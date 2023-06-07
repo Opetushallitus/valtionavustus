@@ -7,7 +7,10 @@ import { BrowserContext } from 'playwright-chromium'
 import { HaunTiedotPage } from '../../pages/hakujen-hallinta/HaunTiedotPage'
 
 const lisatekstiDefault = 'myönteinenlisäteksti default'
-const lisatekstiAmmatillinenKoulutus = 'myönteinenlisäteksti ammatillinen koulutus'
+const lisatekstiAmmatillinenKoulutus = `myönteinenlisäteksti
+monella rivillä
+ammatillinen koulutus
+`
 
 const test = submittedHakemusTest.extend({
   avustushakuID: async ({ page, userCache, hakuProps }, use, testInfo) => {
@@ -49,7 +52,7 @@ test('paatos lisäteksti', async ({ closedAvustushaku, context, avustushakuID, p
     await expect(taTili.value).toBeHidden()
     await openLuonnosAndExpectToContainText(page, context, lisatekstiDefault)
   })
-  await test.step('if koulutusaste selected and have text for koulutusaste show it', async () => {
+  await test.step('if koulutusaste selected and have text for koulutusaste show it (multiline text)', async () => {
     await taTili.input.click()
     await taTili.option.nth(0).click()
     await expect(taTili.value).toContainText('Ammatillinen koulutus')
@@ -74,6 +77,6 @@ const openLuonnosAndExpectToContainText = async (
     context.waitForEvent('page'),
     page.click('a:text-is("Luonnos")'),
   ])
-  await expect(paatosPage.locator('section').nth(3)).toContainText(text)
+  await expect(paatosPage.locator('section').nth(3)).toContainText(text, { useInnerText: true })
   await paatosPage.close()
 }
