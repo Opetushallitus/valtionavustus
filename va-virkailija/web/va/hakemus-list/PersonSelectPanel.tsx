@@ -109,13 +109,9 @@ const RoleContainer = ({ roleName, roleField, roles, hakemus }: RoleContainerPro
 type PersonSelectButtonProps = {
   hakemus: Hakemus
   toggleUkotusModal: (show: boolean) => void
-  toggleSplitView: (forceValue?: boolean) => void
 }
 
-export const PersonSelectPanel = ({
-  hakemus,
-  toggleUkotusModal,
-}: Omit<PersonSelectButtonProps, 'toggleSplitView'>) => {
+export const PersonSelectPanel = ({ hakemus, toggleUkotusModal }: PersonSelectButtonProps) => {
   const hakuDataRoles = useHakemustenArviointiSelector(
     (state) => getLoadedState(state.arviointi).hakuData.roles
   )
