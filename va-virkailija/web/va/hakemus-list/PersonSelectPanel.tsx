@@ -13,7 +13,6 @@ import {
   getLoadedState,
   setArvioValue,
   startHakemusArvioAutoSave,
-  togglePersonSelect,
 } from '../hakemustenArviointi/arviointiReducer'
 
 import styles from './Person.module.less'
@@ -109,16 +108,17 @@ const RoleContainer = ({ roleName, roleField, roles, hakemus }: RoleContainerPro
 
 type PersonSelectButtonProps = {
   hakemus: Hakemus
+  toggleUkotusModal: (show: boolean) => void
   toggleSplitView: (forceValue?: boolean) => void
 }
 
 export const PersonSelectPanel = ({
   hakemus,
+  toggleUkotusModal,
 }: Omit<PersonSelectButtonProps, 'toggleSplitView'>) => {
   const hakuDataRoles = useHakemustenArviointiSelector(
     (state) => getLoadedState(state.arviointi).hakuData.roles
   )
-  const dispatch = useHakemustenArviointiDispatch()
   const roles = [...hakuDataRoles].sort((a, b) => (a.name > b.name ? -1 : 1))
   const presenters = roles.filter(isPresenterRole)
   return (
@@ -126,7 +126,7 @@ export const PersonSelectPanel = ({
       <button
         onClick={(e) => {
           e.stopPropagation()
-          dispatch(togglePersonSelect(undefined))
+          toggleUkotusModal(false)
         }}
         className={styles.close}
         aria-label="Sulje valmistelija ja arvioija valitsin"

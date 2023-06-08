@@ -16,15 +16,8 @@ import { isEvaluator, isPresenter, isPresenterRole, PersonSelectPanel } from './
 import classNames from 'classnames'
 import { ControlledSelectPanel, RoleField } from './ControlledSelectPanel'
 import { AddRoleImage } from './AddRoleImage'
-import {
-  useHakemustenArviointiDispatch,
-  useHakemustenArviointiSelector,
-} from '../hakemustenArviointi/arviointiStore'
-import {
-  getLoadedState,
-  selectHakemus,
-  togglePersonSelect,
-} from '../hakemustenArviointi/arviointiReducer'
+import { useHakemustenArviointiSelector } from '../hakemustenArviointi/arviointiStore'
+import { getLoadedState } from '../hakemustenArviointi/arviointiReducer'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { TAG_ID } from '../hakemustenArviointi/filterReducer'
@@ -274,7 +267,8 @@ export default function HakemusListing(props: Props) {
   const { roles, privileges, avustushaku } = useHakemustenArviointiSelector(
     (state) => getLoadedState(state.arviointi).hakuData
   )
-
+  const [showUkotusModal, setShowUkotusModal] = useState(false)
+  const toggleUkotusModal = (show: boolean) => setShowUkotusModal(show)
   const [hakemuksetWithTaydennyspyynto, setHakemuksetWithTaydennyspyynto] = useState<number[]>([])
   useEffect(() => {
     const fetchHakemuksetWithTaydennyspyynto = async () => {
@@ -332,6 +326,7 @@ export default function HakemusListing(props: Props) {
             totalBudgetGranted={totalBudgetGranted}
             sortingState={sortingState}
             setSorting={setSorting}
+            toggleUkotusModal={toggleUkotusModal}
           />
         ) : (
           <HakemusTable
@@ -347,7 +342,11 @@ export default function HakemusListing(props: Props) {
             setSorting={setSorting}
             allowHakemusScoring={allowHakemusScoring}
             hakemuksetWithTaydennyspyynto={hakemuksetWithTaydennyspyynto}
+            toggleUkotusModal={toggleUkotusModal}
           />
+        )}
+        {showUkotusModal && selectedHakemus && (
+          <PersonSelectPanel hakemus={selectedHakemus} toggleUkotusModal={toggleUkotusModal} />
         )}
       </div>
     </div>
@@ -367,6 +366,7 @@ interface HakemusTableProps {
   sortingState: SortState
   allowHakemusScoring: boolean
   hakemuksetWithTaydennyspyynto: number[]
+  toggleUkotusModal: (show: boolean) => void
 }
 
 function hakemusModifiedAfterSubmitted(hakemus: Hakemus) {
@@ -386,10 +386,8 @@ function HakemusTable({
   setSorting,
   allowHakemusScoring,
   hakemuksetWithTaydennyspyynto,
+  toggleUkotusModal,
 }: HakemusTableProps) {
-  const personSelectHakemusId = useHakemustenArviointiSelector(
-    (state) => state.arviointi.personSelectHakemusId
-  )
   const onOrganizationInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({
       type: 'set-organization-name-filter',
@@ -580,7 +578,10 @@ function HakemusTable({
           const modified = hakemusModifiedAfterSubmitted(hakemus)
           const draft = hakemus.status === 'draft'
           const scoring = hakemus.arvio.scoring
-
+          const onRoleButtonClick = () => {
+            navigateToHakemus(hakemus.id)
+            toggleUkotusModal(true)
+          }
           return (
             <tr
               key={`hakemus-${hakemus.id}`}
@@ -653,11 +654,20 @@ function HakemusTable({
                   : '-'}
               </td>
               <td>
-                <PeopleRoleButton roles={roles} hakemus={hakemus} selectedRole="presenter" />
+                <PeopleRoleButton
+                  roles={roles}
+                  hakemus={hakemus}
+                  selectedRole="presenter"
+                  toggleUkotusModal={onRoleButtonClick}
+                />
               </td>
               <td>
-                <PeopleRoleButton roles={roles} hakemus={hakemus} selectedRole="evaluators" />
-                {personSelectHakemusId === hakemus.id && <PersonSelectPanel hakemus={hakemus} />}
+                <PeopleRoleButton
+                  roles={roles}
+                  hakemus={hakemus}
+                  selectedRole="evaluators"
+                  toggleUkotusModal={onRoleButtonClick}
+                />
               </td>
             </tr>
           )
@@ -700,6 +710,7 @@ interface ResolvedTableProps {
   totalBudgetGranted: number
   setSorting: (sortKey?: SortKey) => void
   sortingState: SortState
+  toggleUkotusModal: (show: boolean) => void
 }
 
 function ResolvedTable(props: ResolvedTableProps) {
@@ -714,10 +725,8 @@ function ResolvedTable(props: ResolvedTableProps) {
     totalBudgetGranted,
     setSorting,
     sortingState,
+    toggleUkotusModal,
   } = props
-  const personSelectHakemusId = useHakemustenArviointiSelector(
-    (state) => state.arviointi.personSelectHakemusId
-  )
   const onOrganizationInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({
       type: 'set-organization-name-filter',
@@ -1011,64 +1020,82 @@ function ResolvedTable(props: ResolvedTableProps) {
         </tr>
       </thead>
       <tbody>
-        {filteredList.map((hakemus) => (
-          <tr
-            key={`hakemus-${hakemus.id}`}
-            className={
-              hakemus.id === selectedHakemusId ? styles.selectedHakemusRow : styles.hakemusRow
-            }
-            tabIndex={0}
-            onClick={() => {
-              navigateToHakemus(hakemus.id)
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                navigateToHakemus(hakemus.id)
+        {filteredList.map((hakemus) => {
+          const onRoleButtonClick = () => {
+            navigateToHakemus(hakemus.id)
+            toggleUkotusModal(true)
+          }
+          return (
+            <tr
+              key={`hakemus-${hakemus.id}`}
+              className={
+                hakemus.id === selectedHakemusId ? styles.selectedHakemusRow : styles.hakemusRow
               }
-            }}
-            data-test-id={`hakemus-${hakemus.id}`}
-          >
-            <td className="organization-cell">{hakemus['organization-name']}</td>
-            <td className="project-name-cell">{getProject(hakemus)}</td>
-            <td className="hakemus-status-cell" data-test-class="hakemus-status-cell">
-              <ArvioStatus
-                status={hakemus.arvio.status}
-                refused={hakemus.refused}
-                keskeytettyAloittamatta={hakemus['keskeytetty-aloittamatta']}
-              />
-            </td>
-            <td data-test-class="muutoshakemus-status-cell">
-              <MuutoshakemusPill
-                status={hakemus['status-muutoshakemus']}
-                refused={hakemus.refused}
-              />
-            </td>
-            <td data-test-class="valiselvitys-status-cell">
-              <ValiselvitysPill status={hakemus['status-valiselvitys']} refused={hakemus.refused} />
-            </td>
-            <td data-test-class="loppuselvitys-status-cell">
-              <LoppuselvitysPill
-                status={hakemus['status-loppuselvitys']}
-                refused={hakemus.refused}
-              />
-            </td>
-            <td
-              className={`${styles.alignRight} granted-sum-cell`}
-              data-test-class="granted-sum-cell"
+              tabIndex={0}
+              onClick={() => {
+                navigateToHakemus(hakemus.id)
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  navigateToHakemus(hakemus.id)
+                }
+              }}
+              data-test-id={`hakemus-${hakemus.id}`}
             >
-              {hakemus.arvio['budget-granted']
-                ? euroFormatter.format(hakemus.arvio['budget-granted'])
-                : '-'}
-            </td>
-            <td>
-              <PeopleRoleButton roles={roles} hakemus={hakemus} selectedRole="presenter" />
-            </td>
-            <td>
-              <PeopleRoleButton roles={roles} hakemus={hakemus} selectedRole="evaluators" />
-              {personSelectHakemusId === hakemus.id && <PersonSelectPanel hakemus={hakemus} />}
-            </td>
-          </tr>
-        ))}
+              <td className="organization-cell">{hakemus['organization-name']}</td>
+              <td className="project-name-cell">{getProject(hakemus)}</td>
+              <td className="hakemus-status-cell" data-test-class="hakemus-status-cell">
+                <ArvioStatus
+                  status={hakemus.arvio.status}
+                  refused={hakemus.refused}
+                  keskeytettyAloittamatta={hakemus['keskeytetty-aloittamatta']}
+                />
+              </td>
+              <td data-test-class="muutoshakemus-status-cell">
+                <MuutoshakemusPill
+                  status={hakemus['status-muutoshakemus']}
+                  refused={hakemus.refused}
+                />
+              </td>
+              <td data-test-class="valiselvitys-status-cell">
+                <ValiselvitysPill
+                  status={hakemus['status-valiselvitys']}
+                  refused={hakemus.refused}
+                />
+              </td>
+              <td data-test-class="loppuselvitys-status-cell">
+                <LoppuselvitysPill
+                  status={hakemus['status-loppuselvitys']}
+                  refused={hakemus.refused}
+                />
+              </td>
+              <td
+                className={`${styles.alignRight} granted-sum-cell`}
+                data-test-class="granted-sum-cell"
+              >
+                {hakemus.arvio['budget-granted']
+                  ? euroFormatter.format(hakemus.arvio['budget-granted'])
+                  : '-'}
+              </td>
+              <td>
+                <PeopleRoleButton
+                  roles={roles}
+                  hakemus={hakemus}
+                  selectedRole="presenter"
+                  toggleUkotusModal={onRoleButtonClick}
+                />
+              </td>
+              <td>
+                <PeopleRoleButton
+                  roles={roles}
+                  hakemus={hakemus}
+                  selectedRole="evaluators"
+                  toggleUkotusModal={onRoleButtonClick}
+                />
+              </td>
+            </tr>
+          )
+        })}
       </tbody>
       <tfoot>
         <tr>
@@ -1109,19 +1136,24 @@ interface PeopleRoleButton {
   roles: Role[]
   hakemus: Hakemus
   selectedRole: 'evaluators' | 'presenter'
+  toggleUkotusModal: (show: boolean) => void
 }
 
-const PeopleRoleButton = ({ roles, selectedRole, hakemus }: PeopleRoleButton) => {
+const PeopleRoleButton = ({
+  roles,
+  selectedRole,
+  hakemus,
+  toggleUkotusModal,
+}: PeopleRoleButton) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const hakuData = useHakemustenArviointiSelector(
     (state) => getLoadedState(state.arviointi).hakuData
   )
-  const dispatch = useHakemustenArviointiDispatch()
-  const onClickCallback = (e: React.SyntheticEvent<HTMLButtonElement>) => {
+  const onClickCallback = async (e: React.SyntheticEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     searchParams.set('splitView', 'true')
     setSearchParams(searchParams)
-    dispatch(selectHakemus(hakemus.id)).then(() => dispatch(togglePersonSelect(hakemus.id)))
+    toggleUkotusModal(true)
   }
   const presentersWanted = selectedRole === 'presenter'
   const filteredRoles = roles.filter((role) =>

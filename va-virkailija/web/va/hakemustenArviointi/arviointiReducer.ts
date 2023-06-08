@@ -396,7 +396,6 @@ interface SaveStatus {
 
 interface State {
   initialData: { loading: true } | { loading: false; data: InitialData }
-  personSelectHakemusId?: number
   saveStatus: SaveStatus
   modal: JSX.Element | undefined
   showOthersScores?: boolean
@@ -404,7 +403,6 @@ interface State {
 
 const initialState: State = {
   initialData: { loading: true },
-  personSelectHakemusId: undefined,
   saveStatus: {
     saveInProgress: false,
     saveTime: null,
@@ -435,9 +433,6 @@ const arviointiSlice = createSlice({
   name: 'hakemustenArviointi',
   initialState,
   reducers: {
-    togglePersonSelect: (state, { payload }: PayloadAction<number | undefined>) => {
-      state.personSelectHakemusId = payload
-    },
     setArvioValue: <_ = State, T extends keyof Arvio = 'id'>(
       state: Draft<State>,
       { payload }: ArvioAction<T>
@@ -628,12 +623,7 @@ export const getUserRoles = (state: HakemustenArviointiRootState, hakemusId: num
   }
 }
 
-export const {
-  togglePersonSelect,
-  setArvioValue,
-  setArvioFieldValue,
-  setMuutoshakemukset,
-  toggleShowOthersScore,
-} = arviointiSlice.actions
+export const { setArvioValue, setArvioFieldValue, setMuutoshakemukset, toggleShowOthersScore } =
+  arviointiSlice.actions
 
 export default arviointiSlice.reducer
