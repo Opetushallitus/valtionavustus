@@ -123,6 +123,7 @@ export const PersonSelectPanel = ({
   const presenters = roles.filter(isPresenterRole)
   return (
     <div className="panel person-panel person-panel--top">
+      <p>{hakemus['project-name']}</p>
       <button
         onClick={(e) => {
           e.stopPropagation()
