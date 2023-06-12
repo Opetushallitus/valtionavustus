@@ -408,11 +408,13 @@ div.soresu-field-edit
   z-index: 10000;
   .box-triangle(325px);
   .box-triangle-up(@light-gray, @off-white);
+  pointer-events: auto;
 
   &&--top {
-    left: inherit;
+    position: absolute;
+    top: 20px;
     right: 20px;
-    top: 80px;
+    left: inherit;
     &:before,
     &:after {
       content: none;

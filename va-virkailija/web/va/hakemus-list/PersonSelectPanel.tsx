@@ -108,7 +108,7 @@ const RoleContainer = ({ roleName, roleField, roles, hakemus }: RoleContainerPro
 
 type PersonSelectButtonProps = {
   hakemus: Hakemus
-  toggleUkotusModal: (show: boolean) => void
+  toggleUkotusModal: (hakemusId: number | undefined) => void
 }
 
 export const PersonSelectPanel = ({ hakemus, toggleUkotusModal }: PersonSelectButtonProps) => {
@@ -123,7 +123,7 @@ export const PersonSelectPanel = ({ hakemus, toggleUkotusModal }: PersonSelectBu
       <button
         onClick={(e) => {
           e.stopPropagation()
-          toggleUkotusModal(false)
+          toggleUkotusModal(undefined)
         }}
         className={styles.close}
         aria-label="Sulje valmistelija ja arvioija valitsin"
