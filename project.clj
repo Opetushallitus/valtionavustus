@@ -76,7 +76,7 @@
                          [org.bouncycastle/bcpkix-jdk15on "1.70"]
                          [org.bouncycastle/bcprov-jdk15on "1.70"]
                          [buddy/buddy-core "1.11.418"]
-                         [buddy/buddy-sign "3.4.333"]
+                         [buddy/buddy-sign "3.5.346"]
 
                          ;; cas
                          [fi.vm.sade/scala-cas_2.11 "2.2.3-SNAPSHOT"]
