@@ -153,24 +153,24 @@
                  [clj-time]
                  [org.clojure/tools.trace]]
 
-  :profiles {:uberjar {:aot [oph.va.hakija.main oph.va.virkailija.main]}
+  :profiles {:uberjar {:aot [oph.va.hakija.main]}
              :hakija-dev     {:env {:config "va-hakija/config/dev.edn"
                               :configsecrets "../valtionavustus-secret/config/secret-dev.edn"
                               :environment "dev"
                               :configdefaults "va-hakija/config/defaults.edn"}}
-                              
+
              :hakija-test     {:env {:config "va-hakija/config/docker-compose-test.edn"
                               :environment "dev"
                               :configdefaults "va-hakija/config/defaults.edn"}}
 
-             :virkailija-dev {:env {:config "va-virkailija/config/dev.edn"
+             :virkailija-dev {:env {:config "va-hakija/config/dev.edn"
                               :configsecrets "../valtionavustus-secret/config/secret-dev.edn"
                               :environment "dev"
-                              :configdefaults "va-virkailija/config/defaults.edn"}}
+                              :configdefaults "va-hakija/config/defaults.edn"}}
 
-             :virkailija-test {:env {:config "va-virkailija/config/docker-compose-test.edn"
+             :virkailija-test {:env {:config "va-hakija/config/docker-compose-test.edn"
                               :environment "dev"
-                              :configdefaults "va-virkailija/config/defaults.edn"}}
+                              :configdefaults "va-hakija/config/defaults.edn"}}
 
              :test {:env {:config "server/config/test.edn"
                           :configdefaults "server/config/test.edn"
@@ -186,7 +186,7 @@
 
              :hakija-prod     {:env {:config "va-hakija/config/prod.edn"}}
 
-             :virkalija-prod  {:env {:config "va-virkailija/config/va-prod.edn"}}
+             :virkalija-prod  {:env {:config "va-hakija/config/va-prod.edn"}}
              }
 
   :aot [oph.va.jdbc.enums oph.va.hakija.db.migrations oph.va.virkailija.db.migrations clj-time.core]

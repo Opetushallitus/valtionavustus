@@ -24,7 +24,6 @@ function rename_panes_to_match_the_script_they_run {
   tmux select-pane -t 1 -T run_frontend
   tmux select-pane -t 2 -T run_hakija_server
   tmux select-pane -t 3 -T run_fakesmtp
-  tmux select-pane -t 4 -T run_virkailija_server
   tmux select-pane -t 5 -T run_maksatuspalvelu
 }
 
@@ -56,8 +55,6 @@ tmux send-keys "$up_cmd hakija" C-m
 tmux splitw -v
 tmux send-keys "$up_cmd fakesmtp" C-m
 
-tmux select-pane -t 4
-tmux send-keys "$up_cmd virkailija" C-m
 
 tmux splitw
 tmux send-keys "$up_cmd maksatuspalvelu" C-m

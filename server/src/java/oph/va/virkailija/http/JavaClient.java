@@ -32,8 +32,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static oph.va.virkailija.http.Common.CLIENT_SUBSYSTEM_CODE;
-
 /** Wraps {@link Client} to provide nicer interface for Java programs. */
 public class JavaClient {
     private static final Logger LOG = LoggerFactory.getLogger(JavaClient.class);
@@ -124,7 +122,7 @@ public class JavaClient {
             headers.add(Header$.MODULE$.apply(entry.getKey(), entry.getValue()));
         }
 
-        headers.add(Header$.MODULE$.apply("clientSubSystemCode", CLIENT_SUBSYSTEM_CODE));
+        headers.add(Header$.MODULE$.apply("clientSubSystemCode", "valtionavustus"));
 
         return Headers.apply(JavaConversions.asScalaSet(headers).toSeq());
     }

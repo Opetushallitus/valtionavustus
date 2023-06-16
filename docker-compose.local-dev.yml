@@ -5,6 +5,9 @@ services:
       - type: bind
         source: ./server/
         target: /app/server/
+      - type: bind
+        source: ./tmp/
+        target: /tmp/
   virkailija:
     volumes:
       - type: bind

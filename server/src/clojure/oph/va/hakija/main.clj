@@ -1,12 +1,13 @@
 (ns oph.va.hakija.main
-  (:use [oph.va.hakija.server :only [start-hakija-server]])
-  (:require [clojure.tools.logging :as log]
+  (:require [oph.va.hakija.server :refer [start-hakija-server]]
+            [oph.va.virkailija.server :refer [start-virkailija-server]]
+            [clojure.tools.logging :as log]
             [nrepl.server :as nrepl-server]
-            [oph.soresu.common.config :refer [config]])
+            [oph.soresu.common.config :refer [config without-authentication?]])
   (:gen-class))
 
 (defn write-nrepl-port-file [port]
-  (with-open [w (clojure.java.io/writer  ".nrepl-port")]
+  (with-open [w (clojure.java.io/writer ".nrepl-port")]
     (.write w (str port))))
 
 (defn run-nrepl []
@@ -20,8 +21,15 @@
 (defn -main [& args]
   (let [server-config (:server config)
         auto-reload? (:auto-reload? server-config)
-        port (:port server-config)
-        host (:host server-config)]
+        hakija-port (-> server-config :hakija-port )
+        hakija-host (:virkailija-host server-config)
+        virkailija-host (:virkailija-host server-config)
+        virkailija-port (-> server-config :virkailija-port )]
     (if (:nrepl-enabled? config) (run-nrepl))
-    (let [stop-server (start-hakija-server host port auto-reload?)]
-      (.addShutdownHook (Runtime/getRuntime) (Thread. stop-server)))))
+    (let [stop-hakija-server (start-hakija-server hakija-host hakija-port auto-reload?)
+          stop-virkailija-server (start-virkailija-server {:host                    virkailija-host
+                                                           :port                    virkailija-port
+                                                           :auto-reload?            auto-reload?
+                                                           :without-authentication? (without-authentication?)})]
+      (.addShutdownHook (Runtime/getRuntime) (Thread. stop-hakija-server))
+      (.addShutdownHook (Runtime/getRuntime) (Thread. stop-virkailija-server)))))

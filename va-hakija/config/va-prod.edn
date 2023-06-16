@@ -1,15 +1,48 @@
-{:server {:auto-reload? false
-          :allow-db-clear? false
-          :host "*"
-          :port 8081
-          :url {:fi "https://valtionavustukset.oph.fi/"
-                :sv "https://statsunderstod.oph.fi/"}
-          :virkailija-url "https://virkailija.valtionavustukset.oph.fi"}
- :ui {:show-environment? false}
- :db {:database-name "va-prod"}
- :email {:enabled? true
-         :host "smtp.sdn.csc.fi"
-         :port 25
-         :sender "no-reply@csc.fi"
-         :bounce-address "valtionavustukset@oph.fi"}
- }
+{:server                  {:auto-reload?    false
+                           :allow-db-clear? false
+                           :hakija-host     "*"
+                           :hakija-port     8081
+                           :virkailija-port 6071
+                           :virkailija-host "*"
+                           :url             {:fi "https://valtionavustukset.oph.fi/"
+                                             :sv "https://statsunderstod.oph.fi/"}
+                           :virkailija-url  "https://virkailija.valtionavustukset.oph.fi"}
+ :opintopolku             {:url "https://virkailija.opintopolku.fi"}
+ :ui                      {:show-environment? false}
+ :db                      {:database-name "va-prod"}
+ :rondo-scheduler         {:enabled?                 true
+                           :scheduling               "0 00 04 ? * *"
+                           :strict-host-key-checking :yes}
+ :notifications           {:asiatarkastus                   {:enabled? true
+                                                             :schedule "0 0 7 ? * 2"}
+                           :taloustarkastus                 {:enabled? true
+                                                             :schedule "0 0 7 ? * 2"}
+                           :valiselvitys                    {:enabled? true
+                                                             :schedule "0 0 7 ? * 2"}
+                           :valiselvitys-palauttamatta      {:enabled? true
+                                                             :schedule "0 0 14 ? * MON-FRI"}
+                           :laheta-valiselvityspyynnot      {:enabled? true
+                                                             :schedule "0 0 8 1 * ?"}
+                           :laheta-loppuselvityspyynnot     {:enabled? true
+                                                             :schedule "0 0 8 1 * ?"}
+                           :loppuselvitys-palauttamatta     {:enabled? true
+                                                             :schedule "0 0 14 ? * MON-FRI"}
+                           :hakuaika-paattymassa            {:enabled? true
+                                                             :schedule "0 0 7 ? * MON-FRI"}
+                           :hakuaika-paattynyt              {:enabled? true
+                                                             :schedule "0 0 7 ? * *"}
+                           :muutoshakemuksia-kasittelematta {:enabled? true
+                                                             :schedule "0 0 8 ? * MON *"}
+
+                           }
+ :email                   {:enabled?            true
+                           :host                "smtp.sdn.csc.fi"
+                           :port                25
+                           :sender              "no-reply@csc.fi"
+                           :bounce-address      "valtionavustukset@oph.fi"
+                           :to-taloustarkastaja ["taloustarkastus@oph.fi"]
+                           :persistent-retry    {:enabled? true
+                                                 :schedule "0 * * * * ?"}}
+ :integration-healthcheck {:enabled?         true
+                           :timeout          5000
+                           :interval-minutes 15}}

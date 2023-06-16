@@ -24,34 +24,6 @@ services:
       options:
         mode: 'non-blocking'
 
-  virkailija:
-    build:
-      context: .
-      dockerfile: ./Dockerfile.virkailija
-    container_name: va-virkailija
-    hostname: va-virkailija
-    environment:
-      JAVA_TOOL_OPTIONS: '-Duser.timezone="Europe/Helsinki"'
-    volumes:
-      - /dev/urandom:/dev/random
-    ports:
-      - '8081:8081'
-    depends_on:
-      hakija:
-        condition: service_healthy
-      fakesmtp:
-        condition: service_started
-      maksatuspalvelu:
-        condition: service_started
-    healthcheck:
-      test: ["CMD-SHELL", "curl http://localhost:8081/api/healthcheck"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    logging:
-      options:
-        mode: 'non-blocking'
-
   hakija:
     build:
       context: .

@@ -43,7 +43,6 @@ RUN ./lein compile
 
 COPY server/config/ ./server/config/
 COPY va-hakija/config/ ./va-hakija/config/
-COPY va-virkailija/config/ ./va-virkailija/config/
 
 COPY --from=web-builder /app/server/resources/public/hakija/js/ server/resources/public/hakija/js/
 COPY --from=web-builder /app/server/resources/public/virkailija/js/ server/resources/public/virkailija/js/

@@ -16,7 +16,7 @@
   (:import (java.time.format DateTimeFormatter)))
 
 (defn decision-translation [translations lang translation-key]
-  (-> translations :paatos (keyword translation-key) lang))
+  (get-in translations [:paatos (keyword translation-key) lang]))
 
 (defn content-with-paragraphs [content]
   (let [rows (str/split content #"\n")
@@ -195,7 +195,7 @@
         arvio-role (first (filter #(= (:id %) arvio-role-id) roles))
         role (if (nil? arvio-role) (first presenting-officers) arvio-role)
         language (keyword (:language hakemus))
-        avustushaku-name (-> avustushaku :content :name language)
+        avustushaku-name (get-in avustushaku [:content :name language])
         total-granted (:budget-granted arvio)
         template (email/load-template (str "templates/paatos.html"))
         translations-str (email/load-template "public/translations.json")

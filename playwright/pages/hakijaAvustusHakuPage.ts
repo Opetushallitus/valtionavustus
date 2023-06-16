@@ -202,8 +202,7 @@ export class HakijaAvustusHakuPage {
     beforeSubmitFn?: () => void
   ) {
     await this.fillMuutoshakemusEnabledHakemus(avustushakuID, answers, beforeSubmitFn)
-    await this.submitApplication()
-    const userKey = await this.getUserKey()
+    const { userKey } = await this.submitApplication()
     return { userKey }
   }
 
