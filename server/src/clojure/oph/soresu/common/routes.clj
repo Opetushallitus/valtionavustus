@@ -4,8 +4,7 @@
             [ring.util.response :as resp]
             [schema.utils :as schema]
             [compojure.api.exception :as compojure-ex]
-            [clojure.tools.logging :as log]
-            [clojure.java.io :as java-io]))
+            [clojure.tools.logging :as log]))
 
 (defn return-from-classpath [filename-under-public contenttype]
   (-> (resp/resource-response filename-under-public {:root "public"})

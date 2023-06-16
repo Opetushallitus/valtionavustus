@@ -42,9 +42,7 @@ Software is deployed as jar. Jar is built and deployed by [Jenkins CI
 server](https://dev.valtionavustukset.oph.fi/), which also runs in
 VMware environment.
 
-Environment specific application configurations are in
-[va-hakija/config](../va-hakija/config/) and
-[va-virkailija/config](../va-virkailija/config/)
+Environment specific application configurations are in [va-hakija/config](../va-hakija/config/)
 
 ### Server and network architecture
 

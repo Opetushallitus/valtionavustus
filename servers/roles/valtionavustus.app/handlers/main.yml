@@ -4,12 +4,7 @@
     state: started
     enabled: yes
 
-- name: Restart va-hakija
+- name: Restart va
   supervisorctl:
-    name: va-hakija
-    state: restarted
-
-- name: Restart va-virkailija
-  supervisorctl:
-    name: va-virkailija
+    name: va
     state: restarted

@@ -7,14 +7,14 @@ services:
       dockerfile: Dockerfile.playwright-test-runner
     container_name: va-playwright-tests
     depends_on:
-      virkailija:
+      va:
         condition: service_healthy
     volumes:
       - ./playwright-results:/playwright-results
     environment:
       HEADLESS: 'true'
-      VIRKAILIJA_HOSTNAME: va-virkailija
-      HAKIJA_HOSTNAME: va-hakija
+      VIRKAILIJA_HOSTNAME: va
+      HAKIJA_HOSTNAME: va
       PLAYWRIGHT_WORKERS: "${PLAYWRIGHT_WORKERS:-5}"
       PLAYWRIGHT_RETRIES: 1
       PLAYWRIGHT_SHARD: "${PLAYWRIGHT_SHARD-}"
@@ -24,53 +24,26 @@ services:
       options:
         mode: 'non-blocking'
 
-  virkailija:
-    build:
-      context: .
-      dockerfile: ./Dockerfile.virkailija
-    container_name: va-virkailija
-    hostname: va-virkailija
-    environment:
-      JAVA_TOOL_OPTIONS: '-Duser.timezone="Europe/Helsinki"'
-    volumes:
-      - /dev/urandom:/dev/random
-    ports:
-      - '8081:8081'
-    depends_on:
-      hakija:
-        condition: service_healthy
-      fakesmtp:
-        condition: service_started
-      maksatuspalvelu:
-        condition: service_started
-    healthcheck:
-      test: ["CMD-SHELL", "curl http://localhost:8081/api/healthcheck"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    logging:
-      options:
-        mode: 'non-blocking'
-
-  hakija:
+  va:
     build:
       context: .
       dockerfile: ./Dockerfile.hakija
-    container_name: va-hakija
-    hostname: va-hakija
+    container_name: va
+    hostname: va
     environment:
       JAVA_TOOL_OPTIONS: '-Duser.timezone="Europe/Helsinki"'
     volumes:
       - /dev/urandom:/dev/random
     ports:
       - '8080:8080'
+      - '8081:8081'
     depends_on:
       db:
         condition: service_healthy
       fakesmtp:
         condition: service_started
     healthcheck:
-      test: ["CMD-SHELL", "curl http://localhost:8080/api/healthcheck"]
+      test: ["CMD-SHELL", "curl http://localhost:8081/api/healthcheck"]
       interval: 10s
       timeout: 5s
       retries: 5

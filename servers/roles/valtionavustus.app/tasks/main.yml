@@ -69,8 +69,7 @@
     group: www
     mode: 0600
   notify:
-    - Restart va-hakija
-    - Restart va-virkailija
+    - Restart va
   tags:
     - app_secrets
 
@@ -82,11 +81,9 @@
     group: www
     mode: 0600
   with_items:
-    - va-hakija
-    - va-virkailija
+    - va
   notify:
-    - Restart va-hakija
-    - Restart va-virkailija
+    - Restart va
 
 - name: Create ~www/.ssh directory
   file:
@@ -114,8 +111,7 @@
   template: src=supervisord.conf.j2 dest=/etc/supervisord.conf owner=root group=www-data mode=0640
   notify:
     - Restart supervisord
-    - Restart va-hakija
-    - Restart va-virkailija
+    - Restart va
 
 - name: Create dir for supervisor lock file
   file: path=/var/run/supervisor owner=www group=www-data state=directory mode=0770

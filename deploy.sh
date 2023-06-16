@@ -8,6 +8,7 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/deploy-scripts/jenkins
 
 trap stop_systems_under_test EXIT
 
+valtionavustus_jar="$repo"/target/*uberjar*/valtionavustus-*-standalone.jar
 function main {
   if running_on_jenkins; then
     docker image prune --force
@@ -18,22 +19,16 @@ function main {
   parse_env_from_script_name "deploy"
   set_env_vars
   build_and_test_jars
-  deploy_jars
-}
 
-valtionavustus_jar="$repo"/target/*uberjar*/valtionavustus-*-standalone.jar
-function deploy_jars {
   ls ${valtionavustus_jar}
-
-  do_deploy_jar $APP_HOSTNAME.csc.fi va-hakija ${valtionavustus_jar} 8081
-  do_deploy_jar $APP_HOSTNAME.csc.fi va-virkailija ${valtionavustus_jar} 6071
+  do_deploy_jar
 }
 
 function do_deploy_jar {
-  local target_server_name=$1
-  local module_name=$2
-  local jar_source_path=$3
-  local application_port=$4
+  local target_server_name=$APP_HOSTNAME.csc.fi
+  local module_name=va
+  local jar_source_path=${valtionavustus_jar}
+  local virkailija_port=6071
   echo "Starting $module_name..."
   echo "Transfering to application server ${target_server_name} ..."
   SSH_KEY=~/.ssh/id_deploy
@@ -50,7 +45,7 @@ function do_deploy_jar {
   $SSH ln -sfT ${TARGET_DIR} ${CURRENT_DIR}
   restart_application ${module_name}
   CAT_LOG_COMMAND="$SSH tail -n 100 /logs/valtionavustus/${module_name}_run.log /logs/valtionavustus/${module_name}_application.log"
-  HEALTH_CHECK_COMMAND="`dirname $0`/ci/health_check.bash ${SSH_USER} ${SSH_KEY} ${target_server_name} ${application_port} $CAT_LOG_COMMAND"
+  HEALTH_CHECK_COMMAND="`dirname $0`/ci/health_check.bash ${SSH_USER} ${SSH_KEY} ${target_server_name} ${virkailija_port} $CAT_LOG_COMMAND"
   echo "Checking that application responds to healthcheck ($HEALTH_CHECK_COMMAND)..."
   $HEALTH_CHECK_COMMAND
   echo "Success in starting $module_name"
@@ -60,6 +55,8 @@ function do_deploy_jar {
 }
 
 function restart_application {
+  $SSH "supervisorctl stop va-hakija"
+  $SSH "supervisorctl stop va-virkailija"
   local module_name=$1
   echo "Stopping application..."
   $SSH "supervisorctl stop $module_name"

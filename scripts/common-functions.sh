@@ -71,11 +71,8 @@ function start_system_under_test () {
     disable_docker_buildkit_builder
   fi
 
-  docker-compose -f "$DOCKER_COMPOSE_FILE" up --force-recreate --build -d hakija
-  wait_for_container_to_be_healthy va-hakija
-
-  docker-compose -f "$DOCKER_COMPOSE_FILE" up --force-recreate --build -d virkailija
-  wait_for_container_to_be_healthy va-virkailija
+  docker-compose -f "$DOCKER_COMPOSE_FILE" up --force-recreate --build -d va
+  wait_for_container_to_be_healthy va
 
   follow_service_logs
 }

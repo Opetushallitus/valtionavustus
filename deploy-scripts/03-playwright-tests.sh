@@ -20,7 +20,7 @@ function main {
   mkdir -p "$RESULTS_DIR"
 
   start_gh_actions_group "Build images required for playwright tests"
-  $compose up --build --wait db hakija virkailija fakesmtp maksatuspalvelu
+  $compose up --build --wait db va fakesmtp maksatuspalvelu
   docker build -t playwright-image -f Dockerfile.playwright-test-runner .
   end_gh_actions_group
 
@@ -28,16 +28,16 @@ function main {
   docker run --rm --network valtionavustus-playwright_default \
   -v "$RESULTS_DIR":/playwright-results\
   --env TZ='Europe/Helsinki'\
-  --env VIRKAILIJA_HOSTNAME=va-virkailija \
+  --env VIRKAILIJA_HOSTNAME=va-hakija \
   --env HAKIJA_HOSTNAME=va-hakija \
   --env HEADLESS=true \
   --env PLAYWRIGHT_WORKERS="${PLAYWRIGHT_WORKERS:-5}"\
   --env PLAYWRIGHT_RETRIES=1\
   --env PLAYWRIGHT_SHARD="${PLAYWRIGHT_SHARD-}"\
   --env PLAYWRIGHT_SHARDS_AMOUNT="${PLAYWRIGHT_SHARDS_AMOUNT-}"\
-  playwright-image 
+  playwright-image
   end_gh_actions_group
-  
+
   clean
 }
 

@@ -3,40 +3,22 @@ version: '3.9'
 name: valtionavustus
 
 services:
-  virkailija:
-    extends:
-      service: va-server
-    command: with-profile virkailija-dev run -m oph.va.virkailija.main
-    container_name: va-virkailija
-    hostname: va-virkailija
-    ports:
-      - '127.0.0.1:8081:8081'
-    depends_on:
-      hakija:
-        condition: service_healthy
-      fakesmtp:
-        condition: service_started
-      maksatuspalvelu:
-        condition: service_started
-    healthcheck:
-      test: ["CMD-SHELL", "curl http://localhost:8081/api/healthcheck"]
-      start_period: 30s
-
-  hakija:
+  va:
     extends:
       service: va-server
     command: with-profile hakija-dev run -m oph.va.hakija.main
-    container_name: va-hakija
-    hostname: va-hakija
+    container_name: va
+    hostname: va
     ports:
       - '127.0.0.1:8080:8080'
+      - '127.0.0.1:8081:8081'
     depends_on:
       db:
         condition: service_healthy
       fakesmtp:
         condition: service_started
     healthcheck:
-      test: ["CMD-SHELL", "curl http://localhost:8080/api/healthcheck"]
+      test: ["CMD-SHELL", "curl http://localhost:8081/api/healthcheck"]
 
   va-server:
     build:
