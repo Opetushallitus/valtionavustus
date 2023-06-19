@@ -1,9 +1,11 @@
-import { getDocument } from 'pdfjs-dist/legacy/build/pdf.js'
+import { getDocument } from 'pdfjs-dist'
 
 export const getPdfFirstPageTextContent = async (pdfData: Buffer) => {
   const pdf = await getDocument({ data: pdfData }).promise
   const firstPage = await pdf.getPage(1)
-  const allTextContent = await firstPage.getTextContent()
+  const allTextContent = await firstPage.getTextContent({
+    includeMarkedContent: false,
+  })
   return allTextContent.items
     .flatMap((item) => {
       if ('str' in item) {
