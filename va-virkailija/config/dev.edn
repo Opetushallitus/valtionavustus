@@ -37,4 +37,5 @@
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :test-apis {:enabled? true}
  :grant-reporting-deadline {:enabled? true}
+ :backup-contact-person {:enabled? true}
  }

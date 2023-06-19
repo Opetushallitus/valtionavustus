@@ -29,4 +29,5 @@
  :test-apis {:enabled? true}
  :officer-edit-jwt-secret "playwright-test-secret"
  :grant-reporting-deadline {:enabled? true}
+ :backup-contact-person {:enabled? true}
  }

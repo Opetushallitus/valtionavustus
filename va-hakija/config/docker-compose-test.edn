@@ -14,5 +14,6 @@
          :host "fakesmtp"
          :port 25}
  :applications-ui {:enabled? true}
+ :backup-contact-person {:enabled? true}
  :officer-edit-jwt-secret "playwright-test-secret"
  }

@@ -39,4 +39,5 @@
                            :timeout 5000
                            :interval-minutes 15}
  :grant-reporting-deadline {:enabled? true}
+ :backup-contact-person {:enabled? true}
  }
