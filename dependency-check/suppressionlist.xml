@@ -122,4 +122,11 @@
    ]]></notes>
     <cve>CVE-2022-45688</cve>
   </suppress>
+  <suppress until="2023-07-19">
+    <notes><![CDATA[
+   Might be non issue https://github.com/FasterXML/jackson-databind/issues/3972
+   Also no fix as of 19.6.2023
+   ]]></notes>
+    <cve>CVE-2023-35116</cve>
+  </suppress>
 </suppressions>
