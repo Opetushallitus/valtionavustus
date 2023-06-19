@@ -9,13 +9,6 @@
     ]]>    </notes>
     <cve>CVE-2020-8908</cve>
   </suppress>
-  <suppress until="2022-10-01Z">
-    <notes><![CDATA[
-    file name: poi-4.1.1.jar
-    ]]>    </notes>
-    <packageUrl regex="true">^pkg:maven/org\.apache\.poi/poi.*</packageUrl>
-    <cve>CVE-2022-26336</cve>
-  </suppress>
   <suppress>
     <notes><![CDATA[
     Does not affect client use and update is currently very labourous
@@ -58,69 +51,12 @@
     <packageUrl regex="true">^pkg:maven/org\.scalaz/scalaz-core.*</packageUrl>
     <cve>CVE-2022-2393</cve>
   </suppress>
-  <suppress until="2022-11-08Z">
-    <notes><![CDATA[
-    No updates
-    ]]>
-    </notes>
-    <packageUrl regex="true">^pkg:maven/xalan/serializer@2.7.2</packageUrl>
-    <cve>CVE-2022-34169</cve>
-  </suppress>
-  <suppress until="2022-11-08Z">
-    <notes><![CDATA[
-    No updates
-    ]]>
-    </notes>
-    <packageUrl regex="true">^pkg:maven/xalan/xalan@2.7.2</packageUrl>
-    <cve>CVE-2022-34169</cve>
-  </suppress>
-  <suppress until="2023-01-15Z">
-    <notes><![CDATA[
-   file name: snakeyaml-1.33.jar
-   ]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
-    <vulnerabilityName>CVE-2022-41854</vulnerabilityName>
-  </suppress>
-  <suppress until="2023-01-15Z">
-    <notes><![CDATA[
-   file name: msgpack-0.6.12.jar
-   ]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.msgpack/msgpack@.*$</packageUrl>
-    <cve>CVE-2022-41719</cve>
-  </suppress>
   <suppress>
     <notes><![CDATA[
    file name: snakeyaml-1.33.jar
    ]]></notes>
     <packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
     <cve>CVE-2022-1471</cve>
-  </suppress>
-  <suppress until="2023-01-13Z">
-    <notes><![CDATA[
-    No update available
-    ]]>
-    </notes>
-    <cve>CVE-2021-37533</cve>
-  </suppress>
-  <suppress until="2023-05-01Z">
-    <notes><![CDATA[
-   file name: clj-yaml-1.0.26.jar
-   ]]></notes>
-    <packageUrl regex="true">^pkg:maven/clj\-commons/clj\-yaml@.*$</packageUrl>
-    <cve>CVE-2021-4235</cve>
-  </suppress>
-  <suppress until="2023-05-01Z">
-    <notes><![CDATA[
-   file name: clj-yaml-1.0.26.jar
-   ]]></notes>
-    <packageUrl regex="true">^pkg:maven/clj\-commons/clj\-yaml@.*$</packageUrl>
-    <cve>CVE-2022-3064</cve>
-  </suppress>
-  <suppress until="2023-04-16">
-    <notes><![CDATA[
-   False positive
-   ]]></notes>
-    <cve>CVE-2022-45688</cve>
   </suppress>
   <suppress until="2023-07-19">
     <notes><![CDATA[
