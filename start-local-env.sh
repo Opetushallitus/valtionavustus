@@ -30,7 +30,7 @@ function rename_panes_to_match_the_script_they_run {
 init
 
 $compose pull
-$compose create db hakija virkailija fakesmtp maksatuspalvelu
+$compose create db va fakesmtp maksatuspalvelu
 
 session="valtionavustus"
 
@@ -50,7 +50,7 @@ tmux splitw -v
 tmux send-keys "$repo/scripts/run_frontend.sh" C-m
 
 tmux select-pane -t 2
-tmux send-keys "$up_cmd hakija" C-m
+tmux send-keys "$up_cmd va" C-m
 
 tmux splitw -v
 tmux send-keys "$up_cmd fakesmtp" C-m
