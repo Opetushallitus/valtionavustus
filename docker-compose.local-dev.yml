@@ -1,6 +1,6 @@
 name: valtionavustus-dev
 services:
-  hakija:
+  va:
     volumes:
       - type: bind
         source: ./server/
@@ -8,8 +8,3 @@ services:
       - type: bind
         source: ./tmp/
         target: /tmp/
-  virkailija:
-    volumes:
-      - type: bind
-        source: ./server/
-        target: /app/server/

@@ -28,8 +28,8 @@ function main {
   docker run --rm --network valtionavustus-playwright_default \
   -v "$RESULTS_DIR":/playwright-results\
   --env TZ='Europe/Helsinki'\
-  --env VIRKAILIJA_HOSTNAME=va-hakija \
-  --env HAKIJA_HOSTNAME=va-hakija \
+  --env VIRKAILIJA_HOSTNAME=va\
+  --env HAKIJA_HOSTNAME=va\
   --env HEADLESS=true \
   --env PLAYWRIGHT_WORKERS="${PLAYWRIGHT_WORKERS:-5}"\
   --env PLAYWRIGHT_RETRIES=1\
