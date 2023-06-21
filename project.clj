@@ -67,7 +67,6 @@
                          ;; logging
                          [org.apache.logging.log4j/log4j-core ~log4j-version]
                          [org.apache.logging.log4j/log4j-slf4j2-impl ~log4j-version]
-                         [org.clojure/tools.logging "1.2.4"]
                          [org.slf4j/slf4j-api "2.0.7"]
                          [commons-logging "1.2"]
                          [org.log4s/log4s_2.11 "1.10.0"]
@@ -86,13 +85,10 @@
 
                          ;; other
                          [clj-commons/clj-yaml "1.0.26"]
-                         [clj-time "0.15.2"]
                          [clojurewerkz/quartzite "2.1.0"]
                          [com.cemerick/url "0.1.1"]
                          [commons-codec "1.16.0"]
                          [commons-io "2.13.0"]
-                         [de.ubercode.clostache/clostache "1.4.0"]
-                         [dk.ative/docjure "1.19.0"]
                          [instaparse "1.4.12"]
                          [metosin/ring-swagger-ui "4.18.1"]
                          [org.apache.commons/commons-email "1.5"]
@@ -103,7 +99,7 @@
                          [org.scala-lang/scala-library "2.11.12"]]
 
   :dependencies [[org.clojure/clojure]
-                 [de.ubercode.clostache/clostache]
+                 [de.ubercode.clostache/clostache "1.4.0"]
                  [org.apache.commons/commons-email]
                  [org.clojure/core.async]
                  [org.apache.logging.log4j/log4j-core]
@@ -146,9 +142,9 @@
                  [speclj]
                  [speclj-junit]
                  [environ]
-                 [org.clojure/tools.logging]
+                 [org.clojure/tools.logging "1.2.4"]
                  [buddy/buddy-core]
-                 [clj-time]
+                 [clj-time "0.15.2"]
                  [org.clojure/tools.trace]]
 
   :profiles {:uberjar {:aot [oph.va.hakija.main]}
