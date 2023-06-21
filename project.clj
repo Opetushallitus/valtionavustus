@@ -93,11 +93,9 @@
                          [commons-io "2.13.0"]
                          [de.ubercode.clostache/clostache "1.4.0"]
                          [dk.ative/docjure "1.19.0"]
-                         [funcool/cuerdas "2022.06.16-403"] ; 2.2.0 is absolutely mental and wants clojurescript, no thanks
                          [instaparse "1.4.12"]
                          [metosin/ring-swagger-ui "4.18.1"]
                          [org.apache.commons/commons-email "1.5"]
-                         [org.checkerframework/checker-qual "3.35.0"]
                          [org.clojure/core.async "1.6.673"]
                          [org.clojure/data.xml "0.0.8"]
                          [org.clojure/tools.trace "0.7.11"]
