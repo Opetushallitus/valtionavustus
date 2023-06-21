@@ -3,12 +3,12 @@
                                                :enable-hsts?            false
                                                :enable-csp?             false
                                                :host                    "hakija"
-                                               :url                     {:fi "http://va-hakija:8080/"
-                                                                         :sv "http://va-hakija:8080/"}
+                                               :url                     {:fi "http://va:8080/"
+                                                                         :sv "http://va:8080/"}
 
                                                :without-authentication? true
                                                :require-https?          false
-                                               :virkailija-url          "http://va-virkailija:8081"
+                                               :virkailija-url          "http://va:8081"
                                                :payment-service-sftp    {:enabled?         true
                                                                          :host-ip          "maksatuspalvelu"
                                                                          :port             22
