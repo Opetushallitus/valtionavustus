@@ -2,12 +2,11 @@
                                                :enable-access-log?      false
                                                :enable-hsts?            false
                                                :enable-csp?             false
-
                                                :require-https?          false
-                                               :virkailija-url          "http://localhost:8081"
+                                               :virkailija-url          "http://127.0.0.1:8081"
                                                :without-authentication? true
-                                               :url                     {:fi "http://localhost:8080/"
-                                                                         :sv "http://localhost:8080/"}
+                                               :url                     {:fi "http://127.0.0.1:8080/"
+                                                                         :sv "http://127.0.0.1:8080/"}
                                                :payment-service-sftp    {:enabled?         true
                                                                          :host-ip          "maksatuspalvelu"
                                                                          :port             22

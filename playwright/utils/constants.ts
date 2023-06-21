@@ -1,9 +1,9 @@
 import * as path from 'path'
 import { Answers } from './types'
 
-const HAKIJA_HOSTNAME = process.env.HAKIJA_HOSTNAME || 'localhost'
+const HAKIJA_HOSTNAME = process.env.HAKIJA_HOSTNAME || '127.0.0.1'
 const HAKIJA_PORT = 8080
-const VIRKAILIJA_HOSTNAME = process.env.VIRKAILIJA_HOSTNAME || 'localhost'
+const VIRKAILIJA_HOSTNAME = process.env.VIRKAILIJA_HOSTNAME || '127.0.0.1'
 const VIRKAILIJA_PORT = 8081
 export const VIRKAILIJA_URL = `http://${VIRKAILIJA_HOSTNAME}:${VIRKAILIJA_PORT}`
 export const HAKIJA_URL = `http://${HAKIJA_HOSTNAME}:${HAKIJA_PORT}`

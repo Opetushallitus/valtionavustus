@@ -4,8 +4,10 @@
           :enable-hsts? true
           :enable-csp? true
           :without-authentication? false
-          :host "localhost"
-          :port 8081
+          :hakija-host "127.0.0.1"
+          :hakija-port 8080
+          :virkailija-host "127.0.0.1"
+          :virkailija-port 8081
           :require-https? true
           :attachment-max-size 50 ;in megabytes
           :attachment-mime-types ["text/plain"
@@ -22,7 +24,7 @@
                                   "application/zip"]
           :session-timeout-in-s 28800
           :threads 16
-          :virkailija-url "http://localhost:8081"}
+          :virkailija-url "http://127.0.0.1:8081"}
  :opintopolku {:url "https://virkailija.testiopintopolku.fi"
                :cas-login "/cas/login?service="
                :cas-logout "/cas/logout?service="
