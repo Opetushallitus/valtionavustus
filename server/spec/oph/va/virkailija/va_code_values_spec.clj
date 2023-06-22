@@ -55,7 +55,7 @@
     (add-mock-authentication user-authentication)
     (with-test-server!
       "virkailija"
-      #(start-server
+      #(start-virkailija-server
          {:host "localhost"
           :port test-server-port
           :auto-reload? false
@@ -74,7 +74,7 @@
   (tags :vacodevalues)
 
   (around-all [_] (with-test-server! "virkailija"
-                    #(start-server
+                    #(start-virkailija-server
                        {:host "localhost"
                         :port test-server-port
                         :auto-reload? false

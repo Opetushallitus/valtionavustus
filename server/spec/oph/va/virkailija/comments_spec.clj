@@ -14,7 +14,7 @@
   (around-all [_]
               (u/add-mock-authentication u/admin-authentication)
               (with-test-server! "virkailija"
-                    #(start-server
+                    #(start-virkailija-server
                        {:host "localhost"
                         :port u/test-server-port
                         :auto-reload? false

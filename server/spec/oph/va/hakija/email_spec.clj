@@ -19,7 +19,7 @@
     [_]
     (with-test-server!
       "hakija"
-      #(start-server "localhost" test-server-port false) (_)))
+      #(start-hakija-server "localhost" test-server-port false) (_)))
 
   (it "generates refused email for applicant"
       (should=

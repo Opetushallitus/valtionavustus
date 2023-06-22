@@ -197,7 +197,7 @@
 
   ;; Start HTTP server for running tests
   (around-all [_]
-    (with-test-server! "hakija" #(start-server "localhost" test-server-port false) (_)))
+    (with-test-server! "hakija" #(start-hakija-server "localhost" test-server-port false) (_)))
 
   ;; Set time
   (around-all [_]
@@ -443,7 +443,7 @@
 
   ;; Start HTTP server for running tests
   (around-all [_]
-    (with-test-server! "hakija" #(start-server "localhost" test-server-port false) (_)))
+    (with-test-server! "hakija" #(start-hakija-server "localhost" test-server-port false) (_)))
 
   ;; Set time
   (around-all [_]
@@ -471,7 +471,7 @@
 
   ;; Start HTTP server for running tests
   (around-all [_]
-    (with-test-server! "hakija" #(start-server "localhost" test-server-port false) (_)))
+    (with-test-server! "hakija" #(start-hakija-server "localhost" test-server-port false) (_)))
 
   ;; Set time
   (around-all [_]
@@ -489,7 +489,7 @@
   (tags :server)
 
   (around-all [_]
-    (with-test-server! "hakija" #(start-server "localhost" test-server-port false) (_)))
+    (with-test-server! "hakija" #(start-hakija-server "localhost" test-server-port false) (_)))
 
   (around-all [_]
     ;; Add self-financing-amount field to the budget in avustushaku form
@@ -561,7 +561,7 @@
           (tags :server :applicationchange)
 
           (around-all
-            [_] (with-test-server! "hakija" #(start-server "localhost" test-server-port false) (_)))
+            [_] (with-test-server! "hakija" #(start-hakija-server "localhost" test-server-port false) (_)))
 
           (around-all [_] (set-time hakemus-open-timestamp (_)))
 

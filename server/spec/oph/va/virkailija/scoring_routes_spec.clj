@@ -25,7 +25,7 @@
     (u/add-mock-authentication u/user-authentication)
     (with-test-server!
       "virkailija"
-      #(start-server
+      #(start-virkailija-server
          {:host "localhost"
           :port u/test-server-port
           :auto-reload? false

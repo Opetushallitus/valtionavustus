@@ -13,7 +13,7 @@
 
   ;; Start HTTP server for running tests
   (around-all [_] (with-test-server! "virkailija"
-                    #(start-server
+                    #(start-virkailija-server
                        {:host "localhost"
                         :port test-server-port
                         :auto-reload? false}) (_)))
