@@ -89,7 +89,7 @@
                          [clj-time "0.15.2"]
                          [clojurewerkz/quartzite "2.1.0"]
                          [com.cemerick/url "0.1.1"]
-                         [commons-codec "1.15"]
+                         [commons-codec "1.16.0"]
                          [commons-io "2.13.0"]
                          [de.ubercode.clostache/clostache "1.4.0"]
                          [dk.ative/docjure "1.19.0"]
