@@ -128,7 +128,7 @@ export default defineConfig({
   },
   publicDir: publicAssetsDir,
   build: {
-    sourcemap: 'inline',
+    sourcemap: 'hidden',
     emptyOutDir: true,
     rollupOptions: VATYPE === 'hakija' ? hakijaRollupOptions : virkailijaRollupOptions,
   },
