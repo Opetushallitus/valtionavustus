@@ -74,7 +74,7 @@
 
                          ;; cryptography
                          [org.bouncycastle/bcpkix-jdk18on "1.75"]
-                         [org.bouncycastle/bcprov-jdk18on "1.74"]
+                         [org.bouncycastle/bcprov-jdk18on "1.75"]
                          [buddy/buddy-core "1.11.418"]
                          [buddy/buddy-sign "3.5.346"]
 
