@@ -10,7 +10,7 @@ const { VATYPE } = process.env
 const VATYPES = ['hakija', 'virkailija', 'dev']
 
 if (!VATYPE || !VATYPES.includes(VATYPE as any)) {
-  throw Error(`Unknown VATYPE ${VATYPE}`)
+  throw Error(`Unknown VATYPE ${VATYPE} should be one of ${VATYPES}`)
 }
 
 const virkailijaPaths = {
