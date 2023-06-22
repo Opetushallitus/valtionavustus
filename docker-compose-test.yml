@@ -42,6 +42,8 @@ services:
         condition: service_healthy
       fakesmtp:
         condition: service_started
+      maksatuspalvelu:
+        condition: service_started
     healthcheck:
       test: ["CMD-SHELL", "curl http://localhost:8081/api/healthcheck"]
       interval: 10s
