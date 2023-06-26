@@ -127,7 +127,7 @@ export default class FormErrorSummary extends React.Component {
       )
     }
     return (
-      <div className="error" key={htmlId + '-validation-error'} data-field-id={htmlId}>
+      <div className="error" key={htmlId + '-validation-error'} data-test-id={htmlId}>
         <a role="button" onClick={this.jumpToField(htmlId)}>
           <LocalizedString
             translations={labelHolder}

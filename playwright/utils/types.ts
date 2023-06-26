@@ -23,6 +23,11 @@ export interface Answers {
   signatories?: Signatory[]
   lang?: 'fi' | 'sv'
   hakemusFields?: FieldAnswer[]
+  trustedContact?: {
+    name: string
+    email: string
+    phoneNumber: string
+  }
 }
 
 export interface Signatory {

@@ -94,6 +94,16 @@ export class HakijaAvustusHakuPage {
     await this.page.click('input.get-business-id')
   }
 
+  fillSignatories = async (signatories: Signatory[]) => {
+    for (const [index, signatory] of signatories.entries()) {
+      const nameSelector = `[id='signatories-fieldset-${index + 1}.name']`
+      const emailSelector = `[id='signatories-fieldset-${index + 1}.email']`
+
+      await this.page.fill(nameSelector, signatory.name)
+      await this.page.fill(emailSelector, signatory.email)
+    }
+  }
+
   async fillMuutoshakemusEnabledHakemus(
     avustushakuID: number,
     answers: Answers,
@@ -115,17 +125,7 @@ export class HakijaAvustusHakuPage {
       return answers.signatories
     }
 
-    const fillSignatories = async (signatories: Signatory[]) => {
-      for (const [index, signatory] of signatories.entries()) {
-        const nameSelector = `[id='signatories-fieldset-${index + 1}.name']`
-        const emailSelector = `[id='signatories-fieldset-${index + 1}.email']`
-
-        await this.page.fill(nameSelector, signatory.name)
-        await this.page.fill(emailSelector, signatory.email)
-      }
-    }
-
-    await fillSignatories(getSignatoriesOrDefault())
+    await this.fillSignatories(getSignatoriesOrDefault())
 
     await clickElementWithText(
       this.page,
@@ -186,7 +186,7 @@ export class HakijaAvustusHakuPage {
     await this.page.waitForSelector('#submit:not([disabled])')
   }
 
-  private async startAndFillApplication(answers: Answers, avustushakuID: number) {
+  async startAndFillApplication(answers: Answers, avustushakuID: number) {
     const hakemusUrl = await this.startApplication(avustushakuID, answers.contactPersonEmail)
     await this.page.goto(hakemusUrl)
 

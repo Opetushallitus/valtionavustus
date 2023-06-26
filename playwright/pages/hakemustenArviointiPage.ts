@@ -554,6 +554,11 @@ export class HakemustenArviointiPage {
         phoneNumber: newAnswer.locator(phone),
         email: newAnswer.locator(email),
       },
+      trustedContact: {
+        name: this.page.locator('#trusted-contact-name'),
+        email: this.page.locator('#trusted-contact-email'),
+        phoneNumber: this.page.locator('#trusted-contact-phoneNumber'),
+      },
     }
   }
 
