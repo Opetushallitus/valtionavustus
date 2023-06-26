@@ -6,6 +6,7 @@ compose="docker compose -f docker-compose.yml"
 if [ -d "$repo/../valtionavustus-secret/" ]; then
   compose="$compose -f docker-compose.with-secret.yml"
 fi
+mkdir -p tmp
 compose="$compose -f docker-compose.local-dev.yml"
 readonly compose
 
