@@ -31,7 +31,6 @@ const typeValueInFieldAndExpectValidationError = async ({
   await field.fill(fieldValueAfter)
 }
 
-// Skipped because koodistopalvelu might have changed
 test('can add and validate different fields', async ({
   page,
   hakuProps,
