@@ -60,6 +60,11 @@
         "groupName": "Node.js"
       },
       {
+        "matchManagers": ["nvm"],
+        "updateTypes": ["minor", "patch"],
+        "enabled": true
+      },
+      {
         "matchManagers": ["dockerfile"],
         "matchPackageNames": ["eclipse-temurin"],
         "versioning": "regex:^(?<major>\\d+)(((\\.|u)(?<minor>\\d+))?(\\.(?<patch>\\d+))?((_|-b)(?<build>\\d+))?)-(?<compatibility>.*)$"
