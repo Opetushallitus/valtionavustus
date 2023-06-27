@@ -68,8 +68,8 @@ function set_env_vars {
     export APP_HOSTNAME="oph-va-app-test01"
     export HEALTHCHECK_PORT=6071
   elif [ "$ENV" = "prod" ]; then
-    export HEALTHCHECK_PORT=6072
     export APP_HOSTNAME="oph-va-app-prod01"
+    export HEALTHCHECK_PORT=6072
   else
     echo "Invalid environment $ENV" >&2
     exit 1
