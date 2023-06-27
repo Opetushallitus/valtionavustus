@@ -87,6 +87,7 @@
     ]})
 
 (def hakemus-key "f95d23ff1757c1ec79940c4b028de4372480e75ea0c84d6a26c98b411fac4d3e")
+(def hakemus-id 12)
 
 (def submitted-hakemus
   {:user_key hakemus-key
@@ -116,7 +117,8 @@
                    haku-title
                    user-key
                    haku-start-date
-                   haku-end-date]
+                   haku-end-date
+                   hakemus-id]
   {:language language
    :to to
    :haku-id haku-id
@@ -129,7 +131,7 @@
   (tags :server)
 
   (it "Sends notification email to all given emails"
-      (let [sent-data (send-submit-notifications! fake-sender false answers-with-old-fields submitted-hakemus avustushaku )]
+      (let [sent-data (send-submit-notifications! fake-sender false answers-with-old-fields submitted-hakemus avustushaku hakemus-id)]
         (should= :fi (:language sent-data))
         (should= [primary-email organization-email signature-email] (:to sent-data))
         (should= hakemus-key (:user-key sent-data))
@@ -139,7 +141,7 @@
   (tags :server)
 
   (it "Sends notification email to all given emails"
-      (let [sent-data (send-submit-notifications! fake-sender false answers-with-email-notification-fields submitted-hakemus avustushaku )]
+      (let [sent-data (send-submit-notifications! fake-sender false answers-with-email-notification-fields submitted-hakemus avustushaku hakemus-id)]
         (should= :fi (:language sent-data))
         (should= [primary-email
                   organization-email
@@ -155,12 +157,12 @@
                        [{:key "primary-email" :value "" :fieldType "emailField"}
                         {:key "organization-email" :value nil :fieldType "emailField"}
                         {:key "signature-email" :value "user@example.com" :fieldType "emailField"}]}
-            sent-data (send-submit-notifications! fake-sender false answers submitted-hakemus avustushaku)]
+            sent-data (send-submit-notifications! fake-sender false answers submitted-hakemus avustushaku hakemus-id)]
         (should= ["user@example.com"] (:to sent-data))))
 
   (it "Does not send notification email if no emails found"
       (let [answers   {:value []}
-            sent-data (send-submit-notifications! fake-sender false answers submitted-hakemus avustushaku)]
+            sent-data (send-submit-notifications! fake-sender false answers submitted-hakemus avustushaku hakemus-id)]
         (should-be-nil sent-data))))
 
 (run-specs)
