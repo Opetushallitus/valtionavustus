@@ -57,12 +57,8 @@
       {
         "matchManagers": ["nvm", "npm", "dockerfile"],
         "matchPackageNames": ["@types/node", "node"],
-        "groupName": "Node.js"
-      },
-      {
-        "matchManagers": ["nvm"],
         "updateTypes": ["minor", "patch"],
-        "enabled": true
+        "groupName": "Node.js"
       },
       {
         "matchManagers": ["dockerfile"],
