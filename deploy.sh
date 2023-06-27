@@ -28,7 +28,7 @@ function do_deploy_jar {
   local target_server_name=$APP_HOSTNAME.csc.fi
   local module_name=va
   local jar_source_path=${valtionavustus_jar}
-  local virkailija_port=6071
+  local virkailija_port=6072
   echo "Starting $module_name..."
   echo "Transfering to application server ${target_server_name} ..."
   SSH_KEY=~/.ssh/id_deploy
@@ -55,8 +55,6 @@ function do_deploy_jar {
 }
 
 function restart_application {
-  $SSH "supervisorctl stop va-hakija"
-  $SSH "supervisorctl stop va-virkailija"
   local module_name=$1
   echo "Stopping application..."
   $SSH "supervisorctl stop $module_name"

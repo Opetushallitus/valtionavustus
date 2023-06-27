@@ -1,9 +1,9 @@
 {:server                  {:auto-reload?    false
                            :allow-db-clear? false
-                           :hakija-port     8081
+                           :hakija-port     8082
                            :hakija-host     "*"
                            :virkailija-host "*"
-                           :virkailija-port 6071
+                           :virkailija-port 6072
                            :url             {:fi "https://testi.valtionavustukset.oph.fi/"
                                              :sv "https://testi.valtionavustukset.oph.fi/"}
                            :virkailija-url  "https://testi.virkailija.valtionavustukset.oph.fi"}
