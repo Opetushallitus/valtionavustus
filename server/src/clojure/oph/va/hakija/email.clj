@@ -184,7 +184,7 @@
                                        :avustushaku avustushaku-name-fi
                                        :url url})))
 
-(defn send-hakemus-submitted-message! [is-change-request-response? lang to avustushaku-id avustushaku user-key start-date end-date]
+(defn send-hakemus-submitted-message! [is-change-request-response? lang to avustushaku-id avustushaku user-key start-date end-date hakemus-id]
   (let [lang-str (or (clojure.core/name lang) "fi")
         start-date-string (datetime/date-string start-date)
         start-time-string (datetime/time-string start-date)
@@ -203,6 +203,8 @@
                       :start-time start-time-string
                       :end-date end-date-string
                       :end-time end-time-string
-                      :url url}]
+                      :url url
+                      :avustushaku-id avustushaku-id
+                      :hakemus-id hakemus-id}]
     (log/info "Urls would be: " url)
     (email/enqueue-message-to-be-send user-message)))

@@ -58,7 +58,7 @@ const getEmailsWithAvustushaku =
       .then((r) => emailSchema.validate(r.data))
 
 export const getTäydennyspyyntöEmails = getEmails('taydennyspyynto')
-
+export const getHakemusSubmitted = getEmails('hakemus-submitted')
 export const getValmistelijaEmails = getEmails('notify-valmistelija-of-new-muutoshakemus')
 export const getMuutoshakemusPaatosEmails = getEmails('muutoshakemus-paatos')
 export const getMuutoshakemusEmails = getEmails('paatos-refuse')

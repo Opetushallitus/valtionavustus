@@ -16,7 +16,7 @@
        (map :value)
        (filterv (comp not empty?))))
 
-(defn send-submit-notifications! [send! is-change-request-response? answers submitted-hakemus avustushaku]
+(defn send-submit-notifications! [send! is-change-request-response? answers submitted-hakemus avustushaku hakemus-id]
   (let [haku-id                (:id avustushaku)
         avustushaku-content    (:content avustushaku)
         language               (keyword (:language submitted-hakemus))
@@ -39,4 +39,6 @@
              avustushaku-title
              user-key
              avustushaku-start-date
-             avustushaku-end-date))))
+             avustushaku-end-date
+             hakemus-id
+             ))))

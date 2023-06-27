@@ -5,6 +5,7 @@ import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
 import { readFile } from 'fs/promises'
 import { HakijaAvustusHakuPage } from '../pages/hakijaAvustusHakuPage'
 import { HakemustenArviointiPage } from '../pages/hakemustenArviointiPage'
+import { getAcceptedPäätösEmails, getHakemusSubmitted } from '../utils/emails'
 
 const test = defaultValues.extend<MuutoshakemusFixtures>({
   answers: async ({ answers }, use) => {
@@ -42,7 +43,13 @@ const test = defaultValues.extend<MuutoshakemusFixtures>({
   },
 })
 
-test('varayhteyshenkilo flow', async ({ page, avustushakuID, answers }) => {
+test('varayhteyshenkilo flow', async ({
+  page,
+  avustushakuID,
+  answers,
+  projektikoodi,
+  ukotettuValmistelija,
+}) => {
   const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
   await test.step('fill hakemus without varahenkilö', async () => {
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
@@ -101,15 +108,45 @@ test('varayhteyshenkilo flow', async ({ page, avustushakuID, answers }) => {
       .fill(answers.trustedContact!.phoneNumber)
     await hakijaAvustusHakuPage.submitApplication()
   })
-  await test.step('varayhteyshenkilö is shown in arviointi after submission', async () => {
-    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+  const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+  let hakemusID
+  await test.step('varayhteyshenkilö gets notified about submitted hakemus', async () => {
     await hakemustenArviointiPage.navigate(avustushakuID)
-    await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+    hakemusID = await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
+    const emails = await getHakemusSubmitted(hakemusID)
+    await expect(emails).toHaveLength(1)
+    await expect(emails[0]['to-address']).toContain(answers.trustedContact!.email)
+  })
+  await test.step('varayhteyshenkilö is shown in arviointi after submission', async () => {
     const sidebarLocators = hakemustenArviointiPage.sidebarLocators()
     await expect(sidebarLocators.trustedContact.name).toHaveText(answers.trustedContact!.name)
     await expect(sidebarLocators.trustedContact.email).toHaveText(answers.trustedContact!.email)
     await expect(sidebarLocators.trustedContact.phoneNumber).toHaveText(
       answers.trustedContact!.phoneNumber
     )
+  })
+  const hakujenHallinta = new HakujenHallintaPage(page)
+  await test.step('close and approve hakemus', async () => {
+    const haunTiedot = await hakujenHallinta.navigate(avustushakuID)
+    await haunTiedot.closeAvustushakuByChangingEndDateToPast()
+    await haunTiedot.common.waitForSave()
+    await hakemustenArviointiPage.navigate(avustushakuID)
+    await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID!, ukotettuValmistelija)
+    await hakemustenArviointiPage.acceptAvustushaku({
+      avustushakuID,
+      projectName: answers.projectName,
+      budget: '10000',
+      projektikoodi,
+    })
+  })
+  await test.step('varayhteyshenkilö gets notified about päätös', async () => {
+    const haunTiedot = await hakujenHallinta.navigate(avustushakuID)
+    await haunTiedot.resolveAvustushaku()
+    const paatosTab = await haunTiedot.common.switchToPaatosTab()
+    await paatosTab.sendPaatos()
+    await expect(paatosTab.locators.paatosSentToEmails).toContainText(answers.trustedContact!.email)
+    const emails = await getAcceptedPäätösEmails(hakemusID!)
+    expect(emails).toHaveLength(1)
+    expect(emails[0]['to-address']).toContain(answers.trustedContact!.email)
   })
 })

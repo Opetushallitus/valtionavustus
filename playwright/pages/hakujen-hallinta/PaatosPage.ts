@@ -21,6 +21,7 @@ export function PaatosPage(page: Page) {
     decisionEditor: page.locator('.decision-editor'),
     confirmSending: page.locator('text="Vahvista lähetys"'),
     paatosSendError: page.locator('#päätös-send-error'),
+    paatosSentToEmails: page.getByTestId('sent-emails'),
     erityisavustusEhdotCheckbox: page
       .locator('label')
       .locator('text=Eritysavustukseen liittyvät ehdot ja rajoitukset'),

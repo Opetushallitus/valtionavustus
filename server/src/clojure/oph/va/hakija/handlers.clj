@@ -292,7 +292,7 @@
                                                       answers
                                                       budget-totals)
               normalized-hakemus-success (try-store-normalized-hakemus (:id hakemus) hakemus answers haku-id)]
-          (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! false answers submitted-hakemus avustushaku)
+          (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! false answers submitted-hakemus avustushaku (:id hakemus))
           (hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
