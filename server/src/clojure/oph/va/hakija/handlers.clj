@@ -322,7 +322,7 @@
               email-of-virkailija (:user_email (last change-requests))]
           (if email-of-virkailija
             (va-email/send-change-request-responded-message-to-virkailija! [email-of-virkailija] (:id avustushaku) (-> avustushaku :content :name :fi) (:id submitted-hakemus)))
-          (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! true answers submitted-hakemus avustushaku)
+          (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! true answers submitted-hakemus avustushaku hakemus-id)
           (method-not-allowed! {:change-request-response "saved"}))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
