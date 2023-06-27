@@ -28,7 +28,7 @@ function do_deploy_jar {
   local target_server_name=$APP_HOSTNAME.csc.fi
   local module_name=va
   local jar_source_path=${valtionavustus_jar}
-  local virkailija_port=6072
+  local virkailija_port=6071
   echo "Starting $module_name..."
   echo "Transfering to application server ${target_server_name} ..."
   SSH_KEY=~/.ssh/id_deploy
