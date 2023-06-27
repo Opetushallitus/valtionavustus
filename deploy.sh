@@ -28,7 +28,7 @@ function do_deploy_jar {
   local target_server_name=$APP_HOSTNAME.csc.fi
   local module_name=va
   local jar_source_path=${valtionavustus_jar}
-  local virkailija_port=6071
+  local virkailija_port=$HEALTHCHECK_PORT
   echo "Starting $module_name..."
   echo "Transfering to application server ${target_server_name} ..."
   SSH_KEY=~/.ssh/id_deploy
@@ -66,7 +66,9 @@ function set_env_vars {
   export JAVA_HOME
   if [ "$ENV" = "qa" ]; then
     export APP_HOSTNAME="oph-va-app-test01"
+    export HEALTHCHECK_PORT=6071
   elif [ "$ENV" = "prod" ]; then
+    export HEALTHCHECK_PORT=6072
     export APP_HOSTNAME="oph-va-app-prod01"
   else
     echo "Invalid environment $ENV" >&2
