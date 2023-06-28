@@ -1,8 +1,8 @@
 {:server                  {:auto-reload?    false
                            :allow-db-clear? false
                            :hakija-host     "*"
-                           :hakija-port     8082
-                           :virkailija-port 6072
+                           :hakija-port     8081
+                           :virkailija-port 6071
                            :virkailija-host "*"
                            :url             {:fi "https://valtionavustukset.oph.fi/"
                                              :sv "https://statsunderstod.oph.fi/"}
