@@ -25,7 +25,7 @@
     dest: '{{ iptables_script }}'
     regexp: '^iptables .* --comment "va single process hakija webapp traffic from load balancer"$'
     line: 'iptables -I INPUT -m tcp -p tcp -s oph-va-lb-prod01.csc.fi --dport 8082 -j ACCEPT -m comment --comment "va single process hakija webapp traffic from load balancer"'
-    state: present
+    state: absent
   notify: Reload iptables
   when: ansible_os_family == 'RedHat'
   tags:
@@ -36,7 +36,7 @@
     dest: '{{ iptables_script }}'
     regexp: '^iptables .* --comment "va single process virkailija webapp traffic from load balancer"$'
     line: 'iptables -I INPUT -m tcp -p tcp -s oph-va-lb-prod01.csc.fi --dport 6072 -j ACCEPT -m comment --comment "va single process virkailija webapp traffic from load balancer"'
-    state: present
+    state: absent
   notify: Reload iptables
   when: ansible_os_family == 'RedHat'
   tags:

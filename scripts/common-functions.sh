@@ -297,10 +297,10 @@ function current-commit-is-not-tested {
 function build_and_test_jars {
   build_jars
 
-  #if current-commit-is-not-tested;
-  #then
-  #  start_system_under_test
-  #  run_tests
-  #  stop_system_under_test
-  #fi
+  if current-commit-is-not-tested;
+  then
+    start_system_under_test
+    run_tests
+    stop_system_under_test
+  fi
 }
