@@ -214,7 +214,9 @@ export class HakemustenArviointiPage {
 
   async selectHakemusFromList(projectName: string) {
     await this.page.click(`text=${projectName}`)
-    await this.page.waitForLoadState('networkidle')
+    await expect(
+      this.saveStatus.getByText('Tallennetaan').and(this.saveStatusSuccess)
+    ).not.toBeVisible()
     return this.arviointiTabLocators()
   }
 
