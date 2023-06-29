@@ -4,7 +4,7 @@
 [INPUT]
   Name             tail
   Db               /logs/fluent-bit_tail-state.db
-  Path             /logs/valtionavustus/va-*_application.log
+  Path             /logs/valtionavustus/va*_application.log
   Path_Key         filename
   Multiline        On
   Parser_Firstline multiline_log4j
