@@ -126,7 +126,18 @@
 (defn get-normalized-hakemus [user-key]
   (log/info (str "Get normalized hakemus with user-key: " user-key))
   (let [hakemus (first
-                 (query "SELECT h.* FROM virkailija.normalized_hakemus as h
+                 (query " SELECT
+                            h.id,
+                            h.hakemus_id,
+                            h.contact_person,
+                            h.contact_email,
+                            h.contact_phone,
+                            h.project_name,
+                            h.created_at,
+                            h.updated_at,
+                            h.organization_name,
+                            h.register_number
+                          FROM virkailija.normalized_hakemus as h
                           WHERE h.hakemus_id = (SELECT id
                                                 FROM hakija.hakemukset
                                                 WHERE user_key = ?
@@ -161,7 +172,19 @@
 
 (defn get-normalized-hakemus-by-id [id]
   (log/info (str "Get normalized hakemus with id: " id))
-  (let [hakemukset (query "SELECT * from virkailija.normalized_hakemus WHERE hakemus_id = ?" [id])
+  (let [hakemukset (query "
+         SELECT
+          id,
+          hakemus_id,
+          contact_person,
+          contact_email,
+          contact_phone,
+          project_name,
+          created_at,
+          updated_at,
+          organization_name,
+          register_number
+          from virkailija.normalized_hakemus WHERE hakemus_id = ?" [id])
         hakemus (first hakemukset)
         talousarvio (when hakemus (get-talousarvio (:hakemus-id hakemus) "hakemus"))]
     (log/info (str "Succesfully fetched hakemus with id: " id))
