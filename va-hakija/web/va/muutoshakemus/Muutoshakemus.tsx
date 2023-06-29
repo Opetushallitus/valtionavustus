@@ -26,6 +26,8 @@ import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'
 
 import 'soresu-form/web/form/style/main.less'
 import '../style/main.less'
+import { getInputErrorClass } from 'soresu-form/web/va/formikHelpers'
+import { ErrorMessage } from './ErrorMessage'
 
 let initialState: MuutoshakemusProps = {
   status: 'LOADING',
@@ -75,12 +77,19 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
       ])
       const currentProjectEnd = getProjectEndMoment(avustushaku, muutoshakemukset)
       const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
-
+      const hasTrustedContact =
+        hakemus?.['trusted-contact-phone'] &&
+        hakemus?.['trusted-contact-email'] &&
+        hakemus?.['trusted-contact-name']
       f.resetForm({
         values: {
           name: hakemus['contact-person'],
           email: hakemus['contact-email'],
           phone: hakemus['contact-phone'],
+          hasTrustedContact: hasTrustedContact !== undefined,
+          trustedContactName: hakemus['trusted-contact-name'],
+          trustedContactEmail: hakemus['trusted-contact-email'],
+          trustedContactPhone: hakemus['trusted-contact-phone'],
           haenSisaltomuutosta: false,
           haenKayttoajanPidennysta: false,
           haenMuutostaTaloudenKayttosuunnitelmaan: false,
@@ -164,6 +173,58 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
               registerNumber={state.hakemus?.['register-number']}
               f={f}
             />
+          )}
+          {f.values.hasTrustedContact && (
+            <div className="muutoshakemus__form-row">
+              <div className="muutoshakemus__form-cell">
+                <label className="muutoshakemus__label" htmlFor="trusted-contact-name">
+                  {t.contactPersonEdit.trustedContactName}
+                </label>
+                <input
+                  id="trusted-contact-name"
+                  className="muutoshakemus__input muutoshakemus__input--contact"
+                  name="trustedContactName"
+                  type="text"
+                  onChange={f.handleChange}
+                  onBlur={f.handleBlur}
+                  value={f.values.trustedContactName}
+                />
+              </div>
+              <div className="muutoshakemus__form-cell">
+                <label className="muutoshakemus__label" htmlFor="trusted-contact-email">
+                  {t.contactPersonEdit.trustedContactEmail}
+                </label>
+                <input
+                  id="trusted-contact-email"
+                  name="trustedContactEmail"
+                  type="text"
+                  className={`${getInputErrorClass(
+                    f,
+                    'trustedContactEmail',
+                    'muutoshakemus__input',
+                    'muutoshakemus__input-error'
+                  )}  muutoshakemus__input--contact`}
+                  onChange={f.handleChange}
+                  onBlur={f.handleBlur}
+                  value={f.values.trustedContactEmail}
+                />
+                <ErrorMessage text={f.errors.trustedContactEmail} />
+              </div>
+              <div className="muutoshakemus__form-cell">
+                <label className="muutoshakemus__label" htmlFor="trusted-contact-phone">
+                  {t.contactPersonEdit.trustedContactPhone}
+                </label>
+                <input
+                  id="trusted-contact-phone"
+                  className="muutoshakemus__input muutoshakemus__input--contact"
+                  name="trustedContactPhone"
+                  type="text"
+                  onChange={f.handleChange}
+                  onBlur={f.handleBlur}
+                  value={f.values.trustedContactPhone}
+                />
+              </div>
+            </div>
           )}
           {!existingNewMuutoshakemus && (
             <>

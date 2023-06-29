@@ -92,6 +92,10 @@ export type FormValues = {
   name: string
   email: string
   phone: string
+  hasTrustedContact: boolean
+  trustedContactName?: string
+  trustedContactEmail?: string
+  trustedContactPhone?: string
   haenKayttoajanPidennysta: boolean
   haenSisaltomuutosta: boolean
   sisaltomuutosPerustelut?: string

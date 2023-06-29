@@ -198,7 +198,7 @@
                 "fi": "",
                 "sv": ""
               },
-              "id": "trusted-contact-phoneNumber",
+              "id": "trusted-contact-phone",
               "params": {
                 "size": "small",
                 "maxlength": 15

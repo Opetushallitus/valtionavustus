@@ -16,6 +16,9 @@ export const translationsFi = {
     contactPerson: 'Yhteyshenkilön nimi',
     email: 'Yhteyshenkilön sähköpostiosoite',
     phone: 'Yhteyshenkilön puhelinumero',
+    trustedContactName: 'Varayhteyshenkilön nimi',
+    trustedContactEmail: 'Varayhteyshenkilön sähköpostiosoite',
+    trustedContactPhone: 'Varayhteyshenkilön puhelinumero',
   },
   applicationEdit: {
     title: 'Haettavat muutokset',
@@ -254,6 +257,9 @@ const translationsSv: Translations = {
     contactPerson: 'Kontaktperson',
     email: 'Kontaktpersonens e-postadress',
     phone: 'Kontaktpersonens telefonnummer',
+    trustedContactName: 'Reservkontaktperson',
+    trustedContactEmail: 'Reservkontaktperson e-postadress',
+    trustedContactPhone: 'Reservkontaktpersonens telefonnummer',
   },
   applicationEdit: {
     title: 'Ändringar som ändringsansökan gäller',

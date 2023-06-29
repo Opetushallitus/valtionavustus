@@ -92,9 +92,9 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
   const newName = randomString()
   const newEmail = 'uusi.email@reaktor.com'
   const newPhone = '0901967632'
+  await hakijaMuutoshakemusPage.navigateWithLink(linkToMuutoshakemus)
+  const locators = hakijaMuutoshakemusPage.locators()
   await test.step('test form validation before submitting muutoshakemus #1', async () => {
-    await hakijaMuutoshakemusPage.navigateWithLink(linkToMuutoshakemus)
-    const locators = hakijaMuutoshakemusPage.locators()
     await locators.contactPerson.fill(newName)
     await locators.contactPersonEmail.fill('not-email')
     await locators.contactPersonPhoneNumber.fill(newPhone)
@@ -103,6 +103,11 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
     await locators.contactPersonEmail.fill(newEmail)
     await expect(locators.contactPersonEmail).not.toHaveClass(/error/)
     await expect(locators.sendMuutospyyntoButton).toBeEnabled()
+  })
+  await test.step('varayhteyshenkilö fields should not be shown (as its not in the form)', async () => {
+    await expect(locators.trustedContact.name).toBeHidden()
+    await expect(locators.trustedContact.email).toBeHidden()
+    await expect(locators.trustedContact.phone).toBeHidden()
   })
 
   await test.step('submit muutoshakemus #1', async () => {

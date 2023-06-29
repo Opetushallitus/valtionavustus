@@ -136,7 +136,10 @@
                             h.created_at,
                             h.updated_at,
                             h.organization_name,
-                            h.register_number
+                            h.register_number,
+                            h.trusted_contact_name,
+                            h.trusted_contact_email,
+                            h.trusted_contact_phone
                           FROM virkailija.normalized_hakemus as h
                           WHERE h.hakemus_id = (SELECT id
                                                 FROM hakija.hakemukset
@@ -146,7 +149,8 @@
         talousarvio (when hakemus (get-talousarvio (:hakemus-id hakemus) "hakemus"))]
     (log/info (str "Succesfully fetched hakemus with user-key: " user-key))
     (if hakemus
-      {:id (:id hakemus)
+      (into {} (filter (comp some? val) {
+        :id (:id hakemus)
         :hakemus-id (:hakemus-id hakemus)
         :updated-at (:updated-at hakemus)
         :created-at (:created-at hakemus)
@@ -156,7 +160,11 @@
         :contact-phone (:contact-phone hakemus)
         :organization-name (:organization-name hakemus)
         :register-number (:register-number hakemus)
-        :talousarvio talousarvio}
+        :talousarvio talousarvio
+        :trusted-contact-name (get-in hakemus [:trusted-contact-name])
+        :trusted-contact-email (get-in hakemus [:trusted-contact-email])
+        :trusted-contact-phone (get-in hakemus [:trusted-contact-phone])
+       }))
       nil)))
 
 (defn create-muutoshakemus-url [va-url avustushaku-id user-key]
@@ -183,9 +191,12 @@
           created_at,
           updated_at,
           organization_name,
-          register_number
+          register_number,
+          trusted_contact_name,
+          trusted_contact_email,
+          trusted_contact_phone
           from virkailija.normalized_hakemus WHERE hakemus_id = ?" [id])
-        hakemus (first hakemukset)
+        hakemus (into {} (filter (comp some? val) (first hakemukset)))
         talousarvio (when hakemus (get-talousarvio (:hakemus-id hakemus) "hakemus"))]
     (log/info (str "Succesfully fetched hakemus with id: " id))
     (if (and hakemus (count talousarvio))
@@ -322,22 +333,40 @@
   (log/info (str "Storing normalized fields for hakemus: " id))
   (with-tx (fn [tx]
     (execute! tx
-      "INSERT INTO virkailija.normalized_hakemus (hakemus_id, project_name, contact_person, contact_email, contact_phone, organization_name, register_number)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+      "INSERT INTO virkailija.normalized_hakemus (
+          hakemus_id,
+          project_name,
+          contact_person,
+          contact_email,
+          contact_phone,
+          organization_name,
+          register_number,
+          trusted_contact_name,
+          trusted_contact_email,
+          trusted_contact_phone
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT (hakemus_id) DO UPDATE SET
           project_name = EXCLUDED.project_name,
           contact_person = EXCLUDED.contact_person,
           contact_email = EXCLUDED.contact_email,
           contact_phone = EXCLUDED.contact_phone,
           organization_name = EXCLUDED.organization_name,
-          register_number = EXCLUDED.register_number"
-        [ id,
-          (form-util/find-answer-value answers "project-name"),
-          (form-util/find-answer-value answers "applicant-name"),
-          (form-util/find-answer-value answers "primary-email"),
-          (form-util/find-answer-value answers "textField-0"),
-          (:organization_name hakemus),
-          (:register_number hakemus) ])))
+          register_number = EXCLUDED.register_number,
+          trusted_contact_name = EXCLUDED.trusted_contact_name,
+          trusted_contact_email = EXCLUDED.trusted_contact_email,
+          trusted_contact_phone = EXCLUDED.trusted_contact_phone"
+        [id,
+         (form-util/find-answer-value answers "project-name"),
+         (form-util/find-answer-value answers "applicant-name"),
+         (form-util/find-answer-value answers "primary-email"),
+         (form-util/find-answer-value answers "textField-0"),
+         (:organization_name hakemus),
+         (:register_number hakemus)
+         (form-util/find-answer-value answers "trusted-contact-name")
+         (form-util/find-answer-value answers "trusted-contact-email")
+         (form-util/find-answer-value answers "trusted-contact-phone")
+         ])))
   (log/info (str "Succesfully stored normalized fields for hakemus with id: " id)))
 
 (defn- change-normalized-hakemus-contact-person-details [tx user-key hakemus-id contact-person-details]
@@ -352,6 +381,18 @@
      ))
     (log/info (str "Succesfully changed contact person details with user-key: " user-key)))
 
+(defn- change-normalized-hakemus-trusted-contact-person-details [tx user-key hakemus-id contact]
+  (log/info (str "Change normalized trusted contact person details with user-key: " user-key))
+  (let [contact-name (:name contact)
+        contact-phone (:phone contact)
+        contact-email (:email contact)]
+    (execute! tx
+              "UPDATE virkailija.normalized_hakemus SET
+               trusted_contact_name = ?, trusted_contact_email = ?, trusted_contact_phone = ? WHERE hakemus_id = ?"
+              [contact-name contact-email contact-phone hakemus-id]
+              ))
+  (log/info (str "Successfully changed trusted contact person details with user-key: " user-key)))
+
 (defn on-muutoshakemus [user-key hakemus-id avustushaku-id muutoshakemus]
   (with-tx (fn [tx]
     (when (or (:talousarvio muutoshakemus) (get-in muutoshakemus [:jatkoaika :haenKayttoajanPidennysta]) (get-in muutoshakemus [:sisaltomuutos :haenSisaltomuutosta]))
@@ -359,9 +400,9 @@
         (when (:talousarvio muutoshakemus)
           (add-muutoshakemus-menoluokkas tx muutoshakemus-id avustushaku-id (:talousarvio muutoshakemus)))))
     (when (contains? muutoshakemus :yhteyshenkilo)
-      (log/info (str "Change normalized contact person details with user-key: " user-key))
-      (change-normalized-hakemus-contact-person-details tx user-key hakemus-id (get muutoshakemus :yhteyshenkilo))
-      (log/info (str "Succesfully changed contact person details with user-key: " user-key))))))
+      (change-normalized-hakemus-contact-person-details tx user-key hakemus-id (get muutoshakemus :yhteyshenkilo)))
+     (when (contains? muutoshakemus :varayhteyshenkilo)
+      (change-normalized-hakemus-trusted-contact-person-details tx user-key hakemus-id (get muutoshakemus :varayhteyshenkilo))))))
 
 (defn update-submission [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
   (with-tx (fn [tx]

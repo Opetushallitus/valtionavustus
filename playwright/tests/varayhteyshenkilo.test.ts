@@ -5,7 +5,12 @@ import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
 import { readFile } from 'fs/promises'
 import { HakijaAvustusHakuPage } from '../pages/hakijaAvustusHakuPage'
 import { HakemustenArviointiPage } from '../pages/hakemustenArviointiPage'
-import { getAcceptedPäätösEmails, getHakemusSubmitted } from '../utils/emails'
+import {
+  getAcceptedPäätösEmails,
+  getHakemusSubmitted,
+  getLinkToMuutoshakemusFromSentEmails,
+} from '../utils/emails'
+import { HakijaMuutoshakemusPage } from '../pages/hakijaMuutoshakemusPage'
 
 const test = defaultValues.extend<MuutoshakemusFixtures>({
   answers: async ({ answers }, use) => {
@@ -81,9 +86,7 @@ test('varayhteyshenkilo flow', async ({
       .click()
     await expect(hakijaAvustusHakuPage.page.getByTestId('trusted-contact-name')).toBeVisible()
     await expect(hakijaAvustusHakuPage.page.getByTestId('trusted-contact-email')).toBeVisible()
-    await expect(
-      hakijaAvustusHakuPage.page.getByTestId('trusted-contact-phoneNumber')
-    ).toBeVisible()
+    await expect(hakijaAvustusHakuPage.page.getByTestId('trusted-contact-phone')).toBeVisible()
     await hakijaAvustusHakuPage.page
       .getByLabel('VarayhteyshenkilöVarayhteyshenkilöllä tarkoitetaan hankkeen varavastuuhenkilöä.')
       .fill(answers.trustedContact!.name)
@@ -91,20 +94,16 @@ test('varayhteyshenkilo flow', async ({
       hakijaAvustusHakuPage.page.getByRole('button', { name: '2 vastauksessa puutteita' })
     ).toBeVisible()
     await expect(hakijaAvustusHakuPage.page.getByTestId('trusted-contact-email')).toBeVisible()
-    await expect(
-      hakijaAvustusHakuPage.page.getByTestId('trusted-contact-phoneNumber')
-    ).toBeVisible()
+    await expect(hakijaAvustusHakuPage.page.getByTestId('trusted-contact-phone')).toBeVisible()
     await hakijaAvustusHakuPage.page
       .locator('#trusted-contact-email')
       .fill(answers.trustedContact!.email)
     await expect(
       hakijaAvustusHakuPage.page.getByRole('button', { name: '1 vastauksessa puutteita' })
     ).toBeVisible()
-    await expect(
-      hakijaAvustusHakuPage.page.getByTestId('trusted-contact-phoneNumber')
-    ).toBeVisible()
+    await expect(hakijaAvustusHakuPage.page.getByTestId('trusted-contact-phone')).toBeVisible()
     await hakijaAvustusHakuPage.page
-      .locator('#trusted-contact-phoneNumber')
+      .locator('#trusted-contact-phone')
       .fill(answers.trustedContact!.phoneNumber)
     await hakijaAvustusHakuPage.submitApplication()
   })
@@ -148,5 +147,51 @@ test('varayhteyshenkilo flow', async ({
     const emails = await getAcceptedPäätösEmails(hakemusID!)
     expect(emails).toHaveLength(1)
     expect(emails[0]['to-address']).toContain(answers.trustedContact!.email)
+  })
+  const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
+  const muutoshakemusUrl = await getLinkToMuutoshakemusFromSentEmails(hakemusID!)
+  const newEmail = 'ville.korjattu@example.com'
+  await test.step('varayhteyshenkilö email can be updated with muutoshakemus', async () => {
+    await hakijaMuutoshakemusPage.navigateWithLink(muutoshakemusUrl)
+    const { trustedContact } = hakijaMuutoshakemusPage.locators()
+    await expect(trustedContact.name).toHaveValue(answers.trustedContact!.name)
+    await expect(trustedContact.email).toHaveValue(answers.trustedContact!.email)
+    await expect(trustedContact.phone).toHaveValue(answers.trustedContact!.phoneNumber)
+    await trustedContact.email.fill(newEmail)
+    await hakijaMuutoshakemusPage.clickSaveContacts()
+    await hakijaMuutoshakemusPage.expectMuutoshakemusToBeSubmittedSuccessfully(false)
+    await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
+    const sidebar = hakemustenArviointiPage.sidebarLocators()
+    await expect(sidebar.oldAnswers.trustedContactName).toBeHidden()
+    await expect(sidebar.oldAnswers.trustedContactEmail).toHaveText(answers.trustedContact!.email)
+    await expect(sidebar.oldAnswers.trustedContactPhone).toBeHidden()
+    await expect(sidebar.trustedContact.name).toHaveText(answers.trustedContact!.name)
+    await expect(sidebar.trustedContact.phoneNumber).toHaveText(answers.trustedContact!.phoneNumber)
+    await expect(sidebar.newAnswers.trustedContactName).toBeHidden()
+    await expect(sidebar.newAnswers.trustedContactEmail).toHaveText(newEmail)
+    await expect(sidebar.newAnswers.trustedContactPhone).toBeHidden()
+  })
+  await test.step('name and phone can also be changed with muutoshakemus', async () => {
+    const newName = 'Ville Varahenkilö'
+    const newPhone = '04059559599'
+    const { trustedContact } = hakijaMuutoshakemusPage.locators()
+    await hakijaMuutoshakemusPage.navigateWithLink(muutoshakemusUrl)
+    await expect(trustedContact.name).toHaveValue(answers.trustedContact!.name)
+    await expect(trustedContact.email).toHaveValue(newEmail)
+    await expect(trustedContact.phone).toHaveValue(answers.trustedContact!.phoneNumber)
+    await trustedContact.name.fill(newName)
+    await trustedContact.phone.fill(newPhone)
+    await hakijaMuutoshakemusPage.clickSaveContacts()
+    await hakijaMuutoshakemusPage.expectMuutoshakemusToBeSubmittedSuccessfully(false)
+    await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
+    const sidebar = hakemustenArviointiPage.sidebarLocators()
+    await expect(sidebar.oldAnswers.trustedContactName).toHaveText(answers.trustedContact!.name)
+    await expect(sidebar.oldAnswers.trustedContactEmail).toHaveText(answers.trustedContact!.email)
+    await expect(sidebar.oldAnswers.trustedContactPhone).toHaveText(
+      answers.trustedContact!.phoneNumber
+    )
+    await expect(sidebar.newAnswers.trustedContactName).toHaveText(newName)
+    await expect(sidebar.newAnswers.trustedContactEmail).toHaveText(newEmail)
+    await expect(sidebar.newAnswers.trustedContactPhone).toHaveText(newPhone)
   })
 })

@@ -50,6 +50,24 @@ function mutateDeltaFromNormalizedData(
   )
   mutateAnswersDeltaWithKey(answersDelta, answers, 'primary-email', normalizedData['contact-email'])
   mutateAnswersDeltaWithKey(answersDelta, answers, 'textField-0', normalizedData['contact-phone'])
+  mutateAnswersDeltaWithKey(
+    answersDelta,
+    answers,
+    'trusted-contact-name',
+    normalizedData['trusted-contact-name']
+  )
+  mutateAnswersDeltaWithKey(
+    answersDelta,
+    answers,
+    'trusted-contact-phone',
+    normalizedData['trusted-contact-phone']
+  )
+  mutateAnswersDeltaWithKey(
+    answersDelta,
+    answers,
+    'trusted-contact-email',
+    normalizedData['trusted-contact-email']
+  )
 }
 
 function mutateDeltaFromMuutoshakemukset(

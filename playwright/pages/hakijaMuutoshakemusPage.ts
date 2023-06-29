@@ -136,6 +136,11 @@ export class HakijaMuutoshakemusPage {
       contactPersonEmailLabel: this.page.locator('label[for="muutoshakemus__email"]'),
       contactPersonPhoneNumber: this.page.locator('#muutoshakemus__phone'),
       contactPersonPhoneNumberLabel: this.page.locator('label[for="muutoshakemus__phone"]'),
+      trustedContact: {
+        name: this.page.locator('#trusted-contact-name'),
+        email: this.page.locator('#trusted-contact-email'),
+        phone: this.page.locator('#trusted-contact-phone'),
+      },
       sendMuutospyyntoButton: this.page.locator('#send-muutospyynto-button'),
       originalHakemus: {
         contactPersonName: originalHakemusIframe.locator('#applicant-name'),

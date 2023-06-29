@@ -128,7 +128,10 @@
                             n.created_at,
                             n.updated_at,
                             n.organization_name,
-                            n.register_number
+                            n.register_number,
+                            n.trusted_contact_name,
+                            n.trusted_contact_email,
+                            n.trusted_contact_phone
                           FROM virkailija.normalized_hakemus n
                           JOIN hakija.hakemukset h ON h.id = n.hakemus_id
                           JOIN hakija.avustushaut a ON a.id = h.avustushaku
@@ -139,7 +142,7 @@
         talousarvio (get-talousarvio hakemus-id "hakemus")]
     (log/info (str "Succesfully fetched hakemus with id: " hakemus-id))
     (if hakemus
-      (assoc hakemus :talousarvio talousarvio)
+      (into {} (filter (comp some? val) (assoc hakemus :talousarvio talousarvio)))
       nil)))
 
 (defn onko-muutoshakukelpoinen-avustushaku-ok [avustushaku-id]

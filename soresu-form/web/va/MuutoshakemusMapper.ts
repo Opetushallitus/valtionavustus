@@ -19,6 +19,15 @@ export function mapAnswersWithMuutoshakemusData(
         return normalizedData ? { ...a, value: normalizedData['contact-email'] } : a
       case 'textField-0':
         return normalizedData ? { ...a, value: normalizedData['contact-phone'] } : a
+      case 'trusted-contact-name': {
+        return normalizedData ? { ...a, value: normalizedData['trusted-contact-name'] } : a
+      }
+      case 'trusted-contact-email': {
+        return normalizedData ? { ...a, value: normalizedData['trusted-contact-email'] } : a
+      }
+      case 'trusted-contact-phone': {
+        return normalizedData ? { ...a, value: normalizedData['trusted-contact-phone'] } : a
+      }
       default:
         return a
     }

@@ -544,22 +544,31 @@ export class HakemustenArviointiPage {
     const applicantName = '#applicant-name div'
     const phone = '#textField-0 div'
     const email = '#primary-email div'
+    const trustedContactName = '#trusted-contact-name'
+    const trustedContactEmail = '#trusted-contact-email'
+    const trustedContactPhone = '#trusted-contact-phone'
     return {
       printableLink: this.page.locator('text="Tulostusversio"'),
       oldAnswers: {
         applicantName: oldAnswer.locator(applicantName),
         phoneNumber: oldAnswer.locator(phone),
         email: oldAnswer.locator(email),
+        trustedContactName: oldAnswer.locator(trustedContactName),
+        trustedContactEmail: oldAnswer.locator(trustedContactEmail),
+        trustedContactPhone: oldAnswer.locator(trustedContactPhone),
       },
       newAnswers: {
         applicantName: newAnswer.locator(applicantName),
         phoneNumber: newAnswer.locator(phone),
         email: newAnswer.locator(email),
+        trustedContactName: newAnswer.locator(trustedContactName),
+        trustedContactEmail: newAnswer.locator(trustedContactEmail),
+        trustedContactPhone: newAnswer.locator(trustedContactPhone),
       },
       trustedContact: {
         name: this.page.locator('#trusted-contact-name'),
         email: this.page.locator('#trusted-contact-email'),
-        phoneNumber: this.page.locator('#trusted-contact-phoneNumber'),
+        phoneNumber: this.page.locator('#trusted-contact-phone'),
       },
     }
   }

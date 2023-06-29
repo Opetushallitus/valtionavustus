@@ -37,6 +37,7 @@
     (s/optional-key :talousarvio) TalousarvioMuutos
     (s/optional-key :talousarvioPerustelut) s/Str
     (s/optional-key :yhteyshenkilo) ContactPersonDetails
+    (s/optional-key :varayhteyshenkilo) ContactPersonDetails
     (s/optional-key :sisaltomuutos) Sisaltomuutos
   })
 

@@ -204,6 +204,9 @@
    :contact-phone s/Str
    :organization-name s/Str
    :register-number s/Str
+   (s/optional-key :trusted-contact-name) s/Str
+   (s/optional-key :trusted-contact-email) s/Str
+   (s/optional-key :trusted-contact-phone) s/Str
    (s/optional-key :talousarvio) [Meno]
    })
 

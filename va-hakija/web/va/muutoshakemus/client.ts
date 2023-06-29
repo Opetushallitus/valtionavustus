@@ -51,5 +51,12 @@ export async function postMuutoshakemus(props: MuutoshakemusProps) {
       email: values.email,
       phone: values.phone,
     },
+    varayhteyshenkilo: values.hasTrustedContact
+      ? {
+          name: values.trustedContactName,
+          email: values.trustedContactEmail,
+          phone: values.trustedContactPhone,
+        }
+      : undefined,
   })
 }

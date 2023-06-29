@@ -145,6 +145,9 @@ export interface NormalizedHakemusData {
   'contact-person': string
   'contact-email': string
   'contact-phone': string
+  'trusted-contact-name'?: string
+  'trusted-contact-email'?: string
+  'trusted-contact-phone'?: string
   'hakemus-id': number
   id: number
   'organization-name': string
