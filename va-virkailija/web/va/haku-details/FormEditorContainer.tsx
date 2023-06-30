@@ -12,7 +12,6 @@ import {
   Avustushaku,
   formJsonUpdated,
   formUpdated,
-  selectDraftsForAvustushaku,
   selectHakuState,
   selectLoadedInitialData,
 } from '../hakujenHallinta/hakuReducer'
@@ -59,8 +58,9 @@ const FormEditorContainer = () => {
   const dispatch = useHakujenHallintaDispatch()
   const avustushaku = useCurrentAvustushaku()
   const { environment, helpTexts } = useHakujenHallintaSelector(selectLoadedInitialData)
-  const { formDraft, formDraftJson } = useHakujenHallintaSelector(
-    selectDraftsForAvustushaku(avustushaku.id)
+  const formDraft = useHakujenHallintaSelector((state) => state.haku.formDrafts[avustushaku.id])
+  const formDraftJson = useHakujenHallintaSelector(
+    (state) => state.haku.formDraftsJson[avustushaku.id]
   )
   const varayhteishenkiloEnabled = useHakujenHallintaSelector(
     (state) => selectLoadedInitialData(state).environment['backup-contact-person']?.['enabled?']

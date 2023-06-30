@@ -19,7 +19,6 @@ import {
   selectLoadedInitialData,
   recreateSelvitysForm,
   saveSelvitysForm,
-  selectDraftsForAvustushaku,
   selvitysFormJsonUpdated,
   selvitysFormUpdated,
 } from '../hakujenHallinta/hakuReducer'
@@ -34,12 +33,18 @@ export const SelvitysFormEditor = ({ selvitysType }: SelvitysFormEditorProps) =>
   const isValiSelvitys = selvitysType === 'valiselvitys'
   const { environment, helpTexts } = useHakujenHallintaSelector(selectLoadedInitialData)
   const { koodistos } = useHakujenHallintaSelector(selectHakuState)
-  const {
-    valiselvitysFormDraft,
-    loppuselvitysFormDraft,
-    valiselvitysFormDraftJson,
-    loppuselvitysFormDraftsJson,
-  } = useHakujenHallintaSelector(selectDraftsForAvustushaku(avustushaku.id))
+  const valiselvitysFormDraft = useHakujenHallintaSelector(
+    (state) => state.haku.valiselvitysFormDrafts[avustushaku.id]
+  )
+  const valiselvitysFormDraftJson = useHakujenHallintaSelector(
+    (state) => state.haku.valiselvitysFormDraftsJson[avustushaku.id]
+  )
+  const loppuselvitysFormDraft = useHakujenHallintaSelector(
+    (state) => state.haku.loppuselvitysFormDrafts[avustushaku.id]
+  )
+  const loppuselvitysFormDraftsJson = useHakujenHallintaSelector(
+    (state) => state.haku.loppuselvitysFormDraftsJson[avustushaku.id]
+  )
   const [count, setCount] = useState<number | undefined>(undefined)
   const [sending, setSending] = useState(false)
   const [lahetykset, setLahetykset] = useState<Lahetys[]>([])

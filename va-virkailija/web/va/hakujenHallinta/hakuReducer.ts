@@ -988,19 +988,6 @@ export const selectAvustushaku = (state: State, avustushakuId: number) => {
   return getAvustushakuFromList(hakuList, avustushakuId)
 }
 
-export const selectDraftsForAvustushaku =
-  (avustushakuId: number) =>
-  ({ haku }: HakujenHallintaRootState) => {
-    return {
-      formDraft: haku.formDrafts[avustushakuId],
-      formDraftJson: haku.formDraftsJson[avustushakuId],
-      valiselvitysFormDraft: haku.valiselvitysFormDrafts[avustushakuId],
-      valiselvitysFormDraftJson: haku.valiselvitysFormDraftsJson[avustushakuId],
-      loppuselvitysFormDraft: haku.loppuselvitysFormDrafts[avustushakuId],
-      loppuselvitysFormDraftsJson: haku.loppuselvitysFormDraftsJson[avustushakuId],
-    }
-  }
-
 export const selectLoadedInitialData = (state: HakujenHallintaRootState) => {
   const initialData = state.haku.initialData
   if (initialData.loading) {
