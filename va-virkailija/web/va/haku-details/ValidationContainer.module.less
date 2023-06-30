@@ -1,4 +1,4 @@
-.validation-container {
+.validationContainer {
   position: sticky;
   top: 4px;
   z-index: 100;
@@ -7,25 +7,26 @@
   flex-direction: column;
   box-sizing: border-box;
   border-radius: 4px;
-
-  &-with-header {
-    top: 52px;
-  }
 }
 
-.validation-warning {
+.validationContainerWithHeader {
+  composes: validationContainer;
+  top: 52px;
+}
+
+.validationWarning {
   background-color: #fffae2;
   color: #956a14;
   border: 1px solid #deb335;
 }
 
-.validation-ok {
+.validationOk {
   background-color: #dcf8e7;
   color: #108046;
   border: 1px solid #108046;
 }
 
-.validation-info {
+.validationInfo {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -34,7 +35,7 @@
   border-radius: 4px;
 }
 
-.validation-warning-shadow {
+.validationWarningShadow {
   box-shadow: 0 0 0 1px #deb335;
 }
 
@@ -49,46 +50,44 @@
   display: inline-block;
 }
 
-.validation-icon-ok {
+.validationIconOk {
   position: relative;
   vertical-align: middle;
   display: inline-block;
 }
 
-.validation-text-bold {
+.validationText {
   vertical-align: middle;
   display: inline-block;
   margin-left: 8px;
+}
+
+.validationTextBold {
+  composes: validationText;
   font-weight: bold;
 }
 
-.validation-text {
-  vertical-align: middle;
-  display: inline-block;
-  margin-left: 8px;
-}
-
-.validation-warning-button {
+.validationWarningButton {
   cursor: pointer;
 }
 
-.validation-warning-button-text {
+.validationWarningButtonText {
   vertical-align: middle;
   display: inline-block;
   text-decoration: underline;
 }
 
-.validation-warning-arrow {
+.validationWarningArrow {
   vertical-align: middle;
   display: inline-block;
   margin-left: 13px;
 }
 
-.validation-dropdown {
+.validationDropdown {
   padding: 9px 0;
 }
 
-.validation-dropdown-item {
+.validationDropdownItem {
   display: flex;
   justify-content: flex-start;
   flex-direction: row;
@@ -100,14 +99,14 @@
   margin: 8px;
 }
 
-.validation-dropdown-item-brown-box {
+.validationDropdownItemBrownBox {
   margin: 6px 13px;
   padding: 6px 0;
   border-radius: 4px;
   min-width: 180px;
   background-color: rgba(222, 179, 53, 0.1);
+  > * {
+    margin: 0 10px;
+  }
 }
 
-.validation-dropdown-item-brown-box > * {
-  margin: 0 10px;
-}

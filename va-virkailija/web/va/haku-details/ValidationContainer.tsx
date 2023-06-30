@@ -6,7 +6,7 @@ import { ValidationResult } from '../types'
 import useScrollingUp from '../useScrollingUp'
 import classNames from 'classnames'
 
-import './ValidationContainer.less'
+import styles from './ValidationContainer.module.less'
 
 const fieldLabels: Record<string, string> = {
   'project-name': 'Hankkeen nimi',
@@ -60,20 +60,20 @@ const Warning = ({ result, controlDropdown, errorTexts }: WarningProps) => {
       : errorTexts?.single ||
         `Lomakkeesta puuttuu muutoshakemukselle tarpeellinen kenttä. Muutoshaku ei ole mahdollista.`
   return (
-    <div className="validation-info validation-warning-shadow">
+    <div className={`${styles.validationInfo} ${styles.validationWarningShadow}`}>
       <span data-test-id="validation-warning">
-        <span className="validation-icon-warning">
+        <span className={styles.validationIconOk}>
           <IconExclamationMark />
         </span>
-        <span className="validation-text-bold">{warningText}</span>
+        <span className={styles.validationTextBold}>{warningText}</span>
       </span>
       <div
-        className="validation-warning-button"
+        className={styles.validationWarningButton}
         data-test-id="validation-warning-button"
         onClick={controlDropdown}
       >
-        <span className="validation-warning-button-text">Näytä lisätietoja</span>
-        <span className="validation-warning-arrow">
+        <span className={styles.validationWarningButtonText}>Näytä lisätietoja</span>
+        <span className={styles.validationWarningArrow}>
           <IconArrowDown />
         </span>
       </div>
@@ -83,13 +83,13 @@ const Warning = ({ result, controlDropdown, errorTexts }: WarningProps) => {
 
 export const Ok = () => {
   return (
-    <div className="validation-info validation-ok-shadow">
+    <div className={`${styles.validationInfo} ${styles.validationOkShadow}`}>
       <span data-test-id="validation-ok">
-        <span className="validation-icon-ok">
+        <span className={styles.validationIconOk}>
           <IconOkMark />
         </span>
-        <span className="validation-text-bold">Lomake on muutoshakukelpoinen</span>
-        <span className="validation-text">
+        <span className={styles.validationTextBold}>Lomake on muutoshakukelpoinen</span>
+        <span className={styles.validationText}>
           Muutoshakulomake toimitetaan avustuksen saajille automaattisesti päätösviestin yhteydessä
         </span>
       </span>
@@ -99,13 +99,13 @@ export const Ok = () => {
 
 const Dropdown = ({ result }: ValidationProps) => {
   return (
-    <div className="validation-dropdown">
+    <div className={styles.validationDropdown}>
       {result['erroneous-fields'].map((field) => (
-        <div key={field.id} className="validation-dropdown-item">
-          <div className="validation-dropdown-item-brown-box">
+        <div key={field.id} className={styles.validationDropdownItem}>
+          <div className={styles.validationDropdownItemBrownBox}>
             <b>Id</b> <span data-test-id="validation-dropdown-item-id">{field.id}</span>
           </div>
-          <div className="validation-dropdown-item-brown-box">
+          <div className={styles.validationDropdownItemBrownBox}>
             <b>Selite</b>{' '}
             <span data-test-id="validation-dropdown-item-label">
               {field?.label || fieldLabels[field.id]}
@@ -134,7 +134,7 @@ export const ScrollAwareValidationContainer = (props: ValidationProps) => {
   return (
     <ValidationContainer
       {...props}
-      extraClasses={isScrollingUp ? 'validation-container-with-header' : undefined}
+      extraClasses={isScrollingUp ? styles.validationContainerWithHeader : undefined}
     />
   )
 }
@@ -145,13 +145,13 @@ export const ValidationContainer = ({
   extraClasses = '',
 }: ValidationProps & { extraClasses?: string }) => {
   const [state, setState] = useState(initialState)
-  const colorClass = result['is-ok'] ? 'validation-ok' : 'validation-warning'
+  const colorClass = result['is-ok'] ? styles.validationOk : styles.validationWarning
 
   const controlDropdown = () => {
     setState({ open: !state.open })
   }
   return (
-    <div className={classNames('validation-container', colorClass, extraClasses)}>
+    <div className={classNames(styles.validationContainer, colorClass, extraClasses)}>
       {result['is-ok'] ? (
         <Ok />
       ) : (
