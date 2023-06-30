@@ -3,6 +3,7 @@ import { expect } from '@playwright/test'
 import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
 import fs from 'fs/promises'
 import path from 'path'
+import { HakulomakePage } from '../../pages/hakujen-hallinta/HakulomakePage'
 
 budjettimuutoshakemusTest(
   'warns missing financing-plan',
@@ -14,25 +15,23 @@ budjettimuutoshakemusTest(
       'utf8'
     )
     const hakujenHallintaPage = new HakujenHallintaPage(page)
-    const missingField = page.locator(
-      'text=Lomakkeesta puuttuu muutoshakemukselle tarpeellinen kenttä. Muutoshaku ei ole mahdollista.'
-    )
+    const formEditorPage = HakulomakePage(page)
     const { avustushakuID } = await hakujenHallintaPage.createHakuWithLomakeJson(
       muutoshakemusEnabledHakuLomakeJson,
       hakuProps
     )
     const formEditor = await hakujenHallintaPage.navigateToFormEditor(avustushakuID)
-    await expect(missingField).toBeHidden()
+    await expect(formEditorPage.locators.lomakeWarning.nth(1)).toBeHidden()
     const badBuduLomake = await fs.readFile(
       path.join(__dirname, '../../fixtures/budjettimuutos-bad-budget.hakulomake.json'),
       'utf8'
     )
     await formEditor.changeLomakeJson(badBuduLomake)
     await formEditor.saveForm()
-    await expect(missingField).toBeVisible()
-    await page.locator('text=Näytä lisätietoja').click()
-    await expect(
-      page.locator('div.validation-warning').locator('text=financing-plan')
-    ).toBeVisible()
+    await expect(formEditorPage.locators.lomakeWarning.nth(1)).toContainText(
+      'Lomakkeesta puuttuu muutoshakemukselle tarpeellinen kenttä. Muutoshaku ei ole mahdollista.'
+    )
+    await formEditorPage.locators.lomakeWarningBtn.nth(1).click()
+    await expect(formEditorPage.locators.lomakeWarningId).toContainText('financing-plan')
   }
 )
