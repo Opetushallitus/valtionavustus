@@ -9,6 +9,8 @@ export function HakulomakePage(page: Page) {
     form: page.locator('.form-json-editor textarea'),
     fieldId: page.locator('span.soresu-field-id'),
     saveFormButton: page.locator('#saveForm'),
+    lomakeWarning: page.getByTestId('muutoshakukelpoisuus-warning'),
+    muutoshakuOk: page.getByTestId('muutoshakukelpoisuus-ok'),
   }
 
   async function waitFormToBeLoaded() {

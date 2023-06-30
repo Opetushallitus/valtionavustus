@@ -2,8 +2,11 @@ import React from 'react'
 import DateUtil from 'soresu-form/web/DateUtil'
 import FormEditor from './FormEditor'
 import FormJsonEditor from './FormJsonEditor'
-import { MuutoshakukelpoisuusContainer } from './MuutoshakukelpoisuusContainer'
-import { Form } from 'soresu-form/web/va/types'
+import {
+  MuutoshakukelpoisuusContainer,
+  ScrollAwareMuutoshakukelpoisuusContainer,
+} from './MuutoshakukelpoisuusContainer'
+import { Field, Form } from 'soresu-form/web/va/types'
 import {
   useHakujenHallintaDispatch,
   useHakujenHallintaSelector,
@@ -17,6 +20,45 @@ import {
   selectLoadedInitialData,
 } from '../hakujenHallinta/hakuReducer'
 import { useCurrentAvustushaku } from '../hakujenHallinta/useAvustushaku'
+import FormUtil from 'soresu-form/web/form/FormUtil'
+import { OnkoMuutoshakukelpoinenAvustushakuOk } from '../types'
+
+const trustedContact = {
+  name: {
+    fieldId: 'trusted-contact-name',
+    label: 'Varayhteyshenkilön nimi',
+  },
+  email: {
+    fieldId: 'trusted-contact-email',
+    label: 'Varayhteyshenkilön sähköpostiosoite',
+  },
+  phone: {
+    fieldId: 'trusted-contact-phone',
+    label: 'Varayhteyshenkilön puhelinnumero',
+  },
+}
+const hasVarayhteyshenkiloFields = (
+  formContent: Field[] = []
+): OnkoMuutoshakukelpoinenAvustushakuOk => {
+  const results = [trustedContact.name, trustedContact.email, trustedContact.phone].reduce<
+    Omit<OnkoMuutoshakukelpoinenAvustushakuOk, 'is-ok'>
+  >(
+    (acc, { fieldId, label }) => {
+      const foundField = FormUtil.findField(formContent, fieldId)
+      if (foundField) {
+        acc['ok-fields'].push({ id: fieldId, label })
+      } else {
+        acc['erroneous-fields'].push({ id: fieldId, label })
+      }
+      return acc
+    },
+    { 'ok-fields': [], 'erroneous-fields': [] }
+  )
+  return {
+    ...results,
+    'is-ok': results['erroneous-fields'].length === 0,
+  }
+}
 
 const FormEditorContainer = () => {
   const dispatch = useHakujenHallintaDispatch()
@@ -24,6 +66,9 @@ const FormEditorContainer = () => {
   const { environment, helpTexts } = useHakujenHallintaSelector(selectLoadedInitialData)
   const { formDraft, formDraftJson } = useHakujenHallintaSelector(
     selectDraftsForAvustushaku(avustushaku.id)
+  )
+  const varayhteishenkiloEnabled = useHakujenHallintaSelector(
+    (state) => selectLoadedInitialData(state).environment['backup-contact-person']?.['enabled?']
   )
   const { koodistos } = useHakujenHallintaSelector(selectHakuState)
 
@@ -39,7 +84,7 @@ const FormEditorContainer = () => {
   const formattedUpdatedDate = `${DateUtil.asDateString(updatedAt)} klo ${DateUtil.asTimeString(
     updatedAt
   )}`
-
+  const varayhteyshenkiloOk = hasVarayhteyshenkiloFields(formDraft?.content)
   const onFormChange = ({ id: avustushakuId }: Avustushaku, newDraft: Form) => {
     dispatch(formUpdated({ avustushakuId, newForm: newDraft }))
     dispatch(
@@ -62,8 +107,20 @@ const FormEditorContainer = () => {
 
   return (
     <section>
+      {varayhteishenkiloEnabled && !varayhteyshenkiloOk['is-ok'] && (
+        <MuutoshakukelpoisuusContainer
+          muutoshakukelpoisuus={varayhteyshenkiloOk}
+          errorTexts={{
+            single: 'Hakemukselta puuttuu varayhteyshenkilön täyttöön liittyvä kenttä.',
+            multiple: (numberOfErrors) =>
+              `Hakemukselta puuttuu ${numberOfErrors} varayhteyshenkilön täyttöön tarvittavaa kenttää.`,
+          }}
+        />
+      )}
       {avustushaku.muutoshakukelpoisuus && (
-        <MuutoshakukelpoisuusContainer muutoshakukelpoisuus={avustushaku.muutoshakukelpoisuus} />
+        <ScrollAwareMuutoshakukelpoisuusContainer
+          muutoshakukelpoisuus={avustushaku.muutoshakukelpoisuus}
+        />
       )}
       <div dangerouslySetInnerHTML={mainHelp} />
       <div style={{ float: 'right' }}>

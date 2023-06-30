@@ -5,12 +5,9 @@ import 'react-widgets/styles.css'
 import './Muutoshakukelpoisuus.less'
 import { OnkoMuutoshakukelpoinenAvustushakuOk } from '../types'
 import useScrollingUp from '../useScrollingUp'
+import classNames from 'classnames'
 
-interface Field {
-  id: 'project-name' | 'applicant-name' | 'primary-email' | 'textField-0'
-}
-
-const fieldLabels = {
+const fieldLabels: Record<string, string> = {
   'project-name': 'Hankkeen nimi',
   'applicant-name': 'Yhteyshenkilön nimi',
   'primary-email': 'Yhteyshenkilön sähköposti',
@@ -20,6 +17,10 @@ const fieldLabels = {
 interface MuutoshakukelpoisuusWarningProps {
   muutoshakukelpoisuus: OnkoMuutoshakukelpoinenAvustushakuOk
   controlDropdown: () => void
+  errorTexts?: {
+    single: string
+    multiple: (numberOfErrors: number) => string
+  }
 }
 
 const IconExclamationMark = () => (
@@ -49,15 +50,18 @@ const IconArrowDown = () => (
   </svg>
 )
 
-export const MuutoshakukelpoisuusWarning = ({
+const MuutoshakukelpoisuusWarning = ({
   muutoshakukelpoisuus,
   controlDropdown,
+  errorTexts,
 }: MuutoshakukelpoisuusWarningProps) => {
   const numberOfErrors = muutoshakukelpoisuus['erroneous-fields'].length
   const warningText =
     numberOfErrors > 1
-      ? `Lomakkeesta puuttuu ${numberOfErrors} muutoshakemukselle tarpeellista kenttää. Muutoshaku ei ole mahdollista.`
-      : `Lomakkeesta puuttuu muutoshakemukselle tarpeellinen kenttä. Muutoshaku ei ole mahdollista.`
+      ? errorTexts?.multiple(numberOfErrors) ||
+        `Lomakkeesta puuttuu ${numberOfErrors} muutoshakemukselle tarpeellista kenttää. Muutoshaku ei ole mahdollista.`
+      : errorTexts?.single ||
+        `Lomakkeesta puuttuu muutoshakemukselle tarpeellinen kenttä. Muutoshaku ei ole mahdollista.`
   return (
     <div className="muutoshakukelpoisuus-info muutoshakukelpoisuus-warning-shadow">
       <span data-test-id="muutoshakukelpoisuus-warning">
@@ -97,42 +101,53 @@ export const MuutoshakukelpoisuusOk = () => {
 }
 
 const MuutoshakukelpoisuusDropdown = ({ muutoshakukelpoisuus }: MuutoshakukelpoisuusProps) => {
-  const createMuutoshakukelpoisuusDropdownItem = (field: Field) => {
-    return (
-      <div className="muutoshakukelpoisuus-dropdown-item">
-        <div className="muutoshakukelpoisuus-dropdown-item-brown-box">
-          <b>Id</b> <span className="muutoshakukelpoisuus-dropdown-item-id">{field.id}</span>
-        </div>
-        <div className="muutoshakukelpoisuus-dropdown-item-brown-box">
-          <b>Selite</b>{' '}
-          <span className="muutoshakukelpoisuus-dropdown-item-label">{fieldLabels[field.id]}</span>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="muutoshakukelpoisuus-dropdown">
-      {JSON.parse(JSON.stringify(muutoshakukelpoisuus['erroneous-fields'])).map(
-        createMuutoshakukelpoisuusDropdownItem
-      )}
+      {muutoshakukelpoisuus['erroneous-fields'].map((field) => (
+        <div key={field.id} className="muutoshakukelpoisuus-dropdown-item">
+          <div className="muutoshakukelpoisuus-dropdown-item-brown-box">
+            <b>Id</b> <span className="muutoshakukelpoisuus-dropdown-item-id">{field.id}</span>
+          </div>
+          <div className="muutoshakukelpoisuus-dropdown-item-brown-box">
+            <b>Selite</b>{' '}
+            <span className="muutoshakukelpoisuus-dropdown-item-label">
+              {field?.label || fieldLabels[field.id]}
+            </span>
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
 
 interface MuutoshakukelpoisuusProps {
   muutoshakukelpoisuus: OnkoMuutoshakukelpoinenAvustushakuOk
+  errorTexts?: {
+    single: string
+    multiple: (numberOfErrors: number) => string
+  }
 }
 
 let initialState = {
   open: false,
 }
 
+export const ScrollAwareMuutoshakukelpoisuusContainer = (props: MuutoshakukelpoisuusProps) => {
+  const isScrollingUp = useScrollingUp()
+  return (
+    <MuutoshakukelpoisuusContainer
+      {...props}
+      extraClasses={isScrollingUp ? 'muutoshakukelpoisuus-container-with-header' : undefined}
+    />
+  )
+}
+
 export const MuutoshakukelpoisuusContainer = ({
   muutoshakukelpoisuus,
-}: MuutoshakukelpoisuusProps) => {
+  errorTexts,
+  extraClasses = '',
+}: MuutoshakukelpoisuusProps & { extraClasses?: string }) => {
   const [state, setState] = useState(initialState)
-  const isScrollingUp = useScrollingUp()
   const colorClass = muutoshakukelpoisuus['is-ok']
     ? 'muutoshakukelpoisuus-ok'
     : 'muutoshakukelpoisuus-warning'
@@ -140,19 +155,15 @@ export const MuutoshakukelpoisuusContainer = ({
   const controlDropdown = () => {
     setState({ open: !state.open })
   }
-
   return (
-    <div
-      className={`muutoshakukelpoisuus-container ${colorClass} ${
-        isScrollingUp ? 'muutoshakukelpoisuus-container-with-header' : ''
-      }`}
-    >
+    <div className={classNames('muutoshakukelpoisuus-container', colorClass, extraClasses)}>
       {muutoshakukelpoisuus['is-ok'] ? (
         <MuutoshakukelpoisuusOk />
       ) : (
         <MuutoshakukelpoisuusWarning
           muutoshakukelpoisuus={muutoshakukelpoisuus}
           controlDropdown={controlDropdown}
+          errorTexts={errorTexts}
         />
       )}
       {state.open && <MuutoshakukelpoisuusDropdown muutoshakukelpoisuus={muutoshakukelpoisuus} />}

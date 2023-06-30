@@ -33,15 +33,30 @@ const test = defaultValues.extend<MuutoshakemusFixtures>({
     testInfo.setTimeout(testInfo.timeout + 40_000)
     expect(userCache).toBeDefined()
     const hakujenHallintaPage = new HakujenHallintaPage(page)
-    console.log(__dirname + '../fixtures/varayhteys-henkilo.hakulomake.json')
     const lomakeJson = await readFile(
       __dirname + '/../fixtures/varayhteys-henkilo.hakulomake.json',
       'utf-8'
     )
-    const { avustushakuID } = await hakujenHallintaPage.createHakuWithLomakeJson(
-      lomakeJson,
-      hakuProps
-    )
+    const avustushakuID = await hakujenHallintaPage.copyEsimerkkihaku()
+    await hakujenHallintaPage.fillAvustushaku(hakuProps)
+    const formEditorPage = await hakujenHallintaPage.navigateToFormEditor(avustushakuID)
+    await test.step('lomake warning is shown before changing lomake to have required fields', async () => {
+      await expect(formEditorPage.locators.lomakeWarning).toHaveCount(2)
+      await expect(formEditorPage.locators.lomakeWarning.first()).toHaveText(
+        'Hakemukselta puuttuu 3 varayhteyshenkilön täyttöön tarvittavaa kenttää.'
+      )
+      await expect(formEditorPage.locators.lomakeWarning.nth(1)).toHaveText(
+        'Lomakkeesta puuttuu 2 muutoshakemukselle tarpeellista kenttää. Muutoshaku ei ole mahdollista.'
+      )
+      await formEditorPage.changeLomakeJson(lomakeJson)
+      await expect(formEditorPage.locators.lomakeWarning).toHaveText(
+        'Lomakkeesta puuttuu 2 muutoshakemukselle tarpeellista kenttää. Muutoshaku ei ole mahdollista.'
+      )
+      await expect(formEditorPage.locators.muutoshakuOk).toBeHidden()
+      await formEditorPage.saveForm()
+      await expect(formEditorPage.locators.lomakeWarning).toBeHidden()
+      await expect(formEditorPage.locators.muutoshakuOk).toBeVisible()
+    })
     const haunTiedot = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
     await haunTiedot.publishAvustushaku()
     await use(avustushakuID)

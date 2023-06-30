@@ -99,7 +99,7 @@ export interface VaUserSearchResult {
   privileges: string[]
 }
 
-interface MuutoshakemuksenVaatimaKentta {
+export interface MuutoshakemuksenVaatimaKentta {
   id: string
   label?: string
 }
