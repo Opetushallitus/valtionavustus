@@ -176,7 +176,7 @@
                        JOIN email_event ON (email.id = email_event.email_id)
                        WHERE hakemus_id = ? AND email_type = ?::email_type"
                       [hakemus-id email-type])]
-    (log/info (str "Succesfully fetched email for hakemus with hakemus-id: " hakemus-id emails))
+    (log/info (str "Succesfully fetched email for hakemus with hakemus-id: " hakemus-id))
     emails))
 
 (defn get-avustushaku-emails [avustushaku-id email-type]
