@@ -29,6 +29,9 @@ adminusers:
   spkerkela:
     state: present
     name: Simo-Pekka Kerkelä
+  rikuhonk:
+    state: present
+    name: Riku Honkanen
   juusostr:
     state: absent
     name: Juuso Strömberg
@@ -47,3 +50,4 @@ adminusers:
   teppo:
     state: absent
     name: Teppo Juntunen
+
