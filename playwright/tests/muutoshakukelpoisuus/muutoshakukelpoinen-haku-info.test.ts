@@ -97,8 +97,6 @@ test.describe('Form editor muutoshakukelpoisuus message', () => {
       'Lomakkeesta puuttuu muutoshakemukselle tarpeellinen kenttä. Muutoshaku ei ole mahdollista.'
     )
 
-    //await page.evaluate(() => window.scrollTo(0, 0))
-    //await page.click('[data-test-id="validation-warning-button"]')
     await formEditorPage.locators.lomakeWarningBtn.nth(1).click()
 
     await expect(formEditorPage.locators.lomakeWarningId).toContainText('applicant-name')
