@@ -4,14 +4,7 @@ import {
   createSlice,
   PayloadAction,
 } from '@reduxjs/toolkit'
-import {
-  OnkoMuutoshakukelpoinenAvustushakuOk,
-  Privileges,
-  Role,
-  Selvitys,
-  UserInfo,
-  VaCodeValue,
-} from '../types'
+import { ValidationResult, Privileges, Role, Selvitys, UserInfo, VaCodeValue } from '../types'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 import {
   Avustushaku as BaseAvustushaku,
@@ -44,7 +37,7 @@ export interface Avustushaku extends BaseAvustushaku {
   payments?: Payment[]
   privileges?: Privileges
   formContent?: Form
-  muutoshakukelpoisuus?: OnkoMuutoshakukelpoinenAvustushakuOk
+  muutoshakukelpoisuus?: ValidationResult
   allow_visibility_in_external_system: boolean
   arvioitu_maksupaiva?: string
   vastuuvalmistelija?: string
@@ -74,7 +67,7 @@ interface InitialData {
 }
 
 interface OnSelectHakuData {
-  muutoshakukelpoisuus: OnkoMuutoshakukelpoinenAvustushakuOk
+  muutoshakukelpoisuus: ValidationResult
   privileges: Privileges
   roles: Role[]
   projects: VaCodeValue[]
@@ -305,7 +298,7 @@ export const selectHaku = createAsyncThunk<
     formContent,
     talousarviotilit,
   ] = await Promise.all([
-    HttpUtil.get<OnkoMuutoshakukelpoinenAvustushakuOk>(
+    HttpUtil.get<ValidationResult>(
       `/api/avustushaku/${avustushakuId}/onko-muutoshakukelpoinen-avustushaku-ok`
     ),
     HttpUtil.get<Privileges>(`/api/avustushaku/${avustushakuId}/privileges`),
@@ -549,14 +542,14 @@ export const saveForm = createAsyncThunk<
   {
     avustushakuId: number
     form: Form
-    muutoshakukelpoinen: OnkoMuutoshakukelpoinenAvustushakuOk
+    muutoshakukelpoinen: ValidationResult
   },
   { avustushakuId: number; form: Form },
   { rejectValue: string }
 >('haku/saveForm', async ({ avustushakuId, form }, { rejectWithValue }) => {
   try {
     const formFromServer = await HttpUtil.post(`/api/avustushaku/${avustushakuId}/form`, form)
-    const muutoshakukelpoinen = await HttpUtil.get<OnkoMuutoshakukelpoinenAvustushakuOk>(
+    const muutoshakukelpoinen = await HttpUtil.get<ValidationResult>(
       `/api/avustushaku/${avustushakuId}/onko-muutoshakukelpoinen-avustushaku-ok`
     )
     return {

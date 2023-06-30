@@ -1,9 +1,11 @@
-import { expect, Page } from '@playwright/test'
+import { expect } from '@playwright/test'
 import { readFileSync } from 'fs'
 import * as path from 'path'
 
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
+import { HakulomakePage } from '../../pages/hakujen-hallinta/HakulomakePage'
+import { expectToBeDefined } from '../../utils/util'
 
 const puuttuvaYhteyshenkilonNimiJson = readFileSync(
   path.join(__dirname, 'puuttuva-yhteyshenkilon-nimi.json'),
@@ -18,7 +20,7 @@ test.describe('Form editor muutoshakukelpoisuus message', () => {
   test('tells that avustushaku is muutoshakukelpoinen', async ({ avustushakuID, page }) => {
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.navigateToFormEditor(avustushakuID)
-    const okBannerText = await page.innerText('[data-test-id="muutoshakukelpoisuus-ok"]')
+    const okBannerText = await page.innerText('[data-test-id="validation-ok"]')
     expect(okBannerText).toEqual(
       'Lomake on muutoshakukelpoinenMuutoshakulomake toimitetaan avustuksen saajille automaattisesti päätösviestin yhteydessä'
     )
@@ -86,44 +88,42 @@ test.describe('Form editor muutoshakukelpoisuus message', () => {
     ])
   })
 
-  test('tells user about one missing field', async ({ page, hakuProps }) => {
+  test('tells user about one missing field', async ({ page, hakuProps, userCache }) => {
+    expectToBeDefined(userCache)
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.createHakuWithLomakeJson(puuttuvaYhteyshenkilonNimiJson, hakuProps)
-
-    await page.waitForSelector(
-      'text="Lomakkeesta puuttuu muutoshakemukselle tarpeellinen kenttä. Muutoshaku ei ole mahdollista."'
+    const formEditorPage = HakulomakePage(page)
+    await expect(formEditorPage.locators.lomakeWarning.nth(1)).toHaveText(
+      'Lomakkeesta puuttuu muutoshakemukselle tarpeellinen kenttä. Muutoshaku ei ole mahdollista.'
     )
 
-    await page.evaluate(() => window.scrollTo(0, 0))
-    await page.click('[data-test-id="muutoshakukelpoisuus-warning-button"]')
+    //await page.evaluate(() => window.scrollTo(0, 0))
+    //await page.click('[data-test-id="validation-warning-button"]')
+    await formEditorPage.locators.lomakeWarningBtn.nth(1).click()
 
-    await expectMissingFieldId(page, 'applicant-name')
-    await expectMissingFieldLabel(page, 'Yhteyshenkilön nimi')
+    await expect(formEditorPage.locators.lomakeWarningId).toContainText('applicant-name')
+    await expect(formEditorPage.locators.lomakeWarningLabel).toContainText('Yhteyshenkilön nimi')
   })
 
-  test('tells user about multiple missing fields', async ({ page, hakuProps }) => {
+  test('tells user about multiple missing fields', async ({ page, hakuProps, userCache }) => {
+    expectToBeDefined(userCache)
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.createHakuWithLomakeJson(
       puuttuvaYhteyshenkilonNimiJaPuhelinnumeroJson,
       hakuProps
     )
-
-    await page.waitForSelector(
-      'text="Lomakkeesta puuttuu 2 muutoshakemukselle tarpeellista kenttää. Muutoshaku ei ole mahdollista."'
+    const formEditorPage = HakulomakePage(page)
+    await expect(formEditorPage.locators.lomakeWarning.nth(1)).toHaveText(
+      'Lomakkeesta puuttuu 2 muutoshakemukselle tarpeellista kenttää. Muutoshaku ei ole mahdollista.'
     )
-
-    await page.evaluate(() => window.scrollTo(0, 0))
-    await page.click('[data-test-id="muutoshakukelpoisuus-warning-button"]')
-
-    expectMissingFieldId(page, 'applicant-name')
-    expectMissingFieldId(page, 'textField-0')
-
-    expectMissingFieldLabel(page, 'Yhteyshenkilön nimi')
-    expectMissingFieldLabel(page, 'Yhteyshenkilön puhelinnumero')
+    await formEditorPage.locators.lomakeWarningBtn.nth(1).click()
+    await expect(formEditorPage.locators.lomakeWarningId).toContainText([
+      'applicant-name',
+      'textField-0',
+    ])
+    await expect(formEditorPage.locators.lomakeWarningLabel).toContainText([
+      'Yhteyshenkilön nimi',
+      'Yhteyshenkilön puhelinnumero',
+    ])
   })
 })
-
-const expectMissingFieldId = (page: Page, fieldId: string) =>
-  page.waitForSelector(`.muutoshakukelpoisuus-dropdown-item-id >> text="${fieldId}"`)
-const expectMissingFieldLabel = (page: Page, labelText: string) =>
-  page.waitForSelector(`.muutoshakukelpoisuus-dropdown-item-label >> text="${labelText}"`)

@@ -4,13 +4,17 @@ import { Field } from '../../utils/types'
 import { saveStatusTestId } from './CommonHakujenHallintaPage'
 
 export function HakulomakePage(page: Page) {
+  const lomakeWarning = page.getByTestId('validation-warning')
   const locators = {
     formErrorState: page.getByTestId('form-error-state'),
     form: page.locator('.form-json-editor textarea'),
     fieldId: page.locator('span.soresu-field-id'),
     saveFormButton: page.locator('#saveForm'),
-    lomakeWarning: page.getByTestId('muutoshakukelpoisuus-warning'),
-    muutoshakuOk: page.getByTestId('muutoshakukelpoisuus-ok'),
+    lomakeWarning,
+    lomakeWarningBtn: page.getByText('Näytä lisätietoja'),
+    lomakeWarningId: page.getByTestId('validation-dropdown-item-id'),
+    lomakeWarningLabel: page.getByTestId('validation-dropdown-item-label'),
+    muutoshakuOk: page.getByTestId('validation-ok'),
   }
 
   async function waitFormToBeLoaded() {

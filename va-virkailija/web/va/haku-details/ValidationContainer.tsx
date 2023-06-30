@@ -2,10 +2,11 @@ import React, { useState } from 'react'
 
 import 'react-widgets/styles.css'
 
-import './Muutoshakukelpoisuus.less'
-import { OnkoMuutoshakukelpoinenAvustushakuOk } from '../types'
+import { ValidationResult } from '../types'
 import useScrollingUp from '../useScrollingUp'
 import classNames from 'classnames'
+
+import './ValidationContainer.less'
 
 const fieldLabels: Record<string, string> = {
   'project-name': 'Hankkeen nimi',
@@ -14,8 +15,8 @@ const fieldLabels: Record<string, string> = {
   'textField-0': 'Yhteyshenkilön puhelinnumero',
 }
 
-interface MuutoshakukelpoisuusWarningProps {
-  muutoshakukelpoisuus: OnkoMuutoshakukelpoinenAvustushakuOk
+interface WarningProps {
+  result: ValidationResult
   controlDropdown: () => void
   errorTexts?: {
     single: string
@@ -50,12 +51,8 @@ const IconArrowDown = () => (
   </svg>
 )
 
-const MuutoshakukelpoisuusWarning = ({
-  muutoshakukelpoisuus,
-  controlDropdown,
-  errorTexts,
-}: MuutoshakukelpoisuusWarningProps) => {
-  const numberOfErrors = muutoshakukelpoisuus['erroneous-fields'].length
+const Warning = ({ result, controlDropdown, errorTexts }: WarningProps) => {
+  const numberOfErrors = result['erroneous-fields'].length
   const warningText =
     numberOfErrors > 1
       ? errorTexts?.multiple(numberOfErrors) ||
@@ -63,20 +60,20 @@ const MuutoshakukelpoisuusWarning = ({
       : errorTexts?.single ||
         `Lomakkeesta puuttuu muutoshakemukselle tarpeellinen kenttä. Muutoshaku ei ole mahdollista.`
   return (
-    <div className="muutoshakukelpoisuus-info muutoshakukelpoisuus-warning-shadow">
-      <span data-test-id="muutoshakukelpoisuus-warning">
-        <span className="muutoshakukelpoisuus-icon-warning">
+    <div className="validation-info validation-warning-shadow">
+      <span data-test-id="validation-warning">
+        <span className="validation-icon-warning">
           <IconExclamationMark />
         </span>
-        <span className="muutoshakukelpoisuus-text-bold">{warningText}</span>
+        <span className="validation-text-bold">{warningText}</span>
       </span>
       <div
-        className="muutoshakukelpoisuus-warning-button"
-        data-test-id="muutoshakukelpoisuus-warning-button"
+        className="validation-warning-button"
+        data-test-id="validation-warning-button"
         onClick={controlDropdown}
       >
-        <span className="muutoshakukelpoisuus-warning-button-text">Näytä lisätietoja</span>
-        <span className="muutoshakukelpoisuus-warning-arrow">
+        <span className="validation-warning-button-text">Näytä lisätietoja</span>
+        <span className="validation-warning-arrow">
           <IconArrowDown />
         </span>
       </div>
@@ -84,15 +81,15 @@ const MuutoshakukelpoisuusWarning = ({
   )
 }
 
-export const MuutoshakukelpoisuusOk = () => {
+export const Ok = () => {
   return (
-    <div className="muutoshakukelpoisuus-info muutoshakukelpoisuus-ok-shadow">
-      <span data-test-id="muutoshakukelpoisuus-ok">
-        <span className="muutoshakukelpoisuus-icon-ok">
+    <div className="validation-info validation-ok-shadow">
+      <span data-test-id="validation-ok">
+        <span className="validation-icon-ok">
           <IconOkMark />
         </span>
-        <span className="muutoshakukelpoisuus-text-bold">Lomake on muutoshakukelpoinen</span>
-        <span className="muutoshakukelpoisuus-text">
+        <span className="validation-text-bold">Lomake on muutoshakukelpoinen</span>
+        <span className="validation-text">
           Muutoshakulomake toimitetaan avustuksen saajille automaattisesti päätösviestin yhteydessä
         </span>
       </span>
@@ -100,17 +97,17 @@ export const MuutoshakukelpoisuusOk = () => {
   )
 }
 
-const MuutoshakukelpoisuusDropdown = ({ muutoshakukelpoisuus }: MuutoshakukelpoisuusProps) => {
+const Dropdown = ({ result }: ValidationProps) => {
   return (
-    <div className="muutoshakukelpoisuus-dropdown">
-      {muutoshakukelpoisuus['erroneous-fields'].map((field) => (
-        <div key={field.id} className="muutoshakukelpoisuus-dropdown-item">
-          <div className="muutoshakukelpoisuus-dropdown-item-brown-box">
-            <b>Id</b> <span className="muutoshakukelpoisuus-dropdown-item-id">{field.id}</span>
+    <div className="validation-dropdown">
+      {result['erroneous-fields'].map((field) => (
+        <div key={field.id} className="validation-dropdown-item">
+          <div className="validation-dropdown-item-brown-box">
+            <b>Id</b> <span data-test-id="validation-dropdown-item-id">{field.id}</span>
           </div>
-          <div className="muutoshakukelpoisuus-dropdown-item-brown-box">
+          <div className="validation-dropdown-item-brown-box">
             <b>Selite</b>{' '}
-            <span className="muutoshakukelpoisuus-dropdown-item-label">
+            <span data-test-id="validation-dropdown-item-label">
               {field?.label || fieldLabels[field.id]}
             </span>
           </div>
@@ -120,8 +117,8 @@ const MuutoshakukelpoisuusDropdown = ({ muutoshakukelpoisuus }: Muutoshakukelpoi
   )
 }
 
-interface MuutoshakukelpoisuusProps {
-  muutoshakukelpoisuus: OnkoMuutoshakukelpoinenAvustushakuOk
+interface ValidationProps {
+  result: ValidationResult
   errorTexts?: {
     single: string
     multiple: (numberOfErrors: number) => string
@@ -132,41 +129,35 @@ let initialState = {
   open: false,
 }
 
-export const ScrollAwareMuutoshakukelpoisuusContainer = (props: MuutoshakukelpoisuusProps) => {
+export const ScrollAwareValidationContainer = (props: ValidationProps) => {
   const isScrollingUp = useScrollingUp()
   return (
-    <MuutoshakukelpoisuusContainer
+    <ValidationContainer
       {...props}
-      extraClasses={isScrollingUp ? 'muutoshakukelpoisuus-container-with-header' : undefined}
+      extraClasses={isScrollingUp ? 'validation-container-with-header' : undefined}
     />
   )
 }
 
-export const MuutoshakukelpoisuusContainer = ({
-  muutoshakukelpoisuus,
+export const ValidationContainer = ({
+  result,
   errorTexts,
   extraClasses = '',
-}: MuutoshakukelpoisuusProps & { extraClasses?: string }) => {
+}: ValidationProps & { extraClasses?: string }) => {
   const [state, setState] = useState(initialState)
-  const colorClass = muutoshakukelpoisuus['is-ok']
-    ? 'muutoshakukelpoisuus-ok'
-    : 'muutoshakukelpoisuus-warning'
+  const colorClass = result['is-ok'] ? 'validation-ok' : 'validation-warning'
 
   const controlDropdown = () => {
     setState({ open: !state.open })
   }
   return (
-    <div className={classNames('muutoshakukelpoisuus-container', colorClass, extraClasses)}>
-      {muutoshakukelpoisuus['is-ok'] ? (
-        <MuutoshakukelpoisuusOk />
+    <div className={classNames('validation-container', colorClass, extraClasses)}>
+      {result['is-ok'] ? (
+        <Ok />
       ) : (
-        <MuutoshakukelpoisuusWarning
-          muutoshakukelpoisuus={muutoshakukelpoisuus}
-          controlDropdown={controlDropdown}
-          errorTexts={errorTexts}
-        />
+        <Warning result={result} controlDropdown={controlDropdown} errorTexts={errorTexts} />
       )}
-      {state.open && <MuutoshakukelpoisuusDropdown muutoshakukelpoisuus={muutoshakukelpoisuus} />}
+      {state.open && <Dropdown result={result} />}
     </div>
   )
 }

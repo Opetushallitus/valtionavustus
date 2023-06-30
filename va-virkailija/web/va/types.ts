@@ -104,7 +104,7 @@ export interface MuutoshakemuksenVaatimaKentta {
   label?: string
 }
 
-export interface OnkoMuutoshakukelpoinenAvustushakuOk {
+export interface ValidationResult {
   'is-ok': boolean
   'ok-fields': MuutoshakemuksenVaatimaKentta[]
   'erroneous-fields': MuutoshakemuksenVaatimaKentta[]

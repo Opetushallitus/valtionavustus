@@ -2,10 +2,7 @@ import React from 'react'
 import DateUtil from 'soresu-form/web/DateUtil'
 import FormEditor from './FormEditor'
 import FormJsonEditor from './FormJsonEditor'
-import {
-  MuutoshakukelpoisuusContainer,
-  ScrollAwareMuutoshakukelpoisuusContainer,
-} from './MuutoshakukelpoisuusContainer'
+import { ValidationContainer, ScrollAwareValidationContainer } from './ValidationContainer'
 import { Field, Form } from 'soresu-form/web/va/types'
 import {
   useHakujenHallintaDispatch,
@@ -21,7 +18,7 @@ import {
 } from '../hakujenHallinta/hakuReducer'
 import { useCurrentAvustushaku } from '../hakujenHallinta/useAvustushaku'
 import FormUtil from 'soresu-form/web/form/FormUtil'
-import { OnkoMuutoshakukelpoinenAvustushakuOk } from '../types'
+import { ValidationResult } from '../types'
 
 const trustedContact = {
   name: {
@@ -37,11 +34,9 @@ const trustedContact = {
     label: 'Varayhteyshenkilön puhelinnumero',
   },
 }
-const hasVarayhteyshenkiloFields = (
-  formContent: Field[] = []
-): OnkoMuutoshakukelpoinenAvustushakuOk => {
+const hasVarayhteyshenkiloFields = (formContent: Field[] = []): ValidationResult => {
   const results = [trustedContact.name, trustedContact.email, trustedContact.phone].reduce<
-    Omit<OnkoMuutoshakukelpoinenAvustushakuOk, 'is-ok'>
+    Omit<ValidationResult, 'is-ok'>
   >(
     (acc, { fieldId, label }) => {
       const foundField = FormUtil.findField(formContent, fieldId)
@@ -84,7 +79,7 @@ const FormEditorContainer = () => {
   const formattedUpdatedDate = `${DateUtil.asDateString(updatedAt)} klo ${DateUtil.asTimeString(
     updatedAt
   )}`
-  const varayhteyshenkiloOk = hasVarayhteyshenkiloFields(formDraft?.content)
+  const varayhteyshenkiloResult = hasVarayhteyshenkiloFields(formDraft?.content)
   const onFormChange = ({ id: avustushakuId }: Avustushaku, newDraft: Form) => {
     dispatch(formUpdated({ avustushakuId, newForm: newDraft }))
     dispatch(
@@ -107,9 +102,9 @@ const FormEditorContainer = () => {
 
   return (
     <section>
-      {varayhteishenkiloEnabled && !varayhteyshenkiloOk['is-ok'] && (
-        <MuutoshakukelpoisuusContainer
-          muutoshakukelpoisuus={varayhteyshenkiloOk}
+      {varayhteishenkiloEnabled && !varayhteyshenkiloResult['is-ok'] && (
+        <ValidationContainer
+          result={varayhteyshenkiloResult}
           errorTexts={{
             single: 'Hakemukselta puuttuu varayhteyshenkilön täyttöön liittyvä kenttä.',
             multiple: (numberOfErrors) =>
@@ -118,9 +113,7 @@ const FormEditorContainer = () => {
         />
       )}
       {avustushaku.muutoshakukelpoisuus && (
-        <ScrollAwareMuutoshakukelpoisuusContainer
-          muutoshakukelpoisuus={avustushaku.muutoshakukelpoisuus}
-        />
+        <ScrollAwareValidationContainer result={avustushaku.muutoshakukelpoisuus} />
       )}
       <div dangerouslySetInnerHTML={mainHelp} />
       <div style={{ float: 'right' }}>

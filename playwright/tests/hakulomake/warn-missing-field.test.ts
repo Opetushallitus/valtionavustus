@@ -32,7 +32,7 @@ budjettimuutoshakemusTest(
     await expect(missingField).toBeVisible()
     await page.locator('text=Näytä lisätietoja').click()
     await expect(
-      page.locator('div.muutoshakukelpoisuus-warning').locator('text=financing-plan')
+      page.locator('div.validation-warning').locator('text=financing-plan')
     ).toBeVisible()
   }
 )
