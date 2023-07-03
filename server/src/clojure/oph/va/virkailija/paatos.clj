@@ -7,7 +7,6 @@
       [oph.va.decision-liitteet :as decision-liitteet]
       [oph.va.virkailija.email :as email]
       [oph.common.email :refer [refuse-url modify-url legacy-email-field-ids legacy-email-field-ids-without-contact-email]]
-      [oph.va.virkailija.hakudata :as hakudata]
       [oph.va.virkailija.db :as virkailija-db]
       [oph.va.virkailija.saved-search :as saved-search]
       [clojure.tools.logging :as log]
@@ -25,7 +24,7 @@
                        legacy-email-field-ids-without-contact-email
                        legacy-email-field-ids)]
       (or
-        (formutil/has-field-type? "vaEmailNotification" field)
+        (and (not= (:key field) "trusted-contact-email") (formutil/has-field-type? "vaEmailNotification" field))
         ;;This array is for old-style email-fields which did not yet have the :vaEmailNotification field-type
         (some #(= (:key field) %) email-fields))))
 
@@ -34,24 +33,22 @@
         emails (vec (remove nil? (distinct (map :value email-answers))))]
     emails))
 
-(defn- emails-for-hakemus-without-signatories [hakemus contact-email]
+(defn- emails-for-hakemus-without-signatories [hakemus contact-email trusted-contact-email]
   (let [submission (hakija-api/get-hakemus-submission hakemus)
         emails (emails-from-answers (get-in submission [:answers :value]) (some? contact-email))]
-    (if (some? contact-email)
-      (concat [contact-email] emails)
-      emails)))
+    (remove nil? (concat [contact-email trusted-contact-email] emails))))
 
-(defn- emails-for-hakemus-with-signatories [hakemus contact-email]
+(defn- emails-for-hakemus-with-signatories [hakemus contact-email trusted-contact-email]
   (let [submission (hakija-api/get-hakemus-submission hakemus)
         emails (emails-from-answers (flatten-answers (:answers submission) []) (some? contact-email))]
-    (if (some? contact-email)
-      (concat [contact-email] emails)
-      emails)))
+    (remove nil? (concat [contact-email trusted-contact-email] emails))))
 
 (defn- paatos-emails [hakemus-id]
   (let [hakemus (hakija-api/get-hakemus hakemus-id)
-        contact-email (virkailija-db/get-normalized-hakemus-contact-email hakemus-id)]
-    (emails-for-hakemus-with-signatories hakemus contact-email)))
+        normalized-hakemus (virkailija-db/get-normalized-hakemus hakemus-id)
+        contact-email (:contact-email normalized-hakemus)
+        trusted-contact-email (:trusted-contact-email normalized-hakemus)]
+    (emails-for-hakemus-with-signatories hakemus contact-email trusted-contact-email)))
 
 (defn send-paatokset-lahetetty [avustushaku-id ids identity]
   (let [valmistelija-emails (virkailija-db/get-valmistelija-emails-assigned-to-avustushaku avustushaku-id)
@@ -177,11 +174,13 @@
 (defn- send-selvitys-for-all [avustushaku-id selvitys-type uuid identity hakemus-id]
       (log/info "send-" selvitys-type "-for-all" hakemus-id)
       (let [hakemus (hakija-api/get-hakemus hakemus-id)
-            contact-email (virkailija-db/get-normalized-hakemus-contact-email hakemus-id)
+            normalized-hakemus (virkailija-db/get-normalized-hakemus hakemus-id)
+            contact-email (:contact-email normalized-hakemus)
+            trusted-contact-email (:trusted-contact-email normalized-hakemus)
             avustushaku (hakija-api/get-avustushaku avustushaku-id)
             roles (hakija-api/get-avustushaku-roles avustushaku-id)
             arvio (virkailija-db/get-arvio hakemus-id)
-            emails (emails-for-hakemus-without-signatories hakemus contact-email)]
+            emails (emails-for-hakemus-without-signatories hakemus contact-email trusted-contact-email)]
            (email/send-selvitys-notification! emails avustushaku hakemus selvitys-type arvio roles uuid identity)))
 
 (defn send-selvitys-emails [avustushaku-id selvitys-type uuid identity]

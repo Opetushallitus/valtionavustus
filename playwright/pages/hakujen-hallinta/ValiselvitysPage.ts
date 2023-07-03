@@ -4,7 +4,6 @@ import SelvitysTab from './CommonSelvitysPage'
 
 export const ValiselvitysPage = (page: Page) => {
   const locators = {
-    tapahtumaloki: page.locator('div.tapahtumaloki'),
     updatedAt: page.locator('#valiselvitysUpdatedAt'),
     ohje: page.getByTestId('valiselvitys-ohje'),
   }

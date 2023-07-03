@@ -445,6 +445,8 @@
   (let [lang (keyword (:language hakemus))]
     (email/enqueue-message-to-be-send {:operation :send
                                        :email-type :selvitys
+                                       :hakemus-id (:id hakemus)
+                                       :avustushaku-id (:avustushaku hakemus)
                                        :lang lang
                                        :from (-> email/smtp-config :from lang)
                                        :sender (-> email/smtp-config :sender)

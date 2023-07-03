@@ -189,9 +189,6 @@
   (let [result (first (query "SELECT COUNT(id) FROM menoluokka_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
     (> (:count result) 1)))
 
-(defn get-normalized-hakemus-contact-email [hakemus-id]
-  (:contact-email (get-normalized-hakemus hakemus-id)))
-
 (defn get-hakemus-ids-having-taydennyspyynto [avustushaku-id]
   (log/info (str "Get hakemus IDs having taydennyspyynto for avustushaku: " avustushaku-id))
   (map :id (query "SELECT distinct id

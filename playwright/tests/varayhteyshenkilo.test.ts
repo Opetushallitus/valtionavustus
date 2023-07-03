@@ -9,8 +9,15 @@ import {
   getAcceptedPäätösEmails,
   getHakemusSubmitted,
   getLinkToMuutoshakemusFromSentEmails,
+  getSelvitysEmails,
+  getValiselvitysEmails,
+  lastOrFail,
 } from '../utils/emails'
 import { HakijaMuutoshakemusPage } from '../pages/hakijaMuutoshakemusPage'
+import { VirkailijaValiselvitysPage } from '../pages/virkailijaValiselvitysPage'
+import { navigate } from '../utils/navigate'
+import { HakijaSelvitysPage } from '../pages/hakijaSelvitysPage'
+import { expectToBeDefined } from '../utils/util'
 
 const test = defaultValues.extend<MuutoshakemusFixtures>({
   answers: async ({ answers }, use) => {
@@ -208,5 +215,32 @@ test('varayhteyshenkilo flow', async ({
     await expect(sidebar.newAnswers.trustedContactName).toHaveText(newName)
     await expect(sidebar.newAnswers.trustedContactEmail).toHaveText(newEmail)
     await expect(sidebar.newAnswers.trustedContactPhone).toHaveText(newPhone)
+  })
+  await test.step('väliselvitys gets sent to varayhteyshenkilö', async () => {
+    const valiselvitysPage = await hakujenHallinta.navigateToValiselvitys(avustushakuID)
+    await valiselvitysPage.sendValiselvitys()
+    const tapahtumaloki = valiselvitysPage.commonSelvitys.tapahtumaloki
+    await expect(tapahtumaloki.getByTestId('sender-0')).toHaveText(ukotettuValmistelija)
+    await expect(tapahtumaloki.getByTestId('sent-0')).toHaveText('1')
+    const emails = await getValiselvitysEmails(hakemusID!)
+    expect(emails).toHaveLength(1)
+    expect(emails[0]['to-address']).not.toContain(answers.trustedContact!.email)
+    expect(emails[0]['to-address']).toContain(newEmail)
+    const virkailijaValiselvitysPage = VirkailijaValiselvitysPage(page)
+    await virkailijaValiselvitysPage.navigateToValiselvitysTab(avustushakuID, hakemusID!)
+    const valiselvitysUrl = await virkailijaValiselvitysPage.linkToHakemus.getAttribute('href')
+    expectToBeDefined(valiselvitysUrl)
+    await navigate(page, valiselvitysUrl)
+    const hakijaSelvitysPage = HakijaSelvitysPage(page)
+    await hakijaSelvitysPage.fillCommonValiselvitysForm()
+    await hakijaSelvitysPage.submitButton.click()
+    await expect(hakijaSelvitysPage.submitButton).toHaveText('Väliselvitys lähetetty')
+    await virkailijaValiselvitysPage.navigateToValiselvitysTab(avustushakuID, hakemusID!)
+    await virkailijaValiselvitysPage.acceptVäliselvitys()
+    const emailsAfterAcceptance = await getSelvitysEmails(avustushakuID)
+    const latestMail = lastOrFail(emailsAfterAcceptance)
+    expect(latestMail['formatted']).toContain('väliselvitys on käsitelty')
+    expect(latestMail['to-address']).not.toContain(answers.trustedContact!.email)
+    expect(latestMail['to-address']).toContain(newEmail)
   })
 })

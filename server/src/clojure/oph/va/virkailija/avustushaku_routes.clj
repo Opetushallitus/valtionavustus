@@ -152,12 +152,15 @@
                       (let [{:keys [avustushaku hakemus]} (get-hakemus-and-its-avustushaku avustushaku-id hakemus-id)
                             roles (hakija-api/get-avustushaku-roles avustushaku-id)
                             arvio (virkailija-db/get-arvio hakemus-id)
-                            contact-email (virkailija-db/get-normalized-hakemus-contact-email hakemus-id)
+                            normalized-hakemus (virkailija-db/get-normalized-hakemus hakemus-id)
+                            contact-email (:contact-email normalized-hakemus)
+                            trusted-contact-email (:trusted-contact-email normalized-hakemus)
+                            to (remove nil? [contact-email trusted-contact-email])
                             identity (authentication/get-request-identity request)
                             decider (str (:first-name identity) " " (:surname identity))
                             paatos (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)
                             token (virkailija-db/create-application-token (:id hakemus))]
-                        (email/send-muutoshakemus-paatos [contact-email] avustushaku hakemus arvio roles token muutoshakemus-id paatos)
+                        (email/send-muutoshakemus-paatos to avustushaku hakemus arvio roles token muutoshakemus-id paatos)
                         (http/ok (virkailija-db/get-muutoshakemukset hakemus-id)))))
 
 (defn- put-searches []

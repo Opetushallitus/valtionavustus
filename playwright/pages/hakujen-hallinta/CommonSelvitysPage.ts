@@ -3,6 +3,9 @@ import { Response } from 'playwright-core'
 
 export default function SelvitysTab(page: Page) {
   const titleSelector = '[name="applicant-info-label-fi"]'
+  const locators = {
+    tapahtumaloki: page.locator('div.tapahtumaloki'),
+  }
 
   async function save() {
     await Promise.all([
@@ -52,5 +55,6 @@ export default function SelvitysTab(page: Page) {
     setSelvitysTitleFi,
     openFormPreviewFi,
     openFormPreviewSv,
+    ...locators,
   }
 }

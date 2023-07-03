@@ -45,7 +45,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
         valiselvitysPage.sendValiselvitys(),
       ])
     })
-    const tapahtumaloki = valiselvitysPage.locators.tapahtumaloki
+    const tapahtumaloki = valiselvitysPage.commonSelvitys.tapahtumaloki
     await test.step('updates tapahtumaloki', async () => {
       await expect(tapahtumaloki.getByTestId('sender-0')).toHaveText(ukotettuValmistelija)
       await expect(tapahtumaloki.getByTestId('sent-0')).toHaveText('1')
@@ -67,27 +67,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
       if (!väliselvitysFormUrl) throw Error('valiselvitys form url not found')
       await navigate(page, väliselvitysFormUrl)
       const hakijaSelvitysPage = HakijaSelvitysPage(page)
-      await hakijaSelvitysPage.organization.fill('Avustuksen saajan nimi')
-      await hakijaSelvitysPage.projectName.fill('Hankkeen nimi')
-
-      await hakijaSelvitysPage.projectGoal.fill('Hankkeen/toiminnan tavoite')
-      await hakijaSelvitysPage.projectActivity.fill('Toiminta, jolla tavoitteeseen on pyritty')
-      await hakijaSelvitysPage.projectResult.fill(
-        'Konkreettiset tulokset, jotka tavoitteen osalta saavutettiin'
-      )
-
-      await hakijaSelvitysPage
-        .textArea(1)
-        .fill('Miten hankkeen toimintaa, tuloksia ja vaikutuksia on arvioitu?')
-      await hakijaSelvitysPage.textArea(3).fill('Miten hankkeesta/toiminnasta on tiedotettu?')
-
-      await hakijaSelvitysPage.outcomeTypeRadioButtons.report.click()
-      await hakijaSelvitysPage.outcomeDescription.fill('Kuvaus')
-      await hakijaSelvitysPage.outcomeAddress.fill('Saatavuustiedot, www-osoite tms.')
-      await hakijaSelvitysPage.goodPracticesRadioButtons.no.click()
-      await hakijaSelvitysPage.textArea(4).fill('Lisätietoja')
-      await hakijaSelvitysPage.firstAttachment.setInputFiles(dummyPdfPath)
-
+      await hakijaSelvitysPage.fillCommonValiselvitysForm()
       await expect(hakijaSelvitysPage.valiselvitysWarning).toBeHidden()
       await expect(hakijaSelvitysPage.submitButton).toHaveText('Lähetä käsiteltäväksi')
       await hakijaSelvitysPage.submitButton.click()

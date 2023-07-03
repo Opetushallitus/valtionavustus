@@ -65,6 +65,9 @@ export const getMuutoshakemusEmails = getEmails('paatos-refuse')
 export const getAcceptedPäätösEmails = getMuutoshakemusEmails
 export const getValiselvitysEmails = getEmails('valiselvitys-notification')
 export const getValiselvitysEmailsForAvustus = getEmailsWithAvustushaku('valiselvitys-notification')
+
+export const getSelvitysEmails = getEmailsWithAvustushaku('selvitys')
+
 export const getValiselvitysSubmittedNotificationEmails = getEmails(
   'valiselvitys-submitted-notification'
 )
