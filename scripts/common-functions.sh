@@ -11,7 +11,7 @@ readonly COMMON_FUNCTIONS_SOURCED="true"
 repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )" && readonly repo
 readonly VA_SECRETS_REPO="$repo/../valtionavustus-secret"
 node_version="$(cat "$repo/.nvmrc")" && readonly node_version
-readonly ansible_version="4.6.0"
+readonly ansible_version="8.1.0"
 readonly python_version="3.9.0"
 readonly local_docker_namespace="va"
 
