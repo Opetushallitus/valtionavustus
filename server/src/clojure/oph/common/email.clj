@@ -67,7 +67,12 @@
                                    :email-type email-type
                                    :lang       lang})
                   (not-empty email-msg)))
-    ((log/info "Failed to store invalid email")
+    ((log/info "Failed to store invalid email" (msg->description {:from       from
+                                                                  :sender     sender
+                                                                  :to         to
+                                                                  :subject    subject
+                                                                  :email-type email-type
+                                                                  :lang       lang}))
      (throw (Exception. "Failed to store invalid email"))))
   (let [from (common-string/trim-ws from)
         sender (common-string/trim-ws sender)
