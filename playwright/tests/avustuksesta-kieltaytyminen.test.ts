@@ -68,9 +68,10 @@ test('Avustuksesta kieltäytyminen', async ({
   await test.step('sends only one loppuselvityspyyntö', async () => {
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.navigateFromHeader()
-    await hakujenHallintaPage.commonHakujenHallinta.switchToLoppuselvitysTab()
+    const loppuselvitysTab =
+      await hakujenHallintaPage.commonHakujenHallinta.switchToLoppuselvitysTab()
     expect(await getLoppuselvitysEmailsForAvustus(avustushakuID)).toHaveLength(0)
-    await hakujenHallintaPage.sendLoppuselvitys(1)
+    await loppuselvitysTab.sendSelvitysPyynnot(1)
     expect(await getLoppuselvitysEmailsForAvustus(avustushakuID)).toHaveLength(1)
   })
 })

@@ -1,5 +1,4 @@
 import { expect, test } from '@playwright/test'
-import { VirkailijaValiselvitysPage } from '../../pages/virkailijaValiselvitysPage'
 import { expectToBeDefined, waitForNewTab } from '../../utils/util'
 import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
 
@@ -13,6 +12,7 @@ import { HAKIJA_URL } from '../../utils/constants'
 import { HakijaSelvitysPage } from '../../pages/hakijaSelvitysPage'
 import { selvitysTest } from '../../fixtures/selvitysTest'
 import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
+import { ValiselvitysPage } from '../../pages/hakujen-hallinta/ValiselvitysPage'
 
 test.describe('Väliselvitys', () => {
   selvitysTest(
@@ -71,7 +71,7 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
         )
       })
 
-      const valiselvitysPage = VirkailijaValiselvitysPage(page)
+      const valiselvitysPage = ValiselvitysPage(page)
       await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, acceptedHakemus.hakemusID)
       await test.step('hakija could still edit väliselvitys', async () => {
         const [newPage] = await Promise.all([
@@ -87,7 +87,7 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
 
       await test.step('tarkasta väliselvitys', async () => {
         await expect(page.getByTestId('selvitys-email')).toBeVisible()
-        await valiselvitysPage.acceptVäliselvitys()
+        await valiselvitysPage.acceptSelvitys()
       })
 
       await test.step('väliselvitys accepted email is sent to primary and organization emails', async () => {
@@ -133,9 +133,9 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
     'väliselvitys cannot be edited after it has been accepted',
     async ({ context, page, avustushakuID, acceptedHakemus, väliselvitysSubmitted }) => {
       expectToBeDefined(väliselvitysSubmitted)
-      const valiselvitysPage = VirkailijaValiselvitysPage(page)
+      const valiselvitysPage = ValiselvitysPage(page)
       await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, acceptedHakemus.hakemusID)
-      await valiselvitysPage.acceptVäliselvitys()
+      await valiselvitysPage.acceptSelvitys()
       const valiselvitysFormUrl = await valiselvitysPage.linkToHakemus.getAttribute('href')
       if (!valiselvitysFormUrl) throw Error('väliselvitys form url not found')
       const [newPage] = await Promise.all([
@@ -152,7 +152,7 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
 selvitysTest(
   'Valiselvitys tab in hakemuksen arviointi should have link to hakemus form',
   async ({ page, avustushakuID, acceptedHakemus: { hakemusID } }) => {
-    const valiselvitysPage = VirkailijaValiselvitysPage(page)
+    const valiselvitysPage = ValiselvitysPage(page)
     await test.step('warning is shown before sending loppuselvitykset', async () => {
       await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, hakemusID)
       await expect(valiselvitysPage.warning).toBeVisible()

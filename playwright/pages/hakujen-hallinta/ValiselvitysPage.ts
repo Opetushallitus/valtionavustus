@@ -15,6 +15,6 @@ export const ValiselvitysPage = (page: Page) => {
     locators,
     sendValiselvitys,
     hakulomakePage: HakulomakePage(page),
-    commonSelvitys: SelvitysTab(page),
+    ...SelvitysTab(page, 'vali'),
   }
 }

@@ -17,8 +17,8 @@ test('Loppuselvitys tab in hakemuksen arviointi should have link to correct lopp
   })
   await test.step('send loppuselvitykset', async () => {
     const hakujenHallintaPage = new HakujenHallintaPage(page)
-    await hakujenHallintaPage.navigateToLoppuselvitys(avustushakuID)
-    await hakujenHallintaPage.sendLoppuselvitys()
+    const loppuselvitysTab = await hakujenHallintaPage.navigateToLoppuselvitys(avustushakuID)
+    await loppuselvitysTab.sendLoppuselvitys()
   })
   await test.step('warning is hidden, link and lomake work', async () => {
     await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)

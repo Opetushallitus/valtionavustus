@@ -40,8 +40,8 @@ test('Älä lähetä selvityspyyntöjä jos hakemus on kekeytetty aloittamatta',
   })
   await test.step('no loppuselvitys email', async () => {
     await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.switchToLoppuselvitysTab()
-    await hakujenHallintaPage.sendLoppuselvitys(0)
+    const loppuselvitysTab = await hakujenHallintaPage.switchToLoppuselvitysTab()
+    await loppuselvitysTab.sendLoppuselvitys(0)
     const emails = await waitUntilMinEmails(getLoppuselvitysEmails, 0, acceptedHakemus.hakemusID)
     expect(emails).toHaveLength(0)
   })

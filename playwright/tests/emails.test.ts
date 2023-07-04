@@ -182,8 +182,8 @@ test('sends emails to correct contact and hakemus emails', async ({
     expect(email.cc).toStrictEqual([])
   })
   await test.step('sends loppuselvitys email', async () => {
-    await hakujenHallintaPage.switchToLoppuselvitysTab()
-    await hakujenHallintaPage.sendLoppuselvitys(1)
+    const loppuselvitysTab = await hakujenHallintaPage.switchToLoppuselvitysTab()
+    await loppuselvitysTab.sendSelvitysPyynnot(1)
     const emails = await waitUntilMinEmails(getLoppuselvitysEmails, 1, hakemusID)
     expect(emails).toHaveLength(1)
     const email = lastOrFail(emails)

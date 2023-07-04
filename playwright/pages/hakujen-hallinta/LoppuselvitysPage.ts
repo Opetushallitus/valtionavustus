@@ -1,7 +1,5 @@
 import { expect, Page } from '@playwright/test'
 import SelvitysTab from './CommonSelvitysPage'
-import { navigate } from '../../utils/navigate'
-import { SelvitysTab as SelvitysTabRefactor } from '../virkailijaValiselvitysPage'
 
 export const LoppuselvitysPage = (page: Page) => {
   const locators = {
@@ -13,11 +11,6 @@ export const LoppuselvitysPage = (page: Page) => {
     taloustarkastettu: page.getByRole('heading', {
       name: 'Taloustarkastettu ja lähetetty hakijalle',
     }),
-  }
-
-  async function navigateToLoppuselvitysTab(avustushakuID: number, hakemusID: number) {
-    await navigate(page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/loppuselvitys/`)
-    await expect(page.getByTestId('hakemus-details-loppuselvitys')).toBeVisible()
   }
 
   async function getSelvitysFormUrl() {
@@ -48,12 +41,10 @@ export const LoppuselvitysPage = (page: Page) => {
 
   return {
     locators,
-    navigateToLoppuselvitysTab,
-    acceptLoppuselvitys: SelvitysTabRefactor(page, 'loppu').acceptSelvitys,
     getSelvitysFormUrl,
     sendLoppuselvitys,
-    commonSelvitys: SelvitysTab(page),
     asiatarkastaLoppuselvitys,
     taloustarkastaLoppuselvitys,
+    ...SelvitysTab(page, 'loppu'),
   }
 }

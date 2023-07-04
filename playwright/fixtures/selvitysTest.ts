@@ -1,12 +1,12 @@
 import { muutoshakemusTest } from './muutoshakemusTest'
 import { clearAndType, expectToBeDefined, waitForElementWithText } from '../utils/util'
 import { dummyPdfPath, VIRKAILIJA_URL } from '../utils/constants'
-import { VirkailijaValiselvitysPage } from '../pages/virkailijaValiselvitysPage'
 import { navigate } from '../utils/navigate'
 import { HakijaSelvitysPage } from '../pages/hakijaSelvitysPage'
 import { expect, test } from '@playwright/test'
 import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
 import { LoppuselvitysPage } from '../pages/hakujen-hallinta/LoppuselvitysPage'
+import { ValiselvitysPage } from '../pages/hakujen-hallinta/ValiselvitysPage'
 
 interface SelvitysFixtures {
   väliselvityspyyntöSent: {}
@@ -45,7 +45,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
         valiselvitysPage.sendValiselvitys(),
       ])
     })
-    const tapahtumaloki = valiselvitysPage.commonSelvitys.tapahtumaloki
+    const tapahtumaloki = valiselvitysPage.tapahtumaloki
     await test.step('updates tapahtumaloki', async () => {
       await expect(tapahtumaloki.getByTestId('sender-0')).toHaveText(ukotettuValmistelija)
       await expect(tapahtumaloki.getByTestId('sent-0')).toHaveText('1')
@@ -61,7 +61,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     let userKey: string | null = null
     await muutoshakemusTest.step('Fill in and submit väliselvitys', async () => {
       expectToBeDefined(väliselvityspyyntöSent)
-      const valiselvitysPage = VirkailijaValiselvitysPage(page)
+      const valiselvitysPage = ValiselvitysPage(page)
       await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, acceptedHakemus.hakemusID)
       const väliselvitysFormUrl = await valiselvitysPage.linkToHakemus.getAttribute('href')
       if (!väliselvitysFormUrl) throw Error('valiselvitys form url not found')

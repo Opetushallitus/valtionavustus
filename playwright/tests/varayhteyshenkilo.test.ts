@@ -15,11 +15,11 @@ import {
   lastOrFail,
 } from '../utils/emails'
 import { HakijaMuutoshakemusPage } from '../pages/hakijaMuutoshakemusPage'
-import { VirkailijaValiselvitysPage } from '../pages/virkailijaValiselvitysPage'
 import { navigate } from '../utils/navigate'
 import { HakijaSelvitysPage } from '../pages/hakijaSelvitysPage'
 import { expectToBeDefined } from '../utils/util'
 import { LoppuselvitysPage } from '../pages/hakujen-hallinta/LoppuselvitysPage'
+import { ValiselvitysPage } from '../pages/hakujen-hallinta/ValiselvitysPage'
 
 const test = defaultValues.extend<MuutoshakemusFixtures>({
   answers: async ({ answers }, use) => {
@@ -221,14 +221,14 @@ test('varayhteyshenkilo flow', async ({
   await test.step('väliselvitys gets sent to varayhteyshenkilö', async () => {
     const valiselvitysPage = await hakujenHallinta.navigateToValiselvitys(avustushakuID)
     await valiselvitysPage.sendValiselvitys()
-    const tapahtumaloki = valiselvitysPage.commonSelvitys.tapahtumaloki
+    const tapahtumaloki = valiselvitysPage.tapahtumaloki
     await expect(tapahtumaloki.getByTestId('sender-0')).toHaveText(ukotettuValmistelija)
     await expect(tapahtumaloki.getByTestId('sent-0')).toHaveText('1')
     const emails = await getValiselvitysEmails(hakemusID!)
     expect(emails).toHaveLength(1)
     expect(emails[0]['to-address']).not.toContain(answers.trustedContact!.email)
     expect(emails[0]['to-address']).toContain(newEmail)
-    const virkailijaValiselvitysPage = VirkailijaValiselvitysPage(page)
+    const virkailijaValiselvitysPage = ValiselvitysPage(page)
     await virkailijaValiselvitysPage.navigateToValiselvitysTab(avustushakuID, hakemusID!)
     const valiselvitysUrl = await virkailijaValiselvitysPage.linkToHakemus.getAttribute('href')
     expectToBeDefined(valiselvitysUrl)
@@ -238,7 +238,7 @@ test('varayhteyshenkilo flow', async ({
     await hakijaSelvitysPage.submitButton.click()
     await expect(hakijaSelvitysPage.submitButton).toHaveText('Väliselvitys lähetetty')
     await virkailijaValiselvitysPage.navigateToValiselvitysTab(avustushakuID, hakemusID!)
-    await virkailijaValiselvitysPage.acceptVäliselvitys()
+    await virkailijaValiselvitysPage.acceptSelvitys()
     const emailsAfterAcceptance = await getSelvitysEmails(avustushakuID)
     const latestMail = lastOrFail(emailsAfterAcceptance)
     expect(latestMail['formatted']).toContain('väliselvitys on käsitelty')
@@ -248,7 +248,7 @@ test('varayhteyshenkilo flow', async ({
   await test.step('loppuselvitys gets sent to varayhteyshenkilö', async () => {
     const loppuselvitysPage = await hakujenHallinta.navigateToLoppuselvitys(avustushakuID)
     await loppuselvitysPage.sendLoppuselvitys()
-    const tapahtumaloki = loppuselvitysPage.commonSelvitys.tapahtumaloki
+    const tapahtumaloki = loppuselvitysPage.tapahtumaloki
     await expect(tapahtumaloki.getByTestId('sender-0')).toHaveText(ukotettuValmistelija)
     await expect(tapahtumaloki.getByTestId('sent-0')).toHaveText('1')
     const emails = await getLoppuselvitysEmails(hakemusID!)
@@ -257,8 +257,7 @@ test('varayhteyshenkilo flow', async ({
     expect(emails[0]['to-address']).toContain(newEmail)
     const virkailijaLoppuselvitysPage = LoppuselvitysPage(page)
     await virkailijaLoppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID!)
-    const loppuselvitysUrl =
-      await virkailijaLoppuselvitysPage.commonSelvitys.linkToHakemus.getAttribute('href')
+    const loppuselvitysUrl = await virkailijaLoppuselvitysPage.linkToHakemus.getAttribute('href')
     expectToBeDefined(loppuselvitysUrl)
     await navigate(page, loppuselvitysUrl)
     const hakijaSelvitysPage = HakijaSelvitysPage(page)

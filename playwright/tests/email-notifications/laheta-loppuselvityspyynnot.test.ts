@@ -66,8 +66,8 @@ async function expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(
 
 async function sendLoppuselvitysEmails(page: Page, avustushakuID: number) {
   const hakujenHallintaPage = new HakujenHallintaPage(page)
-  await hakujenHallintaPage.navigateToLoppuselvitys(avustushakuID)
-  await hakujenHallintaPage.sendLoppuselvitys()
+  const loppuselvitysTab = await hakujenHallintaPage.navigateToLoppuselvitys(avustushakuID)
+  await loppuselvitysTab.sendSelvitysPyynnot()
 }
 
 test.describe.parallel('loppuselvitys', () => {

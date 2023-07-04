@@ -118,11 +118,6 @@ export class HakujenHallintaPage {
     return LoppuselvitysPage(this.page)
   }
 
-  async sendLoppuselvitys(expectedAmount = 1) {
-    await this.page.click('text="Lähetä loppuselvityspyynnöt"')
-    await this.page.waitForSelector(`text="Lähetetty ${expectedAmount} viestiä"`)
-  }
-
   async waitForSave() {
     await waitForSave(this.page)
   }

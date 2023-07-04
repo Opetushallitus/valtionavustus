@@ -7,7 +7,6 @@ import { VIRKAILIJA_URL } from '../../utils/constants'
 import { MaksatuksetPage } from '../../pages/hakujen-hallinta/maksatuksetPage'
 import { HakujenHallintaPage, Installment } from '../../pages/hakujenHallintaPage'
 import { NoProjectCodeProvided } from '../../utils/types'
-import { VirkailijaValiselvitysPage } from '../../pages/virkailijaValiselvitysPage'
 import moment from 'moment'
 import { randomString } from '../../utils/random'
 import { expectToBeDefined } from '../../utils/util'
@@ -17,6 +16,7 @@ import {
   getAllMaksatuksetFromMaksatuspalvelu,
   putMaksupalauteToMaksatuspalveluAndProcessIt,
 } from './maksatuspalvelu'
+import { ValiselvitysPage } from '../../pages/hakujen-hallinta/ValiselvitysPage'
 
 const correctOVTTest = test.extend({
   codes: async ({ page }, use) => {
@@ -85,7 +85,7 @@ test.describe('Maksatukset', () => {
       acceptedHakemus: { hakemusID },
       talousarviotili,
     }) => {
-      const valiselvitysPage = VirkailijaValiselvitysPage(page)
+      const valiselvitysPage = ValiselvitysPage(page)
 
       const SECOND_INSTALLMENT = '30000'
       await test.step(`lisää toinen maksatuserä (${SECOND_INSTALLMENT} e)`, async () => {
