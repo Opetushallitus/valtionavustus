@@ -102,9 +102,10 @@
                                        :end-time end-time-string
                                        :url url})))
 
-(defn generate-refused-email [lang recipients grant-name]
+(defn generate-refused-email [lang recipients grant-name hakemus-id]
   {:operation :send
    :email-type :application-refused
+   :hakemus-id hakemus-id
    :lang lang
    :from (get-in email/smtp-config [:from lang])
    :sender (:sender email/smtp-config)
@@ -112,9 +113,9 @@
    :to recipients
    :grant-name grant-name})
 
-(defn send-refused-message! [lang recipients grant-name]
+(defn send-refused-message! [lang recipients grant-name hakemus-id]
   (email/enqueue-message-to-be-send
-       (generate-refused-email lang recipients grant-name)))
+       (generate-refused-email lang recipients grant-name hakemus-id)))
 
 (defn generate-presenter-refused-email [recipients grant application-id]
   (let [url (email/generate-virkailija-url (:id grant) application-id)

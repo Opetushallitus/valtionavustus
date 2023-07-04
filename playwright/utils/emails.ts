@@ -92,6 +92,8 @@ export const getLoppuselvitysAsiatarkastamattaEmails = getEmailsWithAvustushaku(
 export const getValiselvitysPalauttamattaEmails = getEmails('valiselvitys-palauttamatta')
 export const getYhteystiedotMuutettuEmails = getEmails('hakemus-edited-after-applicant-edit')
 export const getPaatoksetLahetettyEmails = getEmailsWithAvustushaku('paatokset-lahetetty')
+
+export const getAvustushakuRefusedEmails = getEmails('application-refused')
 export const getMuutoshakemuksetKasittelemattaEmails = async (
   ukotettuEmailAddress: string,
   avustushakuID: number

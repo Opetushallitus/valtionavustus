@@ -257,16 +257,22 @@
            (not (:refused hakemus)))
       (do
         (with-tx (fn [tx] (va-db/refuse-application tx (:id hakemus) comment)))
-        (let [virkailija-roles (get-valmistelijas-for-avustushaku (:id avustushaku))]
+        (let [
+              virkailija-roles (get-valmistelijas-for-avustushaku (:id avustushaku))
+              normalized-hakemus (va-db/get-normalized-hakemus hakemus-id)
+              contact-email (:contact-email normalized-hakemus)
+              trusted-contact-email (:trusted-contact-email normalized-hakemus)
+              answer-email (find-answer-value (:answers submission) "primary-email")
+              primary-contact-email (or contact-email answer-email)
+              to (remove nil? (concat [primary-contact-email trusted-contact-email]))
+              ]
           (when (some #(when (some? (:email %)) true) virkailija-roles)
             (va-email/send-refused-message-to-presenter!
              (map :email (filter #(some? (:email %)) virkailija-roles))
              avustushaku
-             (:id hakemus))))
-        (when-let [email (find-answer-value
-                          (:answers submission) "primary-email")]
-          (va-email/send-refused-message!
-           lang [email] (get-in avustushaku [:content :name lang])))
+             (:id hakemus)))
+          (when (< 0 (count to))
+            (va-email/send-refused-message! lang to (get-in avustushaku [:content :name lang]) (:id hakemus))))
         (hakemus-ok-response (va-db/get-hakemus hakemus-id) submission {} nil))
       :else (hakemus-conflict-response hakemus))))
 
