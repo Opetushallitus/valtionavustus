@@ -57,9 +57,27 @@ export const HakijaSelvitysPage = (page: Page) => {
     await locators.textArea(4).fill('Lisätietoja')
     await locators.firstAttachment.setInputFiles(dummyPdfPath)
   }
+  const fillCommonLoppuselvitysForm = async () => {
+    await locators.textArea(0).fill('Yhteenveto')
+    await locators.textArea(2).fill('Työn jako')
+    await locators.projectGoal.fill('Tavoite')
+    await locators.projectActivity.fill('Toiminta')
+    await locators.projectResult.fill('Tulokset')
+    await locators.textArea(1).fill('Arviointi')
+    await locators.textArea(3).fill('Tiedotus')
 
+    await locators.outcomeTypeRadioButtons.operatingModel.click()
+    await locators.outcomeDescription.fill('Kuvaus')
+    await locators.outcomeAddress.fill('Saatavuustiedot')
+
+    await locators.goodPracticesRadioButtons.no.click()
+    await locators.textArea(4).fill('Lisätietoja')
+
+    await locators.firstAttachment.setInputFiles(dummyPdfPath)
+  }
   return {
     ...locators,
     fillCommonValiselvitysForm,
+    fillCommonLoppuselvitysForm,
   }
 }

@@ -5,7 +5,7 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
 import Translator from 'soresu-form/web/form/Translator'
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
-import { Answer, Avustushaku, Hakemus, Selvitys } from 'soresu-form/web/va/types'
+import { Avustushaku, Hakemus, Selvitys } from 'soresu-form/web/va/types'
 import { Language } from 'soresu-form/web/va/i18n/translations'
 import translations from '../../../../server/resources/public/translations.json'
 
@@ -19,6 +19,7 @@ import {
   loadSelvitys,
   refreshHakemukset,
 } from '../hakemustenArviointi/arviointiReducer'
+import { initialRecipientEmails } from './emailRecipients'
 
 interface ValiselvitysEmailProps {
   avustushaku: Avustushaku
@@ -30,7 +31,7 @@ interface ValiselvitysEmailProps {
 
 type Email = { value: string; isValid: boolean }
 
-const makeRecipientEmail = (value = '') => ({
+const makeFormRecipientEmail = (value = '') => ({
   value,
   isValid: !SyntaxValidator.validateEmail(value),
 })
@@ -60,26 +61,6 @@ function initialSubject(props: ValiselvitysEmailProps) {
   })
 }
 
-function initialRecipientEmails(props: ValiselvitysEmailProps, varayhteyshenkiloEnabled = false) {
-  const normalizedVarayhteyshenkiloEmail = props.hakemus.normalizedData?.['trusted-contact-email']
-  const isVarayhteyshenkiloEmailField = (answer: Answer) =>
-    varayhteyshenkiloEnabled && !normalizedVarayhteyshenkiloEmail
-      ? answer.key === 'trusted-contact-email'
-      : false
-  const emailsFromAnswers = props.hakemus.answers
-    .filter(
-      (a) =>
-        a.key === 'primary-email' ||
-        a.key === 'organization-email' ||
-        isVarayhteyshenkiloEmailField(a)
-    )
-    .map((a) => makeRecipientEmail(a.value))
-  if (normalizedVarayhteyshenkiloEmail) {
-    return [...emailsFromAnswers, makeRecipientEmail(normalizedVarayhteyshenkiloEmail)]
-  }
-  return emailsFromAnswers
-}
-
 export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
   const { avustushaku, lang, valiselvitys, hakemus } = props
   const dispatch = useHakemustenArviointiDispatch()
@@ -89,13 +70,15 @@ export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
   const [message, setMessage] = useState<string>(initialMessage(props))
   const [subject, setSubject] = useState<string>(initialSubject(props))
   const [recipientEmails, setRecipientEmails] = useState<Email[]>(
-    initialRecipientEmails(props, varayhteyshenkiloEnabled)
+    initialRecipientEmails(hakemus.answers, hakemus.normalizedData, varayhteyshenkiloEnabled).map(
+      makeFormRecipientEmail
+    )
   )
 
   function onRecipientEmailChange(index: number, event: React.ChangeEvent<HTMLInputElement>) {
     const value = event.target.value
     const newRecipients = new Array(...recipientEmails)
-    newRecipients.splice(index, 1, makeRecipientEmail(value))
+    newRecipients.splice(index, 1, makeFormRecipientEmail(value))
     setRecipientEmails(newRecipients)
   }
 

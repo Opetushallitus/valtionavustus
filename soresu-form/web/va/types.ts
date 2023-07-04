@@ -238,6 +238,14 @@ export interface LoadedHakemusData {
   accessControl: HakemusAccessControl
 }
 
+export interface HakemusSelvitys {
+  attachments: unknown
+  loppuselvitysForm?: ImmutableObject<Form>
+  loppuselvitys: Selvitys
+  valiselvitysForm?: ImmutableObject<Form>
+  valiselvitys: Selvitys
+}
+
 export interface Hakemus {
   id: number
   answers: Answer[]
@@ -258,13 +266,7 @@ export interface Hakemus {
   muutoshakemusUrl: string
   muutoshakemukset?: Muutoshakemus[]
   normalizedData?: NormalizedHakemusData
-  selvitys?: {
-    attachments: unknown
-    loppuselvitysForm?: ImmutableObject<Form>
-    loppuselvitys: Selvitys
-    valiselvitysForm?: ImmutableObject<Form>
-    valiselvitys: Selvitys
-  }
+  selvitys?: HakemusSelvitys
   version: number
   'submitted-version'?: number
   'version-date': string

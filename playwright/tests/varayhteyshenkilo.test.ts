@@ -9,6 +9,7 @@ import {
   getAcceptedPäätösEmails,
   getHakemusSubmitted,
   getLinkToMuutoshakemusFromSentEmails,
+  getLoppuselvitysEmails,
   getSelvitysEmails,
   getValiselvitysEmails,
   lastOrFail,
@@ -18,6 +19,7 @@ import { VirkailijaValiselvitysPage } from '../pages/virkailijaValiselvitysPage'
 import { navigate } from '../utils/navigate'
 import { HakijaSelvitysPage } from '../pages/hakijaSelvitysPage'
 import { expectToBeDefined } from '../utils/util'
+import { LoppuselvitysPage } from '../pages/hakujen-hallinta/LoppuselvitysPage'
 
 const test = defaultValues.extend<MuutoshakemusFixtures>({
   answers: async ({ answers }, use) => {
@@ -240,6 +242,35 @@ test('varayhteyshenkilo flow', async ({
     const emailsAfterAcceptance = await getSelvitysEmails(avustushakuID)
     const latestMail = lastOrFail(emailsAfterAcceptance)
     expect(latestMail['formatted']).toContain('väliselvitys on käsitelty')
+    expect(latestMail['to-address']).not.toContain(answers.trustedContact!.email)
+    expect(latestMail['to-address']).toContain(newEmail)
+  })
+  await test.step('loppuselvitys gets sent to varayhteyshenkilö', async () => {
+    const loppuselvitysPage = await hakujenHallinta.navigateToLoppuselvitys(avustushakuID)
+    await loppuselvitysPage.sendLoppuselvitys()
+    const tapahtumaloki = loppuselvitysPage.commonSelvitys.tapahtumaloki
+    await expect(tapahtumaloki.getByTestId('sender-0')).toHaveText(ukotettuValmistelija)
+    await expect(tapahtumaloki.getByTestId('sent-0')).toHaveText('1')
+    const emails = await getLoppuselvitysEmails(hakemusID!)
+    expect(emails).toHaveLength(1)
+    expect(emails[0]['to-address']).not.toContain(answers.trustedContact!.email)
+    expect(emails[0]['to-address']).toContain(newEmail)
+    const virkailijaLoppuselvitysPage = LoppuselvitysPage(page)
+    await virkailijaLoppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID!)
+    const loppuselvitysUrl =
+      await virkailijaLoppuselvitysPage.commonSelvitys.linkToHakemus.getAttribute('href')
+    expectToBeDefined(loppuselvitysUrl)
+    await navigate(page, loppuselvitysUrl)
+    const hakijaSelvitysPage = HakijaSelvitysPage(page)
+    await hakijaSelvitysPage.fillCommonLoppuselvitysForm()
+    await hakijaSelvitysPage.submitButton.click()
+    await expect(hakijaSelvitysPage.submitButton).toHaveText('Loppuselvitys lähetetty')
+    await virkailijaLoppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID!)
+    await virkailijaLoppuselvitysPage.asiatarkastaLoppuselvitys('Ok')
+    await virkailijaLoppuselvitysPage.taloustarkastaLoppuselvitys()
+    const emailsAfterAcceptance = await getSelvitysEmails(avustushakuID)
+    const latestMail = lastOrFail(emailsAfterAcceptance)
+    expect(latestMail['subject']).toContain('Loppuselvitys')
     expect(latestMail['to-address']).not.toContain(answers.trustedContact!.email)
     expect(latestMail['to-address']).toContain(newEmail)
   })

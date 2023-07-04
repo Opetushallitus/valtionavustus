@@ -1,14 +1,22 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { UserInfo } from '../types'
 import { Language } from 'soresu-form/web/va/i18n/translations'
-import { Hakemus, Answer, Selvitys, SelvitysEmail } from 'soresu-form/web/va/types'
+import { Hakemus, Selvitys, SelvitysEmail } from 'soresu-form/web/va/types'
 import { IconTrashcan } from 'soresu-form/web/va/img/IconTrashcan'
 
 import './TaloustarkastusEmail.less'
 import { VerificationBox } from './VerificationBox'
-import { useHakemustenArviointiDispatch } from '../hakemustenArviointi/arviointiStore'
-import { loadSelvitys, refreshHakemukset } from '../hakemustenArviointi/arviointiReducer'
+import {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from '../hakemustenArviointi/arviointiStore'
+import {
+  getLoadedState,
+  loadSelvitys,
+  refreshHakemukset,
+} from '../hakemustenArviointi/arviointiReducer'
+import { initialRecipientEmails } from './emailRecipients'
 
 type TaloustarkastusEmailProps = {
   avustushakuId: number
@@ -32,35 +40,33 @@ export const TaloustarkastusEmail = ({
   const senderName = userInfo['first-name'].split(' ')[0] + ' ' + userInfo['surname']
   const projectName = loppuselvitys['project-name'] || hakemus['project-name'] || ''
   const registerNumber = loppuselvitys['register-number'] || ''
-  const emailAnswers = flattenAnswers(loppuselvitys.answers?.concat(hakemus.answers) || []).filter(
-    (answer) => answer.key && answer.key.includes('email')
-  )
-  const organizationEmail = emailAnswers.find((a) => a.key === 'organization-email')
-  const primaryEmail = emailAnswers.find((a) => a.key === 'primary-email')
   const selvitysEmail = loppuselvitys['selvitys-email']
-
-  const [email, setEmail] = useState(
-    taloustarkastettu && selvitysEmail
+  const varayhteyshenkiloEnabled = useHakemustenArviointiSelector(
+    (state) => getLoadedState(state.arviointi).environment['backup-contact-person']?.['enabled?']
+  )
+  const isTaloustarkastettu = taloustarkastettu && selvitysEmail !== undefined
+  const [email, setEmail] = useState(() =>
+    isTaloustarkastettu
       ? sentEmail(lang, selvitysEmail)
-      : initialEmail(lang, projectName, avustushakuName, registerNumber, senderName, userInfo)
+      : {
+          lang,
+          subject: createEmailSubject(registerNumber)[lang],
+          content: createEmailContent(projectName, avustushakuName, senderName, userInfo.email)[
+            lang
+          ],
+          receivers: initialRecipientEmails(
+            (loppuselvitys.answers ?? []).concat(hakemus.answers),
+            hakemus.normalizedData,
+            varayhteyshenkiloEnabled
+          ),
+        }
   )
 
   useEffect(() => {
-    if (taloustarkastettu && selvitysEmail) {
-      setEmail((email) => ({
-        ...email,
-        receivers: selvitysEmail.to,
-        subject: selvitysEmail.subject,
-        message: selvitysEmail.message,
-      }))
-    } else {
-      const receivers: string[] = []
-      organizationEmail && receivers.push(organizationEmail.value)
-      primaryEmail && receivers.push(primaryEmail.value)
-
-      setEmail((email) => ({ ...email, receivers }))
+    if (isTaloustarkastettu) {
+      sentEmail(lang, selvitysEmail)
     }
-  }, [organizationEmail, primaryEmail, selvitysEmail])
+  }, [isTaloustarkastettu, lang])
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -225,26 +231,6 @@ function createEmailSubject(registerNumber: string) {
   return {
     fi: createEmailSubjectFi(registerNumber),
     sv: createEmailSubjectSv(registerNumber),
-  }
-}
-
-function flattenAnswers(answers: Answer[]): Answer[] {
-  return answers.flatMap((a) => (Array.isArray(a.value) ? flattenAnswers(a.value) : a))
-}
-
-function initialEmail(
-  lang: Language,
-  projectName: string,
-  avustushakuName: string,
-  registerNumber: string,
-  senderName: string,
-  userInfo: UserInfo
-) {
-  return {
-    lang,
-    subject: createEmailSubject(registerNumber)[lang],
-    content: createEmailContent(projectName, avustushakuName, senderName, userInfo.email)[lang],
-    receivers: new Array<string>(),
   }
 }
 

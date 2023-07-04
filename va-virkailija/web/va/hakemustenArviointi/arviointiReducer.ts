@@ -17,6 +17,7 @@ import {
   ChangeRequest,
   Comment,
   Hakemus,
+  HakemusSelvitys,
   HakemusStatus,
   LoadedHakemusData,
   NormalizedHakemusData,
@@ -273,10 +274,10 @@ startHakemustenArviointiListening({
 })
 
 export const loadSelvitys = createAsyncThunk<
-  Hakemus['selvitys'],
+  HakemusSelvitys,
   { avustushakuId: number; hakemusId: number }
 >('arviointi/loadSelvitykset', async ({ hakemusId, avustushakuId }) => {
-  return await HttpUtil.get<Hakemus['selvitys']>(
+  return await HttpUtil.get<HakemusSelvitys>(
     `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/selvitys`
   )
 })

@@ -4,7 +4,7 @@ import { navigate } from '../utils/navigate'
 
 type SelvitysType = 'vali' | 'loppu'
 
-function SelvitysTab(page: Page, type: SelvitysType) {
+export function SelvitysTab(page: Page, type: SelvitysType) {
   const umlautType = type === 'vali' ? 'väli' : 'loppu'
 
   async function acceptSelvitys() {

@@ -5,6 +5,7 @@ export default function SelvitysTab(page: Page) {
   const titleSelector = '[name="applicant-info-label-fi"]'
   const locators = {
     tapahtumaloki: page.locator('div.tapahtumaloki'),
+    linkToHakemus: page.locator('text="Linkki lomakkeelle"'),
   }
 
   async function save() {

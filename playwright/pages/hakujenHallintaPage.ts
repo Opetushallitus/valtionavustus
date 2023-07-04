@@ -98,6 +98,7 @@ export class HakujenHallintaPage {
 
   async navigateToLoppuselvitys(avustushakuID: number) {
     await this.navigateTo(`/admin/loppuselvitys/?avustushaku=${avustushakuID}`)
+    return LoppuselvitysPage(this.page)
   }
 
   async navigateToFormEditor(avustushakuID: number) {
