@@ -22,13 +22,23 @@ import { expectToBeDefined } from '../utils/util'
 import { LoppuselvitysPage } from '../pages/hakujen-hallinta/LoppuselvitysPage'
 import { ValiselvitysPage } from '../pages/hakujen-hallinta/ValiselvitysPage'
 import { RefusePage } from '../pages/hakija/refuse-page'
+import { Answers } from '../utils/types'
+
+type VarayhteyshenkiloAnswers = Answers & {
+  trustedContact: {
+    name: string
+    email: string
+    phoneNumber: string
+  }
+}
 
 interface VarayhteyshenkiloFixtures extends MuutoshakemusFixtures {
   acceptedHakemusId: number
+  answersWithTrustedContact: VarayhteyshenkiloAnswers
 }
 
 const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
-  answers: async ({ answers }, use) => {
+  answersWithTrustedContact: async ({ answers }, use) => {
     await use({
       ...answers,
       trustedContact: {
@@ -77,7 +87,13 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
     await use(avustushakuID)
   },
   acceptedHakemusId: async (
-    { page, avustushakuID, answers, ukotettuValmistelija, projektikoodi },
+    {
+      page,
+      avustushakuID,
+      answersWithTrustedContact: answers,
+      ukotettuValmistelija,
+      projektikoodi,
+    },
     use,
     testInfo
   ) => {
@@ -120,7 +136,7 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
         .getByLabel(
           'VarayhteyshenkilöVarayhteyshenkilöllä tarkoitetaan hankkeen varavastuuhenkilöä.'
         )
-        .fill(answers.trustedContact!.name)
+        .fill(answers.trustedContact.name)
       await expect(
         hakijaAvustusHakuPage.page.getByRole('button', { name: '2 vastauksessa puutteita' })
       ).toBeVisible()
@@ -128,14 +144,14 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
       await expect(hakijaAvustusHakuPage.page.getByTestId('trusted-contact-phone')).toBeVisible()
       await hakijaAvustusHakuPage.page
         .locator('#trusted-contact-email')
-        .fill(answers.trustedContact!.email)
+        .fill(answers.trustedContact.email)
       await expect(
         hakijaAvustusHakuPage.page.getByRole('button', { name: '1 vastauksessa puutteita' })
       ).toBeVisible()
       await expect(hakijaAvustusHakuPage.page.getByTestId('trusted-contact-phone')).toBeVisible()
       await hakijaAvustusHakuPage.page
         .locator('#trusted-contact-phone')
-        .fill(answers.trustedContact!.phoneNumber)
+        .fill(answers.trustedContact.phoneNumber)
       await hakijaAvustusHakuPage.submitApplication()
     })
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
@@ -145,14 +161,14 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
       hakemusID = await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
       const emails = await getHakemusSubmitted(hakemusID)
       await expect(emails).toHaveLength(1)
-      await expect(emails[0]['to-address']).toContain(answers.trustedContact!.email)
+      await expect(emails[0]['to-address']).toContain(answers.trustedContact.email)
     })
     await test.step('varayhteyshenkilö is shown in arviointi after submission', async () => {
       const sidebarLocators = hakemustenArviointiPage.sidebarLocators()
-      await expect(sidebarLocators.trustedContact.name).toHaveText(answers.trustedContact!.name)
-      await expect(sidebarLocators.trustedContact.email).toHaveText(answers.trustedContact!.email)
+      await expect(sidebarLocators.trustedContact.name).toHaveText(answers.trustedContact.name)
+      await expect(sidebarLocators.trustedContact.email).toHaveText(answers.trustedContact.email)
       await expect(sidebarLocators.trustedContact.phoneNumber).toHaveText(
-        answers.trustedContact!.phoneNumber
+        answers.trustedContact.phoneNumber
       )
     })
     const hakujenHallinta = new HakujenHallintaPage(page)
@@ -175,11 +191,11 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
       const paatosTab = await haunTiedot.common.switchToPaatosTab()
       await paatosTab.sendPaatos()
       await expect(paatosTab.locators.paatosSentToEmails).toContainText(
-        answers.trustedContact!.email
+        answers.trustedContact.email
       )
       const emails = await getAcceptedPäätösEmails(hakemusID)
       expect(emails).toHaveLength(1)
-      expect(emails[0]['to-address']).toContain(answers.trustedContact!.email)
+      expect(emails[0]['to-address']).toContain(answers.trustedContact.email)
     })
     await use(hakemusID!)
   },
@@ -188,7 +204,7 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
 test('varayhteyshenkilo flow', async ({
   page,
   avustushakuID,
-  answers,
+  answersWithTrustedContact: answers,
   ukotettuValmistelija,
   acceptedHakemusId,
 }) => {
@@ -200,19 +216,19 @@ test('varayhteyshenkilo flow', async ({
   await test.step('varayhteyshenkilö email can be updated with muutoshakemus', async () => {
     await hakijaMuutoshakemusPage.navigateWithLink(muutoshakemusUrl)
     const { trustedContact } = hakijaMuutoshakemusPage.locators()
-    await expect(trustedContact.name).toHaveValue(answers.trustedContact!.name)
-    await expect(trustedContact.email).toHaveValue(answers.trustedContact!.email)
-    await expect(trustedContact.phone).toHaveValue(answers.trustedContact!.phoneNumber)
+    await expect(trustedContact.name).toHaveValue(answers.trustedContact.name)
+    await expect(trustedContact.email).toHaveValue(answers.trustedContact.email)
+    await expect(trustedContact.phone).toHaveValue(answers.trustedContact.phoneNumber)
     await trustedContact.email.fill(newEmail)
     await hakijaMuutoshakemusPage.clickSaveContacts()
     await hakijaMuutoshakemusPage.expectMuutoshakemusToBeSubmittedSuccessfully(false)
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
     const sidebar = hakemustenArviointiPage.sidebarLocators()
     await expect(sidebar.oldAnswers.trustedContactName).toBeHidden()
-    await expect(sidebar.oldAnswers.trustedContactEmail).toHaveText(answers.trustedContact!.email)
+    await expect(sidebar.oldAnswers.trustedContactEmail).toHaveText(answers.trustedContact.email)
     await expect(sidebar.oldAnswers.trustedContactPhone).toBeHidden()
-    await expect(sidebar.trustedContact.name).toHaveText(answers.trustedContact!.name)
-    await expect(sidebar.trustedContact.phoneNumber).toHaveText(answers.trustedContact!.phoneNumber)
+    await expect(sidebar.trustedContact.name).toHaveText(answers.trustedContact.name)
+    await expect(sidebar.trustedContact.phoneNumber).toHaveText(answers.trustedContact.phoneNumber)
     await expect(sidebar.newAnswers.trustedContactName).toBeHidden()
     await expect(sidebar.newAnswers.trustedContactEmail).toHaveText(newEmail)
     await expect(sidebar.newAnswers.trustedContactPhone).toBeHidden()
@@ -222,19 +238,19 @@ test('varayhteyshenkilo flow', async ({
     const newPhone = '04059559599'
     const { trustedContact } = hakijaMuutoshakemusPage.locators()
     await hakijaMuutoshakemusPage.navigateWithLink(muutoshakemusUrl)
-    await expect(trustedContact.name).toHaveValue(answers.trustedContact!.name)
+    await expect(trustedContact.name).toHaveValue(answers.trustedContact.name)
     await expect(trustedContact.email).toHaveValue(newEmail)
-    await expect(trustedContact.phone).toHaveValue(answers.trustedContact!.phoneNumber)
+    await expect(trustedContact.phone).toHaveValue(answers.trustedContact.phoneNumber)
     await trustedContact.name.fill(newName)
     await trustedContact.phone.fill(newPhone)
     await hakijaMuutoshakemusPage.clickSaveContacts()
     await hakijaMuutoshakemusPage.expectMuutoshakemusToBeSubmittedSuccessfully(false)
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
     const sidebar = hakemustenArviointiPage.sidebarLocators()
-    await expect(sidebar.oldAnswers.trustedContactName).toHaveText(answers.trustedContact!.name)
-    await expect(sidebar.oldAnswers.trustedContactEmail).toHaveText(answers.trustedContact!.email)
+    await expect(sidebar.oldAnswers.trustedContactName).toHaveText(answers.trustedContact.name)
+    await expect(sidebar.oldAnswers.trustedContactEmail).toHaveText(answers.trustedContact.email)
     await expect(sidebar.oldAnswers.trustedContactPhone).toHaveText(
-      answers.trustedContact!.phoneNumber
+      answers.trustedContact.phoneNumber
     )
     await expect(sidebar.newAnswers.trustedContactName).toHaveText(newName)
     await expect(sidebar.newAnswers.trustedContactEmail).toHaveText(newEmail)
@@ -248,7 +264,7 @@ test('varayhteyshenkilo flow', async ({
     await expect(tapahtumaloki.getByTestId('sent-0')).toHaveText('1')
     const emails = await getValiselvitysEmails(acceptedHakemusId)
     expect(emails).toHaveLength(1)
-    expect(emails[0]['to-address']).not.toContain(answers.trustedContact!.email)
+    expect(emails[0]['to-address']).not.toContain(answers.trustedContact.email)
     expect(emails[0]['to-address']).toContain(newEmail)
     const virkailijaValiselvitysPage = ValiselvitysPage(page)
     await virkailijaValiselvitysPage.navigateToValiselvitysTab(avustushakuID, acceptedHakemusId)
@@ -263,8 +279,8 @@ test('varayhteyshenkilo flow', async ({
     await virkailijaValiselvitysPage.acceptSelvitys()
     const emailsAfterAcceptance = await getSelvitysEmails(avustushakuID)
     const latestMail = lastOrFail(emailsAfterAcceptance)
-    expect(latestMail['formatted']).toContain('väliselvitys on käsitelty')
-    expect(latestMail['to-address']).not.toContain(answers.trustedContact!.email)
+    expect(latestMail['subject']).toContain('Väliselvitys')
+    expect(latestMail['to-address']).not.toContain(answers.trustedContact.email)
     expect(latestMail['to-address']).toContain(newEmail)
   })
   await test.step('loppuselvitys gets sent to varayhteyshenkilö', async () => {
@@ -275,7 +291,7 @@ test('varayhteyshenkilo flow', async ({
     await expect(tapahtumaloki.getByTestId('sent-0')).toHaveText('1')
     const emails = await getLoppuselvitysEmails(acceptedHakemusId)
     expect(emails).toHaveLength(1)
-    expect(emails[0]['to-address']).not.toContain(answers.trustedContact!.email)
+    expect(emails[0]['to-address']).not.toContain(answers.trustedContact.email)
     expect(emails[0]['to-address']).toContain(newEmail)
     const virkailijaLoppuselvitysPage = LoppuselvitysPage(page)
     await virkailijaLoppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, acceptedHakemusId)
@@ -292,19 +308,23 @@ test('varayhteyshenkilo flow', async ({
     const emailsAfterAcceptance = await getSelvitysEmails(avustushakuID)
     const latestMail = lastOrFail(emailsAfterAcceptance)
     expect(latestMail['subject']).toContain('Loppuselvitys')
-    expect(latestMail['to-address']).not.toContain(answers.trustedContact!.email)
+    expect(latestMail['to-address']).not.toContain(answers.trustedContact.email)
     expect(latestMail['to-address']).toContain(newEmail)
   })
 })
 
-test('varayhteyshenkilö refused avustushaku', async ({ page, answers, acceptedHakemusId }) => {
+test('varayhteyshenkilö refused avustushaku', async ({
+  page,
+  answersWithTrustedContact: answers,
+  acceptedHakemusId,
+}) => {
   const refusePage = RefusePage(page)
   await test.step('varayhteyshenkilö is shown in refusal page', async () => {
     await refusePage.navigate(acceptedHakemusId)
     expectToBeDefined(answers.trustedContact)
-    await expect(refusePage.page.getByText(answers.trustedContact!.name)).toBeVisible()
-    await expect(refusePage.page.getByText(answers.trustedContact!.email)).toBeVisible()
-    await expect(refusePage.page.getByText(answers.trustedContact!.phoneNumber)).toBeVisible()
+    await expect(refusePage.page.getByText(answers.trustedContact.name)).toBeVisible()
+    await expect(refusePage.page.getByText(answers.trustedContact.email)).toBeVisible()
+    await expect(refusePage.page.getByText(answers.trustedContact.phoneNumber)).toBeVisible()
   })
   await test.step('refuse avustushaku', async () => {
     await refusePage.refuseGrant()
@@ -318,6 +338,6 @@ test('varayhteyshenkilö refused avustushaku', async ({ page, answers, acceptedH
     const to = emails[0]['to-address']
     expect(to).toHaveLength(2)
     expect(to).toContain(answers.contactPersonEmail)
-    expect(to).toContain(answers.trustedContact!.email)
+    expect(to).toContain(answers.trustedContact.email)
   })
 })
