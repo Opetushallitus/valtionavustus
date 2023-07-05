@@ -12,6 +12,22 @@ export function HakijaAvustusHakuPage(page: Page) {
     sendHakemusButton: page.locator('#topbar #form-controls button#submit'),
     officerEditSubmitButton: page.locator('#virkailija-edit-submit'),
     previewContainer: page.locator('div.soresu-preview'),
+    validationErrors: {
+      haveErrorsButton: (amountOfErrors: number) =>
+        page.getByRole('button', { name: `${amountOfErrors} vastauksessa puutteita` }),
+      trustedContact: {
+        name: page.getByTestId('trusted-contact-name'),
+        email: page.getByTestId('trusted-contact-email'),
+        phone: page.getByTestId('trusted-contact-phone'),
+      },
+    },
+    form: {
+      trustedContact: {
+        name: page.locator('#trusted-contact-name'),
+        email: page.locator('#trusted-contact-email'),
+        phone: page.locator('#trusted-contact-phone'),
+      },
+    },
   }
 
   async function navigate(avustushakuID: number, lang: 'fi' | 'sv' | undefined) {

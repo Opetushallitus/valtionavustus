@@ -126,32 +126,22 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
     })
     await test.step('form validates correctly that its required', async () => {
       await hakijaAvustusHakuPage.page.reload()
-      await hakijaAvustusHakuPage.page
-        .getByRole('button', { name: '3 vastauksessa puutteita' })
-        .click()
-      await expect(hakijaAvustusHakuPage.page.getByTestId('trusted-contact-name')).toBeVisible()
-      await expect(hakijaAvustusHakuPage.page.getByTestId('trusted-contact-email')).toBeVisible()
-      await expect(hakijaAvustusHakuPage.page.getByTestId('trusted-contact-phone')).toBeVisible()
+      await hakijaAvustusHakuPage.validationErrors.haveErrorsButton(3).click()
+      await expect(hakijaAvustusHakuPage.validationErrors.trustedContact.name).toBeVisible()
+      await expect(hakijaAvustusHakuPage.validationErrors.trustedContact.email).toBeVisible()
+      await expect(hakijaAvustusHakuPage.validationErrors.trustedContact.phone).toBeVisible()
       await hakijaAvustusHakuPage.page
         .getByLabel(
           'VarayhteyshenkilöVarayhteyshenkilöllä tarkoitetaan hankkeen varavastuuhenkilöä.'
         )
         .fill(answers.trustedContact.name)
-      await expect(
-        hakijaAvustusHakuPage.page.getByRole('button', { name: '2 vastauksessa puutteita' })
-      ).toBeVisible()
-      await expect(hakijaAvustusHakuPage.page.getByTestId('trusted-contact-email')).toBeVisible()
-      await expect(hakijaAvustusHakuPage.page.getByTestId('trusted-contact-phone')).toBeVisible()
-      await hakijaAvustusHakuPage.page
-        .locator('#trusted-contact-email')
-        .fill(answers.trustedContact.email)
-      await expect(
-        hakijaAvustusHakuPage.page.getByRole('button', { name: '1 vastauksessa puutteita' })
-      ).toBeVisible()
-      await expect(hakijaAvustusHakuPage.page.getByTestId('trusted-contact-phone')).toBeVisible()
-      await hakijaAvustusHakuPage.page
-        .locator('#trusted-contact-phone')
-        .fill(answers.trustedContact.phoneNumber)
+      await expect(hakijaAvustusHakuPage.validationErrors.haveErrorsButton(2)).toBeVisible()
+      await expect(hakijaAvustusHakuPage.validationErrors.trustedContact.email).toBeVisible()
+      await expect(hakijaAvustusHakuPage.validationErrors.trustedContact.phone).toBeVisible()
+      await hakijaAvustusHakuPage.form.trustedContact.email.fill(answers.trustedContact.email)
+      await expect(hakijaAvustusHakuPage.validationErrors.haveErrorsButton(1)).toBeVisible()
+      await expect(hakijaAvustusHakuPage.validationErrors.trustedContact.phone).toBeVisible()
+      await hakijaAvustusHakuPage.form.trustedContact.phone.fill(answers.trustedContact.phoneNumber)
       await hakijaAvustusHakuPage.submitApplication()
     })
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
