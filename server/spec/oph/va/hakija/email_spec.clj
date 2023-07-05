@@ -31,9 +31,10 @@
          :subject
          "Ilmoitus avustuksenne vastaanottamatta jättämisestä on lähetetty"
          :to ["applicant@local"]
-         :grant-name "Test grant"}
+         :grant-name "Test grant"
+         :hakemus-id 1}
         (va-email/generate-refused-email
-          :fi ["applicant@local"] "Test grant")))
+          :fi ["applicant@local"] "Test grant" 1)))
 
   (it "generates refused email for presenter"
       (let [grant (first (va-db/list-avustushaut))
