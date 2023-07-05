@@ -27,6 +27,10 @@ export function HakijaAvustusHakuPage(page: Page) {
         email: page.locator('#trusted-contact-email'),
         phone: page.locator('#trusted-contact-phone'),
       },
+      bank: {
+        iban: page.locator('#bank-iban'),
+        bic: page.locator('#bank-bic'),
+      },
     },
   }
 
@@ -142,8 +146,8 @@ export function HakijaAvustusHakuPage(page: Page) {
     )
     await page.click("[id='koodistoField-1_input']")
     await selectMaakuntaFromDropdown(lang === 'fi' ? 'Kainuu' : 'Åland')
-    await page.fill('#bank-iban', 'FI95 6682 9530 0087 65')
-    await page.fill('#bank-bic', 'OKOYFIHH')
+    await locators.form.bank.iban.fill('FI95 6682 9530 0087 65')
+    await locators.form.bank.bic.fill('OKOYFIHH')
     await page.fill('#textField-2', '2')
     await page.fill('#textField-1', '20')
     await page.fill('#project-name', answers.projectName)
@@ -236,8 +240,8 @@ export function HakijaAvustusHakuPage(page: Page) {
     await selectMaakuntaFromDropdown('Kainuu')
     await page.fill("[id='signatories-fieldset-1.name']", 'Erkki Esimerkki')
     await page.fill("[id='signatories-fieldset-1.email']", 'erkki.esimerkki@example.com')
-    await page.fill('#bank-iban', 'FI95 6682 9530 0087 65')
-    await page.fill('#bank-bic', 'OKOYFIHH')
+    await locators.form.bank.iban.fill('FI95 6682 9530 0087 65')
+    await locators.form.bank.bic.fill('OKOYFIHH')
     await page.fill('#textField-5', 'Kirkko')
     await page.fill('#project-name', answers.projectName)
     await page.click(`[for='language.radio.0']`)
@@ -327,8 +331,8 @@ export function HakijaAvustusHakuPage(page: Page) {
     )
     await page.click("[id='koodistoField-1_input']")
     await selectMaakuntaFromDropdown(lang === 'fi' ? 'Kainuu' : 'Åland')
-    await page.fill('#bank-iban', 'FI95 6682 9530 0087 65')
-    await page.fill('#bank-bic', 'OKOYFIHH')
+    await locators.form.bank.iban.fill('FI95 6682 9530 0087 65')
+    await locators.form.bank.bic.fill('OKOYFIHH')
     await page.fill('#textField-2', '2')
     await page.fill('#textField-1', '20')
     await page.fill('#project-name', answers.projectName)

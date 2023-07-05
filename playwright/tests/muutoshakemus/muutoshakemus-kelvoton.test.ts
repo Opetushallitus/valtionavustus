@@ -44,8 +44,8 @@ test('hakija does not get an email with link to muutoshakemus when avustushaku f
     await hakijaAvustusHakuPage.page.fill('#applicant-name', answers.contactPersonName)
     await hakijaAvustusHakuPage.page.fill('#signature', answers.contactPersonName)
     await hakijaAvustusHakuPage.page.fill('#signature-email', answers.contactPersonEmail)
-    await hakijaAvustusHakuPage.page.fill('#bank-iban', 'FI95 6682 9530 0087 65')
-    await hakijaAvustusHakuPage.page.fill('#bank-bic', 'OKOYFIHH')
+    await hakijaAvustusHakuPage.form.bank.iban.fill('FI95 6682 9530 0087 65')
+    await hakijaAvustusHakuPage.form.bank.bic.fill('OKOYFIHH')
     await hakujenHallintaPage.page.click('text="Kansanopisto"')
     await hakujenHallintaPage.page.fill("[name='project-costs-row.amount']", '100000')
     await hakijaAvustusHakuPage.page
@@ -159,8 +159,8 @@ const akuTest = defaultValues.extend<{
         "[id='signatories-fieldset-1.email']",
         'teppo.testityyppi@example.com'
       )
-      await hakijaAvustusHakuPage.page.fill('#bank-iban', 'FI95 6682 9530 0087 65')
-      await hakijaAvustusHakuPage.page.fill('#bank-bic', 'OKOYFIHH')
+      await hakijaAvustusHakuPage.form.bank.iban.fill('FI95 6682 9530 0087 65')
+      await hakijaAvustusHakuPage.form.bank.bic.fill('OKOYFIHH')
       await hakijaAvustusHakuPage.page.fill('#project-name', answers.projectName)
       await hakijaAvustusHakuPage.page.click('label[for="combined-effort.radio.1"]') // yhteishanke = ei
       await hakijaAvustusHakuPage.page.fill('#textArea-2', 'Ei osaamista') // Hakijayhteisön osaaminen ja kokemus opetustoimen henkilöstökoulutuksesta

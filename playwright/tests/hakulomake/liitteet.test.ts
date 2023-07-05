@@ -26,8 +26,8 @@ const test = defaultValues.extend<{
     await hakijaAvustusHakuPage.page.fill('#applicant-name', answers.contactPersonName)
     await hakijaAvustusHakuPage.page.fill('#signature', answers.contactPersonName)
     await hakijaAvustusHakuPage.page.fill('#signature-email', answers.contactPersonEmail)
-    await hakijaAvustusHakuPage.page.fill('#bank-iban', 'FI95 6682 9530 0087 65')
-    await hakijaAvustusHakuPage.page.fill('#bank-bic', 'OKOYFIHH')
+    await hakijaAvustusHakuPage.form.bank.iban.fill('FI95 6682 9530 0087 65')
+    await hakijaAvustusHakuPage.form.bank.bic.fill('OKOYFIHH')
     await hakujenHallintaPage.page.click('text="Kansanopisto"')
     await hakujenHallintaPage.page.fill("[name='project-costs-row.amount']", '100000')
     await hakijaAvustusHakuPage.page
