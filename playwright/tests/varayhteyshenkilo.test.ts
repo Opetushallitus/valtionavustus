@@ -98,7 +98,7 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
     testInfo
   ) => {
     testInfo.setTimeout(testInfo.timeout + 40_000)
-    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     await test.step('fill hakemus without varahenkilö', async () => {
       await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
       await hakijaAvustusHakuPage.startAndFillApplication(answers, avustushakuID)

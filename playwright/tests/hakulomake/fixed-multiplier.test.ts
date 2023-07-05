@@ -259,7 +259,7 @@ test('fixed multiplier field works', async ({
     const haunTiedotPage = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
     await haunTiedotPage.publishAvustushaku()
   })
-  const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+  const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
   await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
   const hakemusUrl = await hakijaAvustusHakuPage.startApplication(
     avustushakuID,

@@ -133,7 +133,7 @@ const test = defaultValues.extend<Fixtures>({
       const haunTiedotPage = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
       await haunTiedotPage.publishAvustushaku()
     })
-    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     const growingSets = {
       first: growingFieldSet(hakijaAvustusHakuPage.page, 0),
       second: growingFieldSet(hakijaAvustusHakuPage.page, 1),
@@ -176,7 +176,7 @@ test.describe.parallel('growing field set', () => {
     page,
     growingSets: { first, second, third },
   }) => {
-    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     const firstTavoite = 'a'
     const secondTavoite = 'd'
     const secondToiminta = 'e'
@@ -219,7 +219,7 @@ test.describe.parallel('growing field set', () => {
     page,
     growingSets: { first },
   }) => {
-    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     await test.step('fill and remove first field', async () => {
       await first.tavoite.fill('a')
       await first.remove.click()

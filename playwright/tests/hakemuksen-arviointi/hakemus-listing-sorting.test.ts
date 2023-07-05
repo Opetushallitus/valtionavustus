@@ -57,7 +57,7 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
   hakemustenArviointiPage: async ({ submittedHakemus, page, avustushakuID, answers }, use) => {
     expectToBeDefined(submittedHakemus)
 
-    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
     const answers2 = {
       ...answers,

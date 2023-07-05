@@ -42,7 +42,7 @@ export const muutoshakemuskelvotonTest = defaultValues.extend<MuutoshakemusFixtu
     testInfo.setTimeout(testInfo.timeout + 15_000)
 
     const userKey = await test.step('Submit hakemus', async () => {
-      const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+      const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
       await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
       const { userKey } = await hakijaAvustusHakuPage.fillAndSendMuutoshakemusEnabledHakemus(
         avustushakuID,

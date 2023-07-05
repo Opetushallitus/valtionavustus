@@ -13,7 +13,7 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
   hakemustenArviointiPage: async ({ submittedHakemus, page, avustushakuID, answers }, use) => {
     expectToBeDefined(submittedHakemus)
 
-    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     const answers2 = {
       ...answers,
       contactPersonEmail: 'erkki2.esimerkki@example.com',

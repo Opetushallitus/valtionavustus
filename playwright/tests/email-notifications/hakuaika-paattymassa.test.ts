@@ -14,7 +14,7 @@ type HakuaikaPaattymassaFixtures = {
   filledHakemus: {
     email: string
     userKey: string
-    page: HakijaAvustusHakuPage
+    page: ReturnType<typeof HakijaAvustusHakuPage>
   }
   swedishHakemus: {
     email: string
@@ -27,7 +27,7 @@ const hakuaikaPaattymassaTest = muutoshakemusTest.extend<HakuaikaPaattymassaFixt
     testInfo.setTimeout(testInfo.timeout + 30_000)
 
     const page = await browser.newPage()
-    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
     const randomEmail = `${randomString()}@example.com`
     const { contactPersonEmail, ...answersWithoutEmail } = answers
@@ -49,7 +49,7 @@ const hakuaikaPaattymassaTest = muutoshakemusTest.extend<HakuaikaPaattymassaFixt
     testInfo.setTimeout(testInfo.timeout + 30_000)
     const answers = swedishAnswers
 
-    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
     const randomEmail = `${randomString()}@example.com`
     const { contactPersonEmail, ...answersWithoutEmail } = answers

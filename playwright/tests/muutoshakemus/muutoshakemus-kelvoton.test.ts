@@ -31,7 +31,7 @@ test('hakija does not get an email with link to muutoshakemus when avustushaku f
   await hakujenHallintaPage.fillAvustushaku(hakuProps)
   const haunTiedotPage = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
   await haunTiedotPage.publishAvustushaku()
-  const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+  const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
   await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
 
   const hakemusUrl = await hakijaAvustusHakuPage.startApplication(
@@ -131,7 +131,7 @@ const akuTest = defaultValues.extend<{
     await hakujenHallintaPage.navigate(avustushakuID)
     const haunTiedotPage = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
     await haunTiedotPage.publishAvustushaku()
-    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
 
     const hakemusUrl = await hakijaAvustusHakuPage.startApplication(

@@ -21,7 +21,7 @@ export const twoAcceptedHakemusTest = muutoshakemusTest.extend<Fixtures>({
     })
   },
   submittedHakemus: async ({ avustushakuID, answers, secondAnswers, page }, use) => {
-    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
     const userKey = await hakijaAvustusHakuPage.fillAndSendMuutoshakemusEnabledHakemus(
       avustushakuID,

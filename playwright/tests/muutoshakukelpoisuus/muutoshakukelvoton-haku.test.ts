@@ -105,7 +105,7 @@ test.describe.parallel('Avustushaku that was marked as muutoshakukelvoton', () =
     page,
   }) => {
     const { token } = await getHakemusTokenAndRegisterNumber(hakemusID)
-    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     await hakijaAvustusHakuPage.navigateToYhteyshenkilöChangePage(avustushakuID, userKey, token)
 
     await waitForElementWithText(page, 'button', 'Aloita yhteystietojen muokkaus')

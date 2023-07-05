@@ -5,7 +5,7 @@ import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
 import { dummyPdfPath, TEST_Y_TUNNUS } from '../../utils/constants'
 
 const test = defaultValues.extend<{
-  hakijaAvustusHakuPage: HakijaAvustusHakuPage
+  hakijaAvustusHakuPage: ReturnType<typeof HakijaAvustusHakuPage>
 }>({
   hakijaAvustusHakuPage: async ({ page, answers, hakuProps, userCache }, use) => {
     expect(userCache).toBeDefined()
@@ -14,7 +14,7 @@ const test = defaultValues.extend<{
     await hakujenHallintaPage.fillAvustushaku(hakuProps)
     const haunTiedotPage = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
     await haunTiedotPage.publishAvustushaku()
-    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
 
     const hakemusUrl = await hakijaAvustusHakuPage.startApplication(

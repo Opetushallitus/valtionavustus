@@ -354,7 +354,7 @@ muutoshakemusTest(
     await haunTiedotPage.publishAvustushaku()
     await haunTiedotPage.common.waitForSave()
     await test.step('fill haku', async () => {
-      const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+      const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
       await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
       await hakijaAvustusHakuPage.fillAndSendMuutoshakemusEnabledHakemus(avustushakuID, answers)
     })

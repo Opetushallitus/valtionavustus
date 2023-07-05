@@ -47,7 +47,7 @@ test.describe.parallel('avustushaku with koulutusosio happy path', () => {
   } of koulutusosioCases) {
     test(type, async ({ avustushakuID, page, answers }) => {
       await test.step('send hakemus', async () => {
-        const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+        const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
         await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
         await hakijaAvustusHakuPage.fillKoulutusosioHakemus(avustushakuID, answers, type)
         await hakijaAvustusHakuPage.submitApplication()

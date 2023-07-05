@@ -41,7 +41,7 @@ export const submittedHakemusTest = defaultValues.extend<MuutoshakemusFixtures>(
 
     let userKey: string | null = null
     await test.step('Submit hakemus', async () => {
-      const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+      const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
       await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
       userKey = (
         await hakijaAvustusHakuPage.fillAndSendMuutoshakemusEnabledHakemus(avustushakuID, answers)

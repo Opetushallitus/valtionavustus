@@ -42,7 +42,7 @@ const test = muutoshakemusTest.extend<{
   submittedHakemus: async ({ avustushakuID, answers, page }, use, testInfo) => {
     testInfo.setTimeout(testInfo.timeout + 30_000)
 
-    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
     await hakijaAvustusHakuPage.fillAndSendMuutoshakemusEnabledHakemus(
       avustushakuID,

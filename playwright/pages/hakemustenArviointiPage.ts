@@ -137,7 +137,9 @@ export class HakemustenArviointiPage {
     await this.page.click('[aria-label="Sulje valmistelija ja arvioija valitsin"]')
   }
 
-  async openHakemusEditPage(reason: string = 'Kunhan editoin'): Promise<HakijaAvustusHakuPage> {
+  async openHakemusEditPage(
+    reason: string = 'Kunhan editoin'
+  ): Promise<ReturnType<typeof HakijaAvustusHakuPage>> {
     await this.page.getByTestId('virkailija-edit-hakemus').click()
     await this.page.getByTestId('virkailija-edit-comment').type(reason)
     const [newPage] = await Promise.all([
@@ -145,7 +147,7 @@ export class HakemustenArviointiPage {
       this.page.getByTestId('virkailija-edit-submit').click(),
     ])
     await newPage.bringToFront()
-    return new HakijaAvustusHakuPage(newPage)
+    return HakijaAvustusHakuPage(newPage)
   }
 
   async createChangeRequest(reason: string = 'Täydennäppä') {

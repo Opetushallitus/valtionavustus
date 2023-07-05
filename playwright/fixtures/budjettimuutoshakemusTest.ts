@@ -27,7 +27,7 @@ export const budjettimuutoshakemusTest = defaultValues.extend<Budjettimuutoshake
   submittedHakemus: async ({ page, avustushakuID, answers, budget }, use, testInfo) => {
     testInfo.setTimeout(testInfo.timeout + 15_000)
 
-    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
     await hakijaAvustusHakuPage.fillBudjettimuutoshakemusEnabledHakemus(
       avustushakuID,

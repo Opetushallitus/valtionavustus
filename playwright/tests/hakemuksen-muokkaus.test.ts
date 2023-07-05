@@ -62,7 +62,7 @@ test('virkailija can edit hakemus', async ({ page, avustushakuID, submittedHakem
 })
 
 test('hakija', async ({ page, avustushakuID, submittedHakemus: hakemus }) => {
-  const hakemusPage = new HakijaAvustusHakuPage(page)
+  const hakemusPage = HakijaAvustusHakuPage(page)
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
 
   await test.step('can edit hakemus when hakemus has been submitted', async () => {

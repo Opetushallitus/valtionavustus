@@ -47,7 +47,7 @@ const test = budjettimuutoshakemusTest.extend<SearchFixtures>({
       lang: 'sv' as const,
     }
 
-    const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers2.lang)
     await hakijaAvustusHakuPage.fillBudjettimuutoshakemusEnabledHakemus(
       avustushakuID,

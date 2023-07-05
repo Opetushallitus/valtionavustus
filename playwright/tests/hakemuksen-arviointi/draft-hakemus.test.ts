@@ -15,7 +15,7 @@ const newHakemusTest = muutoshakemusTest.extend<NewHakemusFixtures>({
 
     let hakemusUrl: string | null = null
     await test.step('Create new hakemus link', async () => {
-      const hakijaAvustusHakuPage = new HakijaAvustusHakuPage(page)
+      const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
       const email = 'teppo.testaaja@example.com'
       await hakijaAvustusHakuPage.navigate(avustushakuID, 'fi')
       hakemusUrl = await hakijaAvustusHakuPage.startApplication(avustushakuID, email)
@@ -27,7 +27,7 @@ const newHakemusTest = muutoshakemusTest.extend<NewHakemusFixtures>({
 
 newHakemusTest('an unsubmitted (draft) hakemus', async ({ avustushakuID, newHakemus, page }) => {
   const hakemusListPage = new HakemustenArviointiPage(page)
-  const hakijaPage = new HakijaAvustusHakuPage(page)
+  const hakijaPage = HakijaAvustusHakuPage(page)
 
   await test.step('is not shown in showAll list when new', async () => {
     await hakemusListPage.navigate(avustushakuID)
