@@ -79,8 +79,8 @@ serverurl=unix:///var/run/supervisor/supervisor.sock ; use a unix:// URL  for a 
 
 [program:va]
 command=/usr/bin/java
-  -Xms500m
-  -Xmx500m
+  -Xms1028m
+  -Xmx1028m
   -XX:+HeapDumpOnOutOfMemoryError
   -XX:HeapDumpPath={{ data_dir }}/www/dumps
   -Dfile.encoding=UTF-8
