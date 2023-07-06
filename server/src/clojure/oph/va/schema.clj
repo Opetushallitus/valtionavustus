@@ -49,6 +49,7 @@
 
 (s/defschema Environment
   {:name s/Str
+   :environment (s/maybe s/Str)
    :show-name s/Bool
    :hakija-server {:url LocalizedString}
    :virkailija-server {:url s/Str}

@@ -1,5 +1,5 @@
 (ns oph.va.environment
-  (:require [oph.soresu.common.config :refer [config config-simple-name get-feature-flags]]
+  (:require [oph.soresu.common.config :refer [config config-simple-name environment get-feature-flags]]
             [oph.soresu.common.db :as db]))
 
 (defn virkailija-url []
@@ -13,6 +13,7 @@
 (defn get-content []
   (let [common-environment
         {:name (config-simple-name)
+         :environment environment
          :show-name (:show-environment? (:ui config))
          :hakija-server {:url (:url (:server config))}
          :virkailija-server {:url (:virkailija-url (:server config))}
