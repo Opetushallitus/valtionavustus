@@ -54,6 +54,7 @@
    :virkailija-server {:url s/Str}
    :paatos-path s/Str
    :notice {:fi s/Str :sv s/Str}
+   :feature-flags [s/Keyword]
    (s/optional-key :payments) (s/maybe {(s/optional-key :delete-payments?) s/Bool
                                         (s/optional-key :enabled?) s/Bool})
    (s/optional-key :opintopolku) {:url s/Str

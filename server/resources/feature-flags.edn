@@ -1,0 +1,7 @@
+{; available environments: [:dev :test ??????]
+ ;
+ ; example:
+ ; :muistutusviesti-loppuselvityksesta [:dev :test]}
+
+ ; https://jira.eduuni.fi/browse/VA-373
+ :muistutusviesti-loppuselvityksesta [:dev]}

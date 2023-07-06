@@ -1,6 +1,7 @@
 (ns oph.soresu.common.config
   (:require [clojure.edn]
             [environ.core :refer [env]]
+            [clojure.java.io :as io]
             [clojure.tools.logging :as log]))
 
 (def environment (env :environment))
@@ -51,6 +52,15 @@
     (when (and use-fake-auth (not= "dev" environment))
       (throw (Exception. (str "Disabling authentication is allowed only in dev environment (env=" environment ")"))))
     use-fake-auth))
+
+(defn- enabled-features [flags env]
+  (letfn [(feature-enabled? [[_ envs]] (some #(= % env) envs))]
+    (map first (filter feature-enabled? flags))))
+
+(defn get-feature-flags []
+  (let [flags-file (io/resource "feature-flags.edn")
+        flags      (clojure.edn/read-string (slurp flags-file))]
+    (enabled-features flags (keyword environment))))
 
 (defn feature-enabled? [flag]
   (get-in config [flag :enabled?]))

@@ -1,5 +1,5 @@
 (ns oph.va.environment
-  (:require [oph.soresu.common.config :refer [config config-simple-name]]
+  (:require [oph.soresu.common.config :refer [config config-simple-name get-feature-flags]]
             [oph.soresu.common.db :as db]))
 
 (defn virkailija-url []
@@ -19,6 +19,7 @@
          :paatos-path (:paatos-path (:ui config))
          :payments (:payments config)
          :notice (get-notice)
+         :feature-flags (get-feature-flags)
          :application-change {:refuse-enabled? true}
          :multibatch-payments (:multibatch-payments config)
          :backup-contact-person (:backup-contact-person config)
