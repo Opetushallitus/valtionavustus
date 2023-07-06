@@ -1,15 +1,14 @@
 (ns oph.va.environment
   (:require [oph.soresu.common.config :refer [config config-simple-name]]
-            [oph.soresu.common.db :as db]
-            [oph.va.db.queries :as queries]))
-
-(defn get-notice []
-  (-> (db/exec queries/get-environment-notice {})
-      first
-      :notice))
+            [oph.soresu.common.db :as db]))
 
 (defn virkailija-url []
   (-> config :server :virkailija-url))
+
+(defn- get-notice []
+  (-> (db/query "select notice from environment where id = 1" {})
+      first
+      :notice))
 
 (defn get-content []
   (let [common-environment
