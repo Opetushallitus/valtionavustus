@@ -10,9 +10,6 @@
             [schema.core :as s]
             [clojure.tools.logging :as log]))
 
-(defn virkailija-url []
-  (-> (environment/get-content) :virkailija-server :url))
-
 (defn get-translations []
   (return-from-classpath "translations.json" "application/json; charset=utf-8"))
 

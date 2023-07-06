@@ -8,6 +8,9 @@
       first
       :notice))
 
+(defn virkailija-url []
+  (-> config :server :virkailija-url))
+
 (defn get-content []
   (let [common-environment
         {:name (config-simple-name)

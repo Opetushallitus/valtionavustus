@@ -21,6 +21,7 @@
             [oph.va.hakija.schema :refer :all]
             [oph.va.hakija.handlers :refer :all]
             [oph.va.hakija.selvitys.routes :as selvitys-routes]
+            [oph.va.environment :as va-env]
             [oph.common.organisation-service :as org]))
 
 (defn- on-healthcheck []
@@ -239,7 +240,7 @@
   (compojure-api/OPTIONS "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
     :path-params [haku-id :- Long, hakemus-id :- s/Str, field-id :- s/Str]
     (-> (ok {:status "ok"})
-        (assoc-in [:headers "Access-Control-Allow-Origin"] (va-routes/virkailija-url))
+        (assoc-in [:headers "Access-Control-Allow-Origin"] (va-env/virkailija-url))
         (assoc-in [:headers "Access-Control-Allow-Methods"] "DELETE"))))
 
 (defn- del-attachment []
@@ -247,13 +248,13 @@
     :path-params [haku-id :- Long, hakemus-id :- s/Str, field-id :- s/Str]
     :summary "Delete attachment (marks attachment as closed)"
     (let [response (on-attachment-delete haku-id hakemus-id field-id)]
-      (assoc-in response [:headers "Access-Control-Allow-Origin"] (va-routes/virkailija-url)))))
+      (assoc-in response [:headers "Access-Control-Allow-Origin"] (va-env/virkailija-url)))))
 
 (defn- options-put-attachment []
   (compojure-api/OPTIONS "/:haku-id/hakemus/:hakemus-id/:hakemus-base-version/attachments/:field-id" [haku-id hakemus-id hakemus-base-version field-id]
     :path-params [haku-id :- Long, hakemus-id :- s/Str, hakemus-base-version :- Long, field-id :- s/Str]
     (-> (ok {:status "ok"})
-        (assoc-in [:headers "Access-Control-Allow-Origin"] (va-routes/virkailija-url))
+        (assoc-in [:headers "Access-Control-Allow-Origin"] (va-env/virkailija-url))
         (assoc-in [:headers "Access-Control-Allow-Methods"] "PUT"))))
 
 (defn- put-attachment []
@@ -271,7 +272,7 @@
                                          content-type
                                          size
                                          tempfile)]
-      (assoc-in response [:headers "Access-Control-Allow-Origin"] (va-routes/virkailija-url)))))
+      (assoc-in response [:headers "Access-Control-Allow-Origin"] (va-env/virkailija-url)))))
 
 (compojure-api/defroutes applications-routes
   "API for applications"
