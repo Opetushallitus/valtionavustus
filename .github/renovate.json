@@ -59,7 +59,8 @@
         "matchPackageNames": ["@types/node", "node"],
         "updateTypes": ["major"],
         "groupName": "Node.js major updates",
-        "description": "Node.js version limited to 16 until we don't use CentOS 7 any more (node 18 and above require a newer glibc version than is available on CentOS 7)"
+        "description": "Node.js version limited to 16 until we don't use CentOS 7 any more (node 18 and above require a newer glibc version than is available on CentOS 7)",
+        "enabled": false
       },
       {
         "matchManagers": ["nvm", "npm", "dockerfile"],
