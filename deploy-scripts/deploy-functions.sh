@@ -12,6 +12,7 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../scripts/common-func
 
 readonly github_registry="ghcr.io/opetushallitus/va-server"
 readonly revision="${GITHUB_SHA:-$(git rev-parse HEAD)}"
+readonly image_tag="$github_registry:$revision"
 readonly deploy_dist_dir="$repo/deploy-scripts/dist/"
 mkdir -p "$deploy_dist_dir"
 

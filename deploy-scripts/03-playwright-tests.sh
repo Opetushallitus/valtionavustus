@@ -4,6 +4,9 @@ set -o errexit -o nounset -o pipefail
 # shellcheck source=../scripts/common-functions.sh
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../scripts/common-functions.sh"
 
+# shellcheck source=./deploy-functions.sh
+source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/deploy-functions.sh"
+
 trap clean EXIT
 
 readonly RESULTS_DIR="$repo/playwright-results"
@@ -18,10 +21,17 @@ function main {
   require_docker_compose
 
   mkdir -p "$RESULTS_DIR"
+  export VA_SERVER_IMAGE="$image_tag"
+  info "Using $image_tag"
 
-  start_gh_actions_group "Build images required for playwright tests"
-  $compose up --build --wait db va fakesmtp maksatuspalvelu
+  start_gh_actions_group "Pull and build images required for playwright tests"
+  $compose pull
+  $compose build db fakesmtp maksatuspalvelu
   docker build -t playwright-image -f Dockerfile.playwright-test-runner .
+  end_gh_actions_group
+
+  start_gh_actions_group "Start services"
+  $compose up --no-build --wait va
   end_gh_actions_group
 
   start_gh_actions_group "run playwright tests"

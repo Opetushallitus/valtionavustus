@@ -30,8 +30,7 @@ function rename_panes_to_match_the_script_they_run {
 
 init
 
-$compose pull
-$compose create db va fakesmtp maksatuspalvelu
+$compose create --build -- va db fakesmtp maksatuspalvelu
 
 session="valtionavustus"
 

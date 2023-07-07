@@ -8,7 +8,6 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../scripts/common-func
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/deploy-functions.sh"
 
 readonly service_name="va-server"
-readonly image_tag="$github_registry:$revision"
 
 function main {
   require_command docker
@@ -20,7 +19,7 @@ function main {
 
   start_gh_actions_group "Building $image_tag"
   export VA_SERVER_TAG="$image_tag"
-  docker compose build --pull "$service_name"
+  docker build --tag "$image_tag" "$repo"
   tags_to_push+=("$image_tag")
   end_gh_actions_group
 
