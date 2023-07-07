@@ -7,7 +7,6 @@ on:
 defaults:
   run:
     shell: bash
-concurrency: deploy-master
 
 jobs:
   build:
@@ -71,6 +70,7 @@ jobs:
   deploy-jars:
     name: 04-deploy-jars.sh
     runs-on: ubuntu-22.04
+    concurrency: deploy-qa
     needs: 
       - playwright-tests
       - other-tests
