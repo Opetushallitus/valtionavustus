@@ -37,7 +37,6 @@ import {
   mutatesDefaultBudgetValuesForSelectedHakemusSeurantaAnswers,
 } from './overrides'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
-import { startHakemustenArviointiListening } from './hakemustenArviointiListenerMiddleware'
 
 const oldestFirst = (a: Lahetys, b: Lahetys) => (a.created_at < b.created_at ? -1 : 1)
 const successfullySent = (lahetys: Lahetys) => lahetys.success
@@ -240,10 +239,10 @@ export const selectHakemus = createAsyncThunk<
   }
 })
 
-const saveHakemusArvio = createAsyncThunk<
+export const saveHakemusArvio = createAsyncThunk<
   { budgetGranted: number | undefined },
   { hakemusId: number },
-  { state: HakemustenArviointiRootState }
+  { state: { arviointi: ArviointiState } }
 >('arviointi/saveHakemusArvio', async ({ hakemusId }, thunkAPI) => {
   const avustushakuId = getLoadedState(thunkAPI.getState().arviointi).hakuData.avustushaku.id
   const hakemus = getHakemus(thunkAPI.getState().arviointi, hakemusId)
@@ -263,15 +262,6 @@ const saveHakemusArvio = createAsyncThunk<
 export const startHakemusArvioAutoSave = createAction<{ hakemusId: number }>(
   'arviointi/startHakemusArvioAutoSave'
 )
-
-startHakemustenArviointiListening({
-  actionCreator: startHakemusArvioAutoSave,
-  effect: async (action, listenerApi) => {
-    listenerApi.cancelActiveListeners()
-    await listenerApi.delay(3000)
-    await listenerApi.dispatch(saveHakemusArvio(action.payload))
-  },
-})
 
 export const loadSelvitys = createAsyncThunk<
   HakemusSelvitys,
@@ -395,14 +385,14 @@ interface SaveStatus {
   serverError: string
 }
 
-interface State {
+export interface ArviointiState {
   initialData: { loading: true } | { loading: false; data: InitialData }
   saveStatus: SaveStatus
   modal: JSX.Element | undefined
   showOthersScores?: boolean
 }
 
-const initialState: State = {
+const initialState: ArviointiState = {
   initialData: { loading: true },
   saveStatus: {
     saveInProgress: false,
@@ -434,8 +424,8 @@ const arviointiSlice = createSlice({
   name: 'hakemustenArviointi',
   initialState,
   reducers: {
-    setArvioValue: <_ = State, T extends keyof Arvio = 'id'>(
-      state: Draft<State>,
+    setArvioValue: <_ = ArviointiState, T extends keyof Arvio = 'id'>(
+      state: Draft<ArviointiState>,
       { payload }: ArvioAction<T>
     ) => {
       const { hakemusId, key, value } = payload
@@ -444,7 +434,7 @@ const arviointiSlice = createSlice({
       hakemus.arvio[key] = value
     },
     setArvioFieldValue: (
-      state: Draft<State>,
+      state: Draft<ArviointiState>,
       { payload }: PayloadAction<{ hakemusId: number; answer: Answer; index: number }>
     ) => {
       const { hakemusId, answer, index } = payload
@@ -577,14 +567,14 @@ const arviointiSlice = createSlice({
   },
 })
 
-export const getLoadedState = (state: State) => {
+export const getLoadedState = (state: ArviointiState) => {
   if (state.initialData.loading) {
     throw Error('Tried to access data before it was loaded')
   }
   return state.initialData.data
 }
 
-export const getHakemus = (state: State, hakemusId: number) => {
+export const getHakemus = (state: ArviointiState, hakemusId: number) => {
   const { hakuData } = getLoadedState(state)
   const hakemus = hakuData.hakemukset.find((h) => h.id === hakemusId)
   if (!hakemus) {
