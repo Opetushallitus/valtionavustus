@@ -12,9 +12,8 @@ import { UserInfo } from '../types'
 import { MuutoshakemusTabs } from './MuutoshakemusTabs'
 
 import './Muutoshakemus.less'
-import { useHakemustenArviointiSelector } from '../hakemustenArviointi/arviointiStore'
-import { getUserRoles } from '../hakemustenArviointi/arviointiReducer'
 import { useHakemus } from '../hakemustenArviointi/useHakemus'
+import { useUserRoles } from '../hakemustenArviointi/arviointiSelectors'
 
 interface MuutoshakemusProps {
   environment: EnvironmentApiResponse
@@ -32,8 +31,9 @@ export const Muutoshakemus = ({
   userInfo,
 }: MuutoshakemusProps) => {
   const { id: hakemusId } = useHakemus()
+
   const { hakemukselleUkotettuValmistelija, isCurrentUserHakemukselleUkotettuValmistelija } =
-    useHakemustenArviointiSelector((state) => getUserRoles(state, hakemusId))
+    useUserRoles(hakemusId)
   const hakemus = hakemusVersion.normalizedData
   const [activeMuutoshakemus, setActiveMuutoshakemus] = useState(muutoshakemukset[0].id)
   const a = muutoshakemukset.find((_) => _.id === activeMuutoshakemus)!

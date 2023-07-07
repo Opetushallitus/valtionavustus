@@ -13,11 +13,11 @@ import {
 import {
   addPayment,
   getLoadedState,
-  getUserRoles,
   hasMultibatchPayments,
   removePayment,
 } from '../hakemustenArviointi/arviointiReducer'
 import { useHakemus } from '../hakemustenArviointi/useHakemus'
+import { useUserRoles } from '../hakemustenArviointi/arviointiSelectors'
 
 const Väliselvitys = () => {
   const hakemus = useHakemus()
@@ -34,9 +34,8 @@ const Väliselvitys = () => {
   const hasSelvitysAnswers = !!hakemus.selvitys?.valiselvitys?.answers
   const valiselvitys = hakemus.selvitys?.valiselvitys
   const form = hakemus.selvitys?.valiselvitysForm
-  const { isPresentingOfficer } = useHakemustenArviointiSelector((state) =>
-    getUserRoles(state, hakemus.id)
-  )
+  const { isPresentingOfficer } = useUserRoles(hakemus.id)
+
   const dispatch = useHakemustenArviointiDispatch()
   return (
     <div id="tab-content" className={hakemus.refused ? 'disabled' : ''}>

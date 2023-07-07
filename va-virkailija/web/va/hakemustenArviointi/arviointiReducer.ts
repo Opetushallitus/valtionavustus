@@ -25,7 +25,7 @@ import {
   Score,
   Scoring,
 } from 'soresu-form/web/va/types'
-import { HakuData, LahetysStatuses, UserInfo, VaCodeValue, VALMISTELIJA_ROLES } from '../types'
+import { HakuData, LahetysStatuses, UserInfo, VaCodeValue } from '../types'
 import { Lahetys } from '../haku-details/Tapahtumaloki'
 import { TalousarviotiliWithKoulutusasteet } from '../hakujenHallinta/hakuReducer'
 import { Muutoshakemus as MuutoshakemusType } from 'soresu-form/web/va/types/muutoshakemus'
@@ -599,29 +599,6 @@ export const hasMultibatchPayments = ({ arviointi }: HakemustenArviointiRootStat
   const multibatchEnabled = Boolean(environment['multibatch-payments']?.['enabled?'])
   const multiplemaksuera = avustushaku.content.multiplemaksuera === true
   return multibatchEnabled && multiplemaksuera
-}
-
-export const getUserRoles = (state: HakemustenArviointiRootState, hakemusId: number) => {
-  const { hakuData, userInfo } = getLoadedState(state.arviointi)
-  const hakemus = getHakemus(state.arviointi, hakemusId)
-  const { roles } = hakuData
-  const fallbackPresenter = roles.find((r) =>
-    (VALMISTELIJA_ROLES as readonly string[]).includes(r.role)
-  )
-  const hakemukselleUkotettuValmistelija =
-    roles.find((r) => r.id === hakemus.arvio['presenter-role-id']) || fallbackPresenter
-  const userOid = userInfo['person-oid']
-  const isCurrentUserHakemukselleUkotettuValmistelija =
-    hakemukselleUkotettuValmistelija?.oid === userOid
-  const userRole = roles.find((r) => r.oid === userOid)?.role
-  const isPresentingOfficer =
-    userRole && (VALMISTELIJA_ROLES as readonly string[]).includes(userRole)
-  return {
-    userOid,
-    isPresentingOfficer,
-    hakemukselleUkotettuValmistelija,
-    isCurrentUserHakemukselleUkotettuValmistelija,
-  }
 }
 
 export const { setArvioValue, setArvioFieldValue, setMuutoshakemukset, toggleShowOthersScore } =

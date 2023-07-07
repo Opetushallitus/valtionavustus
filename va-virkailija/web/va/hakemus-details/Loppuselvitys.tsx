@@ -10,7 +10,6 @@ import ApplicationPayments from './ApplicationPayments'
 import {
   addPayment,
   getLoadedState,
-  getUserRoles,
   hasMultibatchPayments,
   removePayment,
 } from '../hakemustenArviointi/arviointiReducer'
@@ -19,6 +18,7 @@ import {
   useHakemustenArviointiSelector,
 } from '../hakemustenArviointi/arviointiStore'
 import { useHakemus } from '../hakemustenArviointi/useHakemus'
+import { useUserRoles } from '../hakemustenArviointi/arviointiSelectors'
 
 const Loppuselvitys = () => {
   const hakemus = useHakemus()
@@ -31,9 +31,7 @@ const Loppuselvitys = () => {
     (state) => getLoadedState(state.arviointi).lahetykset.loppuselvitysPyynnotSentAt !== undefined
   )
   const multibatchPaymentsEnabled = useHakemustenArviointiSelector(hasMultibatchPayments)
-  const { isPresentingOfficer, hakemukselleUkotettuValmistelija } = useHakemustenArviointiSelector(
-    (state) => getUserRoles(state, hakemus.id)
-  )
+  const { isPresentingOfficer, hakemukselleUkotettuValmistelija } = useUserRoles(hakemus.id)
   const hasSelvitys = !!hakemus.selvitys?.loppuselvitys?.answers
   const selvitysHakemus = hakemus.selvitys?.loppuselvitys
   const form = hakemus.selvitys?.loppuselvitysForm
