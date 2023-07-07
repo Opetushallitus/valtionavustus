@@ -1,4 +1,5 @@
-{:server                                      {:allow-db-clear?         true
+{:environment              "dev"
+ :server                                      {:allow-db-clear?         true
                                                :enable-access-log?      false
                                                :enable-hsts?            false
                                                :enable-csp?             false

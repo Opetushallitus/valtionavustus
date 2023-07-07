@@ -1,4 +1,5 @@
-{:server                  {:auto-reload?    false
+{:environment              "va-prod"
+ :server                  {:auto-reload?    false
                            :allow-db-clear? false
                            :hakija-host     "*"
                            :hakija-port     8081

@@ -4,8 +4,6 @@
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]))
 
-(def environment (env :environment))
-
 (defn config-name [] (env :config))
 
 (defn config-simple-name []
@@ -46,6 +44,10 @@
          (clojure.edn/read-string)
          (merge-with-secrets)
          (merge-with-defaults))))
+
+(def environment
+  (when-not *compile-files*
+    (or (env :environment) (:environment config))))
 
 (defn without-authentication? []
   (let [use-fake-auth (-> config :server :without-authentication?)]

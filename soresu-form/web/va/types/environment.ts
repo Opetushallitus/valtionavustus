@@ -1,7 +1,8 @@
-type FeatureFlag = { 'enabled?': boolean }
+type LegacyFeatureFlag = { 'enabled?': boolean }
 
 export interface EnvironmentApiResponse {
   name: string
+  'feature-flags': string[]
   'show-name': boolean
   'hakija-server': {
     url: {
@@ -13,14 +14,8 @@ export interface EnvironmentApiResponse {
     fi: string
     sv: string
   }
-  'multibatch-payments': FeatureFlag
-  'dont-send-loppuselvityspyynto-to-virkailija'?: FeatureFlag
-  payments: FeatureFlag & { 'delete-payments?': boolean }
-  'backup-contact-person'?: FeatureFlag
+  'multibatch-payments': LegacyFeatureFlag
+  'dont-send-loppuselvityspyynto-to-virkailija'?: LegacyFeatureFlag
+  payments: LegacyFeatureFlag & { 'delete-payments?': boolean }
+  'backup-contact-person'?: LegacyFeatureFlag
 }
-
-type FeatureFlags<T> = {
-  [P in keyof T as T[P] extends FeatureFlag ? P : never]: T[P]
-}
-
-export type FeatureFlagKey = keyof FeatureFlags<Required<EnvironmentApiResponse>>

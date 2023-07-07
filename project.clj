@@ -132,7 +132,7 @@
                  [compojure]
                  [metosin/compojure-api]
                  [com.github.java-json-tools/jackson-coreutils "2.0"  :exclusions [com.google.code.findbugs/jsr305]]
-                 [com.google.guava/guava "32.0.1-jre" ]
+                 [com.google.guava/guava "32.0.1-jre"]
                  [cheshire]
                  [prismatic/schema]
                  [org.postgresql/postgresql]
@@ -148,23 +148,12 @@
                  [org.clojure/tools.trace]]
 
   :profiles {:uberjar {:aot [oph.va.hakija.main]}
-             :hakija-dev     {:env {:config "va-hakija/config/dev.edn"
-                              :configsecrets "../valtionavustus-secret/config/secret-dev.edn"
-                              :environment "dev"
-                              :configdefaults "va-hakija/config/defaults.edn"}}
+             :server-dev {:env {:config "va-hakija/config/dev.edn"
+                                :configsecrets "../valtionavustus-secret/config/secret-dev.edn"
+                                :configdefaults "va-hakija/config/defaults.edn"}}
 
-             :hakija-test     {:env {:config "va-hakija/config/docker-compose-test.edn"
-                              :environment "dev"
-                              :configdefaults "va-hakija/config/defaults.edn"}}
-
-             :virkailija-dev {:env {:config "va-hakija/config/dev.edn"
-                              :configsecrets "../valtionavustus-secret/config/secret-dev.edn"
-                              :environment "dev"
-                              :configdefaults "va-hakija/config/defaults.edn"}}
-
-             :virkailija-test {:env {:config "va-hakija/config/docker-compose-test.edn"
-                              :environment "dev"
-                              :configdefaults "va-hakija/config/defaults.edn"}}
+             :server-test {:env {:config "va-hakija/config/docker-compose-test.edn"
+                                 :configdefaults "va-hakija/config/defaults.edn"}}
 
              :test {:env {:config "server/config/test.edn"
                           :configdefaults "server/config/test.edn"
@@ -173,15 +162,10 @@
                     :resource-paths ["server/test-resources"]}
 
              :test-legacy {:env {:config "server/config/test-legacy.edn"
-                          :configdefaults "server/config/test.edn"
-                          :environment "test"}
-                    :test-paths ["server/spec"]
-                    :resource-paths ["server/test-resources"]}
-
-             :hakija-prod     {:env {:config "va-hakija/config/prod.edn"}}
-
-             :virkalija-prod  {:env {:config "va-hakija/config/va-prod.edn"}}
-             }
+                                 :configdefaults "server/config/test.edn"
+                                 :environment "test"}
+                           :test-paths ["server/spec"]
+                           :resource-paths ["server/test-resources"]}}
 
   :aot [oph.va.jdbc.enums oph.va.hakija.db.migrations oph.va.virkailija.db.migrations clj-time.core]
 

@@ -6,7 +6,7 @@ services:
   va:
     extends:
       service: va-server
-    command: with-profile hakija-dev run -m oph.va.hakija.main
+    command: with-profile server-dev run -m oph.va.hakija.main
     container_name: va
     hostname: va
     ports:
