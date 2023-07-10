@@ -171,7 +171,10 @@ function MultipleEmailRecipents({
         <button
           data-test-id={`${formName}-add-receiver`}
           className="form-add-receiver"
-          onClick={() => setEmail({ ...email, receivers: [...email.receivers, ''] })}
+          onClick={(e) => {
+            e.preventDefault()
+            setEmail({ ...email, receivers: [...email.receivers, ''] })
+          }}
         >
           + Lisää uusi vastaanottaja
         </button>

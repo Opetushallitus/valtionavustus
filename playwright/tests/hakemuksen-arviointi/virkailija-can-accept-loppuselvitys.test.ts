@@ -17,8 +17,12 @@ test('virkailija can accept loppuselvitys', async ({
   const subject = 'Hieno homma'
   const content = 'Hyvä juttu'
   const additionalReceiver = 'buddy-boy@buddy.boy'
-
+  let emailSendApiCalled = 0
   await test.step('virkailija accepts loppuselvitys', async () => {
+    await page.route('**/loppuselvitys/send', (route) => {
+      emailSendApiCalled++
+      route.continue()
+    })
     await page.click('[data-test-id="taloustarkastus-add-receiver"]')
     await clearAndType(page, '[data-test-id="taloustarkastus-receiver-2"]', additionalReceiver)
 
@@ -27,6 +31,7 @@ test('virkailija can accept loppuselvitys', async ({
     await page.click('[data-test-id="taloustarkastus-submit"]')
 
     await waitForElementWithText(page, 'h3', 'Taloustarkastettu ja lähetetty hakijalle')
+    expect(emailSendApiCalled).toEqual(1)
   })
 
   await test.step('and sees which email was sent to hakija afterward', async () => {
