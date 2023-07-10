@@ -20,13 +20,14 @@ import {
 import { useHakemus } from '../hakemustenArviointi/useHakemus'
 import { useUserRoles } from '../hakemustenArviointi/arviointiSelectors'
 import MuistutusViesti from './Muistutusviesti'
+import { isFeatureEnabled } from 'soresu-form/web/va/types/environment'
 
 const Loppuselvitys = () => {
   const hakemus = useHakemus()
   const loadingHakemus = useHakemustenArviointiSelector(
     (state) => state.arviointi.saveStatus.loadingHakemus
   )
-  const { hakuData, helpTexts, userInfo } = useHakemustenArviointiSelector((state) =>
+  const { hakuData, helpTexts, userInfo, environment } = useHakemustenArviointiSelector((state) =>
     getLoadedState(state.arviointi)
   )
   const { avustushaku } = hakuData
@@ -48,11 +49,15 @@ const Loppuselvitys = () => {
   const presenterCommentHelpText = helpTexts['hankkeen_sivu__loppuselvitys___linkki_lomakkeelle']
   const selvitysLinkHelpText = helpTexts['hankkeen_sivu__loppuselvitys___linkki_lomakkeelle']
   const lang = loppuselvitys?.language || 'fi'
+  const muistusviestiEnabled = isFeatureEnabled(environment, 'muistutusviesti-loppuselvityksesta')
+
   return (
     <div id="tab-content" className={hakemus.refused ? 'disabled' : ''}>
       <div className="selvitys-container" data-test-id="hakemus-details-loppuselvitys">
         <PresenterComment helpText={presenterCommentHelpText} />
-        {loppuselvitys && !loadingHakemus && <MuistutusViesti hakemus={hakemus} lang={lang} />}
+        {loppuselvitys && !loadingHakemus && muistusviestiEnabled && (
+          <MuistutusViesti hakemus={hakemus} lang={lang} />
+        )}
         {hasSelvitys ? (
           <SelvitysPreview
             hakemus={hakemus}
@@ -93,7 +98,9 @@ const Loppuselvitys = () => {
           helpText={selvitysLinkHelpText}
           selvitysPyynnotSent={loppuselvitysPyynnotSent}
         />
-        {!loppuselvitys && !loadingHakemus && <MuistutusViesti hakemus={hakemus} lang={lang} />}
+        {!loppuselvitys && !loadingHakemus && muistusviestiEnabled && (
+          <MuistutusViesti hakemus={hakemus} lang={lang} />
+        )}
         {hasSelvitys && (
           <LoppuselvitysForm
             hakemus={hakemus}
