@@ -82,24 +82,31 @@
 (defn stop-background-job-send-mails []
   (email/stop-background-job-send-mails))
 
+(defn- render-body [msg]
+  (let [{:keys [email-type lang]} msg
+        template (get-in mail-templates [email-type lang])]
+    (render template msg)))
+
 (defn send-taydennyspyynto-message! [lang to cc avustushaku-id hakemus-id avustushaku-name user-key taydennyspyynto presenting-officer-email]
   (let [lang-str (or (clojure.core/name lang) "fi")
-        url (email/generate-url avustushaku-id lang lang-str user-key false)]
+        url (email/generate-url avustushaku-id lang lang-str user-key false)
+        msg {:operation :send
+             :email-type :taydennyspyynto
+             :lang lang
+             :hakemus-id hakemus-id
+             :from (-> email/smtp-config :from lang)
+             :bcc presenting-officer-email
+             :cc cc
+             :sender (-> email/smtp-config :sender)
+             :subject (get-in mail-titles [:taydennyspyynto lang])
+             :to [to]
+             :avustushaku avustushaku-name
+             :url url
+             :yhteyshenkilo presenting-officer-email
+             :taydennyspyynto taydennyspyynto}
+        body (render-body msg)]
     (log/info "Url would be: " url)
-    (email/enqueue-message-to-be-send {:operation :send
-                                       :email-type :taydennyspyynto
-                                       :lang lang
-                                       :hakemus-id hakemus-id
-                                       :from (-> email/smtp-config :from lang)
-                                       :bcc presenting-officer-email
-                                       :cc cc
-                                       :sender (-> email/smtp-config :sender)
-                                       :subject (get-in mail-titles [:taydennyspyynto lang])
-                                       :to [to]
-                                       :avustushaku avustushaku-name
-                                       :url url
-                                       :yhteyshenkilo presenting-officer-email
-                                       :taydennyspyynto taydennyspyynto})))
+    (email/enqueue-message-to-be-send msg body)))
 
 (defn paatos-url [avustushaku-id user-key lang]
   (let [va-url (-> config :server :url lang)]
@@ -442,17 +449,19 @@
     ))
 
 (defn send-selvitys! [to hakemus mail-subject mail-message]
-  (let [lang (keyword (:language hakemus))]
-    (email/enqueue-message-to-be-send {:operation :send
-                                       :email-type :selvitys
-                                       :hakemus-id (:id hakemus)
-                                       :avustushaku-id (:avustushaku hakemus)
-                                       :lang lang
-                                       :from (-> email/smtp-config :from lang)
-                                       :sender (-> email/smtp-config :sender)
-                                       :subject mail-subject
-                                       :to to
-                                       :body mail-message})))
+  (let [lang (keyword (:language hakemus))
+        msg {:operation :send
+             :email-type :selvitys
+             :hakemus-id (:id hakemus)
+             :avustushaku-id (:avustushaku hakemus)
+             :lang lang
+             :from (-> email/smtp-config :from lang)
+             :sender (-> email/smtp-config :sender)
+             :subject mail-subject
+             :to to
+             :body mail-message}
+        body (render-body msg)]
+    (email/enqueue-message-to-be-send msg body)))
 
 (defn send-selvitys-notification! [to avustushaku hakemus selvitys-type arvio roles uuid identity]
   (let [lang-str (:language hakemus)
@@ -466,43 +475,44 @@
         presenter (if (nil? selected-presenter) (first roles) selected-presenter)
         disable-selvitysmail-to-virkailija (-> config :dont-send-loppuselvityspyynto-to-virkailija :enabled?)
         selvitysdate-unformatted ((keyword (str selvitys-type "date")) avustushaku)
-        selvitysdate (if (nil? selvitysdate-unformatted) "" (datetime/java8-date-string selvitysdate-unformatted))]
+        selvitysdate (if (nil? selvitysdate-unformatted) "" (datetime/java8-date-string selvitysdate-unformatted))
+        msg {:operation :send
+             :hakemus-id (:id hakemus)
+             :avustushaku-id (:id avustushaku)
+             :email-type (keyword type)
+             :lang lang
+             :from (-> email/smtp-config :from lang)
+             :sender (-> email/smtp-config :sender)
+             :subject mail-subject
+             :selvitysdate selvitysdate
+             :presenter-name (:name presenter)
+             :avustushaku-name avustushaku-name
+             :to to
+             :bcc (when-not disable-selvitysmail-to-virkailija (:email identity))
+             :url url
+             :register-number (:register_number hakemus)
+             :project-name (:project_name hakemus)}
+        body (render-body msg)]
     (log/info "Url would be: " url)
     (tapahtumaloki/create-log-entry type (:id avustushaku) (:id hakemus) identity uuid to true)
-    (email/enqueue-message-to-be-send {:operation :send
-                                       :hakemus-id (:id hakemus)
-                                       :avustushaku-id (:id avustushaku)
-                                       :email-type (keyword type)
-                                       :lang lang
-                                       :from (-> email/smtp-config :from lang)
-                                       :sender (-> email/smtp-config :sender)
-                                       :subject mail-subject
-                                       :selvitysdate selvitysdate
-                                       :presenter-name (:name presenter)
-                                       :avustushaku-name avustushaku-name
-                                       :to to
-                                       :bcc (when-not disable-selvitysmail-to-virkailija (:email identity))
-                                       :url url
-                                       :register-number (:register_number hakemus)
-                                       :project-name (:project_name hakemus)})))
+    (email/enqueue-message-to-be-send msg body)))
 
 (defn send-payments-info! [payments-info]
   (let [lang :fi
         grant-title (get-in payments-info [:title lang])
-        mail-subject
-        (format (get-in mail-titles [:payments-info-notification lang])
-                grant-title)]
-    (email/enqueue-message-to-be-send {:operation :send
-                                       :email-type :payments-info-notification
-                                       :lang lang
-                                       :from (-> email/smtp-config :from lang)
-                                       :sender (-> email/smtp-config :sender)
-                                       :subject mail-subject
-                                       :to (:receivers payments-info)
-                                       :date (:date payments-info)
-                                       :batch-key (:batch-key payments-info)
-                                       :count (:count payments-info)
-                                       :total-granted (:total-granted payments-info)})))
+        mail-subject (format (get-in mail-titles [:payments-info-notification lang]) grant-title)
+        msg {:operation :send
+             :email-type :payments-info-notification
+             :lang lang
+             :from (-> email/smtp-config :from lang)
+             :sender (-> email/smtp-config :sender)
+             :subject mail-subject
+             :to (:receivers payments-info)
+             :date (:date payments-info)
+             :batch-key (:batch-key payments-info)
+             :count (:count payments-info)
+             :total-granted (:total-granted payments-info)}]
+    (email/enqueue-message-to-be-send msg (render-body msg))))
 
 (defjob EmailRetryJob [ctx]
   (log/info "Running email retry")

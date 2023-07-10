@@ -3,7 +3,6 @@
             [clojure.tools.logging :as log]
             [clojure.string :as string]
             [clojure.java.io :as io]
-            [clostache.parser :refer [render]]
             [oph.soresu.common.config :refer [config]]
             [oph.soresu.common.db :refer [query execute!]]
             [oph.common.email-utils :as email-utils]
@@ -197,61 +196,6 @@
       (catch Exception e
         (log/info e "Tried to send email:" email-id)))))
 
-(def mail-templates
-  (merge {:new-hakemus                              {:fi (load-template "email-templates/new-hakemus.plain.fi")
-                                                     :sv (load-template "email-templates/new-hakemus.plain.sv")}
-          :hakemus-submitted                        {:fi (load-template "email-templates/hakemus-submitted.plain.fi")
-                                                     :sv (load-template "email-templates/hakemus-submitted.plain.sv")}
-          :hakemus-change-request-responded         {:fi (load-template "email-templates/hakemus-change-request-responded.plain.fi")}
-          :valiselvitys-submitted-notification      {:fi (load-template "email-templates/valiselvitys-submitted-notification.plain.fi")
-                                                     :sv (load-template "email-templates/valiselvitys-submitted-notification.plain.sv")}
-          :loppuselvitys-submitted-notification     {:fi (load-template "email-templates/loppuselvitys-submitted-notification.plain.fi")
-                                                     :sv (load-template "email-templates/loppuselvitys-submitted-notification.plain.sv")}
-          :notify-valmistelija-of-new-muutoshakemus {:fi (load-template "email-templates/notify-valmistelija-of-new-muutoshakemus.plain.fi")}
-          :application-refused-presenter
-          {:fi (load-template
-                 "email-templates/application-refused-presenter.plain.fi")}
-          :application-refused                      {:fi (load-template
-                                                           "email-templates/application-refused.plain.fi")
-                                                     :sv (load-template
-                                                           "email-templates/application-refused.plain.sv")}
-          :hakemus-edited-after-applicant-edit      {:fi (load-template
-                                                           "email-templates/hakemus-edited-after-applicant-edit.plain.fi")
-                                                     :sv (load-template
-                                                           "email-templates/hakemus-edited-after-applicant-edit.plain.sv")}}
-         {:taydennyspyynto                   {:fi (load-template "email-templates/taydennyspyynto.plain.fi")
-                                              :sv (load-template "email-templates/taydennyspyynto.plain.sv")}
-          :paatos                            {:fi (load-template "email-templates/paatos.plain.fi")
-                                              :sv (load-template "email-templates/paatos.plain.sv")}
-          :muutoshakemus-paatos              {:fi (load-template "email-templates/muutoshakemus-paatos.plain.fi")
-                                              :sv (load-template "email-templates/muutoshakemus-paatos.plain.sv")}
-          :paatos-refuse
-          {:fi (load-template "email-templates/paatos-refuse.plain.fi")
-           :sv (load-template "email-templates/paatos-refuse.plain.sv")}
-          :selvitys                          {:fi (load-template "email-templates/selvitys.plain.fi")
-                                              :sv (load-template "email-templates/selvitys.plain.sv")}
-          :valiselvitys-notification         {:fi (load-template "email-templates/valiselvitys-notification.plain.fi")
-                                              :sv (load-template "email-templates/valiselvitys-notification.plain.sv")}
-          :loppuselvitys-notification        {:fi (load-template "email-templates/loppuselvitys-notification.plain.fi")
-                                              :sv (load-template "email-templates/loppuselvitys-notification.plain.sv")}
-          :payments-info-notification
-          {:fi (load-template "email-templates/payments-info.fi")
-           :sv (load-template "email-templates/payments-info.fi")}
-          :loppuselvitys-asiatarkastamatta   (load-template "email-templates/loppuselvitys-asiatarkastamatta.fi")
-          :loppuselvitys-taloustarkastamatta (load-template "email-templates/loppuselvitys-taloustarkastamatta.fi")
-          :laheta-loppuselvityspyynnot       (load-template "email-templates/laheta-loppuselvityspyynnot.fi")
-          :valiselvitys-tarkastamatta        (load-template "email-templates/valiselvitys-tarkastamatta.fi")
-          :muutoshakemuksia-kasittelematta   (load-template "email-templates/muutoshakemuksia-kasittelematta.fi")
-          :laheta-valiselvityspyynnot        (load-template "email-templates/laheta-valiselvityspyynnot.fi")
-          :hakuaika-paattymassa              {:fi (load-template "email-templates/hakuaika-paattymassa.fi")
-                                              :sv (load-template "email-templates/hakuaika-paattymassa.sv")}
-          :hakuaika-paattynyt                {:fi (load-template "email-templates/hakuaika-paattynyt.fi")}
-          :paatokset-lahetetty               {:fi (load-template "email-templates/paatokset-lahetetty.fi")}
-          :valiselvitys-palauttamatta        {:fi (load-template "email-templates/valiselvitys-palauttamatta.fi")
-                                              :sv (load-template "email-templates/valiselvitys-palauttamatta.sv")}
-          :loppuselvitys-palauttamatta       {:fi (load-template "email-templates/loppuselvitys-palauttamatta.fi")
-                                              :sv (load-template "email-templates/loppuselvitys-palauttamatta.sv")}}))
-
 (defn start-loop-send-mails [_new-templates]
   (go
     (log/info "Starting background job: send mails...")
@@ -311,13 +255,8 @@
   (email-utils/modify-url
    (get-in config [:server :url lang]) avustushaku-id user-key lang token include-muutoshaku-link?))
 
-(defn- render-body [msg]
-  (let [template (get-in mail-templates [(:email-type msg) (:lang msg)])]
-    (render template msg)))
-
-(defn enqueue-message-to-be-send [msg]
-  (let [body (render-body msg)
-        email-id (store-email msg body)]
+(defn enqueue-message-to-be-send [msg body]
+  (let [email-id (store-email msg body)]
     (>!! mail-chan {:operation :send, :msg msg, :body body, :email-id email-id})))
 
 (defn- get-messages-that-failed-to-send []

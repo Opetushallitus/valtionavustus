@@ -48,6 +48,11 @@
                                          :sv (email/load-template
                                               "email-templates/hakemus-edited-after-applicant-edit.plain.sv")}})
 
+(defn- render-body [msg]
+  (let [{:keys [email-type lang]} msg
+        template (get-in mail-templates [email-type lang])]
+    (render template msg)))
+
 (defn start-background-job-send-mails []
   (email/start-background-job-send-mails mail-templates))
 
@@ -85,22 +90,24 @@
         start-time-string (datetime/time-string start-date)
         end-date-string (datetime/date-string end-date)
         end-time-string (datetime/time-string end-date)
-        url (email/generate-url avustushaku-id lang lang-str user-key false)]
+        url (email/generate-url avustushaku-id lang lang-str user-key false)
+        msg {:operation :send
+             :email-type :new-hakemus
+             :lang lang
+             :from (-> email/smtp-config :from lang)
+             :sender (-> email/smtp-config :sender)
+             :subject (get-in mail-titles [:new-hakemus lang])
+             :to to
+             :avustushaku avustushaku
+             :avustushaku-id avustushaku-id
+             :start-date start-date-string
+             :start-time start-time-string
+             :end-date end-date-string
+             :end-time end-time-string
+             :url url}
+        body (render-body msg)]
     (log/info "Url would be: " url)
-    (email/enqueue-message-to-be-send {:operation :send
-                                       :email-type :new-hakemus
-                                       :lang lang
-                                       :from (-> email/smtp-config :from lang)
-                                       :sender (-> email/smtp-config :sender)
-                                       :subject (get-in mail-titles [:new-hakemus lang])
-                                       :to to
-                                       :avustushaku avustushaku
-                                       :avustushaku-id avustushaku-id
-                                       :start-date start-date-string
-                                       :start-time start-time-string
-                                       :end-date end-date-string
-                                       :end-time end-time-string
-                                       :url url})))
+    (email/enqueue-message-to-be-send msg body)))
 
 (defn generate-refused-email [lang recipients grant-name hakemus-id]
   {:operation :send
@@ -114,8 +121,9 @@
    :grant-name grant-name})
 
 (defn send-refused-message! [lang recipients grant-name hakemus-id]
-  (email/enqueue-message-to-be-send
-       (generate-refused-email lang recipients grant-name hakemus-id)))
+  (let [msg (generate-refused-email lang recipients grant-name hakemus-id)
+        body (render-body msg)]
+  (email/enqueue-message-to-be-send msg body)))
 
 (defn generate-presenter-refused-email [recipients grant application-id]
   (let [url (email/generate-virkailija-url (:id grant) application-id)
@@ -131,8 +139,9 @@
      :url url}))
 
 (defn send-refused-message-to-presenter! [recipients grant application-id]
-  (email/enqueue-message-to-be-send
-       (generate-presenter-refused-email recipients grant application-id)))
+  (let [msg (generate-presenter-refused-email recipients grant application-id)
+        body (render-body msg)]
+    (email/enqueue-message-to-be-send msg body)))
 
 (defn generate-applicant-edit-email [lang recipients grant-name hakemus]
   {:operation :send
@@ -150,40 +159,43 @@
    :avustushaku-id (:avustushaku hakemus)})
 
 (defn send-applicant-edit-message! [lang recipients grant-name hakemus]
-  (email/enqueue-message-to-be-send
-       (generate-applicant-edit-email lang recipients grant-name hakemus)))
+  (let [msg (generate-applicant-edit-email lang recipients grant-name hakemus)
+        body (render-body msg)]
+  (email/enqueue-message-to-be-send msg body)))
 
 (defn notify-valmistelija-of-new-muutoshakemus [to avustushaku-id register-number hanke hakemus-id]
   (let [lang :fi
         url (email/generate-virkailija-url avustushaku-id hakemus-id)
         msg {:operation :send
-                          :email-type :notify-valmistelija-of-new-muutoshakemus
-                          :lang lang
-                          :from (-> email/smtp-config :from lang)
-                          :sender (-> email/smtp-config :sender)
-                          :hakemus-id hakemus-id
-                          :subject (get-in mail-titles [:notify-valmistelija-of-new-muutoshakemus lang])
-                          :to to
-                          :hanke hanke
-                          :register-number register-number
-                          :url url}
-        formatted-message (render (get-in mail-templates [:notify-valmistelija-of-new-muutoshakemus lang]) msg)]
+             :email-type :notify-valmistelija-of-new-muutoshakemus
+             :lang lang
+             :from (-> email/smtp-config :from lang)
+             :sender (-> email/smtp-config :sender)
+             :hakemus-id hakemus-id
+             :subject (get-in mail-titles [:notify-valmistelija-of-new-muutoshakemus lang])
+             :to to
+             :hanke hanke
+             :register-number register-number
+             :url url}
+        body (render-body msg)]
     (log/info "Notifying valmistelija of new muutoshakemus: " url)
-    (email/enqueue-message-to-be-send msg)))
+    (email/enqueue-message-to-be-send msg body)))
 
 (defn send-change-request-responded-message-to-virkailija! [to avustushaku-id avustushaku-name-fi hakemus-db-id]
   (let [lang :fi
-        url (email/generate-virkailija-url avustushaku-id hakemus-db-id)]
+        url (email/generate-virkailija-url avustushaku-id hakemus-db-id)
+        msg {:operation :send
+             :email-type :hakemus-change-request-responded
+             :lang lang
+             :from (-> email/smtp-config :from lang)
+             :sender (-> email/smtp-config :sender)
+             :subject (get-in mail-titles [:hakemus-change-request-responded lang])
+             :to to
+             :avustushaku avustushaku-name-fi
+             :url url}
+        body (render-body msg)]
     (log/info "Url would be: " url)
-    (email/enqueue-message-to-be-send {:operation :send
-                                       :email-type :hakemus-change-request-responded
-                                       :lang lang
-                                       :from (-> email/smtp-config :from lang)
-                                       :sender (-> email/smtp-config :sender)
-                                       :subject (get-in mail-titles [:hakemus-change-request-responded lang])
-                                       :to to
-                                       :avustushaku avustushaku-name-fi
-                                       :url url})))
+    (email/enqueue-message-to-be-send msg body)))
 
 (defn send-hakemus-submitted-message! [is-change-request-response? lang to avustushaku-id avustushaku user-key start-date end-date hakemus-id]
   (let [lang-str (or (clojure.core/name lang) "fi")
@@ -206,6 +218,7 @@
                       :end-time end-time-string
                       :url url
                       :avustushaku-id avustushaku-id
-                      :hakemus-id hakemus-id}]
+                      :hakemus-id hakemus-id}
+        body (render-body user-message)]
     (log/info "Urls would be: " url)
-    (email/enqueue-message-to-be-send user-message)))
+    (email/enqueue-message-to-be-send user-message body)))
