@@ -19,6 +19,7 @@ import {
 } from '../hakemustenArviointi/arviointiStore'
 import { useHakemus } from '../hakemustenArviointi/useHakemus'
 import { useUserRoles } from '../hakemustenArviointi/arviointiSelectors'
+import MuistutusViesti from './Muistutusviesti'
 
 const Loppuselvitys = () => {
   const hakemus = useHakemus()
@@ -51,6 +52,7 @@ const Loppuselvitys = () => {
     <div id="tab-content" className={hakemus.refused ? 'disabled' : ''}>
       <div className="selvitys-container" data-test-id="hakemus-details-loppuselvitys">
         <PresenterComment helpText={presenterCommentHelpText} />
+        {loppuselvitys && !loadingHakemus && <MuistutusViesti hakemus={hakemus} lang={lang} />}
         {hasSelvitys ? (
           <SelvitysPreview
             hakemus={hakemus}
@@ -91,6 +93,7 @@ const Loppuselvitys = () => {
           helpText={selvitysLinkHelpText}
           selvitysPyynnotSent={loppuselvitysPyynnotSent}
         />
+        {!loppuselvitys && !loadingHakemus && <MuistutusViesti hakemus={hakemus} lang={lang} />}
         {hasSelvitys && (
           <LoppuselvitysForm
             hakemus={hakemus}
