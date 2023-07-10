@@ -97,77 +97,76 @@
 (defn- filter-blank-addresses [addresses]
   (filter (comp not string/blank?) addresses))
 
-(defn create-mail-send-fn [{:keys [from sender to bcc cc reply-to subject attachment email-type lang]} email-msg]
-  (let [from (common-string/trim-ws from)
-        sender (common-string/trim-ws sender)
-        to (filter-blank-addresses (mapv common-string/trim-ws to))
-        bcc (trim-ws-or-nil bcc)
-        cc (filter-blank-addresses (mapv common-string/trim-ws cc))
-        reply-to (trim-ws-or-nil reply-to)
-        subject (common-string/trim-ws subject)
-        description (msg->description {:from       from
-                                       :sender     sender
-                                       :to         to
-                                       :subject    subject
-                                       :email-type email-type
-                                       :lang       lang})]
-    (log/info "Sending email:" description)
-    (let [make-email-obj (fn []
-                           (let [msg (if attachment (MultiPartEmail.) (SimpleEmail.))]
-                             (doto msg
-                               (.setHostName (:host smtp-config))
-                               (.setSmtpPort (:port smtp-config))
-                               (.setFrom from)
-                               (.addHeader "Sender" sender)
-                               (.setBounceAddress (:bounce-address smtp-config))
-                               (.setSubject subject)
-                               (.setMsg email-msg))
-                             (when reply-to
-                               (.addReplyTo msg reply-to))
-                             (when bcc
-                               (.addBcc msg bcc))
-                             (doseq [address cc]
-                               (.addCc msg address))
-                             (when attachment
-                               (let [is (ByteArrayInputStream. (:contents attachment))
-                                     ds (ByteArrayDataSource. is, "application/pdf")]
-                                 (.attach msg ds (:title attachment) (:description attachment))))
-                             (doseq [address to]
-                               (.addTo msg address))
-                             msg))
-          send-fn (if (:enabled? smtp-config)
-                    (fn []
-                      (.send (make-email-obj)))
-                    (fn []
-                      (when (:print-mail-on-disable? smtp-config)
-                        (let [email-obj (make-email-obj)]
-                          (log/infof (string/join "\n"
-                                                  ["Would have sent email:"
-                                                   "----"
-                                                   "hostname: %s"
-                                                   "smtp port: %s"
-                                                   "to: %s"
-                                                   "bcc: %s"
-                                                   "cc: %s"
-                                                   "from: %s"
-                                                   "reply-to: %s"
-                                                   "bounce address: %s"
-                                                   "other headers: %s"
-                                                   "subject: %s"
-                                                   "\n%s"
-                                                   "----"])
-                                     (.getHostName email-obj)
-                                     (.getSmtpPort email-obj)
-                                     (.getToAddresses email-obj)
-                                     (.getBccAddresses email-obj)
-                                     (.getCcAddresses email-obj)
-                                     (.getFromAddress email-obj)
-                                     (.getReplyToAddresses email-obj)
-                                     (.getBounceAddress email-obj)
-                                     (.getHeaders email-obj)
-                                     (.getSubject email-obj)
-                                     email-msg)))))]
-      [description send-fn])))
+(defn- print-email [email-obj email-msg]
+  (log/infof (string/join "\n"
+                          ["Would have sent email:"
+                           "----"
+                           "hostname: %s"
+                           "smtp port: %s"
+                           "to: %s"
+                           "bcc: %s"
+                           "cc: %s"
+                           "from: %s"
+                           "reply-to: %s"
+                           "bounce address: %s"
+                           "other headers: %s"
+                           "subject: %s"
+                           "\n%s"
+                           "----"])
+             (.getHostName email-obj)
+             (.getSmtpPort email-obj)
+             (.getToAddresses email-obj)
+             (.getBccAddresses email-obj)
+             (.getCcAddresses email-obj)
+             (.getFromAddress email-obj)
+             (.getReplyToAddresses email-obj)
+             (.getBounceAddress email-obj)
+             (.getHeaders email-obj)
+             (.getSubject email-obj)
+             email-msg))
+
+(defn- clean-email-fields [raw-fields]
+  (let [{:keys [from sender to bcc cc reply-to subject]} raw-fields]
+    (merge raw-fields
+           {:from (common-string/trim-ws from)
+            :sender (common-string/trim-ws sender)
+            :to (filter-blank-addresses (mapv common-string/trim-ws to))
+            :bcc (trim-ws-or-nil bcc)
+            :cc (filter-blank-addresses (mapv common-string/trim-ws cc))
+            :reply-to (trim-ws-or-nil reply-to)
+            :subject (common-string/trim-ws subject)})))
+
+(defn- create-email [{:keys [from sender to bcc cc reply-to subject attachment]} body]
+  (let [msg (if attachment (MultiPartEmail.) (SimpleEmail.))]
+    (doto msg
+      (.setHostName (:host smtp-config))
+      (.setSmtpPort (:port smtp-config))
+      (.setFrom from)
+      (.addHeader "Sender" sender)
+      (.setBounceAddress (:bounce-address smtp-config))
+      (.setSubject subject)
+      (.setMsg body))
+    (when reply-to
+      (.addReplyTo msg reply-to))
+    (when bcc
+      (.addBcc msg bcc))
+    (doseq [address cc]
+      (.addCc msg address))
+    (when attachment
+      (let [is (ByteArrayInputStream. (:contents attachment))
+            ds (ByteArrayDataSource. is, "application/pdf")]
+        (.attach msg ds (:title attachment) (:description attachment))))
+    (doseq [address to]
+      (.addTo msg address))
+    msg))
+
+(defn- send-mail [raw-email-fields body]
+  (let [email-fields (clean-email-fields raw-email-fields)
+        email (create-email email-fields body)]
+    (log/info "Sending email:" (msg->description email-fields))
+    (if (:enabled? smtp-config)
+      (.send email)
+      (print-email email body))))
 
 (defn create-email-event [email-id success {:keys [email-type hakemus-id avustushaku-id muutoshakemus-id]}]
   (try
@@ -180,24 +179,14 @@
       (log/error (.toString e))
       (log/error (str "Failed to store email event for email: " email-id)))))
 
-(defn try-send-msg [{:keys [to from sender subject bcc cc email-type reply-to attachment hakemus-id avustushaku-id muutoshakemus-id lang]}
+(defn- try-send-msg [{:keys [to from sender subject bcc cc email-type reply-to attachment hakemus-id avustushaku-id muutoshakemus-id lang]}
                     body
                     email-id]
   (let [email-event {:email-type       email-type
                      :hakemus-id       hakemus-id
                      :avustushaku-id   avustushaku-id
-                     :muutoshakemus-id muutoshakemus-id}]
-  (when (not (valid-message? {:from       from
-                              :sender     sender
-                              :to         to
-                              :subject    subject
-                              :email-type email-type
-                              :lang       lang}))
-    ((log/info (format "Failed to send invalid email with id: %s" email-id))
-     (create-email-event email-id false email-event)
-     (throw (Exception.
-             (format "Failed to send invalid email with id: %s" email-id)))))
-  (let [message {:to         to
+                     :muutoshakemus-id muutoshakemus-id}
+        message {:to         to
                  :from       from
                  :sender     sender
                  :bcc        bcc
@@ -206,15 +195,19 @@
                  :subject    subject
                  :attachment attachment
                  :email-type email-type
-                 :lang       lang}
-        [_ send-fn] (create-mail-send-fn message body)]
-    (try
-      (send-fn)
-      (create-email-event email-id true email-event)
-      (catch Exception e
-        (log/info e (format "Failed to send message: %s" (.getMessage e)))
+                 :lang       lang}]
+    (if (not (valid-message? message))
+      (let [log-message (format "Failed to send invalid email with id: %s" email-id)]
+        (log/info log-message)
         (create-email-event email-id false email-event)
-        (throw e))))))
+        (throw (Exception. log-message)))
+      (try
+        (send-mail message body)
+        (create-email-event email-id true email-event)
+        (catch Exception e
+          (log/info e (format "Failed to send message: %s" (.getMessage e)))
+          (create-email-event email-id false email-event)
+          (throw e))))))
 
 (defn try-send-msg-once
   ([msg format-plaintext-message]
