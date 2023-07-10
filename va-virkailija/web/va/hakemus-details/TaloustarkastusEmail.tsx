@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { UserInfo } from '../types'
 import { Language } from 'soresu-form/web/va/i18n/translations'
 import { Hakemus, Selvitys, SelvitysEmail } from 'soresu-form/web/va/types'
-import { IconTrashcan } from 'soresu-form/web/va/img/IconTrashcan'
 
-import './TaloustarkastusEmail.less'
 import { VerificationBox } from './VerificationBox'
 import {
   useHakemustenArviointiDispatch,
@@ -17,6 +15,7 @@ import {
   refreshHakemukset,
 } from '../hakemustenArviointi/arviointiReducer'
 import { initialRecipientEmails } from './emailRecipients'
+import MultipleRecipentEmailForm from './MultipleRecipentsEmailForm'
 
 type TaloustarkastusEmailProps = {
   avustushakuId: number
@@ -62,12 +61,6 @@ export const TaloustarkastusEmail = ({
         }
   )
 
-  useEffect(() => {
-    if (isTaloustarkastettu) {
-      sentEmail(lang, selvitysEmail)
-    }
-  }, [isTaloustarkastettu, lang])
-
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     e.stopPropagation()
@@ -82,94 +75,22 @@ export const TaloustarkastusEmail = ({
   }
 
   return (
-    <div data-test-id="taloustarkastus-email" className="taloustarkastus">
-      <form onSubmit={onSubmit} className="soresu-form">
-        <div className="taloustarkastus-body">
-          <h2 className="taloustarkastus-header">Taloustarkastus ja loppuselvityksen hyväksyntä</h2>
-          <fieldset>
-            <legend>Lähettäjä</legend>
-            <input type="text" name="sender" disabled={true} value="no-reply@oph.fi" />
-          </fieldset>
-          <fieldset disabled={taloustarkastettu}>
-            <legend>Vastaanottajat</legend>
-            {email.receivers.map((address, idx) => {
-              return (
-                <div className={`taloustarkastus-receiver-row`} key={idx}>
-                  <input
-                    data-test-id={`taloustarkastus-receiver-${idx}`}
-                    type="text"
-                    name="receiver"
-                    onChange={(e) => {
-                      const newReceivers = email.receivers
-                      newReceivers[idx] = e.target.value
-                      setEmail({ ...email, receivers: newReceivers })
-                    }}
-                    value={address}
-                  />
-                  {!taloustarkastettu && (
-                    <span
-                      className={'taloustarkastus-trashcan'}
-                      onClick={() => {
-                        const newReceivers = email.receivers
-                        newReceivers.splice(idx, 1)
-                        setEmail({ ...email, receivers: newReceivers })
-                      }}
-                    >
-                      <IconTrashcan />
-                    </span>
-                  )}
-                </div>
-              )
-            })}
-            {!taloustarkastettu && (
-              <button
-                data-test-id="taloustarkastus-add-receiver"
-                className="taloustarkastus-add-receiver"
-                onClick={() => setEmail({ ...email, receivers: [...email.receivers, ''] })}
-              >
-                + Lisää uusi vastaanottaja
-              </button>
-            )}
-          </fieldset>
-          <fieldset disabled={taloustarkastettu}>
-            <legend>Aihe</legend>
-            <input
-              data-test-id="taloustarkastus-email-subject"
-              onChange={(e) => setEmail({ ...email, subject: e.target.value })}
-              type="text"
-              name="subject"
-              value={email.subject}
-            />
-            <textarea
-              data-test-id="taloustarkastus-email-content"
-              onChange={(e) => setEmail({ ...email, content: e.target.value })}
-              rows={13}
-              name="content"
-              value={email.content}
-            />
-          </fieldset>
-        </div>
-        <div data-test-id="taloustarkastus">
-          {taloustarkastettu ? (
-            <VerificationBox
-              title="Taloustarkastettu ja lähetetty hakijalle"
-              date={hakemus['loppuselvitys-taloustarkastettu-at']}
-              verifier={hakemus['loppuselvitys-taloustarkastanut-name']}
-            />
-          ) : (
-            <div className="taloustarkastus-footer">
-              <button
-                data-test-id="taloustarkastus-submit"
-                type="submit"
-                name="submit-taloustarkastus"
-              >
-                Hyväksy taloustarkastus ja lähetä viesti
-              </button>
-            </div>
-          )}
-        </div>
-      </form>
-    </div>
+    <MultipleRecipentEmailForm
+      onSubmit={onSubmit}
+      disabled={isTaloustarkastettu}
+      email={email}
+      setEmail={setEmail}
+      formName="taloustarkastus"
+      submitText="Hyväksy taloustarkastus ja lähetä viesti"
+      heading="Taloustarkastus ja loppuselvityksen hyväksyntä"
+      disabledSubmitButton={
+        <VerificationBox
+          title="Taloustarkastettu ja lähetetty hakijalle"
+          date={hakemus['loppuselvitys-taloustarkastettu-at']}
+          verifier={hakemus['loppuselvitys-taloustarkastanut-name']}
+        />
+      }
+    />
   )
 }
 
