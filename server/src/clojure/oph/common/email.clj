@@ -35,6 +35,18 @@
   (when str
     (common-string/trim-ws str)))
 
+(defn- clean-email-fields [raw-fields]
+  (let [{:keys [from sender to bcc cc reply-to subject]} raw-fields
+        filter-blank (fn [coll] (filter (comp not string/blank?) coll))]
+    (merge raw-fields
+           {:from (common-string/trim-ws from)
+            :sender (common-string/trim-ws sender)
+            :to (filter-blank (mapv common-string/trim-ws to))
+            :bcc (trim-ws-or-nil bcc)
+            :cc (filter-blank (mapv common-string/trim-ws cc))
+            :reply-to (trim-ws-or-nil reply-to)
+            :subject (common-string/trim-ws subject)})))
+
 (defn- msg->description [{:keys [from sender to subject email-type lang]}]
   (let [from (or from sender)
         email-type (name email-type)
@@ -57,45 +69,21 @@
    (not-empty (name email-type))
    (not-empty (name lang))))
 
-(defn store-email [{:keys [to sender from subject email-type lang bcc cc reply-to attachment]}
-                   email-msg]
-
-  (when (not (and (valid-message? {:from       from
-                                   :sender     sender
-                                   :to         to
-                                   :subject    subject
-                                   :email-type email-type
-                                   :lang       lang})
-                  (not-empty email-msg)))
-    ((log/info "Failed to store invalid email" (msg->description {:from       from
-                                                                  :sender     sender
-                                                                  :to         to
-                                                                  :subject    subject
-                                                                  :email-type email-type
-                                                                  :lang       lang}))
-     (throw (Exception. "Failed to store invalid email"))))
-  (let [from (common-string/trim-ws from)
-        sender (common-string/trim-ws sender)
-        to (mapv common-string/trim-ws to)
-        bcc (trim-ws-or-nil bcc)
-        cc (mapv common-string/trim-ws cc)
-        reply-to (trim-ws-or-nil reply-to)
-        subject (common-string/trim-ws subject)]
-    (log/info "Storing email: " (msg->description {:from       from
-                                                   :sender     sender
-                                                   :to         to
-                                                   :subject    subject
-                                                   :email-type email-type
-                                                   :lang       lang}))
-    (let [result (query "INSERT INTO virkailija.email (formatted, from_address, sender, to_address, bcc, cc, reply_to, subject, attachment_contents, attachment_title, attachment_description)
+(defn store-email [email-fields body]
+  (if (not (and (valid-message? email-fields)
+                (not-empty body)))
+    (do (log/info "Failed to store invalid email" (msg->description email-fields))
+        (throw (Exception. "Failed to store invalid email")))
+    (do
+      (log/info "Storing email: " (msg->description email-fields))
+      (let [cleaned-fields (clean-email-fields email-fields)
+            {:keys [from sender to bcc cc reply-to subject attachment]} cleaned-fields
+            result (query "INSERT INTO virkailija.email (formatted, from_address, sender, to_address, bcc, cc, reply_to, subject, attachment_contents, attachment_title, attachment_description)
                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id"
-                        [email-msg from sender to bcc cc reply-to subject (:contents attachment) (:title attachment) (:description attachment)])
-          email_id (:id (first result))]
-      (log/info (str "Succesfully stored email with id: " email_id))
-      email_id)))
-
-(defn- filter-blank-addresses [addresses]
-  (filter (comp not string/blank?) addresses))
+                          [body from sender to bcc cc reply-to subject (:contents attachment) (:title attachment) (:description attachment)])
+            email_id (:id (first result))]
+        (log/info (str "Succesfully stored email with id: " email_id))
+        email_id))))
 
 (defn- print-email [email-obj email-msg]
   (log/infof (string/join "\n"
@@ -124,17 +112,6 @@
              (.getHeaders email-obj)
              (.getSubject email-obj)
              email-msg))
-
-(defn- clean-email-fields [raw-fields]
-  (let [{:keys [from sender to bcc cc reply-to subject]} raw-fields]
-    (merge raw-fields
-           {:from (common-string/trim-ws from)
-            :sender (common-string/trim-ws sender)
-            :to (filter-blank-addresses (mapv common-string/trim-ws to))
-            :bcc (trim-ws-or-nil bcc)
-            :cc (filter-blank-addresses (mapv common-string/trim-ws cc))
-            :reply-to (trim-ws-or-nil reply-to)
-            :subject (common-string/trim-ws subject)})))
 
 (defn- create-email [{:keys [from sender to bcc cc reply-to subject attachment]} body]
   (let [msg (if attachment (MultiPartEmail.) (SimpleEmail.))]
