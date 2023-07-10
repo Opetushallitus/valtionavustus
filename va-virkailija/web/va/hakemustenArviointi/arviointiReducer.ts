@@ -383,6 +383,7 @@ interface SaveStatus {
   saveInProgress: boolean
   saveTime: string | null
   serverError: string
+  loadingHakemus?: boolean
 }
 
 export interface ArviointiState {
@@ -482,10 +483,17 @@ const arviointiSlice = createSlice({
         hakemus['keskeytetty-aloittamatta'] = payload['keskeytetty-aloittamatta']
         hakemus.refused = payload.refused
       })
+      .addCase(selectHakemus.rejected, (state) => {
+        state.saveStatus.loadingHakemus = false
+      })
+      .addCase(selectHakemus.pending, (state) => {
+        state.saveStatus.loadingHakemus = true
+      })
       .addCase(selectHakemus.fulfilled, (state, { payload, meta }) => {
         const hakemusId = meta.arg
         const { hakemukset } = getLoadedState(state).hakuData
         const index = hakemukset.findIndex((h) => h.id === hakemusId)
+        state.saveStatus.loadingHakemus = false
         if (index != -1) {
           hakemukset[index] = {
             ...payload.hakemus,

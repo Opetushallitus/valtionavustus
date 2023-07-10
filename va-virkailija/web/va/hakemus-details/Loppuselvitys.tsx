@@ -22,6 +22,9 @@ import { useUserRoles } from '../hakemustenArviointi/arviointiSelectors'
 
 const Loppuselvitys = () => {
   const hakemus = useHakemus()
+  const loadingHakemus = useHakemustenArviointiSelector(
+    (state) => state.arviointi.saveStatus.loadingHakemus
+  )
   const { hakuData, helpTexts, userInfo } = useHakemustenArviointiSelector((state) =>
     getLoadedState(state.arviointi)
   )

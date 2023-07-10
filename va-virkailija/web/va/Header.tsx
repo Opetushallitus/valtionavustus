@@ -18,6 +18,7 @@ interface HeaderSaveStatus {
   savingManuallyRefactorToOwnActionsAtSomepoint?: boolean
   sendingMaksatuksetAndTasmaytysraportti?: boolean
   sendingMaksatuksetAndTasmaytysraporttiFailed?: boolean
+  loadingHakemus?: boolean
 }
 
 type NotificationStatus = 'ok' | 'error' | 'warning' | 'info'
@@ -76,6 +77,7 @@ export const HeaderContainer = ({
     saveStatus?.savingManuallyRefactorToOwnActionsAtSomepoint,
     saveStatus?.sendingMaksatuksetAndTasmaytysraportti,
     saveStatus?.sendingMaksatuksetAndTasmaytysraporttiFailed,
+    saveStatus?.loadingHakemus,
   ])
 
   return (
@@ -202,7 +204,7 @@ function getNotificationContent(saveStatus?: HeaderSaveStatus): NotificationProp
       notificationIcon: okIcon,
       status: 'ok',
     }
-  } else if (saveStatus?.loadingAvustushaku) {
+  } else if (saveStatus?.loadingAvustushaku || saveStatus?.loadingHakemus) {
     return {
       notification: 'Ladataan tietoja',
       notificationIcon: saveInProgressIcon,
