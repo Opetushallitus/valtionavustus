@@ -73,9 +73,6 @@
                                      "check that you run with correct mode. "
                                      "Current config name is " (config-name))))))
 
-(defn clear-db! [schema-name]
-  (clear-db-and-grant! schema-name nil))
-
 (defmacro exec [query params]
   `(jdbc/with-db-transaction [connection# {:datasource (get-datasource)}]
      (~query ~params {:connection connection#})))
@@ -95,8 +92,14 @@
                             (func connection)))
 
 (defn query
+  "Execute SQL query and convert underscores to dashes in returned identifiers"
   ([sql params] (with-tx (fn [tx] (query tx sql params))))
   ([tx sql params] (jdbc/query tx (concat [sql] params) {:identifiers #(.replace % \_ \-)})))
+
+(defn query-original-identifiers
+  "Query, but preserves underscores in identifiers"
+  ([sql params] (with-tx (fn [tx] (query-original-identifiers tx sql params))))
+  ([tx sql params] (jdbc/query tx (concat [sql] params))))
 
 (defn execute!
   ([sql params] (with-tx (fn [tx] (execute! tx sql params))))

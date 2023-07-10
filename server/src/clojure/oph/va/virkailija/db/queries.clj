@@ -91,6 +91,3 @@
 
 (defquery get-unprosessed-tasmaytysraportti-data "sql/virkailija/tasmaytysraportti/get-unprocessed-tasmaytysraportti-data.sql")
 (defquery get-tasmaytysraportti-by-avustushaku-id-data "sql/virkailija/tasmaytysraportti/get-tasmaytysraportti-by-avustushaku-id-data.sql")
-
-(defquery create-tapahtumaloki-entry "sql/virkailija/tapahtumaloki/create-tapahtumaloki-entry.sql")
-(defquery get-tapahtumaloki-entries "sql/virkailija/tapahtumaloki/get-tapahtumaloki-entries.sql")
