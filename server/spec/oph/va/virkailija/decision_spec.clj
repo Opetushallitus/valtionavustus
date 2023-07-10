@@ -1,11 +1,11 @@
 (ns oph.va.virkailija.decision-spec
   (:require [speclj.core
              :refer [describe it should= should-contain tags run-specs around-all]]
+            [clojure.java.io :as io]
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
             [oph.va.virkailija.server :refer [start-virkailija-server]]
             [oph.va.virkailija.grant-data :as grant-data]
             [oph.va.virkailija.decision :as d]
-            [oph.common.email :as email]
             [clojure.data.json :as json]
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.va.virkailija.common-utils
@@ -13,7 +13,7 @@
                      create-application-evaluation]])
   (:import (java.time LocalDate)))
 
-(def translations-str (email/load-template "public/translations.json"))
+(def translations-str (slurp (io/resource "public/translations.json")))
 (def translations (json/read-str translations-str :key-fn keyword))
 (def translate (partial d/decision-translation translations :fi))
 (def translate-sv (partial d/decision-translation translations :sv))
