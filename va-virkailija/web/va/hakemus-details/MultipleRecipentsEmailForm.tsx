@@ -5,6 +5,11 @@ import './MultipleRecipentsEmailForm.less'
 
 export type Email = { lang: Language; subject: string; content: string; receivers: string[] }
 
+type CancelButton = {
+  text: string
+  onClick: () => void
+}
+
 export default function MultipleRecipentEmailForm({
   heading,
   disabled,
@@ -12,8 +17,9 @@ export default function MultipleRecipentEmailForm({
   onSubmit,
   setEmail,
   submitText,
-  disabledSubmitButton,
   formName,
+  disabledSubmitButton,
+  cancelButton,
 }: {
   heading: string
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>
@@ -23,6 +29,7 @@ export default function MultipleRecipentEmailForm({
   submitText: string
   formName: string
   disabledSubmitButton?: ReactElement
+  cancelButton?: CancelButton
 }) {
   return (
     <div data-test-id={`${formName}-email`} className="form">
@@ -43,6 +50,7 @@ export default function MultipleRecipentEmailForm({
           disabled={disabled}
           disabledComponent={disabledSubmitButton}
           formName={formName}
+          cancelButton={cancelButton}
         />
       </form>
     </div>
@@ -54,11 +62,13 @@ function SubmitContainer({
   disabled,
   formName,
   disabledComponent,
+  cancelButton,
 }: {
   submitText: string
   disabled: boolean
   formName: string
   disabledComponent?: ReactElement
+  cancelButton?: CancelButton
 }) {
   const DisabledComponent = () => disabledComponent
   return (
@@ -75,6 +85,11 @@ function SubmitContainer({
           >
             {submitText}
           </button>
+          {cancelButton && (
+            <button className="cancelButton" onClick={cancelButton.onClick}>
+              {cancelButton.text}
+            </button>
+          )}
         </div>
       )}
     </div>

@@ -16,16 +16,22 @@ export default function MuistutusViesti({ hakemus, lang }: MuistutusviestiProps)
   const [showEmailForm, setShowEmailForm] = useState(false)
 
   const contactEmail = hakemus.normalizedData?.['contact-email']
-  const [email, setEmail] = useState({
+  const initialEmail = {
     lang,
     subject: '',
     content: '',
     receivers: contactEmail ? [contactEmail] : [],
-  })
+  }
+  const [email, setEmail] = useState(initialEmail)
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     e.stopPropagation()
+  }
+
+  function cancelForm() {
+    setEmail(initialEmail)
+    setShowEmailForm(false)
   }
 
   return (
@@ -52,6 +58,10 @@ export default function MuistutusViesti({ hakemus, lang }: MuistutusviestiProps)
           formName="muistutusviesti"
           submitText="Lähetä muistutusviesti"
           heading="Lähetä muistutusviesti"
+          cancelButton={{
+            text: 'Peruuta',
+            onClick: cancelForm,
+          }}
         />
       )}
     </>
