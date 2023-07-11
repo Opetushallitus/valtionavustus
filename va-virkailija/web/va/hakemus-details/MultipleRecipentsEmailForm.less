@@ -1,24 +1,23 @@
 @import "~soresu-form/web/form/style/variables.less";
 
 .form {
-  margin: 2rem 0;
+  margin-bottom: 1rem;
   width: 100%;
   border: 1px solid #eaeaea;
+  background: @background-blue;
 
   .form-body {
     padding: 1rem;
     box-sizing: border-box;
-    background: @background-blue;
   }
 
   .form-header {
+    font: 'Open Sans';
     margin: 0 0 1rem;
-    color: #000000;
   }
 
   .form-footer {
     padding: 1rem;
-    background: @background-blue;
     box-sizing: border-box;
   }
 
@@ -44,6 +43,7 @@
     }
 
     .form-trashcan {
+      cursor: pointer;
       padding: 1rem;
     }
   }
