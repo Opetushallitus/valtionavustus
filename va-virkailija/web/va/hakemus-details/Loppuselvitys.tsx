@@ -53,7 +53,7 @@ const Loppuselvitys = () => {
 
   return (
     <div id="tab-content" className={hakemus.refused ? 'disabled' : ''}>
-      <div className="selvitys-container" data-test-id="hakemus-details-loppuselvitys">
+      <div data-test-id="hakemus-details-loppuselvitys">
         <PresenterComment helpText={presenterCommentHelpText} />
         {loppuselvitys && !loadingHakemus && muistusviestiEnabled && (
           <MuistutusViesti hakemus={hakemus} lang={lang} />
