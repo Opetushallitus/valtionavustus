@@ -53,6 +53,9 @@ const dateFormat = 'D.M.YYYY H.mm'
 const formatDate = (date: Date | moment.Moment) => moment(date).format(dateFormat)
 export const parseDate = (input: string) => moment(input, dateFormat).toDate()
 
+export const hakuPath = (avustushakuID: number) =>
+  `/admin/haku-editor/?avustushaku=${avustushakuID}`
+
 export class HakujenHallintaPage {
   readonly page: Page
   readonly valiselvitysUpdatedAt: Locator
@@ -82,12 +85,12 @@ export class HakujenHallintaPage {
   }
 
   async navigate(avustushakuID: number) {
-    await this.navigateTo(`/admin/haku-editor/?avustushaku=${avustushakuID}`)
+    await this.navigateTo(hakuPath(avustushakuID))
     return HaunTiedotPage(this.page)
   }
 
   async navigateToDefaultAvustushaku() {
-    await this.navigateTo('/admin/haku-editor/?avustushaku=1')
+    await this.navigateTo(hakuPath(1))
     return HaunTiedotPage(this.page)
   }
 

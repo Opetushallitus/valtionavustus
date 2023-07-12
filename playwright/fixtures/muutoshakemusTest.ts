@@ -1,11 +1,12 @@
 import { expect, test } from '@playwright/test'
 import { HakemustenArviointiPage } from '../pages/hakemustenArviointiPage'
-import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
+import { HakujenHallintaPage, hakuPath } from '../pages/hakujenHallintaPage'
 import moment from 'moment'
 import { HakijaAvustusHakuPage } from '../pages/hakijaAvustusHakuPage'
 import { defaultValues } from './defaultValues'
 import { expectToBeDefined } from '../utils/util'
 import { PaatosPage } from '../pages/hakujen-hallinta/PaatosPage'
+import { VIRKAILIJA_URL } from '../utils/constants'
 
 export interface MuutoshakemusFixtures {
   finalAvustushakuEndDate: moment.Moment
@@ -28,12 +29,14 @@ export const submittedHakemusTest = defaultValues.extend<MuutoshakemusFixtures>(
     expect(userCache).toBeDefined()
     testInfo.setTimeout(testInfo.timeout + 40_000)
 
-    let avustushakuID: number | null = null
-    await test.step('Create avustushaku', async () => {
+    const avustushakuID = await test.step('Create avustushaku', async () => {
       const hakujenHallintaPage = new HakujenHallintaPage(page)
-      avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
+      return await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
     })
-    expectToBeDefined(avustushakuID)
+    testInfo.annotations.push({
+      type: 'avustushaku',
+      description: `${VIRKAILIJA_URL}${hakuPath(avustushakuID)}`,
+    })
     await use(avustushakuID)
   },
   submittedHakemus: async ({ avustushakuID, answers, page }, use, testInfo) => {
