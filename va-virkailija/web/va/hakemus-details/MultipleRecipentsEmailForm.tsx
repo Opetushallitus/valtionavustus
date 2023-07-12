@@ -125,6 +125,7 @@ function EmailContent({
         type="text"
         name="subject"
         value={email.subject}
+        required
       />
       <textarea
         data-test-id={`${formName}-email-content`}
@@ -132,6 +133,7 @@ function EmailContent({
         rows={13}
         name="content"
         value={email.content}
+        required
       />
     </fieldset>
   )
