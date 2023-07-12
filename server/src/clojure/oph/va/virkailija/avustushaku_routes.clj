@@ -228,16 +228,17 @@
     (compojure-api/POST
       "/:avustushaku-id/hakemus/:hakemus-id/loppuselvitys/send-reminder" request
       :path-params [avustushaku-id :- Long hakemus-id :- Long]
-      :body [{:keys [body subject to]} {:body s/Str
-                                        :subject s/Str
-                                        :to [s/Str]}]
+      :body [{:keys [body subject to lang]} {:lang s/Str
+                                             :body s/Str
+                                             :subject s/Str
+                                             :to [s/Str]}]
       :return s/Any
       :summary "Send muistutusviesti to hakija"
       (do
         (when (not (seq to))
           (http/bad-request! {:error "Viestillä on oltava vähintään yksi vastaanottaja"}))
         (common-email/try-send-email!
-         (common-email/message :fi
+         (common-email/message (keyword lang)
                                :loppuselvitys-muistutus
                                to
                                subject

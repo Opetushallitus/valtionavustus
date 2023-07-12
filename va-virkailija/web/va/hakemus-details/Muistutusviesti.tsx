@@ -32,6 +32,7 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
     await HttpUtil.post(
       `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/loppuselvitys/send-reminder`,
       {
+        lang,
         body: email.content,
         subject: email.subject,
         to: email.receivers,
