@@ -57,7 +57,7 @@
 
 (defn- enabled-features [flags env]
   (letfn [(feature-enabled? [[_ envs]] (some #(= % env) envs))]
-    (map first (filter feature-enabled? flags))))
+    (set (map first (filter feature-enabled? flags)))))
 
 (defn get-feature-flags []
   (let [flags-file (io/resource "feature-flags.edn")
@@ -65,4 +65,4 @@
     (enabled-features flags (keyword environment))))
 
 (defn feature-enabled? [flag]
-  (get-in config [flag :enabled?]))
+  (contains? (get-feature-flags) flag))

@@ -224,26 +224,27 @@
                           (http/bad-request!)))))
 
 (defn- send-loppuselvitys-reminder []
-  (compojure-api/POST
-    "/:avustushaku-id/hakemus/:hakemus-id/loppuselvitys/send-reminder" request
-    :path-params [avustushaku-id :- Long hakemus-id :- Long]
-    :body [{:keys [body subject to]} {:body s/Str
-                                      :subject s/Str
-                                      :to [s/Str]}]
-    :return s/Any
-    :summary "Send muistutusviesti to hakija"
-    (do
-      (when (not (seq to))
-        (http/bad-request! {:error "Viestillä on oltava vähintään yksi vastaanottaja"}))
-      (common-email/try-send-email!
-       (common-email/message :fi
-                             :loppuselvitys-muistutus
-                             to
-                             subject
-                             body)
-       {:hakemus-id hakemus-id
-        :avustushaku-id avustushaku-id})
-      (http/created))))
+  (when (feature-enabled? :muistutusviesti-loppuselvityksesta)
+    (compojure-api/POST
+      "/:avustushaku-id/hakemus/:hakemus-id/loppuselvitys/send-reminder" request
+      :path-params [avustushaku-id :- Long hakemus-id :- Long]
+      :body [{:keys [body subject to]} {:body s/Str
+                                        :subject s/Str
+                                        :to [s/Str]}]
+      :return s/Any
+      :summary "Send muistutusviesti to hakija"
+      (do
+        (when (not (seq to))
+          (http/bad-request! {:error "Viestillä on oltava vähintään yksi vastaanottaja"}))
+        (common-email/try-send-email!
+         (common-email/message :fi
+                               :loppuselvitys-muistutus
+                               to
+                               subject
+                               body)
+         {:hakemus-id hakemus-id
+          :avustushaku-id avustushaku-id})
+        (http/created)))))
 
 (defn- send-selvitys []
   (compojure-api/POST "/:avustushaku-id/selvitys/:selvitys-type/send" request

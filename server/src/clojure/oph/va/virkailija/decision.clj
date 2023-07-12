@@ -7,7 +7,6 @@
             [oph.va.decision-liitteet :as decision-liitteet]
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.soresu.form.formutil :as formutil]
-            [oph.soresu.common.config :refer [feature-enabled?]]
             [oph.va.virkailija.authorization :as authorization]
             [oph.va.virkailija.kayttosuunnitelma :as ks]
             [oph.va.virkailija.koulutusosio :as koulutusosio]

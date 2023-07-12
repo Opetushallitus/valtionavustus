@@ -1,7 +1,7 @@
 (ns oph.va.hakija.handlers
   (:require [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
-            [oph.soresu.common.config :refer [config feature-enabled?]]
+            [oph.soresu.common.config :refer [config]]
             [oph.soresu.common.db :refer [with-tx]]
             [oph.common.datetime :as datetime]
             [oph.soresu.form.db :as form-db]

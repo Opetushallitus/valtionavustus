@@ -20,7 +20,7 @@
          :paatos-path (:paatos-path (:ui config))
          :payments (:payments config)
          :notice (get-notice)
-         :feature-flags (get-feature-flags)
+         :feature-flags (seq (get-feature-flags))
          :application-change {:refuse-enabled? true}
          :multibatch-payments (:multibatch-payments config)
          :backup-contact-person (:backup-contact-person config)
