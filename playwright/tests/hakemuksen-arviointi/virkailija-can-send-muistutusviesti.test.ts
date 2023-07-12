@@ -1,9 +1,12 @@
+import { expect } from '@playwright/test'
 import { clearAndType } from '../../utils/util'
 import { selvitysTest as test } from '../../fixtures/selvitysTest'
 import SelvitysTab from '../../pages/hakujen-hallinta/CommonSelvitysPage'
+import { getLoppuselvitysMuistutusviestiEmails, waitUntilMinEmails } from '../../utils/emails'
 
-test('virkailija can send muistutusviesti', async ({
+test('virkailija can send muistutusviesti for loppuselvitys', async ({
   page,
+  answers,
   acceptedHakemus: { hakemusID },
   avustushakuID,
 }) => {
@@ -11,7 +14,7 @@ test('virkailija can send muistutusviesti', async ({
   const content = 'Hei! Muistattehan täyttää kaikki kentät?'
   const additionalReceiver = 'karri@kojootti.dog'
 
-  await test.step('virkailija can fill muistutusviesti form', async () => {
+  await test.step('virkailija can fill and submit muistutusviesti form', async () => {
     SelvitysTab(page, 'loppu').navigateToLoppuselvitysTab(avustushakuID, hakemusID)
 
     await page.getByRole('button', { name: 'Kirjoita' }).click()
@@ -21,5 +24,20 @@ test('virkailija can send muistutusviesti', async ({
     await clearAndType(page, '[data-test-id="muistutusviesti-email-subject"]', subject)
     await clearAndType(page, '[data-test-id="muistutusviesti-email-content"]', content)
     await page.getByRole('button', { name: 'Lähetä muistutusviesti' }).click()
+  })
+
+  await test.step('muistutusviesti email is sent', async () => {
+    const emails = await waitUntilMinEmails(getLoppuselvitysMuistutusviestiEmails, 1, hakemusID)
+    expect(emails).toHaveLength(1)
+
+    const email = emails[0]
+    expect(email.subject).toEqual(subject)
+    expect(email.formatted).toEqual(content)
+    expect(email.bcc).toBeNull()
+    expect(email.cc).toEqual([])
+    expect(email['reply-to']).toBe(null)
+
+    const { contactPersonEmail } = answers
+    expect(email['to-address']).toEqual([contactPersonEmail, additionalReceiver])
   })
 })

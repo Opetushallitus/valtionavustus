@@ -57,6 +57,10 @@ const getEmailsWithAvustushaku =
       })
       .then((r) => emailSchema.validate(r.data))
 
+// Emails sent to hakija
+export const getLoppuselvitysMuistutusviestiEmails = getEmails('loppuselvitys-muistutus')
+
+// ???? emails
 export const getTäydennyspyyntöEmails = getEmails('taydennyspyynto')
 export const getHakemusSubmitted = getEmails('hakemus-submitted')
 export const getValmistelijaEmails = getEmails('notify-valmistelija-of-new-muutoshakemus')

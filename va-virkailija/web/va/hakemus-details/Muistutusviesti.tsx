@@ -1,18 +1,20 @@
 import React, { useState } from 'react'
-
-import { Language } from 'soresu-form/web/va/i18n/translations'
-import { Hakemus } from 'soresu-form/web/va/types'
-import './muistutusviesti.less'
 import cn from 'classnames'
 
+import HttpUtil from 'soresu-form/web/HttpUtil'
+import { Language } from 'soresu-form/web/va/i18n/translations'
+import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
+
 import MultipleRecipentEmailForm from './MultipleRecipentsEmailForm'
+import './muistutusviesti.less'
 
 type MuistutusviestiProps = {
   hakemus: Hakemus
+  avustushaku: Avustushaku
   lang: Language
 }
 
-export default function MuistutusViesti({ hakemus, lang }: MuistutusviestiProps) {
+export default function MuistutusViesti({ avustushaku, hakemus, lang }: MuistutusviestiProps) {
   const [showEmailForm, setShowEmailForm] = useState(false)
 
   const contactEmail = hakemus.normalizedData?.['contact-email']
@@ -27,6 +29,14 @@ export default function MuistutusViesti({ hakemus, lang }: MuistutusviestiProps)
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     e.stopPropagation()
+    await HttpUtil.post(
+      `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/loppuselvitys/send-reminder`,
+      {
+        body: email.content,
+        subject: email.subject,
+        to: email.receivers,
+      }
+    )
   }
 
   function cancelForm() {

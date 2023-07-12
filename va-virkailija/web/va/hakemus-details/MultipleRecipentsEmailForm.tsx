@@ -185,9 +185,9 @@ function MultipleEmailRecipents({
       {!disabled && (
         <button
           data-test-id={`${formName}-add-receiver`}
+          type="button"
           className="form-add-receiver"
-          onClick={(e) => {
-            e.preventDefault()
+          onClick={() => {
             setEmail({ ...email, receivers: [...email.receivers, ''] })
           }}
         >

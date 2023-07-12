@@ -3,6 +3,7 @@
             [compojure.api.sweet :as compojure-api]
             [oph.common.datetime :as datetime]
             [oph.soresu.common.db :refer [with-tx]]
+            [oph.common.email :as common-email]
             [oph.soresu.common.config :refer [feature-enabled?]]
             [oph.soresu.form.formutil :as formutil]
             [oph.soresu.form.schema :as form-schema]
@@ -221,6 +222,28 @@
                         (if response
                           (http/ok response)
                           (http/bad-request!)))))
+
+(defn- send-loppuselvitys-reminder []
+  (compojure-api/POST
+    "/:avustushaku-id/hakemus/:hakemus-id/loppuselvitys/send-reminder" request
+    :path-params [avustushaku-id :- Long hakemus-id :- Long]
+    :body [{:keys [body subject to]} {:body s/Str
+                                      :subject s/Str
+                                      :to [s/Str]}]
+    :return s/Any
+    :summary "Send muistutusviesti to hakija"
+    (do
+      (when (not (seq to))
+        (http/bad-request! {:error "Viestillä on oltava vähintään yksi vastaanottaja"}))
+      (common-email/try-send-email!
+       (common-email/message :fi
+                             :loppuselvitys-muistutus
+                             to
+                             subject
+                             body)
+       {:hakemus-id hakemus-id
+        :avustushaku-id avustushaku-id})
+      (http/created))))
 
 (defn- send-selvitys []
   (compojure-api/POST "/:avustushaku-id/selvitys/:selvitys-type/send" request
@@ -680,4 +703,5 @@
   (post-projects)
   (get-avustushaku-talousarviotilit)
   (post-avustushaku-talousarviotilit)
+  (send-loppuselvitys-reminder)
   (get-tapahtumaloki))

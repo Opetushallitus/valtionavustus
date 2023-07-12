@@ -146,9 +146,12 @@
 (defn create-email-event [email-id success {:keys [email-type hakemus-id avustushaku-id muutoshakemus-id]}]
   (try
     (log/info "Storing email event for email: " email-id)
-    (execute! "INSERT INTO virkailija.email_event (avustushaku_id, hakemus_id, muutoshakemus_id, email_id, email_type, success)
-                 VALUES (?, ?, ?, ?, ?::virkailija.email_type, ?)"
-              [avustushaku-id hakemus-id muutoshakemus-id email-id (name email-type) success])
+    (execute! "INSERT INTO virkailija.email_event
+               (email_id, email_type, success, -- required
+                avustushaku_id, hakemus_id, muutoshakemus_id) -- optional
+               VALUES (?, ?::virkailija.email_type, ?, ?, ?, ?)"
+              [email-id (name email-type) success
+               avustushaku-id hakemus-id muutoshakemus-id])
     (log/info (str "Succesfully stored email event for email: " email-id))
     (catch Exception e
       (log/error (.toString e))
@@ -310,9 +313,9 @@
 (s/def :attachment/title nonempty-string)
 (s/def :attachment/description nonempty-string)
 (s/def :email/attachment
-  (s/keys :req-un [:attachment/title
-                   :attachment/description
-                   :attachment/contents]))
+  (s/nilable (s/keys :req-un [:attachment/title
+                              :attachment/description
+                              :attachment/contents])))
 (defn attachment [title description contents]
   {:title title
    :description description
@@ -354,29 +357,36 @@
      [body from sender to subject
       bcc cc reply-to (:contents attachment) (:title attachment) (:description attachment)])))
 
-(defn- send-email-once! [email from sender email-id]
-  (let [email-type (:email-type email)]
+(defn- send-email-once! [email from sender email-id & {:keys [hakemus-id muutoshakemus-id avustushaku-id]}]
+  (let [email-type (:email-type email)
+        email-event {:email-type email-type
+                     :muutoshakemus-id muutoshakemus-id
+                     :hakemus-id hakemus-id
+                     :avustushaku-id avustushaku-id}]
     (try
       (send-mail! (merge email {:from from
                                 :sender sender})
                   (:body email))
-      (create-email-event email-id true {:email-type email-type})
+      (create-email-event email-id true email-event)
       (catch Exception e
         (log/warn e "Failed to send email")
-        (create-email-event email-id false {:email-type email-type})))))
+        (create-email-event email-id false email-event)))))
 
 (defn try-send-email!
   "Tries to send email asynchronously. Sending is retried later if unsuccessful.
    Throws on validation error or if email cannot be inserted to db.
 
    Returns the id of the email added to db"
-  [raw-email]
+  ([raw-email] (try-send-email! raw-email {:hakemus-id nil
+                                           :avustushaku-id nil
+                                           :muutoshakemus-id nil}))
+  ([raw-email extra-event-fields]
   (let [email (clean-email-fields raw-email)]
     (if (s/valid? :email/message email)
       (let [lang (:lang email)
             from (-> smtp-config :from lang)
             sender (-> smtp-config :sender)
             {email-id :id} (insert-email! email from sender)]
-        (go (send-email-once! email from sender email-id))
+        (go (send-email-once! email from sender email-id extra-event-fields))
         email-id)
-      (throw (ex-info "Email not valid" (s/explain-data :email/message email))))))
+      (throw (ex-info "Email not valid" (s/explain-data :email/message email)))))))
