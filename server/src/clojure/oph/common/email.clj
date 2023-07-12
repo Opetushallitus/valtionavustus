@@ -1,5 +1,6 @@
 (ns oph.common.email
   (:require [clojure.core.async :refer [<! >!! go chan]]
+            [clojure.spec.alpha :as s]
             [clojure.tools.logging :as log]
             [clojure.string :as string]
             [clojure.java.io :as io]
@@ -35,12 +36,10 @@
     (common-string/trim-ws str)))
 
 (defn- clean-email-fields [raw-fields]
-  (let [{:keys [from sender to bcc cc reply-to subject]} raw-fields
+  (let [{:keys [to bcc cc reply-to subject]} raw-fields
         filter-blank (fn [coll] (filter (comp not string/blank?) coll))]
     (merge raw-fields
-           {:from (common-string/trim-ws from)
-            :sender (common-string/trim-ws sender)
-            :to (filter-blank (mapv common-string/trim-ws to))
+           {:to (filter-blank (mapv common-string/trim-ws to))
             :bcc (trim-ws-or-nil bcc)
             :cc (filter-blank (mapv common-string/trim-ws cc))
             :reply-to (trim-ws-or-nil reply-to)
@@ -54,7 +53,7 @@
             email-type
             from
             sender
-            to
+            (seq to)
             lang
             subject)))
 
@@ -136,7 +135,7 @@
       (.addTo msg address))
     msg))
 
-(defn- send-mail [raw-email-fields body]
+(defn- send-mail! [raw-email-fields body]
   (let [email-fields (clean-email-fields raw-email-fields)
         email (create-email email-fields body)]
     (log/info "Sending email:" (msg->description email-fields))
@@ -178,14 +177,14 @@
         (create-email-event email-id false email-event)
         (throw (Exception. log-message)))
       (try
-        (send-mail message body)
+        (send-mail! message body)
         (create-email-event email-id true email-event)
         (catch Exception e
           (log/info e (format "Failed to send message: %s" (.getMessage e)))
           (create-email-event email-id false email-event)
           (throw e))))))
 
-(defn try-send-msg-once
+(defn ^:deprecated try-send-msg-once
   ([msg format-plaintext-message]
    (let [body (format-plaintext-message msg)
          email-id (store-email msg body)]
@@ -196,7 +195,7 @@
       (catch Exception e
         (log/info e "Tried to send email:" email-id)))))
 
-(defn start-loop-send-mails [_new-templates]
+(defn- start-loop-send-mails []
   (go
     (log/info "Starting background job: send mails...")
     (loop []
@@ -213,9 +212,9 @@
           (recur))))
     (log/info "Stopped background job: send mails.")))
 
-(defn start-background-job-send-mails [mail-templates]
+(defn start-background-job-send-mails []
   (job-supervisor/start-background-job :send-mails
-                                       (partial start-loop-send-mails mail-templates)
+                                       start-loop-send-mails
                                        #(>!! mail-chan {:operation :stop})))
 
 (defn stop-background-job-send-mails []
@@ -300,3 +299,84 @@
               ;; fluentbit sends an alarm to pagerduty from error level logs
               (log/error e "Failed to send email for 60 minutes:" email-id first-created-at)
               (log/info e "Failed to send email:" email-id first-created-at))))))))
+
+;; the new era starts here
+
+(def nonempty-string (s/and string? not-empty))
+(def email-address nonempty-string)
+(defn nonempty-coll-of [pred]
+  (s/and seq (s/coll-of pred)))
+
+(s/def :attachment/title nonempty-string)
+(s/def :attachment/description nonempty-string)
+(s/def :email/attachment
+  (s/keys :req-un [:attachment/title
+                   :attachment/description
+                   :attachment/contents]))
+(defn attachment [title description contents]
+  {:title title
+   :description description
+   :contents contents})
+
+(s/def :email/lang #{:fi :sv})
+(s/def :email/email-type keyword?)
+(s/def :email/to (nonempty-coll-of email-address))
+(s/def :email/subject nonempty-string)
+(s/def :email/body nonempty-string)
+(s/def :email/cc (s/nilable (s/coll-of email-address)))
+(s/def :email/bcc (s/nilable email-address))
+(s/def :email/reply-to (s/nilable email-address))
+
+(s/def :email/message (s/keys :req-un [:email/lang :email/email-type :email/to :email/subject :email/body]
+                              :opt-un [:email/cc :email/bcc :email/reply-to :email/attachment]))
+
+(defn message
+  "Creates an email of `type` with a seq of recipients (`to-seq`), plus optionally a `reply-to` address, seq of `cc`, `bcc`, or an `attachment`"
+  ([lang type to-seq subject body & {:keys [cc bcc reply-to attachment]}]
+   {:lang lang
+    :email-type type
+    :to to-seq
+    :subject subject
+    :body body
+    :cc cc
+    :bcc bcc
+    :reply-to reply-to
+    :attachment attachment}))
+
+(defn- insert-email! [email from sender]
+  (let [{:keys [to subject cc bcc body reply-to attachment]} email]
+    (query
+     "INSERT INTO virkailija.email
+      (formatted, from_address, sender, to_address, subject, -- NOT NULL columns
+       bcc, cc, reply_to, attachment_contents, attachment_title, attachment_description) -- nullable columns
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      RETURNING id"
+     [body from sender to subject
+      bcc cc reply-to (:contents attachment) (:title attachment) (:description attachment)])))
+
+(defn- send-email-once! [email from sender email-id]
+  (let [email-type (:email-type email)]
+    (try
+      (send-mail! (merge email {:from from
+                                :sender sender})
+                  (:body email))
+      (create-email-event email-id true {:email-type email-type})
+      (catch Exception e
+        (log/warn e "Failed to send email")
+        (create-email-event email-id false {:email-type email-type})))))
+
+(defn try-send-email!
+  "Tries to send email asynchronously. Sending is retried later if unsuccessful.
+   Throws on validation error or if email cannot be inserted to db.
+
+   Returns the id of the email added to db"
+  [raw-email]
+  (let [email (clean-email-fields raw-email)]
+    (if (s/valid? :email/message email)
+      (let [lang (:lang email)
+            from (-> smtp-config :from lang)
+            sender (-> smtp-config :sender)
+            {email-id :id} (insert-email! email from sender)]
+        (go (send-email-once! email from sender email-id))
+        email-id)
+      (throw (ex-info "Email not valid" (s/explain-data :email/message email))))))

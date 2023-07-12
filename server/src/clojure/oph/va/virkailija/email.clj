@@ -77,7 +77,7 @@
    :sender (-> email/smtp-config :sender)})
 
 (defn start-background-job-send-mails []
-  (email/start-background-job-send-mails mail-templates))
+  (email/start-background-job-send-mails))
 
 (defn stop-background-job-send-mails []
   (email/stop-background-job-send-mails))
