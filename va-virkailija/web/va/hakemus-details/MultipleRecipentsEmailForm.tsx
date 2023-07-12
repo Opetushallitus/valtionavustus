@@ -157,10 +157,11 @@ function MultipleEmailRecipents({
   setEmail: React.Dispatch<React.SetStateAction<Email>>
   formName: string
 }) {
+  const { receivers } = email
   return (
     <fieldset disabled={disabled}>
       <legend>Vastaanottajat</legend>
-      {email.receivers.map((address, idx) => {
+      {receivers.map((address, idx) => {
         return (
           <div className={`form-receiver-row`} key={idx}>
             <input
@@ -168,17 +169,17 @@ function MultipleEmailRecipents({
               type="text"
               name="receiver"
               onChange={(e) => {
-                const newReceivers = email.receivers
+                const newReceivers = [...receivers]
                 newReceivers[idx] = e.target.value
                 setEmail({ ...email, receivers: newReceivers })
               }}
               value={address}
             />
-            {!disabled && (
+            {!disabled && receivers.length > 1 && (
               <span
                 className={'form-trashcan'}
                 onClick={() => {
-                  const newReceivers = email.receivers
+                  const newReceivers = [...receivers]
                   newReceivers.splice(idx, 1)
                   setEmail({ ...email, receivers: newReceivers })
                 }}
@@ -195,7 +196,7 @@ function MultipleEmailRecipents({
           type="button"
           className="form-add-receiver"
           onClick={() => {
-            setEmail({ ...email, receivers: [...email.receivers, ''] })
+            setEmail({ ...email, receivers: [...receivers, ''] })
           }}
         >
           + Lisää uusi vastaanottaja
