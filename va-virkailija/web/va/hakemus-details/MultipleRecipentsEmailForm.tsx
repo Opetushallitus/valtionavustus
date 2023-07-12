@@ -168,7 +168,7 @@ function MultipleEmailRecipents({
           <div className={`form-receiver-row`} key={idx}>
             <input
               data-test-id={`${formName}-receiver-${idx}`}
-              type="text"
+              type="email"
               name="receiver"
               onChange={(e) => {
                 const newReceivers = [...receivers]
