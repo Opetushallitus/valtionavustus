@@ -3,16 +3,33 @@ import { IconTrashcan } from 'soresu-form/web/va/img/IconTrashcan'
 import { Language } from 'soresu-form/web/va/types'
 import './MultipleRecipentsEmailForm.less'
 
-export type Email = { lang: Language; subject: string; content: string; receivers: string[] }
+export type Email = {
+  lang: Language
+  subject: string
+  content: string
+  receivers: string[]
+}
 
 type CancelButton = {
   text: string
   onClick: () => void
 }
 
+type Props = {
+  heading: string
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>
+  email: Email
+  setEmail: React.Dispatch<React.SetStateAction<Email>>
+  submitText: string
+  formName: string
+  disabled?: boolean
+  disabledSubmitButton?: ReactElement
+  cancelButton?: CancelButton
+}
+
 export default function MultipleRecipentEmailForm({
   heading,
-  disabled,
+  disabled = false,
   email,
   onSubmit,
   setEmail,
@@ -20,17 +37,7 @@ export default function MultipleRecipentEmailForm({
   formName,
   disabledSubmitButton,
   cancelButton,
-}: {
-  heading: string
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>
-  disabled: boolean
-  email: Email
-  setEmail: React.Dispatch<React.SetStateAction<Email>>
-  submitText: string
-  formName: string
-  disabledSubmitButton?: ReactElement
-  cancelButton?: CancelButton
-}) {
+}: Props) {
   return (
     <div data-test-id={`${formName}-email`} className="form">
       <form onSubmit={onSubmit} className="soresu-form">

@@ -62,7 +62,6 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
       {showEmailForm && (
         <MultipleRecipentEmailForm
           onSubmit={onSubmit}
-          disabled={false}
           email={email}
           setEmail={setEmail}
           formName="muistutusviesti"
