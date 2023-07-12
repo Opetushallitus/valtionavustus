@@ -48,7 +48,7 @@ const Loppuselvitys = () => {
     loppuselvitysStatus === 'information_verified' || loppuselvitysStatus === 'accepted'
   const presenterCommentHelpText = helpTexts['hankkeen_sivu__loppuselvitys___linkki_lomakkeelle']
   const selvitysLinkHelpText = helpTexts['hankkeen_sivu__loppuselvitys___linkki_lomakkeelle']
-  const lang = loppuselvitys?.language || 'fi'
+  const lang = hakemus.language
   const muistusviestiEnabled = isFeatureEnabled(environment, 'muistutusviesti-loppuselvityksesta')
 
   return (
