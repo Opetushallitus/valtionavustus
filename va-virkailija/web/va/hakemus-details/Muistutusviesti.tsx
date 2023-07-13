@@ -18,11 +18,15 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
   const [showEmailForm, setShowEmailForm] = useState(false)
 
   const contactEmail = hakemus.normalizedData?.['contact-email']
+  const trustedContactEmail = hakemus.normalizedData?.['trusted-contact-email']
+  const receivers = [contactEmail, trustedContactEmail].filter(
+    (email): email is string => typeof email === 'string'
+  )
   const initialEmail = {
     lang,
     subject: '',
     content: '',
-    receivers: contactEmail ? [contactEmail] : [],
+    receivers: receivers,
   }
   const [email, setEmail] = useState(initialEmail)
 
