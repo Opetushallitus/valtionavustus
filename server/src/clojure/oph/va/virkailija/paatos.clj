@@ -6,7 +6,8 @@
       [oph.soresu.form.formutil :as formutil]
       [oph.va.decision-liitteet :as decision-liitteet]
       [oph.va.virkailija.email :as email]
-      [oph.common.email :refer [refuse-url modify-url legacy-email-field-ids legacy-email-field-ids-without-contact-email]]
+      [oph.common.email :refer [legacy-email-field-ids legacy-email-field-ids-without-contact-email]]
+      [oph.common.email-utils :as email-utils]
       [oph.va.virkailija.db :as virkailija-db]
       [oph.va.virkailija.saved-search :as saved-search]
       [clojure.tools.logging :as log]
@@ -16,7 +17,6 @@
       [oph.va.virkailija.application-data :refer [get-application-token create-application-token]]
       [oph.va.virkailija.payments-data :as payments-data]
       [oph.va.virkailija.tapahtumaloki :as tapahtumaloki]
-      [oph.soresu.form.formutil :refer [flatten-answers]]
       [oph.va.virkailija.authentication :as authentication]))
 
 (defn is-notification-email-field? [field has-normalized-contact-email?]
@@ -40,7 +40,7 @@
 
 (defn- emails-for-hakemus-with-signatories [hakemus contact-email trusted-contact-email]
   (let [submission (hakija-api/get-hakemus-submission hakemus)
-        emails (emails-from-answers (flatten-answers (:answers submission) []) (some? contact-email))]
+        emails (emails-from-answers (formutil/flatten-answers (:answers submission) []) (some? contact-email))]
     (remove nil? (concat [contact-email trusted-contact-email] emails))))
 
 (defn- paatos-emails [hakemus-id]
@@ -268,9 +268,9 @@
                                                  :include-muutoshaku-link include-muutoshaku-link?
                                                  :modify-url       (when include-muutoshaku-link? "MODIFY_URL_PLACEHOLDER")})
                                  :example-url (email/paatos-url avustushaku-id first-hakemus-user-key :fi)
-                                 :example-modify-url (modify-url avustushaku-id first-hakemus-user-key :fi first-hakemus-token true)
+                                 :example-modify-url (email-utils/modify-url avustushaku-id first-hakemus-user-key :fi first-hakemus-token true)
                                  :example-refuse-url
-                                              (refuse-url
+                                              (email-utils/refuse-url
                                                 avustushaku-id first-hakemus-user-key :fi first-hakemus-token)}
                                 (select-keys sent-status [:sent :count :sent-time :paatokset])))))
 

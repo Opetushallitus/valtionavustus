@@ -15,10 +15,12 @@
         url-parameters  (form-encode { :lang lang-str :user-key user-key :avustushaku-id avustushaku-id})]
 (str va-url "muutoshakemus?" url-parameters)))
 
- (defn modify-url [va-url avustushaku-id user-key lang token include-muutoshaku-link?]
-   (if include-muutoshaku-link?
-     (muutoshakemus-url-generator va-url avustushaku-id user-key lang)
-     (url-generator va-url avustushaku-id user-key lang token "modify")))
+(defn- va-url [lang] (get-in config [:server :url lang]))
 
-  (defn refuse-url [va-url avustushaku-id user-key lang token]
-    (url-generator va-url avustushaku-id user-key lang token "refuse"))
+(defn modify-url [avustushaku-id user-key lang token include-muutoshaku-link?]
+  (if include-muutoshaku-link?
+    (muutoshakemus-url-generator (va-url lang) avustushaku-id user-key lang)
+    (url-generator (va-url lang) avustushaku-id user-key lang token "modify")))
+
+(defn refuse-url [avustushaku-id user-key lang token]
+  (url-generator (va-url lang) avustushaku-id user-key lang token "refuse"))

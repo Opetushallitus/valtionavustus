@@ -6,7 +6,6 @@
             [clojure.java.io :as io]
             [oph.soresu.common.config :refer [config]]
             [oph.soresu.common.db :refer [query execute!]]
-            [oph.common.email-utils :as email-utils]
             [oph.common.string :as common-string]
             [oph.common.background-job-supervisor :as job-supervisor])
   (:import [org.apache.commons.mail SimpleEmail]
@@ -240,22 +239,6 @@
        (if preview?
          "&preview=true"
          "")))
-
-(defn generate-virkailija-url [avustushaku-id hakemus-db-id]
-  (str (-> config :server :virkailija-url)
-       "/avustushaku/"
-       avustushaku-id
-       "/hakemus/"
-       hakemus-db-id
-       "/"))
-
-(defn refuse-url [avustushaku-id user-key lang token]
-  (email-utils/refuse-url
-   (get-in config [:server :url lang]) avustushaku-id user-key lang token))
-
-(defn modify-url [avustushaku-id user-key lang token include-muutoshaku-link?]
-  (email-utils/modify-url
-   (get-in config [:server :url lang]) avustushaku-id user-key lang token include-muutoshaku-link?))
 
 (defn enqueue-message-to-be-send [msg body]
   (let [email-id (store-email msg body)]

@@ -59,6 +59,14 @@
 (defn stop-background-job-send-mails []
   (email/stop-background-job-send-mails))
 
+(defn generate-virkailija-url [avustushaku-id hakemus-db-id]
+  (str (-> config :server :virkailija-url)
+       "/avustushaku/"
+       avustushaku-id
+       "/hakemus/"
+       hakemus-db-id
+       "/"))
+
 (defn selvitys-preview-url [avustushaku-id selvitys-user-key lang selvitys-type]
   (let [va-url (-> config :server :url lang)
         lang-str (or (clojure.core/name lang) "fi")]
@@ -126,7 +134,7 @@
   (email/enqueue-message-to-be-send msg body)))
 
 (defn generate-presenter-refused-email [recipients grant application-id]
-  (let [url (email/generate-virkailija-url (:id grant) application-id)
+  (let [url (generate-virkailija-url (:id grant) application-id)
         lang :fi]
     {:operation :send
      :email-type :application-refused-presenter
@@ -165,7 +173,7 @@
 
 (defn notify-valmistelija-of-new-muutoshakemus [to avustushaku-id register-number hanke hakemus-id]
   (let [lang :fi
-        url (email/generate-virkailija-url avustushaku-id hakemus-id)
+        url (generate-virkailija-url avustushaku-id hakemus-id)
         msg {:operation :send
              :email-type :notify-valmistelija-of-new-muutoshakemus
              :lang lang
@@ -183,7 +191,7 @@
 
 (defn send-change-request-responded-message-to-virkailija! [to avustushaku-id avustushaku-name-fi hakemus-db-id]
   (let [lang :fi
-        url (email/generate-virkailija-url avustushaku-id hakemus-db-id)
+        url (generate-virkailija-url avustushaku-id hakemus-db-id)
         msg {:operation :send
              :email-type :hakemus-change-request-responded
              :lang lang

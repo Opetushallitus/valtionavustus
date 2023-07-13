@@ -8,6 +8,7 @@
             [clostache.parser :refer [render]]
             [oph.common.datetime :as datetime]
             [oph.common.email :as email]
+            [oph.common.email-utils :as email-utils]
             [oph.soresu.common.config :refer [config]]
             [oph.soresu.common.db :refer [query]]
             [oph.va.decision-liitteet :refer [Liitteet]]
@@ -419,10 +420,10 @@
   (let [lang-str (:language hakemus)
         lang (keyword lang-str)
         url (paatos-url (:id avustushaku) (:user_key hakemus) (keyword lang-str))
-        paatos-refuse-url (email/refuse-url (:id avustushaku) (:user_key hakemus) lang token)
+        paatos-refuse-url (email-utils/refuse-url (:id avustushaku) (:user_key hakemus) lang token)
         budjettimuutoshakemus-enabled? (has-multiple-menoluokka-rows (:id hakemus))
         include-muutoshaku-link? (should-include-muutoshaku-link-in-paatos-email? avustushaku (:id hakemus))
-        paatos-modify-url (email/modify-url (:id avustushaku) (:user_key hakemus) lang token include-muutoshaku-link?)
+        paatos-modify-url (email-utils/modify-url (:id avustushaku) (:user_key hakemus) lang token include-muutoshaku-link?)
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
         mail-subject (get-in mail-titles [:paatos lang])
         msg {
