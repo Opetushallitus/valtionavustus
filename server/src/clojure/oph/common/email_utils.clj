@@ -24,3 +24,22 @@
 
 (defn refuse-url [avustushaku-id user-key lang token]
   (url-generator (va-url lang) avustushaku-id user-key lang token "refuse"))
+
+(defn generate-url [avustushaku-id lang user-key preview?]
+  (let [lang-str (or (clojure.core/name lang) "fi")]
+    (str (va-url lang)
+         (if (= lang :sv)
+           "statsunderstod/"
+           "avustushaku/")
+         avustushaku-id
+         "/"
+         (if (= lang :sv)
+           "visa"
+           "nayta")
+         "?hakemus="
+         user-key
+         "&lang="
+         lang-str
+         (if preview?
+           "&preview=true"
+           ""))))

@@ -222,24 +222,6 @@
 (defn stop-background-job-send-mails []
   (job-supervisor/stop-background-job :send-mails))
 
-(defn generate-url [avustushaku-id lang lang-str user-key preview?]
-  (str (-> config :server :url lang)
-       (if (= lang :sv)
-         "statsunderstod/"
-         "avustushaku/")
-       avustushaku-id
-       "/"
-       (if (= lang :sv)
-         "visa"
-         "nayta")
-       "?hakemus="
-       user-key
-       "&lang="
-       lang-str
-       (if preview?
-         "&preview=true"
-         "")))
-
 (defn enqueue-message-to-be-send [msg body]
   (let [email-id (store-email msg body)]
     (>!! mail-chan {:operation :send, :msg msg, :body body, :email-id email-id})))

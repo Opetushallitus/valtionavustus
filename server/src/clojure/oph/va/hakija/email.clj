@@ -2,6 +2,7 @@
   (:require [oph.common.datetime :as datetime]
             [oph.soresu.common.config :refer [config]]
             [oph.common.email :as email]
+            [oph.common.email-utils :as email-utils]
             [clojure.tools.logging :as log]
             [clostache.parser :refer [render]]))
 
@@ -87,12 +88,11 @@
                              (partial render template))))
 
 (defn send-new-hakemus-message! [lang to avustushaku-id avustushaku user-key start-date end-date]
-  (let [lang-str (or (clojure.core/name lang) "fi")
-        start-date-string (datetime/date-string start-date)
+  (let [start-date-string (datetime/date-string start-date)
         start-time-string (datetime/time-string start-date)
         end-date-string (datetime/date-string end-date)
         end-time-string (datetime/time-string end-date)
-        url (email/generate-url avustushaku-id lang lang-str user-key false)
+        url (email-utils/generate-url avustushaku-id lang user-key false)
         msg {:operation :send
              :email-type :new-hakemus
              :lang lang
@@ -200,12 +200,11 @@
     (email/enqueue-message-to-be-send msg body)))
 
 (defn send-hakemus-submitted-message! [is-change-request-response? lang to avustushaku-id avustushaku user-key start-date end-date hakemus-id]
-  (let [lang-str (or (clojure.core/name lang) "fi")
-        start-date-string (datetime/date-string start-date)
+  (let [start-date-string (datetime/date-string start-date)
         start-time-string (datetime/time-string start-date)
         end-date-string (datetime/date-string end-date)
         end-time-string (datetime/time-string end-date)
-        url (email/generate-url avustushaku-id lang lang-str user-key true)
+        url (email-utils/generate-url avustushaku-id lang user-key true)
         user-message {:operation :send
                       :email-type  :hakemus-submitted
                       :lang lang

@@ -83,8 +83,7 @@
     (render template msg)))
 
 (defn send-taydennyspyynto-message! [lang to cc avustushaku-id hakemus-id avustushaku-name user-key taydennyspyynto presenting-officer-email]
-  (let [lang-str (or (clojure.core/name lang) "fi")
-        url (email/generate-url avustushaku-id lang lang-str user-key false)
+  (let [url (email-utils/generate-url avustushaku-id lang user-key false)
         msg {:operation :send
              :email-type :taydennyspyynto
              :lang lang
@@ -146,7 +145,7 @@
         hakemus-id (:id hakemus)
         lang (keyword lang-str)
         muutoshakemus-paatos-url (muutoshakemus-paatos-url (:user-key paatos) lang)
-        muutoshakemus-url (email/modify-url (:id avustushaku) (:user_key hakemus) lang token true)
+        muutoshakemus-url (email-utils/modify-url (:id avustushaku) (:user_key hakemus) lang token true)
         mail-subject (get-in mail-titles [:muutoshakemus-paatos lang])
         presenter-role-id (:presenter_role_id arvio)
         oikaisuvaatimusosoitus (find-3a-oikaisuvaatimusosoitus-attachment)
@@ -208,15 +207,13 @@
                              (partial render template))))
 
 (defn send-hakuaika-paattymassa [hakemus]
-  (let [lang-str       (:language hakemus)
-        lang           (keyword lang-str)
+  (let [lang           (keyword (:language hakemus))
         mail-subject   (get-in mail-titles [:hakuaika-paattymassa lang])
         template       (get-in mail-templates [:hakuaika-paattymassa lang])
         to             (:contact-email hakemus)
         paattymispaiva (datetime/date-string (datetime/parse (:paattymispaiva hakemus)))
         paattymisaika  (datetime/time-string (datetime/parse (:paattymispaiva hakemus)))
-
-        url            (email/generate-url (:avustushaku-id hakemus) lang lang-str (:user-key hakemus) false) ]
+        url            (email-utils/generate-url (:avustushaku-id hakemus) lang (:user-key hakemus) false)]
     (log/info "sending to" to)
     (email/try-send-msg-once {:email-type :hakuaika-paattymassa
                               :lang lang
