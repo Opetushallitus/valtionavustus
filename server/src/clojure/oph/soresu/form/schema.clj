@@ -1,7 +1,5 @@
 (ns oph.soresu.form.schema
   (:require [schema.core :as s]
-            [schema.spec.leaf :as s-leaf]
-            [schema.spec.core :as s-spec]
             [oph.soresu.common.types :as types]
             [oph.soresu.common.validation :as validation]))
 

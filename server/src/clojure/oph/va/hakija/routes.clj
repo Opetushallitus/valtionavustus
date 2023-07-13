@@ -16,7 +16,7 @@
             [oph.va.schema :refer :all]
             [oph.soresu.form.schema :refer :all]
             [oph.va.routes :as va-routes]
-            [oph.soresu.form.routes :refer :all]
+            [oph.soresu.form.routes :as soresu-routes]
             [oph.va.hakija.db :as hakija-db]
             [oph.va.hakija.schema :refer :all]
             [oph.va.hakija.handlers :refer :all]
@@ -394,7 +394,7 @@
 
   (compojure-api/context "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
 
-  (compojure-api/context "/api/form" [] :tags ["forms"] form-restricted-routes)
+  (compojure-api/context "/api/form" [] :tags ["forms"] soresu-routes/form-restricted-routes)
 
   (compojure-api/context "/api/avustushaku" [] :tags ["avustushaut"] avustushaku-routes)
 
@@ -412,7 +412,7 @@
 
   (compojure-api/context "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
 
-  (compojure-api/context "/api/form" [] :tags ["forms"] form-routes)
+  (compojure-api/context "/api/form" [] :tags ["forms"] soresu-routes/form-routes)
 
   (compojure-api/context "/api/test" [] :tags ["test"] test-routes)
 
