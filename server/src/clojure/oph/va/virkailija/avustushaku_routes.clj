@@ -96,13 +96,6 @@
                          (http/ok response)
                          (http/not-found)))))
 
-(defn- get-muutoshakemukset []
-  (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/muutoshakemus/" [hakemus-id]
-                     :path-params [hakemus-id :- Long]
-                     :return  va-schema/MuutoshakemusList
-                     :summary "Get muutoshakemukset"
-                     (http/ok (virkailija-db/get-muutoshakemukset hakemus-id))))
-
 (defn- get-hakemus-ids-having-taydennyspyynto []
   (compojure-api/GET "/:avustushaku-id/hakemus-ids-having-taydennyspyynto" []
                      :path-params [avustushaku-id :- Long]
@@ -144,26 +137,6 @@
                       :return s/Any
                       (http/ok (talousarvio/post-avustushaku-talousarviotilit avustushaku-id talousarviotilit))))
 
-(defn- post-muutoshakemus-paatos []
-  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/muutoshakemus/:muutoshakemus-id/paatos" request
-                      :path-params [avustushaku-id :- Long hakemus-id :- Long muutoshakemus-id :- Long]
-                      :body [paatos (compojure-api/describe virkailija-schema/MuutoshakemusPaatosRequest "Muutoshakemus paatos")]
-                      :return va-schema/MuutoshakemusList
-                      :summary "Create a paatos for muutoshakemus"
-                      (let [{:keys [avustushaku hakemus]} (get-hakemus-and-its-avustushaku avustushaku-id hakemus-id)
-                            roles (hakija-api/get-avustushaku-roles avustushaku-id)
-                            arvio (virkailija-db/get-arvio hakemus-id)
-                            normalized-hakemus (virkailija-db/get-normalized-hakemus hakemus-id)
-                            contact-email (:contact-email normalized-hakemus)
-                            trusted-contact-email (:trusted-contact-email normalized-hakemus)
-                            to (remove nil? [contact-email trusted-contact-email])
-                            identity (authentication/get-request-identity request)
-                            decider (str (:first-name identity) " " (:surname identity))
-                            paatos (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)
-                            token (virkailija-db/create-application-token (:id hakemus))]
-                        (email/send-muutoshakemus-paatos to avustushaku hakemus arvio roles token muutoshakemus-id paatos)
-                        (http/ok (virkailija-db/get-muutoshakemukset hakemus-id)))))
-
 (defn- put-searches []
   (compojure-api/PUT "/:avustushaku-id/searches" request
                      :path-params [avustushaku-id :- Long]
@@ -176,77 +149,6 @@
                            search-url (str "/yhteenveto/avustushaku/" avustushaku-id "/listaus/" search-id "/")]
                        (http/ok {:search-url search-url}))))
 
-(defn- get-project []
-  (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/project" [haku-id hakemus-id]
-    :path-params [haku-id :- Long hakemus-id :- Long]
-    :return (s/maybe virkailija-schema/VACodeValue)
-    :summary "Get selected hakemus project"
-      (http/ok (projects/get-project hakemus-id))))
-
-(defn- post-project []
-  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/project" [avustushaku-id hakemus-id]
-                     :path-params [avustushaku-id :- Long hakemus-id :- Long]
-                     :body [project-body (compojure-api/describe virkailija-schema/VACodeValue "Hakemuksen projekti")]
-                     :return s/Any
-                     (http/ok (projects/update-project hakemus-id project-body)
-                     )))
-
-(defn- get-normalized-hakemus []
-  (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/normalized" [haku-id hakemus-id]
-    :path-params [haku-id :- Long hakemus-id :- Long]
-    :return  va-schema/NormalizedHakemus
-    :summary "Get normalized answers"
-    (if-let [normalized-hakemus (virkailija-db/get-normalized-hakemus hakemus-id)]
-      (http/ok normalized-hakemus)
-      (http/not-found)
-      )))
-
-
-(defn- get-selvitys []
-  (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/selvitys" request
-                     :path-params [hakemus-id :- Long avustushaku-id :- Long]
-                     :return s/Any
-                     :summary "Return all relevant selvitys data including answers, form and attachments"
-                     (if-let [response (hakija-api/get-selvitysdata avustushaku-id hakemus-id)]
-                       (http/ok response)
-                       (http/not-found))))
-
-(defn- verify-loppuselvitys-information []
-  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/loppuselvitys/verify-information" request
-                      :path-params [avustushaku-id :- Long hakemus-id :- Long]
-                      :body [verify-information {:message s/Str}]
-                      :return s/Any
-                      :summary "Set loppuselvitys information verified"
-                      (let [identity (authentication/get-request-identity request)
-                            response (hakija-api/verify-loppuselvitys-information hakemus-id verify-information identity)]
-                        (if response
-                          (http/ok response)
-                          (http/bad-request!)))))
-
-(defn- send-loppuselvitys-reminder []
-  (when (feature-enabled? :muistutusviesti-loppuselvityksesta)
-    (compojure-api/POST
-      "/:avustushaku-id/hakemus/:hakemus-id/loppuselvitys/send-reminder" request
-      :path-params [avustushaku-id :- Long hakemus-id :- Long]
-      :body [{:keys [body subject to lang]} {:lang s/Str
-                                             :body s/Str
-                                             :subject s/Str
-                                             :to [s/Str]}]
-      :return s/Any
-      :summary "Send muistutusviesti to hakija"
-      (let [identity (authentication/get-request-identity request)]
-        (when (not (seq to))
-          (http/bad-request! {:error "Viestillä on oltava vähintään yksi vastaanottaja"}))
-        (let [email-id (common-email/try-send-email!
-                        (common-email/message (keyword lang)
-                                              :loppuselvitys-muistutus
-                                              to
-                                              subject
-                                              body)
-                        {:hakemus-id hakemus-id
-                         :avustushaku-id avustushaku-id})]
-          (tapahtumaloki/create-log-entry "loppuselvitys-muistutus" avustushaku-id hakemus-id identity "" {} email-id true))
-        (http/created)))))
 
 (defn- send-selvitys []
   (compojure-api/POST "/:avustushaku-id/selvitys/:selvitys-type/send" request
@@ -270,15 +172,6 @@
                         (log/info  (str "Send emails for avustushaku " avustushaku-id))
                         (paatos/send-selvitys-emails avustushaku-id selvitys-type uuid identity))))
 
-(defn- re-send-paatos-email []
-  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/re-send-paatos" request
-                      :path-params [avustushaku-id :- Long hakemus-id :- Long]
-                      :return s/Any
-                      :summary "Re-sends paatos emails"
-                      (log/info  (str "Re-send emails for application " hakemus-id))
-                      (paatos/re-send-paatos-email
-                        hakemus-id (.toString (java.util.UUID/randomUUID)) (authentication/get-request-identity request))))
-
 (defn- post-change-request-email []
   (compojure-api/POST "/:avustushaku-id/change-request-email" request
                       :path-params [avustushaku-id :- Long]
@@ -295,15 +188,15 @@
                                                        :url "[linkki hakemukseen]"})}))))
 
 (defn- get-avustushaku-export []
-  (compojure-api/GET "/:haku-id/export.xslx" [haku-id]
-                     :path-params [haku-id :- Long]
+  (compojure-api/GET "/:avustushaku-id/export.xslx" [haku-id]
+                     :path-params [avustushaku-id :- Long]
                      :summary "Export Excel XLSX document for avustushaku"
-                     (let [document (-> (hakudata/get-hakudata-for-export haku-id)
+                     (let [document (-> (hakudata/get-hakudata-for-export avustushaku-id)
                                         export/export-avustushaku
                                         (ByteArrayInputStream.))]
                        (-> (http/ok document)
                            (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
-                           (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"avustushaku-" haku-id ".xlsx\""))))))
+                           (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"avustushaku-" avustushaku-id ".xlsx\""))))))
 
 (defn- get-avustushaku-role []
   (compojure-api/GET "/:avustushaku-id/role" [avustushaku-id]
@@ -413,82 +306,6 @@
                               (http/not-found)))
                         (http/method-not-allowed!))))
 
-(defn- post-hakemus-arvio []
-  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/arvio" request
-                      :path-params [avustushaku-id :- Long hakemus-id :- Long]
-                      :body [arvio (compojure-api/describe virkailija-schema/Arvio "New arvio")]
-                      :return virkailija-schema/Arvio
-                      :summary "Update arvio for given hakemus. Creates arvio if missing."
-                      (if-let [avustushaku (hakija-api/get-avustushaku avustushaku-id)]
-                        (let [identity (authentication/get-request-identity request)]
-                          (http/ok (-> (virkailija-db/update-or-create-hakemus-arvio avustushaku hakemus-id arvio identity)
-                                  hakudata/arvio-json)))
-                        (http/not-found))))
-
-(defn- put-keskeyta-aloittamatta []
-  (compojure-api/PUT "/:avustushaku-id/hakemus/:hakemus-id/keskeyta-aloittamatta"
-                     request
-    :path-params [avustushaku-id :- Long hakemus-id :- Long]
-    :return s/Any
-    :body [body virkailija-schema/KeskeytaAloittamattaBody]
-    (with-tx (fn [tx]
-     (if (:keskeyta body)
-       (hakija-db/refuse-application tx hakemus-id "Keskeytetty aloittamatta")
-       (hakija-db/unrefuse-application tx hakemus-id))
-     (virkailija-db/keskeyta-aloittamatta tx hakemus-id (:keskeyta body))
-     (http/ok (hakija-db/get-hakemus-by-id-tx tx hakemus-id))))))
-
-(defn- get-hakemus-comments []
-  (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/comments" []
-                     :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-                     :return virkailija-schema/Comments
-                     :summary "Get current comments for hakemus"
-                     (http/ok (virkailija-db/list-comments hakemus-id))))
-
-(defn- post-hakemus-comments []
-  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/comments" request
-                      :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-                      :body [comment (compojure-api/describe virkailija-schema/NewComment "New comment")]
-                      :return virkailija-schema/Comments
-                      :summary "Add a comment for hakemus. As response, return all comments"
-                      (let [identity (authentication/get-request-identity request)
-                            _avustushaku_and_hakemus_exists? (get-hakemus-and-its-published-avustushaku avustushaku-id hakemus-id)]
-                        (http/ok (virkailija-db/add-comment hakemus-id
-                                                       (:first-name identity)
-                                                       (:surname identity)
-                                                       (:email identity)
-                                                       (:comment comment)
-                                                       (:person-oid identity))))))
-(defn- get-hakemus-attachments []
-  (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments" []
-                     :path-params [haku-id :- Long, hakemus-id :- Long]
-                     :return s/Any
-                     :summary "List current attachments"
-                     :description "Listing does not return actual attachment data. Use per-field download for getting it."
-                     (http/ok (-> (hakija-api/list-attachments hakemus-id)
-                             (hakija-api/attachments->map)))))
-
-(defn- get-hakemus-attachments-versions []
-  (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments/versions" []
-                     :path-params [haku-id :- Long, hakemus-id :- Long]
-                     :return [va-schema/Attachment]
-                     :summary "List all versions of attachments of given hakemus"
-                     :description "Listing does not return actual attachment data. Use per-field versioned download URL for getting it."
-                     (http/ok (->> (hakija-api/list-attachment-versions hakemus-id)
-                              (map hakija-api/convert-attachment)))))
-
-(defn- get-hakemus-attachment []
-  (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" []
-                     :path-params [haku-id :- Long, hakemus-id :- Long, field-id :- s/Str]
-                     :query-params [{attachment-version :- Long nil}]
-                     :summary "Download attachment attached to given field"
-                     (if (hakija-api/attachment-exists? hakemus-id field-id)
-                       (let [{:keys [data size filename content-type]} (hakija-api/download-attachment hakemus-id field-id attachment-version)]
-                         (-> (http/ok data)
-                             (assoc-in [:headers "Content-Type"] content-type)
-                             (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" filename "\""))))
-                       (http/not-found))))
-
 (defn- sql-constraint-exception? [ex constraint-name]
   (-> ex .getCause .getServerErrorMessage .getConstraint (= constraint-name)))
 
@@ -529,14 +346,217 @@
                             response (hakija-api/update-form form-id updated-form)]
                         (http/ok (without-id response)))))
 
-(defn- get-change-requests []
+(defn- delete-score []
+  (compojure-api/DELETE "/evaluations/:id/scores/:index/" request
+                        :path-params [id :- Long, index :- Long]
+                        :summary "Delete score"
+                        :description "Delete application score given by user"
+                        (let [identity (authentication/get-request-identity request)]
+                          (scoring/delete-score id index identity)
+                          (http/ok ""))))
+
+(defn- get-search []
+  (compojure-api/GET "/:avustushaku-id/searches/:saved-search-id" []
+                     :path-params [avustushaku-id :- Long, saved-search-id :- Long]
+                     :return virkailija-schema/SavedSearch
+                     :summary "Get stored search"
+                     :description "Stored search captures the ids of selection, and provide a stable view to hakemus data."
+                     (let [saved-search (saved-search/get-saved-search avustushaku-id saved-search-id)]
+                       (http/ok (:query saved-search)))))
+
+(defn- get-tapahtumaloki []
+  (compojure-api/GET "/:avustushaku-id/tapahtumaloki/:tyyppi" []
+                     :path-params [avustushaku-id :- Long, tyyppi :- s/Str]
+                     (http/ok (tapahtumaloki/get-tapahtumaloki-entries tyyppi avustushaku-id))))
+
+(defn- get-avustushaku-lainsaadanto []
+  (compojure-api/GET "/:avustushaku-id/lainsaadanto" []
+                     :path-params [avustushaku-id :- Long]
+                     (http/ok (virkailija-db/get-avustushaku-lainsaadanto avustushaku-id))))
+
+(defn- post-avustushaku-lainsaadanto []
+  (compojure-api/POST "/:avustushaku-id/lainsaadanto" request
+                      :path-params [avustushaku-id :- Long]
+                      :body [body [s/Int]]
+                      (http/ok (virkailija-db/upsert-avustushaku-lainsaadanto avustushaku-id body))))
+
+;; /:avustushaku-id/hakemus/
+
+(defn- map-email-field-value [field]
+      (map :value (filter #(formutil/has-field-type? "vaEmailNotification" %) field)))
+
+(compojure-api/defroutes hakemus-routes
+  (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/muutoshakemus/" [hakemus-id]
+                     :path-params [hakemus-id :- Long]
+                     :return  va-schema/MuutoshakemusList
+                     :summary "Get muutoshakemukset"
+                     (http/ok (virkailija-db/get-muutoshakemukset hakemus-id)))
+  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/muutoshakemus/:muutoshakemus-id/paatos" request
+                      :path-params [avustushaku-id :- Long hakemus-id :- Long muutoshakemus-id :- Long]
+                      :body [paatos (compojure-api/describe virkailija-schema/MuutoshakemusPaatosRequest "Muutoshakemus paatos")]
+                      :return va-schema/MuutoshakemusList
+                      :summary "Create a paatos for muutoshakemus"
+                      (let [{:keys [avustushaku hakemus]} (get-hakemus-and-its-avustushaku avustushaku-id hakemus-id)
+                            roles (hakija-api/get-avustushaku-roles avustushaku-id)
+                            arvio (virkailija-db/get-arvio hakemus-id)
+                            normalized-hakemus (virkailija-db/get-normalized-hakemus hakemus-id)
+                            contact-email (:contact-email normalized-hakemus)
+                            trusted-contact-email (:trusted-contact-email normalized-hakemus)
+                            to (remove nil? [contact-email trusted-contact-email])
+                            identity (authentication/get-request-identity request)
+                            decider (str (:first-name identity) " " (:surname identity))
+                            paatos (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)
+                            token (virkailija-db/create-application-token (:id hakemus))]
+                        (email/send-muutoshakemus-paatos to avustushaku hakemus arvio roles token muutoshakemus-id paatos)
+                        (http/ok (virkailija-db/get-muutoshakemukset hakemus-id))))
+
+  (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/project" [haku-id hakemus-id]
+    :path-params [avustushaku-id :- Long hakemus-id :- Long]
+    :return (s/maybe virkailija-schema/VACodeValue)
+    :summary "Get selected hakemus project"
+      (http/ok (projects/get-project hakemus-id)))
+
+  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/project" [avustushaku-id hakemus-id]
+                     :path-params [avustushaku-id :- Long hakemus-id :- Long]
+                     :body [project-body (compojure-api/describe virkailija-schema/VACodeValue "Hakemuksen projekti")]
+                     :return s/Any
+                     (http/ok (projects/update-project hakemus-id project-body)))
+
+  (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/selvitys" request
+                     :path-params [hakemus-id :- Long avustushaku-id :- Long]
+                     :return s/Any
+                     :summary "Return all relevant selvitys data including answers, form and attachments"
+                     (if-let [response (hakija-api/get-selvitysdata avustushaku-id hakemus-id)]
+                       (http/ok response)
+                       (http/not-found)))
+
+  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/loppuselvitys/verify-information" request
+                      :path-params [avustushaku-id :- Long hakemus-id :- Long]
+                      :body [verify-information {:message s/Str}]
+                      :return s/Any
+                      :summary "Set loppuselvitys information verified"
+                      (let [identity (authentication/get-request-identity request)
+                            response (hakija-api/verify-loppuselvitys-information hakemus-id verify-information identity)]
+                        (if response
+                          (http/ok response)
+                          (http/bad-request!))))
+
+  (when (feature-enabled? :muistutusviesti-loppuselvityksesta)
+    (compojure-api/POST
+      "/:avustushaku-id/hakemus/:hakemus-id/loppuselvitys/send-reminder" request
+      :path-params [avustushaku-id :- Long hakemus-id :- Long]
+      :body [{:keys [body subject to lang]} {:lang s/Str
+                                             :body s/Str
+                                             :subject s/Str
+                                             :to [s/Str]}]
+      :return s/Any
+      :summary "Send muistutusviesti to hakija"
+      (let [identity (authentication/get-request-identity request)]
+        (when (not (seq to))
+          (http/bad-request! {:error "Viestillä on oltava vähintään yksi vastaanottaja"}))
+        (let [email-id (common-email/try-send-email!
+                        (common-email/message (keyword lang)
+                                              :loppuselvitys-muistutus
+                                              to
+                                              subject
+                                              body)
+                        {:hakemus-id hakemus-id
+                         :avustushaku-id avustushaku-id})]
+          (tapahtumaloki/create-log-entry "loppuselvitys-muistutus" avustushaku-id hakemus-id identity "" {} email-id true))
+        (http/created))))
+
+  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/re-send-paatos" request
+                      :path-params [avustushaku-id :- Long hakemus-id :- Long]
+                      :return s/Any
+                      :summary "Re-sends paatos emails"
+                      (log/info  (str "Re-send emails for application " hakemus-id))
+                      (paatos/re-send-paatos-email
+                        hakemus-id (.toString (java.util.UUID/randomUUID)) (authentication/get-request-identity request)))
+
+  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/arvio" request
+                      :path-params [avustushaku-id :- Long hakemus-id :- Long]
+                      :body [arvio (compojure-api/describe virkailija-schema/Arvio "New arvio")]
+                      :return virkailija-schema/Arvio
+                      :summary "Update arvio for given hakemus. Creates arvio if missing."
+                      (if-let [avustushaku (hakija-api/get-avustushaku avustushaku-id)]
+                        (let [identity (authentication/get-request-identity request)]
+                          (http/ok (-> (virkailija-db/update-or-create-hakemus-arvio avustushaku hakemus-id arvio identity)
+                                  hakudata/arvio-json)))
+                        (http/not-found)))
+
+  (compojure-api/PUT "/:avustushaku-id/hakemus/:hakemus-id/keskeyta-aloittamatta"
+                     request
+    :path-params [avustushaku-id :- Long hakemus-id :- Long]
+    :return s/Any
+    :body [body virkailija-schema/KeskeytaAloittamattaBody]
+    (with-tx (fn [tx]
+     (if (:keskeyta body)
+       (hakija-db/refuse-application tx hakemus-id "Keskeytetty aloittamatta")
+       (hakija-db/unrefuse-application tx hakemus-id))
+     (virkailija-db/keskeyta-aloittamatta tx hakemus-id (:keskeyta body))
+     (http/ok (hakija-db/get-hakemus-by-id-tx tx hakemus-id)))))
+
+  (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/comments" []
+                     :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+                     :return virkailija-schema/Comments
+                     :summary "Get current comments for hakemus"
+                     (http/ok (virkailija-db/list-comments hakemus-id)))
+
+  (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/comments" request
+                      :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+                      :body [comment (compojure-api/describe virkailija-schema/NewComment "New comment")]
+                      :return virkailija-schema/Comments
+                      :summary "Add a comment for hakemus. As response, return all comments"
+                      (let [identity (authentication/get-request-identity request)
+                            _avustushaku_and_hakemus_exists? (get-hakemus-and-its-published-avustushaku avustushaku-id hakemus-id)]
+                        (http/ok (virkailija-db/add-comment hakemus-id
+                                                       (:first-name identity)
+                                                       (:surname identity)
+                                                       (:email identity)
+                                                       (:comment comment)
+                                                       (:person-oid identity)))))
+  (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/attachments" []
+                     :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+                     :return s/Any
+                     :summary "List current attachments"
+                     :description "Listing does not return actual attachment data. Use per-field download for getting it."
+                     (http/ok (-> (hakija-api/list-attachments hakemus-id)
+                             (hakija-api/attachments->map))))
+
+  (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/attachments/versions" []
+                     :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+                     :return [va-schema/Attachment]
+                     :summary "List all versions of attachments of given hakemus"
+                     :description "Listing does not return actual attachment data. Use per-field versioned download URL for getting it."
+                     (http/ok (->> (hakija-api/list-attachment-versions hakemus-id)
+                              (map hakija-api/convert-attachment))))
+
+  (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/attachments/:field-id" []
+                     :path-params [avustushaku-id :- Long, hakemus-id :- Long, field-id :- s/Str]
+                     :query-params [{attachment-version :- Long nil}]
+                     :summary "Download attachment attached to given field"
+                     (if (hakija-api/attachment-exists? hakemus-id field-id)
+                       (let [{:keys [data size filename content-type]} (hakija-api/download-attachment hakemus-id field-id attachment-version)]
+                         (-> (http/ok data)
+                             (assoc-in [:headers "Content-Type"] content-type)
+                             (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" filename "\""))))
+                       (http/not-found)))
+
+  (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/normalized" [haku-id hakemus-id]
+    :path-params [avustushaku-id :- Long hakemus-id :- Long]
+    :return  va-schema/NormalizedHakemus
+    :summary "Get normalized answers"
+    (if-let [normalized-hakemus (virkailija-db/get-normalized-hakemus hakemus-id)]
+      (http/ok normalized-hakemus)
+      (http/not-found)
+      ))
+
   (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/change-requests" []
                      :path-params [avustushaku-id :- Long, hakemus-id :- Long]
                      :return [virkailija-schema/Hakemus]
                      :summary "List change requests of given hakemus"
-                     (hakija-api/list-hakemus-change-requests hakemus-id)))
+                     (hakija-api/list-hakemus-change-requests hakemus-id))
 
-(defn- get-scores []
   (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/scores" []
                      :path-params [avustushaku-id :- Long, hakemus-id :- Long]
                      :return virkailija-schema/ScoringOfArvio
@@ -545,9 +565,8 @@
                      (if-let [arvio (virkailija-db/get-arvio hakemus-id)]
                        (http/ok (scoring/get-arvio-scores avustushaku-id (:id arvio)))
                        (http/ok {:scoring nil
-                            :scores []}))))
+                            :scores []})))
 
-(defn- post-scores []
   (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/scores" request
                       :path-params [avustushaku-id :- Long, hakemus-id :- Long]
                       :body [score (compojure-api/describe virkailija-schema/NewScore "Stored or updated score")]
@@ -560,21 +579,8 @@
                                                hakemus-id
                                                identity
                                                (:selection-criteria-index score)
-                                               (:score score))))))
+                                               (:score score)))))
 
-(defn- delete-score []
-  (compojure-api/DELETE "/evaluations/:id/scores/:index/" request
-                        :path-params [id :- Long, index :- Long]
-                        :summary "Delete score"
-                        :description "Delete application score given by user"
-                        (let [identity (authentication/get-request-identity request)]
-                          (scoring/delete-score id index identity)
-                          (http/ok ""))))
-
-(defn map-email-field-value [field]
-      (map :value (filter #(formutil/has-field-type? "vaEmailNotification" %) field)))
-
-(defn- post-hakemus-status []
   (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/status" request
                       :path-params [avustushaku-id :- Long, hakemus-id :- Long]
                       :body [body {:status va-schema/HakemusStatus
@@ -607,33 +613,11 @@
                           (http/ok {:hakemus-id hakemus-id
                                :status new-status})))))
 
-(defn- get-search []
-  (compojure-api/GET "/:avustushaku-id/searches/:saved-search-id" []
-                     :path-params [avustushaku-id :- Long, saved-search-id :- Long]
-                     :return virkailija-schema/SavedSearch
-                     :summary "Get stored search"
-                     :description "Stored search captures the ids of selection, and provide a stable view to hakemus data."
-                     (let [saved-search (saved-search/get-saved-search avustushaku-id saved-search-id)]
-                       (http/ok (:query saved-search)))))
-
-(defn- get-tapahtumaloki []
-  (compojure-api/GET "/:avustushaku-id/tapahtumaloki/:tyyppi" []
-                     :path-params [avustushaku-id :- Long, tyyppi :- s/Str]
-                     (http/ok (tapahtumaloki/get-tapahtumaloki-entries tyyppi avustushaku-id))))
-
-(defn- get-avustushaku-lainsaadanto []
-  (compojure-api/GET "/:avustushaku-id/lainsaadanto" []
-                     :path-params [avustushaku-id :- Long]
-                     (http/ok (virkailija-db/get-avustushaku-lainsaadanto avustushaku-id))))
-
-(defn- post-avustushaku-lainsaadanto []
-  (compojure-api/POST "/:avustushaku-id/lainsaadanto" request
-                      :path-params [avustushaku-id :- Long]
-                      :body [body [s/Int]]
-                      (http/ok (virkailija-db/upsert-avustushaku-lainsaadanto avustushaku-id body))))
 
 (compojure-api/defroutes avustushaku-routes
   "Hakemus listing and filtering"
+
+  hakemus-routes
 
   (get-all-avustushaku-exports)
 
@@ -656,19 +640,13 @@
     (http/ok (virkailija-db/get-lainsaadanto-options)))
 
   (get-avustushaku-status)
-  (get-normalized-hakemus)
   (put-avustushaku)
   (post-avustushaku)
   (get-avustushaku)
   (get-hakemus-ids-having-taydennyspyynto)
   (get-onko-muutoshakukelpoinen-avustushaku-ok)
-  (get-muutoshakemukset)
-  (post-muutoshakemus-paatos)
-  (get-selvitys)
-  (verify-loppuselvitys-information)
   (send-selvitys)
   (send-selvitys-email)
-  (re-send-paatos-email)
   (post-change-request-email)
   (get-avustushaku-export)
   (get-avustushaku-role)
@@ -684,27 +662,13 @@
   (get-avustushaku-privileges)
   (get-avustushaku-form)
   (post-avustushaku-form)
-  (post-hakemus-arvio)
-  (get-hakemus-comments)
-  (put-keskeyta-aloittamatta)
-  (post-hakemus-comments)
-  (get-hakemus-attachments)
-  (get-hakemus-attachments-versions)
-  (get-hakemus-attachment)
   (post-init-selvitysform)
   (post-selvitysform)
-  (get-change-requests)
-  (get-scores)
-  (post-scores)
   (delete-score)
-  (post-hakemus-status)
   (put-searches)
   (get-search)
-  (get-project)
-  (post-project)
   (get-projects)
   (post-projects)
   (get-avustushaku-talousarviotilit)
   (post-avustushaku-talousarviotilit)
-  (send-loppuselvitys-reminder)
   (get-tapahtumaloki))
