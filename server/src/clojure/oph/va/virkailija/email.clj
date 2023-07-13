@@ -494,7 +494,7 @@
              :project-name (:project_name hakemus)}
         body (render-body msg)]
     (log/info "Url would be: " url)
-    (tapahtumaloki/create-log-entry type (:id avustushaku) (:id hakemus) identity uuid to true)
+    (tapahtumaloki/create-log-entry type (:id avustushaku) (:id hakemus) identity uuid to nil true)
     (email/enqueue-message-to-be-send msg body)))
 
 (defn send-payments-info! [payments-info]

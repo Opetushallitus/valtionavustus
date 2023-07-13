@@ -237,15 +237,15 @@
       (let [identity (authentication/get-request-identity request)]
         (when (not (seq to))
           (http/bad-request! {:error "Viestillä on oltava vähintään yksi vastaanottaja"}))
-        (common-email/try-send-email!
-         (common-email/message (keyword lang)
-                               :loppuselvitys-muistutus
-                               to
-                               subject
-                               body)
-         {:hakemus-id hakemus-id
-          :avustushaku-id avustushaku-id})
-        (tapahtumaloki/create-log-entry "loppuselvitys-muistutus" avustushaku-id hakemus-id identity "" {} true)
+        (let [email-id (common-email/try-send-email!
+                        (common-email/message (keyword lang)
+                                              :loppuselvitys-muistutus
+                                              to
+                                              subject
+                                              body)
+                        {:hakemus-id hakemus-id
+                         :avustushaku-id avustushaku-id})]
+          (tapahtumaloki/create-log-entry "loppuselvitys-muistutus" avustushaku-id hakemus-id identity "" {} email-id true))
         (http/created)))))
 
 (defn- send-selvitys []
