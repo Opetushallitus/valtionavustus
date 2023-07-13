@@ -357,7 +357,7 @@
      [body from sender to subject
       bcc cc reply-to (:contents attachment) (:title attachment) (:description attachment)])))
 
-(defn- send-email-once! [email from sender email-id & {:keys [hakemus-id muutoshakemus-id avustushaku-id]}]
+(defn- send-email-once! [email from sender email-id avustushaku-id hakemus-id muutoshakemus-id]
   (let [email-type (:email-type email)
         email-event {:email-type email-type
                      :muutoshakemus-id muutoshakemus-id
@@ -377,16 +377,13 @@
    Throws on validation error or if email cannot be inserted to db.
 
    Returns the id of the email added to db"
-  ([raw-email] (try-send-email! raw-email {:hakemus-id nil
-                                           :avustushaku-id nil
-                                           :muutoshakemus-id nil}))
-  ([raw-email extra-event-fields]
+  [raw-email & {:keys [hakemus-id avustushaku-id muutoshakemus-id]}]
   (let [email (clean-email-fields raw-email)]
     (if (s/valid? :email/message email)
       (let [lang (:lang email)
             from (-> smtp-config :from lang)
             sender (-> smtp-config :sender)
             {email-id :id} (insert-email! email from sender)]
-        (go (send-email-once! email from sender email-id extra-event-fields))
+        (go (send-email-once! email from sender email-id avustushaku-id hakemus-id muutoshakemus-id))
         email-id)
-      (throw (ex-info "Email not valid" (s/explain-data :email/message email)))))))
+      (throw (ex-info "Email not valid" (s/explain-data :email/message email))))))

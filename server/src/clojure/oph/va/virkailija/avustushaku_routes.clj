@@ -234,7 +234,7 @@
                                              :to [s/Str]}]
       :return s/Any
       :summary "Send muistutusviesti to hakija"
-      (do
+      (let [identity (authentication/get-request-identity request)]
         (when (not (seq to))
           (http/bad-request! {:error "Viestillä on oltava vähintään yksi vastaanottaja"}))
         (common-email/try-send-email!
@@ -245,6 +245,7 @@
                                body)
          {:hakemus-id hakemus-id
           :avustushaku-id avustushaku-id})
+        (tapahtumaloki/create-log-entry "loppuselvitys-muistutus" avustushaku-id hakemus-id identity "" {} true)
         (http/created)))))
 
 (defn- send-selvitys []
