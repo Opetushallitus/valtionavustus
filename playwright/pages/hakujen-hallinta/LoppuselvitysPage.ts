@@ -13,6 +13,15 @@ export const LoppuselvitysPage = (page: Page) => {
     }),
   }
 
+  async function checkMuistutusViestiEmailRecipients(recipients: string[]) {
+    await page.getByRole('button', { name: 'Kirjoita' }).click()
+    await Promise.all(
+      recipients.map((recipent, i) => {
+        expect(page.locator(`[data-test-id="muistutusviesti-receiver-${i}"]`)).toHaveValue(recipent)
+      })
+    )
+  }
+
   async function getSelvitysFormUrl() {
     const formUrl = await locators.linkToForm.getAttribute('href')
     if (!formUrl) {
@@ -45,6 +54,7 @@ export const LoppuselvitysPage = (page: Page) => {
     sendLoppuselvitys,
     asiatarkastaLoppuselvitys,
     taloustarkastaLoppuselvitys,
+    checkMuistutusViestiEmailRecipients,
     ...SelvitysTab(page, 'loppu'),
   }
 }

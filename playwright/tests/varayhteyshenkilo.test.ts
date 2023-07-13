@@ -293,6 +293,10 @@ test('varayhteyshenkilo flow', async ({
     await hakijaSelvitysPage.submitButton.click()
     await expect(hakijaSelvitysPage.submitButton).toHaveText('Loppuselvitys lähetetty')
     await virkailijaLoppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, acceptedHakemusId)
+    await loppuselvitysPage.checkMuistutusViestiEmailRecipients([
+      answers.contactPersonEmail,
+      newEmail,
+    ])
     await virkailijaLoppuselvitysPage.asiatarkastaLoppuselvitys('Ok')
     await virkailijaLoppuselvitysPage.taloustarkastaLoppuselvitys()
     const emailsAfterAcceptance = await getSelvitysEmails(avustushakuID)
