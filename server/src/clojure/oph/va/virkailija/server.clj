@@ -10,6 +10,7 @@
             [oph.va.hakija.db.migrations :as hakija-dbmigrations]
             [buddy.auth.backends.session :as buddy-session]
             [clojure.tools.logging :as log]
+            [oph.common.email :as common-email]
             [oph.common.server :as server]
             [oph.common.background-job-supervisor :as job-supervisor]
             [oph.soresu.common.config :refer [config environment]]
@@ -30,7 +31,7 @@
   (dbmigrations/migrate "virkailija"
                         "db.migration.virkailija"
                         "oph.va.virkailija.db.migrations")
-  (email/start-background-job-send-mails)
+  (common-email/start-background-job-send-mails)
   (auth/start-background-job-timeout-sessions)
   (when (get-in config [:va-users :use-cache?])
     (va-users/start-background-job-update-va-users-cache))
@@ -45,7 +46,7 @@
 
 (defn- shutdown []
   (log/info "Shutting down...")
-  (email/stop-background-job-send-mails)
+  (common-email/stop-background-job-send-mails)
   (auth/stop-background-job-timeout-sessions)
   (if (get-in config [:va-users :use-cache?])
     (va-users/stop-background-job-update-va-users-cache))

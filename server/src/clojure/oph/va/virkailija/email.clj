@@ -77,12 +77,6 @@
    :subject (:fi (msg-type mail-titles))
    :sender (-> email/smtp-config :sender)})
 
-(defn start-background-job-send-mails []
-  (email/start-background-job-send-mails))
-
-(defn stop-background-job-send-mails []
-  (email/stop-background-job-send-mails))
-
 (defn- render-body [msg]
   (let [{:keys [email-type lang]} msg
         template (get-in mail-templates [email-type lang])]

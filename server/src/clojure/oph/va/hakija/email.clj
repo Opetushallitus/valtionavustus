@@ -53,12 +53,6 @@
         template (get-in mail-templates [email-type lang])]
     (render template msg)))
 
-(defn start-background-job-send-mails []
-  (email/start-background-job-send-mails))
-
-(defn stop-background-job-send-mails []
-  (email/stop-background-job-send-mails))
-
 (defn generate-virkailija-url [avustushaku-id hakemus-db-id]
   (str (-> config :server :virkailija-url)
        "/avustushaku/"

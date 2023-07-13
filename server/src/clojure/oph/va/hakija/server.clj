@@ -7,11 +7,11 @@
             [clojure.tools.logging :as log]
             [oph.common.background-job-supervisor :as job-supervisor]
             [oph.common.server :as server]
+            [oph.common.email :as email]
             [oph.soresu.common.config :refer [config]]
             [oph.soresu.common.db :as db]
             [oph.va.hakija.db.migrations :as dbmigrations]
             [oph.va.virkailija.db.migrations :as virkailija-dbmigrations]
-            [oph.va.hakija.email :as email]
             [oph.va.hakija.officer-edit-auth :refer [officer-edit-auth-backend]]))
 
 (defn- startup [config]
