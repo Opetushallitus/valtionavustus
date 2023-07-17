@@ -15,6 +15,35 @@ type MuistutusviestiProps = {
   lang: Language
 }
 
+const messages = [
+  {
+    id: 1,
+    date: new Date('2023-07-14'),
+    virkailija: 'Ville Virkailija',
+    sender: 'ville.virkailija@example.com',
+    subject: 'Viestin aihe 1',
+    message: 'Viesti 1',
+    receivers: ['vastaanottaja@example.com', 'vastaanottaja2@example.com'],
+  },
+  {
+    id: 2,
+    date: new Date('2023-07-12'),
+    virkailija: 'Ville Virkailija',
+    sender: 'ville.virkailija@example.com',
+    subject: 'Viestin aihe 2',
+    message: 'Viesti 2',
+    receivers: ['vastaanottaja@example.com', 'vastaanottaja2@example.com'],
+  },
+  {
+    id: 3,
+    date: new Date('2023-07-10'),
+    virkailija: 'Ville Virkailija',
+    sender: 'ville.virkailija@example.com',
+    subject: 'Viestin aihe 3',
+    message: 'Viesti 3',
+    receivers: ['vastaanottaja@example.com', 'vastaanottaja2@example.com'],
+  },
+]
 export default function MuistutusViesti({ avustushaku, hakemus, lang }: MuistutusviestiProps) {
   const [showEmailForm, setShowEmailForm] = useState(false)
 
@@ -50,11 +79,13 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
     setShowEmailForm(false)
   }
 
+  const containsSentMessage = messages.length > 1
+
   return (
     <>
       <div
         className={cn('writeMuistutusviesti', {
-          ['formOpen']: showEmailForm,
+          ['noBottomBorder']: showEmailForm || containsSentMessage,
         })}
       >
         <h2>Muistutusviesti</h2>
@@ -65,37 +96,7 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
           Kirjoita
         </button>
       </div>
-      <ViestiLista
-        messages={[
-          {
-            id: 1,
-            date: new Date('2023-07-14'),
-            virkailija: 'Ville Virkailija',
-            sender: 'ville.virkailija@example.com',
-            subject: 'Viestin aihe 1',
-            message: 'Viesti 1',
-            receivers: ['vastaanottaja@example.com', 'vastaanottaja2@example.com'],
-          },
-          {
-            id: 2,
-            date: new Date('2023-07-12'),
-            virkailija: 'Ville Virkailija',
-            sender: 'ville.virkailija@example.com',
-            subject: 'Viestin aihe 2',
-            message: 'Viesti 2',
-            receivers: ['vastaanottaja@example.com', 'vastaanottaja2@example.com'],
-          },
-          {
-            id: 3,
-            date: new Date('2023-07-10'),
-            virkailija: 'Ville Virkailija',
-            sender: 'ville.virkailija@example.com',
-            subject: 'Viestin aihe 3',
-            message: 'Viesti 3',
-            receivers: ['vastaanottaja@example.com', 'vastaanottaja2@example.com'],
-          },
-        ]}
-      />
+      <ViestiLista messages={messages} />
       {showEmailForm && (
         <MultipleRecipentEmailForm
           onSubmit={onSubmit}
