@@ -55,7 +55,7 @@ const Loppuselvitys = () => {
     <div id="tab-content" className={hakemus.refused ? 'disabled' : ''}>
       <div data-test-id="hakemus-details-loppuselvitys">
         <PresenterComment helpText={presenterCommentHelpText} />
-        {loppuselvitys && !loadingHakemus && muistusviestiEnabled && (
+        {hasSelvitys && !loadingHakemus && muistusviestiEnabled && (
           <MuistutusViesti avustushaku={avustushaku} hakemus={hakemus} lang={lang} />
         )}
         {hasSelvitys ? (
@@ -98,7 +98,7 @@ const Loppuselvitys = () => {
           helpText={selvitysLinkHelpText}
           selvitysPyynnotSent={loppuselvitysPyynnotSent}
         />
-        {!loppuselvitys && !loadingHakemus && muistusviestiEnabled && (
+        {!hasSelvitys && !loadingHakemus && muistusviestiEnabled && (
           <MuistutusViesti avustushaku={avustushaku} hakemus={hakemus} lang={lang} />
         )}
         {hasSelvitys && (
