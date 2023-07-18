@@ -19,6 +19,7 @@ type MuistutusviestiProps = {
 export default function MuistutusViesti({ avustushaku, hakemus, lang }: MuistutusviestiProps) {
   const [showEmailForm, setShowEmailForm] = useState(false)
   const [sentEmails, setSentEmails] = useState<Message[]>([])
+  const [formErrorMessage, setFormErrorMessage] = useState<string>()
   const containsSentEmails = sentEmails.length > 0
   const contactEmail = hakemus.normalizedData?.['contact-email']
   const trustedContactEmail = hakemus.normalizedData?.['trusted-contact-email']
@@ -30,33 +31,41 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
       const sentEmails = await fetchSentEmails(avustushaku, hakemus)
       setSentEmails(sentEmails)
     }
-
     fetchEmails()
   }, [])
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     e.stopPropagation()
-    await HttpUtil.post(
-      `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/loppuselvitys/send-reminder`,
-      {
-        lang,
-        body: email.content,
-        subject: email.subject,
-        to: email.receivers,
-      }
-    )
+    try {
+      await HttpUtil.post(
+        `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/loppuselvitys/send-reminder`,
+        {
+          lang,
+          body: email.content,
+          subject: email.subject,
+          to: email.receivers,
+        }
+      )
 
-    const sentEmails = await fetchSentEmails(avustushaku, hakemus)
-    setSentEmails(sentEmails)
-    cancelForm()
+      const sentEmails = await fetchSentEmails(avustushaku, hakemus)
+      setSentEmails(sentEmails)
+      setFormErrorMessage(undefined)
+      cancelForm()
+    } catch (err: any) {
+      if (err.name === 'HttpResponseError' && err.response.status === 400) {
+        setFormErrorMessage(err.response.data.error)
+      } else {
+        setFormErrorMessage('Muistutusviestin lähetys epäonnistui')
+      }
+    }
   }
 
   function cancelForm() {
     setEmail(initialEmail)
     setShowEmailForm(false)
+    setFormErrorMessage(undefined)
   }
-  console.log(containsSentEmails)
   return (
     <>
       <div
@@ -85,6 +94,7 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
             text: 'Peruuta',
             onClick: cancelForm,
           }}
+          errorText={formErrorMessage}
         />
       )}
     </>

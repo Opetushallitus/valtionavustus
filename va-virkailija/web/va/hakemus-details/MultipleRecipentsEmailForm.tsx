@@ -25,6 +25,7 @@ type Props = {
   disabled?: boolean
   disabledSubmitButton?: ReactElement
   cancelButton?: CancelButton
+  errorText?: string
 }
 
 export default function MultipleRecipentEmailForm({
@@ -37,6 +38,7 @@ export default function MultipleRecipentEmailForm({
   formName,
   disabledSubmitButton,
   cancelButton,
+  errorText,
 }: Props) {
   return (
     <div data-test-id={`${formName}-email`} className="form">
@@ -58,6 +60,7 @@ export default function MultipleRecipentEmailForm({
           disabledComponent={disabledSubmitButton}
           formName={formName}
           cancelButton={cancelButton}
+          errorText={errorText}
         />
       </form>
     </div>
@@ -70,12 +73,14 @@ function SubmitContainer({
   formName,
   disabledComponent,
   cancelButton,
+  errorText,
 }: {
   submitText: string
   disabled: boolean
   formName: string
   disabledComponent?: ReactElement
   cancelButton?: CancelButton
+  errorText?: string
 }) {
   const DisabledComponent = () => disabledComponent
   return (
@@ -84,14 +89,17 @@ function SubmitContainer({
         <DisabledComponent />
       ) : (
         <div className="form-footer">
-          <button
-            disabled={disabled}
-            data-test-id={`${formName}-submit`}
-            type="submit"
-            name={`submit-${formName}`}
-          >
-            {submitText}
-          </button>
+          <div>
+            <button
+              disabled={disabled}
+              data-test-id={`${formName}-submit`}
+              type="submit"
+              name={`submit-${formName}`}
+            >
+              {submitText}
+            </button>
+            <span className="error-message">{errorText}</span>
+          </div>
           {cancelButton && (
             <button className="cancelButton" onClick={cancelButton.onClick}>
               {cancelButton.text}
