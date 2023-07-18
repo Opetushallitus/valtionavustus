@@ -178,6 +178,7 @@ function MultipleEmailRecipents({
               data-test-id={`${formName}-receiver-${idx}`}
               type="email"
               name="receiver"
+              required
               onChange={(e) => {
                 const newReceivers = [...receivers]
                 newReceivers[idx] = e.target.value
