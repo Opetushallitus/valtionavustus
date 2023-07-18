@@ -7,6 +7,9 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../scripts/common-func
 # shellcheck source=./deploy-functions.sh
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/deploy-functions.sh"
 
+function cleanup {
+    docker compose down
+}
 
 function main {
     require_command docker
@@ -15,10 +18,19 @@ function main {
     
     cd "$repo"
 
+    readonly test_image_tag="va-server-speclj:$revision"
+
+    start_gh_actions_group "Build test image"
+    docker build --tag "$test_image_tag" \
+        --build-arg "VA_SERVER_IMAGE=$image_tag" \
+        --file Dockerfile.lein-spec "$repo"
+    end_gh_actions_group
+
     start_gh_actions_group "Run lein tests"
-    docker compose up -d db
-    docker run --rm --network container:va-postgres "$image_tag" with-profile test spec -f d
-    docker compose down
+    trap cleanup EXIT
+    docker compose up --wait db
+    docker run --rm --network container:va-postgres "$test_image_tag"
     end_gh_actions_group
 }
+
 main "$@"

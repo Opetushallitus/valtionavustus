@@ -35,10 +35,6 @@ RUN ./lein deps
 COPY server/src/ ./server/src/
 COPY server/resources/ ./server/resources/
 
-# add spec files
-COPY server/spec/ ./server/spec/
-COPY server/test-resources/ ./server/test-resources/
-
 RUN ./lein compile
 
 COPY server/config/ ./server/config/
