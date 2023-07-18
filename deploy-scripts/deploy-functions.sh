@@ -16,7 +16,7 @@ readonly image_tag="$github_registry:${revision}"
 readonly deploy_dist_dir="$repo/deploy-scripts/dist/"
 mkdir -p "$deploy_dist_dir"
 
-readonly standalone_jar="$deploy_dist_dir/valtionavustus-standalone-$revision.jar"
+readonly standalone_jar_name="valtionavustus-standalone-$revision.jar"
 
 function image_exists_locally {
   local tag="$1"

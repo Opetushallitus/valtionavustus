@@ -49,16 +49,10 @@ function build_jar {
   start_gh_actions_group "lein uberjar"
 
   info "lein uberjar"
-  readonly uberjar_container="va-server-uberjar"
-  docker rm $uberjar_container || true
-  docker compose run \
-    --name "$uberjar_container" \
-    $service_name \
-    uberjar
-  docker cp \
-    "$uberjar_container:/app/target/uberjar/valtionavustus-0.1.0-SNAPSHOT-standalone.jar" \
-    "$standalone_jar"
-
+  docker build --output "type=local,dest=$deploy_dist_dir" \
+    --build-arg "UBERJAR_NAME=$standalone_jar_name" \
+    --target va-uberjar \
+    "$repo"
   end_gh_actions_group
 }
 
