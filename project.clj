@@ -52,7 +52,7 @@
                          [prismatic/schema "1.4.1"]
 
                          ;; database
-                         [hikari-cp "1.8.3"]
+                         [hikari-cp "3.0.1"]
                          [org.flywaydb/flyway-core "4.2.0"]
                          [org.postgresql/postgresql "42.6.0"]
                          [yesql "0.5.3"]
