@@ -32,6 +32,8 @@
 (defn- without-id [x]
   (dissoc x :id))
 
+(defn- notEmptyString [x] (not (clojure.string/blank? x)))
+
 (defn- get-hakemus-and-its-avustushaku [avustushaku-id hakemus-id]
   (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
         hakemus (hakija-api/get-hakemus hakemus-id)]
@@ -459,7 +461,7 @@
       :return s/Any
       :summary "Send muistutusviesti to hakija"
       (let [identity (authentication/get-request-identity request)]
-        (when (not (seq to))
+        (when (not (seq (filter notEmptyString to)))
           (http/bad-request! {:error "Viestillä on oltava vähintään yksi vastaanottaja"}))
         (let [email-id (common-email/try-send-email!
                         (common-email/message (keyword lang)
