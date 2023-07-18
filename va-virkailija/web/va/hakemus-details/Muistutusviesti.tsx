@@ -46,6 +46,10 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
         to: email.receivers,
       }
     )
+
+    const sentEmails = await fetchSentEmails(avustushaku, hakemus)
+    setSentEmails(sentEmails)
+    cancelForm()
   }
 
   function cancelForm() {
