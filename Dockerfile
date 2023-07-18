@@ -35,7 +35,7 @@ RUN ./lein deps
 COPY server/src/ ./server/src/
 COPY server/resources/ ./server/resources/
 
-RUN ./lein compile
+RUN ./lein compile :all
 
 COPY server/config/ ./server/config/
 COPY va-hakija/config/ ./va-hakija/config/
