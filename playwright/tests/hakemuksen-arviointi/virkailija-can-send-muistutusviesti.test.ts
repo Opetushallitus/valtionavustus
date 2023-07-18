@@ -3,6 +3,7 @@ import { clearAndType } from '../../utils/util'
 import { selvitysTest as test } from '../../fixtures/selvitysTest'
 import SelvitysTab from '../../pages/hakujen-hallinta/CommonSelvitysPage'
 import { getLoppuselvitysMuistutusviestiEmails, waitUntilMinEmails } from '../../utils/emails'
+import moment from 'moment'
 
 test('virkailija can send muistutusviesti for loppuselvitys', async ({
   page,
@@ -51,8 +52,23 @@ test('virkailija can send muistutusviesti for loppuselvitys', async ({
     const { contactPersonEmail } = answers
     expect(email['to-address']).toEqual([contactPersonEmail, additionalReceiver])
   })
+
+  await test.step('sent muistutusviesti is shown in list', async () => {
+    await expect(page.getByText(formatDate(new Date()))).toBeVisible()
+    await page.getByTestId('open-email-0').click()
+    await expect(
+      page.getByText('Vastaanottajaterkki.esimerkki@example.com, karri@kojootti.dog')
+    ).toBeVisible()
+    await expect(page.getByText(`Aihe${subject}`)).toBeVisible()
+    await expect(page.getByText(content)).toBeVisible()
+  })
 })
 
+moment.locale('fi')
+
+const formatDate = (date: Date) => {
+  return `${moment(date).format('DD.MM.YYYY')}`
+}
 function isValid(locator: Locator): Promise<boolean> {
   return locator.evaluate((elem: HTMLFormElement) => elem.checkValidity())
 }

@@ -25,7 +25,7 @@ type OpenedMessagesState = Record<number, boolean>
 
 export default function ViestiLista(props: Props) {
   const [openedMessages, setOpenedMessages] = useState<OpenedMessagesState>({})
-  const messages = props.messages.map((message) => {
+  const messages = props.messages.map((message, idx) => {
     return (
       <div key={message.id} className={'viestiListaItem'}>
         <div className={'viestiListaRow'}>
@@ -33,6 +33,8 @@ export default function ViestiLista(props: Props) {
           <div className={'rowDate'}>{formatDate(message.date)}</div>
           <div className={'rowVirkailija'}>{message.virkailija}</div>
           <div
+            data-test-id={`open-email-${idx}`}
+            role="button"
             className={'rowOpenCloseIcon'}
             onClick={() =>
               setOpenedMessages({ ...openedMessages, [message.id]: !openedMessages[message.id] })
