@@ -31,12 +31,13 @@ function main {
   fi
 
   if [ "${GITHUB_ACTIONS:-}" == "true" ]; then
-    info "Pushing tags"
+    start_gh_actions_group "Pushing tags"
     for tag in "${tags_to_push[@]}"
     do
       info "docker push $tag"
       docker push "$tag"
     done
+    end_gh_actions_group
   else
     info "Not pushing tags when running locally"
   fi

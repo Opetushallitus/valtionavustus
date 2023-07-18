@@ -17,9 +17,11 @@ function clean {
 }
 
 function main {
+  start_gh_actions_group "Setup"
   require_command docker
   require_docker_compose
   require_built_image
+  end_gh_actions_group
 
   mkdir -p "$RESULTS_DIR"
   export VA_SERVER_IMAGE="$image_tag"
