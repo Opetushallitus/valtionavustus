@@ -22,35 +22,13 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
   const containsSentEmails = sentEmails.length > 0
   const contactEmail = hakemus.normalizedData?.['contact-email']
   const trustedContactEmail = hakemus.normalizedData?.['trusted-contact-email']
-  const receivers = [contactEmail, trustedContactEmail].filter(
-    (email): email is string => typeof email === 'string'
-  )
-  const initialEmail = {
-    lang,
-    subject: '',
-    content: '',
-    receivers: receivers,
-  }
+  const initialEmail = generateInitialEmail(contactEmail, trustedContactEmail, lang)
   const [email, setEmail] = useState(initialEmail)
 
   useEffect(() => {
     async function fetchEmails() {
-      const sentEmails = await HttpUtil.get<Lahetys[]>(
-        `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/tapahtumaloki/loppuselvitys-muistutus`
-      )
-      const mappedEmails: Message[] = sentEmails.flatMap(({ user_name, email_content }) => {
-        if (!email_content) return []
-        return {
-          date: new Date(email_content.created_at),
-          id: email_content.id,
-          message: email_content.formatted,
-          receivers: email_content.to_address,
-          sender: email_content.from_address,
-          subject: email_content.subject,
-          virkailija: user_name,
-        }
-      })
-      setSentEmails(mappedEmails)
+      const sentEmails = await fetchSentEmails(avustushaku, hakemus)
+      setSentEmails(sentEmails)
     }
 
     fetchEmails()
@@ -107,4 +85,39 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
       )}
     </>
   )
+}
+function generateInitialEmail(
+  contactEmail: string | undefined,
+  trustedContactEmail: string | undefined,
+  lang: Language
+) {
+  const receivers = [contactEmail, trustedContactEmail].filter(
+    (email): email is string => typeof email === 'string'
+  )
+  const initialEmail = {
+    lang,
+    subject: '',
+    content: '',
+    receivers: receivers,
+  }
+  return initialEmail
+}
+
+async function fetchSentEmails(avustushaku: Avustushaku, hakemus: Hakemus): Promise<Message[]> {
+  const sentEmails = await HttpUtil.get<Lahetys[]>(
+    `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/tapahtumaloki/loppuselvitys-muistutus`
+  )
+  const mappedEmails: Message[] = sentEmails.flatMap(({ user_name, email_content }) => {
+    if (!email_content) return []
+    return {
+      date: new Date(email_content.created_at),
+      id: email_content.id,
+      message: email_content.formatted,
+      receivers: email_content.to_address,
+      sender: email_content.from_address,
+      subject: email_content.subject,
+      virkailija: user_name,
+    }
+  })
+  return mappedEmails
 }
