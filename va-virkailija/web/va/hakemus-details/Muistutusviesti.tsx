@@ -19,7 +19,7 @@ type MuistutusviestiProps = {
 export default function MuistutusViesti({ avustushaku, hakemus, lang }: MuistutusviestiProps) {
   const [showEmailForm, setShowEmailForm] = useState(false)
   const [sentEmails, setSentEmails] = useState<Message[]>([])
-  const containsSentEmails = sentEmails.length > 1
+  const containsSentEmails = sentEmails.length > 0
   const contactEmail = hakemus.normalizedData?.['contact-email']
   const trustedContactEmail = hakemus.normalizedData?.['trusted-contact-email']
   const receivers = [contactEmail, trustedContactEmail].filter(
@@ -74,7 +74,7 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
     setEmail(initialEmail)
     setShowEmailForm(false)
   }
-
+  console.log(containsSentEmails)
   return (
     <>
       <div
