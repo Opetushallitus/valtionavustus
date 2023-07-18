@@ -25,8 +25,8 @@ export default function ViestiLista(props: Props) {
   const messages = props.messages.map((message) => {
     const [isOpen, setOpen] = useState(false)
     return (
-      <div className={'viestiListaItem'}>
-        <div key={message.id} className={'viestiListaRow'}>
+      <div key={message.id} className={'viestiListaItem'}>
+        <div className={'viestiListaRow'}>
           <EnvelopeIcon />
           <div className={'rowDate'}>{formatDate(message.date)}</div>
           <div className={'rowVirkailija'}>{message.virkailija}</div>
