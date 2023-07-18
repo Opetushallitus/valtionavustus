@@ -19,13 +19,13 @@ function clean {
 function main {
   require_command docker
   require_docker_compose
+  require_built_image
 
   mkdir -p "$RESULTS_DIR"
   export VA_SERVER_IMAGE="$image_tag"
   info "Using $image_tag"
 
   start_gh_actions_group "Pull and build images required for playwright tests"
-  $compose pull
   $compose build db fakesmtp maksatuspalvelu
   docker build -t playwright-image -f Dockerfile.playwright-test-runner .
   end_gh_actions_group
