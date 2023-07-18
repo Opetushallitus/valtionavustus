@@ -33,7 +33,7 @@
   {:id s/Str
    (s/optional-key :label) (s/maybe s/Str)})
 
-(s/defschema KeskeytaAloittamattaBody 
+(s/defschema KeskeytaAloittamattaBody
   {:keskeyta s/Bool})
 
 (s/defschema OnkoMuutoshakukelpoinenAvustushakuOk
@@ -555,3 +555,32 @@
 (s/defschema AvustushakuTalousarviotili
   (assoc Talousarviotili
          :koulutusasteet s/Any))
+
+(s/defschema EmailContent
+  "Email"
+  {
+    :id s/Int
+    :sender s/Str
+    :formatted s/Str
+    :created_at s/Inst
+    :to_address [s/Str]
+    :from_address s/Str
+    :subject s/Str
+  }
+)
+
+(s/defschema HakemusTapahtumaloki
+  "Hakemus Tapahtumaloki"
+  [{:id s/Int
+    :tyyppi s/Str
+    :created_at s/Inst
+    :avustushaku_id s/Int
+    :user_oid s/Str
+    :batch_id s/Str
+    :success s/Bool
+    :user_name s/Str
+    :emails {:addresses (s/either [s/Str] {})}
+    :hakemus_id s/Int
+    :email_id (s/maybe s/Int)
+    :email_content (s/maybe EmailContent)
+    }])

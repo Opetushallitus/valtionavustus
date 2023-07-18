@@ -33,3 +33,19 @@
      FROM virkailija.tapahtumaloki
      WHERE avustushaku_id = ? AND tyyppi = ?"
     [avustushaku-id tyyppi]))
+
+(defn get-hakemus-tapahtumaloki-entries [tyyppi avustushaku-id hakemus-id]
+  (db/query-original-identifiers
+    "SELECT id, tyyppi, created_at, avustushaku_id, hakemus_id, batch_id, emails, success, user_name, user_oid, email_id,
+       (SELECT json_build_object(
+           'id', id,
+           'formatted', formatted,
+           'from_address', from_address,
+           'sender', sender,
+           'to_address', to_address,
+           'created_at', created_at,
+           'subject', subject
+           ) FROM virkailija.email where tapahtumaloki.email_id = id)::jsonb as email_content
+     FROM virkailija.tapahtumaloki
+     WHERE avustushaku_id = ? AND tyyppi = ? AND hakemus_id = ?"
+    [avustushaku-id tyyppi hakemus-id]))

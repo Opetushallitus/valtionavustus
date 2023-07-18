@@ -441,6 +441,13 @@
                           (http/ok response)
                           (http/bad-request!))))
 
+  (compojure-api/GET "/:avustushaku-id/hakemus/:hakemus-id/tapahtumaloki/:tyyppi" []
+    :path-params [avustushaku-id :- Long, hakemus-id :- Long, tyyppi :- s/Str]
+    :return virkailija-schema/HakemusTapahtumaloki
+    :summary "Get specific hakemus tapahtumaloki"
+    (http/ok (tapahtumaloki/get-hakemus-tapahtumaloki-entries tyyppi avustushaku-id hakemus-id)))
+
+
   (when (feature-enabled? :muistutusviesti-loppuselvityksesta)
     (compojure-api/POST
       "/:avustushaku-id/hakemus/:hakemus-id/loppuselvitys/send-reminder" request
