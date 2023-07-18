@@ -21,20 +21,27 @@ interface Props {
   messages: Message[]
 }
 
+type OpenedMessagesState = Record<number, boolean>
+
 export default function ViestiLista(props: Props) {
+  const [openedMessages, setOpenedMessages] = useState<OpenedMessagesState>({})
   const messages = props.messages.map((message) => {
-    const [isOpen, setOpen] = useState(false)
     return (
       <div key={message.id} className={'viestiListaItem'}>
         <div className={'viestiListaRow'}>
           <EnvelopeIcon />
           <div className={'rowDate'}>{formatDate(message.date)}</div>
           <div className={'rowVirkailija'}>{message.virkailija}</div>
-          <div className={'rowOpenCloseIcon'} onClick={() => setOpen(!isOpen)}>
+          <div
+            className={'rowOpenCloseIcon'}
+            onClick={() =>
+              setOpenedMessages({ ...openedMessages, [message.id]: !openedMessages[message.id] })
+            }
+          >
             <CloseIcon />
           </div>
         </div>
-        {isOpen && <ViestiDetails message={message} />}
+        {openedMessages[message.id] && <ViestiDetails message={message} />}
       </div>
     )
   })
