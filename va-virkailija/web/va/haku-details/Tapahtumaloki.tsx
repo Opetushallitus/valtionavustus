@@ -15,6 +15,17 @@ export type Lahetys = {
   tyyppi: LahetysType
   user_name: string
   user_oid: string
+  email_content?: EmailContent | null
+}
+
+type EmailContent = {
+  id: number
+  subject: string
+  sender: string
+  formatted: string
+  created_at: string
+  to_address: string[]
+  from_address: string
 }
 
 type LahetysType = 'paatoksen_lahetys' | 'valiselvitys-notification' | 'loppuselvitys-notification'

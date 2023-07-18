@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
@@ -7,7 +7,8 @@ import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 
 import MultipleRecipentEmailForm from './MultipleRecipentsEmailForm'
 import './muistutusviesti.less'
-import ViestiLista from './ViestiLista'
+import ViestiLista, { Message } from './ViestiLista'
+import { Lahetys } from '../haku-details/Tapahtumaloki'
 
 type MuistutusviestiProps = {
   hakemus: Hakemus
@@ -15,39 +16,10 @@ type MuistutusviestiProps = {
   lang: Language
 }
 
-const messages = [
-  {
-    id: 1,
-    date: new Date('2023-07-14'),
-    virkailija: 'Ville Virkailija',
-    sender: 'ville.virkailija@example.com',
-    subject: 'Viestin aihe 1',
-    message: 'Viesti 1',
-    receivers: ['vastaanottaja@example.com', 'vastaanottaja2@example.com'],
-  },
-  {
-    id: 2,
-    date: new Date('2023-07-12'),
-    virkailija: 'Ville Virkailija',
-    sender: 'ville.virkailija@example.com',
-    subject: 'Viestin aihe 2',
-    message: 'Viesti 2',
-    receivers: ['vastaanottaja@example.com', 'vastaanottaja2@example.com'],
-  },
-  {
-    id: 3,
-    date: new Date('2023-07-10'),
-    virkailija: 'Ville Virkailija',
-    sender: 'ville.virkailija@example.com',
-    subject: 'Viestin aihe 3',
-    message:
-      'Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3Viesti 3',
-    receivers: ['vastaanottaja@example.com', 'vastaanottaja2@example.com'],
-  },
-]
 export default function MuistutusViesti({ avustushaku, hakemus, lang }: MuistutusviestiProps) {
   const [showEmailForm, setShowEmailForm] = useState(false)
-
+  const [sentEmails, setSentEmails] = useState<Message[]>([])
+  const containsSentEmails = sentEmails.length > 1
   const contactEmail = hakemus.normalizedData?.['contact-email']
   const trustedContactEmail = hakemus.normalizedData?.['trusted-contact-email']
   const receivers = [contactEmail, trustedContactEmail].filter(
@@ -60,6 +32,29 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
     receivers: receivers,
   }
   const [email, setEmail] = useState(initialEmail)
+
+  useEffect(() => {
+    async function fetchEmails() {
+      const sentEmails = await HttpUtil.get<Lahetys[]>(
+        `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/tapahtumaloki/loppuselvitys-muistutus`
+      )
+      const mappedEmails: Message[] = sentEmails.flatMap(({ user_name, email_content }) => {
+        if (!email_content) return []
+        return {
+          date: new Date(email_content.created_at),
+          id: email_content.id,
+          message: email_content.formatted,
+          receivers: email_content.to_address,
+          sender: email_content.from_address,
+          subject: email_content.subject,
+          virkailija: user_name,
+        }
+      })
+      setSentEmails(mappedEmails)
+    }
+
+    fetchEmails()
+  }, [])
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -80,13 +75,11 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
     setShowEmailForm(false)
   }
 
-  const containsSentMessage = messages.length > 1
-
   return (
     <>
       <div
         className={cn('writeMuistutusviesti', {
-          ['noBottomBorder']: showEmailForm || containsSentMessage,
+          ['noBottomBorder']: showEmailForm || containsSentEmails,
         })}
       >
         <h2>Muistutusviesti</h2>
@@ -97,7 +90,7 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
           Kirjoita
         </button>
       </div>
-      <ViestiLista messages={messages} />
+      <ViestiLista messages={sentEmails} />
       {showEmailForm && (
         <MultipleRecipentEmailForm
           onSubmit={onSubmit}
