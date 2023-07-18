@@ -22,9 +22,7 @@
 
   :pedantic? :abort
 
-  :plugins [[lein-ancient "0.7.0"]
-            [lein-environ "1.2.0"]
-            [speclj "3.4.3"]
+  :plugins [[lein-environ "1.2.0"]
             [reifyhealth/lein-git-down "0.4.1"]]
 
   :managed-dependencies [[org.clojure/clojure "1.11.1"]
@@ -139,8 +137,6 @@
                  [yesql]
                  [hikari-cp]
                  [org.flywaydb/flyway-core]
-                 [speclj]
-                 [speclj-junit]
                  [environ]
                  [org.clojure/tools.logging "1.2.4"]
                  [buddy/buddy-core]
@@ -159,13 +155,19 @@
                           :configdefaults "server/config/test.edn"
                           :environment "test"}
                     :test-paths ["server/spec"]
-                    :resource-paths ["server/test-resources"]}
+                    :resource-paths ["server/test-resources"]
+                    :plugins [[speclj "3.4.3"]]
+                    :dependencies [[speclj]
+                                   [speclj-junit]]}
 
              :test-legacy {:env {:config "server/config/test-legacy.edn"
                                  :configdefaults "server/config/test.edn"
                                  :environment "test"}
                            :test-paths ["server/spec"]
-                           :resource-paths ["server/test-resources"]}}
+                           :resource-paths ["server/test-resources"]
+                           :plugins [[speclj "3.4.3"]]
+                           :dependencies [[speclj]
+                                          [speclj-junit]]}}
 
   :aot [oph.va.jdbc.enums oph.va.hakija.db.migrations oph.va.virkailija.db.migrations clj-time.core]
 
