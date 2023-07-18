@@ -13,6 +13,8 @@ jobs:
   build:
     name: 01-build.sh
     runs-on: ubuntu-22.04
+    env:
+      DOCKER_BUILDKIT: "1" # BuildKit is enabled by default starting in Docker v23, Ubuntu 22.04 has an older version
     steps:
       - uses: actions/checkout@v3.5.3
       - name: Login to GitHub Container Registry
