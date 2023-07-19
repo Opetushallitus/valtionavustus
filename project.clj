@@ -35,7 +35,7 @@
                          [org.apache.commons/commons-compress "1.23.0"]
                          [org.apache.tika/tika-core "2.8.0"]
                          [compojure "1.7.0"]
-                         [http-kit "2.6.0"]
+                         [http-kit "2.7.0"]
                          [metosin/compojure-api "1.1.13"]
                          [org.yaml/snakeyaml "1.33"] ; dependency of compojure-api -> explicitly updated for security patches
 
