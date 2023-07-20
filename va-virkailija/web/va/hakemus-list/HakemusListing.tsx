@@ -19,7 +19,7 @@ import { AddRoleImage } from './AddRoleImage'
 import { useHakemustenArviointiSelector } from '../hakemustenArviointi/arviointiStore'
 import { getLoadedState } from '../hakemustenArviointi/arviointiReducer'
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { NavigateFunction, useNavigate, useSearchParams } from 'react-router-dom'
 import { TAG_ID } from '../hakemustenArviointi/filterReducer'
 
 interface Props {
@@ -315,6 +315,12 @@ export default function HakemusListing(props: Props) {
   const ukotusHakemus = showUkotusModalForHakemusId
     ? hakemusList.find((h) => h.id === showUkotusModalForHakemusId)
     : undefined
+
+  const navigate = useNavigate()
+  const changeHakemus = (navigate: NavigateFunction) => (hakemusId: number) => {
+    navigate(`hakemus/${hakemusId}/arviointi${window.location.search}`)
+  }
+  const onHakemusClick = changeHakemus(navigate)
   return (
     <div className={styles.containerForModals}>
       <div className={styles.ukotusModalContainer}>
@@ -336,6 +342,7 @@ export default function HakemusListing(props: Props) {
             sortingState={sortingState}
             setSorting={setSorting}
             toggleUkotusModal={toggleUkotusModal}
+            onHakemusClick={onHakemusClick}
           />
         ) : (
           <HakemusTable
@@ -352,6 +359,7 @@ export default function HakemusListing(props: Props) {
             allowHakemusScoring={allowHakemusScoring}
             hakemuksetWithTaydennyspyynto={hakemuksetWithTaydennyspyynto}
             toggleUkotusModal={toggleUkotusModal}
+            onHakemusClick={onHakemusClick}
           />
         )}
       </div>
@@ -373,6 +381,7 @@ interface HakemusTableProps {
   allowHakemusScoring: boolean
   hakemuksetWithTaydennyspyynto: number[]
   toggleUkotusModal: (hakemusId: number | undefined) => void
+  onHakemusClick: (hakemusId: number) => void
 }
 
 function hakemusModifiedAfterSubmitted(hakemus: Hakemus) {
@@ -393,6 +402,7 @@ function HakemusTable({
   allowHakemusScoring,
   hakemuksetWithTaydennyspyynto,
   toggleUkotusModal,
+  onHakemusClick,
 }: HakemusTableProps) {
   const onOrganizationInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({
@@ -408,10 +418,6 @@ function HakemusTable({
     return total + ophShare
   }, 0)
   const { organization, projectNameOrCode, status: statusFilter } = filterState
-  const navigate = useNavigate()
-  const navigateToHakemus = (hakemusId: number) => {
-    navigate(`hakemus/${hakemusId}/arviointi${window.location.search}`)
-  }
   return (
     <table className={styles.table}>
       <colgroup>
@@ -596,11 +602,11 @@ function HakemusTable({
               )}
               tabIndex={0}
               onClick={() => {
-                navigateToHakemus(hakemus.id)
+                onHakemusClick(hakemus.id)
               }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  navigateToHakemus(hakemus.id)
+                  onHakemusClick(hakemus.id)
                 }
               }}
               data-test-id={`hakemus-${hakemus.id}`}
@@ -716,6 +722,7 @@ interface ResolvedTableProps {
   setSorting: (sortKey?: SortKey) => void
   sortingState: SortState
   toggleUkotusModal: (hakemusId: number | undefined) => void
+  onHakemusClick: (hakemusId: number) => void
 }
 
 function ResolvedTable(props: ResolvedTableProps) {
@@ -731,6 +738,7 @@ function ResolvedTable(props: ResolvedTableProps) {
     setSorting,
     sortingState,
     toggleUkotusModal,
+    onHakemusClick,
   } = props
   const onOrganizationInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({
@@ -742,10 +750,7 @@ function ResolvedTable(props: ResolvedTableProps) {
     dispatch({ type: 'set-project-name-filter', value: event.target.value })
   }
   const { projectNameOrCode, organization, status: statusFilter } = filterState
-  const navigate = useNavigate()
-  const navigateToHakemus = (hakemusId: number) => {
-    navigate(`hakemus/${hakemusId}/arviointi${window.location.search}`)
-  }
+
   return (
     <table className={styles.table}>
       <colgroup>
@@ -1037,11 +1042,11 @@ function ResolvedTable(props: ResolvedTableProps) {
               }
               tabIndex={0}
               onClick={() => {
-                navigateToHakemus(hakemus.id)
+                onHakemusClick(hakemus.id)
               }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  navigateToHakemus(hakemus.id)
+                  onHakemusClick(hakemus.id)
                 }
               }}
               data-test-id={`hakemus-${hakemus.id}`}
