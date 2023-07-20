@@ -7,6 +7,7 @@ import { defaultValues } from './defaultValues'
 import { expectToBeDefined } from '../utils/util'
 import { PaatosPage } from '../pages/hakujen-hallinta/PaatosPage'
 import { VIRKAILIJA_URL } from '../utils/constants'
+import { Answers } from '../utils/types'
 
 export interface MuutoshakemusFixtures {
   finalAvustushakuEndDate: moment.Moment
@@ -21,6 +22,7 @@ export interface MuutoshakemusFixtures {
     hakemusID: number
     userKey: string
   }
+  submitMultipleHakemuses: {}
 }
 
 export const submittedHakemusTest = defaultValues.extend<MuutoshakemusFixtures>({
@@ -52,6 +54,38 @@ export const submittedHakemusTest = defaultValues.extend<MuutoshakemusFixtures>(
     })
     expectToBeDefined(userKey)
     await use({ userKey })
+  },
+  submitMultipleHakemuses: async ({ avustushakuID, answers, page }, use, testInfo) => {
+    testInfo.setTimeout(testInfo.timeout + 15_000)
+
+    await test.step('Submit hakemus', async () => {
+      const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
+      await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
+      await hakijaAvustusHakuPage.fillAndSendMuutoshakemusEnabledHakemus(avustushakuID, answers)
+    })
+    await test.step('submit hakemus2', async () => {
+      const answers2: Answers = {
+        ...answers,
+        organization: 'Säädön jatko firma oy',
+        projectName: `Säätö jatkuu...`,
+        contactPersonEmail: 'erkki2.esimerkki@example.com',
+      }
+      const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
+      await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
+      await hakijaAvustusHakuPage.fillAndSendMuutoshakemusEnabledHakemus(avustushakuID, answers2)
+    })
+    await test.step('submit hakemus3', async () => {
+      const answers3: Answers = {
+        ...answers,
+        organization: 'Pieni Hakusivufirma oy',
+        projectName: `Pieni säätö`,
+        contactPersonEmail: 'erkki3.esimerkki@example.com',
+      }
+      const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
+      await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
+      await hakijaAvustusHakuPage.fillAndSendMuutoshakemusEnabledHakemus(avustushakuID, answers3)
+    })
+    await use({})
   },
   closedAvustushaku: async (
     { page, avustushakuID, submittedHakemus, finalAvustushakuEndDate },

@@ -16,6 +16,20 @@ muutoshakemusTest.use({
 })
 
 muutoshakemusTest(
+  'Ukotusmodal hanke changes when user changes hanke from list',
+  async ({ page, submitMultipleHakemuses, avustushakuID }) => {
+    expect(submitMultipleHakemuses).toBeDefined()
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    const hakemusId = await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
+    await hakemustenArviointiPage.closeHakemusDetails()
+    await hakemustenArviointiPage.openUkotusModal(hakemusId)
+    await expect(page.getByTestId('ukotusModal')).toContainText('Pieni säätö')
+    await hakemustenArviointiPage.clickHakemusByHanke('Säätö jatkuu...')
+    await expect(page.getByTestId('ukotusModal')).toContainText('Säätö jatkuu...')
+  }
+)
+
+muutoshakemusTest(
   'Valmistelija as an arvostelija',
   async ({ page, avustushakuID, submittedHakemus }) => {
     expect(submittedHakemus).toBeDefined()
