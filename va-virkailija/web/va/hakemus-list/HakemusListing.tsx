@@ -319,7 +319,7 @@ export default function HakemusListing(props: Props) {
   const navigate = useNavigate()
   const changeHakemus = (navigate: NavigateFunction) => (hakemusId: number) => {
     navigate(`hakemus/${hakemusId}/arviointi${window.location.search}`)
-    toggleUkotusModal(hakemusId)
+    showUkotusModalForHakemusId !== undefined && toggleUkotusModal(hakemusId)
   }
   const onHakemusClick = changeHakemus(navigate)
   return (
