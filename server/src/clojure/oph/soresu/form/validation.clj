@@ -191,6 +191,35 @@
     "tableField"      (validate-table-field answers field)
     (validate-generic-field answers field)))
 
+(defn find-missing-form-fields [form answers attachments]
+
+  (let [form-fields (:content form)
+        applied-form (rules/apply-rules form answers attachments)
+        fields  (find-fields (:content applied-form))
+        growing-fieldsets (filter (fn [x] (= (:fieldType x) "growingFieldset" )) (:value answers))
+        growing-answers-to-validate (flatten (mapcat (fn [fieldset] (map (fn [x] (:value x) ) (:value fieldset) )) growing-fieldsets))
+        growing-form-fields-to-validate-against (filter (fn [field] (some (fn [answer] (= (:key answer) (:id field))) growing-answers-to-validate) ) fields)
+
+        missing-fields (filter (fn [answer] (not
+         (some
+          (fn [field] (= (:key answer) (:id field) ))
+          growing-form-fields-to-validate-against))) growing-answers-to-validate)
+
+        missing-form-fields-renamed (map (fn [missing]
+          (let [renamed-answer-field (string/replace (:key missing) #"\d" "1")
+                found-form-field (first (filter (fn [x] (= (:id x) renamed-answer-field))   growing-form-fields-to-validate-against))
+                ]
+              (assoc found-form-field :id (:key missing))
+            )
+         ) missing-fields)
+        ]
+
+      missing-form-fields-renamed
+
+  )
+)
+
+
 (defn validate-field [answers attachments field]
   (let [field-id    (keyword (:id field))
         validations (validate-field-by-type answers attachments field)]
@@ -199,7 +228,7 @@
 (defn validate-form [form answers attachments]
   (let [applied-form (rules/apply-rules form answers attachments)
         validator (partial validate-field answers attachments)]
-    (->> (find-fields (:content applied-form))
+    (->> (concat (find-fields (:content applied-form)) (find-missing-form-fields form answers attachments))
          (map validator)
          (into {}))))
 
