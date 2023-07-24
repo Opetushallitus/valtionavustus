@@ -52,33 +52,30 @@
 (defn- start-loop-update-va-users-cache []
   (go
     (log/info "Starting background job: update VA users cache...")
-    (loop [prev-failures 0]
-      (let [exception           (try
-                                  (update-va-users-cache)
-                                  nil
+    (loop [failures 0 refresh-interval-ms va-users-cache-refresh-interval-in-ms]
+      (let [next-iter-values (try (update-va-users-cache)
+                                  (if (> failures 0)
+                                    (log/infof "Successfully resumed updating VA users cache after failure (failed %d time(s) in a row)"
+                                               failures)
+                                    (log/info "Successfully updated VA users cache"))
+                                  {:new-failures 0 :new-refresh-interval-ms refresh-interval-ms}
                                   (catch Exception e
-                                    e))
-            curr-failures       (if exception
-                                  (+ 1 prev-failures)
-                                  0)
-            refresh-interval-ms (if exception
-                                  (min va-users-cache-max-refresh-interval-in-ms
-                                       (* (Math/pow 2 prev-failures) va-users-cache-refresh-interval-in-ms))
-                                  va-users-cache-refresh-interval-in-ms)]
-        (cond
-          exception
-          (log/logf (if (= 0 (mod curr-failures 5)) :error :warn)
-                    exception
-                    "Failed updating VA users cache (%d time(s) in a row), retrying in %.0f secs..."
-                    curr-failures
-                    (double (/ refresh-interval-ms 1000)))
-
-          (and (not exception) (> prev-failures 0))
-          (log/infof "Successfully resumed updating VA users cache after failure (failed %d time(s) in a row)"
-                     prev-failures))
-        (let [[value _] (alts! [va-users-update-chan (timeout refresh-interval-ms)])]
-          (if (nil? value)
-            (recur curr-failures)))))
+                                    (let [new-failures (+ failures 1)
+                                          new-refresh-interval-ms (* refresh-interval-ms 2)]
+                                      (log/logf (if (> new-failures 5) :error :warn)
+                                                e
+                                                "Failed updating VA users cache (%d time(s) in a row), retrying in %.0f secs..."
+                                                new-failures
+                                                (double (/ new-refresh-interval-ms 1000)))
+                                      {:new-failures new-failures
+                                       :new-refresh-interval-ms new-refresh-interval-ms})))
+            new-failures (:new-failures next-iter-values)
+            new-refresh-interval-ms (:new-refresh-interval-ms next-iter-values)
+            [value _] (alts! [va-users-update-chan (timeout new-refresh-interval-ms)])]
+        (when (nil? value)
+          (recur
+            new-failures
+            (min va-users-cache-max-refresh-interval-in-ms new-refresh-interval-ms)))))
     (log/info "Stopped background job: update VA users cache.")))
 
 (defn start-background-job-update-va-users-cache []
