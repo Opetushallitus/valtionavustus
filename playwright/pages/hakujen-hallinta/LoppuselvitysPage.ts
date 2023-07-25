@@ -13,7 +13,7 @@ export const LoppuselvitysPage = (page: Page) => {
     }),
   }
 
-  async function checkMuistutusViestiEmailRecipients(recipients: string[]) {
+  async function ensureMuistutusViestiEmailRecipientsContain(recipients: string[]) {
     await page.getByRole('button', { name: 'Kirjoita' }).click()
     await Promise.all(
       recipients.map((recipent, i) => {
@@ -54,7 +54,7 @@ export const LoppuselvitysPage = (page: Page) => {
     sendLoppuselvitys,
     asiatarkastaLoppuselvitys,
     taloustarkastaLoppuselvitys,
-    checkMuistutusViestiEmailRecipients,
+    ensureMuistutusViestiEmailRecipientsContain,
     ...SelvitysTab(page, 'loppu'),
   }
 }
