@@ -49,33 +49,31 @@
 (defn- update-va-users-cache []
   (virkailija-db/update-va-users-cache (get-all-va-users)))
 
+(defn- try-to-update-va-users-cache [failures refresh-interval-ms]
+  (try (update-va-users-cache)
+       (log/info "Successfully updated VA users cache")
+       {:failures 0 :refresh-interval-ms refresh-interval-ms}
+       (catch Exception e
+         (let [updated-values {:failures (+ failures 1)
+                               :refresh-interval-ms (* refresh-interval-ms 2)}]
+           (log/logf (if (> (:failures updated-values) 5) :error :warn)
+                     e
+                     "Failed updating VA users cache (%d time(s) in a row), retrying in %.0f secs..."
+                     (:failures updated-values)
+                     (double (/ (:refresh-interval-ms updated-values) 1000)))
+           updated-values))))
+
+
 (defn- start-loop-update-va-users-cache []
   (go
     (log/info "Starting background job: update VA users cache...")
     (loop [failures 0 refresh-interval-ms va-users-cache-refresh-interval-in-ms]
-      (let [next-iter-values (try (update-va-users-cache)
-                                  (if (> failures 0)
-                                    (log/infof "Successfully resumed updating VA users cache after failure (failed %d time(s) in a row)"
-                                               failures)
-                                    (log/info "Successfully updated VA users cache"))
-                                  {:new-failures 0 :new-refresh-interval-ms refresh-interval-ms}
-                                  (catch Exception e
-                                    (let [new-failures (+ failures 1)
-                                          new-refresh-interval-ms (* refresh-interval-ms 2)]
-                                      (log/logf (if (> new-failures 5) :error :warn)
-                                                e
-                                                "Failed updating VA users cache (%d time(s) in a row), retrying in %.0f secs..."
-                                                new-failures
-                                                (double (/ new-refresh-interval-ms 1000)))
-                                      {:new-failures new-failures
-                                       :new-refresh-interval-ms new-refresh-interval-ms})))
-            new-failures (:new-failures next-iter-values)
-            new-refresh-interval-ms (:new-refresh-interval-ms next-iter-values)
-            [value _] (alts! [va-users-update-chan (timeout new-refresh-interval-ms)])]
+      (let [next-iter-values (try-to-update-va-users-cache failures refresh-interval-ms)
+            [value _] (alts! [va-users-update-chan (timeout (:refresh-interval-ms next-iter-values))])]
         (when (nil? value)
           (recur
-            new-failures
-            (min va-users-cache-max-refresh-interval-in-ms new-refresh-interval-ms)))))
+            (:failures next-iter-values)
+            (min va-users-cache-max-refresh-interval-in-ms (:refresh-interval-ms next-iter-values))))))
     (log/info "Stopped background job: update VA users cache.")))
 
 (defn start-background-job-update-va-users-cache []
