@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
@@ -17,7 +17,6 @@ type MuistutusviestiProps = {
 }
 
 export default function MuistutusViesti({ avustushaku, hakemus, lang }: MuistutusviestiProps) {
-  const [showEmailForm, setShowEmailForm] = useState(false)
   const [sentEmails, setSentEmails] = useState<Message[]>([])
   const [formErrorMessage, setFormErrorMessage] = useState<string>()
   const containsSentEmails = sentEmails.length > 0
@@ -33,6 +32,19 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
     }
     fetchEmails()
   }, [])
+
+  const [showEmailForm, setShowEmailForm] = useState(false)
+  const emailFormRef = useRef<HTMLDivElement>(null)
+  const revealEmailForm = () => emailFormRef.current?.scrollIntoView({ behavior: 'smooth' })
+  function openOrRevealEmailForm() {
+    setShowEmailForm(true)
+    revealEmailForm() // try reveal here, only works when form is open, therefore the component is already mounted
+  }
+  useEffect(() => {
+    if (showEmailForm) {
+      revealEmailForm() // reveal after showEmailForm changes to true and component is mounted
+    }
+  }, [showEmailForm])
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -74,16 +86,14 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
         })}
       >
         <h2>Muistutusviesti</h2>
-        <button
-          onClick={() => setShowEmailForm(!showEmailForm)}
-          className="writeMuistutusviestiButton"
-        >
+        <button onClick={() => openOrRevealEmailForm()} className="writeMuistutusviestiButton">
           Kirjoita
         </button>
       </div>
       <ViestiLista messages={sentEmails} />
       {showEmailForm && (
         <MultipleRecipentEmailForm
+          ref={emailFormRef}
           onSubmit={onSubmit}
           email={email}
           setEmail={setEmail}

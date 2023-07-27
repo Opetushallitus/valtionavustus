@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react'
+import React, { ForwardedRef, ReactElement, forwardRef } from 'react'
 import { IconTrashcan } from 'soresu-form/web/va/img/IconTrashcan'
 import { Language } from 'soresu-form/web/va/types'
 import './MultipleRecipentsEmailForm.less'
@@ -28,20 +28,23 @@ type Props = {
   errorText?: string
 }
 
-export default function MultipleRecipentEmailForm({
-  heading,
-  disabled = false,
-  email,
-  onSubmit,
-  setEmail,
-  submitText,
-  formName,
-  disabledSubmitButton,
-  cancelButton,
-  errorText,
-}: Props) {
+function MultipleRecipentEmailForm(
+  {
+    heading,
+    disabled = false,
+    email,
+    onSubmit,
+    setEmail,
+    submitText,
+    formName,
+    disabledSubmitButton,
+    cancelButton,
+    errorText,
+  }: Props,
+  ref: ForwardedRef<HTMLDivElement>
+) {
   return (
-    <div data-test-id={`${formName}-email`} className="form">
+    <div ref={ref} data-test-id={`${formName}-email`} className="form">
       <form onSubmit={onSubmit} className="soresu-form">
         <div className="form-body">
           <h2 className="form-header">{heading}</h2>
@@ -216,3 +219,5 @@ function MultipleEmailRecipents({
     </fieldset>
   )
 }
+
+export default forwardRef(MultipleRecipentEmailForm)
