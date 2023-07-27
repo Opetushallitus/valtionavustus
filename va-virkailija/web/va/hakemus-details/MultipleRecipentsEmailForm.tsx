@@ -104,7 +104,7 @@ function SubmitContainer({
             <span className="error-message">{errorText}</span>
           </div>
           {cancelButton && (
-            <button className="cancelButton" onClick={cancelButton.onClick}>
+            <button type="button" className="cancelButton" onClick={cancelButton.onClick}>
               {cancelButton.text}
             </button>
           )}
