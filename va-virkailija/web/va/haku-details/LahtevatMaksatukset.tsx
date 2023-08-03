@@ -254,6 +254,7 @@ const DocumentEditor = ({
 }: DocumentEditorProps) => {
   const currentDocument = documents.find((d) => d.phase === phase)
   const [ashaTunniste, setAshaTunniste] = useState(currentDocument?.['document-id'])
+  const ashaRef = useRef<HTMLInputElement>(null)
   const [esittelija, setEsittelija] = useState(currentDocument?.['presenter-email'])
   const [_esittelijaSearch, setEsittelijaSearch, esittelijat] = useVaUserSearch()
   const esittelijaRef = useRef<HTMLInputElement>(null)
@@ -278,86 +279,104 @@ const DocumentEditor = ({
   }
 
   return (
-    <div key={`document-${avustushaku.id}-${phase}`} className="maksatukset_document">
-      <div>
-        <h3>Vaihe</h3>
-        <div className="maksatukset_document-phase">{phase + 1}. erä</div>
-      </div>
-      <div>
-        <h3 className="required">
-          ASHA-tunniste
-          <HelpTooltip
-            content={helpTexts['hakujen_hallinta__maksatus___asha-tunniste']}
-            direction="left"
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        onDocumentEdit()
+      }}
+    >
+      <div key={`document-${avustushaku.id}-${phase}`} className="maksatukset_document">
+        <div>
+          <h3>Vaihe</h3>
+          <div className="maksatukset_document-phase">{phase + 1}. erä</div>
+        </div>
+        <div>
+          <h3 className="required">
+            ASHA-tunniste
+            <HelpTooltip
+              content={helpTexts['hakujen_hallinta__maksatus___asha-tunniste']}
+              direction="left"
+            />
+          </h3>
+          <input
+            defaultValue={ashaTunniste}
+            ref={ashaRef}
+            onChange={(e) => {
+              if (e.target.validity.patternMismatch) {
+                ashaRef.current?.setCustomValidity('Tarkista ASHA-tunniste')
+              } else {
+                ashaRef.current?.setCustomValidity('')
+              }
+              setAshaTunniste(e.target.value)
+            }}
+            disabled={!!currentDocument}
+            pattern={'^ID\\d{1,10}$'}
           />
-        </h3>
-        <input
-          defaultValue={ashaTunniste}
-          onChange={(e) => setAshaTunniste(e.target.value)}
-          disabled={!!currentDocument}
-        />
-      </div>
-      <div className="maksatukset_email-field">
-        <h3 className="required">
-          Esittelijän sähköpostiosoite
-          <HelpTooltip
-            content={helpTexts['hakujen_hallinta__maksatus___esittelijän_sähköpostiosoite']}
-            direction="left"
+        </div>
+        <div className="maksatukset_email-field">
+          <h3 className="required">
+            Esittelijän sähköpostiosoite
+            <HelpTooltip
+              content={helpTexts['hakujen_hallinta__maksatus___esittelijän_sähköpostiosoite']}
+              direction="left"
+            />
+          </h3>
+          <input
+            ref={esittelijaRef}
+            defaultValue={esittelija}
+            onChange={(e) => {
+              setEsittelija(e.target.value)
+              setEsittelijaSearch(e.target.value)
+            }}
+            disabled={!!currentDocument}
           />
-        </h3>
-        <input
-          ref={esittelijaRef}
-          defaultValue={esittelija}
-          onChange={(e) => {
-            setEsittelija(e.target.value)
-            setEsittelijaSearch(e.target.value)
-          }}
-          disabled={!!currentDocument}
-        />
-        {!!esittelijat.result.results.length && (
-          <SelectEmail
-            userSearch={esittelijat}
-            setSearch={setEsittelijaSearch}
-            setEmail={setEsittelija}
-            inputRef={esittelijaRef}
+          {!!esittelijat.result.results.length && (
+            <SelectEmail
+              userSearch={esittelijat}
+              setSearch={setEsittelijaSearch}
+              setEmail={setEsittelija}
+              inputRef={esittelijaRef}
+            />
+          )}
+        </div>
+        <div className="maksatukset_email-field">
+          <h3 className="required">
+            Hyväksyjän sähköpostiosoite
+            <HelpTooltip
+              content={helpTexts['hakujen_hallinta__maksatus___hyväksyjän_sähköpostiosoite']}
+              direction="left"
+            />
+          </h3>
+          <input
+            ref={hyvaksyjaRef}
+            defaultValue={hyvaksyja}
+            onChange={(e) => {
+              setHyvaksyja(e.target.value)
+              setHyvaksyjaSearch(e.target.value)
+            }}
+            disabled={!!currentDocument}
           />
-        )}
+          {!!hyvaksyjat.result.results.length && (
+            <SelectEmail
+              userSearch={hyvaksyjat}
+              setSearch={setHyvaksyjaSearch}
+              setEmail={setHyvaksyja}
+              inputRef={hyvaksyjaRef}
+            />
+          )}
+        </div>
+        <div>
+          <button
+            type="submit"
+            disabled={
+              (!currentDocument && (!ashaTunniste || !esittelija || !hyvaksyja)) || disabled
+            }
+          >
+            {!!currentDocument ? 'Poista asiakirja' : 'Lisää asiakirja'}
+          </button>
+        </div>
       </div>
-      <div className="maksatukset_email-field">
-        <h3 className="required">
-          Hyväksyjän sähköpostiosoite
-          <HelpTooltip
-            content={helpTexts['hakujen_hallinta__maksatus___hyväksyjän_sähköpostiosoite']}
-            direction="left"
-          />
-        </h3>
-        <input
-          ref={hyvaksyjaRef}
-          defaultValue={hyvaksyja}
-          onChange={(e) => {
-            setHyvaksyja(e.target.value)
-            setHyvaksyjaSearch(e.target.value)
-          }}
-          disabled={!!currentDocument}
-        />
-        {!!hyvaksyjat.result.results.length && (
-          <SelectEmail
-            userSearch={hyvaksyjat}
-            setSearch={setHyvaksyjaSearch}
-            setEmail={setHyvaksyja}
-            inputRef={hyvaksyjaRef}
-          />
-        )}
-      </div>
-      <div>
-        <button
-          onClick={onDocumentEdit}
-          disabled={(!currentDocument && (!ashaTunniste || !esittelija || !hyvaksyja)) || disabled}
-        >
-          {!!currentDocument ? 'Poista asiakirja' : 'Lisää asiakirja'}
-        </button>
-      </div>
-    </div>
+    </form>
   )
 }
 

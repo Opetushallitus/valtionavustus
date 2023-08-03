@@ -37,7 +37,7 @@ export function MaksatuksetPage(page: Page) {
     const dueDate = await getDueDateInputValue()
 
     await fillInMaksueranTiedot(
-      'asha pasha',
+      'ID0123456789',
       'essi.esittelija@example.com',
       'hygge.hyvaksyja@example.com'
     )
@@ -58,10 +58,16 @@ export function MaksatuksetPage(page: Page) {
 
     for (let i = 0; i < amountOfInstallments; i++) {
       const row = page.locator(`.maksatukset_document`).nth(i)
-      await row.locator('input').nth(0).fill(ashaTunniste)
-      await row.locator('input').nth(1).fill(esittelijanOsoite)
-      await row.locator('input').nth(2).fill(hyvaksyjanOsoite)
-      await row.locator('text=Lisää asiakirja').click()
+      const input = row.locator('input')
+      await input.nth(0).fill(ashaTunniste)
+      await input.nth(1).fill(esittelijanOsoite)
+      await input.nth(2).fill(hyvaksyjanOsoite)
+      const clearButton = row.getByRole('button', { name: 'Poista asiakirja' })
+      const addButton = row.getByRole('button', { name: 'Lisää asiakirja' })
+      await expect(clearButton).toBeHidden()
+      await addButton.click()
+      await expect(addButton).toBeHidden()
+      await expect(clearButton).toBeVisible()
     }
   }
 

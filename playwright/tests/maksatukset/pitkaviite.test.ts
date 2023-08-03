@@ -34,7 +34,7 @@ test.describe('maksatukset pitkaviite', async () => {
     await maksatuksetPage.goto(avustushakuName)
 
     await maksatuksetPage.fillInMaksueranTiedot(
-      'asha pasha',
+      'ID0123456789',
       'essi.esittelija@example.com',
       'hygge.hyvaksyja@example.com'
     )

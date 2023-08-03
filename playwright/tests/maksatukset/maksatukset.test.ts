@@ -131,7 +131,7 @@ test.describe('Maksatukset', () => {
         await expect(sentPayments(1).amountOfPayments).toHaveText('1')
         await expect(sentPayments(3).laskuPaivamaara).toHaveText(today())
         await expect(sentPayments(2).eraPaivamaara).toHaveText(oneWeekFromNow())
-        await expect(sentPayments(1).allekirjoitettuYhteenveto).toHaveText('asha pasha')
+        await expect(sentPayments(1).allekirjoitettuYhteenveto).toHaveText('ID0123456789')
         await expect(sentPayments(2).presenterEmail).toHaveText(presenter)
         await expect(sentPayments(3).acceptorEmail).toHaveText(acceptor)
       })
