@@ -420,7 +420,7 @@
   "Payment batch document"
   {(s/optional-key :created-at) s/Inst
    (s/optional-key :id) s/Int
-   :document-id s/Str
+   :document-id (describe #"^ID\d{1,10}$" "ASHA-tunniste")
    :phase s/Int
    :presenter-email s/Str
    :acceptor-email s/Str
