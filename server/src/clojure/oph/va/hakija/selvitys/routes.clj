@@ -124,9 +124,10 @@
     (:primary-email (first rows))))
 
 (defn- get-hakemus-contact-email [hakemus-id]
-  (if-some [normalized-hakemus (va-db/get-normalized-hakemus-by-id hakemus-id)]
-    (:contact-email normalized-hakemus)
-    (find-contact-person-email-from-last-hakemus-version hakemus-id)))
+  (let [normalized-hakemus (va-db/get-normalized-hakemus-by-id hakemus-id)]
+      (if (and normalized-hakemus (:contact-email normalized-hakemus))
+        (:contact-email normalized-hakemus)
+        (find-contact-person-email-from-last-hakemus-version hakemus-id))))
 
 (defn- on-selvitys-submit [haku-id selvitys-user-key base-version answers selvitys-field-keyword selvitys-type]
   (let [avustushaku (va-db/get-avustushaku haku-id)
