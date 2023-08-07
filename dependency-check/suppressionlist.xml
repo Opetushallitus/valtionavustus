@@ -65,4 +65,13 @@
    ]]></notes>
     <cve>CVE-2023-35116</cve>
   </suppress>
+  <suppress until="2023-10-10">
+    <notes><![CDATA[
+   file name: quartz-2.3.2.jar
+   Vulnerability is in quartz-jobs and not in quartz
+   https://github.com/jeremylong/DependencyCheck/issues/5862
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.quartz\-scheduler/quartz@.*$</packageUrl>
+    <cve>CVE-2023-39017</cve>
+  </suppress>
 </suppressions>
