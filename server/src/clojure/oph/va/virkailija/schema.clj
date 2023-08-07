@@ -418,19 +418,17 @@
 
 (s/defschema BatchDocument
   "Payment batch document"
-  {(s/optional-key :created-at) s/Inst
-   (s/optional-key :id) s/Int
-   :document-id (describe s/Str "ASHA-tunniste that can be anything unlike NewBatchDocument")
+  {:created-at s/Inst
+   :id s/Int
+   :document-id (describe s/Str "can contain old ASHA-tunniste that are different from the validation rule in NewBatchDocument")
    :phase s/Int
    :presenter-email s/Str
    :acceptor-email s/Str
 })
 
 (s/defschema NewBatchDocument
-  "Payment batch document with validated ASHA-tunniste"
-  {(s/optional-key :created-at) s/Inst
-   (s/optional-key :id) s/Int
-   :document-id (describe #"^ID\d{1,10}$" "ASHA-tunniste")
+  "New payment batch document with validated ASHA-tunniste"
+  {:document-id (describe #"^ID\d{1,10}$" "ASHA-tunniste")
    :phase s/Int
    :presenter-email s/Str
    :acceptor-email s/Str
