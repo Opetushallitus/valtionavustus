@@ -219,7 +219,7 @@ export const LahtevatMaksatukset = ({
             ))}
           </div>
           <button onClick={onLähetäMaksatuksetJaTäsmäytysraportti} disabled={disabled}>
-            "Lähetä maksatukset ja täsmäytysraportti"
+            Lähetä maksatukset ja täsmäytysraportti
           </button>
           {userInfo.privileges.includes('va-admin') && (
             <>
