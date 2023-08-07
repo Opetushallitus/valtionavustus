@@ -70,7 +70,7 @@
     "/:id/documents/" []
     :path-params [id :- Long]
     :body [document
-           (compojure-api/describe schema/BatchDocument
+           (compojure-api/describe schema/NewBatchDocument
                                    "Payment batch document")]
     :return schema/BatchDocument
     :summary "Create new payment batch document"
