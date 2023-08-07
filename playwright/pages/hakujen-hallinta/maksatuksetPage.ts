@@ -51,8 +51,9 @@ export function MaksatuksetPage(page: Page) {
     esittelijanOsoite: string,
     hyvaksyjanOsoite: string
   ) {
-    await page.waitForSelector(`.maksatukset_documents`)
-    const amountOfInstallments = await page.locator(`.maksatukset_document-phase`).count()
+    const phases = page.locator(`.maksatukset_document-phase`)
+    await expect(phases.nth(0)).toBeVisible()
+    const amountOfInstallments = await phases.count()
 
     await fillTositepaivamaara()
 

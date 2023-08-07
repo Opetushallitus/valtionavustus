@@ -20,6 +20,7 @@ import {
   useHakujenHallintaDispatch,
   useHakujenHallintaSelector,
 } from '../hakujenHallinta/hakujenHallintaStore'
+import { createDefaultErapaiva } from './erapaiva'
 
 type LahtevatMaksatuksetProps = {
   avustushaku: Avustushaku
@@ -62,9 +63,10 @@ export const LahtevatMaksatukset = ({
   userInfo,
 }: LahtevatMaksatuksetProps) => {
   const dispatch = useHakujenHallintaDispatch()
-  const [laskunPvm, setLaskunPvm] = useState<Date>(now.toDate())
-  const [erapaiva, setErapaiva] = useState(now.add(1, 'w').toDate())
-  const [tositePvm, setTositePvm] = useState<Date>()
+  const defaultLaskuAndTosite = (): Date => now.toDate()
+  const [laskunPvm, setLaskunPvm] = useState<Date>(defaultLaskuAndTosite)
+  const [erapaiva, setErapaiva] = useState<Date>(createDefaultErapaiva(now))
+  const [tositePvm, setTositePvm] = useState<Date>(defaultLaskuAndTosite)
   const [documents, setDocuments] = useState<Document[]>([])
   const [asetaMaksatuksetState, setAsetaMaksatuksetState] = useState<LoadingState>('initial')
   const sendingMaksatuksetAndTasmaytysraportti = useHakujenHallintaSelector(

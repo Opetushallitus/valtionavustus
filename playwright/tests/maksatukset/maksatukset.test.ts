@@ -17,6 +17,7 @@ import {
   putMaksupalauteToMaksatuspalveluAndProcessIt,
 } from './maksatuspalvelu'
 import { ValiselvitysPage } from '../../pages/hakujen-hallinta/ValiselvitysPage'
+import { createDefaultErapaiva } from '../../../va-virkailija/web/va/haku-details/erapaiva'
 
 const correctOVTTest = test.extend({
   codes: async ({ page }, use) => {
@@ -119,9 +120,6 @@ test.describe('Maksatukset', () => {
         const today = (): string => {
           return moment().format('D.M.YYYY')
         }
-        const oneWeekFromNow = (): string => {
-          return moment().add(7, 'day').format('D.M.YYYY')
-        }
 
         const sentPayments = await maksatuksetPage.clickLahetetytMaksatuksetTab()
 
@@ -130,7 +128,10 @@ test.describe('Maksatukset', () => {
         await expect(sentPayments(3).totalSum).toHaveText('10000')
         await expect(sentPayments(1).amountOfPayments).toHaveText('1')
         await expect(sentPayments(3).laskuPaivamaara).toHaveText(today())
-        await expect(sentPayments(2).eraPaivamaara).toHaveText(oneWeekFromNow())
+        await expect(sentPayments(3).tositePaiva).toHaveText(today())
+        await expect(sentPayments(2).eraPaivamaara).toHaveText(
+          moment(createDefaultErapaiva(moment())).format('D.M.YYYY')
+        )
         await expect(sentPayments(1).allekirjoitettuYhteenveto).toHaveText('ID0123456789')
         await expect(sentPayments(2).presenterEmail).toHaveText(presenter)
         await expect(sentPayments(3).acceptorEmail).toHaveText(acceptor)
