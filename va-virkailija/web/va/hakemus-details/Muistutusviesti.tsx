@@ -145,3 +145,31 @@ async function fetchSentEmails(avustushaku: Avustushaku, hakemus: Hakemus): Prom
   })
   return mappedEmails
 }
+
+export function Taydennyspyynto({ disabled }: { disabled: boolean }) {
+  return (
+    <div className={cn('writeMuistutusviesti', {})}>
+      <h2>Loppuselvityksen asiatarkastus</h2>
+      <div>
+        <button disabled={disabled} className="writeMuistutusviestiButton">
+          Täydennyspyyntö
+        </button>
+        <button disabled={disabled}>Hyväksy</button>
+      </div>
+    </div>
+  )
+}
+
+export function Taloustarkastus({ disabled }: { disabled: boolean }) {
+  return (
+    <div className={cn('writeMuistutusviesti', {})}>
+      <h2>Loppuselvityksen taloustarkastus</h2>
+      <div>
+        <button disabled={disabled} className="writeMuistutusviestiButton">
+          Täydennyspyyntö
+        </button>
+        <button disabled={disabled}>Hyväksy</button>
+      </div>
+    </div>
+  )
+}

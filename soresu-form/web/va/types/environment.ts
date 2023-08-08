@@ -1,6 +1,6 @@
 type LegacyFeatureFlag = { 'enabled?': boolean }
 
-type FeatureFlag = 'muistutusviesti-loppuselvityksesta'
+type FeatureFlag = 'muistutusviesti-loppuselvityksesta' | 'loppuselvitys-taydennyspyynto'
 
 export function isFeatureEnabled(env: EnvironmentApiResponse, feature: FeatureFlag): boolean {
   return env['feature-flags'].includes(feature)

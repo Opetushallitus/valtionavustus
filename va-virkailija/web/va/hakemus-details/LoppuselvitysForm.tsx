@@ -7,8 +7,13 @@ import { Role, UserInfo } from '../types'
 import { VerificationBox } from './VerificationBox'
 
 import './LoppuselvitysForm.less'
-import { useHakemustenArviointiDispatch } from '../hakemustenArviointi/arviointiStore'
-import { refreshHakemukset } from '../hakemustenArviointi/arviointiReducer'
+import {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from '../hakemustenArviointi/arviointiStore'
+import { getLoadedState, refreshHakemukset } from '../hakemustenArviointi/arviointiReducer'
+import { isFeatureEnabled } from 'soresu-form/web/va/types/environment'
+import { Taloustarkastus, Taydennyspyynto } from './Muistutusviesti'
 
 type LoppuselvitysFormProps = {
   avustushaku: Avustushaku
@@ -26,6 +31,11 @@ export const LoppuselvitysForm = ({
   const [message, setMessage] = useState('')
   const dispatch = useHakemustenArviointiDispatch()
   const status = hakemus['status-loppuselvitys']
+  const environment = useHakemustenArviointiSelector(
+    (state) => getLoadedState(state.arviointi).environment
+  )
+  const showTaydennyspyynto =
+    status !== 'missing' && isFeatureEnabled(environment, 'loppuselvitys-taydennyspyynto')
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -43,11 +53,12 @@ export const LoppuselvitysForm = ({
   }
 
   const allowedToDoAsiatarkastus =
-    isPääkäyttäjä(userInfo) || (presenter?.oid && presenter?.oid === userInfo['person-oid'])
-
+    isPääkäyttäjä(userInfo) || presenter?.oid === userInfo['person-oid']
+  const asiatarkastusEnabled = status === 'submitted' && allowedToDoAsiatarkastus
+  const taloustarkastusEnabled = status === 'information_verified' || status === 'accepted'
   return (
     <div className="information-verification">
-      {status === 'submitted' && allowedToDoAsiatarkastus && (
+      {asiatarkastusEnabled && (
         <form onSubmit={onSubmit}>
           <div className="verification-comment">
             <h2 className="verification-header">Asiatarkastus</h2>
@@ -65,7 +76,7 @@ export const LoppuselvitysForm = ({
           </div>
         </form>
       )}
-      {(status === 'information_verified' || status === 'accepted') && (
+      {taloustarkastusEnabled && (
         <div>
           <div className="verification-comment">
             <h2 className="verification-header">Asiatarkastus</h2>
@@ -83,6 +94,8 @@ export const LoppuselvitysForm = ({
           />
         </div>
       )}
+      {showTaydennyspyynto && <Taydennyspyynto disabled={taloustarkastusEnabled} />}
+      {showTaydennyspyynto && <Taloustarkastus disabled={asiatarkastusEnabled} />}
     </div>
   )
 }
