@@ -24,6 +24,7 @@ export function MaksatuksetPage(page: Page) {
 
     await page.locator(openDatepicker).click()
     await page.locator(selectToday).click()
+    await page.keyboard.press('Tab')
   }
 
   async function getDueDateInputValue(): Promise<string> {
