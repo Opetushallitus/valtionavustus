@@ -59,6 +59,9 @@ const getEmailsWithAvustushaku =
 
 // Emails sent to hakija
 export const getLoppuselvitysMuistutusviestiEmails = getEmails('loppuselvitys-muistutus')
+export const getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails = getEmails(
+  'taydennyspyynto-asiatarkastus'
+)
 
 // ???? emails
 export const getTäydennyspyyntöEmails = getEmails('taydennyspyynto')

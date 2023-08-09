@@ -474,6 +474,31 @@
           (tapahtumaloki/create-log-entry "loppuselvitys-muistutus" avustushaku-id hakemus-id identity "" {} email-id true))
         (http/created))))
 
+  (when (feature-enabled? :loppuselvitys-taydennyspyynto)
+    (compojure-api/POST
+      "/:avustushaku-id/hakemus/:hakemus-id/loppuselvitys/taydennyspyynto" request
+      :path-params [avustushaku-id :- Long hakemus-id :- Long]
+      :body [{:keys [body subject to type  lang]} {:lang s/Str
+                                             :body s/Str
+                                             :subject s/Str
+                                             :type (s/enum "taydennyspyynto-asiatarkastus")
+                                             :to [s/Str]}]
+      :return s/Any
+      :summary "Send taydennyspyynto to hakija"
+      (let [identity (authentication/get-request-identity request)]
+        (when (not (seq (filter notEmptyString to)))
+          (http/bad-request! {:error "Viestillä on oltava vähintään yksi vastaanottaja"}))
+        (let [email-id (common-email/try-send-email!
+                         (common-email/message (keyword lang)
+                                               (keyword type)
+                                               to
+                                               subject
+                                               body)
+                         {:hakemus-id hakemus-id
+                          :avustushaku-id avustushaku-id})]
+          (tapahtumaloki/create-log-entry type avustushaku-id hakemus-id identity "" {} email-id true))
+        (http/created))))
+
   (compojure-api/POST "/:avustushaku-id/hakemus/:hakemus-id/re-send-paatos" request
                       :path-params [avustushaku-id :- Long hakemus-id :- Long]
                       :return s/Any
