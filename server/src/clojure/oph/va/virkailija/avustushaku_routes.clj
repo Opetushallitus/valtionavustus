@@ -481,7 +481,7 @@
       :body [{:keys [body subject to type  lang]} {:lang s/Str
                                              :body s/Str
                                              :subject s/Str
-                                             :type (s/enum "taydennyspyynto-asiatarkastus")
+                                             :type (s/enum "taydennyspyynto-asiatarkastus" "taydennyspyynto-taloustarkastus")
                                              :to [s/Str]}]
       :return s/Any
       :summary "Send taydennyspyynto to hakija"

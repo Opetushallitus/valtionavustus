@@ -168,10 +168,11 @@ function createInitialTaydennyspyyntoEmail(hakemus: Hakemus) {
 
 async function fetchSentTaydennyspyyntoEmails(
   avustushakuId: number,
-  hakemusId: number
+  hakemusId: number,
+  phase: 'asiatarkastus' | 'taloustarkastus'
 ): Promise<Message[]> {
   const sentEmails = await HttpUtil.get<Lahetys[]>(
-    `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/tapahtumaloki/taydennyspyynto-asiatarkastus`
+    `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/tapahtumaloki/taydennyspyynto-${phase}`
   )
   return sentEmails.flatMap(mapEmails)
 }
@@ -187,7 +188,7 @@ export function Taydennyspyynto({ disabled }: { disabled: boolean }) {
   const revealEmailForm = () => emailFormRef.current?.scrollIntoView({ behavior: 'smooth' })
   useEffect(() => {
     async function fetchEmails() {
-      const mails = await fetchSentTaydennyspyyntoEmails(avustushakuId, hakemus.id)
+      const mails = await fetchSentTaydennyspyyntoEmails(avustushakuId, hakemus.id, 'asiatarkastus')
       setSentEmails(mails)
     }
     void fetchEmails()
@@ -220,7 +221,11 @@ export function Taydennyspyynto({ disabled }: { disabled: boolean }) {
           to: email.receivers,
         }
       )
-      const emails = await fetchSentTaydennyspyyntoEmails(avustushakuId, hakemus.id)
+      const emails = await fetchSentTaydennyspyyntoEmails(
+        avustushakuId,
+        hakemus.id,
+        'asiatarkastus'
+      )
       setSentEmails(emails)
       setFormErrorMessage(undefined)
       cancelForm()
@@ -269,15 +274,101 @@ export function Taydennyspyynto({ disabled }: { disabled: boolean }) {
 }
 
 export function Taloustarkastus({ disabled }: { disabled: boolean }) {
+  const hakemus = useHakemus()
+  const avustushakuId = useAvustushakuId()
+  const [sentEmails, setSentEmails] = useState<Message[]>([])
+  const [showEmailForm, setShowEmailForm] = useState(false)
+  const emailFormRef = useRef<HTMLDivElement>(null)
+  const [formErrorMessage, setFormErrorMessage] = useState<string>()
+  const [email, setEmail] = useState(createInitialTaydennyspyyntoEmail(hakemus))
+  const revealEmailForm = () => emailFormRef.current?.scrollIntoView({ behavior: 'smooth' })
+  useEffect(() => {
+    async function fetchEmails() {
+      const mails = await fetchSentTaydennyspyyntoEmails(
+        avustushakuId,
+        hakemus.id,
+        'taloustarkastus'
+      )
+      setSentEmails(mails)
+    }
+    void fetchEmails()
+  }, [])
+  useEffect(() => {
+    if (showEmailForm) {
+      revealEmailForm() // reveal after showEmailForm changes to true and component is mounted
+    }
+  }, [showEmailForm])
+  function openOrRevealEmailForm() {
+    setShowEmailForm(true)
+    revealEmailForm() // try reveal here, only works when form is open, therefore the component is already mounted
+  }
+  function cancelForm() {
+    setEmail(createInitialTaydennyspyyntoEmail(hakemus))
+    setShowEmailForm(false)
+    setFormErrorMessage(undefined)
+  }
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    e.stopPropagation()
+    try {
+      await HttpUtil.post(
+        `/api/avustushaku/${avustushakuId}/hakemus/${hakemus.id}/loppuselvitys/taydennyspyynto`,
+        {
+          lang: email.lang,
+          type: 'taydennyspyynto-taloustarkastus',
+          body: email.content,
+          subject: email.subject,
+          to: email.receivers,
+        }
+      )
+      const emails = await fetchSentTaydennyspyyntoEmails(
+        avustushakuId,
+        hakemus.id,
+        'taloustarkastus'
+      )
+      setSentEmails(emails)
+      setFormErrorMessage(undefined)
+      cancelForm()
+    } catch (err) {
+      if (err instanceof HttpResponseError && err.response.status === 400) {
+        setFormErrorMessage(err.response.data.error)
+      } else {
+        setFormErrorMessage('Täydennyspyynnön lähetys epäonnistui')
+      }
+    }
+  }
   return (
-    <div className={cn('writeMuistutusviesti', {})}>
-      <h2>Loppuselvityksen taloustarkastus</h2>
-      <div>
-        <button disabled={disabled} className="writeMuistutusviestiButton">
-          Täydennyspyyntö
-        </button>
-        <button disabled={disabled}>Hyväksy</button>
+    <>
+      <div className={cn('writeMuistutusviesti', {})}>
+        <h2>Loppuselvityksen taloustarkastus</h2>
+        <div>
+          <button
+            onClick={openOrRevealEmailForm}
+            disabled={disabled}
+            className="writeMuistutusviestiButton"
+          >
+            Täydennyspyyntö
+          </button>
+          <button disabled={disabled}>Hyväksy</button>
+        </div>
       </div>
-    </div>
+      <ViestiLista messages={sentEmails} />
+      {showEmailForm && (
+        <MultipleRecipentEmailForm
+          ref={emailFormRef}
+          onSubmit={onSubmit}
+          email={email}
+          setEmail={setEmail}
+          formName="loppuselvitys-taydennyspyynto-taloustarkastus"
+          submitText="Lähetä täydennyspyyntö"
+          heading="Taloustarkastuksen täydennyspyyntö"
+          cancelButton={{
+            text: 'Peruuta',
+            onClick: cancelForm,
+          }}
+          errorText={formErrorMessage}
+        />
+      )}
+    </>
   )
 }

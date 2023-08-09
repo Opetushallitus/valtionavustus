@@ -15,6 +15,7 @@ import { HakijaAvustusHakuPage } from './hakijaAvustusHakuPage'
 import { createReactSelectLocators } from '../utils/react-select'
 import { Header } from './Header'
 import SelvitysTab from './hakujen-hallinta/CommonSelvitysPage'
+import { LoppuselvitysPage } from './hakujen-hallinta/LoppuselvitysPage'
 
 const jatkoaikaTestId = 'muutoshakemus-jatkoaika'
 
@@ -100,7 +101,7 @@ export class HakemustenArviointiPage {
 
   async navigateToHakemusArviointiLoppuselvitys(avustushakuID: number, hakemusID: number) {
     await navigate(this.page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/loppuselvitys/`)
-    return SelvitysTab
+    return LoppuselvitysPage(this.page)
   }
 
   async navigateToHakemus(avustushakuId: number, hanke: string, options?: { showAll?: boolean }) {

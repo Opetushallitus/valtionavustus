@@ -62,6 +62,9 @@ export const getLoppuselvitysMuistutusviestiEmails = getEmails('loppuselvitys-mu
 export const getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails = getEmails(
   'taydennyspyynto-asiatarkastus'
 )
+export const getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails = getEmails(
+  'taydennyspyynto-taloustarkastus'
+)
 
 // ???? emails
 export const getTäydennyspyyntöEmails = getEmails('taydennyspyynto')
