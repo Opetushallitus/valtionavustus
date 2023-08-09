@@ -16,7 +16,7 @@ test('virkailija can send muistutusviesti for loppuselvitys', async ({
   const additionalReceiver = 'karri@kojootti.dog'
 
   await test.step('virkailija can fill and submit muistutusviesti form', async () => {
-    SelvitysTab(page, 'loppu').navigateToLoppuselvitysTab(avustushakuID, hakemusID)
+    await SelvitysTab(page, 'loppu').navigateToLoppuselvitysTab(avustushakuID, hakemusID)
 
     await page.getByRole('button', { name: 'Kirjoita' }).click()
     const form = page.getByTestId('muistutusviesti-email').locator('form')
