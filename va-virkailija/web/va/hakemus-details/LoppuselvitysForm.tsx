@@ -13,7 +13,7 @@ import {
 } from '../hakemustenArviointi/arviointiStore'
 import { getLoadedState, refreshHakemukset } from '../hakemustenArviointi/arviointiReducer'
 import { isFeatureEnabled } from 'soresu-form/web/va/types/environment'
-import { Taloustarkastus, Asiatarkastus } from './LoppuselvitysAsiatarkastus'
+import { Taloustarkastus, Asiatarkastus } from './LoppuselvitysTarkastus'
 
 type LoppuselvitysFormProps = {
   avustushaku: Avustushaku
