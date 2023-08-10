@@ -17,7 +17,7 @@ import {
   useGetRaportointiveloitteetQuery,
   usePostRaportointivelvoiteMutation,
   usePutRaportointivelvoiteMutation,
-} from '../hakujenHallinta/hakuApiSlice'
+} from '../apiSlice'
 
 type RaportointivelvoitteetProps = {
   avustushaku: Avustushaku

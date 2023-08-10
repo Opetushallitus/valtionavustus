@@ -1,6 +1,6 @@
 import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
-import { apiSlice } from './apiSlice'
+import { apiSlice } from '../apiSlice'
 
 type State = { talousarviotiliIdInEditing?: number }
 const initialState: State = { talousarviotiliIdInEditing: undefined }

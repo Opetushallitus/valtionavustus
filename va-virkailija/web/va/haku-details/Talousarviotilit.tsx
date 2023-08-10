@@ -8,7 +8,7 @@ import {
   replaceTalousarviotilit,
   TalousarviotiliWithKoulutusasteet,
 } from '../hakujenHallinta/hakuReducer'
-import { useGetTalousarvioTilitQuery } from '../hakujenHallinta/hakuApiSlice'
+import { useGetTalousarvioTilitQuery } from '../apiSlice'
 import { TalousarviotiliWithUsageInfo } from '../koodienhallinta/types'
 import HelpTooltip from '../HelpTooltip'
 

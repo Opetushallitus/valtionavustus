@@ -7,7 +7,7 @@ import { Koodienhallinta } from './koodienhallinta/Koodienhallinta'
 import { HeaderContainer } from './Header'
 import { store } from './koodienhallinta/store'
 import { VaCode } from './koodienhallinta/VaCode'
-import { useGetEnvironmentAndUserInfoQuery } from './koodienhallinta/apiSlice'
+import { useGetEnvironmentAndUserInfoQuery } from './apiSlice'
 import { TalousarviotilienHallinta } from './koodienhallinta/TalousarviotilienHallinta'
 
 import 'oph-virkailija-style-guide/oph-styles-min.css'

@@ -7,7 +7,7 @@ import arviointiReducer, {
   startHakemusArvioAutoSave,
 } from './arviointiReducer'
 import filterReducer from './filterReducer'
-import { arviointiApiSlice } from './apiSlice'
+import { apiSlice } from '../apiSlice'
 
 const arvioAutoSave = createListenerMiddleware<{ arviointi: ArviointiState }>()
 arvioAutoSave.startListening({
@@ -23,10 +23,10 @@ const store = configureStore({
   reducer: {
     arviointi: arviointiReducer,
     filter: filterReducer,
-    [arviointiApiSlice.reducerPath]: arviointiApiSlice.reducer,
+    [apiSlice.reducerPath]: apiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(arviointiApiSlice.middleware).prepend(arvioAutoSave.middleware),
+    getDefaultMiddleware().concat(apiSlice.middleware).prepend(arvioAutoSave.middleware),
 })
 
 export default store

@@ -9,7 +9,7 @@ import {
   useGetTalousarvioTilitQuery,
   useRemoveTalousarviotiliMutation,
   useUpdateTalousarviotiliMutation,
-} from './apiSlice'
+} from '../apiSlice'
 import { TalousarviotiliWithUsageInfo } from './types'
 import useOutsideClick from '../useOutsideClick'
 import { IconAdd, IconButton, IconEdit, IconRemove, IconSave } from './IconButton'

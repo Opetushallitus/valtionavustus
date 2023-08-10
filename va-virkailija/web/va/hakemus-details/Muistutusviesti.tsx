@@ -11,7 +11,7 @@ import { isString } from 'lodash'
 
 import './muistutusviesti.less'
 import { Lahetys } from '../haku-details/Tapahtumaloki'
-import { mapEmails } from '../hakemustenArviointi/apiSlice'
+import { mapEmails } from '../apiSlice'
 
 type MuistutusviestiProps = {
   hakemus: Hakemus

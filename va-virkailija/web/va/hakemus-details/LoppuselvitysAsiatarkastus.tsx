@@ -10,7 +10,7 @@ import {
   EmailType,
   useGetTapahtumalokiForEmailTypeQuery,
   usePostLoppuselvitysTaydennyspyyntoMutation,
-} from '../hakemustenArviointi/apiSlice'
+} from '../apiSlice'
 import { hasFetchErrorMsg } from '../isFetchBaseQueryError'
 
 function createInitialTaydennyspyyntoEmail(hakemus: Hakemus) {
