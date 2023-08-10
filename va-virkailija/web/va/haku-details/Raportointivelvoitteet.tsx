@@ -2,17 +2,22 @@ import { debounce } from 'lodash'
 import React, { PropsWithChildren, useCallback, useEffect, useState } from 'react'
 import Select, { components, OptionProps, GroupBase } from 'react-select'
 
-import HttpUtil from 'soresu-form/web/HttpUtil'
 import { HelpTexts, Raportointivelvoite } from 'soresu-form/web/va/types'
 
 import HelpTooltip from '../HelpTooltip'
 import { DateInput } from './DateInput'
 import { useHakujenHallintaDispatch } from '../hakujenHallinta/hakujenHallintaStore'
 import {
-  completeManualSave,
   Avustushaku,
+  completeManualSave,
   startManuallySaving,
 } from '../hakujenHallinta/hakuReducer'
+import {
+  useDeleteRaportointivelvoiteMutation,
+  useGetRaportointiveloitteetQuery,
+  usePostRaportointivelvoiteMutation,
+  usePutRaportointivelvoiteMutation,
+} from '../hakujenHallinta/hakuApiSlice'
 
 type RaportointivelvoitteetProps = {
   avustushaku: Avustushaku
@@ -21,12 +26,10 @@ type RaportointivelvoitteetProps = {
 
 type RaportointivelvoiteProps = {
   index: number
+  last: boolean
   raportointivelvoite?: Raportointivelvoite
   helpTexts: HelpTexts
-  postRaportointivelvoite: (r: Raportointivelvoite) => void | undefined
-  putRaportointivelvoite: (index: number, r: Raportointivelvoite) => void | undefined
-  addRaportointivelvoite: (index: number) => void
-  deleteRaportointivelvoite: (index: number, r?: Raportointivelvoite) => Promise<void> | undefined
+  avustushakuId: number
 }
 
 const AddButton = () => (
@@ -71,18 +74,45 @@ export function Option({
 
 const Raportointivelvoite = ({
   index,
+  last,
   raportointivelvoite,
   helpTexts,
-  postRaportointivelvoite,
-  putRaportointivelvoite,
-  addRaportointivelvoite,
-  deleteRaportointivelvoite,
+  avustushakuId,
 }: RaportointivelvoiteProps) => {
   const [raportointilaji, setRaportointilaji] = useState(raportointivelvoite?.raportointilaji)
   const [maaraaika, setMaaraaika] = useState(raportointivelvoite?.maaraaika)
   const [ashaTunnus, setAshaTunnus] = useState(raportointivelvoite?.['asha-tunnus'])
   const [lisatiedot, setLisatiedot] = useState(raportointivelvoite?.lisatiedot)
-
+  const [putRaportointivelvoite] = usePutRaportointivelvoiteMutation()
+  const [postRaportointivelvoite] = usePostRaportointivelvoiteMutation()
+  const [deleteRaportointivelvoite] = useDeleteRaportointivelvoiteMutation()
+  const dispatch = useHakujenHallintaDispatch()
+  const startAutoSave = () => dispatch(startManuallySaving())
+  const saveSuccessful =
+    (success = true) =>
+    () =>
+      dispatch(completeManualSave(success))
+  const debouncedPutRaportointivelvoite = useCallback(
+    debounce(
+      async (payload: { raportointivelvoite: Raportointivelvoite; avustushakuId: number }) => {
+        putRaportointivelvoite(payload).unwrap().then(saveSuccessful()).catch(saveSuccessful(false))
+      },
+      2000
+    ),
+    []
+  )
+  const debouncedPostRaportointivelvoite = useCallback(
+    debounce(
+      async (payload: { raportointivelvoite: Raportointivelvoite; avustushakuId: number }) => {
+        postRaportointivelvoite(payload)
+          .unwrap()
+          .then(saveSuccessful())
+          .catch(saveSuccessful(false))
+      },
+      2000
+    ),
+    []
+  )
   useEffect(() => {
     if (
       raportointilaji &&
@@ -93,20 +123,23 @@ const Raportointivelvoite = ({
         raportointivelvoite?.['asha-tunnus'] !== ashaTunnus ||
         raportointivelvoite?.lisatiedot !== lisatiedot)
     ) {
-      if (raportointivelvoite?.id) {
-        postRaportointivelvoite({
-          id: raportointivelvoite?.id,
-          raportointilaji,
-          maaraaika,
-          'asha-tunnus': ashaTunnus,
-          lisatiedot,
+      startAutoSave()
+      const body = {
+        id: raportointivelvoite?.id,
+        raportointilaji,
+        maaraaika,
+        'asha-tunnus': ashaTunnus,
+        lisatiedot,
+      }
+      if (body?.id) {
+        debouncedPostRaportointivelvoite({
+          raportointivelvoite: body,
+          avustushakuId,
         })
       } else {
-        putRaportointivelvoite(index, {
-          raportointilaji,
-          maaraaika,
-          'asha-tunnus': ashaTunnus,
-          lisatiedot,
+        debouncedPutRaportointivelvoite({
+          raportointivelvoite: body,
+          avustushakuId,
         })
       }
     }
@@ -171,97 +204,42 @@ const Raportointivelvoite = ({
         />
       </div>
       <div className="raportointivelvoitteet_buttons">
-        <button
-          id={`new-raportointivelvoite-${index}`}
-          className="raportointivelvoitteet_button"
-          onClick={() => addRaportointivelvoite(index)}
-        >
-          <AddButton />
-        </button>
-        <button
-          className="raportointivelvoitteet_button"
-          onClick={() =>
-            raportointivelvoite && deleteRaportointivelvoite(index, raportointivelvoite)
-          }
-        >
-          <RemoveButton />
-        </button>
+        {last ? (
+          <button id={`new-raportointivelvoite-${index}`} className="raportointivelvoitteet_button">
+            <AddButton />
+          </button>
+        ) : (
+          <button
+            className="raportointivelvoitteet_button"
+            onClick={() => {
+              if (raportointivelvoite?.id) {
+                startAutoSave()
+                deleteRaportointivelvoite({
+                  raportointivelvoiteId: raportointivelvoite.id,
+                  avustushakuId,
+                })
+                  .unwrap()
+                  .then(saveSuccessful())
+                  .catch(saveSuccessful(false))
+              }
+            }}
+          >
+            <RemoveButton />
+          </button>
+        )}
       </div>
     </div>
   )
 }
 
 export const Raportointivelvoitteet = ({ avustushaku, helpTexts }: RaportointivelvoitteetProps) => {
-  const [raportointivelvoitteet, setRaportointivelvoitteet] = useState<
-    Raportointivelvoite[] | undefined
-  >()
-  const dispatch = useHakujenHallintaDispatch()
-  const startAutoSave = () => dispatch(startManuallySaving())
-  useEffect(() => {
-    const fetchRaportointivelvoitteet = async () => {
-      const r = await HttpUtil.get<Raportointivelvoite[]>(
-        `/api/avustushaku/${avustushaku.id}/raportointivelvoitteet`
-      )
-      setRaportointivelvoitteet(
-        r.length
-          ? r
-          : [
-              {
-                'asha-tunnus': '',
-                lisatiedot: '',
-              } as Raportointivelvoite,
-            ]
-      )
-    }
-
-    void fetchRaportointivelvoitteet()
-  }, [avustushaku.id])
-
-  const putRaportointivelvoite = useCallback(
-    debounce(async (index: number, r: Raportointivelvoite) => {
-      const newRaportointivelvoite = await HttpUtil.put(
-        `/api/avustushaku/${avustushaku.id}/raportointivelvoite`,
-        r
-      )
-      setRaportointivelvoitteet(
-        raportointivelvoitteet?.map((old, i) => (i === index ? newRaportointivelvoite : old))
-      )
-      dispatch(completeManualSave())
-    }, 2000),
-    [raportointivelvoitteet]
-  )
-
-  const postRaportointivelvoite = useCallback(
-    debounce(async (r: Raportointivelvoite) => {
-      await HttpUtil.post(`/api/avustushaku/${avustushaku.id}/raportointivelvoite/${r.id}`, r)
-      setRaportointivelvoitteet(raportointivelvoitteet?.map((old) => (old.id === r.id ? r : old)))
-      dispatch(completeManualSave())
-    }, 2000),
-    [raportointivelvoitteet]
-  )
-
-  const addRaportointivelvoite = (index: number) => {
-    const newRaportointivelvoitteet = [...(raportointivelvoitteet ?? [])]
-    newRaportointivelvoitteet.splice(index + 1, 0, {
+  const { data } = useGetRaportointiveloitteetQuery(avustushaku.id)
+  const raportointiveloitteet = (data ?? []).concat([
+    {
       'asha-tunnus': '',
       lisatiedot: '',
-    } as Raportointivelvoite)
-    setRaportointivelvoitteet(newRaportointivelvoitteet)
-  }
-
-  const deleteRaportointivelvoite = async (index: number, r?: Raportointivelvoite) => {
-    if (r?.id) {
-      dispatch(startManuallySaving())
-      await HttpUtil.delete(`/api/avustushaku/${avustushaku.id}/raportointivelvoite/${r.id}`)
-      setRaportointivelvoitteet(raportointivelvoitteet?.filter((old) => old.id !== r.id))
-      dispatch(completeManualSave())
-    } else {
-      const newRaportointivelvoitteet = [...(raportointivelvoitteet ?? [])]
-      newRaportointivelvoitteet.splice(index, 1)
-      setRaportointivelvoitteet(newRaportointivelvoitteet)
-    }
-  }
-
+    } as Raportointivelvoite,
+  ])
   return (
     <div className="raportointivelvoitteet">
       <h1>OPH:lle asetetut raportointivelvoitteet</h1>
@@ -271,22 +249,14 @@ export const Raportointivelvoitteet = ({ avustushaku, helpTexts }: Raportointive
         Raportointivelvoitteet löydät määrärahan asettamiskirjeestä ja muista valtionavustusta
         ohjaavista asiakirjoista.
       </span>
-      {raportointivelvoitteet?.map((r, i) => (
+      {raportointiveloitteet?.map((r, i) => (
         <Raportointivelvoite
           key={`raportointivelvoite-${i}-${r.id}`}
           index={i}
+          last={raportointiveloitteet?.length === i + 1}
           raportointivelvoite={r}
           helpTexts={helpTexts}
-          putRaportointivelvoite={(index, raportointivelvoite) => {
-            startAutoSave()
-            putRaportointivelvoite(index, raportointivelvoite)
-          }}
-          postRaportointivelvoite={(raportointivelvoite) => {
-            startAutoSave()
-            postRaportointivelvoite(raportointivelvoite)
-          }}
-          addRaportointivelvoite={addRaportointivelvoite}
-          deleteRaportointivelvoite={deleteRaportointivelvoite}
+          avustushakuId={avustushaku.id}
         />
       ))}
     </div>

@@ -646,7 +646,8 @@
 (defn get-raportointivelvoitteet [avustushaku-id]
   (query "SELECT id, raportointilaji, asha_tunnus, maaraaika, lisatiedot
           FROM raportointivelvoite
-          WHERE avustushaku_id = ?" [avustushaku-id]))
+          WHERE avustushaku_id = ?
+          ORDER BY id" [avustushaku-id]))
 
 (defn insert-raportointivelvoite [avustushaku-id velvoite]
   (let [id (query "INSERT INTO raportointivelvoite (avustushaku_id, raportointilaji, asha_tunnus, maaraaika, lisatiedot)

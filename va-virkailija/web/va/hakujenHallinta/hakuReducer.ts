@@ -694,8 +694,13 @@ const hakuSlice = createSlice({
     stopIndicatingThatSendingMaksatuksetFailed: (state) => {
       state.saveStatus.sendingMaksatuksetAndTasmaytysraporttiFailed = false
     },
-    completeManualSave: (state) => {
-      state.saveStatus = saveSuccess(state, 'savingManuallyRefactorToOwnActionsAtSomepoint')
+    completeManualSave: (state, { payload }: PayloadAction<boolean | undefined>) => {
+      if (payload === false) {
+        state.saveStatus.savingManuallyRefactorToOwnActionsAtSomepoint = false
+        state.saveStatus.serverError = 'unexpected-save-error'
+      } else {
+        state.saveStatus = saveSuccess(state, 'savingManuallyRefactorToOwnActionsAtSomepoint')
+      }
     },
     formUpdated: (state, { payload }: PayloadAction<{ avustushakuId: number; newForm: Form }>) => {
       state.formDrafts[payload.avustushakuId] = payload.newForm
