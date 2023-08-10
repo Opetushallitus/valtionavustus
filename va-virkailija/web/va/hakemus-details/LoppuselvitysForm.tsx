@@ -13,7 +13,7 @@ import {
 } from '../hakemustenArviointi/arviointiStore'
 import { getLoadedState, refreshHakemukset } from '../hakemustenArviointi/arviointiReducer'
 import { isFeatureEnabled } from 'soresu-form/web/va/types/environment'
-import { Taloustarkastus, Taydennyspyynto } from './Muistutusviesti'
+import { Taloustarkastus, Asiatarkastus } from './LoppuselvitysAsiatarkastus'
 
 type LoppuselvitysFormProps = {
   avustushaku: Avustushaku
@@ -94,8 +94,10 @@ export const LoppuselvitysForm = ({
           />
         </div>
       )}
-      {showTaydennyspyynto && <Taydennyspyynto disabled={taloustarkastusEnabled} />}
-      {showTaydennyspyynto && <Taloustarkastus disabled={asiatarkastusEnabled} />}
+      {showTaydennyspyynto && <Asiatarkastus disabled={taloustarkastusEnabled} />}
+      {showTaydennyspyynto && (
+        <Taloustarkastus disabled={asiatarkastusEnabled || status === 'accepted'} />
+      )}
     </div>
   )
 }

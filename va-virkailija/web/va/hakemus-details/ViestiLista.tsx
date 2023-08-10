@@ -3,13 +3,13 @@ import moment from 'moment/moment'
 
 moment.locale('fi')
 
-const formatDate = (date: Date) => {
+const formatDate = (date: string) => {
   return `${moment(date).format('DD.MM.YYYY')} klo ${moment(date).format('HH.mm')}`
 }
 
 export interface Message {
   id: number
-  date: Date
+  date: string
   virkailija: string
   sender: string
   subject: string
