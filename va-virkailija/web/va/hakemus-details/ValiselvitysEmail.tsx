@@ -10,15 +10,8 @@ import { Language } from 'soresu-form/web/va/i18n/translations'
 import translations from '../../../../server/resources/public/translations.json'
 
 import { UserInfo } from '../types'
-import {
-  useHakemustenArviointiDispatch,
-  useHakemustenArviointiSelector,
-} from '../hakemustenArviointi/arviointiStore'
-import {
-  getLoadedState,
-  loadSelvitys,
-  refreshHakemukset,
-} from '../hakemustenArviointi/arviointiReducer'
+import { useHakemustenArviointiDispatch } from '../hakemustenArviointi/arviointiStore'
+import { loadSelvitys, refreshHakemukset } from '../hakemustenArviointi/arviointiReducer'
 import { initialRecipientEmails } from './emailRecipients'
 
 interface ValiselvitysEmailProps {
@@ -64,15 +57,10 @@ function initialSubject(props: ValiselvitysEmailProps) {
 export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
   const { avustushaku, lang, valiselvitys, hakemus } = props
   const dispatch = useHakemustenArviointiDispatch()
-  const varayhteyshenkiloEnabled = useHakemustenArviointiSelector(
-    (state) => getLoadedState(state.arviointi).environment['backup-contact-person']?.['enabled?']
-  )
   const [message, setMessage] = useState<string>(initialMessage(props))
   const [subject, setSubject] = useState<string>(initialSubject(props))
   const [recipientEmails, setRecipientEmails] = useState<Email[]>(
-    initialRecipientEmails(hakemus.answers, hakemus.normalizedData, varayhteyshenkiloEnabled).map(
-      makeFormRecipientEmail
-    )
+    initialRecipientEmails(hakemus.answers, hakemus.normalizedData).map(makeFormRecipientEmail)
   )
 
   function onRecipientEmailChange(index: number, event: React.ChangeEvent<HTMLInputElement>) {

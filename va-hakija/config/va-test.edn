@@ -39,7 +39,6 @@
                                                              :schedule "0 0 14 ? * MON-FRI"}
                            }
  :payments                {:enabled? true :delete-payments? true}
- :backup-contact-person   {:enabled? true}
  :integration-healthcheck {:enabled?         true
                            :timeout          5000
                            :interval-minutes 15}}

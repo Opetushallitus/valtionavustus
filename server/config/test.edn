@@ -84,5 +84,4 @@
  :integration-healthcheck {:enabled? false}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :test-apis {:enabled? false}
- :backup-contact-person {:enabled? true}
  }

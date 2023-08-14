@@ -5,15 +5,8 @@ import { Language } from 'soresu-form/web/va/i18n/translations'
 import { Hakemus, Selvitys, SelvitysEmail } from 'soresu-form/web/va/types'
 
 import { VerificationBox } from './VerificationBox'
-import {
-  useHakemustenArviointiDispatch,
-  useHakemustenArviointiSelector,
-} from '../hakemustenArviointi/arviointiStore'
-import {
-  getLoadedState,
-  loadSelvitys,
-  refreshHakemukset,
-} from '../hakemustenArviointi/arviointiReducer'
+import { useHakemustenArviointiDispatch } from '../hakemustenArviointi/arviointiStore'
+import { loadSelvitys, refreshHakemukset } from '../hakemustenArviointi/arviointiReducer'
 import { initialRecipientEmails } from './emailRecipients'
 import MultipleRecipentEmailForm from './MultipleRecipentsEmailForm'
 
@@ -40,9 +33,6 @@ export const TaloustarkastusEmail = ({
   const projectName = loppuselvitys['project-name'] || hakemus['project-name'] || ''
   const registerNumber = loppuselvitys['register-number'] || ''
   const selvitysEmail = loppuselvitys['selvitys-email']
-  const varayhteyshenkiloEnabled = useHakemustenArviointiSelector(
-    (state) => getLoadedState(state.arviointi).environment['backup-contact-person']?.['enabled?']
-  )
   const isTaloustarkastettu = taloustarkastettu && selvitysEmail !== undefined
   const [email, setEmail] = useState(() =>
     isTaloustarkastettu
@@ -55,8 +45,7 @@ export const TaloustarkastusEmail = ({
           ],
           receivers: initialRecipientEmails(
             (loppuselvitys.answers ?? []).concat(hakemus.answers),
-            hakemus.normalizedData,
-            varayhteyshenkiloEnabled
+            hakemus.normalizedData
           ),
         }
   )

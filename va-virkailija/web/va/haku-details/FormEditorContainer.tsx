@@ -62,9 +62,6 @@ const FormEditorContainer = () => {
   const formDraftJson = useHakujenHallintaSelector(
     (state) => state.haku.formDraftsJson[avustushaku.id]
   )
-  const varayhteishenkiloEnabled = useHakujenHallintaSelector(
-    (state) => selectLoadedInitialData(state).environment['backup-contact-person']?.['enabled?']
-  )
   const { koodistos } = useHakujenHallintaSelector(selectHakuState)
 
   const updatedAt = avustushaku.formContent?.updated_at
@@ -102,7 +99,7 @@ const FormEditorContainer = () => {
 
   return (
     <section>
-      {varayhteishenkiloEnabled && !varayhteyshenkiloResult['is-ok'] && (
+      {!varayhteyshenkiloResult['is-ok'] && (
         <ValidationContainer
           result={varayhteyshenkiloResult}
           errorTexts={{

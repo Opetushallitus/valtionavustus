@@ -23,5 +23,4 @@ export interface EnvironmentApiResponse {
   'multibatch-payments': LegacyFeatureFlag
   'dont-send-loppuselvityspyynto-to-virkailija'?: LegacyFeatureFlag
   payments: LegacyFeatureFlag & { 'delete-payments?': boolean }
-  'backup-contact-person'?: LegacyFeatureFlag
 }

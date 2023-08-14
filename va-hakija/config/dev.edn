@@ -37,5 +37,4 @@
                                                :delete-payments? true}
  :applications-ui                             {:enabled? true}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
- :backup-contact-person                       {:enabled? true}
  :test-apis                                   {:enabled? true}}

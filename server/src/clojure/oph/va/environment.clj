@@ -23,7 +23,6 @@
          :feature-flags (seq (get-feature-flags))
          :application-change {:refuse-enabled? true}
          :multibatch-payments (:multibatch-payments config)
-         :backup-contact-person (:backup-contact-person config)
          :dont-send-loppuselvityspyynto-to-virkailija (:dont-send-loppuselvityspyynto-to-virkailija config)}
         opintopolku (:opintopolku config)]
     (if-let [opintopolku-url (:url opintopolku)]
