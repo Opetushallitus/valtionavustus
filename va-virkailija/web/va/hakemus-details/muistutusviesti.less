@@ -27,16 +27,17 @@
 .viestiListaItem {
   background-color: @background-blue;
   .viestiListaRow {
-    margin: 8px;
+    cursor: pointer;
+    margin-bottom: 4px;
+    padding: 0 16px;
     height: 56px;
-    display: flex;
+    display: grid;
+    grid: auto-flow / 24px 170px minmax(auto, 0.5fr) 1fr min-content;
+    gap: 8px;
+    grid-auto-flow: row;
+    justify-items: flex-start;
     align-items: center;
-    justify-content: space-between;
-
-    .rowIcon {
-      margin-left: 1rem;
-      margin-right: 1rem;
-    }
+    line-height: 1.6;
 
     .rowVirkailija {
       margin-right: 1rem;
@@ -44,6 +45,10 @@
 
     .rowDate {
       margin-right: 1rem;
+    }
+
+    .rowHeading {
+      font-weight: 700;
     }
 
     .rowOpenCloseIcon {

@@ -1,5 +1,5 @@
 import { Hakemus } from 'soresu-form/web/va/types'
-import ViestiLista from './ViestiLista'
+import ViestiLista, { ViestiListaRow } from './ViestiLista'
 import { useHakemus } from '../hakemustenArviointi/useHakemus'
 import { useAvustushakuId } from '../hakemustenArviointi/useAvustushaku'
 import React, { useEffect, useRef, useState } from 'react'
@@ -12,6 +12,9 @@ import {
   usePostLoppuselvitysTaydennyspyyntoMutation,
 } from '../apiSlice'
 import { hasFetchErrorMsg } from '../isFetchBaseQueryError'
+import HttpUtil from 'soresu-form/web/HttpUtil'
+import { refreshHakemukset } from '../hakemustenArviointi/arviointiReducer'
+import { useHakemustenArviointiDispatch } from '../hakemustenArviointi/arviointiStore'
 
 function createInitialTaydennyspyyntoEmail(hakemus: Hakemus) {
   const contactEmail = hakemus.normalizedData?.['contact-email']
@@ -25,6 +28,34 @@ function createInitialTaydennyspyyntoEmail(hakemus: Hakemus) {
 }
 
 export function Asiatarkastus({ disabled }: { disabled: boolean }) {
+  const [showConfirmation, setShowConfirmation] = useState(false)
+  const dispatch = useHakemustenArviointiDispatch()
+  const hakemus = useHakemus()
+  const avustushakuId = useAvustushakuId()
+  const verifiedBy = hakemus['loppuselvitys-information-verified-by']
+  const verifiedAt = hakemus['loppuselvitys-information-verified-at']
+  const verification = hakemus['loppuselvitys-information-verification']
+  const onSubmit = async () => {
+    await HttpUtil.post(
+      `/api/avustushaku/${avustushakuId}/hakemus/${hakemus.id}/loppuselvitys/verify-information`,
+      { message: '' }
+    )
+    dispatch(
+      refreshHakemukset({
+        avustushakuId,
+        hakemusId: hakemus.id,
+      })
+    )
+  }
+  const onClick = async (e: React.FormEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (showConfirmation) {
+      await onSubmit()
+    } else {
+      setShowConfirmation(true)
+    }
+  }
   return (
     <LoppuselvitysTarkastus
       taydennyspyyntoType="taydennyspyynto-asiatarkastus"
@@ -32,6 +63,20 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
       heading="Loppuselvityksen asiatarkastus"
       taydennyspyyntoHeading="Asiatarkastuksen täydennyspyyntö"
       confirmButtonText="Hyväksy"
+      confirmButton={
+        <button disabled={disabled} onClick={onClick}>
+          {showConfirmation ? 'Vahvista hyväksyntä' : 'Hyväksy'}
+        </button>
+      }
+      completedBy={
+        verifiedAt && verifiedBy
+          ? {
+              name: verifiedBy,
+              date: verifiedAt,
+              verification,
+            }
+          : undefined
+      }
     />
   )
 }
@@ -44,6 +89,7 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
       heading="Loppuselvityksen taloustarkastus"
       taydennyspyyntoHeading="Taloustarkastuksen täydennyspyyntö"
       confirmButtonText="Hyväksy"
+      confirmButton={<button disabled={disabled}>{'Hyväksy'}</button>}
     />
   )
 }
@@ -54,6 +100,12 @@ interface LoppuselvitysTarkastusProps {
   heading: string
   taydennyspyyntoHeading: string
   confirmButtonText: string
+  confirmButton: React.JSX.Element
+  completedBy?: {
+    name: string
+    date: string
+    verification?: string
+  }
 }
 
 function LoppuselvitysTarkastus({
@@ -61,7 +113,8 @@ function LoppuselvitysTarkastus({
   heading,
   taydennyspyyntoHeading,
   taydennyspyyntoType,
-  confirmButtonText,
+  confirmButton,
+  completedBy,
 }: LoppuselvitysTarkastusProps) {
   const hakemus = useHakemus()
   const avustushakuId = useAvustushakuId()
@@ -76,6 +129,8 @@ function LoppuselvitysTarkastus({
   const [formErrorMessage, setFormErrorMessage] = useState<string>()
   const [email, setEmail] = useState(createInitialTaydennyspyyntoEmail(hakemus))
   const revealEmailForm = () => emailFormRef.current?.scrollIntoView({ behavior: 'smooth' })
+  const [showMessage, setShowMessage] = useState(false)
+
   useEffect(() => {
     if (showEmailForm) {
       revealEmailForm() // reveal after showEmailForm changes to true and component is mounted
@@ -120,7 +175,7 @@ function LoppuselvitysTarkastus({
   }
   return (
     <>
-      <div className={cn('writeMuistutusviesti', {})}>
+      <div data-test-id={taydennyspyyntoType} className={cn('writeMuistutusviesti', {})}>
         <h2>{heading}</h2>
         <div>
           <button
@@ -130,10 +185,26 @@ function LoppuselvitysTarkastus({
           >
             Täydennyspyyntö
           </button>
-          <button disabled={disabled}>{confirmButtonText}</button>
+          {confirmButton}
         </div>
       </div>
       <ViestiLista messages={sentEmails ?? []} />
+      {completedBy && (
+        <ViestiListaRow
+          icon="done"
+          virkailija={completedBy.name}
+          date={completedBy.date}
+          onClick={() => setShowMessage((show) => !show)}
+          heading="Asiatarkastettu"
+          dataTestId="loppuselvitys-tarkastus"
+        >
+          {showMessage && completedBy.verification && (
+            <div className={'messageDetails'}>
+              <div className={'rowMessage'}>{completedBy.verification}</div>
+            </div>
+          )}
+        </ViestiListaRow>
+      )}
       {showEmailForm && (
         <MultipleRecipentEmailForm
           ref={emailFormRef}

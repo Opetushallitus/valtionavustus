@@ -58,7 +58,7 @@ export const LoppuselvitysForm = ({
   const taloustarkastusEnabled = status === 'information_verified' || status === 'accepted'
   return (
     <div className="information-verification">
-      {asiatarkastusEnabled && (
+      {asiatarkastusEnabled && !showTaydennyspyynto && (
         <form onSubmit={onSubmit}>
           <div className="verification-comment">
             <h2 className="verification-header">Asiatarkastus</h2>
@@ -76,7 +76,7 @@ export const LoppuselvitysForm = ({
           </div>
         </form>
       )}
-      {taloustarkastusEnabled && (
+      {taloustarkastusEnabled && !showTaydennyspyynto && (
         <div>
           <div className="verification-comment">
             <h2 className="verification-header">Asiatarkastus</h2>
@@ -94,7 +94,9 @@ export const LoppuselvitysForm = ({
           />
         </div>
       )}
-      {showTaydennyspyynto && <Asiatarkastus disabled={taloustarkastusEnabled} />}
+      {showTaydennyspyynto && allowedToDoAsiatarkastus && (
+        <Asiatarkastus disabled={taloustarkastusEnabled} />
+      )}
       {showTaydennyspyynto && (
         <Taloustarkastus disabled={asiatarkastusEnabled || status === 'accepted'} />
       )}

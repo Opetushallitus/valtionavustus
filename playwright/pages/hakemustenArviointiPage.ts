@@ -14,7 +14,6 @@ import { AcceptedBudget, BudgetAmount, fillBudget } from '../utils/budget'
 import { HakijaAvustusHakuPage } from './hakijaAvustusHakuPage'
 import { createReactSelectLocators } from '../utils/react-select'
 import { Header } from './Header'
-import SelvitysTab from './hakujen-hallinta/CommonSelvitysPage'
 import { LoppuselvitysPage } from './hakujen-hallinta/LoppuselvitysPage'
 
 const jatkoaikaTestId = 'muutoshakemus-jatkoaika'

@@ -155,12 +155,8 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     expect(loppuselvitysFormFilled)
     const loppuselvitysPage = LoppuselvitysPage(page)
     await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
-
-    const textareaSelector = 'textarea[name="information-verification"]'
-    await clearAndType(page, textareaSelector, 'Hyvältä näyttääpi')
-    await page.click('button[name="submit-verification"]')
-
-    await page.getByTestId('taloustarkastus-email').waitFor()
+    await loppuselvitysPage.asiatarkastaLoppuselvitys('')
+    await expect(page.getByTestId('taloustarkastus-email')).toBeVisible()
     await use({
       asiatarkastettu: true,
     })

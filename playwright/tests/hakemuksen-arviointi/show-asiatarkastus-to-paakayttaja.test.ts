@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 
-import { switchUserIdentityTo, countElements } from '../../utils/util'
+import { switchUserIdentityTo } from '../../utils/util'
 
 import { selvitysTest as test } from '../../fixtures/selvitysTest'
 import { LoppuselvitysPage } from '../../pages/hakujen-hallinta/LoppuselvitysPage'
@@ -14,7 +14,13 @@ test('shows asiatarkastus to pääkäyttäjä who is not valmistelija', async ({
   expect(loppuselvitysFormFilled)
   const loppuselvitysPage = LoppuselvitysPage(page)
   await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
+  const va = page.getByText('_ valtionavustus')
+  const paiviPaakayttaja = page.getByText('Päivi Pääkäyttäjä')
+  await expect(va).toBeVisible()
+  await expect(paiviPaakayttaja).toBeHidden()
+  await expect(loppuselvitysPage.locators.acceptAsiatarkastus).toBeVisible()
   await switchUserIdentityTo(page, 'paivipaakayttaja')
-  await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
-  expect(await countElements(page, 'button[name=submit-verification]')).toEqual(1)
+  await expect(va).toBeHidden()
+  await expect(paiviPaakayttaja).toBeVisible()
+  await expect(loppuselvitysPage.locators.acceptAsiatarkastus).toBeVisible()
 })

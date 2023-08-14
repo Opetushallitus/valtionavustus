@@ -11,6 +11,13 @@ export const LoppuselvitysPage = (page: Page) => {
     taloustarkastettu: page.getByRole('heading', {
       name: 'Taloustarkastettu ja lähetetty hakijalle',
     }),
+    asiatarkastettu: page.getByTestId('loppuselvitys-tarkastus').first(),
+    acceptAsiatarkastus: page
+      .getByTestId('taydennyspyynto-asiatarkastus')
+      .getByRole('button', { name: 'Hyväksy' }),
+    confirmAsiatarkastus: page
+      .getByTestId('taydennyspyynto-asiatarkastus')
+      .getByRole('button', { name: 'Vahvista hyväksyntä' }),
   }
 
   async function ensureMuistutusViestiEmailRecipientsContain(recipients: string[]) {
@@ -34,11 +41,11 @@ export const LoppuselvitysPage = (page: Page) => {
     await page.waitForSelector(`text="Lähetetty ${expectedAmount} viestiä"`)
   }
 
-  async function asiatarkastaLoppuselvitys(huomiot: string) {
-    await page.getByPlaceholder('Kirjaa tähän mahdolliset huomiot asiatarkastuksesta').fill(huomiot)
-    await page
-      .getByRole('button', { name: 'Hyväksy asiatarkastus ja lähetä taloustarkastukseen' })
-      .click()
+  async function asiatarkastaLoppuselvitys(_: string) {
+    await expect(locators.asiatarkastettu).toBeHidden()
+    await locators.acceptAsiatarkastus.click()
+    await locators.confirmAsiatarkastus.click()
+    await expect(locators.asiatarkastettu).toBeVisible()
   }
 
   async function taloustarkastaLoppuselvitys() {
