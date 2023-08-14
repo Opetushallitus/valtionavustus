@@ -84,5 +84,5 @@
  :multibatch-payments                         {:enabled? true}
  :integration-healthcheck                     {:enabled? false}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
- :backup-contact-person                       {:enabled? false}
+ :backup-contact-person                       {:enabled? true}
  :test-apis                                   {:enabled? false}}
