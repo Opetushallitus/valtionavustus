@@ -173,9 +173,17 @@ function LoppuselvitysTarkastus({
       }
     }
   }
+
+  const containsSentEmails = !!sentEmails?.length
+
   return (
     <>
-      <div data-test-id={taydennyspyyntoType} className={cn('writeMuistutusviesti', {})}>
+      <div
+        data-test-id={taydennyspyyntoType}
+        className={cn('writeMuistutusviesti', {
+          ['noBottomBorder']: showEmailForm || containsSentEmails,
+        })}
+      >
         <h2>{heading}</h2>
         <div>
           <button
