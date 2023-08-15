@@ -109,16 +109,18 @@ const Loppuselvitys = () => {
             userInfo={userInfo}
           />
         )}
-        {loppuselvitys && renderTaloustarkastusEmail && (
-          <TaloustarkastusEmail
-            avustushakuId={avustushaku.id}
-            hakemus={hakemus}
-            loppuselvitys={loppuselvitys}
-            lang={lang}
-            userInfo={userInfo}
-            avustushakuName={avustushaku.content.name[lang]}
-          />
-        )}
+        {loppuselvitys &&
+          renderTaloustarkastusEmail &&
+          !isFeatureEnabled(environment, 'loppuselvitys-taydennyspyynto') && (
+            <TaloustarkastusEmail
+              avustushakuId={avustushaku.id}
+              hakemus={hakemus}
+              loppuselvitys={loppuselvitys}
+              lang={lang}
+              userInfo={userInfo}
+              avustushakuName={avustushaku.content.name[lang]}
+            />
+          )}
       </div>
     </div>
   )

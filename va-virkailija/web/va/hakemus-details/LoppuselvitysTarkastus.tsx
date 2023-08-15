@@ -1,5 +1,5 @@
-import { Hakemus } from 'soresu-form/web/va/types'
-import ViestiLista, { ViestiListaRow } from './ViestiLista'
+import { Hakemus, SelvitysEmail } from 'soresu-form/web/va/types'
+import ViestiLista, { ViestiDetails, ViestiListaRow } from './ViestiLista'
 import { useHakemus } from '../hakemustenArviointi/useHakemus'
 import { useAvustushakuId } from '../hakemustenArviointi/useAvustushaku'
 import React, { useEffect, useRef, useState } from 'react'
@@ -13,8 +13,18 @@ import {
 } from '../apiSlice'
 import { hasFetchErrorMsg } from '../isFetchBaseQueryError'
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import { refreshHakemukset } from '../hakemustenArviointi/arviointiReducer'
-import { useHakemustenArviointiDispatch } from '../hakemustenArviointi/arviointiStore'
+import {
+  getLoadedState,
+  loadSelvitys,
+  refreshHakemukset,
+} from '../hakemustenArviointi/arviointiReducer'
+import {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from '../hakemustenArviointi/arviointiStore'
+import { initialRecipientEmails } from './emailRecipients'
+import { Language } from 'soresu-form/web/va/i18n/translations'
+import { VerificationBox } from './VerificationBox'
 
 function createInitialTaydennyspyyntoEmail(hakemus: Hakemus) {
   const contactEmail = hakemus.normalizedData?.['contact-email']
@@ -73,7 +83,12 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
           ? {
               name: verifiedBy,
               date: verifiedAt,
-              verification,
+              heading: 'Asiatarkastettu',
+              component: (
+                <div className={'messageDetails'}>
+                  <div className={'rowMessage'}>{verification}</div>
+                </div>
+              ),
             }
           : undefined
       }
@@ -82,15 +97,114 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
 }
 
 export function Taloustarkastus({ disabled }: { disabled: boolean }) {
+  const hakemus = useHakemus()
+  const avustushaku = useHakemustenArviointiSelector(
+    (s) => getLoadedState(s.arviointi).hakuData.avustushaku
+  )
+  const [showEmail, toggleEmail] = useState(false)
+  const userInfo = useHakemustenArviointiSelector((s) => getLoadedState(s.arviointi).userInfo)
+  const lang = hakemus.language
+  const loppuselvitys = hakemus.selvitys?.loppuselvitys
+  const taloustarkastettu = hakemus['status-loppuselvitys'] === 'accepted'
+  const senderName = userInfo['first-name'].split(' ')[0] + ' ' + userInfo['surname']
+  const projectName = loppuselvitys?.['project-name'] || hakemus['project-name'] || ''
+  const registerNumber = loppuselvitys?.['register-number'] || ''
+  const selvitysEmail = loppuselvitys?.['selvitys-email']
+  const dispatch = useHakemustenArviointiDispatch()
+  const isTaloustarkastettu = taloustarkastettu && selvitysEmail !== undefined
+  const [email, setEmail] = useState(() =>
+    isTaloustarkastettu
+      ? sentEmail(lang, selvitysEmail)
+      : {
+          lang,
+          subject: createEmailSubject(registerNumber)[lang],
+          content: createEmailContent(
+            projectName,
+            avustushaku.content.name[lang],
+            senderName,
+            userInfo.email
+          )[lang],
+          receivers: initialRecipientEmails(
+            (loppuselvitys?.answers ?? []).concat(hakemus.answers),
+            hakemus.normalizedData
+          ),
+        }
+  )
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    await HttpUtil.post(`/api/avustushaku/${avustushaku.id}/selvitys/loppuselvitys/send`, {
+      message: email.content,
+      'selvitys-hakemus-id': loppuselvitys!.id,
+      to: email.receivers,
+      subject: email.subject,
+    })
+    await dispatch(loadSelvitys({ avustushakuId: avustushaku.id, hakemusId: hakemus.id }))
+    await dispatch(refreshHakemukset({ avustushakuId: avustushaku.id, hakemusId: hakemus.id }))
+  }
+
   return (
-    <LoppuselvitysTarkastus
-      taydennyspyyntoType="taydennyspyynto-taloustarkastus"
-      disabled={disabled}
-      heading="Loppuselvityksen taloustarkastus"
-      taydennyspyyntoHeading="Taloustarkastuksen täydennyspyyntö"
-      confirmButtonText="Hyväksy"
-      confirmButton={<button disabled={disabled}>{'Hyväksy'}</button>}
-    />
+    <>
+      <LoppuselvitysTarkastus
+        taydennyspyyntoType="taydennyspyynto-taloustarkastus"
+        disabled={disabled || showEmail}
+        heading="Loppuselvityksen taloustarkastus"
+        taydennyspyyntoHeading="Taloustarkastuksen täydennyspyyntö"
+        confirmButtonText="Hyväksy"
+        completedBy={
+          isTaloustarkastettu &&
+          hakemus['loppuselvitys-taloustarkastanut-name'] &&
+          hakemus['loppuselvitys-taloustarkastettu-at']
+            ? {
+                name: hakemus['loppuselvitys-taloustarkastanut-name'],
+                date: hakemus['loppuselvitys-taloustarkastettu-at'],
+                heading: 'Hyväksytty',
+                component: (
+                  <ViestiDetails
+                    message={{
+                      id: 123456789,
+                      date: hakemus['loppuselvitys-taloustarkastettu-at'],
+                      virkailija: hakemus['loppuselvitys-taloustarkastanut-name'],
+                      sender: 'no-reply@oph.fi',
+                      receivers: selvitysEmail?.to,
+                      message: selvitysEmail?.message,
+                      subject: selvitysEmail?.subject,
+                    }}
+                  />
+                ),
+              }
+            : undefined
+        }
+        confirmButton={
+          <button
+            disabled={disabled || showEmail}
+            onClick={() => {
+              toggleEmail((show) => !show)
+            }}
+          >
+            {'Hyväksy'}
+          </button>
+        }
+      />
+      {!isTaloustarkastettu && showEmail && (
+        <MultipleRecipentEmailForm
+          onSubmit={onSubmit}
+          disabled={isTaloustarkastettu}
+          email={email}
+          setEmail={setEmail}
+          formName="taloustarkastus"
+          submitText="Hyväksy taloustarkastus ja lähetä viesti"
+          heading="Taloustarkastus ja loppuselvityksen hyväksyntä"
+          disabledSubmitButton={
+            <VerificationBox
+              title="Taloustarkastettu ja lähetetty hakijalle"
+              date={hakemus['loppuselvitys-taloustarkastettu-at']}
+              verifier={hakemus['loppuselvitys-taloustarkastanut-name']}
+            />
+          }
+        />
+      )}
+    </>
   )
 }
 
@@ -104,7 +218,8 @@ interface LoppuselvitysTarkastusProps {
   completedBy?: {
     name: string
     date: string
-    verification?: string
+    heading: string
+    component?: React.ReactNode
   }
 }
 
@@ -188,7 +303,7 @@ function LoppuselvitysTarkastus({
         <div>
           <button
             onClick={openOrRevealEmailForm}
-            disabled={disabled}
+            disabled={disabled || showEmailForm}
             className="writeMuistutusviestiButton"
           >
             Täydennyspyyntö
@@ -196,21 +311,17 @@ function LoppuselvitysTarkastus({
           {confirmButton}
         </div>
       </div>
-      <ViestiLista messages={sentEmails ?? []} />
+      <ViestiLista heading="Täydennyspyyntö" messages={sentEmails ?? []} />
       {completedBy && (
         <ViestiListaRow
           icon="done"
           virkailija={completedBy.name}
           date={completedBy.date}
           onClick={() => setShowMessage((show) => !show)}
-          heading="Asiatarkastettu"
+          heading={completedBy.heading}
           dataTestId="loppuselvitys-tarkastus"
         >
-          {showMessage && completedBy.verification && (
-            <div className={'messageDetails'}>
-              <div className={'rowMessage'}>{completedBy.verification}</div>
-            </div>
-          )}
+          {showMessage && completedBy.component}
         </ViestiListaRow>
       )}
       {showEmailForm && (
@@ -231,4 +342,74 @@ function LoppuselvitysTarkastus({
       )}
     </>
   )
+}
+
+function createEmailSubjectFi(registerNumber: string) {
+  return `Loppuselvitys ${registerNumber} käsitelty`
+}
+
+function createEmailSubjectSv(registerNumber: string) {
+  return `Slutredovisningen ${registerNumber} är behandlad`
+}
+
+function createEmailContentFi(
+  projectName: string,
+  avustushakuName: string,
+  senderName: string,
+  senderEmail: string
+) {
+  return `Hyvä vastaanottaja,
+
+Opetushallitus on tarkastanut hankkeen "${projectName}" ("${avustushakuName}") valtionavustusta koskevan loppuselvityksen ja toteaa avustusta koskevan asian käsittelyn päättyneeksi.
+
+Opetushallitus voi asian käsittelyn päättämisestä huolimatta periä avustuksen tai osan siitä takaisin, jos sen tietoon tulee uusi seikka, joka valtionavustuslain 21 tai 22 §:n mukaisesti velvoittaa tai oikeuttaa takaisinperintään.
+
+Terveisin,
+${senderName}
+${senderEmail}`
+}
+
+function createEmailContentSv(
+  projectName: string,
+  avustushakuName: string,
+  senderName: string,
+  senderEmail: string
+) {
+  return `Bästa mottagare
+
+Utbildningsstyrelsen har granskat slutredovisningen för projektet "${projectName}" ("${avustushakuName}") och bekräftar att ärendet nu är slutbehandlat.
+
+Utbildningsstyrelsen kan trots beslut om att ärendet är slutbehandlat kräva tillbaka understödet eller en del av det, om Utbildningsstyrelsen får ny information om ärendet som enligt 21 § eller 22 § i statsunderstödslagen förpliktar eller ger rätt till återkrav.
+
+Med vänlig hälsning,
+${senderName}
+${senderEmail}`
+}
+
+function createEmailContent(
+  projectName: string,
+  avustushakuName: string,
+  senderName: string,
+  senderEmail: string
+) {
+  return {
+    fi: createEmailContentFi(projectName, avustushakuName, senderName, senderEmail),
+    sv: createEmailContentSv(projectName, avustushakuName, senderName, senderEmail),
+  }
+}
+
+function createEmailSubject(registerNumber: string) {
+  return {
+    fi: createEmailSubjectFi(registerNumber),
+    sv: createEmailSubjectSv(registerNumber),
+  }
+}
+
+function sentEmail(lang: Language, sentEmail: SelvitysEmail) {
+  return {
+    lang,
+    receivers: sentEmail.to,
+    subject: sentEmail.subject,
+    content: sentEmail.message,
+  }
 }

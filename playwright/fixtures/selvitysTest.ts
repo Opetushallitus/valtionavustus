@@ -1,5 +1,5 @@
 import { muutoshakemusTest } from './muutoshakemusTest'
-import { clearAndType, expectToBeDefined, waitForElementWithText } from '../utils/util'
+import { expectToBeDefined } from '../utils/util'
 import { dummyPdfPath, VIRKAILIJA_URL } from '../utils/constants'
 import { navigate } from '../utils/navigate'
 import { HakijaSelvitysPage } from '../pages/hakijaSelvitysPage'
@@ -156,7 +156,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     const loppuselvitysPage = LoppuselvitysPage(page)
     await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
     await loppuselvitysPage.asiatarkastaLoppuselvitys('')
-    await expect(page.getByTestId('taloustarkastus-email')).toBeVisible()
+    await expect(loppuselvitysPage.locators.acceptTaloustarkastus).toBeEnabled()
     await use({
       asiatarkastettu: true,
     })
@@ -177,15 +177,15 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     expectToBeDefined(hakemusID)
     expect(asiatarkastettu)
     expect(loppuselvitysFormFilled)
-    await clearAndType(page, '[data-test-id="taloustarkastus-email-subject"]', 'Taloustarkastus OK')
-    await clearAndType(
-      page,
-      '[data-test-id="taloustarkastus-email-content"]',
-      'Taloustarkastus OK sähköposti content'
-    )
-    await page.click('[data-test-id="taloustarkastus-submit"]')
 
-    await waitForElementWithText(page, 'h3', 'Taloustarkastettu ja lähetetty hakijalle')
+    const loppuselvitysPage = LoppuselvitysPage(page)
+    await loppuselvitysPage.locators.acceptTaloustarkastus.click()
+    await page.getByTestId('taloustarkastus-email-subject').fill('Taloustarkastus OK')
+    await page
+      .getByTestId('taloustarkastus-email-content')
+      .fill('Taloustarkastus OK sähköposti content')
+    await loppuselvitysPage.locators.confirmTaloustarkastusButton.click()
+    await expect(loppuselvitysPage.locators.taloustarkastettu).toBeVisible()
     await use({
       taloustarkastettu: true,
     })

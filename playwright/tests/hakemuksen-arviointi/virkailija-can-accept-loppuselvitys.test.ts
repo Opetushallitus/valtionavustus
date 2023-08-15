@@ -1,15 +1,13 @@
 import { expect } from '@playwright/test'
 
-import moment from 'moment'
-
-import { waitForElementWithText, clearAndType } from '../../utils/util'
+import { clearAndType } from '../../utils/util'
 
 import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
 import { selvitysTest as test } from '../../fixtures/selvitysTest'
+import { LoppuselvitysPage } from '../../pages/hakujen-hallinta/LoppuselvitysPage'
 
 test('virkailija can accept loppuselvitys', async ({
   page,
-  avustushakuID,
   asiatarkastus: { asiatarkastettu },
   acceptedHakemus,
 }) => {
@@ -18,55 +16,41 @@ test('virkailija can accept loppuselvitys', async ({
   const content = 'Hyvä juttu'
   const additionalReceiver = 'buddy-boy@buddy.boy'
   let emailSendApiCalled = 0
+  const loppuselvitysPage = LoppuselvitysPage(page)
   await test.step('virkailija accepts loppuselvitys', async () => {
     await page.route('**/loppuselvitys/send', (route) => {
       emailSendApiCalled++
       route.continue()
     })
+    await loppuselvitysPage.locators.acceptTaloustarkastus.click()
     await page.click('[data-test-id="taloustarkastus-add-receiver"]')
     await clearAndType(page, '[data-test-id="taloustarkastus-receiver-2"]', additionalReceiver)
 
     await clearAndType(page, '[data-test-id="taloustarkastus-email-subject"]', subject)
     await clearAndType(page, '[data-test-id="taloustarkastus-email-content"]', content)
-    await page.click('[data-test-id="taloustarkastus-submit"]')
-
-    await waitForElementWithText(page, 'h3', 'Taloustarkastettu ja lähetetty hakijalle')
+    await loppuselvitysPage.locators.confirmTaloustarkastusButton.click()
+    await expect(loppuselvitysPage.locators.confirmTaloustarkastusButton).toBeHidden()
+    await expect(loppuselvitysPage.locators.taloustarkastettu).toBeVisible()
+    await expect(loppuselvitysPage.locators.acceptTaloustarkastus).toBeDisabled()
+    await expect(loppuselvitysPage.locators.acceptAsiatarkastus).toBeDisabled()
     expect(emailSendApiCalled).toEqual(1)
   })
 
   await test.step('and sees which email was sent to hakija afterward', async () => {
-    const displayedSubject = await page.getAttribute(
-      '[data-test-id="taloustarkastus-email-subject"]',
-      'value'
-    )
-    const displayedContent = await page.textContent(
-      '[data-test-id="taloustarkastus-email-content"]'
-    )
-    const displayedThirdReceiver = await page.getAttribute(
-      '[data-test-id="taloustarkastus-receiver-2"]',
-      'value'
-    )
-
-    expect(displayedSubject).toEqual(subject)
-    expect(displayedContent).toEqual(content)
-    expect(displayedThirdReceiver).toEqual(additionalReceiver)
-  })
-
-  await test.step('and sees that taloustarkastus has been made', async () => {
-    const title = await page.textContent('[data-test-id="taloustarkastus"] h3')
-    const date = await page.textContent('[data-test-id="taloustarkastus"] .date')
-    const verifier = await page.textContent(
-      '[data-test-id="taloustarkastus"] [data-test-id="verifier"]'
-    )
-
-    expect(title).toEqual('Taloustarkastettu ja lähetetty hakijalle')
-    expect(date).toEqual(moment().format('D.M.YYYY [klo] H.mm'))
-    expect(verifier).toEqual('_ valtionavustus')
+    await loppuselvitysPage.locators.taloustarkastettu.click()
+    await expect(page.getByText('Lähettäjäno-reply@oph.fi')).toBeVisible()
+    await expect(
+      page.getByText(
+        `Vastaanottajaterkki.esimerkki@example.com, akaan.kaupunki@akaa.fi, ${additionalReceiver}`
+      )
+    ).toBeVisible()
+    await expect(page.getByText(`Aihe${subject}`)).toBeVisible()
+    await expect(page.getByText(content)).toBeVisible()
   })
 
   await test.step('loppuselvitys is shown as hyväksytty in hakemus listing', async () => {
     const arviointi = new HakemustenArviointiPage(page)
-    await arviointi.navigate(avustushakuID)
+    await arviointi.closeHakemusDetails()
     await expect(arviointi.getLoppuselvitysStatus(acceptedHakemus.hakemusID)).toHaveText(
       'Hyväksytty'
     )

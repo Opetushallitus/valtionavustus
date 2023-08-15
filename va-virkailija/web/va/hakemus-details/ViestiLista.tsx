@@ -19,6 +19,7 @@ export interface Message {
 
 interface Props {
   messages: Message[]
+  heading?: string
 }
 
 type OpenedMessagesState = Record<number, boolean>
@@ -33,6 +34,7 @@ export default function ViestiLista(props: Props) {
         date={message.date}
         dataTestId={`open-email-${idx}`}
         virkailija={message.virkailija}
+        heading={props.heading}
         onClick={() =>
           setOpenedMessages({ ...openedMessages, [message.id]: !openedMessages[message.id] })
         }
@@ -44,7 +46,7 @@ export default function ViestiLista(props: Props) {
   return <>{messages}</>
 }
 
-function ViestiDetails(props: { message: Message }) {
+export function ViestiDetails(props: { message: Message }) {
   const message = props.message
   return (
     <div className={'messageDetails'}>
