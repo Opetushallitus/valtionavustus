@@ -187,22 +187,28 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
         }
       />
       {!isTaloustarkastettu && showEmail && (
-        <MultipleRecipentEmailForm
-          onSubmit={onSubmit}
-          disabled={isTaloustarkastettu}
-          email={email}
-          setEmail={setEmail}
-          formName="taloustarkastus"
-          submitText="Hyväksy taloustarkastus ja lähetä viesti"
-          heading="Taloustarkastus ja loppuselvityksen hyväksyntä"
-          disabledSubmitButton={
-            <VerificationBox
-              title="Taloustarkastettu ja lähetetty hakijalle"
-              date={hakemus['loppuselvitys-taloustarkastettu-at']}
-              verifier={hakemus['loppuselvitys-taloustarkastanut-name']}
-            />
-          }
-        />
+        <div style={{ marginTop: '8px' }}>
+          <MultipleRecipentEmailForm
+            onSubmit={onSubmit}
+            disabled={isTaloustarkastettu}
+            email={email}
+            setEmail={setEmail}
+            formName="taloustarkastus"
+            submitText="Hyväksy ja lähetä viesti"
+            heading="Taloustarkastus ja loppuselvityksen hyväksyntä"
+            disabledSubmitButton={
+              <VerificationBox
+                title="Taloustarkastettu ja lähetetty hakijalle"
+                date={hakemus['loppuselvitys-taloustarkastettu-at']}
+                verifier={hakemus['loppuselvitys-taloustarkastanut-name']}
+              />
+            }
+            cancelButton={{
+              text: 'Peruuta',
+              onClick: () => toggleEmail((show) => !show),
+            }}
+          />
+        </div>
       )}
     </>
   )
