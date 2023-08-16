@@ -2,7 +2,6 @@ import { expect, Page } from '@playwright/test'
 import SelvitysTab from './CommonSelvitysPage'
 
 export const LoppuselvitysPage = (page: Page) => {
-  const taydennyspyynto = page.getByText('Täydennyspyyntö')
   const locators = {
     linkToForm: page.locator('a', { hasText: 'Linkki lomakkeelle' }),
     warning: page.locator('#selvitys-not-sent-warning'),
@@ -20,8 +19,12 @@ export const LoppuselvitysPage = (page: Page) => {
     confirmAsiatarkastus: page
       .getByTestId('taydennyspyynto-asiatarkastus')
       .getByRole('button', { name: 'Vahvista hyväksyntä' }),
-    taydennyspyyntoAsiatarkastus: taydennyspyynto.nth(0),
-    taydennyspyyntoTaloustarkastus: taydennyspyynto.nth(1),
+    taydennyspyyntoAsiatarkastus: page
+      .getByTestId('taydennyspyynto-asiatarkastus')
+      .getByText('Täydennyspyyntö'),
+    taydennyspyyntoTaloustarkastus: page
+      .getByTestId('taydennyspyynto-taloustarkastus')
+      .getByText('Täydennyspyyntö'),
   }
 
   async function ensureMuistutusViestiEmailRecipientsContain(recipients: string[]) {
