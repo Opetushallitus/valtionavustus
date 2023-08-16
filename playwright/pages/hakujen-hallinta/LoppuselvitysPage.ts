@@ -17,9 +17,7 @@ export const LoppuselvitysPage = (page: Page) => {
       }),
     },
     taloustarkastus: {
-      taydennyspyynto: page
-        .getByTestId('loppuselvitys-taloustarkastus')
-        .getByText('Täydennyspyyntö'),
+      taydennyspyynto: taloustarkastus.getByText('Täydennyspyyntö'),
       accept: taloustarkastus.getByRole('button', { name: 'Hyväksy' }),
       confirmAcceptance: page.getByRole('button', {
         name: 'Hyväksy taloustarkastus ja lähetä viesti',
