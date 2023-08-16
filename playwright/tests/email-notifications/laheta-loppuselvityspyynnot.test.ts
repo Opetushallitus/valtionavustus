@@ -144,9 +144,8 @@ Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
         await test.step('notification is not sent again if loppupäätös is sent', async () => {
           await sendLoppuselvitysEmails(page, avustushakuID)
           await sendLahetaLoppuselvityspyynnotNotifications(page)
-          const emailsAfterSendingLoppuselvitys = await getLahetaLoppuselvityspyynnotEmails(
-            avustushakuID
-          )
+          const emailsAfterSendingLoppuselvitys =
+            await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
           expect(emailsAfter.length).toEqual(emailsAfterSendingLoppuselvitys.length)
         })
       }

@@ -183,13 +183,16 @@ export const MaksatuksetTable = ({ payments, testId }: PaymentsTableProps) => {
     setFilter({ ...filter, [key]: e.target.value })
   }
 
-  const groupedPayments = (payments ?? []).reduce((acc, cur) => {
-    const phase = `${cur.phase}`
-    if (phase) {
-      return { ...acc, [phase]: [...(acc[phase] ?? []), cur] }
-    }
-    return acc
-  }, {} as { [k in string]: Maksatus[] })
+  const groupedPayments = (payments ?? []).reduce(
+    (acc, cur) => {
+      const phase = `${cur.phase}`
+      if (phase) {
+        return { ...acc, [phase]: [...(acc[phase] ?? []), cur] }
+      }
+      return acc
+    },
+    {} as { [k in string]: Maksatus[] }
+  )
 
   return (
     <div data-test-id={testId}>

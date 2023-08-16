@@ -17,9 +17,8 @@ const test = submittedHakemusTest.extend({
     expect(userCache).toBeDefined()
     testInfo.setTimeout(testInfo.timeout + 40_000)
     const hakujenHallintaPage = new HakujenHallintaPage(page)
-    const avustushakuID = await hakujenHallintaPage.createUnpublishedMuutoshakemusEnabledHaku(
-      hakuProps
-    )
+    const avustushakuID =
+      await hakujenHallintaPage.createUnpublishedMuutoshakemusEnabledHaku(hakuProps)
     await test.step('add second koulutusaste', async () => {
       const { taTili } = HaunTiedotPage(page).locators
       await taTili.tili(0).koulutusaste(0).addKoulutusasteBtn.click()

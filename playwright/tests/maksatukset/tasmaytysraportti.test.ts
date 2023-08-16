@@ -15,7 +15,7 @@ export async function getTasmaytysraporit(
       contents: string
       'mailed-at': string
       mailed_at: string
-    }
+    },
   ]
 > {
   const res = await request.get(

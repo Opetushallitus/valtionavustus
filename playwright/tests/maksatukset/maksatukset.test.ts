@@ -138,9 +138,8 @@ test.describe('Maksatukset', () => {
       })
 
       await test.step('tarkista lähetetyt maksatukset', async () => {
-        const { 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(
-          hakemusID
-        )
+        const { 'register-number': registerNumber } =
+          await getHakemusTokenAndRegisterNumber(hakemusID)
         const sentPayments = await maksatuksetPage.clickLahetetytMaksatuksetTab()
 
         await expect(sentPayments(1).pitkaviite).toHaveText(`${registerNumber}_1 Erkki Esimerkki`)
@@ -178,9 +177,8 @@ test.describe('Maksatukset', () => {
       await maksatuksetPage.reloadPaymentPage()
 
       const paymentBatches = await maksatuksetPage.clickLahetetytMaksatuksetTab()
-      const { 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(
-        hakemusID
-      )
+      const { 'register-number': registerNumber } =
+        await getHakemusTokenAndRegisterNumber(hakemusID)
       const pitkaviite = `${registerNumber}_1 Erkki Esimerkki`
 
       await expect(paymentBatches(1).pitkaviite).toHaveText(pitkaviite)

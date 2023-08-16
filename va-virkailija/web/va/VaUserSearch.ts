@@ -19,7 +19,7 @@ const initialVaUserSearch: VaUserSearch = {
 export function useVaUserSearch(): [
   string,
   React.Dispatch<React.SetStateAction<string>>,
-  VaUserSearch
+  VaUserSearch,
 ] {
   const [searchInput, setSearchInput] = useState('')
   const [vaUserSearch, setVaUserSearch] = useState<VaUserSearch>(initialVaUserSearch)

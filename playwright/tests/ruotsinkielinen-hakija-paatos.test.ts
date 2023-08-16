@@ -16,9 +16,8 @@ svTest(
     await test.step('hakija gets an email in swedish', async () => {
       const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
       const email = emails[emails.length - 1]
-      const { token, 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(
-        hakemusID
-      )
+      const { token, 'register-number': registerNumber } =
+        await getHakemusTokenAndRegisterNumber(hakemusID)
       expect(email.formatted).toEqual(`${registerNumber} - ${answers.projectName}
 
 ${hakuProps.avustushakuName} på svenska

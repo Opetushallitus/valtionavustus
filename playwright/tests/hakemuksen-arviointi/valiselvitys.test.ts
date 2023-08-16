@@ -23,9 +23,8 @@ test.describe('Väliselvitys', () => {
       expect(email['to-address']).toHaveLength(1)
       expect(email['to-address']).toEqual(['erkki.esimerkki@example.com'])
       expect(email.subject).toEqual('Väliselvityksenne on vastaanotettu')
-      const { 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(
-        hakemusID
-      )
+      const { 'register-number': registerNumber } =
+        await getHakemusTokenAndRegisterNumber(hakemusID)
       expect(email.formatted).toContain(`Hyvä vastaanottaja,
 
 olemme vastaanottaneet väliselvityksenne.

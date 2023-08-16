@@ -331,9 +331,8 @@ muutoshakemusTest(
     expectToBeDefined(userCache)
     const { tatili1, tatili2 } = await createTaTilit(page)
     const hakujenHallintaPage = new HakujenHallintaPage(page)
-    const avustushakuID = await hakujenHallintaPage.createUnpublishedMuutoshakemusEnabledHaku(
-      hakuProps
-    )
+    const avustushakuID =
+      await hakujenHallintaPage.createUnpublishedMuutoshakemusEnabledHaku(hakuProps)
     const haunTiedotPage = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
     await test.step('add 2 tilis to avustushaku', async () => {
       for (const { index, tili } of [

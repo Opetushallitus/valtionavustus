@@ -61,8 +61,8 @@ export function HakijaAvustusHakuPage(page: Page) {
   }
 
   async function waitForEditSaved() {
-    return page.waitForFunction(() =>
-      document.querySelector('div.save-message')?.textContent?.includes('Tallennettu')
+    return page.waitForFunction(
+      () => document.querySelector('div.save-message')?.textContent?.includes('Tallennettu')
     )
   }
 
