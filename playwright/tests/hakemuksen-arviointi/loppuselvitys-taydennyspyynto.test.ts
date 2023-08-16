@@ -21,13 +21,13 @@ test('can send taydennyspyynto for loppuselvitys', async ({
   const emails = await getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails(hakemusID)
   expect(emails).toHaveLength(0)
   await test.step('only asiatarkastus is enabled', async () => {
-    await expect(loppuselvitysPage.locators.taydennyspyyntoAsiatarkastus).toBeEnabled()
-    await expect(loppuselvitysPage.locators.taydennyspyyntoTaloustarkastus).toBeDisabled()
+    await expect(loppuselvitysPage.locators.asiatarkastus.taydennyspyynto).toBeEnabled()
+    await expect(loppuselvitysPage.locators.taloustarkastus.taydennyspyynto).toBeDisabled()
   })
   await test.step('can send täydennyspyyntö email in asiatarkastus phase', async () => {
     const formHeading = page.getByRole('heading', { name: 'Asiatarkastuksen täydennyspyyntö' })
     await expect(formHeading).toBeHidden()
-    await loppuselvitysPage.locators.taydennyspyyntoAsiatarkastus.click()
+    await loppuselvitysPage.locators.asiatarkastus.taydennyspyynto.click()
     await expect(formHeading).toBeVisible()
     const email1 = 'erkki.esimerkki@example.com'
     await expect(
@@ -53,15 +53,15 @@ test('can send taydennyspyynto for loppuselvitys', async ({
   })
   await test.step('', async () => {
     await loppuselvitysPage.asiatarkastaLoppuselvitys('Ei huomioita')
-    await expect(loppuselvitysPage.locators.taydennyspyyntoAsiatarkastus).toBeDisabled()
-    await expect(loppuselvitysPage.locators.taydennyspyyntoTaloustarkastus).toBeEnabled()
+    await expect(loppuselvitysPage.locators.asiatarkastus.taydennyspyynto).toBeDisabled()
+    await expect(loppuselvitysPage.locators.taloustarkastus.taydennyspyynto).toBeEnabled()
     const emails = await getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails(hakemusID)
     expect(emails).toHaveLength(0)
   })
   await test.step('can send täydennyspyyntö email in taloustarkastus phase', async () => {
     const formHeading = page.getByRole('heading', { name: 'Taloustarkastuksen täydennyspyyntö' })
     await expect(formHeading).toBeHidden()
-    await loppuselvitysPage.locators.taydennyspyyntoTaloustarkastus.click()
+    await loppuselvitysPage.locators.taloustarkastus.taydennyspyynto.click()
     await expect(formHeading).toBeVisible()
     const email1 = 'erkki.esimerkki@example.com'
     await expect(

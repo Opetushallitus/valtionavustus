@@ -156,7 +156,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     const loppuselvitysPage = LoppuselvitysPage(page)
     await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
     await loppuselvitysPage.asiatarkastaLoppuselvitys('')
-    await expect(loppuselvitysPage.locators.acceptTaloustarkastus).toBeEnabled()
+    await expect(loppuselvitysPage.locators.taloustarkastus.accept).toBeEnabled()
     await use({
       asiatarkastettu: true,
     })
@@ -179,12 +179,12 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     expect(loppuselvitysFormFilled)
 
     const loppuselvitysPage = LoppuselvitysPage(page)
-    await loppuselvitysPage.locators.acceptTaloustarkastus.click()
+    await loppuselvitysPage.locators.taloustarkastus.accept.click()
     await page.getByTestId('taloustarkastus-email-subject').fill('Taloustarkastus OK')
     await page
       .getByTestId('taloustarkastus-email-content')
       .fill('Taloustarkastus OK sähköposti content')
-    await loppuselvitysPage.locators.confirmTaloustarkastusButton.click()
+    await loppuselvitysPage.locators.taloustarkastus.confirmAcceptance.click()
     await expect(loppuselvitysPage.locators.taloustarkastettu).toBeVisible()
     await use({
       taloustarkastettu: true,

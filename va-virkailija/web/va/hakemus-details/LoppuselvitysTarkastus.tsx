@@ -68,6 +68,7 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
   }
   return (
     <LoppuselvitysTarkastus
+      dataTestId="loppuselvitys-asiatarkastus"
       taydennyspyyntoType="taydennyspyynto-asiatarkastus"
       disabled={disabled}
       heading="Loppuselvityksen asiatarkastus"
@@ -145,6 +146,7 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
   return (
     <>
       <LoppuselvitysTarkastus
+        dataTestId="loppuselvitys-taloustarkastus"
         taydennyspyyntoType="taydennyspyynto-taloustarkastus"
         disabled={disabled || showEmail}
         heading="Loppuselvityksen taloustarkastus"
@@ -212,6 +214,7 @@ interface LoppuselvitysTarkastusProps {
   heading: string
   taydennyspyyntoHeading: string
   confirmButton: React.JSX.Element
+  dataTestId: string
   completedBy?: {
     name: string
     date: string
@@ -221,6 +224,7 @@ interface LoppuselvitysTarkastusProps {
 }
 
 function LoppuselvitysTarkastus({
+  dataTestId,
   disabled,
   heading,
   taydennyspyyntoHeading,
@@ -291,7 +295,7 @@ function LoppuselvitysTarkastus({
   return (
     <>
       <div
-        data-test-id={taydennyspyyntoType}
+        data-test-id={dataTestId}
         className={cn('writeMuistutusviesti', {
           ['noBottomBorder']: showEmailForm || containsSentEmails,
         })}

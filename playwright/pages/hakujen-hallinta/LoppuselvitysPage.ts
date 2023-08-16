@@ -2,29 +2,29 @@ import { expect, Page } from '@playwright/test'
 import SelvitysTab from './CommonSelvitysPage'
 
 export const LoppuselvitysPage = (page: Page) => {
+  const asiatarkastus = page.getByTestId('loppuselvitys-asiatarkastus')
+  const taloustarkastus = page.getByTestId('loppuselvitys-taloustarkastus')
   const locators = {
     linkToForm: page.locator('a', { hasText: 'Linkki lomakkeelle' }),
     warning: page.locator('#selvitys-not-sent-warning'),
-    acceptTaloustarkastus: page
-      .getByTestId('taydennyspyynto-taloustarkastus')
-      .getByRole('button', { name: 'Hyväksy' }),
-    confirmTaloustarkastusButton: page.getByRole('button', {
-      name: 'Hyväksy taloustarkastus ja lähetä viesti',
-    }),
-    taloustarkastettu: page.getByTestId('loppuselvitys-tarkastus').nth(1),
     asiatarkastettu: page.getByTestId('loppuselvitys-tarkastus').first(),
-    acceptAsiatarkastus: page
-      .getByTestId('taydennyspyynto-asiatarkastus')
-      .getByRole('button', { name: 'Hyväksy' }),
-    confirmAsiatarkastus: page
-      .getByTestId('taydennyspyynto-asiatarkastus')
-      .getByRole('button', { name: 'Vahvista hyväksyntä' }),
-    taydennyspyyntoAsiatarkastus: page
-      .getByTestId('taydennyspyynto-asiatarkastus')
-      .getByText('Täydennyspyyntö'),
-    taydennyspyyntoTaloustarkastus: page
-      .getByTestId('taydennyspyynto-taloustarkastus')
-      .getByText('Täydennyspyyntö'),
+    taloustarkastettu: page.getByTestId('loppuselvitys-tarkastus').nth(1),
+    asiatarkastus: {
+      taydennyspyynto: asiatarkastus.getByText('Täydennyspyyntö'),
+      accept: asiatarkastus.getByRole('button', { name: 'Hyväksy' }),
+      confirmAcceptance: asiatarkastus.getByRole('button', {
+        name: 'Vahvista hyväksyntä',
+      }),
+    },
+    taloustarkastus: {
+      taydennyspyynto: page
+        .getByTestId('loppuselvitys-taloustarkastus')
+        .getByText('Täydennyspyyntö'),
+      accept: taloustarkastus.getByRole('button', { name: 'Hyväksy' }),
+      confirmAcceptance: page.getByRole('button', {
+        name: 'Hyväksy taloustarkastus ja lähetä viesti',
+      }),
+    },
   }
 
   async function ensureMuistutusViestiEmailRecipientsContain(recipients: string[]) {
@@ -50,18 +50,18 @@ export const LoppuselvitysPage = (page: Page) => {
 
   async function asiatarkastaLoppuselvitys(_: string) {
     await expect(locators.asiatarkastettu).toBeHidden()
-    await locators.acceptAsiatarkastus.click()
-    await locators.confirmAsiatarkastus.click()
+    await locators.asiatarkastus.accept.click()
+    await locators.asiatarkastus.confirmAcceptance.click()
     await expect(locators.asiatarkastettu).toBeVisible()
     await expect(locators.asiatarkastettu).toContainText('Asiatarkastettu')
   }
 
   async function taloustarkastaLoppuselvitys() {
     await expect(locators.taloustarkastettu).toBeHidden()
-    await expect(locators.confirmTaloustarkastusButton).toBeHidden()
-    await locators.acceptTaloustarkastus.click()
-    await locators.confirmTaloustarkastusButton.click()
-    await expect(locators.confirmTaloustarkastusButton).toBeHidden()
+    await expect(locators.taloustarkastus.confirmAcceptance).toBeHidden()
+    await locators.taloustarkastus.accept.click()
+    await locators.taloustarkastus.confirmAcceptance.click()
+    await expect(locators.taloustarkastus.confirmAcceptance).toBeHidden()
     await expect(locators.taloustarkastettu).toBeVisible()
     await expect(locators.taloustarkastettu).toContainText('Hyväksytty')
   }
