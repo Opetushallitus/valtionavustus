@@ -72,7 +72,6 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
       disabled={disabled}
       heading="Loppuselvityksen asiatarkastus"
       taydennyspyyntoHeading="Asiatarkastuksen täydennyspyyntö"
-      confirmButtonText="Hyväksy"
       confirmButton={
         <button disabled={disabled} onClick={onClick}>
           {showConfirmation ? 'Vahvista hyväksyntä' : 'Hyväksy'}
@@ -150,7 +149,6 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
         disabled={disabled || showEmail}
         heading="Loppuselvityksen taloustarkastus"
         taydennyspyyntoHeading="Taloustarkastuksen täydennyspyyntö"
-        confirmButtonText="Hyväksy"
         completedBy={
           isTaloustarkastettu &&
           hakemus['loppuselvitys-taloustarkastanut-name'] &&
@@ -213,7 +211,6 @@ interface LoppuselvitysTarkastusProps {
   disabled: boolean
   heading: string
   taydennyspyyntoHeading: string
-  confirmButtonText: string
   confirmButton: React.JSX.Element
   completedBy?: {
     name: string
