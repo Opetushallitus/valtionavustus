@@ -1,4 +1,5 @@
 import { Answer, NormalizedHakemusData } from 'soresu-form/web/va/types'
+import { uniq } from 'lodash'
 
 const isPrimaryEmail = ({ key }: Answer) => key === 'primary-email'
 const isOrganizationEmail = ({ key }: Answer) => key === 'organization-email'
@@ -13,8 +14,8 @@ export function initialRecipientEmails(
   const emailsFromAnswers = answers
     .filter((a) => isPrimaryEmail(a) || isOrganizationEmail(a) || isVarayhteyshenkiloEmailField(a))
     .map((a) => a.value)
-  if (normalizedVarayhteyshenkiloEmail) {
-    return [...emailsFromAnswers, normalizedVarayhteyshenkiloEmail]
-  }
-  return emailsFromAnswers
+  const emails = normalizedVarayhteyshenkiloEmail
+    ? [...emailsFromAnswers, normalizedVarayhteyshenkiloEmail]
+    : emailsFromAnswers
+  return uniq(emails)
 }
