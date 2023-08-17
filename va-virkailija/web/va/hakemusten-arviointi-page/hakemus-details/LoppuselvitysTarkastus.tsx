@@ -289,14 +289,14 @@ function LoppuselvitysTarkastus({
     }
   }
 
-  const containsSentEmails = !!sentEmails?.length
+  const noBottomBorder = !!sentEmails?.length || showEmailForm || completedBy
 
   return (
     <>
       <div
         data-test-id={dataTestId}
         className={cn('writeMuistutusviesti', {
-          ['noBottomBorder']: showEmailForm || containsSentEmails,
+          ['noBottomBorder']: noBottomBorder,
         })}
       >
         <h2>{heading}</h2>
