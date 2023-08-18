@@ -6,12 +6,14 @@ import {
   getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails,
   getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails,
 } from '../../utils/emails'
+import { HakijaSelvitysPage } from '../../pages/hakijaSelvitysPage'
+import { navigate } from '../../utils/navigate'
 
 test('can send taydennyspyynto for loppuselvitys', async ({
   page,
   acceptedHakemus: { hakemusID },
   avustushakuID,
-  loppuselvitysSubmitted: {},
+  loppuselvitysSubmitted: { loppuselvitysFormUrl },
 }) => {
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   const loppuselvitysPage = await hakemustenArviointiPage.navigateToHakemusArviointiLoppuselvitys(
@@ -51,14 +53,14 @@ test('can send taydennyspyynto for loppuselvitys', async ({
     const emailsAfterSending = await getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails(hakemusID)
     expect(emailsAfterSending).toHaveLength(1)
   })
-  await test.step('', async () => {
+  await test.step('asiatarkastus enables taloustarkastus', async () => {
     await loppuselvitysPage.asiatarkastaLoppuselvitys('Ei huomioita')
     await expect(loppuselvitysPage.locators.asiatarkastus.taydennyspyynto).toBeDisabled()
     await expect(loppuselvitysPage.locators.taloustarkastus.taydennyspyynto).toBeEnabled()
-    const emails = await getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails(hakemusID)
-    expect(emails).toHaveLength(0)
   })
   await test.step('can send täydennyspyyntö email in taloustarkastus phase', async () => {
+    const emailsBefore = await getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails(hakemusID)
+    expect(emailsBefore).toHaveLength(0)
     const formHeading = page.getByRole('heading', { name: 'Taloustarkastuksen täydennyspyyntö' })
     await expect(formHeading).toBeHidden()
     await loppuselvitysPage.locators.taloustarkastus.taydennyspyynto.click()
@@ -79,7 +81,27 @@ test('can send taydennyspyynto for loppuselvitys', async ({
     await page.getByTestId('open-email-0').nth(1).click()
     await expect(page.getByText(`Vastaanottajat${email1}`)).toBeVisible()
     await expect(page.getByText(`Aihe${subject}`)).toBeVisible()
-    const emails = await getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails(hakemusID)
-    expect(emails).toHaveLength(1)
+    const emailsAfter = await getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails(hakemusID)
+    expect(emailsAfter).toHaveLength(1)
+  })
+  await test.step('and hakija can send täydennys until taloustarkastus has been done', async () => {
+    await navigate(page, loppuselvitysFormUrl)
+    const hakijaSelvitysPage = HakijaSelvitysPage(page)
+    const saving = hakijaSelvitysPage.page.getByText('Tallennetaan…')
+    await expect(hakijaSelvitysPage.loppuselvitysWarning).toBeHidden()
+    await expect(saving).toBeHidden()
+    await expect(hakijaSelvitysPage.textArea(0)).toHaveValue('Yhteenveto')
+    const updatedText = 'Yhteenveto2'
+    await hakijaSelvitysPage.textArea(0).fill(updatedText)
+    await expect(saving).toBeVisible()
+    await expect(hakijaSelvitysPage.page.getByText('Tallennettu')).toBeVisible()
+    await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
+    await expect(page.getByText(updatedText)).toBeVisible()
+    await loppuselvitysPage.taloustarkastaLoppuselvitys()
+    await navigate(page, loppuselvitysFormUrl)
+    await expect(hakijaSelvitysPage.loppuselvitysWarning).toBeVisible()
+    await expect(hakijaSelvitysPage.textArea(0)).toBeHidden()
+    await expect(hakijaSelvitysPage.page.locator('#textArea-0')).toHaveText(updatedText)
+    await expect(hakijaSelvitysPage.submitButton).toBeHidden()
   })
 })

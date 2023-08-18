@@ -52,12 +52,11 @@ export default class VaForm<T extends BaseStateLoopState<T>> extends React.Compo
       />
     )
     const headerElements = [registerNumberDisplay, changeRequest]
-    const isLoppuselvitysInformationVerified =
-      hakemusType === 'loppuselvitys' &&
-      state.saveStatus &&
-      state.saveStatus.savedObject &&
-      state.saveStatus.savedObject['loppuselvitys-information-verified-at']
-    const form = preview || isLoppuselvitysInformationVerified ? FormPreview : Form
+    const form =
+      preview ||
+      (hakemusType === 'loppuselvitys' && !state.saveStatus.savedObject?.['selvitys-updatable'])
+        ? FormPreview
+        : Form
     const showGrantRefuse =
       preview &&
       // @ts-ignore

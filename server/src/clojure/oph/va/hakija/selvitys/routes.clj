@@ -26,7 +26,8 @@
 (defn- selvitys-updateable? [selvitys-type parent-hakemus]
   (case selvitys-type
     "valiselvitys"  (not= (:status-valiselvitys parent-hakemus) "accepted")
-    "loppuselvitys" (not (:loppuselvitys-information-verified-at parent-hakemus))))
+    "loppuselvitys" (or (not (:loppuselvitys-information-verified-at parent-hakemus))
+                        (and (true? (:loppuselvitys-taloustarkastus-taydennyspyynto-sent parent-hakemus)) (not (:loppuselvitys-taloustarkastettu-at parent-hakemus))))))
 
 (defn selvitys-response [current-answers updatable]
   (let [{:keys [hakemus submission validation parent-hakemus]} current-answers]
@@ -83,8 +84,9 @@
         avustushaku (va-db/get-avustushaku haku-id)
         form-id (get avustushaku (selvitys-form-keyword selvitys-type))
         form (form-db/get-form form-id)
-        security-validation (validation/validate-form-security form answers)]
-    (if (not (selvitys-updateable? selvitys-type parent-hakemus))
+        security-validation (validation/validate-form-security form answers)
+        updatable (selvitys-updateable? selvitys-type parent-hakemus)]
+    (if (not updatable)
       (http/forbidden)
       (if (not= base-version (:version hakemus))
         (handlers/hakemus-conflict-response hakemus)
@@ -102,13 +104,13 @@
                                                          (:register_number hakemus)
                                                          answers
                                                          budget-totals)]
-            (handlers/hakemus-ok-response updated-hakemus updated-submission validation parent-hakemus)))))))
+            (http/ok (selvitys-response {:hakemus updated-hakemus :submission updated-submission :validation validation :parent-hakemus parent-hakemus} updatable))))))))
 
 (defn post-selvitys []
   (compojure-api/POST "/:haku-id/selvitys/:selvitys-type/:hakemus-key/:base-version" [haku-id hakemus-key base-version selvitys-type :as request]
     :path-params [haku-id :- Long, hakemus-key :- s/Str, base-version :- Long]
     :body [answers (compojure-api/describe soresu-schema/Answers "New answers")]
-    :return hakija-schema/Hakemus
+    :return Selvitys
     :summary "Update hakemus values"
     (on-selvitys-update haku-id hakemus-key base-version answers selvitys-type)))
 

@@ -488,6 +488,8 @@
       (let [identity (authentication/get-request-identity request)]
         (when (not (seq (filter notEmptyString to)))
           (http/bad-request! {:error "Viestillä on oltava vähintään yksi vastaanottaja"}))
+        (when (= "taydennyspyynto-taloustarkastus" type)
+          (hakija-db/set-loppuselvitys-taloustarkastus-taydennyspyynto-for-hakemus hakemus-id))
         (let [email-id (common-email/try-send-email!
                          (common-email/message (keyword lang)
                                                (keyword type)
