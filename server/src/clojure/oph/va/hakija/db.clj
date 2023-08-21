@@ -571,7 +571,6 @@
         {:token token}))
 
 (defn set-loppuselvitys-taloustarkastus-taydennyspyynto-for-hakemus [hakemus-id]
-  (query "UPDATE hakemukset
-          SET loppuselvitys_taloustarkastus_taydennyspyynto_sent = true
-          WHERE id = ? AND version_closed IS NULL
-          RETURNING id", [hakemus-id]))
+  (execute! "UPDATE hakemukset
+             SET loppuselvitys_taloustarkastus_taydennyspyynto_sent = true
+             WHERE id = ? AND version_closed IS NULL", [hakemus-id]))
