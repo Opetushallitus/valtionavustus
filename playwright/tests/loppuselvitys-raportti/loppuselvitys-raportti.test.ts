@@ -11,6 +11,7 @@ test('excel contains at least one row after submitting loppuselvitys', async ({
   loppuselvitysSubmitted: { loppuselvitysFormUrl },
   asiatarkastus: { asiatarkastettu },
   taloustarkastus: { taloustarkastettu },
+  hakuProps,
 }) => {
   expect(asiatarkastettu)
   expect(taloustarkastettu)
@@ -49,12 +50,19 @@ test('excel contains at least one row after submitting loppuselvitys', async ({
   await test.step('Hakemukset sheet has correct data', () => {
     const sheet = workbook.Sheets['Hakemukset']
     expectHakemusSheetHeaders(sheet)
+    expectToFindRowInSheet(sheet, {
+      A: `1/${hakuProps.registerNumber}`,
+      B: hakuProps.avustushakuName,
+      C: 'Akaan kaupunki',
+      D: 99999,
+    })
   })
 })
 
 test('at least one loppuselvitys is not asiatarkastettu', async ({
   page,
   loppuselvitysSubmitted: { loppuselvitysFormFilled },
+  hakuProps,
 }) => {
   expect(loppuselvitysFormFilled)
   const res = await page.request.get(
@@ -83,6 +91,12 @@ test('at least one loppuselvitys is not asiatarkastettu', async ({
   await test.step('Hakemukset sheet has correct data', () => {
     const sheet = workbook.Sheets['Hakemukset']
     expectHakemusSheetHeaders(sheet)
+    expectToFindRowInSheet(sheet, {
+      A: `1/${hakuProps.registerNumber}`,
+      B: hakuProps.avustushakuName,
+      C: 'Akaan kaupunki',
+      D: 99999,
+    })
   })
 
   await test.step('Hakemukset sheet has at least one row', () => {
@@ -103,4 +117,19 @@ function expectHakemusSheetHeaders(sheet: xlsx.WorkSheet) {
   expect(sheet['B1'].v).toEqual('Avustushaun nimi')
   expect(sheet['C1'].v).toEqual('Hakijaorganisaatio')
   expect(sheet['D1'].v).toEqual('Myönnetty avustus')
+}
+
+function expectToFindRowInSheet(
+  sheet: xlsx.WorkSheet,
+  expectedRow: { A: string; B: string; C: string; D: number }
+) {
+  const range = xlsx.utils.decode_range(sheet['!ref']!)
+  const numberOfRows = range.e.r - range.s.r + 1
+  const rows = Array.from({ length: numberOfRows }, (_, i) => i + 1).map((indexFromOne) => ({
+    A: sheet[`A${indexFromOne}`].v,
+    B: sheet[`B${indexFromOne}`].v,
+    C: sheet[`C${indexFromOne}`].v,
+    D: sheet[`D${indexFromOne}`].v,
+  }))
+  expect(rows).toContainEqual(expectedRow)
 }

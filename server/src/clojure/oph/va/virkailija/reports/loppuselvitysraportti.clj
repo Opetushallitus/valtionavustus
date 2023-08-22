@@ -57,9 +57,10 @@ left join taloustarkastetut_loppuselvitykset tl on tl.year = l.year
 
 (defn- get-hakemukset-rows []
   (query "
-  select register_number, project_name, organization_name, va.budget_granted
+  select ha.register_number, a.content->'name'->'fi', organization_name, va.budget_granted
   from hakija.hakemukset ha
            join virkailija.arviot va on va.hakemus_id = ha.id
+           join hakija.avustushaut a on ha.avustushaku = a.id
            where version_closed is null
            and ha.status in ('submitted', 'pending_change_request', 'officer_edit')
     " {}))
