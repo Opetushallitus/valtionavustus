@@ -1,9 +1,9 @@
 import { expect } from '@playwright/test'
 
-import { switchUserIdentityTo } from '../../utils/util'
+import { switchUserIdentityTo } from '../../../utils/util'
 
-import { selvitysTest as test } from '../../fixtures/selvitysTest'
-import { LoppuselvitysPage } from '../../pages/hakujen-hallinta/LoppuselvitysPage'
+import { selvitysTest as test } from '../../../fixtures/selvitysTest'
+import { LoppuselvitysPage } from '../../../pages/hakujen-hallinta/LoppuselvitysPage'
 
 test('shows asiatarkastus to pääkäyttäjä who is not valmistelija', async ({
   page,

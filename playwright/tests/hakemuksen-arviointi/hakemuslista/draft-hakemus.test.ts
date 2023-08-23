@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test'
-import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
-import { HakijaAvustusHakuPage } from '../../pages/hakijaAvustusHakuPage'
-import { TEST_Y_TUNNUS } from '../../utils/constants'
-import { expectToBeDefined } from '../../utils/util'
+import { muutoshakemusTest } from '../../../fixtures/muutoshakemusTest'
+import { HakemustenArviointiPage } from '../../../pages/hakemustenArviointiPage'
+import { HakijaAvustusHakuPage } from '../../../pages/hakijaAvustusHakuPage'
+import { TEST_Y_TUNNUS } from '../../../utils/constants'
+import { expectToBeDefined } from '../../../utils/util'
 
 interface NewHakemusFixtures {
   newHakemus: string

@@ -1,9 +1,9 @@
-import { waitForNewTab } from '../../utils/util'
+import { waitForNewTab } from '../../../utils/util'
 
-import { selvitysTest as test } from '../../fixtures/selvitysTest'
+import { selvitysTest as test } from '../../../fixtures/selvitysTest'
 import { expect } from '@playwright/test'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
-import { LoppuselvitysPage } from '../../pages/hakujen-hallinta/LoppuselvitysPage'
+import { HakujenHallintaPage } from '../../../pages/hakujenHallintaPage'
+import { LoppuselvitysPage } from '../../../pages/hakujen-hallinta/LoppuselvitysPage'
 
 test('Loppuselvitys tab in hakemuksen arviointi should have link to correct loppuselvitys form for the hakemus', async ({
   page,

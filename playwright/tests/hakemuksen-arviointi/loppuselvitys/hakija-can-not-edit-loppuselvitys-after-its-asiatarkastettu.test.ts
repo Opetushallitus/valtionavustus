@@ -1,9 +1,9 @@
 import { expect } from '@playwright/test'
 
-import { navigate } from '../../utils/navigate'
+import { navigate } from '../../../utils/navigate'
 
-import { HakijaSelvitysPage } from '../../pages/hakijaSelvitysPage'
-import { selvitysTest as test } from '../../fixtures/selvitysTest'
+import { HakijaSelvitysPage } from '../../../pages/hakijaSelvitysPage'
+import { selvitysTest as test } from '../../../fixtures/selvitysTest'
 
 test('hakija can not edit loppuselvitys after information has been verified', async ({
   page,

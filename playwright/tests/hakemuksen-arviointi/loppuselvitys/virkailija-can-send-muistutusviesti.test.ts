@@ -1,8 +1,8 @@
 import { Locator, expect } from '@playwright/test'
-import { clearAndType } from '../../utils/util'
-import { selvitysTest as test } from '../../fixtures/selvitysTest'
-import SelvitysTab from '../../pages/hakujen-hallinta/CommonSelvitysPage'
-import { getLoppuselvitysMuistutusviestiEmails, waitUntilMinEmails } from '../../utils/emails'
+import { clearAndType } from '../../../utils/util'
+import { selvitysTest as test } from '../../../fixtures/selvitysTest'
+import SelvitysTab from '../../../pages/hakujen-hallinta/CommonSelvitysPage'
+import { getLoppuselvitysMuistutusviestiEmails, waitUntilMinEmails } from '../../../utils/emails'
 import moment from 'moment'
 
 test('virkailija can send muistutusviesti for loppuselvitys', async ({

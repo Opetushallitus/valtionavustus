@@ -1,9 +1,9 @@
-import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { muutoshakemusTest as test } from '../../../fixtures/muutoshakemusTest'
+import { HakujenHallintaPage } from '../../../pages/hakujenHallintaPage'
+import { HakemustenArviointiPage } from '../../../pages/hakemustenArviointiPage'
 import { expect } from '@playwright/test'
-import { expectToBeDefined } from '../../utils/util'
-import { selvitysTest } from '../../fixtures/selvitysTest'
+import { expectToBeDefined } from '../../../utils/util'
+import { selvitysTest } from '../../../fixtures/selvitysTest'
 
 test(`shows Muokattu pill when the application has been modified after submit`, async ({
   page,

@@ -1,10 +1,10 @@
 import { expect } from '@playwright/test'
 
-import { clearAndType } from '../../utils/util'
+import { clearAndType } from '../../../utils/util'
 
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
-import { selvitysTest as test } from '../../fixtures/selvitysTest'
-import { LoppuselvitysPage } from '../../pages/hakujen-hallinta/LoppuselvitysPage'
+import { HakemustenArviointiPage } from '../../../pages/hakemustenArviointiPage'
+import { selvitysTest as test } from '../../../fixtures/selvitysTest'
+import { LoppuselvitysPage } from '../../../pages/hakujen-hallinta/LoppuselvitysPage'
 
 test('virkailija can accept loppuselvitys', async ({
   page,

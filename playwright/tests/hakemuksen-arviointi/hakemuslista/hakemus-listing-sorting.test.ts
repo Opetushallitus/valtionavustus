@@ -1,9 +1,9 @@
 import { expect } from '@playwright/test'
-import { budjettimuutoshakemusTest } from '../../fixtures/budjettimuutoshakemusTest'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
-import { expectToBeDefined } from '../../utils/util'
-import { HakijaAvustusHakuPage } from '../../pages/hakijaAvustusHakuPage'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
+import { budjettimuutoshakemusTest } from '../../../fixtures/budjettimuutoshakemusTest'
+import { HakemustenArviointiPage } from '../../../pages/hakemustenArviointiPage'
+import { expectToBeDefined } from '../../../utils/util'
+import { HakijaAvustusHakuPage } from '../../../pages/hakijaAvustusHakuPage'
+import { HakujenHallintaPage } from '../../../pages/hakujenHallintaPage'
 
 interface ArviointiUiFilteringFixtures {
   hakemustenArviointiPage: HakemustenArviointiPage

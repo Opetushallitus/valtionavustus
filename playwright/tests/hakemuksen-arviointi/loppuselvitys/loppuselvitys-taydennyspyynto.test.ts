@@ -1,13 +1,13 @@
 import { expect } from '@playwright/test'
 
-import { selvitysTest as test } from '../../fixtures/selvitysTest'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { selvitysTest as test } from '../../../fixtures/selvitysTest'
+import { HakemustenArviointiPage } from '../../../pages/hakemustenArviointiPage'
 import {
   getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails,
   getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails,
-} from '../../utils/emails'
-import { HakijaSelvitysPage } from '../../pages/hakijaSelvitysPage'
-import { navigate } from '../../utils/navigate'
+} from '../../../utils/emails'
+import { HakijaSelvitysPage } from '../../../pages/hakijaSelvitysPage'
+import { navigate } from '../../../utils/navigate'
 
 test('can send taydennyspyynto for loppuselvitys', async ({
   page,
