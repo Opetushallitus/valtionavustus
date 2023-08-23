@@ -8,4 +8,6 @@
 
  ;https://jira.eduuni.fi/browse/VA-374
  :loppuselvitys-taydennyspyynto [:dev :va-test]
- }
+
+ ;https://jira.eduuni.fi/browse/VA-375
+ :vapaamuotoinen-viesti-hankkeelle [:dev :va-test]}
