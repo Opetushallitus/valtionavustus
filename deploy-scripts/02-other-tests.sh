@@ -7,8 +7,10 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../scripts/common-func
 # shellcheck source=./deploy-functions.sh
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/deploy-functions.sh"
 
+compose="docker compose -f docker-compose.yml -f docker-compose.local-dev.yml"
+
 function cleanup {
-    docker compose down
+    $compose down
 }
 
 function main {
@@ -30,8 +32,8 @@ function main {
 
     start_gh_actions_group "Run lein tests"
     trap cleanup EXIT
-    docker compose up --wait db
-    docker run --rm --network container:va-postgres "$test_image_tag"
+    $compose up --wait db
+    docker run --rm --network valtionavustus_local-dev "$test_image_tag"
     end_gh_actions_group
 }
 

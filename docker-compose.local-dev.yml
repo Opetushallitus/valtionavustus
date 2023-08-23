@@ -23,3 +23,7 @@ services:
   maksatuspalvelu:
     ports:
       - '127.0.0.1:42022:22'
+
+networks:
+  default:
+    name: valtionavustus_local-dev
