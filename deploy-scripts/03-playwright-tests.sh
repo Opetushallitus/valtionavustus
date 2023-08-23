@@ -47,7 +47,9 @@ function main {
   --env PLAYWRIGHT_RETRIES=1\
   --env PLAYWRIGHT_SHARD="${PLAYWRIGHT_SHARD-}"\
   --env PLAYWRIGHT_SHARDS_AMOUNT="${PLAYWRIGHT_SHARDS_AMOUNT-}"\
-  playwright-image
+  playwright-image \
+  "$@"
+
   end_gh_actions_group
 
   clean
