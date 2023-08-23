@@ -28,15 +28,11 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.hakija
-    container_name: va
     hostname: va
     environment:
       JAVA_TOOL_OPTIONS: '-Duser.timezone="Europe/Helsinki"'
     volumes:
       - /dev/urandom:/dev/random
-    ports:
-      - '8080:8080'
-      - '8081:8081'
     depends_on:
       db:
         condition: service_healthy
@@ -57,10 +53,7 @@ services:
     image: postgres:12.2
     volumes:
       - ./scripts/postgres-docker/init-db.sql:/docker-entrypoint-initdb.d/init.sql
-    container_name: va-postgres
     hostname: va-postgres
-    ports:
-      - '42042:5432'
     command: ["postgres", "-c", "log_statement=all"]
     environment:
       POSTGRES_USER: 'va'
@@ -89,12 +82,9 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.rcs-fakesmtp
-    container_name: rcs-fakesmtp
     hostname: fakesmtp
     volumes:
       - ./fakesmtp/mail:/var/mail
-    ports:
-      - '42069:25'
     logging:
       options:
         mode: 'non-blocking'
@@ -106,8 +96,6 @@ services:
       - ./maksatuspalvelu/initialize-maksatuspalvelu.sh:/etc/sftp.d/initialize-maksatuspalvelu.sh
       - ./maksatuspalvelu/identity/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
       - ./maksatuspalvelu/identity/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key
-    ports:
-      - '42022:22'
     command: demo:pass:1001:100
     logging:
       options:

@@ -1,6 +1,9 @@
 name: valtionavustus-dev
 services:
   va:
+    ports:
+      - '127.0.0.1:8080:8080'
+      - '127.0.0.1:8081:8081'
     volumes:
       - type: bind
         source: ./server/
@@ -8,3 +11,15 @@ services:
       - type: bind
         source: ./tmp/
         target: /tmp/
+
+  db:
+    ports:
+      - '127.0.0.1:42042:5432'
+
+  fakesmtp:
+    ports:
+      - '127.0.0.1:42069:25'
+
+  maksatuspalvelu:
+    ports:
+      - '127.0.0.1:42022:22'
