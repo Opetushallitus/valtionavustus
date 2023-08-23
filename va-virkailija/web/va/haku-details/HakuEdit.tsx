@@ -4,7 +4,6 @@ import { Moment } from 'moment'
 import DateUtil from 'soresu-form/web/DateUtil'
 import { AVUSTUSHAKU_STATUSES, AvustushakuStatus, HelpTexts } from 'soresu-form/web/va/types'
 
-import HakuStatus from '../avustushaku/HakuStatus'
 import { HakuRoles } from './HakuRoles'
 import AutoCompleteCodeValue, { CodeType } from './AutoCompleteCodeValue'
 import HelpTooltip from '../HelpTooltip'
@@ -526,6 +525,14 @@ export const HakuEdit = () => {
   )
 }
 
+const avustushakuStatusDescription = {
+  new: 'Uusi',
+  draft: 'Luonnos',
+  published: 'Julkaistu',
+  resolved: 'Ratkaistu',
+  deleted: 'Poistettu',
+} satisfies Record<AvustushakuStatus, string>
+
 type CreateHakuProps = {
   avustushaku: Avustushaku
   helpTexts: HelpTexts
@@ -948,7 +955,7 @@ const SetStatus = ({
           disabled={isDisabled(status)}
         />
         <label key={htmlId + '-label'} htmlFor={htmlId}>
-          <HakuStatus status={status} />
+          {avustushakuStatusDescription[status]}
         </label>
       </span>
     )
