@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 import { Raportointivelvoite } from 'soresu-form/web/va/types'
-import { Message } from './hakemus-details/ViestiLista'
+import { Message } from './hakemusten-arviointi-page/hakemus-details/ViestiLista'
 import { Lahetys } from './haku-details/Tapahtumaloki'
 import { UserInfo, VaCodeValue } from './types'
 import {

@@ -5,7 +5,7 @@ import * as Bacon from 'baconjs'
 import DateUtil from 'soresu-form/web/DateUtil'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 
-import PaatosUrl from '../hakemus-details/PaatosUrl'
+import PaatosUrl from '../PaatosUrl'
 import HelpTooltip from '../HelpTooltip'
 import { Kayttoaika } from './Kayttoaika'
 import { SelvityksienAikarajat } from './SelvityksienAikarajat'

@@ -8,7 +8,7 @@ import {
   AvustushakuPhase,
   AvustushakuStatus,
 } from 'soresu-form/web/va/types'
-import { Pill } from '../hakemus-list/Pill'
+import { Pill } from '../Pill'
 import moment from 'moment-timezone'
 import DatePicker from 'react-widgets/DatePicker'
 

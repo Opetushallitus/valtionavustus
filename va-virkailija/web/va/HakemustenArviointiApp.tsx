@@ -1,25 +1,24 @@
 import React, { useEffect, useState } from 'react'
-import { createRoot } from 'react-dom/client'
-import HakemusDetails from './hakemus-details/HakemusDetails'
-import { HakemusHakijaSidePreviewLink } from './hakemus-details/HakemusHakijaSidePreviewLink'
-import HakemusDecisionLink from './hakemus-details/HakemusDecisionLink'
-import AvustushakuDropdown from './avustushaku/AvustushakuDropdown'
-import HakemusFilter from './hakemus-filter/HakemusFilter'
-import HakemusListing from './hakemus-list/HakemusListing'
-import { Switch } from './hakemus-list/Switch'
-import { HeaderContainer } from './Header'
-import { AvustushakuDetails } from './hakemus-list/AvustushakuDetails'
-
-import './style/main.less'
-import './hakemusten-arviointi.less'
 import { Provider } from 'react-redux'
+import { createRoot } from 'react-dom/client'
+
+import HakemusDetails from './hakemusten-arviointi-page/hakemus-details/HakemusDetails'
+import { HakemusHakijaSidePreviewLink } from './hakemusten-arviointi-page/hakemus-details/HakemusHakijaSidePreviewLink'
+import HakemusDecisionLink from './hakemusten-arviointi-page/hakemus-details/HakemusDecisionLink'
+import AvustushakuDropdown from './hakemusten-arviointi-page/avustushaku-dropdown/AvustushakuDropdown'
+import HakemusFilter from './hakemusten-arviointi-page/hakemus-filter/HakemusFilter'
+import HakemusListing from './hakemusten-arviointi-page/hakemus-list/HakemusListing'
+import { Switch } from './hakemusten-arviointi-page/hakemus-list/Switch'
+import { HeaderContainer } from './Header'
+import { AvustushakuDetails } from './hakemusten-arviointi-page/hakemus-list/AvustushakuDetails'
+
 import store, {
   useHakemustenArviointiDispatch,
   useHakemustenArviointiSelector,
-} from './hakemustenArviointi/arviointiStore'
-import { getLoadedState, initialize } from './hakemustenArviointi/arviointiReducer'
+} from './hakemusten-arviointi-page/arviointiStore'
+import { getLoadedState, initialize } from './hakemusten-arviointi-page/arviointiReducer'
 import { Hakemus } from 'soresu-form/web/va/types'
-import { MODAL_ROOT_ID } from './hakemus-details/Modal'
+import { MODAL_ROOT_ID } from './hakemusten-arviointi-page/hakemus-details/Modal'
 import {
   BrowserRouter,
   Navigate,
@@ -29,11 +28,14 @@ import {
   useParams,
   useSearchParams,
 } from 'react-router-dom'
-import { HakemusArviointi } from './hakemus-details/HakemusArviointi'
-import Väliselvitys from './hakemus-details/Väliselvitys'
-import Loppuselvitys from './hakemus-details/Loppuselvitys'
-import MuutoshakemusTabContent from './hakemus-details/MuutoshakemusTabContent'
-import Seuranta from './hakemus-details/Seuranta'
+import { HakemusArviointi } from './hakemusten-arviointi-page/hakemus-details/HakemusArviointi'
+import Väliselvitys from './hakemusten-arviointi-page/hakemus-details/Väliselvitys'
+import Loppuselvitys from './hakemusten-arviointi-page/hakemus-details/Loppuselvitys'
+import MuutoshakemusTabContent from './hakemusten-arviointi-page/hakemus-details/MuutoshakemusTabContent'
+import Seuranta from './hakemusten-arviointi-page/hakemus-details/Seuranta'
+
+import './style/main.less'
+import './hakemusten-arviointi.less'
 
 const SHOW_ALL = 'showAll' as const
 const SHOW_ADDITIONAL_INFO = 'showAdditionalInfo' as const
