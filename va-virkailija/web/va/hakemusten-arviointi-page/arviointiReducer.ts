@@ -78,7 +78,6 @@ interface InitialData {
   userInfo: UserInfo
   lahetykset: LahetysStatuses
   earliestPaymentCreatedAt?: string
-  environment: EnvironmentApiResponse
 }
 
 export const fetchInitialState = createAsyncThunk<InitialData, number>(

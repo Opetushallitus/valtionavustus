@@ -36,6 +36,9 @@ import Seuranta from './hakemus-details/Seuranta'
 
 import './../style/main.less'
 import './hakemusten-arviointi.less'
+import HttpUtil from 'soresu-form/web/HttpUtil'
+import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
+import { InitialDataProvider } from '../initial-data-context'
 
 const SHOW_ALL = 'showAll' as const
 const SHOW_ADDITIONAL_INFO = 'showAdditionalInfo' as const
@@ -207,13 +210,19 @@ const LoadedApp = () => {
 const app = document.getElementById('app')
 const root = createRoot(app!)
 
-root.render(
-  <BrowserRouter>
-    <Provider store={store}>
-      <React.Fragment>
-        <AppRoutes />
-        <div id={MODAL_ROOT_ID} />
-      </React.Fragment>
-    </Provider>
-  </BrowserRouter>
-)
+HttpUtil.get<EnvironmentApiResponse>('/environment').then((environment) => {
+  const initialData = {
+    environment,
+  }
+
+  root.render(
+    <BrowserRouter>
+      <Provider store={store}>
+        <InitialDataProvider value={initialData}>
+          <AppRoutes />
+          <div id={MODAL_ROOT_ID} />
+        </InitialDataProvider>
+      </Provider>
+    </BrowserRouter>
+  )
+})

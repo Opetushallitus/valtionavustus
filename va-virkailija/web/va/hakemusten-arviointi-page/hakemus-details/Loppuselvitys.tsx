@@ -18,15 +18,18 @@ import { useHakemus } from '../useHakemus'
 import { useUserRoles } from '../arviointiSelectors'
 import MuistutusViesti from './Muistutusviesti'
 import { isFeatureEnabled } from 'soresu-form/web/va/types/environment'
+import { useEnvironment } from '../../initial-data-context'
 
 const Loppuselvitys = () => {
   const hakemus = useHakemus()
   const loadingHakemus = useHakemustenArviointiSelector(
     (state) => state.arviointi.saveStatus.loadingHakemus
   )
-  const { hakuData, helpTexts, userInfo, environment } = useHakemustenArviointiSelector((state) =>
+  const { hakuData, helpTexts, userInfo } = useHakemustenArviointiSelector((state) =>
     getLoadedState(state.arviointi)
   )
+  const environment = useEnvironment()
+
   const { avustushaku } = hakuData
   const dispatch = useHakemustenArviointiDispatch()
   const loppuselvitysPyynnotSent = useHakemustenArviointiSelector(

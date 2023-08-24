@@ -2,15 +2,16 @@ import React, { useState } from 'react'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
+import { isFeatureEnabled } from 'soresu-form/web/va/types/environment'
 
 import { Role, UserInfo } from '../../types'
+import { useEnvironment } from '../../initial-data-context'
+import { useHakemustenArviointiDispatch } from '../arviointiStore'
+import { refreshHakemukset } from '../arviointiReducer'
 import { VerificationBox } from './VerificationBox'
+import { Taloustarkastus, Asiatarkastus } from './LoppuselvitysTarkastus'
 
 import './LoppuselvitysForm.less'
-import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '../arviointiStore'
-import { getLoadedState, refreshHakemukset } from '../arviointiReducer'
-import { isFeatureEnabled } from 'soresu-form/web/va/types/environment'
-import { Taloustarkastus, Asiatarkastus } from './LoppuselvitysTarkastus'
 
 type LoppuselvitysFormProps = {
   avustushaku: Avustushaku
@@ -28,9 +29,7 @@ export const LoppuselvitysForm = ({
   const [message, setMessage] = useState('')
   const dispatch = useHakemustenArviointiDispatch()
   const status = hakemus['status-loppuselvitys']
-  const environment = useHakemustenArviointiSelector(
-    (state) => getLoadedState(state.arviointi).environment
-  )
+  const environment = useEnvironment()
   const showTaydennyspyynto =
     status !== 'missing' && isFeatureEnabled(environment, 'loppuselvitys-taydennyspyynto')
 
