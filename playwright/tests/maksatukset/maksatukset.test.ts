@@ -76,7 +76,7 @@ const multipleInstallmentTest = test.extend({
 
 const withoutDots = (tatili: string) => tatili.replaceAll('.', '')
 
-test.describe('Maksatukset', () => {
+test.describe.serial('Maksatukset', () => {
   multipleInstallmentTest(
     'Hakemus voidaan maksaa monessa erässä',
     async ({
