@@ -90,7 +90,7 @@
                          [instaparse "1.4.12"]
                          [metosin/ring-swagger-ui "4.18.1"]
                          [org.apache.commons/commons-email "1.5"]
-                         [org.clojure/core.async "1.6.673"]
+                         [org.clojure/core.async "1.6.681"]
                          [org.clojure/data.xml "0.0.8"]
                          [org.clojure/tools.trace "0.7.11"]
                          [org.scala-lang.modules/scala-xml_2.11 "1.3.1"]
