@@ -4,7 +4,7 @@ import DateUtil from 'soresu-form/web/DateUtil'
 import { Comment, HelpTexts } from 'soresu-form/web/va/types'
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
 
-import HelpTooltip from '../../HelpTooltip'
+import HelpTooltip from '../../common-components/HelpTooltip'
 import { useHakemustenArviointiDispatch } from '../arviointiStore'
 import { addHakemusComment } from '../arviointiReducer'
 import { useHakemus } from '../useHakemus'

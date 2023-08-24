@@ -1,6 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
-import HelpTooltip from '../../HelpTooltip'
+import HelpTooltip from '../../common-components/HelpTooltip'
 import { Hakemus } from 'soresu-form/web/va/types'
 import { useHakemustenArviointiDispatch } from '../arviointiStore'
 import { setArvioValue, startHakemusArvioAutoSave } from '../arviointiReducer'

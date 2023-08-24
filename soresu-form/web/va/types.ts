@@ -7,7 +7,7 @@ import {
 import translations from '../../../server/resources/public/translations.json'
 import { ImmutableObject } from 'seamless-immutable'
 import { HakemusAccessControl, VaCodeValue } from '../../../va-virkailija/web/va/types'
-import { TalousarviotiliWithKoulutusasteet } from '../../../va-virkailija/web/va/hakujenHallinta/hakuReducer'
+import { TalousarviotiliWithKoulutusasteet } from '../../../va-virkailija/web/va/hakujen-hallinta-page/hakuReducer'
 
 export const languages = ['fi', 'sv'] as const
 export type Language = (typeof languages)[number]

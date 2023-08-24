@@ -2,14 +2,14 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 import { Raportointivelvoite } from 'soresu-form/web/va/types'
 import { Message } from './hakemusten-arviointi-page/hakemus-details/ViestiLista'
-import { Lahetys } from './haku-details/Tapahtumaloki'
+import { Lahetys } from './hakujen-hallinta-page/haku-details/Tapahtumaloki'
 import { UserInfo, VaCodeValue } from './types'
 import {
   CreateTalousarviotili,
   TalousarviotiliWithUsageInfo,
   UpdateTalousarviotili,
   ValueType,
-} from './koodienhallinta/types'
+} from './koodienhallinta-page/types'
 
 export type EmailType = 'taydennyspyynto-asiatarkastus' | 'taydennyspyynto-taloustarkastus'
 

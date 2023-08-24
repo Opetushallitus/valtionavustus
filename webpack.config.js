@@ -79,12 +79,21 @@ const virkailijaConfig = Object.assign(
   makeConfig(path.resolve(__dirname, 'va-virkailija'), 'virkailija'),
   {
     entry: {
-      app: path.resolve(__dirname, 'va-virkailija/web/va/HakemustenArviointiApp.tsx'),
-      adminApp: path.resolve(__dirname, 'va-virkailija/web/va/HakujenHallintaApp.tsx'),
-      summaryApp: path.resolve(__dirname, 'va-virkailija/web/va/YhteenvetoApp.jsx'),
-      login: path.resolve(__dirname, 'va-virkailija/web/va/Login.jsx'),
-      codeValues: path.resolve(__dirname, 'va-virkailija/web/va/KoodienhallintaApp.tsx'),
-      search: path.resolve(__dirname, 'va-virkailija/web/va/SearchApp.tsx'),
+      app: path.resolve(
+        __dirname,
+        'va-virkailija/web/va/hakemusten-arviointi-page/HakemustenArviointiApp.tsx'
+      ),
+      adminApp: path.resolve(
+        __dirname,
+        'va-virkailija/web/va/hakujen-hallinta-page/HakujenHallintaApp.tsx'
+      ),
+      summaryApp: path.resolve(__dirname, 'va-virkailija/web/va/yhteenveto-page/YhteenvetoApp.jsx'),
+      login: path.resolve(__dirname, 'va-virkailija/web/va/login-page/Login.jsx'),
+      codeValues: path.resolve(
+        __dirname,
+        'va-virkailija/web/va/koodienhallinta-page/KoodienhallintaApp.tsx'
+      ),
+      search: path.resolve(__dirname, 'va-virkailija/web/va/search-page/SearchApp.tsx'),
     },
   }
 )

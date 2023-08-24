@@ -1,5 +1,5 @@
 import React from 'react'
-import HelpTooltip from '../../HelpTooltip'
+import HelpTooltip from '../../common-components/HelpTooltip'
 import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 
 import './SelvitysLink.less'

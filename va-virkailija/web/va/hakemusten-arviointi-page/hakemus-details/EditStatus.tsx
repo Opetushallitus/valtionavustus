@@ -1,6 +1,6 @@
 import React from 'react'
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import HelpTooltip from '../../HelpTooltip'
+import HelpTooltip from '../../common-components/HelpTooltip'
 import { Avustushaku, Hakemus, HakemusStatus, HelpTexts } from 'soresu-form/web/va/types'
 
 type EditStatusProps = {

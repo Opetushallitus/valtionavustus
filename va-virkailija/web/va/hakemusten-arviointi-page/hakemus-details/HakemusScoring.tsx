@@ -9,7 +9,7 @@ import {
   scoringByOid,
   othersScorings,
 } from '../../ScoreResolver'
-import HelpTooltip from '../../HelpTooltip'
+import HelpTooltip from '../../common-components/HelpTooltip'
 import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '../arviointiStore'
 import { getLoadedState, removeScore, setScore, toggleShowOthersScore } from '../arviointiReducer'
 import { LocalizedText, Score, Scoring } from 'soresu-form/web/va/types'

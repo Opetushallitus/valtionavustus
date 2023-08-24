@@ -5,7 +5,7 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import DateUtil from 'soresu-form/web/DateUtil'
 import { Avustushaku, Hakemus, HelpTexts } from 'soresu-form/web/va/types'
 
-import HelpTooltip from '../../HelpTooltip'
+import HelpTooltip from '../../common-components/HelpTooltip'
 import { UserInfo } from '../../types'
 import { useHakemustenArviointiDispatch } from '../arviointiStore'
 import { updateHakemusStatus } from '../arviointiReducer'

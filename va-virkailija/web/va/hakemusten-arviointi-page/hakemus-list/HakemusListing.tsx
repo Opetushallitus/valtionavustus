@@ -8,7 +8,7 @@ import { TaydennyspyyntoIndikaattori } from './TaydennyspyyntoIndikaattori'
 import { MuutoshakemusStatus } from 'soresu-form/web/va/types/muutoshakemus'
 import { HakemusSelvitys, Loppuselvitys, Muutoshakemus } from 'soresu-form/web/va/status'
 import HakemusArviointiStatuses from '../../HakemusArviointiStatuses'
-import { Pill, PillProps } from '../../Pill'
+import { Pill, PillProps } from '../../common-components/Pill'
 import { HakemusFilter, Role } from '../../types'
 
 import useOutsideClick from '../../useOutsideClick'

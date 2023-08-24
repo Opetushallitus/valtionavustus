@@ -4,7 +4,7 @@ import _ from 'lodash'
 import { Hakemus, HelpTexts } from 'soresu-form/web/va/types'
 
 import rejectedReasonsByLanguage from './rejectedReasonsByLanguage.json'
-import HelpTooltip from '../../HelpTooltip'
+import HelpTooltip from '../../common-components/HelpTooltip'
 import { useHakemustenArviointiDispatch } from '../arviointiStore'
 import { setArvioValue, startHakemusArvioAutoSave } from '../arviointiReducer'
 

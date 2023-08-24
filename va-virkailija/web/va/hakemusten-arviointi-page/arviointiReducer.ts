@@ -26,8 +26,8 @@ import {
   Scoring,
 } from 'soresu-form/web/va/types'
 import { HakuData, LahetysStatuses, UserInfo, VaCodeValue } from '../types'
-import { Lahetys } from '../haku-details/Tapahtumaloki'
-import { TalousarviotiliWithKoulutusasteet } from '../hakujenHallinta/hakuReducer'
+import { Lahetys } from '../hakujen-hallinta-page/haku-details/Tapahtumaloki'
+import { TalousarviotiliWithKoulutusasteet } from '../hakujen-hallinta-page/hakuReducer'
 import { Muutoshakemus as MuutoshakemusType } from 'soresu-form/web/va/types/muutoshakemus'
 import { HakemustenArviointiRootState } from './arviointiStore'
 import _ from 'lodash'

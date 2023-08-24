@@ -10,7 +10,7 @@ import ViestiLista, { Message } from './ViestiLista'
 import { isString } from 'lodash'
 
 import './muistutusviesti.less'
-import { Lahetys } from '../../haku-details/Tapahtumaloki'
+import { Lahetys } from '../../hakujen-hallinta-page/haku-details/Tapahtumaloki'
 import { mapEmails } from '../../apiSlice'
 
 type MuistutusviestiProps = {

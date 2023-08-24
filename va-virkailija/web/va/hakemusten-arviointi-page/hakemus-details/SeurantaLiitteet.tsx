@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import Immutable from 'seamless-immutable'
 
-import HelpTooltip from '../../HelpTooltip'
+import HelpTooltip from '../../common-components/HelpTooltip'
 
 import AttachmentField from 'soresu-form/web/form/component/AttachmentField'
 import HttpUtil from 'soresu-form/web/HttpUtil'

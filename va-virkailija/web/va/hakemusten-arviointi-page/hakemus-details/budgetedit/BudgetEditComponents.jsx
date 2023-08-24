@@ -6,7 +6,7 @@ import LocalizedString from 'soresu-form/web/form/component/LocalizedString.tsx'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 
 import VaBudgetCalculator from 'soresu-form/web/va/VaBudgetCalculator'
-import HelpTooltip from '../../../HelpTooltip'
+import HelpTooltip from '../../../common-components/HelpTooltip'
 
 export default class BudgetEditElement extends React.Component {
   constructor(props) {
