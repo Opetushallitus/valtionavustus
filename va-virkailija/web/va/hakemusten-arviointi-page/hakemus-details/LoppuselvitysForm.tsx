@@ -2,10 +2,9 @@ import React, { useState } from 'react'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
-import { isFeatureEnabled } from 'soresu-form/web/va/types/environment'
 
 import { Role, UserInfo } from '../../types'
-import { useEnvironment } from '../../initial-data-context'
+import { useFeature } from '../../initial-data-context'
 import { useHakemustenArviointiDispatch } from '../arviointiStore'
 import { refreshHakemukset } from '../arviointiReducer'
 import { VerificationBox } from './VerificationBox'
@@ -29,9 +28,8 @@ export const LoppuselvitysForm = ({
   const [message, setMessage] = useState('')
   const dispatch = useHakemustenArviointiDispatch()
   const status = hakemus['status-loppuselvitys']
-  const environment = useEnvironment()
-  const showTaydennyspyynto =
-    status !== 'missing' && isFeatureEnabled(environment, 'loppuselvitys-taydennyspyynto')
+  const taydennyspyyntoEnabled = useFeature('loppuselvitys-taydennyspyynto')
+  const showTaydennyspyynto = taydennyspyyntoEnabled && status !== 'missing'
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

@@ -17,8 +17,7 @@ import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '
 import { useHakemus } from '../useHakemus'
 import { useUserRoles } from '../arviointiSelectors'
 import MuistutusViesti from './Muistutusviesti'
-import { isFeatureEnabled } from 'soresu-form/web/va/types/environment'
-import { useEnvironment } from '../../initial-data-context'
+import { useFeature } from '../../initial-data-context'
 
 const Loppuselvitys = () => {
   const hakemus = useHakemus()
@@ -28,7 +27,6 @@ const Loppuselvitys = () => {
   const { hakuData, helpTexts, userInfo } = useHakemustenArviointiSelector((state) =>
     getLoadedState(state.arviointi)
   )
-  const environment = useEnvironment()
 
   const { avustushaku } = hakuData
   const dispatch = useHakemustenArviointiDispatch()
@@ -49,7 +47,9 @@ const Loppuselvitys = () => {
   const presenterCommentHelpText = helpTexts['hankkeen_sivu__loppuselvitys___linkki_lomakkeelle']
   const selvitysLinkHelpText = helpTexts['hankkeen_sivu__loppuselvitys___linkki_lomakkeelle']
   const lang = hakemus.language
-  const muistusviestiEnabled = isFeatureEnabled(environment, 'muistutusviesti-loppuselvityksesta')
+
+  const muistusviestiEnabled = useFeature('muistutusviesti-loppuselvityksesta')
+  const taydennyspyyntoEnabled = useFeature('loppuselvitys-taydennyspyynto')
 
   return (
     <div id="tab-content" className={hakemus.refused ? 'disabled' : ''}>
@@ -109,18 +109,16 @@ const Loppuselvitys = () => {
             userInfo={userInfo}
           />
         )}
-        {loppuselvitys &&
-          renderTaloustarkastusEmail &&
-          !isFeatureEnabled(environment, 'loppuselvitys-taydennyspyynto') && (
-            <TaloustarkastusEmail
-              avustushakuId={avustushaku.id}
-              hakemus={hakemus}
-              loppuselvitys={loppuselvitys}
-              lang={lang}
-              userInfo={userInfo}
-              avustushakuName={avustushaku.content.name[lang]}
-            />
-          )}
+        {loppuselvitys && renderTaloustarkastusEmail && !taydennyspyyntoEnabled && (
+          <TaloustarkastusEmail
+            avustushakuId={avustushaku.id}
+            hakemus={hakemus}
+            loppuselvitys={loppuselvitys}
+            lang={lang}
+            userInfo={userInfo}
+            avustushakuName={avustushaku.content.name[lang]}
+          />
+        )}
       </div>
     </div>
   )
