@@ -178,12 +178,11 @@
         (va-code-values/get-va-code-value id)))
 
 (defn get-combined-avustushaku-data-with-privileges [avustushaku-id identity]
-  (let [haku-data (get-combined-avustushaku-data avustushaku-id)
-        toimintayksikko-id (get-in haku-data [:avustushaku :operational-unit-id])
-        toimintayksikko (get-toimintayksikko toimintayksikko-id)
-        with-privileges (add-privileges identity haku-data)
-        ]
-    (assoc with-privileges :toimintayksikko toimintayksikko)))
+  (when-let [haku-data (get-combined-avustushaku-data avustushaku-id)]
+    (let [toimintayksikko-id (get-in haku-data [:avustushaku :operational-unit-id])
+          toimintayksikko (get-toimintayksikko toimintayksikko-id)
+          with-privileges (add-privileges identity haku-data)]
+      (assoc with-privileges :toimintayksikko toimintayksikko))))
 
 (defn- add-copy-suffixes [nameField]
   { :fi (str (:fi nameField) " (kopio)" )
