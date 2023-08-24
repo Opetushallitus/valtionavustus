@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react'
+import { Outlet, useParams, useSearchParams } from 'react-router-dom'
 
 import HakemusPreview from './HakemusPreview'
-
-import './hakemusDetails.less'
 import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '../arviointiStore'
 import { getLoadedState, selectHakemus } from '../arviointiReducer'
-import { Outlet, useParams, useSearchParams } from 'react-router-dom'
 import { NavLinkWithQuery } from '../../NavLinkWithQuery'
+import { EnvelopeIcon } from '../../common-components/icons'
+import { useFeature } from '../../initial-data-context'
+
+import './hakemusDetails.less'
 
 export const HakemusDetails = () => {
   const { hakemusId } = useParams()
@@ -14,13 +16,15 @@ export const HakemusDetails = () => {
   const splitView = searchParams.get('splitView') === 'true'
   const selectedHakemusId = Number(hakemusId)
   const dispatch = useHakemustenArviointiDispatch()
-  useEffect(() => {
-    dispatch(selectHakemus(selectedHakemusId))
-  }, [selectedHakemusId])
   const hakuData = useHakemustenArviointiSelector(
     (state) => getLoadedState(state.arviointi).hakuData
   )
   const { avustushaku, hakemukset } = hakuData
+  const vapaamuotoinenViestiEnabled = useFeature('vapaamuotoinen-viesti-hankkeelle')
+
+  useEffect(() => {
+    dispatch(selectHakemus(selectedHakemusId))
+  }, [selectedHakemusId])
 
   const onToggle = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -39,6 +43,12 @@ export const HakemusDetails = () => {
     return false
   }
 
+  const hakemus = hakemukset.find((h) => h.id === selectedHakemusId)
+  if (hakemus === undefined) {
+    return null
+  }
+
+  const { muutoshakemukset } = hakemus
   const MuutoshakemuksetLabel = () => (
     <span className="muutoshakemus-tab">
       Muutoshakemukset
@@ -52,12 +62,9 @@ export const HakemusDetails = () => {
       </span>
     </span>
   )
-  const hakemus = hakemukset.find((h) => h.id === selectedHakemusId)
-  if (hakemus === undefined) {
-    return null
-  }
-  const { muutoshakemukset } = hakemus
+
   const isLinkActive = ({ isActive }: { isActive: boolean }) => (isActive ? 'selected' : '')
+
   return (
     <div id="hakemus-details">
       <NavLinkWithQuery id="close-hakemus-button" to={`/avustushaku/${avustushaku.id}`}>
@@ -84,6 +91,11 @@ export const HakemusDetails = () => {
           <NavLinkWithQuery to="seuranta" className={isLinkActive} data-test-id="tab-seuranta">
             Seuranta
           </NavLinkWithQuery>
+          {vapaamuotoinenViestiEnabled && (
+            <NavLinkWithQuery to="viesti" className={isLinkActive}>
+              {({ isActive }) => <EnvelopeIcon active={isActive} />}
+            </NavLinkWithQuery>
+          )}
         </div>
         <div id="hakemus-arviointi" className="fixed-content">
           <Outlet />

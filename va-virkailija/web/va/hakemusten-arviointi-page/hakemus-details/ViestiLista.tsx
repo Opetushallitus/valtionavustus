@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import moment from 'moment/moment'
+import { EnvelopeIcon } from '../../common-components/icons'
 
 moment.locale('fi')
 
@@ -89,7 +90,7 @@ export function ViestiListaRow({
   return (
     <div className={'viestiListaItem'}>
       <div className={'viestiListaRow'} role="button" onClick={onClick} data-test-id={dataTestId}>
-        {icon === 'envelope' ? <EnvelopeIcon /> : <DoneIcon />}
+        {icon === 'envelope' ? <EnvelopeIcon active /> : <DoneIcon />}
         <div className={'rowDate'}>{formatDate(date)}</div>
         <div className={'rowVirkailija'}>{virkailija}</div>
         {heading ? <div className={'rowHeading'}>{heading}</div> : <div></div>}
@@ -101,26 +102,6 @@ export function ViestiListaRow({
     </div>
   )
 }
-
-const EnvelopeIcon = () => (
-  <svg
-    className={'rowIcon'}
-    width="19"
-    height="100%"
-    viewBox="0 0 19 15"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M18.1687 2.08762L17.442 1.36084L10.7097 8.09308C9.86819 8.93462 8.45289 8.93462 7.61136 8.09308L0.87912 1.39909L0.152344 2.12587L5.16327 7.1368L0.152344 12.1477L0.87912 12.8745L5.89005 7.86357L6.88459 8.85811C7.49661 9.47013 8.29989 9.8144 9.14142 9.8144C9.98295 9.8144 10.7862 9.47013 11.3982 8.85811L12.3928 7.86357L17.4037 12.8745L18.1305 12.1477L13.1196 7.1368L18.1687 2.08762Z"
-      fill="#159ECB"
-    />
-    <path
-      d="M16.753 14.1753H1.64367C0.763887 14.1753 0.0371094 13.4485 0.0371094 12.5687V1.78185C0.0371094 0.902068 0.763887 0.175293 1.64367 0.175293H16.753C17.6327 0.175293 18.3595 0.902068 18.3595 1.78185V12.5687C18.3595 13.4485 17.6327 14.1753 16.753 14.1753ZM1.60542 1.20808C1.2994 1.20808 1.0699 1.43758 1.0699 1.7436V12.5305C1.0699 12.8365 1.2994 13.066 1.60542 13.066H16.7147C17.0207 13.066 17.2502 12.8365 17.2502 12.5305V1.7436C17.2502 1.43758 17.0207 1.20808 16.7147 1.20808H1.60542Z"
-      fill="#159ECB"
-    />
-  </svg>
-)
 
 const CloseIcon = () => (
   <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
