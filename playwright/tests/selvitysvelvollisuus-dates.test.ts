@@ -1,6 +1,6 @@
 import { defaultValues } from '../fixtures/defaultValues'
 import { expectToBeDefined } from '../utils/util'
-import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
+import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { randomString } from '../utils/random'
 
 const test = defaultValues

@@ -1,5 +1,5 @@
 import { svBudjettimuutoshakemusTest as svTest } from '../fixtures/swedishHakemusTest'
-import { HakijaPaatosPage } from '../pages/HakijaPaatosPage'
+import { HakijaPaatosPage } from '../pages/hakija/HakijaPaatosPage'
 import { expect, test } from '@playwright/test'
 import {
   getAcceptedPäätösEmails,

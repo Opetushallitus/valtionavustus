@@ -2,11 +2,11 @@ import { muutoshakemusTest } from './muutoshakemusTest'
 import { expectToBeDefined } from '../utils/util'
 import { dummyPdfPath, VIRKAILIJA_URL } from '../utils/constants'
 import { navigate } from '../utils/navigate'
-import { HakijaSelvitysPage } from '../pages/hakijaSelvitysPage'
+import { HakijaSelvitysPage } from '../pages/hakija/hakijaSelvitysPage'
 import { expect, test } from '@playwright/test'
-import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
-import { LoppuselvitysPage } from '../pages/hakujen-hallinta/LoppuselvitysPage'
-import { ValiselvitysPage } from '../pages/hakujen-hallinta/ValiselvitysPage'
+import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { LoppuselvitysPage } from '../pages/virkailija/hakujen-hallinta/LoppuselvitysPage'
+import { ValiselvitysPage } from '../pages/virkailija/hakujen-hallinta/ValiselvitysPage'
 
 interface SelvitysFixtures {
   väliselvityspyyntöSent: {}

@@ -2,8 +2,8 @@ import { MuutoshakemusValues } from '../../utils/types'
 import moment from 'moment'
 import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
 import { expect } from '@playwright/test'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
-import { HakijaMuutoshakemusPage } from '../../pages/hakijaMuutoshakemusPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
+import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusPage'
 import {
   BudjettimuutoshakemusFixtures,
   budjettimuutoshakemusTest,

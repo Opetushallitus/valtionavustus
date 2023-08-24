@@ -1,11 +1,11 @@
 import { expect } from '@playwright/test'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { getAcceptedPäätösEmails } from '../../utils/emails'
 import { expectToBeDefined } from '../../utils/util'
 import { HAKIJA_URL } from '../../utils/constants'
 import { getPdfFirstPageTextContent } from '../../utils/pdfUtil'
-import { PaatosPage } from '../../pages/hakujen-hallinta/PaatosPage'
+import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
 
 test('paatos liitteet', async ({
   page,

@@ -1,10 +1,10 @@
 import { defaultValues as test } from '../../fixtures/defaultValues'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
-import { HakijaAvustusHakuPage } from '../../pages/hakijaAvustusHakuPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
 import { expect, Page } from '@playwright/test'
 import { expectToBeDefined } from '../../utils/util'
 import moment from 'moment/moment'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { getBudgetSelectorsForType } from '../../utils/budget'
 import { BrowserContext } from 'playwright-chromium'
 

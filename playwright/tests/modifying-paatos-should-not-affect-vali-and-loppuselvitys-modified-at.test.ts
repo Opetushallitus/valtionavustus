@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test'
-import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
+import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { selvitysTest as test } from '../fixtures/selvitysTest'
 import { expectToBeDefined } from '../utils/util'
 

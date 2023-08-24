@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test'
-import { HakemustenArviointiPage } from '../pages/hakemustenArviointiPage'
-import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
+import { HakemustenArviointiPage } from '../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
+import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import moment from 'moment'
-import { HakijaAvustusHakuPage } from '../pages/hakijaAvustusHakuPage'
+import { HakijaAvustusHakuPage } from '../pages/hakija/hakijaAvustusHakuPage'
 import { defaultValues } from './defaultValues'
 import { markAvustushakuAsMuutoshakukelvoton } from '../utils/avustushaku'
-import { PaatosPage } from '../pages/hakujen-hallinta/PaatosPage'
+import { PaatosPage } from '../pages/virkailija/hakujen-hallinta/PaatosPage'
 
 export interface MuutoshakemusFixtures {
   finalAvustushakuEndDate: moment.Moment

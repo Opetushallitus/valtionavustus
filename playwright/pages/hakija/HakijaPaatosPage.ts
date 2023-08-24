@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test'
 
-import { getLinkToPaatosFromEmails } from '../utils/emails'
+import { getLinkToPaatosFromEmails } from '../../utils/emails'
 
 export const HakijaPaatosPage = (page: Page) => {
   async function navigate(hakemusID: number) {

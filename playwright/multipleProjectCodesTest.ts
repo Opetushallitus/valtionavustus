@@ -1,4 +1,4 @@
-import { KoodienhallintaPage } from './pages/koodienHallintaPage'
+import { KoodienhallintaPage } from './pages/virkailija/koodienHallintaPage'
 import { randomString } from './utils/random'
 import { muutoshakemusTest } from './fixtures/muutoshakemusTest'
 

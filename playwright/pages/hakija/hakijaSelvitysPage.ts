@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test'
-import { dummyPdfPath } from '../utils/constants'
+import { dummyPdfPath } from '../../utils/constants'
 
 const outcomeLocator = (page: Page, radioNumber: number) =>
   page.locator(`label[for='project-outcomes.project-outcomes-1.outcome-type.radio.${radioNumber}']`)

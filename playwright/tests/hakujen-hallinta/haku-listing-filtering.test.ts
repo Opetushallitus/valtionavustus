@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
-import { HaunTiedotPage } from '../../pages/hakujen-hallinta/HaunTiedotPage'
+import { HaunTiedotPage } from '../../pages/virkailija/hakujen-hallinta/HaunTiedotPage'
 
 const getIndexInHakuList = async (
   haunTiedotPage: ReturnType<typeof HaunTiedotPage>,

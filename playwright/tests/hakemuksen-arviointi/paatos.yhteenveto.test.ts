@@ -3,10 +3,10 @@ import { getPaatoksetLahetettyEmails, lastOrFail, waitUntilMinEmails } from '../
 import { expect, Page } from '@playwright/test'
 import { VIRKAILIJA_URL } from '../../utils/constants'
 import { expectToBeDefined } from '../../utils/util'
-import { YhteenvetoPage } from '../../pages/yhteenvetoPage'
-import { HakijaAvustusHakuPage } from '../../pages/hakijaAvustusHakuPage'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
-import { PaatosPage } from '../../pages/hakujen-hallinta/PaatosPage'
+import { YhteenvetoPage } from '../../pages/virkailija/yhteenvetoPage'
+import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
+import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
 
 const getSearchUrl = async ({
   page,

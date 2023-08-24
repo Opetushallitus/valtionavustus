@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 import { muutoshakemusTest } from '../../../fixtures/muutoshakemusTest'
-import { HakemustenArviointiPage } from '../../../pages/hakemustenArviointiPage'
-import { HakijaAvustusHakuPage } from '../../../pages/hakijaAvustusHakuPage'
+import { HakemustenArviointiPage } from '../../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
+import { HakijaAvustusHakuPage } from '../../../pages/hakija/hakijaAvustusHakuPage'
 import { TEST_Y_TUNNUS } from '../../../utils/constants'
 import { expectToBeDefined } from '../../../utils/util'
 

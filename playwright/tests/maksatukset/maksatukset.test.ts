@@ -1,22 +1,25 @@
 import { APIRequestContext, expect } from '@playwright/test'
 
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
-import { KoodienhallintaPage } from '../../pages/koodienHallintaPage'
+import { KoodienhallintaPage } from '../../pages/virkailija/koodienHallintaPage'
 import { getHakemusTokenAndRegisterNumber } from '../../utils/emails'
 import { VIRKAILIJA_URL } from '../../utils/constants'
-import { MaksatuksetPage } from '../../pages/hakujen-hallinta/maksatuksetPage'
-import { HakujenHallintaPage, Installment } from '../../pages/hakujenHallintaPage'
+import { MaksatuksetPage } from '../../pages/virkailija/hakujen-hallinta/maksatuksetPage'
+import {
+  HakujenHallintaPage,
+  Installment,
+} from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { NoProjectCodeProvided } from '../../utils/types'
 import moment from 'moment'
 import { randomString } from '../../utils/random'
 import { expectToBeDefined } from '../../utils/util'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { twoAcceptedHakemusTest } from '../../fixtures/twoHakemusTest'
 import {
   getAllMaksatuksetFromMaksatuspalvelu,
   putMaksupalauteToMaksatuspalveluAndProcessIt,
 } from './maksatuspalvelu'
-import { ValiselvitysPage } from '../../pages/hakujen-hallinta/ValiselvitysPage'
+import { ValiselvitysPage } from '../../pages/virkailija/hakujen-hallinta/ValiselvitysPage'
 import { createDefaultErapaiva } from '../../../va-virkailija/web/va/hakujen-hallinta-page/haku-details/erapaiva'
 
 const correctOVTTest = test.extend({

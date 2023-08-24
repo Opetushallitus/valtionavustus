@@ -1,9 +1,9 @@
 import { defaultValues } from '../../fixtures/defaultValues'
 import { expect } from '@playwright/test'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
-import { HakijaAvustusHakuPage } from '../../pages/hakijaAvustusHakuPage'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
-import { HakijaPaatosPage } from '../../pages/HakijaPaatosPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
+import { HakijaPaatosPage } from '../../pages/hakija/HakijaPaatosPage'
 
 type KoulutusosioFixtures = {
   avustushakuID: number

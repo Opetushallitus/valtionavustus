@@ -1,10 +1,10 @@
 import { expect } from '@playwright/test'
 import { defaultValues } from '../fixtures/defaultValues'
 import { MuutoshakemusFixtures } from '../fixtures/muutoshakemusTest'
-import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
+import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { readFile } from 'fs/promises'
-import { HakijaAvustusHakuPage } from '../pages/hakijaAvustusHakuPage'
-import { HakemustenArviointiPage } from '../pages/hakemustenArviointiPage'
+import { HakijaAvustusHakuPage } from '../pages/hakija/hakijaAvustusHakuPage'
+import { HakemustenArviointiPage } from '../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import {
   getAcceptedPäätösEmails,
   getHakemusSubmitted,
@@ -15,12 +15,12 @@ import {
   getValiselvitysEmails,
   lastOrFail,
 } from '../utils/emails'
-import { HakijaMuutoshakemusPage } from '../pages/hakijaMuutoshakemusPage'
+import { HakijaMuutoshakemusPage } from '../pages/hakija/hakijaMuutoshakemusPage'
 import { navigate } from '../utils/navigate'
-import { HakijaSelvitysPage } from '../pages/hakijaSelvitysPage'
+import { HakijaSelvitysPage } from '../pages/hakija/hakijaSelvitysPage'
 import { expectToBeDefined } from '../utils/util'
-import { LoppuselvitysPage } from '../pages/hakujen-hallinta/LoppuselvitysPage'
-import { ValiselvitysPage } from '../pages/hakujen-hallinta/ValiselvitysPage'
+import { LoppuselvitysPage } from '../pages/virkailija/hakujen-hallinta/LoppuselvitysPage'
+import { ValiselvitysPage } from '../pages/virkailija/hakujen-hallinta/ValiselvitysPage'
 import { RefusePage } from '../pages/hakija/refuse-page'
 import { Answers } from '../utils/types'
 

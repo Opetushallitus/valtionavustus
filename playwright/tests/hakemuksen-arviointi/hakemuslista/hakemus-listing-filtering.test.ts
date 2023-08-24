@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test'
 import { budjettimuutoshakemusTest } from '../../../fixtures/budjettimuutoshakemusTest'
-import { HakemustenArviointiPage } from '../../../pages/hakemustenArviointiPage'
+import { HakemustenArviointiPage } from '../../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { expectToBeDefined } from '../../../utils/util'
-import { HakijaAvustusHakuPage } from '../../../pages/hakijaAvustusHakuPage'
+import { HakijaAvustusHakuPage } from '../../../pages/hakija/hakijaAvustusHakuPage'
 import { answers, VIRKAILIJA_URL } from '../../../utils/constants'
 
 interface ArviointiUiFilteringFixtures {

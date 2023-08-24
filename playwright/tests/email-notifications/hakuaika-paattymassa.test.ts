@@ -3,7 +3,7 @@ import moment from 'moment'
 
 import { getHakuaikaPaattymassaEmails, getLastEmail } from '../../utils/emails'
 import { HAKIJA_URL, VIRKAILIJA_URL } from '../../utils/constants'
-import { HakijaAvustusHakuPage } from '../../pages/hakijaAvustusHakuPage'
+import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
 import { randomString } from '../../utils/random'
 import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
 

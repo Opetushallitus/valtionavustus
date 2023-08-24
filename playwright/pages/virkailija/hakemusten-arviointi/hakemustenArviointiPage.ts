@@ -1,25 +1,27 @@
 import { expect, Locator, Page } from '@playwright/test'
 
-import { navigate } from '../utils/navigate'
+import { navigate } from '../../../utils/navigate'
 import {
   clickElementWithText,
   expectToBeDefined,
   getChangedBudgetTableCells,
   getExistingBudgetTableCells,
-} from '../utils/util'
-import { VIRKAILIJA_URL } from '../utils/constants'
+} from '../../../utils/util'
+import { VIRKAILIJA_URL } from '../../../utils/constants'
 
-import { MuutoshakemusValues, PaatosStatus, PaatosValues, VaCodeValues } from '../utils/types'
-import { AcceptedBudget, BudgetAmount, fillBudget } from '../utils/budget'
-import { HakijaAvustusHakuPage } from './hakijaAvustusHakuPage'
-import { createReactSelectLocators } from '../utils/react-select'
-import { Header } from './Header'
-import { LoppuselvitysPage } from './hakujen-hallinta/LoppuselvitysPage'
+import { MuutoshakemusValues, PaatosStatus, PaatosValues, VaCodeValues } from '../../../utils/types'
+import { AcceptedBudget, BudgetAmount, fillBudget } from '../../../utils/budget'
+import { HakijaAvustusHakuPage } from '../../hakija/hakijaAvustusHakuPage'
+import { createReactSelectLocators } from '../../../utils/react-select'
+import { Header } from '../Header'
+import { LoppuselvitysPage } from '../hakujen-hallinta/LoppuselvitysPage'
 
 const jatkoaikaTestId = 'muutoshakemus-jatkoaika'
 
 export class HakemustenArviointiPage {
   readonly page: Page
+  readonly header: ReturnType<typeof Header>
+
   readonly avustushakuDropdown: Locator
   readonly inputFilterOrganization: Locator
   readonly inputFilterProject: Locator
@@ -27,11 +29,11 @@ export class HakemustenArviointiPage {
   readonly showUnfinished: Locator
   readonly hakemusRows: Locator
   readonly toggleHakemusList: Locator
-  readonly header: ReturnType<typeof Header>
   readonly taydennyspyynto: Locator
   readonly sendTaydennyspyynto: Locator
   readonly saveStatus: Locator
   readonly saveStatusSuccess: Locator
+
   constructor(page: Page) {
     this.page = page
     this.avustushakuDropdown = this.page.locator('#avustushaku-dropdown')

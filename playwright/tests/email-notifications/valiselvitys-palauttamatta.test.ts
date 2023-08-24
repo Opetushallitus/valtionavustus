@@ -6,7 +6,7 @@ import { getValiselvitysPalauttamattaEmails, lastOrFail } from '../../utils/emai
 import { Answers } from '../../utils/types'
 import { expectToBeDefined } from '../../utils/util'
 import { selvitysTest } from '../../fixtures/selvitysTest'
-import { PaatosPage } from '../../pages/hakujen-hallinta/PaatosPage'
+import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
 
 test.describe('valiselvitys-palauttamatta', () => {
   selvitysTest(

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { expectToBeDefined, waitForNewTab } from '../../utils/util'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 
 import {
   getHakemusTokenAndRegisterNumber,
@@ -9,10 +9,10 @@ import {
   lastOrFail,
 } from '../../utils/emails'
 import { HAKIJA_URL } from '../../utils/constants'
-import { HakijaSelvitysPage } from '../../pages/hakijaSelvitysPage'
+import { HakijaSelvitysPage } from '../../pages/hakija/hakijaSelvitysPage'
 import { selvitysTest } from '../../fixtures/selvitysTest'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
-import { ValiselvitysPage } from '../../pages/hakujen-hallinta/ValiselvitysPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { ValiselvitysPage } from '../../pages/virkailija/hakujen-hallinta/ValiselvitysPage'
 
 test.describe('Väliselvitys', () => {
   selvitysTest(

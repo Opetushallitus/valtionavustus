@@ -1,8 +1,8 @@
 import { expect, Page } from '@playwright/test'
-import { createReactSelectLocators } from '../../utils/react-select'
+import { createReactSelectLocators } from '../../../utils/react-select'
 import { CommonHakujenHallintaPage } from './CommonHakujenHallintaPage'
 import moment from 'moment/moment'
-import { NoProjectCodeProvided, VaCodeValues } from '../../utils/types'
+import { NoProjectCodeProvided, VaCodeValues } from '../../../utils/types'
 
 const dateFormat = 'D.M.YYYY H.mm'
 const formatDate = (date: Date | moment.Moment) => moment(date).format(dateFormat)

@@ -1,12 +1,12 @@
 import { expect } from '@playwright/test'
 
 import { selvitysTest as test } from '../../../fixtures/selvitysTest'
-import { HakemustenArviointiPage } from '../../../pages/hakemustenArviointiPage'
+import { HakemustenArviointiPage } from '../../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import {
   getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails,
   getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails,
 } from '../../../utils/emails'
-import { HakijaSelvitysPage } from '../../../pages/hakijaSelvitysPage'
+import { HakijaSelvitysPage } from '../../../pages/hakija/hakijaSelvitysPage'
 import { navigate } from '../../../utils/navigate'
 
 test('can send taydennyspyynto for loppuselvitys', async ({

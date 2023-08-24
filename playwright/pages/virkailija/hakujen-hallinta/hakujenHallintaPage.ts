@@ -3,20 +3,20 @@ import moment from 'moment'
 import fs from 'fs/promises'
 import path from 'path'
 
-import { navigate } from '../utils/navigate'
-import { expectQueryParameter } from '../utils/util'
-import { VaCodeValues, Field } from '../utils/types'
-import { addFieldsToHakemusJson } from '../utils/hakemus-json'
-import { Talousarviotili } from '../../va-virkailija/web/va/koodienhallinta/types'
-import { HakulomakePage } from './hakujen-hallinta/HakulomakePage'
+import { navigate } from '../../../utils/navigate'
+import { expectQueryParameter } from '../../../utils/util'
+import { VaCodeValues, Field } from '../../../utils/types'
+import { addFieldsToHakemusJson } from '../../../utils/hakemus-json'
+import { Talousarviotili } from '../../../../va-virkailija/web/va/koodienhallinta-page/types'
+import { HakulomakePage } from './HakulomakePage'
 import {
   CommonHakujenHallintaPage,
   saveStatusTestId,
   waitForSave,
-} from './hakujen-hallinta/CommonHakujenHallintaPage'
-import { ValiselvitysPage } from './hakujen-hallinta/ValiselvitysPage'
-import { LoppuselvitysPage } from './hakujen-hallinta/LoppuselvitysPage'
-import { HaunTiedotPage } from './hakujen-hallinta/HaunTiedotPage'
+} from './CommonHakujenHallintaPage'
+import { ValiselvitysPage } from './ValiselvitysPage'
+import { LoppuselvitysPage } from './LoppuselvitysPage'
+import { HaunTiedotPage } from './HaunTiedotPage'
 
 interface Raportointivelvoite {
   raportointilaji: string

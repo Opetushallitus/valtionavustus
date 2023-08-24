@@ -1,7 +1,7 @@
 import { expect, PlaywrightTestArgs } from '@playwright/test'
 import { MuutoshakemusFixtures, muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
-import { Installment } from '../../pages/hakujenHallintaPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
+import { Installment } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { DefaultValueFixtures } from '../../fixtures/defaultValues'
 
 type TestArgs = PlaywrightTestArgs & DefaultValueFixtures & MuutoshakemusFixtures

@@ -1,6 +1,6 @@
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 import { expect } from '@playwright/test'
-import { HakijaPaatosPage } from '../../pages/HakijaPaatosPage'
+import { HakijaPaatosPage } from '../../pages/hakija/HakijaPaatosPage'
 
 test.describe('päätöksen selvitysvelvollisuus-osio', () => {
   test('ei näy jos toimituspäivämääriä tai selvitysvelvollisuus-tekstikenttää ei ole täytetty', async ({

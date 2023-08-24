@@ -10,10 +10,10 @@ import {
 } from '../utils/emails'
 import { HAKIJA_URL } from '../utils/constants'
 import { selectors, expect } from '@playwright/test'
-import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
-import { HakijaMuutoshakemusPage } from '../pages/hakijaMuutoshakemusPage'
-import { HakemustenArviointiPage } from '../pages/hakemustenArviointiPage'
-import { PaatosPage } from '../pages/hakujen-hallinta/PaatosPage'
+import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { HakijaMuutoshakemusPage } from '../pages/hakija/hakijaMuutoshakemusPage'
+import { HakemustenArviointiPage } from '../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
+import { PaatosPage } from '../pages/virkailija/hakujen-hallinta/PaatosPage'
 
 selectors.setTestIdAttribute('data-test-id')
 

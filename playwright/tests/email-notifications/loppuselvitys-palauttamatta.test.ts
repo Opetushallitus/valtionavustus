@@ -4,10 +4,10 @@ import { getLoppuselvitysPalauttamattaEmails, lastOrFail } from '../../utils/ema
 import moment from 'moment'
 import { Answers, MuutoshakemusValues } from '../../utils/types'
 import { expectToBeDefined } from '../../utils/util'
-import { HakijaMuutoshakemusPage } from '../../pages/hakijaMuutoshakemusPage'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { selvitysTest } from '../../fixtures/selvitysTest'
-import { PaatosPage } from '../../pages/hakujen-hallinta/PaatosPage'
+import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
 
 test.describe('loppuselvitys-palauttamatta', () => {
   selvitysTest(

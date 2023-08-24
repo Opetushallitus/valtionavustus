@@ -1,11 +1,11 @@
 import { expect } from '@playwright/test'
-import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
-import { HakijaAvustusHakuPage } from '../pages/hakijaAvustusHakuPage'
-import { HakemustenArviointiPage } from '../pages/hakemustenArviointiPage'
+import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { HakijaAvustusHakuPage } from '../pages/hakija/hakijaAvustusHakuPage'
+import { HakemustenArviointiPage } from '../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { AcceptedBudget, Budget, defaultBudget } from '../utils/budget'
 import { defaultValues } from './defaultValues'
 import { MuutoshakemusFixtures } from './muutoshakemusTest'
-import { PaatosPage } from '../pages/hakujen-hallinta/PaatosPage'
+import { PaatosPage } from '../pages/virkailija/hakujen-hallinta/PaatosPage'
 
 export interface BudjettimuutoshakemusFixtures extends MuutoshakemusFixtures {
   budget: Budget

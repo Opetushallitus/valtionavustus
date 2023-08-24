@@ -1,7 +1,7 @@
 import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
 import { Page, expect } from '@playwright/test'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { expectToBeDefined } from '../../utils/util'
 
 const verifyTooltipText = async (

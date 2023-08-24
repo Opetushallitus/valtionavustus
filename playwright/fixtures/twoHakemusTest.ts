@@ -1,8 +1,8 @@
 import { Answers } from '../utils/types'
 import { muutoshakemusTest } from './muutoshakemusTest'
-import { HakijaAvustusHakuPage } from '../pages/hakijaAvustusHakuPage'
+import { HakijaAvustusHakuPage } from '../pages/hakija/hakijaAvustusHakuPage'
 import { expectToBeDefined } from '../utils/util'
-import { HakemustenArviointiPage } from '../pages/hakemustenArviointiPage'
+import { HakemustenArviointiPage } from '../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 
 interface Fixtures {
   secondAnswers: Answers

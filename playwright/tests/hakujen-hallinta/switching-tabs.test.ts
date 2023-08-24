@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import { defaultValues as test } from '../../fixtures/defaultValues'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { randomAsiatunnus, randomString } from '../../utils/random'
 import { expectToBeDefined } from '../../utils/util'
 

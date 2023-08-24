@@ -1,9 +1,9 @@
 import { expect, Locator, Page } from '@playwright/test'
 
-import { getExistingBudgetTableCells } from '../utils/util'
-import { getLinkToMuutoshakemusFromSentEmails } from '../utils/emails'
-import { MuutoshakemusValues } from '../utils/types'
-import { BudgetAmount, sortedFormTable } from '../utils/budget'
+import { getExistingBudgetTableCells } from '../../utils/util'
+import { getLinkToMuutoshakemusFromSentEmails } from '../../utils/emails'
+import { MuutoshakemusValues } from '../../utils/types'
+import { BudgetAmount, sortedFormTable } from '../../utils/budget'
 
 export class HakijaMuutoshakemusPage {
   readonly page: Page

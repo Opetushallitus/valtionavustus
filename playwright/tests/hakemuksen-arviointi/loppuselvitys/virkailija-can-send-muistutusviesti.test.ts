@@ -1,7 +1,7 @@
 import { Locator, expect } from '@playwright/test'
 import { clearAndType } from '../../../utils/util'
 import { selvitysTest as test } from '../../../fixtures/selvitysTest'
-import SelvitysTab from '../../../pages/hakujen-hallinta/CommonSelvitysPage'
+import SelvitysTab from '../../../pages/virkailija/hakujen-hallinta/CommonSelvitysPage'
 import { getLoppuselvitysMuistutusviestiEmails, waitUntilMinEmails } from '../../../utils/emails'
 import moment from 'moment'
 

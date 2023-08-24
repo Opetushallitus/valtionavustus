@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test'
 import { budjettimuutoshakemusTest } from '../../fixtures/budjettimuutoshakemusTest'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { Budget, BudgetAmount, defaultBudget } from '../../utils/budget'
 import { MuutoshakemusFixtures } from '../../fixtures/muutoshakemusTest'
 

@@ -1,6 +1,6 @@
 import { muutoshakemusTest as test } from '../../../fixtures/muutoshakemusTest'
-import { HakujenHallintaPage } from '../../../pages/hakujenHallintaPage'
-import { HakemustenArviointiPage } from '../../../pages/hakemustenArviointiPage'
+import { HakujenHallintaPage } from '../../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { HakemustenArviointiPage } from '../../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { expect } from '@playwright/test'
 import { expectToBeDefined } from '../../../utils/util'
 import { selvitysTest } from '../../../fixtures/selvitysTest'

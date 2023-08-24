@@ -1,10 +1,10 @@
 import { expect } from '@playwright/test'
 
 import { muutoshakemuskelvotonTest as test } from '../../fixtures/muutoshakemuskelvotonTest'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
-import { HakijaAvustusHakuPage } from '../../pages/hakijaAvustusHakuPage'
-import { PaatosPage } from '../../pages/hakujen-hallinta/PaatosPage'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
+import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
+import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { HAKIJA_URL } from '../../utils/constants'
 import {
   getAcceptedPäätösEmails,

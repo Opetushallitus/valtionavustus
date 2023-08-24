@@ -1,11 +1,14 @@
 import { expect } from '@playwright/test'
 import { selvitysTest } from '../../fixtures/selvitysTest'
-import { HakujenHallintaPage, HakuProps } from '../../pages/hakujenHallintaPage'
+import {
+  HakujenHallintaPage,
+  HakuProps,
+} from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { expectToBeDefined } from '../../utils/util'
 import { markAvustushakuAsMuutoshakukelvoton } from '../../utils/avustushaku'
 import moment from 'moment'
-import { MaksatuksetPage } from '../../pages/hakujen-hallinta/maksatuksetPage'
-import { HaunTiedotPage } from '../../pages/hakujen-hallinta/HaunTiedotPage'
+import { MaksatuksetPage } from '../../pages/virkailija/hakujen-hallinta/maksatuksetPage'
+import { HaunTiedotPage } from '../../pages/virkailija/hakujen-hallinta/HaunTiedotPage'
 
 const prefix1 = 'AAAAA1'
 const prefix2 = 'AAAAA2'

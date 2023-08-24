@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { clickElementWithText } from '../../utils/util'
 
 test.setTimeout(180000)

@@ -4,12 +4,12 @@ import {
   BudjettimuutoshakemusFixtures,
   budjettimuutoshakemusTest,
 } from '../../fixtures/budjettimuutoshakemusTest'
-import { HakijaMuutoshakemusPage } from '../../pages/hakijaMuutoshakemusPage'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import moment from 'moment'
 import { Budget, BudgetAmount, sortedFormTable } from '../../utils/budget'
 import { parseMuutoshakemusPaatosFromEmails } from '../../utils/emails'
-import { HakijaMuutoshakemusPaatosPage } from '../../pages/hakijaMuutoshakemusPaatosPage'
+import { HakijaMuutoshakemusPaatosPage } from '../../pages/hakija/hakijaMuutoshakemusPaatosPage'
 import { svBudjettimuutoshakemusTest } from '../../fixtures/swedishHakemusTest'
 
 const budget: Budget = {

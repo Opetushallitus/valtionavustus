@@ -1,11 +1,11 @@
 import { Page } from '@playwright/test'
 
-import { navigateHakija } from '../utils/navigate'
-import { dummyExcelPath, TEST_Y_TUNNUS } from '../utils/constants'
-import { clickElementWithText, expectQueryParameter, expectToBeDefined } from '../utils/util'
-import { getHakemusUrlFromEmail, pollUntilNewHakemusEmailArrives } from '../utils/emails'
-import { Budget, fillBudget } from '../utils/budget'
-import { Answers, Signatory } from '../utils/types'
+import { navigateHakija } from '../../utils/navigate'
+import { dummyExcelPath, TEST_Y_TUNNUS } from '../../utils/constants'
+import { clickElementWithText, expectQueryParameter, expectToBeDefined } from '../../utils/util'
+import { getHakemusUrlFromEmail, pollUntilNewHakemusEmailArrives } from '../../utils/emails'
+import { Budget, fillBudget } from '../../utils/budget'
+import { Answers, Signatory } from '../../utils/types'
 
 export function HakijaAvustusHakuPage(page: Page) {
   const locators = {

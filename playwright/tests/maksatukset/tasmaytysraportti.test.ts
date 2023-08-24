@@ -2,7 +2,7 @@ import { APIRequestContext, Download, expect } from '@playwright/test'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 import { VIRKAILIJA_URL } from '../../utils/constants'
 import { expectToBeDefined } from '../../utils/util'
-import { MaksatuksetPage } from '../../pages/hakujen-hallinta/maksatuksetPage'
+import { MaksatuksetPage } from '../../pages/virkailija/hakujen-hallinta/maksatuksetPage'
 import { getPdfFirstPageTextContent } from '../../utils/pdfUtil'
 
 export async function getTasmaytysraporit(

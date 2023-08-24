@@ -1,8 +1,8 @@
 import { Page, expect } from '@playwright/test'
-import { navigate } from '../utils/navigate'
-import { randomString } from '../utils/random'
-import { NoProjectCodeProvided, VaCodeValues } from '../utils/types'
-import { HakujenHallintaPage } from './hakujenHallintaPage'
+import { navigate } from '../../utils/navigate'
+import { randomString } from '../../utils/random'
+import { NoProjectCodeProvided, VaCodeValues } from '../../utils/types'
+import { HakujenHallintaPage } from './hakujen-hallinta/hakujenHallintaPage'
 
 type KoodienhallintaTab = 'operational-unit' | 'project' | 'operation'
 

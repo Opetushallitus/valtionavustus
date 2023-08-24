@@ -1,6 +1,6 @@
 import { Dialog, expect, Page } from '@playwright/test'
-import { expectToBeDefined } from '../../utils/util'
-import { Field } from '../../utils/types'
+import { expectToBeDefined } from '../../../utils/util'
+import { Field } from '../../../utils/types'
 import { saveStatusTestId } from './CommonHakujenHallintaPage'
 
 export function HakulomakePage(page: Page) {

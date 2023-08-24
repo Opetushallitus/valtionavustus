@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 import { defaultValues } from '../fixtures/defaultValues'
-import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
+import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 
 defaultValues('Copying haku', async ({ page }) => {
   const hakujenHallinta = new HakujenHallintaPage(page)

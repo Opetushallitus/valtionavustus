@@ -1,6 +1,6 @@
 import { APIRequestContext, expect } from '@playwright/test'
 import { defaultValues } from '../../fixtures/defaultValues'
-import { KoodienhallintaPage } from '../../pages/koodienHallintaPage'
+import { KoodienhallintaPage } from '../../pages/virkailija/koodienHallintaPage'
 import { unpublishedAvustushakuTest } from '../../fixtures/muutoshakemusTest'
 import { expectToBeDefined } from '../../utils/util'
 import { VIRKAILIJA_URL } from '../../utils/constants'
@@ -9,7 +9,7 @@ import {
   createThreeDigitTalousarviotiliCode,
   randomString,
 } from '../../utils/random'
-import { HaunTiedotPage } from '../../pages/hakujen-hallinta/HaunTiedotPage'
+import { HaunTiedotPage } from '../../pages/virkailija/hakujen-hallinta/HaunTiedotPage'
 
 const expectNoErrors = async (koodienhallintaPage: ReturnType<typeof KoodienhallintaPage>) => {
   const taForm = koodienhallintaPage.taTilit.form

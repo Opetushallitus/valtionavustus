@@ -3,14 +3,14 @@ import {
   BudjettimuutoshakemusFixtures,
   budjettimuutoshakemusTest,
 } from '../../fixtures/budjettimuutoshakemusTest'
-import { HakijaMuutoshakemusPage } from '../../pages/hakijaMuutoshakemusPage'
+import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusPage'
 import { getAcceptedPäätösEmails, getLinkToMuutoshakemusFromSentEmails } from '../../utils/emails'
 import { Budget, BudgetAmount, expectBudget, fillBudget } from '../../utils/budget'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import moment from 'moment/moment'
-import { HakijaMuutoshakemusPaatosPage } from '../../pages/hakijaMuutoshakemusPaatosPage'
+import { HakijaMuutoshakemusPaatosPage } from '../../pages/hakija/hakijaMuutoshakemusPaatosPage'
 import { expectToBeDefined } from '../../utils/util'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 
 const testBudget: Budget = {
   amount: {

@@ -1,5 +1,5 @@
 import { test as baseTest, expect } from '@playwright/test'
-import { KoodienhallintaPage } from '../../pages/koodienHallintaPage'
+import { KoodienhallintaPage } from '../../pages/virkailija/koodienHallintaPage'
 import { switchUserIdentityTo, expectToBeDefined } from '../../utils/util'
 import { navigate } from '../../utils/navigate'
 

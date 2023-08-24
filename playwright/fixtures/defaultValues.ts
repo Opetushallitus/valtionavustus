@@ -1,14 +1,14 @@
 import { expect, test } from '@playwright/test'
 import moment from 'moment'
 
-import { HakuProps, parseDate } from '../pages/hakujenHallintaPage'
-import { KoodienhallintaPage } from '../pages/koodienHallintaPage'
+import { HakuProps, parseDate } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { KoodienhallintaPage } from '../pages/virkailija/koodienHallintaPage'
 import { answers, swedishAnswers, VIRKAILIJA_URL } from '../utils/constants'
 import { randomAsiatunnus, randomString } from '../utils/random'
 import { Answers, VaCodeValues } from '../utils/types'
 import { expectToBeDefined, switchUserIdentityTo } from '../utils/util'
 import { EnvironmentApiResponse } from '../../soresu-form/web/va/types/environment'
-import { Talousarviotili } from '../../va-virkailija/web/va/koodienhallinta/types'
+import { Talousarviotili } from '../../va-virkailija/web/va/koodienhallinta-page/types'
 import { randomInt } from 'crypto'
 
 export type DefaultValueFixtures = {

@@ -2,8 +2,8 @@ import { expect } from '@playwright/test'
 
 import { budjettimuutoshakemusTest } from '../fixtures/budjettimuutoshakemusTest'
 import { expectToBeDefined } from '../utils/util'
-import { HakijaAvustusHakuPage } from '../pages/hakijaAvustusHakuPage'
-import SearchPage from '../pages/searchPage'
+import { HakijaAvustusHakuPage } from '../pages/hakija/hakijaAvustusHakuPage'
+import SearchPage from '../pages/virkailija/searchPage'
 import { Answers } from '../utils/types'
 import { randomString } from '../utils/random'
 

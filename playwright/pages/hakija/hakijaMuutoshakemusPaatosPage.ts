@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test'
 
-import { getChangedBudgetTableCells, getExistingBudgetTableCells } from '../utils/util'
+import { getChangedBudgetTableCells, getExistingBudgetTableCells } from '../../utils/util'
 
 export class HakijaMuutoshakemusPaatosPage {
   readonly page: Page

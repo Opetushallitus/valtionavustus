@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { Page, expect } from '@playwright/test'
 
-import { navigate } from '../../utils/navigate'
+import { navigate } from '../../../utils/navigate'
 import { Header } from '../Header'
 
 export function MaksatuksetPage(page: Page) {

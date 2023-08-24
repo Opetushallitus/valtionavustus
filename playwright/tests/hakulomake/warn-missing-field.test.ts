@@ -1,9 +1,9 @@
 import { budjettimuutoshakemusTest } from '../../fixtures/budjettimuutoshakemusTest'
 import { expect } from '@playwright/test'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import fs from 'fs/promises'
 import path from 'path'
-import { HakulomakePage } from '../../pages/hakujen-hallinta/HakulomakePage'
+import { HakulomakePage } from '../../pages/virkailija/hakujen-hallinta/HakulomakePage'
 
 budjettimuutoshakemusTest(
   'warns missing financing-plan',

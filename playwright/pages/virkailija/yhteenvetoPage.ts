@@ -1,6 +1,6 @@
 import { Locator, Page } from '@playwright/test'
 
-import { navigate } from '../utils/navigate'
+import { navigate } from '../../utils/navigate'
 
 const tdTextForLocator = (parentLocator: Locator, nthOfType: number) =>
   parentLocator.locator(`td:nth-of-type(${nthOfType})`).textContent()

@@ -2,7 +2,7 @@ import { APIRequestContext, expect } from '@playwright/test'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 import { getHakemusTokenAndRegisterNumber } from '../../utils/emails'
 import { VIRKAILIJA_URL } from '../../utils/constants'
-import { MaksatuksetPage } from '../../pages/hakujen-hallinta/maksatuksetPage'
+import { MaksatuksetPage } from '../../pages/virkailija/hakujen-hallinta/maksatuksetPage'
 import {
   getAllMaksatuksetFromMaksatuspalvelu,
   putMaksupalauteToMaksatuspalveluAndProcessIt,

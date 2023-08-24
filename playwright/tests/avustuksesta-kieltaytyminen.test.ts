@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test'
-import { HakemustenArviointiPage } from '../pages/hakemustenArviointiPage'
+import { HakemustenArviointiPage } from '../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { RefusePage } from '../pages/hakija/refuse-page'
 import { getLoppuselvitysEmailsForAvustus, getValiselvitysEmailsForAvustus } from '../utils/emails'
-import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
+import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { twoAcceptedHakemusTest as test } from '../fixtures/twoHakemusTest'
 
 test('Avustuksesta kieltäytyminen', async ({

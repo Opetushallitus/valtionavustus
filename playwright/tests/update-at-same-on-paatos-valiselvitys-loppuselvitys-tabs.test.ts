@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test'
 import { muutoshakemusTest as test } from '../fixtures/muutoshakemusTest'
-import { PaatosPage } from '../pages/hakujen-hallinta/PaatosPage'
-import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
+import { PaatosPage } from '../pages/virkailija/hakujen-hallinta/PaatosPage'
+import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 
 /*
   selvitykset are not actually updated at the same time as paatos

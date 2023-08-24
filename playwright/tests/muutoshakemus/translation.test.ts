@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test'
 import { svBudjettimuutoshakemusTest } from '../../fixtures/swedishHakemusTest'
-import { HakijaMuutoshakemusPage } from '../../pages/hakijaMuutoshakemusPage'
+import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusPage'
 import moment from 'moment/moment'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import {
   getHakemusTokenAndRegisterNumber,
   parseMuutoshakemusPaatosFromEmails,

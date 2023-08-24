@@ -1,8 +1,8 @@
 import moment from 'moment'
 import { expect } from '@playwright/test'
 import { budjettimuutoshakemusTest } from '../../fixtures/budjettimuutoshakemusTest'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
-import { HakijaMuutoshakemusPage } from '../../pages/hakijaMuutoshakemusPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
+import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusPage'
 import { BudgetAmount, defaultBudget } from '../../utils/budget'
 import { MuutoshakemusValues } from '../../utils/types'
 

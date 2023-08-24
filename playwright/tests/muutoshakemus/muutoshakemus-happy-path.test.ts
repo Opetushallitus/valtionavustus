@@ -15,8 +15,8 @@ import { clickElementWithText, waitForNewTab } from '../../utils/util'
 import { HAKIJA_URL, TEST_Y_TUNNUS, VIRKAILIJA_URL } from '../../utils/constants'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 import { MuutoshakemusValues } from '../../utils/types'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
-import { HakijaMuutoshakemusPage } from '../../pages/hakijaMuutoshakemusPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
+import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusPage'
 import { randomString } from '../../utils/random'
 
 const sendMuutoshakemuksiaKasittelemattaNotifications = (request: APIRequestContext) =>

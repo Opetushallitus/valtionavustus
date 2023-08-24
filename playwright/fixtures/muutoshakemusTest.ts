@@ -1,11 +1,14 @@
 import { expect, test } from '@playwright/test'
-import { HakemustenArviointiPage } from '../pages/hakemustenArviointiPage'
-import { HakujenHallintaPage, hakuPath } from '../pages/hakujenHallintaPage'
+import { HakemustenArviointiPage } from '../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
+import {
+  HakujenHallintaPage,
+  hakuPath,
+} from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import moment from 'moment'
-import { HakijaAvustusHakuPage } from '../pages/hakijaAvustusHakuPage'
+import { HakijaAvustusHakuPage } from '../pages/hakija/hakijaAvustusHakuPage'
 import { defaultValues } from './defaultValues'
 import { expectToBeDefined } from '../utils/util'
-import { PaatosPage } from '../pages/hakujen-hallinta/PaatosPage'
+import { PaatosPage } from '../pages/virkailija/hakujen-hallinta/PaatosPage'
 import { VIRKAILIJA_URL } from '../utils/constants'
 import { Answers } from '../utils/types'
 

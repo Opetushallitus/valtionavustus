@@ -1,14 +1,14 @@
 import { expect, Locator, Page } from '@playwright/test'
 import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
-import { KoodienhallintaPage } from '../../pages/koodienHallintaPage'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
+import { KoodienhallintaPage } from '../../pages/virkailija/koodienHallintaPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { createRandomTalousarviotiliCode, randomString } from '../../utils/random'
 import { expectToBeDefined } from '../../utils/util'
 import { defaultValues } from '../../fixtures/defaultValues'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
-import { HakijaAvustusHakuPage } from '../../pages/hakijaAvustusHakuPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
+import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
 import { addMigratedTalousarviotili } from '../../utils/avustushaku'
-import { HaunTiedotPage } from '../../pages/hakujen-hallinta/HaunTiedotPage'
+import { HaunTiedotPage } from '../../pages/virkailija/hakujen-hallinta/HaunTiedotPage'
 
 type CreateTaTili = {
   code: string

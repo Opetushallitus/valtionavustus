@@ -1,6 +1,6 @@
 import { defaultValues } from '../../fixtures/defaultValues'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
-import { HakijaAvustusHakuPage } from '../../pages/hakijaAvustusHakuPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
 import { expectToBeDefined } from '../../utils/util'
 import { Page, expect } from '@playwright/test'
 

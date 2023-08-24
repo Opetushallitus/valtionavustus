@@ -4,7 +4,7 @@ import { multipleProjectCodesTest as test } from '../../multipleProjectCodesTest
 import { alustaAvustushaunTaytto } from './multiple-projects-util'
 
 import { expectToBeDefined } from '../../utils/util'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 
 test('Vahintaan yksi projekti pitaa valita', async ({
   page,

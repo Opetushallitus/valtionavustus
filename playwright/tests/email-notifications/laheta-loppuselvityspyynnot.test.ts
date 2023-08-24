@@ -1,15 +1,15 @@
 import { Page, test, expect } from '@playwright/test'
 import { dummyPdfPath, VIRKAILIJA_URL } from '../../utils/constants'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import moment from 'moment'
 import { Email, getLahetaLoppuselvityspyynnotEmails, lastOrFail } from '../../utils/emails'
 import { expectToBeDefined } from '../../utils/util'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { selvitysTest } from '../../fixtures/selvitysTest'
 import { navigate } from '../../utils/navigate'
-import { HakijaSelvitysPage } from '../../pages/hakijaSelvitysPage'
-import { PaatosPage } from '../../pages/hakujen-hallinta/PaatosPage'
-import { LoppuselvitysPage } from '../../pages/hakujen-hallinta/LoppuselvitysPage'
+import { HakijaSelvitysPage } from '../../pages/hakija/hakijaSelvitysPage'
+import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
+import { LoppuselvitysPage } from '../../pages/virkailija/hakujen-hallinta/LoppuselvitysPage'
 
 const sendLahetaLoppuselvityspyynnotNotifications = (page: Page) =>
   page.request.post(`${VIRKAILIJA_URL}/api/test/send-laheta-loppuselvityspyynnot-notifications`, {

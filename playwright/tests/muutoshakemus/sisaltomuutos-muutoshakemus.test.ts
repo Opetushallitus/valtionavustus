@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test'
 import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
-import { HakijaMuutoshakemusPage } from '../../pages/hakijaMuutoshakemusPage'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 
 const sisaltomuutosPerustelut = 'Muutamme kaiken muuttamisen ilosta'
 

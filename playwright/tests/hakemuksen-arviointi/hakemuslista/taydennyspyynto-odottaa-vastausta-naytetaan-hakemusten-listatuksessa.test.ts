@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test'
 import { muutoshakemusTest as test } from '../../../fixtures/muutoshakemusTest'
 
-import { HakemustenArviointiPage } from '../../../pages/hakemustenArviointiPage'
+import { HakemustenArviointiPage } from '../../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 
 test('Täydennyspyyntö odottaa vastausta näytetään hakemusten listauksessa', async ({
   closedAvustushaku,

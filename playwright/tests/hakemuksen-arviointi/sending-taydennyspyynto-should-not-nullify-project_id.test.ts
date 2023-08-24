@@ -1,4 +1,4 @@
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { submittedHakemusTest } from '../../fixtures/muutoshakemusTest'
 import { expectToBeDefined } from '../../utils/util'
 import { VIRKAILIJA_URL } from '../../utils/constants'

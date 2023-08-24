@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test'
 
 import { muutoshakemusTest } from '../fixtures/muutoshakemusTest'
-import { HakemustenArviointiPage } from '../pages/hakemustenArviointiPage'
-import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
+import { HakemustenArviointiPage } from '../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
+import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { getAvustushautForYear, getHakemuksetForAvustushaku } from '../utils/external-api'
 
 const nutshell = 'Projectin pähkinäkuori'

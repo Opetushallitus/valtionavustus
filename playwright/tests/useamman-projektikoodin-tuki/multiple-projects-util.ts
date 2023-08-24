@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test'
-import { HakuProps } from '../../pages/hakujenHallintaPage'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
-import { HaunTiedotPage } from '../../pages/hakujen-hallinta/HaunTiedotPage'
+import { HakuProps } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { HaunTiedotPage } from '../../pages/virkailija/hakujen-hallinta/HaunTiedotPage'
 
 export async function alustaAvustushaunTaytto(page: Page, hakuProps: HakuProps) {
   const hakujenHallintaPage = new HakujenHallintaPage(page)

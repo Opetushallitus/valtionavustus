@@ -3,8 +3,8 @@ import { readFileSync } from 'fs'
 import * as path from 'path'
 
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
-import { HakulomakePage } from '../../pages/hakujen-hallinta/HakulomakePage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { HakulomakePage } from '../../pages/virkailija/hakujen-hallinta/HakulomakePage'
 import { expectToBeDefined } from '../../utils/util'
 
 const puuttuvaYhteyshenkilonNimiJson = readFileSync(

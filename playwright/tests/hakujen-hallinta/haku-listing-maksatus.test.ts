@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test'
 import moment from 'moment'
 import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
-import { MaksatuksetPage } from '../../pages/hakujen-hallinta/maksatuksetPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { MaksatuksetPage } from '../../pages/virkailija/hakujen-hallinta/maksatuksetPage'
 import { expectToBeDefined } from '../../utils/util'
 
 muutoshakemusTest(

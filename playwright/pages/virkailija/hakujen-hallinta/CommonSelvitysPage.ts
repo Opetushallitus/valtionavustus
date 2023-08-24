@@ -1,6 +1,6 @@
 import { expect, Page } from '@playwright/test'
 import { Response } from 'playwright-core'
-import { navigate } from '../../utils/navigate'
+import { navigate } from '../../../utils/navigate'
 
 type SelvitysType = 'vali' | 'loppu'
 

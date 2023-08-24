@@ -1,7 +1,7 @@
 import { defaultValues } from '../../fixtures/defaultValues'
-import { HakijaAvustusHakuPage } from '../../pages/hakijaAvustusHakuPage'
+import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
 import { expect } from '@playwright/test'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { dummyPdfPath, TEST_Y_TUNNUS } from '../../utils/constants'
 
 const test = defaultValues.extend<{

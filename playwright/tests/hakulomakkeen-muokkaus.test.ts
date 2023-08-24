@@ -4,7 +4,7 @@ import { readFile } from 'fs/promises'
 import moment from 'moment'
 
 import { defaultValues } from '../fixtures/defaultValues'
-import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
+import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 
 defaultValues('Editing hakulomake', async ({ page, hakuProps }) => {
   const puuttuvaYhteyshenkilonNimiJson = await readFile(

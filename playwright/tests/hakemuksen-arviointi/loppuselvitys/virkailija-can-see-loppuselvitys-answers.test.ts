@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test'
 
 import { selvitysTest as test } from '../../../fixtures/selvitysTest'
-import { LoppuselvitysPage } from '../../../pages/hakujen-hallinta/LoppuselvitysPage'
+import { LoppuselvitysPage } from '../../../pages/virkailija/hakujen-hallinta/LoppuselvitysPage'
 
 test('virkailija can see loppuselvitys answers', async ({
   page,

@@ -2,9 +2,9 @@ import * as xlsx from 'xlsx'
 import { expect, Page, test } from '@playwright/test'
 import { muutoshakemusTest } from '../fixtures/muutoshakemusTest'
 import { expectToBeDefined } from '../utils/util'
-import { MaksatuksetPage } from '../pages/hakujen-hallinta/maksatuksetPage'
+import { MaksatuksetPage } from '../pages/virkailija/hakujen-hallinta/maksatuksetPage'
 import moment from 'moment'
-import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
+import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 
 muutoshakemusTest.use({
   acceptDownloads: true,

@@ -2,12 +2,12 @@ import { test, expect, Page } from '@playwright/test'
 import moment from 'moment'
 
 import { VIRKAILIJA_URL } from '../../utils/constants'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { getLahetaValiselvityspyynnotEmails } from '../../utils/emails'
 import { expectToBeDefined } from '../../utils/util'
 import { selvitysTest } from '../../fixtures/selvitysTest'
-import { PaatosPage } from '../../pages/hakujen-hallinta/PaatosPage'
+import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
 
 test.describe.parallel('Lähetä väliselvityspyynnöt notifications', () => {
   selvitysTest(

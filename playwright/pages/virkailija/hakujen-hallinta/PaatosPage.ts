@@ -1,5 +1,5 @@
 import { expect, Page } from '@playwright/test'
-import { navigate } from '../../utils/navigate'
+import { navigate } from '../../../utils/navigate'
 import * as common from './CommonHakujenHallintaPage'
 import { CommonHakujenHallintaPage } from './CommonHakujenHallintaPage'
 

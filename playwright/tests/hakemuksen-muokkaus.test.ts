@@ -2,8 +2,8 @@ import { expect, Page } from '@playwright/test'
 import { URLSearchParams } from 'url'
 
 import { muutoshakemusTest as test } from '../fixtures/muutoshakemusTest'
-import { HakemustenArviointiPage } from '../pages/hakemustenArviointiPage'
-import { HakijaAvustusHakuPage } from '../pages/hakijaAvustusHakuPage'
+import { HakemustenArviointiPage } from '../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
+import { HakijaAvustusHakuPage } from '../pages/hakija/hakijaAvustusHakuPage'
 import { waitForElementWithText } from '../utils/util'
 
 test('virkailija can edit hakemus', async ({ page, avustushakuID, submittedHakemus: hakemus }) => {

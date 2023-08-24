@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test'
 
-import { navigate } from '../utils/navigate'
+import { navigate } from '../../utils/navigate'
 
 export default function SearchPage(page: Page) {
   async function navigateToSearchPage() {

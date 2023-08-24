@@ -1,11 +1,11 @@
 import { expect } from '@playwright/test'
 import { muutoshakemusTest as test } from '../../../fixtures/muutoshakemusTest'
-import { HakemustenArviointiPage } from '../../../pages/hakemustenArviointiPage'
+import { HakemustenArviointiPage } from '../../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { expectToBeDefined } from '../../../utils/util'
-import { HakujenHallintaPage } from '../../../pages/hakujenHallintaPage'
+import { HakujenHallintaPage } from '../../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import moment from 'moment'
-import { MaksatuksetPage } from '../../../pages/hakujen-hallinta/maksatuksetPage'
-import { PaatosPage } from '../../../pages/hakujen-hallinta/PaatosPage'
+import { MaksatuksetPage } from '../../../pages/virkailija/hakujen-hallinta/maksatuksetPage'
+import { PaatosPage } from '../../../pages/virkailija/hakujen-hallinta/PaatosPage'
 
 const formattedMoment = () => moment(new Date()).format('DD.MM.YYYY')
 const valiselvitysDeadline = '01.01.2023'

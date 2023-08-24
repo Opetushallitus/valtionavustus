@@ -1,16 +1,16 @@
 import { expect } from '@playwright/test'
 import { defaultValues } from '../../fixtures/defaultValues'
-import { HakijaAvustusHakuPage } from '../../pages/hakijaAvustusHakuPage'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
+import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { dummyExcelPath, dummyPdfPath, HAKIJA_URL, TEST_Y_TUNNUS } from '../../utils/constants'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { getAcceptedPäätösEmails, waitUntilMinEmails } from '../../utils/emails'
 import moment from 'moment'
 import { expectToBeDefined } from '../../utils/util'
 import fs from 'fs'
 import * as path from 'path'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
-import { PaatosPage } from '../../pages/hakujen-hallinta/PaatosPage'
+import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
 
 const muutoshakuDisabledMenoluokiteltuLomakeJson = fs.readFileSync(
   path.join(__dirname, '../../fixtures/muutoshakemus-disabled-menoluokiteltu.hakulomake.json'),

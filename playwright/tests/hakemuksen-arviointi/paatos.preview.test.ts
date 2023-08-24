@@ -1,10 +1,10 @@
 import { submittedHakemusTest } from '../../fixtures/muutoshakemusTest'
 import { expect, Page } from '@playwright/test'
-import { HakujenHallintaPage } from '../../pages/hakujenHallintaPage'
-import { HakemustenArviointiPage } from '../../pages/hakemustenArviointiPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { expectToBeDefined } from '../../utils/util'
 import { BrowserContext } from 'playwright-chromium'
-import { HaunTiedotPage } from '../../pages/hakujen-hallinta/HaunTiedotPage'
+import { HaunTiedotPage } from '../../pages/virkailija/hakujen-hallinta/HaunTiedotPage'
 
 const lisatekstiDefault = 'myönteinenlisäteksti default'
 const lisatekstiAmmatillinenKoulutus = `myönteinenlisäteksti

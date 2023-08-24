@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test'
 
 import { defaultValues } from '../fixtures/defaultValues'
-import { HakujenHallintaPage } from '../pages/hakujenHallintaPage'
-import { HaunTiedotPage } from '../pages/hakujen-hallinta/HaunTiedotPage'
+import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { HaunTiedotPage } from '../pages/virkailija/hakujen-hallinta/HaunTiedotPage'
 
 defaultValues('Vastuuvalmistelija role', async ({ page, userCache }) => {
   expect(userCache).toBeDefined()
