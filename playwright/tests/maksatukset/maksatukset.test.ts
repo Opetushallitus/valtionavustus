@@ -17,7 +17,7 @@ import {
   putMaksupalauteToMaksatuspalveluAndProcessIt,
 } from './maksatuspalvelu'
 import { ValiselvitysPage } from '../../pages/hakujen-hallinta/ValiselvitysPage'
-import { createDefaultErapaiva } from '../../../va-virkailija/web/va/haku-details/erapaiva'
+import { createDefaultErapaiva } from '../../../va-virkailija/web/va/hakujen-hallinta-page/haku-details/erapaiva'
 
 const correctOVTTest = test.extend({
   codes: async ({ page }, use) => {
