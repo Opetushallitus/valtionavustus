@@ -272,7 +272,7 @@ export class HakujenHallintaPage {
 
   async createUnpublishedMuutoshakemusEnabledHaku(hakuProps: HakuProps) {
     const muutoshakemusEnabledHakuLomakeJson = await fs.readFile(
-      path.join(__dirname, '../fixtures/prod.hakulomake.json'),
+      path.join(__dirname, '../../../fixtures/prod.hakulomake.json'),
       'utf8'
     )
     const { avustushakuID } = await this.createHakuWithLomakeJson(
@@ -285,7 +285,7 @@ export class HakujenHallintaPage {
 
   async createBudjettimuutosEnabledHaku(hakuProps: HakuProps) {
     const muutoshakemusEnabledHakuLomakeJson = await fs.readFile(
-      path.join(__dirname, '../fixtures/budjettimuutos.hakulomake.json'),
+      path.join(__dirname, '../../../fixtures/budjettimuutos.hakulomake.json'),
       'utf8'
     )
     const { avustushakuID } = await this.createHakuWithLomakeJson(
@@ -299,7 +299,7 @@ export class HakujenHallintaPage {
 
   async createKoulutusasteHaku(hakuProps: HakuProps) {
     const lomakeJson = await fs.readFile(
-      path.join(__dirname, '../fixtures/koulutusosio.hakulomake.json'),
+      path.join(__dirname, '../../../fixtures/koulutusosio.hakulomake.json'),
       'utf8'
     )
     const { avustushakuID } = await this.createHakuWithLomakeJson(lomakeJson, hakuProps)
