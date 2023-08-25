@@ -1,5 +1,6 @@
 import { expect, Page } from '@playwright/test'
 import SelvitysTab from './CommonSelvitysPage'
+import moment from 'moment/moment'
 
 export const LoppuselvitysPage = (page: Page) => {
   const asiatarkastus = page.getByTestId('loppuselvitys-asiatarkastus')
@@ -52,6 +53,8 @@ export const LoppuselvitysPage = (page: Page) => {
     await locators.asiatarkastus.confirmAcceptance.click()
     await expect(locators.asiatarkastettu).toBeVisible()
     await expect(locators.asiatarkastettu).toContainText('Asiatarkastettu')
+    await expect(locators.asiatarkastettu).toContainText('_ valtionavustus')
+    await expect(locators.asiatarkastettu).toContainText([moment().format('DD.MM.YYYY')])
   }
 
   async function taloustarkastaLoppuselvitys() {
