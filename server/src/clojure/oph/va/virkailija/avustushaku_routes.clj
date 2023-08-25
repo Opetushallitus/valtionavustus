@@ -488,16 +488,17 @@
       (let [identity (authentication/get-request-identity request)]
         (when (not (seq (filter notEmptyString to)))
           (http/bad-request! {:error "Viestillä on oltava vähintään yksi vastaanottaja"}))
-        (when (= "taydennyspyynto-taloustarkastus" type)
-          (hakija-db/set-loppuselvitys-taloustarkastus-taydennyspyynto-for-hakemus hakemus-id))
+        (let [loppuselvitys-hakemus-id (hakija-db/get-loppuselvitys-hakemus-id hakemus-id)
+              loppuselvitys-hakemus (hakija-api/get-hakemus loppuselvitys-hakemus-id)]
+          (hakija-api/update-hakemus-status loppuselvitys-hakemus "pending_change_request" "Täydennyspyyntö kts. sähköposti" identity))
         (let [email-id (common-email/try-send-email!
-                         (common-email/message (keyword lang)
+                       (common-email/message (keyword lang)
                                                (keyword type)
                                                to
                                                subject
                                                body)
-                         {:hakemus-id hakemus-id
-                          :avustushaku-id avustushaku-id})]
+                       {:hakemus-id hakemus-id
+                        :avustushaku-id avustushaku-id})]
           (tapahtumaloki/create-log-entry type avustushaku-id hakemus-id identity "" {} email-id true))
         (http/created))))
 

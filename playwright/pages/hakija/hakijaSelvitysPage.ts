@@ -30,6 +30,7 @@ export const HakijaSelvitysPage = (page: Page) => {
     },
     firstAttachment: page.locator(`[name='namedAttachment-0']`),
     submitButton: page.locator('#submit'),
+    taydennysButton: page.getByRole('button', { name: 'Lähetä täydennys käsiteltäväksi' }),
     valiselvitysWarning: page.locator('text="Väliselvityksen jättämisen määräaika on umpeutunut"'),
     loppuselvitysWarning: page.locator(
       'text="Loppuselvityksen jättämisen määräaika on umpeutunut"'

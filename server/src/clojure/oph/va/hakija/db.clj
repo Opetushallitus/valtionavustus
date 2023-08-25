@@ -573,3 +573,12 @@
   (execute! "UPDATE hakemukset
              SET loppuselvitys_taloustarkastus_taydennyspyynto_sent = true
              WHERE id = ? AND version_closed IS NULL", [hakemus-id]))
+
+(defn get-loppuselvitys-hakemus-id [parent-hakemus-id]
+  (let [result (query "
+                      SELECT id FROM hakemukset
+                      WHERE hakemus_type = 'loppuselvitys' AND
+                            parent_id = ? AND
+                            version_closed IS NULL
+                    " [parent-hakemus-id])]
+(:id (first result))))

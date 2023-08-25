@@ -204,6 +204,8 @@ export interface Selvitys {
   'project-name'?: string
   'register-number'?: string
   'selvitys-email'?: SelvitysEmail
+  status: HakemusStatus
+  'status-loppuselvitys': SelvitysStatus
   answers?: Answer[]
   language: 'fi' | 'sv'
 }
@@ -242,6 +244,7 @@ export interface HakemusSelvitys {
   attachments: unknown
   loppuselvitysForm?: ImmutableObject<Form>
   loppuselvitys: Selvitys
+  loppuselvitysChangeRequests?: Hakemus[]
   valiselvitysForm?: ImmutableObject<Form>
   valiselvitys: Selvitys
 }

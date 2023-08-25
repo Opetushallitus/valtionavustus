@@ -288,11 +288,15 @@
        (exec hakija-queries/list-hakemukset-for-export-by-type-and-avustushaku)
        hakemukset->json))
 
+(defn list-hakemus-change-requests [hakemus-id]
+  (hakemukset->json (exec hakija-queries/list-hakemus-change-requests {:id hakemus-id})))
+
 (defn get-selvitysdata [avustushaku-id hakemus-id]
   (let [avustushaku (get-avustushaku avustushaku-id)
         loppuselvitys-form-id (:form_loppuselvitys avustushaku)
         loppuselvitys-form (get-form-by-id loppuselvitys-form-id)
         loppuselvitys (first (exec hakija-queries/get-by-type-and-parent-id {:parent_id hakemus-id :hakemus_type "loppuselvitys"}))
+        loppuselvitys-change-requests (list-hakemus-change-requests (:id loppuselvitys))
         valiselvitys-form-id (:form_valiselvitys avustushaku)
         valiselvitys-form (get-form-by-id valiselvitys-form-id)
         valiselvitys (first (exec hakija-queries/get-by-type-and-parent-id {:parent_id hakemus-id :hakemus_type "valiselvitys"}))
@@ -301,6 +305,7 @@
      :loppuselvitysForm (form->json loppuselvitys-form)
      :valiselvitysForm (form->json valiselvitys-form)
      :loppuselvitys (if loppuselvitys (hakemus->json loppuselvitys) {})
+     :loppuselvitysChangeRequests loppuselvitys-change-requests
      :valiselvitys (if valiselvitys (hakemus->json valiselvitys) {})
      :attachments (->> attachments
                        (partition-by (fn [attachment] (:hakemus_id attachment)))
@@ -489,8 +494,6 @@
 
                (hakija-queries/update-hakemus-status<! updated-hakemus {:connection tx})))))
 
-(defn list-hakemus-change-requests [hakemus-id]
-  (hakemukset->json (exec hakija-queries/list-hakemus-change-requests {:id hakemus-id})))
 
 (defn find-matching-hakemukset-by-organization-name [organization-name]
   (let [org-pattern (str "%" (escape-like-pattern organization-name) "%")]

@@ -295,6 +295,7 @@
   (selvitys-routes/get-selvitys-init)
   (selvitys-routes/post-selvitys)
   (selvitys-routes/post-selvitys-submit)
+  (selvitys-routes/post-loppuselvitys-change-request-response)
   (put-hakemus)
   (put-refuse-hakemus)
   (post-hakemus)

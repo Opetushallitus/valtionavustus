@@ -104,7 +104,7 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
   const registerNumber = loppuselvitys?.['register-number'] || ''
   const selvitysEmail = loppuselvitys?.['selvitys-email']
   const dispatch = useHakemustenArviointiDispatch()
-  const isTaloustarkastettu = taloustarkastettu && selvitysEmail !== undefined
+  const isTaloustarkastettu = taloustarkastettu && !!selvitysEmail
   const [email, setEmail] = useState(() =>
     isTaloustarkastettu
       ? sentEmail(lang, selvitysEmail)

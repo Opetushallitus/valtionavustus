@@ -63,7 +63,10 @@ const Loppuselvitys = () => {
             hakemus={hakemus}
             avustushaku={avustushaku}
             selvitysType="loppuselvitys"
-            selvitysHakemus={selvitysHakemus}
+            selvitysHakemus={{
+              ...selvitysHakemus,
+              changeRequests: hakemus.selvitys?.loppuselvitysChangeRequests,
+            }}
             form={form}
           />
         ) : (
