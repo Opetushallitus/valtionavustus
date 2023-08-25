@@ -39,6 +39,7 @@ import './hakemusten-arviointi.less'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 import { InitialDataProvider, useFeature } from '../initial-data-context'
+import { ViestiHankkeelle } from './hakemus-details/ViestiHankkeelle'
 
 const SHOW_ALL = 'showAll' as const
 const SHOW_ADDITIONAL_INFO = 'showAdditionalInfo' as const
@@ -73,7 +74,7 @@ const AppRoutes = () => {
           <Route path="loppuselvitys" element={<Loppuselvitys />} />
           <Route path="muutoshakemukset" element={<MuutoshakemusTabContent />} />
           <Route path="seuranta" element={<Seuranta />} />
-          {viestiTabEnabled && <Route path="viesti" element={null} />}
+          {viestiTabEnabled && <Route path="viesti" element={<ViestiHankkeelle />} />}
         </Route>
       </Route>
       <Route path="*" element={<Navigate to={`/avustushaku/${defaultHakuId}`} replace />} />
