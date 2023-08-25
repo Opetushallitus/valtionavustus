@@ -198,7 +198,7 @@
         matching-fields (filter (fn [field] (some (fn [answer] (= (:key answer) (:id field))) answers-to-validate) ) fields)
         missing-fields (filter (fn [answer] (not (some (fn [field] (= (:key answer) (:id field) )) matching-fields))) answers-to-validate)
         new-fields (map (fn [missing]
-                                           (let [renamed-answer-field (string/replace (:key missing) #"\d" "1")
+                                           (let [renamed-answer-field (string/replace-first (:key missing) #"\d+" "1")
                                                  found-form-field (first (filter (fn [x] (= (:id x) renamed-answer-field))   matching-fields))]
                                              (assoc found-form-field :id (:key missing)))) missing-fields)]
     new-fields))
