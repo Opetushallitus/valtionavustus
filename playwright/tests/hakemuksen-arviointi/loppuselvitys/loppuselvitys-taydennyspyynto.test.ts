@@ -5,15 +5,18 @@ import { HakemustenArviointiPage } from '../../../pages/virkailija/hakemusten-ar
 import {
   getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails,
   getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails,
+  getLoppuselvitysTaydennysReceivedEmails,
   getSelvitysEmails,
 } from '../../../utils/emails'
 import { HakijaSelvitysPage } from '../../../pages/hakija/hakijaSelvitysPage'
 import { navigate } from '../../../utils/navigate'
+import { VIRKAILIJA_URL } from '../../../utils/constants'
 
 test('can send taydennyspyynto for loppuselvitys', async ({
   page,
   acceptedHakemus: { hakemusID },
   avustushakuID,
+  avustushakuName,
   loppuselvitysSubmitted: { loppuselvitysFormUrl },
   hakuProps,
 }) => {
@@ -77,6 +80,7 @@ test('can send taydennyspyynto for loppuselvitys', async ({
   const oldAnswer = hakemustenArviointiPage.page.locator('.answer-old-value')
   const newAnswer = hakemustenArviointiPage.page.locator('.answer-new-value')
   await test.step('hakija can send täydennys', async () => {
+    expect(await getLoppuselvitysTaydennysReceivedEmails(hakemusID)).toHaveLength(0)
     await navigate(page, loppuselvitysFormUrl)
     const hakijaSelvitysPage = HakijaSelvitysPage(page)
     await expect(tavoiteLocator).toHaveValue(defaultTavoite)
@@ -87,6 +91,18 @@ test('can send taydennyspyynto for loppuselvitys', async ({
     await expect(hakijaSelvitysPage.submitButton).toHaveText('Loppuselvitys lähetetty')
     await expect(tavoiteLocator).toHaveText(asiatarkastusTaydennysTavoite) // now span instead of input field
     await expect(yhteenvetoLocator).toHaveText(asiatarkastusTaydennysYhteenveto)
+  })
+  await test.step('virkailija receives täydennys received email after hakija submission', async () => {
+    const emails = await getLoppuselvitysTaydennysReceivedEmails(hakemusID)
+    expect(emails).toHaveLength(1)
+    expect(emails[0].subject).toBe(
+      'Automaattinen viesti: avustushakemuksen loppuselvitystä on täydennetty'
+    )
+    expect(emails[0]['to-address']).toStrictEqual(['santeri.horttanainen@reaktor.com'])
+    expect(emails[0].formatted).toBe(`Avustushaku: ${avustushakuName}
+
+Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/loppuselvitys/
+`)
   })
   await test.step('hakija täydennys is shown as diff', async () => {
     await hakemustenArviointiPage.navigateToHakemusArviointiLoppuselvitys(avustushakuID, hakemusID)
@@ -153,6 +169,10 @@ test('can send taydennyspyynto for loppuselvitys', async ({
     await expect(hakijaSelvitysPage.taydennysButton).toBeHidden()
     await expect(tavoiteLocator).toHaveText(taloustarkastusTaydennysTavoite)
     await expect(yhteenvetoLocator).toHaveText(taloustarkastusTaydennysYhteenveto)
+  })
+  await test.step('virkailija receives täydennys received email again after hakija submission', async () => {
+    const emails = await getLoppuselvitysTaydennysReceivedEmails(hakemusID)
+    expect(emails).toHaveLength(2)
   })
   await test.step('shows diff of new answers for virkailija', async () => {
     await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)

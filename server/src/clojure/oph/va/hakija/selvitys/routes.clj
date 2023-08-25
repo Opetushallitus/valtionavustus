@@ -127,6 +127,16 @@
         rows (query sql [hakemus-id])]
     (:primary-email (first rows))))
 
+(defn- get-email-of-virkailija [hakemus-id]
+  (let [sql "select h.user_email
+             from hakija.hakemukset h
+             where h.id = ? and
+             h.status in ('pending_change_request', 'officer_edit') and
+             h.last_status_change_at = h.created_at
+             order by h.version"
+        rows (query sql [hakemus-id])]
+  (:user-email (first rows))))
+
 (defn- get-hakemus-contact-email [hakemus-id]
   (let [normalized-hakemus (va-db/get-normalized-hakemus-by-id hakemus-id)]
     (if (and normalized-hakemus (:contact-email normalized-hakemus))
@@ -156,14 +166,11 @@
                                                       answers
                                                       budget-totals)
               lang (keyword (:language hakemus))
-              parent_id (:parent_id hakemus)
+              parent-hakemus-id (:parent_id hakemus)
               id (:id hakemus)
-              contact-email (get-hakemus-contact-email parent_id)
-              parent-hakemus (va-db/get-hakemus-by-id parent_id)
-              hakemus-name (:project-name parent-hakemus)
-              register-number (:register-number parent-hakemus)]
+              email-of-virkailija (get-email-of-virkailija id)]
           (va-db/update-loppuselvitys-status id "submitted")
-          ;(va-email/send-selvitys-submitted-message! avustushaku-id selvitys-user-key selvitys-type lang parent_id hakemus-name register-number [contact-email])
+          (va-email/send-loppuselvitys-change-request-responded-message-to-virkailija! [email-of-virkailija] avustushaku-id (-> avustushaku :content :name :fi) parent-hakemus-id)
           (handlers/hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (handlers/hakemus-conflict-response hakemus))
       (http/bad-request! validation))))

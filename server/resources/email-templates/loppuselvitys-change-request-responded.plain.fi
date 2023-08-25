@@ -1,0 +1,3 @@
+Avustushaku: {{ avustushaku }}
+
+Hakemuksen loppuselvitystä on täydennetty: {{& url }}

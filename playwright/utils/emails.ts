@@ -77,6 +77,9 @@ export const getValiselvitysEmails = getEmails('valiselvitys-notification')
 export const getValiselvitysEmailsForAvustus = getEmailsWithAvustushaku('valiselvitys-notification')
 
 export const getSelvitysEmails = getEmailsWithAvustushaku('selvitys')
+export const getLoppuselvitysTaydennysReceivedEmails = getEmails(
+  'loppuselvitys-change-request-responded'
+)
 
 export const getValiselvitysSubmittedNotificationEmails = getEmails(
   'valiselvitys-submitted-notification'

@@ -14,6 +14,7 @@
    :hakemus-submitted-after-change-request {:fi "Automaattinen viesti: organisaationne avustushakemusta on täydennetty"
                                             :sv "Automatiskt meddelande: er ansökan om understöd har kompletterats"}
    :hakemus-change-request-responded {:fi "Automaattinen viesti: avustushakemusta on täydennetty"}
+   :loppuselvitys-change-request-responded {:fi "Automaattinen viesti: avustushakemuksen loppuselvitystä on täydennetty"}
    :valiselvitys-submitted-notification {:fi "Väliselvityksenne on vastaanotettu"
                                          :sv "Er mellanredovisning har emottagits"}
    :loppuselvitys-submitted-notification {:fi "Loppuselvityksenne on vastaanotettu"
@@ -32,6 +33,7 @@
    :hakemus-submitted {:fi (email/load-template "email-templates/hakemus-submitted.plain.fi")
                        :sv (email/load-template "email-templates/hakemus-submitted.plain.sv")}
    :hakemus-change-request-responded {:fi (email/load-template "email-templates/hakemus-change-request-responded.plain.fi")}
+   :loppuselvitys-change-request-responded {:fi (email/load-template "email-templates/loppuselvitys-change-request-responded.plain.fi")}
    :valiselvitys-submitted-notification {:fi (email/load-template "email-templates/valiselvitys-submitted-notification.plain.fi")
                                          :sv (email/load-template "email-templates/valiselvitys-submitted-notification.plain.sv")}
    :loppuselvitys-submitted-notification {:fi (email/load-template "email-templates/loppuselvitys-submitted-notification.plain.fi")
@@ -192,6 +194,23 @@
              :from (-> email/smtp-config :from lang)
              :sender (-> email/smtp-config :sender)
              :subject (get-in mail-titles [:hakemus-change-request-responded lang])
+             :to to
+             :avustushaku avustushaku-name-fi
+             :url url}
+        body (render-body msg)]
+    (log/info "Url would be: " url)
+    (email/enqueue-message-to-be-send msg body)))
+
+(defn send-loppuselvitys-change-request-responded-message-to-virkailija! [to avustushaku-id avustushaku-name-fi parent-hakemus-id]
+  (let [lang :fi
+        url (str (generate-virkailija-url avustushaku-id parent-hakemus-id) "loppuselvitys/")
+        msg {:operation :send
+             :email-type :loppuselvitys-change-request-responded
+             :lang lang
+             :hakemus-id parent-hakemus-id
+             :from (-> email/smtp-config :from lang)
+             :sender (-> email/smtp-config :sender)
+             :subject (get-in mail-titles [:loppuselvitys-change-request-responded lang])
              :to to
              :avustushaku avustushaku-name-fi
              :url url}
