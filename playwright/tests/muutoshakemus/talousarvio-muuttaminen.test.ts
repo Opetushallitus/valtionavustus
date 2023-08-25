@@ -184,19 +184,18 @@ muutosTest(
       await expect(seurantaLocators.grantedTotal).toHaveText('5329134')
       await expect(seurantaLocators.amountTotal).toHaveText('5329134')
     })
+
     await test.step('accept muutoshakemus #1 with changes', async () => {
-      await hakemustenArviointiPage.tabs().muutoshakemus.click()
-      await hakemustenArviointiPage.setMuutoshakemusBudgetDecision(
-        'accepted_with_changes',
-        acceptedBudget
-      )
-      await hakemustenArviointiPage.setMuutoshakemusJatkoaikaDecision(
+      const muutoshakemusTab = await hakemustenArviointiPage.clickMuutoshakemusTab()
+      await muutoshakemusTab.setMuutoshakemusBudgetDecision('accepted_with_changes', acceptedBudget)
+      await muutoshakemusTab.setMuutoshakemusJatkoaikaDecision(
         'accepted_with_changes',
         '01.01.2099'
       )
-      await hakemustenArviointiPage.selectVakioperusteluInFinnish()
-      await hakemustenArviointiPage.saveMuutoshakemus()
+      await muutoshakemusTab.selectVakioperusteluInFinnish()
+      await muutoshakemusTab.saveMuutoshakemus()
     })
+
     await test.step('virkailija seuranta tab shows the accepted muutoshakemus budget as accepted by OPH', async () => {
       await hakemustenArviointiPage.tabs().seuranta.click()
       for (const key of Object.keys(budget.description)) {
@@ -211,6 +210,7 @@ muutosTest(
       await expect(hakemustenArviointiPage.seurantaTabLocators().grantedTotal).toHaveText('5329134')
       await expect(hakemustenArviointiPage.seurantaTabLocators().amountTotal).toHaveText('5329134')
     })
+
     await test.step('newest approved budget is prefilled on the new muutoshakemus form', async () => {
       await hakijaMuutoshakemusPage.navigate(hakemusID)
       await hakijaMuutoshakemusPage.clickHaenMuutostaTaloudenKayttosuunnitelmaan()
@@ -265,33 +265,33 @@ muutosTest(
         await hakijaMuutoshakemusPaatosPage.locators().budgetInput.allTextContents()
       ).toHaveLength(0)
     })
+
+    const muutoshakemusTab = await hakemustenArviointiPage.navigateToLatestMuutoshakemus(
+      avustushakuID,
+      hakemusID
+    )
+
     await test.step('virkailija views handled muutoshakemus #1', async () => {
-      await hakemustenArviointiPage.navigateToLatestMuutoshakemus(avustushakuID, hakemusID)
-      await hakemustenArviointiPage.page.locator('[data-test-id="muutoshakemus-tab-1"]').click()
-      await expect(hakemustenArviointiPage.muutoshakemusTabLocators().oldBudgetTitle).toHaveText(
-        'Vanha budjetti'
+      await muutoshakemusTab.locators.multipleMuutoshakemus.tabN(1).click()
+      await expect(muutoshakemusTab.locators.oldBudgetTitle).toHaveText('Vanha budjetti')
+      await expect(muutoshakemusTab.locators.currentBudgetTitle).toHaveText(
+        'Hyväksytty uusi budjetti'
       )
-      await expect(
-        hakemustenArviointiPage.muutoshakemusTabLocators().currentBudgetTitle
-      ).toHaveText('Hyväksytty uusi budjetti')
     })
+
     await test.step('unapproved muutoshakemus #2 has current and applied budget', async () => {
-      await hakemustenArviointiPage.page.locator('[data-test-id="muutoshakemus-tab-0"]').click()
-      await expect(hakemustenArviointiPage.muutoshakemusTabLocators().oldBudgetTitle).toHaveText(
-        'Voimassaoleva budjetti'
-      )
-      await expect(
-        hakemustenArviointiPage.muutoshakemusTabLocators().currentBudgetTitle
-      ).toHaveText('Haettu uusi budjetti')
+      await muutoshakemusTab.locators.multipleMuutoshakemus.tabN(0).click()
+      await expect(muutoshakemusTab.locators.oldBudgetTitle).toHaveText('Voimassaoleva budjetti')
+      await expect(muutoshakemusTab.locators.currentBudgetTitle).toHaveText('Haettu uusi budjetti')
     })
+
     await test.step('reject muutoshakemus #2', async () => {
-      await hakemustenArviointiPage.setMuutoshakemusBudgetDecision('rejected')
-      await hakemustenArviointiPage.selectVakioperusteluInFinnish()
-      await hakemustenArviointiPage.saveMuutoshakemus()
-      await expect(hakemustenArviointiPage.muutoshakemusTabLocators().oldBudgetTitle).toHaveText(
-        'Voimassaoleva budjetti'
-      )
+      await muutoshakemusTab.setMuutoshakemusBudgetDecision('rejected')
+      await muutoshakemusTab.selectVakioperusteluInFinnish()
+      await muutoshakemusTab.saveMuutoshakemus()
+      await expect(muutoshakemusTab.locators.oldBudgetTitle).toHaveText('Voimassaoleva budjetti')
     })
+
     await test.step('prefilled budget for next muutoshakemus is still the one accepted', async () => {
       await hakijaMuutoshakemusPage.navigate(hakemusID)
       await hakijaMuutoshakemusPage.clickHaenMuutostaTaloudenKayttosuunnitelmaan()

@@ -188,10 +188,13 @@ Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid 
         await hakijaMuutoshakemusPage.expectMuutoshakemusToBeSubmittedSuccessfully(true)
 
         const hakemustenArviointiPage = new HakemustenArviointiPage(page)
-        await hakemustenArviointiPage.navigateToLatestMuutoshakemus(avustushakuID, hakemusID)
-        await hakemustenArviointiPage.setMuutoshakemusJatkoaikaDecision('accepted')
-        await hakemustenArviointiPage.selectVakioperusteluInFinnish()
-        await hakemustenArviointiPage.saveMuutoshakemus()
+        const muutoshakemusTab = await hakemustenArviointiPage.navigateToLatestMuutoshakemus(
+          avustushakuID,
+          hakemusID
+        )
+        await muutoshakemusTab.setMuutoshakemusJatkoaikaDecision('accepted')
+        await muutoshakemusTab.selectVakioperusteluInFinnish()
+        await muutoshakemusTab.saveMuutoshakemus()
       }
     }
   )

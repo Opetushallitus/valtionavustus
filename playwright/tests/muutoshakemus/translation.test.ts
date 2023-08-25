@@ -95,11 +95,16 @@ test('swedish muutoshakemus translations', async ({
   })
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   await test.step('check virkailija has finnish text', async () => {
-    await hakemustenArviointiPage.navigateToLatestMuutoshakemus(avustushakuID, hakemusID)
+    const muutoshakemusTab = await hakemustenArviointiPage.navigateToLatestMuutoshakemus(
+      avustushakuID,
+      hakemusID
+    )
+
     await expect(locators.budget.oldTitle).toHaveText('Voimassaoleva budjetti')
     await expect(locators.budget.changeTitle).toHaveText('Haettu uusi budjetti')
-    const muutosTabLocators = hakemustenArviointiPage.muutoshakemusTabLocators()
-    await expect(muutosTabLocators.hakijaPerustelut).toHaveText('Hakijan perustelut')
+
+    const { hakijaPerustelut } = muutoshakemusTab.locators
+    await expect(hakijaPerustelut).toHaveText('Hakijan perustelut')
   })
   await test.step('accept muutoshakemus #1 with changes', async () => {
     const acceptedBudget: BudgetAmount = {

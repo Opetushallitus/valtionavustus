@@ -15,6 +15,7 @@ import { HakijaAvustusHakuPage } from '../../hakija/hakijaAvustusHakuPage'
 import { createReactSelectLocators } from '../../../utils/react-select'
 import { Header } from '../Header'
 import { LoppuselvitysPage } from '../hakujen-hallinta/LoppuselvitysPage'
+import { createMuutoshakemusTab } from './MuutoshakemusTab'
 
 const jatkoaikaTestId = 'muutoshakemus-jatkoaika'
 
@@ -90,10 +91,12 @@ export class HakemustenArviointiPage {
   async navigateToLatestMuutoshakemus(avustushakuID: number, hakemusID: number) {
     await navigate(
       this.page,
-      `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/`
+      `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/`,
+      true
     )
     await this.page.waitForSelector('#tab-content')
-    await this.page.waitForLoadState('networkidle')
+
+    return createMuutoshakemusTab(this.page)
   }
 
   async navigateToHakemusArviointi(avustushakuID: number, hakemusID: number) {
@@ -310,8 +313,11 @@ export class HakemustenArviointiPage {
   async clickMuutoshakemusTab() {
     await this.page.click('span.muutoshakemus-tab')
     await expect(this.page.getByTestId(jatkoaikaTestId)).toBeVisible()
+
+    return createMuutoshakemusTab(this.page)
   }
 
+  /** @deprecated use MuutoshakemusTab */
   async validateMuutoshakemusValues(muutoshakemus: MuutoshakemusValues, paatos?: PaatosValues) {
     await expect(this.page.getByTestId(jatkoaikaTestId)).toHaveText(
       muutoshakemus.jatkoaika!.format('DD.MM.YYYY')
@@ -337,22 +343,12 @@ export class HakemustenArviointiPage {
     }
   }
 
+  /** @deprecated use MuutoshakemusTab */
   async selectVakioperusteluInFinnish() {
     await clickElementWithText(this.page, 'a', 'Lisää vakioperustelu suomeksi')
   }
 
-  async getSisaltomuutosPerustelut() {
-    return this.page.innerText('[data-test-id="sisaltomuutos-perustelut"]')
-  }
-
-  async getMuutoshakemusNotice() {
-    return this.page.innerText('.muutoshakemus-notice')
-  }
-
-  async getPaatosPerustelut() {
-    return this.page.innerText('[data-test-id="muutoshakemus-form-paatos-reason"]')
-  }
-
+  /** @deprecated use MuutoshakemusTab */
   paatosPreview() {
     return {
       open: async () => {
@@ -412,6 +408,7 @@ export class HakemustenArviointiPage {
     }
   }
 
+  /** @deprecated use MuutoshakemusTab */
   async setMuutoshakemusJatkoaikaDecision(status: PaatosStatus, value?: string) {
     await this.page.click(`label[for="haen-kayttoajan-pidennysta-${status}"]`)
     if (value) {
@@ -419,14 +416,12 @@ export class HakemustenArviointiPage {
     }
   }
 
-  async writePerustelu(text: string) {
-    await this.page.fill('#reason', text)
-  }
-
+  /** @deprecated use MuutoshakemusTab */
   async setMuutoshakemusSisaltoDecision(status: PaatosStatus) {
     await this.page.click(`label[for="haen-sisaltomuutosta-${status}"]`)
   }
 
+  /** @deprecated use MuutoshakemusTab */
   async fillMuutoshakemusBudgetAmount(budget: BudgetAmount) {
     await this.page.fill(
       "input[name='talousarvio.personnel-costs-row'][type='number']",
@@ -452,6 +447,7 @@ export class HakemustenArviointiPage {
     await this.page.fill("input[name='talousarvio.other-costs-row'][type='number']", budget.other)
   }
 
+  /** @deprecated use MuutoshakemusTab */
   async setMuutoshakemusBudgetDecision(status: PaatosStatus, value?: BudgetAmount) {
     if (status) {
       await this.page.click(`label[for="talousarvio-${status}"]`)
@@ -461,24 +457,12 @@ export class HakemustenArviointiPage {
     }
   }
 
+  /** @deprecated use MuutoshakemusTab */
   async saveMuutoshakemus() {
-    await this.page.click('[data-test-id="muutoshakemus-submit"]')
+    await this.page.click('[data-test-id="muutoshakemus-submit"]') // TODO: replace test id with button text
     await this.page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
     const statusText = await this.page.textContent('[data-test-id="paatos-status-text"]')
     expect(statusText).toEqual('Käsitelty')
-  }
-
-  async getAcceptedBudgetInputAmounts(): Promise<{ name: string; value: string }[]> {
-    const inputs = await this.page.$$(
-      '[data-test-id="muutoshakemus-form"] [data-test-id="meno-input"] > input'
-    )
-    return Promise.all(
-      inputs.map(async (elem) => {
-        const name = (await elem.getAttribute('name'))?.replace('talousarvio.', '') || ''
-        const value = await elem.inputValue()
-        return { name, value }
-      })
-    )
   }
 
   async setSelectionCriteriaStars(questionNumber: number, starValue: number) {
@@ -616,14 +600,6 @@ export class HakemustenArviointiPage {
             ),
         },
       },
-    }
-  }
-
-  muutoshakemusTabLocators() {
-    return {
-      hakijaPerustelut: this.page.getByTestId('muutoshakemus-reasoning-title'),
-      oldBudgetTitle: this.page.getByTestId('budget-old-title'),
-      currentBudgetTitle: this.page.getByTestId('budget-change-title'),
     }
   }
 

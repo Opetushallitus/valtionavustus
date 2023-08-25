@@ -5,6 +5,7 @@ import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arvio
 import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusPage'
 import { BudgetAmount, defaultBudget } from '../../utils/budget'
 import { MuutoshakemusValues } from '../../utils/types'
+import { MuutoshakemusTab } from '../../pages/virkailija/hakemusten-arviointi/MuutoshakemusTab'
 
 const muutoshakemus: MuutoshakemusValues = {
   jatkoaika: moment(new Date()).add(2, 'months').add(1, 'days').locale('fi'),
@@ -18,29 +19,33 @@ const talousarvio = defaultBudget.amount
 const budjettimuutosPerustelut = 'Ajat muuttuu, niin se vaan on'
 
 const test = budjettimuutoshakemusTest.extend<{
-  hakemustenArviointiPage: HakemustenArviointiPage
+  muutoshakemusTab: MuutoshakemusTab
 }>({
-  hakemustenArviointiPage: async ({ acceptedHakemus: { hakemusID }, avustushakuID, page }, use) => {
-    const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
-    await hakijaMuutoshakemusPage.navigate(hakemusID)
-    await hakijaMuutoshakemusPage.clickHaenSisaltomuutosta()
-    await hakijaMuutoshakemusPage.fillSisaltomuutosPerustelut(sisaltomuutosPerustelut)
-    await hakijaMuutoshakemusPage.fillJatkoaikaValues(muutoshakemus)
-    await hakijaMuutoshakemusPage.clickHaenMuutostaTaloudenKayttosuunnitelmaan()
-    await hakijaMuutoshakemusPage.fillTalousarvioValues(talousarvio, budjettimuutosPerustelut)
-    await hakijaMuutoshakemusPage.sendMuutoshakemus(true)
+  muutoshakemusTab: async ({ acceptedHakemus: { hakemusID }, avustushakuID, page }, use) => {
+    await test.step('submit muutoshakemus', async () => {
+      const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
+      await hakijaMuutoshakemusPage.navigate(hakemusID)
+      await hakijaMuutoshakemusPage.clickHaenSisaltomuutosta()
+      await hakijaMuutoshakemusPage.fillSisaltomuutosPerustelut(sisaltomuutosPerustelut)
+      await hakijaMuutoshakemusPage.fillJatkoaikaValues(muutoshakemus)
+      await hakijaMuutoshakemusPage.clickHaenMuutostaTaloudenKayttosuunnitelmaan()
+      await hakijaMuutoshakemusPage.fillTalousarvioValues(talousarvio, budjettimuutosPerustelut)
+      await hakijaMuutoshakemusPage.sendMuutoshakemus(true)
+    })
+
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigate(avustushakuID)
     await hakemustenArviointiPage.clickHakemus(hakemusID)
-    await hakemustenArviointiPage.clickMuutoshakemusTab()
-    await use(hakemustenArviointiPage)
+    const muutoshakemusTab = await hakemustenArviointiPage.clickMuutoshakemusTab()
+
+    await use(muutoshakemusTab)
   },
 })
 
 test.setTimeout(180000)
 
 test('When making a päätös for muutoshakemus, changing the status of other parts should not reset budjetti', async ({
-  hakemustenArviointiPage,
+  muutoshakemusTab,
 }) => {
   const changedBudgetAmounts: BudgetAmount = {
     ...talousarvio,
@@ -50,20 +55,20 @@ test('When making a päätös for muutoshakemus, changing the status of other pa
   let correctAmounts: { name: string; value: string }[]
 
   await test.step('fill in amended budget', async () => {
-    await hakemustenArviointiPage.setMuutoshakemusBudgetDecision(
+    await muutoshakemusTab.setMuutoshakemusBudgetDecision(
       'accepted_with_changes',
       changedBudgetAmounts
     )
-    correctAmounts = await hakemustenArviointiPage.getAcceptedBudgetInputAmounts()
+    correctAmounts = await muutoshakemusTab.getAcceptedBudgetInputAmounts()
   })
   await test.step('fill in jatkoaika', async () => {
-    await hakemustenArviointiPage.setMuutoshakemusJatkoaikaDecision('rejected')
-    const actualAmounts = await hakemustenArviointiPage.getAcceptedBudgetInputAmounts()
+    await muutoshakemusTab.setMuutoshakemusJatkoaikaDecision('rejected')
+    const actualAmounts = await muutoshakemusTab.getAcceptedBudgetInputAmounts()
     expect(actualAmounts).toEqual(correctAmounts)
   })
   await test.step('fill in sisalto', async () => {
-    await hakemustenArviointiPage.setMuutoshakemusSisaltoDecision('rejected')
-    const actualAmounts = await hakemustenArviointiPage.getAcceptedBudgetInputAmounts()
+    await muutoshakemusTab.setMuutoshakemusSisaltoDecision('rejected')
+    const actualAmounts = await muutoshakemusTab.getAcceptedBudgetInputAmounts()
     expect(actualAmounts).toEqual(correctAmounts)
   })
 })

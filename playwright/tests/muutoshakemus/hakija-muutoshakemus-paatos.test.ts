@@ -101,17 +101,18 @@ const test = budjettimuutoshakemusTest.extend<
     )
     await hakijaMuutoshakemusPage.clickSendMuutoshakemus()
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
-    await hakemustenArviointiPage.navigateToLatestMuutoshakemus(avustushakuID, hakemusID)
-    await hakemustenArviointiPage.setMuutoshakemusJatkoaikaDecision(
-      'accepted_with_changes',
-      '01.01.2099'
+    const muutoshakemusTab = await hakemustenArviointiPage.navigateToLatestMuutoshakemus(
+      avustushakuID,
+      hakemusID
     )
-    await hakemustenArviointiPage.setMuutoshakemusBudgetDecision(
+    await muutoshakemusTab.setMuutoshakemusJatkoaikaDecision('accepted_with_changes', '01.01.2099')
+    await muutoshakemusTab.setMuutoshakemusBudgetDecision(
       'accepted_with_changes',
       acceptedMuutoshakemusBudget
     )
-    await hakemustenArviointiPage.selectVakioperusteluInFinnish()
-    await hakemustenArviointiPage.saveMuutoshakemus()
+    await muutoshakemusTab.selectVakioperusteluInFinnish()
+    await muutoshakemusTab.saveMuutoshakemus()
+
     const links = await parseMuutoshakemusPaatosFromEmails(hakemusID)
     if (!links.linkToMuutoshakemusPaatos) {
       throw Error('No linkToMuutoshakemusPaatos found')
@@ -281,21 +282,20 @@ const svTest = svBudjettimuutoshakemusTest.extend<{
       other: '9999',
     }
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
-    await hakemustenArviointiPage.navigateToLatestMuutoshakemus(avustushakuID, hakemusID)
-    await hakemustenArviointiPage.setMuutoshakemusBudgetDecision(
-      'accepted_with_changes',
-      acceptedBudget
+    const muutoshakemusTab = await hakemustenArviointiPage.navigateToLatestMuutoshakemus(
+      avustushakuID,
+      hakemusID
     )
-    await hakemustenArviointiPage.setMuutoshakemusJatkoaikaDecision(
-      'accepted_with_changes',
-      '01.01.2099'
-    )
-    await hakemustenArviointiPage.selectVakioperusteluInFinnish()
-    await hakemustenArviointiPage.saveMuutoshakemus()
+    await muutoshakemusTab.setMuutoshakemusBudgetDecision('accepted_with_changes', acceptedBudget)
+    await muutoshakemusTab.setMuutoshakemusJatkoaikaDecision('accepted_with_changes', '01.01.2099')
+    await muutoshakemusTab.selectVakioperusteluInFinnish()
+    await muutoshakemusTab.saveMuutoshakemus()
+
     const links = await parseMuutoshakemusPaatosFromEmails(hakemusID)
     if (!links.linkToMuutoshakemusPaatos) {
       throw Error('No linkToMuutoshakemusPaatos found')
     }
+
     const hakijaMuutoshakemusPaatosPage = new HakijaMuutoshakemusPaatosPage(page)
     await hakijaMuutoshakemusPaatosPage.navigate(links.linkToMuutoshakemusPaatos)
     await use(hakijaMuutoshakemusPaatosPage)
