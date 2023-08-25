@@ -17,11 +17,17 @@ const vaCodesTag = 'VaCodes'
 const talousarviotilitTag = 'talousarviotilit'
 const raportointiveloitteetTag = 'raportointiveloitteet'
 const tapahtumalokiEmailsTag = 'tapahtumalokiEmails'
-
+const hakemusIdsHavingTaydennyspyyntoTag = 'hakemusIdsHavingTaydennyspyyntoTag'
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({ baseUrl: '/' }),
-  tagTypes: [vaCodesTag, talousarviotilitTag, raportointiveloitteetTag, tapahtumalokiEmailsTag],
+  tagTypes: [
+    vaCodesTag,
+    talousarviotilitTag,
+    raportointiveloitteetTag,
+    tapahtumalokiEmailsTag,
+    hakemusIdsHavingTaydennyspyyntoTag,
+  ],
   endpoints: (builder) => ({
     getVaCodeValues: builder.query<VaCodeValue[], { valueType: ValueType; year: string }>({
       query: ({ valueType, year }) => {
@@ -174,7 +180,13 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: (_result, _error, arg) => [
         { type: tapahtumalokiEmailsTag, id: arg.email.type },
+        hakemusIdsHavingTaydennyspyyntoTag,
       ],
+    }),
+    getHakemusIdsHavingTaydennyspyynto: builder.query<number[], number>({
+      query: (avustushakuId) =>
+        `/api/avustushaku/${avustushakuId}/hakemus-ids-having-taydennyspyynto`,
+      providesTags: [hakemusIdsHavingTaydennyspyyntoTag],
     }),
   }),
 })
@@ -195,6 +207,7 @@ export const {
   usePutRaportointivelvoiteMutation,
   usePostRaportointivelvoiteMutation,
   useDeleteRaportointivelvoiteMutation,
+  useGetHakemusIdsHavingTaydennyspyyntoQuery,
 } = apiSlice
 
 export const mapEmails = ({ user_name, email_content }: Lahetys): Message | Message[] => {

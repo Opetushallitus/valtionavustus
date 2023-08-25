@@ -28,6 +28,13 @@ test('can send taydennyspyynto for loppuselvitys', async ({
     await expect(loppuselvitysPage.locators.asiatarkastus.taydennyspyynto).toBeEnabled()
     await expect(loppuselvitysPage.locators.taloustarkastus.taydennyspyynto).toBeDisabled()
   })
+  const odottaaTaydennysta = page.getByTestId(`taydennyspyynto-odottaa-vastausta-${hakemusID}`)
+  const taydennykseenVastattu = page.getByTestId(`taydennyspyyntoon-vastattu-${hakemusID}`)
+  await test.step('no T-icon shown as no täydennys', async () => {
+    await hakemustenArviointiPage.toggleHakemusList.click()
+    await expect(odottaaTaydennysta).toBeHidden()
+    await expect(taydennykseenVastattu).toBeHidden()
+  })
   await test.step('can send täydennyspyyntö email in asiatarkastus phase', async () => {
     const formHeading = page.getByRole('heading', { name: 'Asiatarkastuksen täydennyspyyntö' })
     await expect(formHeading).toBeHidden()
@@ -54,6 +61,10 @@ test('can send taydennyspyynto for loppuselvitys', async ({
     await expect(page.getByText(`Aihe${subject}`)).toBeVisible()
     const emailsAfterSending = await getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails(hakemusID)
     expect(emailsAfterSending).toHaveLength(1)
+  })
+  await test.step('waiting T-icon as täydennys has been sent', async () => {
+    await expect(odottaaTaydennysta).toBeVisible()
+    await expect(taydennykseenVastattu).toBeHidden()
   })
   const tavoiteLocator = page.locator('[id="project-description.project-description-1.goal"]')
   const defaultTavoite = 'Tavoite'
@@ -83,6 +94,11 @@ test('can send taydennyspyynto for loppuselvitys', async ({
     await expect(newAnswer.locator(tavoiteLocator)).toHaveText(asiatarkastusTaydennysTavoite)
     await expect(oldAnswer.locator(yhteenvetoLocator)).toHaveText(defaultYhteenveto)
     await expect(newAnswer.locator(yhteenvetoLocator)).toHaveText(asiatarkastusTaydennysYhteenveto)
+  })
+  await test.step('submit T-icon is shown as hakija has sent täydennys', async () => {
+    await hakemustenArviointiPage.toggleHakemusList.click()
+    await expect(odottaaTaydennysta).toBeHidden()
+    await expect(taydennykseenVastattu).toBeVisible()
   })
   await test.step('asiatarkastus enables taloustarkastus', async () => {
     await expect(loppuselvitysPage.locators.taloustarkastus.taydennyspyynto).toBeDisabled()
@@ -117,6 +133,10 @@ test('can send taydennyspyynto for loppuselvitys', async ({
     expect(emailsAfter).toHaveLength(1)
     expect(emailsAfter[0].subject).toBe(subject)
   })
+  await test.step('waiting T-icon is shown again as new täydennyspyyntö', async () => {
+    await expect(odottaaTaydennysta).toBeVisible()
+    await expect(taydennykseenVastattu).toBeHidden()
+  })
   const hakijaSelvitysPage = HakijaSelvitysPage(page)
   await test.step('hakija can send täydennys until taloustarkastus has been done', async () => {
     await navigate(page, loppuselvitysFormUrl)
@@ -142,6 +162,11 @@ test('can send taydennyspyynto for loppuselvitys', async ({
     await expect(newAnswer.locator(yhteenvetoLocator)).toHaveText(
       taloustarkastusTaydennysYhteenveto
     )
+  })
+  await test.step('submit T-icon is shown again as hakija has sent täydennys', async () => {
+    await hakemustenArviointiPage.toggleHakemusList.click()
+    await expect(odottaaTaydennysta).toBeHidden()
+    await expect(taydennykseenVastattu).toBeVisible()
   })
   await test.step('taloustarkastus disables all buttons and email is sent', async () => {
     const beforeSelvitysEmails = await getSelvitysEmails(avustushakuID)

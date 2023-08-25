@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react'
+import React, { useReducer, useState } from 'react'
 import { Hakemus, HakemusArviointiStatus, SelvitysStatus } from 'soresu-form/web/va/types'
 
 import styles from './HakemusListing.module.less'
@@ -21,6 +21,7 @@ import { getLoadedState } from '../arviointiReducer'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { NavigateFunction, useNavigate, useSearchParams } from 'react-router-dom'
 import { TAG_ID } from '../filterReducer'
+import { useGetHakemusIdsHavingTaydennyspyyntoQuery } from '../../apiSlice'
 
 interface Props {
   selectedHakemus: Hakemus | undefined
@@ -270,18 +271,9 @@ export default function HakemusListing(props: Props) {
   const [showUkotusModalForHakemusId, setShowUkotusModal] = useState<number | undefined>(undefined)
   const toggleUkotusModal = (selectedHakemusId: number | undefined) =>
     setShowUkotusModal(selectedHakemusId)
-  const [hakemuksetWithTaydennyspyynto, setHakemuksetWithTaydennyspyynto] = useState<number[]>([])
-  useEffect(() => {
-    const fetchHakemuksetWithTaydennyspyynto = async () => {
-      setHakemuksetWithTaydennyspyynto(
-        await HttpUtil.get<number[]>(
-          `/api/avustushaku/${avustushaku.id}/hakemus-ids-having-taydennyspyynto`
-        )
-      )
-    }
-
-    void fetchHakemuksetWithTaydennyspyynto()
-  }, [avustushaku])
+  const { data: hakemuksetWithTaydennyspyynto = [] } = useGetHakemusIdsHavingTaydennyspyyntoQuery(
+    avustushaku.id
+  )
 
   const allowHakemusScoring = privileges['score-hakemus']
   const hakemusFilterState = useHakemustenArviointiSelector((state) => state.filter)
@@ -344,6 +336,7 @@ export default function HakemusListing(props: Props) {
             setSorting={setSorting}
             toggleUkotusModal={toggleUkotusModal}
             onHakemusClick={onHakemusClick}
+            hakemuksetWithTaydennyspyynto={hakemuksetWithTaydennyspyynto}
           />
         ) : (
           <HakemusTable
@@ -724,6 +717,7 @@ interface ResolvedTableProps {
   sortingState: SortState
   toggleUkotusModal: (hakemusId: number | undefined) => void
   onHakemusClick: (hakemusId: number) => void
+  hakemuksetWithTaydennyspyynto: number[]
 }
 
 function ResolvedTable(props: ResolvedTableProps) {
@@ -1052,7 +1046,18 @@ function ResolvedTable(props: ResolvedTableProps) {
               }}
               data-test-id={`hakemus-${hakemus.id}`}
             >
-              <td className="organization-cell">{hakemus['organization-name']}</td>
+              <td className="organization-cell">
+                {hakemus['organization-name']}
+                {hakemus.selvitys?.loppuselvitys && (
+                  <TaydennyspyyntoIndikaattori
+                    hakemusId={hakemus.id}
+                    hakemusStatus={hakemus.selvitys?.loppuselvitys.status}
+                    hakemukselleLahetettyTaydennyspyynto={props.hakemuksetWithTaydennyspyynto.includes(
+                      hakemus.selvitys?.loppuselvitys.id
+                    )}
+                  />
+                )}
+              </td>
               <td className="project-name-cell">{getProject(hakemus)}</td>
               <td className="hakemus-status-cell" data-test-class="hakemus-status-cell">
                 <ArvioStatus

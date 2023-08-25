@@ -238,6 +238,7 @@ function LoppuselvitysTarkastus({
     avustushakuId,
     emailType: taydennyspyyntoType,
   })
+  const dispatch = useHakemustenArviointiDispatch()
   const [addTaydennyspyynto] = usePostLoppuselvitysTaydennyspyyntoMutation()
   const [showEmailForm, setShowEmailForm] = useState(false)
   const emailFormRef = useRef<HTMLDivElement>(null)
@@ -278,6 +279,7 @@ function LoppuselvitysTarkastus({
           to: email.receivers,
         },
       }).unwrap()
+      await dispatch(loadSelvitys({ avustushakuId, hakemusId: hakemus.id })).unwrap()
       setFormErrorMessage(undefined)
       cancelForm()
     } catch (err) {
