@@ -10,8 +10,7 @@ import ViestiLista, { Message } from './ViestiLista'
 import { isString } from 'lodash'
 
 import './muistutusviesti.less'
-import { Lahetys } from '../../hakujen-hallinta-page/haku-details/Tapahtumaloki'
-import { mapEmails } from '../../apiSlice'
+import { fetchSentEmails } from './sentEmails'
 
 type MuistutusviestiProps = {
   hakemus: Hakemus
@@ -19,14 +18,8 @@ type MuistutusviestiProps = {
   lang: Language
 }
 
-export async function fetchSentEmails(
-  avustushaku: Avustushaku,
-  hakemus: Hakemus
-): Promise<Message[]> {
-  const sentEmails = await HttpUtil.get<Lahetys[]>(
-    `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/tapahtumaloki/loppuselvitys-muistutus`
-  )
-  return sentEmails.flatMap(mapEmails)
+async function fetchMuistutusViestiSentEmails(avustushaku: Avustushaku, hakemus: Hakemus) {
+  return fetchSentEmails(avustushaku, hakemus, 'loppuselvitys-muistutus')
 }
 
 export default function MuistutusViesti({ avustushaku, hakemus, lang }: MuistutusviestiProps) {
@@ -40,7 +33,7 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
 
   useEffect(() => {
     async function fetchEmails() {
-      const sentEmails = await fetchSentEmails(avustushaku, hakemus)
+      const sentEmails = await fetchMuistutusViestiSentEmails(avustushaku, hakemus)
       setSentEmails(sentEmails)
     }
     fetchEmails()
@@ -73,7 +66,7 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
         }
       )
 
-      const sentEmails = await fetchSentEmails(avustushaku, hakemus)
+      const sentEmails = await fetchMuistutusViestiSentEmails(avustushaku, hakemus)
       setSentEmails(sentEmails)
       setFormErrorMessage(undefined)
       cancelForm()
