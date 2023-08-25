@@ -79,7 +79,3 @@ export async function getChangedBudgetTableCells(page: Page, budgetRowSelector?:
     }))
   })
 }
-
-export async function countElements(page: Page, selector: string) {
-  return (await page.$$(selector)).length
-}
