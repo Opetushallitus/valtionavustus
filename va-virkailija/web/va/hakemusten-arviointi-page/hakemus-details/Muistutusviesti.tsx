@@ -57,7 +57,7 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
     e.stopPropagation()
     try {
       await HttpUtil.post(
-        `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/loppuselvitys/send-reminder`,
+        `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/send-email/loppuselvitys-muistutus`,
         {
           lang,
           body: email.content,

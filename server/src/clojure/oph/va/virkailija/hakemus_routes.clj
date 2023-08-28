@@ -102,29 +102,31 @@
     :summary "Get specific hakemus tapahtumaloki"
     (http/ok (tapahtumaloki/get-hakemus-tapahtumaloki-entries tyyppi avustushaku-id hakemus-id)))
 
-
-  (when (feature-enabled? :muistutusviesti-loppuselvityksesta)
+  (when (or (feature-enabled? :muistutusviesti-loppuselvityksesta)
+            (feature-enabled? :vapaamuotoinen-viesti-hankkeelle))
     (compojure-api/POST
-      "/loppuselvitys/send-reminder" request
-      :path-params [avustushaku-id :- Long hakemus-id :- Long]
+      "/send-email/:email-type-str" request
+      :path-params [avustushaku-id :- Long
+                    hakemus-id :- Long
+                    email-type-str :- (s/enum "loppuselvitys-muistutus" "vapaa-viesti")]
       :body [{:keys [body subject to lang]} {:lang s/Str
                                              :body s/Str
                                              :subject s/Str
                                              :to [s/Str]}]
-      :return s/Any
-      :summary "Send muistutusviesti to hakija"
-      (let [identity (authentication/get-request-identity request)]
+      :summary "Send email to hakija"
+      (let [identity (authentication/get-request-identity request)
+            email-type (keyword email-type-str)]
         (when (not (seq (filter notEmptyString to)))
           (http/bad-request! {:error "Viestillä on oltava vähintään yksi vastaanottaja"}))
         (let [email-id (common-email/try-send-email!
                         (common-email/message (keyword lang)
-                                              :loppuselvitys-muistutus
+                                              email-type
                                               to
                                               subject
                                               body)
                         {:hakemus-id hakemus-id
                          :avustushaku-id avustushaku-id})]
-          (tapahtumaloki/create-log-entry "loppuselvitys-muistutus" avustushaku-id hakemus-id identity "" {} email-id true))
+          (tapahtumaloki/create-log-entry email-type-str avustushaku-id hakemus-id identity "" {} email-id true))
         (http/created))))
 
   (when (feature-enabled? :loppuselvitys-taydennyspyynto)
