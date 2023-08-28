@@ -76,18 +76,17 @@
   </suppress>
   <suppress until="2023-10-10">
     <notes><![CDATA[
-   clj-pdf uses xmplgraphics which uses batik@1.16.
+   clj-pdf 2.6.3 uses xmplgraphics which uses batik@1.16.
    Waiting for clj-pdf to update their batik dependency
-   ]]></notes>
-    <packageUrl regex="true">^pkg:maven/org.apache.xmlgraphics/batik-\w+@1.16$</packageUrl>
+   ]]>    </notes>
     <cve>CVE-2022-44729</cve>
   </suppress>
   <suppress until="2023-10-10">
     <notes><![CDATA[
    clj-pdf 2.6.3 uses xmplgraphics which uses batik@1.16.
    Waiting for clj-pdf to update their batik dependency
-   ]]></notes>
-    <packageUrl regex="true">^pkg:maven/org.apache.xmlgraphics/batik-\w+@1.16$</packageUrl>
+   ]]>    </notes>
+    <packageUrl regex="true">^pkg:maven/org.apache.xmlgraphics/batik(-\w+)+@1.16$</packageUrl>
     <cve>CVE-2022-44730</cve>
   </suppress>
 </suppressions>
