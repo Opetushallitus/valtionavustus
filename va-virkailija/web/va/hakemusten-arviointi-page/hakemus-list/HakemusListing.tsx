@@ -1046,17 +1046,19 @@ function ResolvedTable(props: ResolvedTableProps) {
               }}
               data-test-id={`hakemus-${hakemus.id}`}
             >
-              <td className="organization-cell">
-                {hakemus['organization-name']}
-                {hakemus.selvitys?.loppuselvitys && (
-                  <TaydennyspyyntoIndikaattori
-                    hakemusId={hakemus.id}
-                    hakemusStatus={hakemus.selvitys?.loppuselvitys.status}
-                    hakemukselleLahetettyTaydennyspyynto={props.hakemuksetWithTaydennyspyynto.includes(
-                      hakemus.selvitys?.loppuselvitys.id
-                    )}
-                  />
-                )}
+              <td>
+                <div className={styles.organizationCell}>
+                  {hakemus['organization-name']}
+                  {hakemus.selvitys?.loppuselvitys && (
+                    <TaydennyspyyntoIndikaattori
+                      hakemusId={hakemus.id}
+                      hakemusStatus={hakemus.selvitys?.loppuselvitys.status}
+                      hakemukselleLahetettyTaydennyspyynto={props.hakemuksetWithTaydennyspyynto.includes(
+                        hakemus.selvitys?.loppuselvitys.id
+                      )}
+                    />
+                  )}
+                </div>
               </td>
               <td className="project-name-cell">{getProject(hakemus)}</td>
               <td className="hakemus-status-cell" data-test-class="hakemus-status-cell">
