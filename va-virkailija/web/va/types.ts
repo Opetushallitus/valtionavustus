@@ -44,6 +44,7 @@ interface Menoluokka {
 
 export interface HakuData {
   avustushaku: Avustushaku
+  /** @deprecated use useEnvironment instead */
   environment: EnvironmentApiResponse
   form: Form
   roles: Role[]

@@ -16,7 +16,12 @@ import { Hakemus } from 'soresu-form/web/va/types'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 import { HeaderContainer } from '../common-components/Header'
-import { InitialDataProvider, useFeature, useUserInfo } from '../initial-data-context'
+import {
+  InitialDataProvider,
+  useEnvironment,
+  useFeature,
+  useUserInfo,
+} from '../initial-data-context'
 import AvustushakuDropdown from './avustushaku-dropdown/AvustushakuDropdown'
 import HakemusDetails from './hakemus-details/HakemusDetails'
 import { MODAL_ROOT_ID } from './hakemus-details/Modal'
@@ -120,10 +125,11 @@ const LoadedApp = () => {
     getLoadedState(state.arviointi)
   )
   const userInfo = useUserInfo()
+  const environment = useEnvironment()
   const { hakemusId } = useParams()
   const selectedHakemusId = hakemusId ? Number(hakemusId) : undefined
   const saveStatus = useHakemustenArviointiSelector((state) => state.arviointi.saveStatus)
-  const { avustushaku, environment, hakemukset } = hakuData
+  const { avustushaku, hakemukset } = hakuData
   const hakemusList = showAllHakemukset ? hakemukset : hakemukset.filter(unwantedHakemukset)
   const hasSelected = selectedHakemusId !== undefined
   const [searchParams] = useSearchParams()
