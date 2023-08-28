@@ -1,22 +1,27 @@
-import { Hakemus, SelvitysEmail } from 'soresu-form/web/va/types'
-import ViestiLista, { ViestiDetails, ViestiListaRow } from './ViestiLista'
-import { useHakemus } from '../useHakemus'
-import { useAvustushakuId } from '../useAvustushaku'
 import React, { useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
-import MultipleRecipentEmailForm from './MultipleRecipentsEmailForm'
 import { isString } from 'lodash'
+
+import { Hakemus, SelvitysEmail } from 'soresu-form/web/va/types'
+import HttpUtil from 'soresu-form/web/HttpUtil'
+import { Language } from 'soresu-form/web/va/i18n/translations'
+
+import ViestiLista, { ViestiDetails, ViestiListaRow } from '../ViestiLista'
+import { useHakemus } from '../../useHakemus'
+import { useAvustushakuId } from '../../useAvustushaku'
+import MultipleRecipentEmailForm from '../MultipleRecipentsEmailForm'
 import {
   EmailType,
   useGetTapahtumalokiForEmailTypeQuery,
   usePostLoppuselvitysTaydennyspyyntoMutation,
-} from '../../apiSlice'
-import { hasFetchErrorMsg } from '../../isFetchBaseQueryError'
-import HttpUtil from 'soresu-form/web/HttpUtil'
-import { getLoadedState, loadSelvitys, refreshHakemukset } from '../arviointiReducer'
-import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '../arviointiStore'
-import { initialRecipientEmails } from './emailRecipients'
-import { Language } from 'soresu-form/web/va/i18n/translations'
+} from '../../../apiSlice'
+import { hasFetchErrorMsg } from '../../../isFetchBaseQueryError'
+import { getLoadedState, loadSelvitys, refreshHakemukset } from '../../arviointiReducer'
+import {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from '../../arviointiStore'
+import { initialRecipientEmails } from '../emailRecipients'
 import { VerificationBox } from './VerificationBox'
 
 function createInitialTaydennyspyyntoEmail(hakemus: Hakemus) {

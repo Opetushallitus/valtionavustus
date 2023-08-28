@@ -2,24 +2,27 @@ import React from 'react'
 
 import { LoppuselvitysForm } from './LoppuselvitysForm'
 import { TaloustarkastusEmail } from './TaloustarkastusEmail'
-import SelvitysPreview from './SelvitysPreview'
-import SelvitysNotFilled from './SelvitysNotFilled'
-import SelvitysLink from './SelvitysLink'
-import PresenterComment from './PresenterComment'
-import ApplicationPayments from './ApplicationPayments'
+import SelvitysPreview from '../SelvitysPreview'
+import SelvitysNotFilled from '../SelvitysNotFilled'
+import SelvitysLink from '../SelvitysLink'
+import PresenterComment from '../PresenterComment'
+import ApplicationPayments from '../ApplicationPayments'
 import {
   addPayment,
   getLoadedState,
   hasMultibatchPayments,
   removePayment,
-} from '../arviointiReducer'
-import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '../arviointiStore'
-import { useHakemus } from '../useHakemus'
-import { useUserRoles } from '../arviointiSelectors'
+} from '../../arviointiReducer'
+import {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from '../../arviointiStore'
+import { useHakemus } from '../../useHakemus'
+import { useUserRoles } from '../../arviointiSelectors'
 import MuistutusViesti from './Muistutusviesti'
-import { useFeature } from '../../initial-data-context'
+import { useFeature } from '../../../initial-data-context'
 
-const Loppuselvitys = () => {
+const LoppuselvitysTab = () => {
   const hakemus = useHakemus()
   const loadingHakemus = useHakemustenArviointiSelector(
     (state) => state.arviointi.saveStatus.loadingHakemus
@@ -126,4 +129,4 @@ const Loppuselvitys = () => {
   )
 }
 
-export default Loppuselvitys
+export default LoppuselvitysTab

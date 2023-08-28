@@ -1,24 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Provider } from 'react-redux'
 import { createRoot } from 'react-dom/client'
-
-import HakemusDetails from './hakemus-details/HakemusDetails'
-import { HakemusHakijaSidePreviewLink } from './hakemus-details/HakemusHakijaSidePreviewLink'
-import HakemusDecisionLink from './hakemus-details/HakemusDecisionLink'
-import AvustushakuDropdown from './avustushaku-dropdown/AvustushakuDropdown'
-import HakemusFilter from './hakemus-filter/HakemusFilter'
-import HakemusListing from './hakemus-list/HakemusListing'
-import { Switch } from './hakemus-list/Switch'
-import { HeaderContainer } from '../common-components/Header'
-import { AvustushakuDetails } from './hakemus-list/AvustushakuDetails'
-
-import store, {
-  useHakemustenArviointiDispatch,
-  useHakemustenArviointiSelector,
-} from './arviointiStore'
-import { getLoadedState, initialize } from './arviointiReducer'
-import { Hakemus } from 'soresu-form/web/va/types'
-import { MODAL_ROOT_ID } from './hakemus-details/Modal'
 import {
   BrowserRouter,
   Navigate,
@@ -28,18 +10,36 @@ import {
   useParams,
   useSearchParams,
 } from 'react-router-dom'
+
+import HttpUtil from 'soresu-form/web/HttpUtil'
+import { Hakemus } from 'soresu-form/web/va/types'
+import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
+
+import { HeaderContainer } from '../common-components/Header'
+import { InitialDataProvider, useFeature } from '../initial-data-context'
+import AvustushakuDropdown from './avustushaku-dropdown/AvustushakuDropdown'
+import HakemusDetails from './hakemus-details/HakemusDetails'
+import { MODAL_ROOT_ID } from './hakemus-details/Modal'
+import { HakemusHakijaSidePreviewLink } from './hakemus-details/HakemusHakijaSidePreviewLink'
+import HakemusDecisionLink from './hakemus-details/HakemusDecisionLink'
 import { HakemusArviointi } from './hakemus-details/HakemusArviointi'
 import Väliselvitys from './hakemus-details/Väliselvitys'
-import Loppuselvitys from './hakemus-details/Loppuselvitys'
+import LoppuselvitysTab from './hakemus-details/loppuselvitys-tab/LoppuselvitysTab'
 import MuutoshakemusTabContent from './hakemus-details/MuutoshakemusTabContent'
 import Seuranta from './hakemus-details/Seuranta'
+import { ViestiHankkeelle } from './hakemus-details/ViestiHankkeelle'
+import HakemusFilter from './hakemus-filter/HakemusFilter'
+import { AvustushakuDetails } from './hakemus-list/AvustushakuDetails'
+import HakemusListing from './hakemus-list/HakemusListing'
+import { Switch } from './hakemus-list/Switch'
+import store, {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from './arviointiStore'
+import { getLoadedState, initialize } from './arviointiReducer'
 
 import './../style/main.less'
 import './hakemusten-arviointi.less'
-import HttpUtil from 'soresu-form/web/HttpUtil'
-import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
-import { InitialDataProvider, useFeature } from '../initial-data-context'
-import { ViestiHankkeelle } from './hakemus-details/ViestiHankkeelle'
 
 const SHOW_ALL = 'showAll' as const
 const SHOW_ADDITIONAL_INFO = 'showAdditionalInfo' as const
@@ -71,7 +71,7 @@ const AppRoutes = () => {
           <Route index element={<HakemusArviointi />} />
           <Route path="arviointi" element={<HakemusArviointi />} />
           <Route path="valiselvitys" element={<Väliselvitys />} />
-          <Route path="loppuselvitys" element={<Loppuselvitys />} />
+          <Route path="loppuselvitys" element={<LoppuselvitysTab />} />
           <Route path="muutoshakemukset" element={<MuutoshakemusTabContent />} />
           <Route path="seuranta" element={<Seuranta />} />
           {viestiTabEnabled && <Route path="viesti" element={<ViestiHankkeelle />} />}

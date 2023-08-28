@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import { UserInfo } from '../../types'
+import { UserInfo } from '../../../types'
 import { Language } from 'soresu-form/web/va/i18n/translations'
 import { Hakemus, Selvitys, SelvitysEmail } from 'soresu-form/web/va/types'
 
 import { VerificationBox } from './VerificationBox'
-import { useHakemustenArviointiDispatch } from '../arviointiStore'
-import { loadSelvitys, refreshHakemukset } from '../arviointiReducer'
-import { initialRecipientEmails } from './emailRecipients'
-import MultipleRecipentEmailForm from './MultipleRecipentsEmailForm'
+import { useHakemustenArviointiDispatch } from '../../arviointiStore'
+import { loadSelvitys, refreshHakemukset } from '../../arviointiReducer'
+import { initialRecipientEmails } from '../emailRecipients'
+import MultipleRecipentEmailForm from '../MultipleRecipentsEmailForm'
 
 type TaloustarkastusEmailProps = {
   avustushakuId: number
