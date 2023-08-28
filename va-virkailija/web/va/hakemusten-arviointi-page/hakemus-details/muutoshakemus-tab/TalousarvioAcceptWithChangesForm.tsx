@@ -1,10 +1,10 @@
+import 'soresu-form/web/va/muutoshakemus/talous.less'
+
 import React from 'react'
 
 import { getNestedInputErrorClass } from 'soresu-form/web/va/formikHelpers'
 import { Meno, Talousarvio, TalousarvioValues } from 'soresu-form/web/va/types/muutoshakemus'
 import { MuutoshakemusPaatosFormValues } from './hakemusTypes'
-
-import 'soresu-form/web/va/muutoshakemus/talous.less'
 
 interface TalousarvioAcceptWithChangesFormProps {
   f: MuutoshakemusPaatosFormValues

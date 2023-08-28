@@ -1,10 +1,11 @@
-import { Muutoshakemus } from './Muutoshakemus'
 import React from 'react'
-import { useHakemustenArviointiSelector } from '../arviointiStore'
-import { getLoadedState } from '../arviointiReducer'
-import { useHakemus } from '../useHakemus'
 
-const MuutoshakemusTabContent = () => {
+import { Muutoshakemus } from './Muutoshakemus'
+import { useHakemustenArviointiSelector } from '../../arviointiStore'
+import { getLoadedState } from '../../arviointiReducer'
+import { useHakemus } from '../../useHakemus'
+
+const MuutoshakemusTab = () => {
   const hakemus = useHakemus()
   const { hakuData, userInfo } = useHakemustenArviointiSelector((state) =>
     getLoadedState(state.arviointi)
@@ -37,4 +38,4 @@ const MuutoshakemusTabContent = () => {
   )
 }
 
-export default MuutoshakemusTabContent
+export default MuutoshakemusTab

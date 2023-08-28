@@ -1,3 +1,5 @@
+import './Muutoshakemus.less'
+
 import React, { useState } from 'react'
 import moment from 'moment'
 
@@ -8,12 +10,11 @@ import { Muutoshakemus as MuutoshakemusType } from 'soresu-form/web/va/types/muu
 import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 
 import { MuutoshakemusForm } from './MuutoshakemusForm'
-import { UserInfo } from '../../types'
+import { UserInfo } from '../../../types'
 import { MuutoshakemusTabs } from './MuutoshakemusTabs'
 
-import './Muutoshakemus.less'
-import { useHakemus } from '../useHakemus'
-import { useUserRoles } from '../arviointiSelectors'
+import { useHakemus } from '../../useHakemus'
+import { useUserRoles } from '../../arviointiSelectors'
 
 interface MuutoshakemusProps {
   environment: EnvironmentApiResponse

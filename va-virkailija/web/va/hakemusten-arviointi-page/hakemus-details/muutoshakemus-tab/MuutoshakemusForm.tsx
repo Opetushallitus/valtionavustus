@@ -1,3 +1,6 @@
+import 'soresu-form/web/form/style/main.less'
+import '../../../style/main.less'
+
 import React, { useMemo, useState } from 'react'
 import moment from 'moment'
 // @ts-ignore react-widgets-moment doesn't have proper types
@@ -17,8 +20,6 @@ import {
 } from 'soresu-form/web/va/types/muutoshakemus'
 import { MuutosTaloudenKayttosuunnitelmaan } from 'soresu-form/web/va/muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
 import { MuutoshakemusSection } from 'soresu-form/web/va/MuutoshakemusSection'
-import { isError, isSubmitDisabled } from '../../formikHelpers'
-import { copyToClipboard } from '../../copyToClipboard'
 import {
   getTranslationContext,
   TranslationContext,
@@ -35,27 +36,28 @@ import {
   isRejected,
   toFinnishDateFormat,
 } from 'soresu-form/web/va/Muutoshakemus'
-import { MuutoshakemusPaatosRequest, MuutoshakemusPaatosFormValues } from './hakemusTypes'
 import {
   fiLongFormat,
   isoFormat,
   parseDateString,
   parseDateStringToMoment,
 } from 'soresu-form/web/va/i18n/dateformat'
-import { paatosStatuses, PaatosStatusRadioButtonGroup } from './PaatosStatus'
-import { TalousarvioAcceptWithChangesForm } from './TalousarvioAcceptWithChangesForm'
 import { translationsFi } from 'soresu-form/web/va/i18n/translations'
 import { getNestedInputErrorClass } from 'soresu-form/web/va/formikHelpers'
-import { Role, UserInfo } from '../../types'
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import { Modal } from './Modal'
 import { MuutoshakemusPaatos } from 'soresu-form/web/va/MuutoshakemusPaatos'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
-import 'soresu-form/web/form/style/main.less'
-import '../../style/main.less'
-import { useHakemustenArviointiDispatch } from '../arviointiStore'
-import { setMuutoshakemukset } from '../arviointiReducer'
+import { isError, isSubmitDisabled } from '../../../formikHelpers'
+import { copyToClipboard } from '../../../copyToClipboard'
+import { MuutoshakemusPaatosRequest, MuutoshakemusPaatosFormValues } from './hakemusTypes'
+import { paatosStatuses, PaatosStatusRadioButtonGroup } from './PaatosStatus'
+import { TalousarvioAcceptWithChangesForm } from './TalousarvioAcceptWithChangesForm'
+import { Role, UserInfo } from '../../../types'
+import { Modal } from '../Modal'
+
+import { useHakemustenArviointiDispatch } from '../../arviointiStore'
+import { setMuutoshakemukset } from '../../arviointiReducer'
 
 moment.locale('fi')
 const localizer = new MomentLocalizer(moment)

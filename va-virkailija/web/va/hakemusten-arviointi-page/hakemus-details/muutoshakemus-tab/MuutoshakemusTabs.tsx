@@ -1,9 +1,9 @@
+import './MuutoshakemusTabs.less'
+
 import React from 'react'
 import moment from 'moment'
 import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'
 import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
-
-import './MuutoshakemusTabs.less'
 
 interface MuutoshakemusTabsProps {
   muutoshakemukset: Muutoshakemus[]
