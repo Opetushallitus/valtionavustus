@@ -569,11 +569,6 @@
   (exec queries/revoke-application-token!
         {:token token}))
 
-(defn set-loppuselvitys-taloustarkastus-taydennyspyynto-for-hakemus [hakemus-id]
-  (execute! "UPDATE hakemukset
-             SET loppuselvitys_taloustarkastus_taydennyspyynto_sent = true
-             WHERE id = ? AND version_closed IS NULL", [hakemus-id]))
-
 (defn get-loppuselvitys-hakemus-id [parent-hakemus-id]
   (let [result (query "
                       SELECT id FROM hakemukset
