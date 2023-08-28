@@ -2,9 +2,9 @@ import React from 'react'
 
 import { LoppuselvitysForm } from './LoppuselvitysForm'
 import { TaloustarkastusEmail } from './TaloustarkastusEmail'
-import SelvitysPreview from '../SelvitysPreview'
-import SelvitysNotFilled from '../SelvitysNotFilled'
-import SelvitysLink from '../SelvitysLink'
+import SelvitysPreview from '../common-components/SelvitysPreview'
+import SelvitysNotFilled from '../common-components/SelvitysNotFilled'
+import SelvitysLink from '../common-components/SelvitysLink'
 import PresenterComment from '../common-components/PresenterComment'
 import ApplicationPayments from '../common-components/ApplicationPayments'
 import {

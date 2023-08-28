@@ -1,8 +1,8 @@
 import React from 'react'
 
-import SelvitysPreview from '../SelvitysPreview'
-import SelvitysNotFilled from '../SelvitysNotFilled'
-import SelvitysLink from '../SelvitysLink'
+import SelvitysPreview from '../common-components/SelvitysPreview'
+import SelvitysNotFilled from '../common-components/SelvitysNotFilled'
+import SelvitysLink from '../common-components/SelvitysLink'
 import PresenterComment from '../common-components/PresenterComment'
 import ApplicationPayments from '../common-components/ApplicationPayments'
 import { ValiselvitysEmail } from './ValiselvitysEmail'

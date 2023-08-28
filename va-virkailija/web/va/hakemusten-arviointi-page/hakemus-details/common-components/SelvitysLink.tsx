@@ -1,8 +1,8 @@
-import React from 'react'
-import HelpTooltip from '../../common-components/HelpTooltip'
-import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
-
 import './SelvitysLink.less'
+
+import React from 'react'
+import HelpTooltip from '../../../common-components/HelpTooltip'
+import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 
 type SelvitysLinkProps = {
   hakemus: Hakemus

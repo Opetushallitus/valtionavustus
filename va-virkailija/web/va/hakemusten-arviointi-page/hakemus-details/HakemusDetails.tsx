@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Outlet, useParams, useSearchParams } from 'react-router-dom'
 
-import HakemusPreview from './HakemusPreview'
+import HakemusPreview from './hakemus-preview-pane/HakemusPreview'
 import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '../arviointiStore'
 import { getLoadedState, selectHakemus } from '../arviointiReducer'
 import { NavLinkWithQuery } from '../../NavLinkWithQuery'

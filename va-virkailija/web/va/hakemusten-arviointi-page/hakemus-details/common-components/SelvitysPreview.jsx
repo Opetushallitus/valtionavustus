@@ -7,8 +7,8 @@ import FormBranchGrower from 'soresu-form/web/form/FormBranchGrower'
 import VaComponentFactory from 'soresu-form/web/va/VaComponentFactory'
 import VaPreviewComponentFactory from 'soresu-form/web/va/VaPreviewComponentFactory'
 import EditsDisplayingFormView from './EditsDisplayingFormView'
-import FakeFormController from '../../form/FakeFormController'
-import FakeFormState from '../../form/FakeFormState'
+import FakeFormController from '../../../form/FakeFormController'
+import FakeFormState from '../../../form/FakeFormState'
 
 export default class SelvitysPreview extends Component {
   render() {

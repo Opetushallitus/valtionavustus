@@ -1,3 +1,5 @@
+import './formpreview.less'
+
 import React, { Component } from 'react'
 import _ from 'lodash'
 
@@ -11,14 +13,13 @@ import VaHakemusRegisterNumber from 'soresu-form/web/va/VaHakemusRegisterNumber'
 import VaChangeRequest from 'soresu-form/web/va/VaChangeRequest'
 import { mapAnswersWithMuutoshakemusData } from 'soresu-form/web/va/MuutoshakemusMapper'
 import { Answer, Avustushaku, Hakemus, HakemusFormState } from 'soresu-form/web/va/types'
-import GrantRefusedNotice from './GrantRefusedNotice'
-import EditsDisplayingFormView from './EditsDisplayingFormView'
-import FakeFormController from '../../form/FakeFormController'
-import FakeFormState from '../../form/FakeFormState'
-import { HakuData } from '../../types'
-
-import '../../style/formpreview.less'
 import { dateStringToMaybeFinnishDate } from 'soresu-form/web/va/Muutoshakemus'
+
+import EditsDisplayingFormView from '../common-components/EditsDisplayingFormView'
+import GrantRefusedNotice from './GrantRefusedNotice'
+import FakeFormController from '../../../form/FakeFormController'
+import FakeFormState from '../../../form/FakeFormState'
+import { HakuData } from '../../../types'
 
 interface HakemusPreviewProps {
   hakemus: Hakemus
