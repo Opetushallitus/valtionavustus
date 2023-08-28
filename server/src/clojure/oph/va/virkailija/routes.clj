@@ -22,6 +22,7 @@
             [oph.va.virkailija.external :as external]
             [oph.va.virkailija.fake-authentication :as fake-authentication]
             [oph.va.virkailija.grant-routes :as grant-routes]
+            [oph.va.virkailija.hakemus-routes :as hakemus-routes]
             [oph.va.virkailija.hakudata :as hakudata]
             [oph.va.virkailija.healthcheck :as healthcheck]
             [oph.va.virkailija.help-texts :as help-texts]
@@ -566,39 +567,44 @@
                            {:name "healthcheck"
                             :description "Healthcheck"}]}}})
 
-(compojure-api/defapi all-routes
-                      api-config
+(compojure-api/defapi
+  all-routes
+  api-config
 
-                      (when (get-in config [:test-apis :enabled?])
-                        (compojure-api/context "/api/test" [] :tags ["test"] test-api-routes))
-                      (compojure-api/context "/public/api" [] :tags ["public"] public-routes)
-                      (compojure-api/context "/api/avustushaku" [] :tags ["avustushaku"] avustushaku-routes)
-                      (compojure-api/context "/login" [] :tags ["login"] login-routes)
-                      (compojure-api/context "/api/help-texts" [] :tags ["help-texts"] help-texts-routes)
-                      (compojure-api/context "/api/userinfo" [] :tags ["userinfo"] userinfo-routes)
-                      (compojure-api/context "/api/va-user" [] :tags ["va-user"] va-user-routes)
-                      (compojure-api/context "/api/koodisto" [] :tags ["koodisto"] koodisto-routes)
-                      (compojure-api/context "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
-                      (compojure-api/context "/api/paatos" [] :tags ["paatos"] paatos/paatos-routes)
-                      (compojure-api/context "/paatos" [] :tags ["paatos"] decision/decision-routes)
-                      (compojure-api/context "/api/talousarviotilit" [] :tags ["talousarviotilit"]
-                                                                   talousarviotili-routes/routes)
-                      (compojure-api/context "/api/v2/grants" [] :tags ["grants"] grant-routes/routes)
-                      (compojure-api/context "/api/v2/applications" [] :tags ["applications"]
-                                             application-routes/routes)
-                      (compojure-api/context
-                       "/api/v2/reports" [] :tags ["reports"] reporting-routes/routes)
-                      (compojure-api/context "/api/send-maksatukset-and-tasmaytysraportti" [] :tags ["maksatukset and tasmaytysraportti"]
-                                             maksatukset-and-tasmaytysraportti-routes/routes)
-                      (compojure-api/context "/api/v2/payment-batches" [] :tags ["payment batches"]
-                                             payment-batches-routes/routes)
-                      (compojure-api/context "/api/v2/va-code-values" [] :tags ["va-code-values"]
-                                             va-code-values-routes/routes)
-                      (compojure-api/context "/api/v2/payments" [] :tags ["payments"]
-                                             payments-routes/routes)
-                      (compojure-api/context "/api/v2/external" []
-                                             :tags ["external"]
-                                             external/routes)
+  (compojure-api/context "/login" [] :tags ["login"] login-routes)
+  (compojure-api/context "/paatos" [] :tags ["paatos"] decision/decision-routes)
 
-                      va-routes/config-routes
-                      resource-routes)
+  (compojure-api/context "/public/api" [] :tags ["public"] public-routes)
+
+  (when (get-in config [:test-apis :enabled?])
+    (compojure-api/context "/api/test" [] :tags ["test"] test-api-routes))
+  (compojure-api/context "/api/avustushaku" [] :tags ["avustushaku"] avustushaku-routes)
+  (compojure-api/context "/api/avustushaku/:avustushaku-id/hakemus/:hakemus-id" []
+                         :tags ["hakemus"]
+                         hakemus-routes/hakemus-routes)
+  (compojure-api/context "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
+  (compojure-api/context "/api/help-texts" [] :tags ["help-texts"] help-texts-routes)
+  (compojure-api/context "/api/koodisto" [] :tags ["koodisto"] koodisto-routes)
+  (compojure-api/context "/api/paatos" [] :tags ["paatos"] paatos/paatos-routes)
+  (compojure-api/context "/api/send-maksatukset-and-tasmaytysraportti" [] :tags ["maksatukset and tasmaytysraportti"] maksatukset-and-tasmaytysraportti-routes/routes)
+  (compojure-api/context "/api/talousarviotilit" [] :tags ["talousarviotilit"] talousarviotili-routes/routes)
+  (compojure-api/context "/api/userinfo" [] :tags ["userinfo"] userinfo-routes)
+  (compojure-api/context "/api/va-user" [] :tags ["va-user"] va-user-routes)
+
+  (compojure-api/context "/api/v2/grants" [] :tags ["grants"] grant-routes/routes)
+  (compojure-api/context "/api/v2/applications" [] :tags ["applications"]
+    application-routes/routes)
+  (compojure-api/context
+    "/api/v2/reports" [] :tags ["reports"] reporting-routes/routes)
+  (compojure-api/context "/api/v2/payment-batches" [] :tags ["payment batches"]
+    payment-batches-routes/routes)
+  (compojure-api/context "/api/v2/va-code-values" [] :tags ["va-code-values"]
+    va-code-values-routes/routes)
+  (compojure-api/context "/api/v2/payments" [] :tags ["payments"]
+    payments-routes/routes)
+  (compojure-api/context "/api/v2/external" []
+    :tags ["external"]
+    external/routes)
+
+  va-routes/config-routes
+  resource-routes)
