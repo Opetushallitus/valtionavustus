@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react'
 
-import { fetchSentEmails, sendEmail } from './sentEmails'
-import ViestiLista, { Message } from './ViestiLista'
+import { fetchSentEmails, sendEmail } from '../sentEmails'
+import ViestiLista, { Message } from '../ViestiLista'
 import MultipleRecipentEmailForm, {
   Email,
   generateInitialEmail,
-} from './common-components/MultipleRecipentsEmailForm'
-import { useHakemus } from '../useHakemus'
-import { useHakemustenArviointiSelector } from '../arviointiStore'
-import { getLoadedState } from '../arviointiReducer'
+} from '../common-components/MultipleRecipentsEmailForm'
+import { useHakemus } from '../../useHakemus'
+import { useHakemustenArviointiSelector } from '../../arviointiStore'
+import { getLoadedState } from '../../arviointiReducer'
 
-import './ViestiHankkeelle.less'
-
-export function ViestiHankkeelle() {
+export function ViestiHankkeelleTab() {
   const hakemus = useHakemus()
   const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
 
