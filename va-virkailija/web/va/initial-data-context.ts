@@ -1,8 +1,10 @@
 import { createContext, useContext } from 'react'
 import { EnvironmentApiResponse, FeatureFlag } from 'soresu-form/web/va/types/environment'
+import { UserInfo } from './types'
 
 type InitialData = {
   environment: EnvironmentApiResponse
+  userInfo: UserInfo
 }
 
 const initialDataContext = createContext<InitialData | null>(null)
@@ -19,6 +21,10 @@ function useInitialData(): InitialData {
 
 export function useEnvironment(): EnvironmentApiResponse {
   return useInitialData().environment
+}
+
+export function useUserInfo(): UserInfo {
+  return useInitialData().userInfo
 }
 
 function isFeatureEnabled(env: EnvironmentApiResponse, feature: FeatureFlag): boolean {

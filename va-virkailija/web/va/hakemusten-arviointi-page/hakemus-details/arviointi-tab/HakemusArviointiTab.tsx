@@ -6,6 +6,7 @@ import Select from 'react-select'
 import DateUtil from 'soresu-form/web/DateUtil'
 import { ChangeLogEntry, Hakemus, HelpTexts } from 'soresu-form/web/va/types'
 
+import { useUserInfo } from '../../../initial-data-context'
 import HelpTooltip from '../../../common-components/HelpTooltip'
 import ProjectSelector from '../../../common-components/ProjectSelector'
 import HakemusArviointiStatuses from '../../../HakemusArviointiStatuses'
@@ -40,7 +41,8 @@ import { useHakemus } from '../../useHakemus'
 
 export const HakemusArviointiTab = () => {
   const hakemus = useHakemus()
-  const { hakuData, helpTexts, userInfo, projects } = useHakemustenArviointiSelector((state) =>
+  const userInfo = useUserInfo()
+  const { hakuData, helpTexts, projects } = useHakemustenArviointiSelector((state) =>
     getLoadedState(state.arviointi)
   )
   const { avustushaku } = hakuData

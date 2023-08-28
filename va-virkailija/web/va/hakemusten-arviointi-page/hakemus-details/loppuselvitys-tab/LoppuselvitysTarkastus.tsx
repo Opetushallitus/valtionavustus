@@ -16,6 +16,7 @@ import {
   usePostLoppuselvitysTaydennyspyyntoMutation,
 } from '../../../apiSlice'
 import { hasFetchErrorMsg } from '../../../isFetchBaseQueryError'
+import { useUserInfo } from '../../../initial-data-context'
 import { getLoadedState, loadSelvitys, refreshHakemukset } from '../../arviointiReducer'
 import {
   useHakemustenArviointiDispatch,
@@ -100,7 +101,7 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
     (s) => getLoadedState(s.arviointi).hakuData.avustushaku
   )
   const [showEmail, toggleEmail] = useState(false)
-  const userInfo = useHakemustenArviointiSelector((s) => getLoadedState(s.arviointi).userInfo)
+  const userInfo = useUserInfo()
   const lang = hakemus.language
   const loppuselvitys = hakemus.selvitys?.loppuselvitys
   const taloustarkastettu = hakemus['status-loppuselvitys'] === 'accepted'

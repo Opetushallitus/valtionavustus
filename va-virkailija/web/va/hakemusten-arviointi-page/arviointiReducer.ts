@@ -25,7 +25,7 @@ import {
   Score,
   Scoring,
 } from 'soresu-form/web/va/types'
-import { HakuData, LahetysStatuses, UserInfo, VaCodeValue } from '../types'
+import { HakuData, LahetysStatuses, VaCodeValue } from '../types'
 import { Lahetys } from '../hakujen-hallinta-page/haku-details/Tapahtumaloki'
 import { TalousarviotiliWithKoulutusasteet } from '../hakujen-hallinta-page/hakuReducer'
 import { Muutoshakemus as MuutoshakemusType } from 'soresu-form/web/va/types/muutoshakemus'
@@ -75,7 +75,6 @@ interface InitialData {
   hakuData: HakuData
   projects: VaCodeValue[]
   helpTexts: any
-  userInfo: UserInfo
   lahetykset: LahetysStatuses
   earliestPaymentCreatedAt?: string
 }
@@ -89,7 +88,6 @@ export const fetchInitialState = createAsyncThunk<InitialData, number>(
       environment,
       projects,
       helpTexts,
-      userInfo,
       lahetykset,
       earliestPaymentCreatedAt,
     ] = await Promise.all([
@@ -98,7 +96,6 @@ export const fetchInitialState = createAsyncThunk<InitialData, number>(
       HttpUtil.get<EnvironmentApiResponse>('/environment'),
       HttpUtil.get<VaCodeValue[]>(`/api/avustushaku/${avustushakuId}/projects`),
       HttpUtil.get('/api/help-texts/all'),
-      HttpUtil.get<UserInfo>('/api/userinfo'),
       getLahetysStatuses(avustushakuId),
       getEarliestPaymentCreatedAt(avustushakuId),
     ])
@@ -108,7 +105,6 @@ export const fetchInitialState = createAsyncThunk<InitialData, number>(
       environment,
       projects,
       helpTexts,
-      userInfo,
       lahetykset,
       earliestPaymentCreatedAt,
     }

@@ -18,12 +18,14 @@ import {
 } from '../../arviointiReducer'
 import { useHakemus } from '../../useHakemus'
 import { useUserRoles } from '../../arviointiSelectors'
+import { useUserInfo } from '../../../initial-data-context'
 
 const VäliselvitysTab = () => {
   const hakemus = useHakemus()
-  const { hakuData, helpTexts, userInfo } = useHakemustenArviointiSelector((state) =>
+  const { hakuData, helpTexts } = useHakemustenArviointiSelector((state) =>
     getLoadedState(state.arviointi)
   )
+  const userInfo = useUserInfo()
   const { avustushaku } = hakuData
   const multibatchPaymentsEnabled = useHakemustenArviointiSelector(hasMultibatchPayments)
   const valiselvitysPyynnotSent = useHakemustenArviointiSelector(

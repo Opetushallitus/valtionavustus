@@ -16,7 +16,7 @@ import { Hakemus } from 'soresu-form/web/va/types'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 import { HeaderContainer } from '../common-components/Header'
-import { InitialDataProvider, useFeature } from '../initial-data-context'
+import { InitialDataProvider, useFeature, useUserInfo } from '../initial-data-context'
 import AvustushakuDropdown from './avustushaku-dropdown/AvustushakuDropdown'
 import HakemusDetails from './hakemus-details/HakemusDetails'
 import { MODAL_ROOT_ID } from './hakemus-details/Modal'
@@ -40,6 +40,7 @@ import { getLoadedState, initialize } from './arviointiReducer'
 
 import './../style/main.less'
 import './hakemusten-arviointi.less'
+import { UserInfo } from '../types'
 
 const SHOW_ALL = 'showAll' as const
 const SHOW_ADDITIONAL_INFO = 'showAdditionalInfo' as const
@@ -115,9 +116,10 @@ const LoadedApp = () => {
   const [showAllHakemukset, toggleShowAllHakemukset] = useState(
     () => new URLSearchParams(location.search).get(SHOW_ALL) === 'true'
   )
-  const { avustushakuList, hakuData, userInfo } = useHakemustenArviointiSelector((state) =>
+  const { avustushakuList, hakuData } = useHakemustenArviointiSelector((state) =>
     getLoadedState(state.arviointi)
   )
+  const userInfo = useUserInfo()
   const { hakemusId } = useParams()
   const selectedHakemusId = hakemusId ? Number(hakemusId) : undefined
   const saveStatus = useHakemustenArviointiSelector((state) => state.arviointi.saveStatus)
@@ -213,9 +215,13 @@ const LoadedApp = () => {
 const app = document.getElementById('app')
 const root = createRoot(app!)
 
-HttpUtil.get<EnvironmentApiResponse>('/environment').then((environment) => {
+Promise.all([
+  HttpUtil.get<EnvironmentApiResponse>('/environment'),
+  HttpUtil.get<UserInfo>('/api/userinfo'),
+]).then(([environment, userInfo]) => {
   const initialData = {
     environment,
+    userInfo,
   }
 
   root.render(

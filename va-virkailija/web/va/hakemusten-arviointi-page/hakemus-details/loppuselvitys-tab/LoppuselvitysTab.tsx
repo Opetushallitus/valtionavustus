@@ -20,16 +20,17 @@ import {
 import { useHakemus } from '../../useHakemus'
 import { useUserRoles } from '../../arviointiSelectors'
 import MuistutusViesti from './Muistutusviesti'
-import { useFeature } from '../../../initial-data-context'
+import { useFeature, useUserInfo } from '../../../initial-data-context'
 
 const LoppuselvitysTab = () => {
   const hakemus = useHakemus()
   const loadingHakemus = useHakemustenArviointiSelector(
     (state) => state.arviointi.saveStatus.loadingHakemus
   )
-  const { hakuData, helpTexts, userInfo } = useHakemustenArviointiSelector((state) =>
+  const { hakuData, helpTexts } = useHakemustenArviointiSelector((state) =>
     getLoadedState(state.arviointi)
   )
+  const userInfo = useUserInfo()
 
   const { avustushaku } = hakuData
   const dispatch = useHakemustenArviointiDispatch()

@@ -11,12 +11,14 @@ import ShouldPayComments from './ShouldPayComments'
 import { useHakemustenArviointiSelector } from '../../arviointiStore'
 import { getLoadedState } from '../../arviointiReducer'
 import { useHakemus } from '../../useHakemus'
+import { useUserInfo } from '../../../initial-data-context'
 
 const SeurantaTab = () => {
   const hakemus = useHakemus()
-  const { helpTexts, hakuData, userInfo } = useHakemustenArviointiSelector((state) =>
+  const { helpTexts, hakuData } = useHakemustenArviointiSelector((state) =>
     getLoadedState(state.arviointi)
   )
+  const userInfo = useUserInfo()
   const { avustushaku } = hakuData
   const { muutoshakemukset } = hakemus
   return (

@@ -4,12 +4,12 @@ import { Muutoshakemus } from './Muutoshakemus'
 import { useHakemustenArviointiSelector } from '../../arviointiStore'
 import { getLoadedState } from '../../arviointiReducer'
 import { useHakemus } from '../../useHakemus'
+import { useUserInfo } from '../../../initial-data-context'
 
 const MuutoshakemusTab = () => {
   const hakemus = useHakemus()
-  const { hakuData, userInfo } = useHakemustenArviointiSelector((state) =>
-    getLoadedState(state.arviointi)
-  )
+  const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
+  const userInfo = useUserInfo()
   const { avustushaku, environment } = hakuData
   const { muutoshakemukset, language } = hakemus
   const lang = language || 'fi'

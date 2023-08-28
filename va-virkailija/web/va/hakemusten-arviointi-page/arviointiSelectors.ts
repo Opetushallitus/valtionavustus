@@ -1,9 +1,11 @@
+import { useUserInfo } from '../initial-data-context'
 import { VALMISTELIJA_ROLES } from '../types'
 import { getHakemus, getLoadedState } from './arviointiReducer'
 import { useHakemustenArviointiSelector as useSelector } from './arviointiStore'
 
 export const useUserRoles = (hakemusId: number) => {
-  const { hakuData, userInfo } = useSelector((state) => getLoadedState(state.arviointi))
+  const { hakuData } = useSelector((state) => getLoadedState(state.arviointi))
+  const userInfo = useUserInfo()
   const { roles } = hakuData
   const hakemus = useSelector((state) => getHakemus(state.arviointi, hakemusId))
 
