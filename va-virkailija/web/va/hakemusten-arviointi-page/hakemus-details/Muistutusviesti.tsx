@@ -1,11 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
-import { isString } from 'lodash'
 
-import { Language } from 'soresu-form/web/va/i18n/translations'
 import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 
-import MultipleRecipentEmailForm from './MultipleRecipentsEmailForm'
+import MultipleRecipentEmailForm, { generateInitialEmail } from './MultipleRecipentsEmailForm'
 import ViestiLista, { Message } from './ViestiLista'
 import { fetchSentEmails, sendEmail } from './sentEmails'
 
@@ -24,10 +22,7 @@ export default function MuistutusViesti({ avustushaku, hakemus }: Muistutusviest
   const [sentEmails, setSentEmails] = useState<Message[]>([])
   const [formErrorMessage, setFormErrorMessage] = useState<string>()
   const containsSentEmails = sentEmails.length > 0
-  const contactEmail = hakemus.normalizedData?.['contact-email']
-  const trustedContactEmail = hakemus.normalizedData?.['trusted-contact-email']
-  const lang = hakemus.language
-  const initialEmail = generateInitialEmail(contactEmail, trustedContactEmail, lang)
+  const initialEmail = generateInitialEmail(hakemus)
   const [email, setEmail] = useState(initialEmail)
 
   useEffect(() => {
@@ -69,7 +64,7 @@ export default function MuistutusViesti({ avustushaku, hakemus }: Muistutusviest
       setFormErrorMessage(undefined)
       cancelForm()
     } catch (err: any) {
-      if (err.name === 'HttpResponseError' && err.response.status === 400) {
+      if (err?.name === 'HttpResponseError' && err?.response?.status === 400) {
         setFormErrorMessage(err.response.data.error)
       } else {
         setFormErrorMessage('Muistutusviestin lähetys epäonnistui')
@@ -113,19 +108,4 @@ export default function MuistutusViesti({ avustushaku, hakemus }: Muistutusviest
       )}
     </>
   )
-}
-
-function generateInitialEmail(
-  contactEmail: string | undefined,
-  trustedContactEmail: string | undefined,
-  lang: Language
-) {
-  const receivers = [contactEmail, trustedContactEmail].filter(isString)
-  const initialEmail = {
-    lang,
-    subject: '',
-    content: '',
-    receivers: receivers,
-  }
-  return initialEmail
 }

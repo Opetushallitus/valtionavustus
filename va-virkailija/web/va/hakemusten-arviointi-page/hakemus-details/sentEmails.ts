@@ -4,7 +4,7 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import { Lahetys } from '../../hakujen-hallinta-page/haku-details/Tapahtumaloki'
 import { mapEmails } from '../../apiSlice'
 
-type EmailType = 'loppuselvitys-muistutus'
+type EmailType = 'loppuselvitys-muistutus' | 'vapaa-viesti'
 
 export async function sendEmail(
   type: EmailType,
@@ -28,7 +28,7 @@ export async function sendEmail(
 export async function fetchSentEmails(
   avustushaku: Avustushaku,
   hakemus: Hakemus,
-  emailType: string
+  emailType: EmailType
 ): Promise<Message[]> {
   const sentEmails = await HttpUtil.get<Lahetys[]>(
     `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/tapahtumaloki/${emailType}`

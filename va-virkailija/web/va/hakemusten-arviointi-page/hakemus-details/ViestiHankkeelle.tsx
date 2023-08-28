@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import './ViestiHankkeelle.less'
-import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
-import { fetchSentEmails } from './sentEmails'
+
+import { fetchSentEmails, sendEmail } from './sentEmails'
 import ViestiLista, { Message } from './ViestiLista'
+import MultipleRecipentEmailForm, {
+  Email,
+  generateInitialEmail,
+} from './MultipleRecipentsEmailForm'
 import { useHakemus } from '../useHakemus'
 import { useHakemustenArviointiSelector } from '../arviointiStore'
 import { getLoadedState } from '../arviointiReducer'
-async function fetchViestiHankkeelleEmails(
-  avustushaku: Avustushaku,
-  hakemus: Hakemus
-): Promise<Array<Message>> {
-  return fetchSentEmails(avustushaku, hakemus, 'vapaa-viesti')
-}
+
+import './ViestiHankkeelle.less'
 
 export function ViestiHankkeelle() {
   const hakemus = useHakemus()
@@ -19,17 +18,72 @@ export function ViestiHankkeelle() {
 
   const { avustushaku } = hakuData
   const [sentEmails, setSentEmails] = useState<Message[]>([])
-  useEffect(function () {
+
+  useEffect(
+    function () {
+      async function fetchEmails() {
+        const sentEmails = await fetchSentEmails(avustushaku, hakemus, 'vapaa-viesti')
+        setSentEmails(sentEmails)
+      }
+      fetchEmails()
+    },
+    [avustushaku, hakemus]
+  )
+
+  const [email, setEmail] = useState<Email>(generateInitialEmail(hakemus))
+  const [formErrorMessage, setFormErrorMessage] = useState<string | undefined>(undefined)
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    async function send() {
+      try {
+        setFormErrorMessage(undefined)
+        await sendEmail(
+          'vapaa-viesti',
+          avustushaku,
+          hakemus,
+          email.content,
+          email.subject,
+          email.receivers
+        )
+        setEmail(generateInitialEmail(hakemus))
+      } catch (err: any) {
+        if (err?.name === 'HttpResponseError' && err?.response?.status === 400) {
+          setFormErrorMessage(err.response.data.error)
+        } else {
+          setFormErrorMessage('Viestin lähetys epäonnistui')
+        }
+      }
+    }
     async function fetchEmails() {
-      const sentEmails = await fetchViestiHankkeelleEmails(avustushaku, hakemus)
+      const sentEmails = await fetchSentEmails(avustushaku, hakemus, 'vapaa-viesti')
       setSentEmails(sentEmails)
     }
-    fetchEmails()
-  }, [])
+    send().then(fetchEmails)
+  }
+
   return (
     <div>
-      <h1 className={'title'}>Viesti Hankkeelle</h1>
-      <ViestiLista messages={sentEmails} />
+      {sentEmails.length > 0 && (
+        <>
+          <h2>Aiemmin lähetetyt viestit</h2>
+          <ViestiLista messages={sentEmails} />
+        </>
+      )}
+      <h2>Lähetä viesti hankkeelle</h2>
+      <MultipleRecipentEmailForm
+        onSubmit={handleSubmit}
+        email={email}
+        setEmail={setEmail}
+        formName="viestihankkeelle"
+        submitText="Lähetä viesti"
+        cancelButton={{
+          text: 'Peruuta',
+          onClick: () => {},
+        }}
+        errorText={formErrorMessage}
+      />
     </div>
   )
 }

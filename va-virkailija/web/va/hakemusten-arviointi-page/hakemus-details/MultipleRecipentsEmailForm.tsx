@@ -1,6 +1,9 @@
 import React, { ForwardedRef, ReactElement, forwardRef } from 'react'
+import { isString } from 'lodash'
+
 import { IconTrashcan } from 'soresu-form/web/va/img/IconTrashcan'
-import { Language } from 'soresu-form/web/va/types'
+import { Hakemus, Language } from 'soresu-form/web/va/types'
+
 import './MultipleRecipentsEmailForm.less'
 
 export type Email = {
@@ -15,9 +18,22 @@ type CancelButton = {
   onClick: () => void
 }
 
+export function generateInitialEmail(hakemus: Hakemus): Email {
+  const contactEmail = hakemus.normalizedData?.['contact-email']
+  const trustedContactEmail = hakemus.normalizedData?.['trusted-contact-email']
+
+  const receivers = [contactEmail, trustedContactEmail].filter(isString)
+  return {
+    lang: hakemus.language,
+    subject: '',
+    content: '',
+    receivers,
+  }
+}
+
 type Props = {
-  heading: string
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>
+  heading?: string
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   email: Email
   setEmail: React.Dispatch<React.SetStateAction<Email>>
   submitText: string
@@ -47,7 +63,7 @@ function MultipleRecipentEmailForm(
     <div ref={ref} data-test-id={`${formName}-email`} className="form">
       <form onSubmit={onSubmit} className="soresu-form">
         <div className="form-body">
-          <h2 className="form-header">{heading}</h2>
+          {heading && <h2 className="form-header">{heading}</h2>}
           <SenderEmail />
           <MultipleEmailRecipents
             disabled={disabled}
