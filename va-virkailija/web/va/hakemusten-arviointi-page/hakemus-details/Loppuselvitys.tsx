@@ -56,7 +56,7 @@ const Loppuselvitys = () => {
       <div data-test-id="hakemus-details-loppuselvitys">
         <PresenterComment helpText={presenterCommentHelpText} />
         {hasSelvitys && !loadingHakemus && muistusviestiEnabled && (
-          <MuistutusViesti avustushaku={avustushaku} hakemus={hakemus} lang={lang} />
+          <MuistutusViesti avustushaku={avustushaku} hakemus={hakemus} />
         )}
         {hasSelvitys ? (
           <SelvitysPreview
@@ -102,7 +102,7 @@ const Loppuselvitys = () => {
           selvitysPyynnotSent={loppuselvitysPyynnotSent}
         />
         {!hasSelvitys && !loadingHakemus && muistusviestiEnabled && (
-          <MuistutusViesti avustushaku={avustushaku} hakemus={hakemus} lang={lang} />
+          <MuistutusViesti avustushaku={avustushaku} hakemus={hakemus} />
         )}
         {hasSelvitys && (
           <LoppuselvitysForm
@@ -117,7 +117,6 @@ const Loppuselvitys = () => {
             avustushakuId={avustushaku.id}
             hakemus={hakemus}
             loppuselvitys={loppuselvitys}
-            lang={lang}
             userInfo={userInfo}
             avustushakuName={avustushaku.content.name[lang]}
           />

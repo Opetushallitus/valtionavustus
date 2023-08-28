@@ -1,33 +1,32 @@
 import React, { useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
+import { isString } from 'lodash'
 
-import HttpUtil from 'soresu-form/web/HttpUtil'
 import { Language } from 'soresu-form/web/va/i18n/translations'
 import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 
 import MultipleRecipentEmailForm from './MultipleRecipentsEmailForm'
 import ViestiLista, { Message } from './ViestiLista'
-import { isString } from 'lodash'
+import { fetchSentEmails, sendEmail } from './sentEmails'
 
 import './muistutusviesti.less'
-import { fetchSentEmails } from './sentEmails'
 
 type MuistutusviestiProps = {
   hakemus: Hakemus
   avustushaku: Avustushaku
-  lang: Language
 }
 
 async function fetchMuistutusViestiSentEmails(avustushaku: Avustushaku, hakemus: Hakemus) {
   return fetchSentEmails(avustushaku, hakemus, 'loppuselvitys-muistutus')
 }
 
-export default function MuistutusViesti({ avustushaku, hakemus, lang }: MuistutusviestiProps) {
+export default function MuistutusViesti({ avustushaku, hakemus }: MuistutusviestiProps) {
   const [sentEmails, setSentEmails] = useState<Message[]>([])
   const [formErrorMessage, setFormErrorMessage] = useState<string>()
   const containsSentEmails = sentEmails.length > 0
   const contactEmail = hakemus.normalizedData?.['contact-email']
   const trustedContactEmail = hakemus.normalizedData?.['trusted-contact-email']
+  const lang = hakemus.language
   const initialEmail = generateInitialEmail(contactEmail, trustedContactEmail, lang)
   const [email, setEmail] = useState(initialEmail)
 
@@ -56,14 +55,13 @@ export default function MuistutusViesti({ avustushaku, hakemus, lang }: Muistutu
     e.preventDefault()
     e.stopPropagation()
     try {
-      await HttpUtil.post(
-        `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/send-email/loppuselvitys-muistutus`,
-        {
-          lang,
-          body: email.content,
-          subject: email.subject,
-          to: email.receivers,
-        }
+      await sendEmail(
+        'loppuselvitys-muistutus',
+        avustushaku,
+        hakemus,
+        email.content,
+        email.subject,
+        email.receivers
       )
 
       const sentEmails = await fetchMuistutusViestiSentEmails(avustushaku, hakemus)

@@ -16,7 +16,6 @@ type TaloustarkastusEmailProps = {
   loppuselvitys: Selvitys
   userInfo: UserInfo
   avustushakuName: string
-  lang: Language
 }
 
 export const TaloustarkastusEmail = ({
@@ -25,7 +24,6 @@ export const TaloustarkastusEmail = ({
   avustushakuName,
   avustushakuId,
   userInfo,
-  lang,
 }: TaloustarkastusEmailProps) => {
   const dispatch = useHakemustenArviointiDispatch()
   const taloustarkastettu = hakemus['status-loppuselvitys'] === 'accepted'
@@ -34,6 +32,7 @@ export const TaloustarkastusEmail = ({
   const registerNumber = loppuselvitys['register-number'] || ''
   const selvitysEmail = loppuselvitys['selvitys-email']
   const isTaloustarkastettu = taloustarkastettu && selvitysEmail !== undefined
+  const lang = hakemus.language
   const [email, setEmail] = useState(() =>
     isTaloustarkastettu
       ? sentEmail(lang, selvitysEmail)
