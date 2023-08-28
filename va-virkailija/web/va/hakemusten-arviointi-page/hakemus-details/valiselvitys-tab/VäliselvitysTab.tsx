@@ -1,22 +1,25 @@
 import React from 'react'
 
-import SelvitysPreview from './SelvitysPreview'
-import SelvitysNotFilled from './SelvitysNotFilled'
-import SelvitysLink from './SelvitysLink'
-import PresenterComment from './PresenterComment'
-import ApplicationPayments from './ApplicationPayments'
+import SelvitysPreview from '../SelvitysPreview'
+import SelvitysNotFilled from '../SelvitysNotFilled'
+import SelvitysLink from '../SelvitysLink'
+import PresenterComment from '../PresenterComment'
+import ApplicationPayments from '../ApplicationPayments'
 import { ValiselvitysEmail } from './ValiselvitysEmail'
-import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '../arviointiStore'
+import {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from '../../arviointiStore'
 import {
   addPayment,
   getLoadedState,
   hasMultibatchPayments,
   removePayment,
-} from '../arviointiReducer'
-import { useHakemus } from '../useHakemus'
-import { useUserRoles } from '../arviointiSelectors'
+} from '../../arviointiReducer'
+import { useHakemus } from '../../useHakemus'
+import { useUserRoles } from '../../arviointiSelectors'
 
-const Väliselvitys = () => {
+const VäliselvitysTab = () => {
   const hakemus = useHakemus()
   const { hakuData, helpTexts, userInfo } = useHakemustenArviointiSelector((state) =>
     getLoadedState(state.arviointi)
@@ -92,4 +95,4 @@ const Väliselvitys = () => {
   )
 }
 
-export default Väliselvitys
+export default VäliselvitysTab
