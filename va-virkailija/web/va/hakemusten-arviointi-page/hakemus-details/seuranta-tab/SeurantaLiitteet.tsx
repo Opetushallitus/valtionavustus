@@ -2,16 +2,16 @@ import _ from 'lodash'
 import React from 'react'
 import Immutable from 'seamless-immutable'
 
-import HelpTooltip from '../../common-components/HelpTooltip'
+import HelpTooltip from '../../../common-components/HelpTooltip'
 
 import AttachmentField from 'soresu-form/web/form/component/AttachmentField'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import Translator from 'soresu-form/web/form/Translator'
-import translationJson from '../../../../../server/resources/public/translations.json'
-import { HakuData } from '../../types'
+import translationJson from '../../../../../../server/resources/public/translations.json'
+import { HakuData } from '../../../types'
 import { Avustushaku, Hakemus, Field } from 'soresu-form/web/va/types'
-import { useHakemustenArviointiDispatch } from '../arviointiStore'
-import { updateHakemukset } from '../arviointiReducer'
+import { useHakemustenArviointiDispatch } from '../../arviointiStore'
+import { updateHakemukset } from '../../arviointiReducer'
 
 type SeurantaLiitteetProps = {
   hakemus: Hakemus

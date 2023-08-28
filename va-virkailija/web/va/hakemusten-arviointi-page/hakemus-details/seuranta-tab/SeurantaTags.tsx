@@ -2,8 +2,11 @@ import React, { useState } from 'react'
 import _ from 'lodash'
 import ClassNames from 'classnames'
 import { Hakemus } from 'soresu-form/web/va/types'
-import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '../arviointiStore'
-import { getLoadedState, setArvioValue, startHakemusArvioAutoSave } from '../arviointiReducer'
+import {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from '../../arviointiStore'
+import { getLoadedState, setArvioValue, startHakemusArvioAutoSave } from '../../arviointiReducer'
 
 interface Props {
   hakemus: Hakemus

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Hakemus } from 'soresu-form/web/va/types'
-import { setKeskeytettyAloittamatta } from '../arviointiReducer'
-import { useHakemustenArviointiDispatch } from '../arviointiStore'
+import { setKeskeytettyAloittamatta } from '../../arviointiReducer'
+import { useHakemustenArviointiDispatch } from '../../arviointiStore'
 
 interface Props {
   hakemus: Hakemus

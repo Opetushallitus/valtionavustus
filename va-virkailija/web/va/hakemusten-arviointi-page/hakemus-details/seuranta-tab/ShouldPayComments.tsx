@@ -1,7 +1,7 @@
 import React from 'react'
-import { useHakemustenArviointiDispatch } from '../arviointiStore'
-import { setArvioValue, startHakemusArvioAutoSave } from '../arviointiReducer'
-import { useHakemus } from '../useHakemus'
+import { useHakemustenArviointiDispatch } from '../../arviointiStore'
+import { setArvioValue, startHakemusArvioAutoSave } from '../../arviointiReducer'
+import { useHakemus } from '../../useHakemus'
 
 const ShouldPayComments = () => {
   const dispatch = useHakemustenArviointiDispatch()

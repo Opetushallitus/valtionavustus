@@ -1,25 +1,26 @@
+import '../../../../style/budgetedit.less'
+
 import React from 'react'
+import _ from 'lodash'
 
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import FormContainer from 'soresu-form/web/form/FormContainer'
 import Form from 'soresu-form/web/form/Form.jsx'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
+import { Answer, Avustushaku, Hakemus, Form as FormType, Field } from 'soresu-form/web/va/types'
 
 import { BudgetTable } from './BudgetTable'
-import FakeFormState from '../../../form/FakeFormState'
+import FakeFormState from '../../../../form/FakeFormState'
 import SeurantaBudgetEditFormController from './SeurantaBudgetEditFormController'
 import SeurantaBudgetEditComponentFactory from './SeurantaBudgetEditComponentFactory'
 
-import '../../../style/budgetedit.less'
-import { Answer, Avustushaku, Hakemus, Form as FormType, Field } from 'soresu-form/web/va/types'
-import { HakuData } from '../../../types'
+import { HakuData } from '../../../../types'
 import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
-import _ from 'lodash'
 import { createFieldUpdate } from 'soresu-form/web/form/FieldUpdateHandler'
 import VaSyntaxValidator from 'soresu-form/web/va/VaSyntaxValidator'
-import { useHakemustenArviointiDispatch } from '../../arviointiStore'
-import { setArvioValue, startHakemusArvioAutoSave } from '../../arviointiReducer'
+import { useHakemustenArviointiDispatch } from '../../../arviointiStore'
+import { setArvioValue, startHakemusArvioAutoSave } from '../../../arviointiReducer'
 
 interface SeurantaBudgetEditingProps {
   hakemus: Hakemus

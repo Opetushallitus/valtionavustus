@@ -1,6 +1,6 @@
 import React from 'react'
 
-import PresenterComment from './PresenterComment'
+import PresenterComment from '../PresenterComment'
 import SeurantaLiitteet from './SeurantaLiitteet'
 import SeurantaTags from './SeurantaTags'
 import SeurantaBudgetEditing from './seurantabudgetedit/SeurantaBudgetEditing'
@@ -8,11 +8,11 @@ import ShouldPay from './ShouldPay'
 import KeskeytaAloittamatta from './KeskeytaAloittamatta'
 import AllowVisibilityInExternalSystem from './AllowVisibilityInExternalSystem'
 import ShouldPayComments from './ShouldPayComments'
-import { useHakemustenArviointiSelector } from '../arviointiStore'
-import { getLoadedState } from '../arviointiReducer'
-import { useHakemus } from '../useHakemus'
+import { useHakemustenArviointiSelector } from '../../arviointiStore'
+import { getLoadedState } from '../../arviointiReducer'
+import { useHakemus } from '../../useHakemus'
 
-const Seuranta = () => {
+const SeurantaTab = () => {
   const hakemus = useHakemus()
   const { helpTexts, hakuData, userInfo } = useHakemustenArviointiSelector((state) =>
     getLoadedState(state.arviointi)
@@ -68,4 +68,4 @@ const Seuranta = () => {
   )
 }
 
-export default Seuranta
+export default SeurantaTab

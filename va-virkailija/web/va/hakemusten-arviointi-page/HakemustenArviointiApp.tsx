@@ -26,7 +26,7 @@ import { HakemusArviointi } from './hakemus-details/HakemusArviointi'
 import VäliselvitysTab from './hakemus-details/valiselvitys-tab/VäliselvitysTab'
 import LoppuselvitysTab from './hakemus-details/loppuselvitys-tab/LoppuselvitysTab'
 import MuutoshakemusTabContent from './hakemus-details/MuutoshakemusTabContent'
-import Seuranta from './hakemus-details/Seuranta'
+import SeurantaTab from './hakemus-details/seuranta-tab/SeurantaTab'
 import { ViestiHankkeelle } from './hakemus-details/ViestiHankkeelle'
 import HakemusFilter from './hakemus-filter/HakemusFilter'
 import { AvustushakuDetails } from './hakemus-list/AvustushakuDetails'
@@ -73,7 +73,7 @@ const AppRoutes = () => {
           <Route path="valiselvitys" element={<VäliselvitysTab />} />
           <Route path="loppuselvitys" element={<LoppuselvitysTab />} />
           <Route path="muutoshakemukset" element={<MuutoshakemusTabContent />} />
-          <Route path="seuranta" element={<Seuranta />} />
+          <Route path="seuranta" element={<SeurantaTab />} />
           {viestiTabEnabled && <Route path="viesti" element={<ViestiHankkeelle />} />}
         </Route>
       </Route>

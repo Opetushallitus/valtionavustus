@@ -1,4 +1,4 @@
-import BudgetBusinessRules from '../budgetedit/BudgetBusinessRules'
+import BudgetBusinessRules from '../../budgetedit/BudgetBusinessRules'
 
 export default class SeurantaBudgetEditFormController {
   constructor(onChangeListener, customComponentFactory, avustushaku, form, hakemus) {
