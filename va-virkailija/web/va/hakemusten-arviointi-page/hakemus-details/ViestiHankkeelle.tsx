@@ -5,7 +5,7 @@ import ViestiLista, { Message } from './ViestiLista'
 import MultipleRecipentEmailForm, {
   Email,
   generateInitialEmail,
-} from './MultipleRecipentsEmailForm'
+} from './common-components/MultipleRecipentsEmailForm'
 import { useHakemus } from '../useHakemus'
 import { useHakemustenArviointiSelector } from '../arviointiStore'
 import { getLoadedState } from '../arviointiReducer'

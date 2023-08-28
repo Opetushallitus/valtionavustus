@@ -3,8 +3,8 @@ import React, { Component } from 'react'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { Avustushaku, Hakemus, HelpTexts } from 'soresu-form/web/va/types'
 
-import HelpTooltip from '../../common-components/HelpTooltip'
-import { HakuData } from '../../types'
+import HelpTooltip from '../../../common-components/HelpTooltip'
+import { HakuData } from '../../../types'
 
 type ReSendDecisionEmailProps = {
   avustushaku: Avustushaku

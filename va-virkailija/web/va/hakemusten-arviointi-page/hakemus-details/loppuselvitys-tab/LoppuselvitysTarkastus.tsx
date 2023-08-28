@@ -9,7 +9,7 @@ import { Language } from 'soresu-form/web/va/i18n/translations'
 import ViestiLista, { ViestiDetails, ViestiListaRow } from '../ViestiLista'
 import { useHakemus } from '../../useHakemus'
 import { useAvustushakuId } from '../../useAvustushaku'
-import MultipleRecipentEmailForm from '../MultipleRecipentsEmailForm'
+import MultipleRecipentEmailForm from '../common-components/MultipleRecipentsEmailForm'
 import {
   EmailType,
   useGetTapahtumalokiForEmailTypeQuery,

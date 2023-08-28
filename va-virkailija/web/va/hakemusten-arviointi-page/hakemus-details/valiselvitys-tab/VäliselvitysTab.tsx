@@ -3,8 +3,8 @@ import React from 'react'
 import SelvitysPreview from '../SelvitysPreview'
 import SelvitysNotFilled from '../SelvitysNotFilled'
 import SelvitysLink from '../SelvitysLink'
-import PresenterComment from '../PresenterComment'
-import ApplicationPayments from '../ApplicationPayments'
+import PresenterComment from '../common-components/PresenterComment'
+import ApplicationPayments from '../common-components/ApplicationPayments'
 import { ValiselvitysEmail } from './ValiselvitysEmail'
 import {
   useHakemustenArviointiDispatch,

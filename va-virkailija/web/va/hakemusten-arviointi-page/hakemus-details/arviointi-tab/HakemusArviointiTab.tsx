@@ -1,28 +1,31 @@
+import '../../../style/admin.less'
+
 import React, { useEffect } from 'react'
+import Select from 'react-select'
 
 import DateUtil from 'soresu-form/web/DateUtil'
 import { ChangeLogEntry, Hakemus, HelpTexts } from 'soresu-form/web/va/types'
-import { VaCodeValue } from '../../types'
 
-import HakemusBudgetEditing from './budgetedit/HakemusBudgetEditing'
+import HelpTooltip from '../../../common-components/HelpTooltip'
+import ProjectSelector from '../../../common-components/ProjectSelector'
+import HakemusArviointiStatuses from '../../../HakemusArviointiStatuses'
+import { VaCodeValue } from '../../../types'
+import ApplicationPayments from '../common-components/ApplicationPayments'
+import PresenterComment from '../common-components/PresenterComment'
+import HakemusBudgetEditing from '../budgetedit/HakemusBudgetEditing'
 import HakemusScoring from './HakemusScoring'
 import HakemusComments from './HakemusComments'
-import HakemusArviointiStatuses from '../../HakemusArviointiStatuses'
-import TraineeDayEditing from './traineeday/TraineeDayEditing'
+import TraineeDayEditing from '../traineeday/TraineeDayEditing'
 import SpecifyOppilaitos from './SpecifyOppilaitos'
 import AcademySize from './AcademySize'
 import Perustelut from './Perustelut'
-import PresenterComment from './PresenterComment'
 import EditStatus from './EditStatus'
 import ReSendDecisionEmail from './ReSendDecisionEmail'
-import ApplicationPayments from './ApplicationPayments'
-import HelpTooltip from '../../common-components/HelpTooltip'
 import { ChangeRequest } from './ChangeRequest'
-import ProjectSelector from '../../common-components/ProjectSelector'
-
-import '../../style/admin.less'
-import Select from 'react-select'
-import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '../arviointiStore'
+import {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from '../../arviointiStore'
 import {
   addPayment,
   getLoadedState,
@@ -32,10 +35,10 @@ import {
   setArvioValue,
   startHakemusArvioAutoSave,
   updateHakemusStatus,
-} from '../arviointiReducer'
-import { useHakemus } from '../useHakemus'
+} from '../../arviointiReducer'
+import { useHakemus } from '../../useHakemus'
 
-export const HakemusArviointi = () => {
+export const HakemusArviointiTab = () => {
   const hakemus = useHakemus()
   const { hakuData, helpTexts, userInfo, projects } = useHakemustenArviointiSelector((state) =>
     getLoadedState(state.arviointi)

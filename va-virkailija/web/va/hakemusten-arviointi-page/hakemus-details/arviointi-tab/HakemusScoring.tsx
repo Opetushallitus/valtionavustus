@@ -1,6 +1,9 @@
 import React from 'react'
+import { useParams } from 'react-router-dom'
 import _ from 'lodash'
 import ClassNames from 'classnames'
+
+import { LocalizedText, Score, Scoring } from 'soresu-form/web/va/types'
 
 import {
   scoreToFI,
@@ -8,14 +11,20 @@ import {
   myScoringIsComplete,
   scoringByOid,
   othersScorings,
-} from '../../ScoreResolver'
-import HelpTooltip from '../../common-components/HelpTooltip'
-import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '../arviointiStore'
-import { getLoadedState, removeScore, setScore, toggleShowOthersScore } from '../arviointiReducer'
-import { LocalizedText, Score, Scoring } from 'soresu-form/web/va/types'
-import { UserInfo } from '../../types'
-import { useParams } from 'react-router-dom'
-import { useHakemus } from '../useHakemus'
+} from '../../../ScoreResolver'
+import HelpTooltip from '../../../common-components/HelpTooltip'
+import {
+  useHakemustenArviointiDispatch,
+  useHakemustenArviointiSelector,
+} from '../../arviointiStore'
+import {
+  getLoadedState,
+  removeScore,
+  setScore,
+  toggleShowOthersScore,
+} from '../../arviointiReducer'
+import { UserInfo } from '../../../types'
+import { useHakemus } from '../../useHakemus'
 
 interface Props {
   allowHakemusScoring?: boolean

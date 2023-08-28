@@ -2,8 +2,8 @@ import React from 'react'
 
 import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 
-import { useHakemustenArviointiDispatch } from '../arviointiStore'
-import { setArvioValue, startHakemusArvioAutoSave } from '../arviointiReducer'
+import { useHakemustenArviointiDispatch } from '../../arviointiStore'
+import { setArvioValue, startHakemusArvioAutoSave } from '../../arviointiReducer'
 
 type AcademySizeProps = {
   avustushaku: Avustushaku

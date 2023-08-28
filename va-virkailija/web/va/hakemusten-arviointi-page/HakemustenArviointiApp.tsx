@@ -22,7 +22,7 @@ import HakemusDetails from './hakemus-details/HakemusDetails'
 import { MODAL_ROOT_ID } from './hakemus-details/Modal'
 import { HakemusHakijaSidePreviewLink } from './hakemus-details/HakemusHakijaSidePreviewLink'
 import HakemusDecisionLink from './hakemus-details/HakemusDecisionLink'
-import { HakemusArviointi } from './hakemus-details/HakemusArviointi'
+import { HakemusArviointiTab } from './hakemus-details/arviointi-tab/HakemusArviointiTab'
 import VäliselvitysTab from './hakemus-details/valiselvitys-tab/VäliselvitysTab'
 import LoppuselvitysTab from './hakemus-details/loppuselvitys-tab/LoppuselvitysTab'
 import MuutoshakemusTabContent from './hakemus-details/MuutoshakemusTabContent'
@@ -68,8 +68,8 @@ const AppRoutes = () => {
     <Routes>
       <Route path="avustushaku/:avustushakuId" element={<App />}>
         <Route path="hakemus/:hakemusId" element={<HakemusDetails />}>
-          <Route index element={<HakemusArviointi />} />
-          <Route path="arviointi" element={<HakemusArviointi />} />
+          <Route index element={<HakemusArviointiTab />} />
+          <Route path="arviointi" element={<HakemusArviointiTab />} />
           <Route path="valiselvitys" element={<VäliselvitysTab />} />
           <Route path="loppuselvitys" element={<LoppuselvitysTab />} />
           <Route path="muutoshakemukset" element={<MuutoshakemusTabContent />} />

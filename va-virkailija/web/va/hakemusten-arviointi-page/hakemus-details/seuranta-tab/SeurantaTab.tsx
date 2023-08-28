@@ -1,6 +1,6 @@
 import React from 'react'
 
-import PresenterComment from '../PresenterComment'
+import PresenterComment from '../common-components/PresenterComment'
 import SeurantaLiitteet from './SeurantaLiitteet'
 import SeurantaTags from './SeurantaTags'
 import SeurantaBudgetEditing from './seurantabudgetedit/SeurantaBudgetEditing'

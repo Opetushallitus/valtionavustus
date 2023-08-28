@@ -8,7 +8,7 @@ import { VerificationBox } from './VerificationBox'
 import { useHakemustenArviointiDispatch } from '../../arviointiStore'
 import { loadSelvitys, refreshHakemukset } from '../../arviointiReducer'
 import { initialRecipientEmails } from '../emailRecipients'
-import MultipleRecipentEmailForm from '../MultipleRecipentsEmailForm'
+import MultipleRecipentEmailForm from '../common-components/MultipleRecipentsEmailForm'
 
 type TaloustarkastusEmailProps = {
   avustushakuId: number

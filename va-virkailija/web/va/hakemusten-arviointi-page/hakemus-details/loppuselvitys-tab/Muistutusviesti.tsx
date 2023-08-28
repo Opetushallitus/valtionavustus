@@ -3,7 +3,9 @@ import cn from 'classnames'
 
 import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 
-import MultipleRecipentEmailForm, { generateInitialEmail } from '../MultipleRecipentsEmailForm'
+import MultipleRecipentEmailForm, {
+  generateInitialEmail,
+} from '../common-components/MultipleRecipentsEmailForm'
 import ViestiLista, { Message } from '../ViestiLista'
 import { fetchSentEmails, sendEmail } from '../sentEmails'
 

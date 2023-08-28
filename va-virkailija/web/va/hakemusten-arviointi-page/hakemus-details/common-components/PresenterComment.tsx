@@ -1,9 +1,9 @@
 import React from 'react'
 
-import HelpTooltip from '../../common-components/HelpTooltip'
-import { useHakemustenArviointiDispatch } from '../arviointiStore'
-import { setArvioValue, startHakemusArvioAutoSave } from '../arviointiReducer'
-import { useHakemus } from '../useHakemus'
+import HelpTooltip from '../../../common-components/HelpTooltip'
+import { useHakemustenArviointiDispatch } from '../../arviointiStore'
+import { setArvioValue, startHakemusArvioAutoSave } from '../../arviointiReducer'
+import { useHakemus } from '../../useHakemus'
 
 type PresenterCommentProps = {
   helpText: string
