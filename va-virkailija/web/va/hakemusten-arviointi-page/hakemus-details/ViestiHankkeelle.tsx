@@ -22,7 +22,6 @@ export function ViestiHankkeelle() {
   useEffect(function () {
     async function fetchEmails() {
       const sentEmails = await fetchViestiHankkeelleEmails(avustushaku, hakemus)
-      console.table(sentEmails)
       setSentEmails(sentEmails)
     }
     fetchEmails()

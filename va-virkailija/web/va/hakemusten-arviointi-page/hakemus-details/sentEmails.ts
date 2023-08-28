@@ -9,7 +9,6 @@ export async function fetchSentEmails(
   hakemus: Hakemus,
   emailType: string
 ): Promise<Message[]> {
-  console.log(avustushaku, hakemus, emailType)
   const sentEmails = await HttpUtil.get<Lahetys[]>(
     `/api/avustushaku/${avustushaku.id}/hakemus/${hakemus.id}/tapahtumaloki/${emailType}`
   )
