@@ -81,7 +81,6 @@
                                                                                  :schedule "0 0 8 ? * MON *"}
                                                }
  :payments                                    {:enabled? true}
- :multibatch-payments                         {:enabled? true}
  :integration-healthcheck                     {:enabled? false}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :test-apis                                   {:enabled? false}}

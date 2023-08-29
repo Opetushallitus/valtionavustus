@@ -36,7 +36,6 @@ import {
   mutateDefaultTraineeDayValuesForSelectedHakemusOverriddenAnswers,
   mutatesDefaultBudgetValuesForSelectedHakemusSeurantaAnswers,
 } from './overrides'
-import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 const oldestFirst = (a: Lahetys, b: Lahetys) => (a.created_at < b.created_at ? -1 : 1)
 const successfullySent = (lahetys: Lahetys) => lahetys.success
@@ -82,27 +81,18 @@ interface InitialData {
 export const fetchInitialState = createAsyncThunk<InitialData, number>(
   'arviointi/fetchInitialState',
   async (avustushakuId) => {
-    const [
-      avustushakuList,
-      hakuData,
-      environment,
-      projects,
-      helpTexts,
-      lahetykset,
-      earliestPaymentCreatedAt,
-    ] = await Promise.all([
-      HttpUtil.get<Avustushaku[]>('/api/avustushaku/?status=published&status=resolved'),
-      HttpUtil.get<HakuData>(`/api/avustushaku/${avustushakuId}`),
-      HttpUtil.get<EnvironmentApiResponse>('/environment'),
-      HttpUtil.get<VaCodeValue[]>(`/api/avustushaku/${avustushakuId}/projects`),
-      HttpUtil.get('/api/help-texts/all'),
-      getLahetysStatuses(avustushakuId),
-      getEarliestPaymentCreatedAt(avustushakuId),
-    ])
+    const [avustushakuList, hakuData, projects, helpTexts, lahetykset, earliestPaymentCreatedAt] =
+      await Promise.all([
+        HttpUtil.get<Avustushaku[]>('/api/avustushaku/?status=published&status=resolved'),
+        HttpUtil.get<HakuData>(`/api/avustushaku/${avustushakuId}`),
+        HttpUtil.get<VaCodeValue[]>(`/api/avustushaku/${avustushakuId}/projects`),
+        HttpUtil.get('/api/help-texts/all'),
+        getLahetysStatuses(avustushakuId),
+        getEarliestPaymentCreatedAt(avustushakuId),
+      ])
     return {
       avustushakuList,
       hakuData,
-      environment,
       projects,
       helpTexts,
       lahetykset,
@@ -588,10 +578,9 @@ export const getHakemus = (state: ArviointiState, hakemusId: number) => {
 
 export const hasMultibatchPayments = ({ arviointi }: HakemustenArviointiRootState): boolean => {
   const { hakuData } = getLoadedState(arviointi)
-  const { environment, avustushaku } = hakuData
-  const multibatchEnabled = Boolean(environment['multibatch-payments']?.['enabled?'])
+  const { avustushaku } = hakuData
   const multiplemaksuera = avustushaku.content.multiplemaksuera === true
-  return multibatchEnabled && multiplemaksuera
+  return multiplemaksuera
 }
 
 export const { setArvioValue, setArvioFieldValue, setMuutoshakemukset, toggleShowOthersScore } =

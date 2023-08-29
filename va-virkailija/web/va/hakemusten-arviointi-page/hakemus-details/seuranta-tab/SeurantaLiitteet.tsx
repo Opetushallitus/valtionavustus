@@ -12,6 +12,7 @@ import { HakuData } from '../../../types'
 import { Avustushaku, Hakemus, Field } from 'soresu-form/web/va/types'
 import { useHakemustenArviointiDispatch } from '../../arviointiStore'
 import { updateHakemukset } from '../../arviointiReducer'
+import { useEnvironment } from '../../../initial-data-context'
 
 type SeurantaLiitteetProps = {
   hakemus: Hakemus
@@ -26,7 +27,8 @@ const SeurantaLiitteet = ({ hakemus, hakuData, avustushaku, helpText }: Seuranta
   const avustushakuId = avustushaku.id
   const hakemusUserKey = hakemus['user-key']
   const attachments = hakuData.attachments[hakemusId] || []
-  const hakijaServer = _.get(hakuData, 'environment.hakija-server.url.fi')
+  const environment = useEnvironment()
+  const hakijaServer = environment['hakija-server'].url.fi
   const fakeFormController = {
     componentDidMount: () => {},
   }
