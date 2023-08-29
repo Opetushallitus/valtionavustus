@@ -27,7 +27,7 @@
 
   :managed-dependencies [[org.clojure/clojure "1.11.1"]
                          [nrepl "1.0.0"]
-                         [cider/cider-nrepl "0.31.0"]
+                         [cider/cider-nrepl "0.37.0"]
 
                          ;; http
                          [buddy/buddy-auth "3.0.323"]
