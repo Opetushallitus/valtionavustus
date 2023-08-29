@@ -1,14 +1,13 @@
 import React from 'react'
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import HelpTooltip from '../../../common-components/HelpTooltip'
-import { Avustushaku, Hakemus, HakemusStatus, HelpTexts } from 'soresu-form/web/va/types'
+import { HelpTooltip } from '../../../common-components/HelpTooltip'
+import { Avustushaku, Hakemus, HakemusStatus } from 'soresu-form/web/va/types'
 
 type EditStatusProps = {
   avustushaku: Avustushaku
   hakemus: Hakemus
   allowEditing?: boolean
   status: Extract<'officer_edit' | 'cancelled', HakemusStatus>
-  helpTexts: HelpTexts
 }
 
 type EditStatusState = {
@@ -45,7 +44,7 @@ export default class EditStatus extends React.Component<EditStatusProps, EditSta
   }
 
   render() {
-    const { avustushaku, hakemus, allowEditing, status, helpTexts } = this.props
+    const { avustushaku, hakemus, allowEditing, status } = this.props
     const avustushakuId = avustushaku.id
     const cancelled = status === 'cancelled'
     const onOpen = () => {
@@ -94,7 +93,7 @@ export default class EditStatus extends React.Component<EditStatusProps, EditSta
         return (
           <HelpTooltip
             testId={'tooltip-peruuta-hakemus'}
-            content={helpTexts['hankkeen_sivu__arviointi___peruuta_hakemus']}
+            textKey="hankkeen_sivu__arviointi___peruuta_hakemus"
             direction={'arviointi-slim'}
           />
         )
@@ -102,7 +101,7 @@ export default class EditStatus extends React.Component<EditStatusProps, EditSta
         return (
           <HelpTooltip
             testId={'tooltip-muokkaa-hakemusta'}
-            content={helpTexts['hankkeen_sivu__arviointi___muokkaa_hakemusta']}
+            textKey="hankkeen_sivu__arviointi___muokkaa_hakemusta"
             direction={'arviointi-slim'}
           />
         )

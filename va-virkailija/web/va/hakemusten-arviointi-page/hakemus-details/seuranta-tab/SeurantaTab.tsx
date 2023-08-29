@@ -15,9 +15,7 @@ import { useUserInfo } from '../../../initial-data-context'
 
 const SeurantaTab = () => {
   const hakemus = useHakemus()
-  const { helpTexts, hakuData } = useHakemustenArviointiSelector((state) =>
-    getLoadedState(state.arviointi)
-  )
+  const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
   const userInfo = useUserInfo()
   const { avustushaku } = hakuData
   const { muutoshakemukset } = hakemus
@@ -29,23 +27,11 @@ const SeurantaTab = () => {
       />
       <div id="tab-content" className={hakemus.refused ? 'disabled' : ''}>
         <div className="seuranta">
-          <AllowVisibilityInExternalSystem
-            hakemus={hakemus}
-            allowEditing={true}
-            helpText={
-              helpTexts['hankkeen_sivu__seuranta___salli_näkyvyys_ulkoisessa_järjestelmässä']
-            }
-          />
-          <ShouldPay
-            hakemus={hakemus}
-            allowEditing={true}
-            helpText={helpTexts['hankkeen_sivu__seuranta___maksuun']}
-          />
+          <AllowVisibilityInExternalSystem hakemus={hakemus} allowEditing={true} />
+          <ShouldPay hakemus={hakemus} allowEditing={true} />
           <ShouldPayComments />
           <div className="seuranta-section">
-            <PresenterComment
-              helpText={helpTexts['hankkeen_sivu__seuranta___valmistelijan_huomiot']}
-            />
+            <PresenterComment helpTextKey="hankkeen_sivu__seuranta___valmistelijan_huomiot" />
             <SeurantaBudgetEditing
               avustushaku={avustushaku}
               hakuData={hakuData}
@@ -54,12 +40,7 @@ const SeurantaTab = () => {
             />
           </div>
           <div className="seuranta-section">
-            <SeurantaLiitteet
-              avustushaku={avustushaku}
-              hakuData={hakuData}
-              hakemus={hakemus}
-              helpText={helpTexts['hankkeen_sivu__seuranta___liitteet']}
-            />
+            <SeurantaLiitteet avustushaku={avustushaku} hakuData={hakuData} hakemus={hakemus} />
           </div>
           <div className="seuranta-section">
             <SeurantaTags hakemus={hakemus} />

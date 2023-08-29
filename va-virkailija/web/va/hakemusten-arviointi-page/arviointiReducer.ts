@@ -73,7 +73,6 @@ interface InitialData {
   avustushakuList: Avustushaku[]
   hakuData: HakuData
   projects: VaCodeValue[]
-  helpTexts: any
   lahetykset: LahetysStatuses
   earliestPaymentCreatedAt?: string
 }
@@ -81,12 +80,11 @@ interface InitialData {
 export const fetchInitialState = createAsyncThunk<InitialData, number>(
   'arviointi/fetchInitialState',
   async (avustushakuId) => {
-    const [avustushakuList, hakuData, projects, helpTexts, lahetykset, earliestPaymentCreatedAt] =
+    const [avustushakuList, hakuData, projects, lahetykset, earliestPaymentCreatedAt] =
       await Promise.all([
         HttpUtil.get<Avustushaku[]>('/api/avustushaku/?status=published&status=resolved'),
         HttpUtil.get<HakuData>(`/api/avustushaku/${avustushakuId}`),
         HttpUtil.get<VaCodeValue[]>(`/api/avustushaku/${avustushakuId}/projects`),
-        HttpUtil.get('/api/help-texts/all'),
         getLahetysStatuses(avustushakuId),
         getEarliestPaymentCreatedAt(avustushakuId),
       ])
@@ -94,7 +92,6 @@ export const fetchInitialState = createAsyncThunk<InitialData, number>(
       avustushakuList,
       hakuData,
       projects,
-      helpTexts,
       lahetykset,
       earliestPaymentCreatedAt,
     }

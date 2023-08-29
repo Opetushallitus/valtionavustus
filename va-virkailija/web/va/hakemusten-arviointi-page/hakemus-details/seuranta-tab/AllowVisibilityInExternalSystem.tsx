@@ -1,5 +1,5 @@
 import React from 'react'
-import HelpTooltip from '../../../common-components/HelpTooltip'
+import { HelpTooltip } from '../../../common-components/HelpTooltip'
 import { Hakemus } from 'soresu-form/web/va/types'
 import { useHakemustenArviointiDispatch } from '../../arviointiStore'
 import { setArvioValue, startHakemusArvioAutoSave } from '../../arviointiReducer'
@@ -7,7 +7,6 @@ import { setArvioValue, startHakemusArvioAutoSave } from '../../arviointiReducer
 interface Props {
   hakemus: Hakemus
   allowEditing: boolean
-  helpText: string
 }
 
 const groupOptions = [
@@ -24,7 +23,7 @@ const groupOptions = [
   },
 ]
 
-const AllowVisibilityInExternalSystem = ({ hakemus, allowEditing, helpText }: Props) => {
+const AllowVisibilityInExternalSystem = ({ hakemus, allowEditing }: Props) => {
   const dispatch = useHakemustenArviointiDispatch()
   const onHakemusAllowVisibilityInExternalSystem = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(
@@ -59,7 +58,10 @@ const AllowVisibilityInExternalSystem = ({ hakemus, allowEditing, helpText }: Pr
     <div id="set-allow-visibility-in-external-system">
       <h3>
         Salli näkyvyys ulkoisessa järjestelmässä:
-        <HelpTooltip content={helpText} direction={'salli-nakyvyys'} />
+        <HelpTooltip
+          textKey="hankkeen_sivu__seuranta___salli_näkyvyys_ulkoisessa_järjestelmässä"
+          direction={'salli-nakyvyys'}
+        />
       </h3>
       <fieldset className="soresu-radiobutton-group">{options}</fieldset>
     </div>

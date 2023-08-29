@@ -224,10 +224,12 @@ const root = createRoot(app!)
 Promise.all([
   HttpUtil.get<EnvironmentApiResponse>('/environment'),
   HttpUtil.get<UserInfo>('/api/userinfo'),
-]).then(([environment, userInfo]) => {
+  HttpUtil.get<Record<string, string>>('/api/help-texts/all'),
+]).then(([environment, userInfo, helpTexts]) => {
   const initialData = {
     environment,
     userInfo,
+    helpTexts,
   }
 
   root.render(

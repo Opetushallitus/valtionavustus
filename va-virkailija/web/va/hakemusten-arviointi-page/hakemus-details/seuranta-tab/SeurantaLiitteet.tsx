@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import Immutable from 'seamless-immutable'
 
-import HelpTooltip from '../../../common-components/HelpTooltip'
+import { HelpTooltip } from '../../../common-components/HelpTooltip'
 
 import AttachmentField from 'soresu-form/web/form/component/AttachmentField'
 import HttpUtil from 'soresu-form/web/HttpUtil'
@@ -18,10 +18,9 @@ type SeurantaLiitteetProps = {
   hakemus: Hakemus
   hakuData: HakuData
   avustushaku: Avustushaku
-  helpText: string
 }
 
-const SeurantaLiitteet = ({ hakemus, hakuData, avustushaku, helpText }: SeurantaLiitteetProps) => {
+const SeurantaLiitteet = ({ hakemus, hakuData, avustushaku }: SeurantaLiitteetProps) => {
   const dispatch = useHakemustenArviointiDispatch()
   const hakemusId = hakemus.id
   const avustushakuId = avustushaku.id
@@ -103,7 +102,8 @@ const SeurantaLiitteet = ({ hakemus, hakuData, avustushaku, helpText }: Seuranta
   return (
     <div className="seuranta-liitteet">
       <h2>
-        Liitteet <HelpTooltip content={helpText} direction={'arviointi'} />
+        Liitteet{' '}
+        <HelpTooltip textKey="hankkeen_sivu__seuranta___liitteet" direction={'arviointi'} />
       </h2>
       {_.map(fields, (field: Field) => (
         <AttachmentField

@@ -25,6 +25,7 @@ import {
 } from '../../arviointiReducer'
 import { createFieldUpdate } from 'soresu-form/web/form/FieldUpdateHandler'
 import VaSyntaxValidator from 'soresu-form/web/va/VaSyntaxValidator'
+import { useHelpTexts } from '../../../initial-data-context'
 
 interface Props {
   hakemus: Hakemus
@@ -32,9 +33,8 @@ interface Props {
 }
 
 const HakemusBudgetEditing = ({ allowEditing, hakemus }: Props) => {
-  const { hakuData, helpTexts } = useHakemustenArviointiSelector((state) =>
-    getLoadedState(state.arviointi)
-  )
+  const helpTexts = useHelpTexts
+  const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
   const { avustushaku } = hakuData
   const dispatch = useHakemustenArviointiDispatch()
   const isEditingAllowed = (

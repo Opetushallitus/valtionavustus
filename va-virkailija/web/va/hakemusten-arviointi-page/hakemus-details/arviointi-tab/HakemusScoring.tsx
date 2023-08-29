@@ -13,7 +13,7 @@ import {
   othersScorings,
 } from '../../../ScoreResolver'
 import { useUserInfo } from '../../../initial-data-context'
-import HelpTooltip from '../../../common-components/HelpTooltip'
+import { HelpTooltip } from '../../../common-components/HelpTooltip'
 import {
   useHakemustenArviointiDispatch,
   useHakemustenArviointiSelector,
@@ -34,9 +34,7 @@ interface Props {
 const HakemusScoring = ({ allowHakemusScoring }: Props) => {
   const hakemus = useHakemus()
   const myUserInfo = useUserInfo()
-  const { hakuData, helpTexts } = useHakemustenArviointiSelector((state) =>
-    getLoadedState(state.arviointi)
-  )
+  const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
   const { avustushaku } = hakuData
   const showOthersScoresState = useHakemustenArviointiSelector(
     (state) => state.arviointi.showOthersScores
@@ -67,7 +65,7 @@ const HakemusScoring = ({ allowHakemusScoring }: Props) => {
       <label>Valintaperusteet:</label>
       <HelpTooltip
         testId={'tooltip-valintaperusteet'}
-        content={helpTexts['hankkeen_sivu__arviointi___valintaperusteet']}
+        textKey="hankkeen_sivu__arviointi___valintaperusteet"
         direction={'arviointi'}
       />
       <table className="valintaperuste-list">

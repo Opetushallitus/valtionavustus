@@ -5,6 +5,7 @@ import { UserInfo } from './types'
 type InitialData = {
   environment: EnvironmentApiResponse
   userInfo: UserInfo
+  helpTexts: Record<string, string>
 }
 
 const initialDataContext = createContext<InitialData | null>(null)
@@ -34,4 +35,13 @@ function isFeatureEnabled(env: EnvironmentApiResponse, feature: FeatureFlag): bo
 export function useFeature(feature: FeatureFlag): boolean {
   const env = useEnvironment()
   return isFeatureEnabled(env, feature)
+}
+
+export function useHelpTexts() {
+  return useInitialData().helpTexts
+}
+
+export function useHelpText(key: string): string {
+  const helpTexts = useHelpTexts()
+  return helpTexts[key] || ''
 }

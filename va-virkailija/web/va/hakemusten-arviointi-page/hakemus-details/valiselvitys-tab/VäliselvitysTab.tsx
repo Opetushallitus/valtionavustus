@@ -22,17 +22,13 @@ import { useUserInfo } from '../../../initial-data-context'
 
 const VäliselvitysTab = () => {
   const hakemus = useHakemus()
-  const { hakuData, helpTexts } = useHakemustenArviointiSelector((state) =>
-    getLoadedState(state.arviointi)
-  )
+  const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
   const userInfo = useUserInfo()
   const { avustushaku } = hakuData
   const multibatchPaymentsEnabled = useHakemustenArviointiSelector(hasMultibatchPayments)
   const valiselvitysPyynnotSent = useHakemustenArviointiSelector(
     (state) => getLoadedState(state.arviointi).lahetykset.valiselvitysPyynnostSentAt !== undefined
   )
-  const presenterCommentHelpText = helpTexts['hankkeen_sivu__arviointi___valmistelijan_huomiot']
-  const selvitysLinkHelpText = helpTexts['hankkeen_sivu__väliselvitys___linkki_lomakkeelle']
   const hasSelvitysAnswers = !!hakemus.selvitys?.valiselvitys?.answers
   const valiselvitys = hakemus.selvitys?.valiselvitys
   const form = hakemus.selvitys?.valiselvitysForm
@@ -42,7 +38,7 @@ const VäliselvitysTab = () => {
   return (
     <div id="tab-content" className={hakemus.refused ? 'disabled' : ''}>
       <div className="selvitys-container" data-test-id="hakemus-details-valiselvitys">
-        <PresenterComment helpText={presenterCommentHelpText} />
+        <PresenterComment helpTextKey="hankkeen_sivu__arviointi___valmistelijan_huomiot" />
         {hasSelvitysAnswers ? (
           <SelvitysPreview
             hakemus={hakemus}
@@ -80,7 +76,7 @@ const VäliselvitysTab = () => {
           avustushaku={avustushaku}
           hakemus={hakemus}
           selvitysType="valiselvitys"
-          helpText={selvitysLinkHelpText}
+          helpTextKey="hankkeen_sivu__väliselvitys___linkki_lomakkeelle"
           selvitysPyynnotSent={valiselvitysPyynnotSent}
         />
         {valiselvitys && hasSelvitysAnswers && (

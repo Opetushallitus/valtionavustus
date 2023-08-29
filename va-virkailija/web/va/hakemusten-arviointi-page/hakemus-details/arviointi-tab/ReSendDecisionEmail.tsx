@@ -1,16 +1,15 @@
 import React, { Component } from 'react'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import { Avustushaku, Hakemus, HelpTexts } from 'soresu-form/web/va/types'
+import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 
-import HelpTooltip from '../../../common-components/HelpTooltip'
+import { HelpTooltip } from '../../../common-components/HelpTooltip'
 import { HakuData } from '../../../types'
 
 type ReSendDecisionEmailProps = {
   avustushaku: Avustushaku
   hakuData: HakuData
   hakemus: Hakemus
-  helpTexts: HelpTexts
 }
 
 type ReSendDecisionEmailState = {
@@ -28,7 +27,7 @@ export default class ReSendDecisionEmail extends Component<
   }
 
   render() {
-    const { avustushaku, hakemus, helpTexts } = this.props
+    const { avustushaku, hakemus } = this.props
     const avustushakuId = avustushaku.id
     const hakemusId = hakemus.id
     const isResolved = this.props.hakuData.avustushaku.status === 'resolved'
@@ -55,7 +54,7 @@ export default class ReSendDecisionEmail extends Component<
             </button>
             <HelpTooltip
               testId={'tooltip-laheta-email-uudestaan'}
-              content={helpTexts['hankkeen_sivu__arviointi___lähetä_päätössähköposti_uudelleen']}
+              textKey="hankkeen_sivu__arviointi___lähetä_päätössähköposti_uudelleen"
               direction={'arviointi-slim'}
             />
             {this.state.submitted && <span data-test-id="paatos-resent">Sähköposti lähetetty</span>}

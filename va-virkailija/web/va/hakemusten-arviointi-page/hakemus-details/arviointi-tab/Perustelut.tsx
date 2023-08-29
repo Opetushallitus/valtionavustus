@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
 
-import { Hakemus, HelpTexts } from 'soresu-form/web/va/types'
+import { Hakemus } from 'soresu-form/web/va/types'
 
 import rejectedReasonsByLanguage from './rejectedReasonsByLanguage.json'
-import HelpTooltip from '../../../common-components/HelpTooltip'
+import { HelpTooltip } from '../../../common-components/HelpTooltip'
 import { useHakemustenArviointiDispatch } from '../../arviointiStore'
 import { setArvioValue, startHakemusArvioAutoSave } from '../../arviointiReducer'
 
 type PerustelutProps = {
   hakemus: Hakemus
-  helpTexts: HelpTexts
   allowEditing?: boolean
 }
 
-const Perustelut = ({ hakemus, helpTexts, allowEditing }: PerustelutProps) => {
+const Perustelut = ({ hakemus, allowEditing }: PerustelutProps) => {
   const dispatch = useHakemustenArviointiDispatch()
   const [showReasons, toggleReason] = useState(hakemus.arvio.perustelut?.length === 0)
   const hakemusId = hakemus.id
@@ -53,7 +52,7 @@ const Perustelut = ({ hakemus, helpTexts, allowEditing }: PerustelutProps) => {
         </label>
         <HelpTooltip
           testId={'tooltip-perustelut'}
-          content={helpTexts['hankkeen_sivu__arviointi___perustelut_hakijalle_suomeksi']}
+          textKey="hankkeen_sivu__arviointi___perustelut_hakijalle_suomeksi"
           direction={'arviointi-slim'}
         />
         {rejected && (

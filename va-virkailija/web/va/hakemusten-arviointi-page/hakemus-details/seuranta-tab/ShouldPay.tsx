@@ -1,6 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
-import HelpTooltip from '../../../common-components/HelpTooltip'
+import { HelpTooltip } from '../../../common-components/HelpTooltip'
 import { Hakemus } from 'soresu-form/web/va/types'
 import { useHakemustenArviointiDispatch } from '../../arviointiStore'
 import { setArvioValue, startHakemusArvioAutoSave } from '../../arviointiReducer'
@@ -8,7 +8,6 @@ import { setArvioValue, startHakemusArvioAutoSave } from '../../arviointiReducer
 interface Props {
   hakemus: Hakemus
   allowEditing: boolean
-  helpText: string
 }
 
 const groupOptions = [
@@ -16,7 +15,7 @@ const groupOptions = [
   { htmlId: 'set-should-pay-false', value: false, label: 'Ei' },
 ]
 
-const ShouldPay = ({ hakemus, helpText, allowEditing }: Props) => {
+const ShouldPay = ({ hakemus, allowEditing }: Props) => {
   const dispatch = useHakemustenArviointiDispatch()
   const onHakemusShouldPayChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(
@@ -47,7 +46,7 @@ const ShouldPay = ({ hakemus, helpText, allowEditing }: Props) => {
   return (
     <div id="set-should-pay-grant">
       <h3>
-        Maksuun: <HelpTooltip content={helpText} direction={'arviointi'} />
+        Maksuun: <HelpTooltip textKey="hankkeen_sivu__seuranta___maksuun" direction={'arviointi'} />
       </h3>
       <fieldset className="soresu-radiobutton-group">{options}</fieldset>
     </div>

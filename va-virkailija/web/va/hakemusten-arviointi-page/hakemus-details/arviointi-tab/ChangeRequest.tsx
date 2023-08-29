@@ -3,16 +3,15 @@ import * as Bacon from 'baconjs'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import DateUtil from 'soresu-form/web/DateUtil'
-import { Avustushaku, Hakemus, HelpTexts } from 'soresu-form/web/va/types'
+import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 
-import HelpTooltip from '../../../common-components/HelpTooltip'
+import { HelpTooltip } from '../../../common-components/HelpTooltip'
 import { UserInfo } from '../../../types'
 import { useHakemustenArviointiDispatch } from '../../arviointiStore'
 import { updateHakemusStatus } from '../../arviointiReducer'
 
 type ChangeRequestProps = {
   hakemus: Hakemus
-  helpTexts: HelpTexts
   avustushaku: Avustushaku
   userInfo: UserInfo
   allowEditing?: boolean
@@ -27,7 +26,6 @@ type Mail = {
 export const ChangeRequest = ({
   avustushaku,
   hakemus,
-  helpTexts,
   allowEditing,
   userInfo,
 }: ChangeRequestProps) => {
@@ -88,7 +86,7 @@ export const ChangeRequest = ({
       )}
       <HelpTooltip
         testId={'tooltip-taydennys'}
-        content={helpTexts['hankkeen_sivu__arviointi___pyydä_täydennystä']}
+        textKey="hankkeen_sivu__arviointi___pyydä_täydennystä"
         direction="arviointi"
       />
       <div hidden={!newChangeRequest || !allowEditing}>

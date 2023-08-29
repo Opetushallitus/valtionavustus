@@ -487,7 +487,7 @@
 (compojure-api/defroutes help-texts-routes
                          "Help texts"
                          (compojure-api/GET "/all" []
-                                            :return s/Any
+                                            :return (s/pred map?)
                                             :summary "Get help texts"
                                             (ok (help-texts/find-all))))
 

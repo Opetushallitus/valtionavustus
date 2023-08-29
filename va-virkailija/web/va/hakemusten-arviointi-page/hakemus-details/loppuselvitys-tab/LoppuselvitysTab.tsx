@@ -27,9 +27,7 @@ const LoppuselvitysTab = () => {
   const loadingHakemus = useHakemustenArviointiSelector(
     (state) => state.arviointi.saveStatus.loadingHakemus
   )
-  const { hakuData, helpTexts } = useHakemustenArviointiSelector((state) =>
-    getLoadedState(state.arviointi)
-  )
+  const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
   const userInfo = useUserInfo()
 
   const { avustushaku } = hakuData
@@ -48,8 +46,6 @@ const LoppuselvitysTab = () => {
   const loppuselvitys = hakemus.selvitys?.loppuselvitys
   const renderTaloustarkastusEmail =
     loppuselvitysStatus === 'information_verified' || loppuselvitysStatus === 'accepted'
-  const presenterCommentHelpText = helpTexts['hankkeen_sivu__loppuselvitys___linkki_lomakkeelle']
-  const selvitysLinkHelpText = helpTexts['hankkeen_sivu__loppuselvitys___linkki_lomakkeelle']
   const lang = hakemus.language
 
   const muistusviestiEnabled = useFeature('muistutusviesti-loppuselvityksesta')
@@ -58,7 +54,7 @@ const LoppuselvitysTab = () => {
   return (
     <div id="tab-content" className={hakemus.refused ? 'disabled' : ''}>
       <div data-test-id="hakemus-details-loppuselvitys">
-        <PresenterComment helpText={presenterCommentHelpText} />
+        <PresenterComment helpTextKey="hankkeen_sivu__loppuselvitys___linkki_lomakkeelle" />
         {hasSelvitys && !loadingHakemus && muistusviestiEnabled && (
           <MuistutusViesti avustushaku={avustushaku} hakemus={hakemus} />
         )}
@@ -102,7 +98,7 @@ const LoppuselvitysTab = () => {
           avustushaku={avustushaku}
           hakemus={hakemus}
           selvitysType="loppuselvitys"
-          helpText={selvitysLinkHelpText}
+          helpTextKey="hankkeen_sivu__loppuselvitys___linkki_lomakkeelle"
           selvitysPyynnotSent={loppuselvitysPyynnotSent}
         />
         {!hasSelvitys && !loadingHakemus && muistusviestiEnabled && (

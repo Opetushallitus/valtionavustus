@@ -1,21 +1,20 @@
 import React, { useState } from 'react'
 
 import DateUtil from 'soresu-form/web/DateUtil'
-import { Comment, HelpTexts } from 'soresu-form/web/va/types'
+import { Comment } from 'soresu-form/web/va/types'
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
 
-import HelpTooltip from '../../../common-components/HelpTooltip'
+import { HelpTooltip } from '../../../common-components/HelpTooltip'
 import { useHakemustenArviointiDispatch } from '../../arviointiStore'
 import { addHakemusComment } from '../../arviointiReducer'
 import { useHakemus } from '../../useHakemus'
 
 type HakemusCommentsProps = {
-  helpTexts: HelpTexts
   comments?: Comment[]
   allowHakemusCommenting?: boolean
 }
 
-const HakemusComments = ({ helpTexts, allowHakemusCommenting, comments }: HakemusCommentsProps) => {
+const HakemusComments = ({ allowHakemusCommenting, comments }: HakemusCommentsProps) => {
   const dispatch = useHakemustenArviointiDispatch()
   const hakemus = useHakemus()
   const [comment, setComment] = useState('')
@@ -32,7 +31,7 @@ const HakemusComments = ({ helpTexts, allowHakemusCommenting, comments }: Hakemu
       <label>Kommentit</label>
       <HelpTooltip
         testId={'tooltip-kommentit'}
-        content={helpTexts['hankkeen_sivu__arviointi___kommentit']}
+        textKey="hankkeen_sivu__arviointi___kommentit"
         direction={'arviointi'}
       />
       {hasComments ? (

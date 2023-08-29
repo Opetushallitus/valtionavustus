@@ -4,10 +4,10 @@ import React, { useEffect } from 'react'
 import Select from 'react-select'
 
 import DateUtil from 'soresu-form/web/DateUtil'
-import { ChangeLogEntry, Hakemus, HelpTexts } from 'soresu-form/web/va/types'
+import { ChangeLogEntry, Hakemus } from 'soresu-form/web/va/types'
 
 import { useUserInfo } from '../../../initial-data-context'
-import HelpTooltip from '../../../common-components/HelpTooltip'
+import { HelpTooltip } from '../../../common-components/HelpTooltip'
 import ProjectSelector from '../../../common-components/ProjectSelector'
 import HakemusArviointiStatuses from '../../../HakemusArviointiStatuses'
 import { VaCodeValue } from '../../../types'
@@ -42,7 +42,7 @@ import { useHakemus } from '../../useHakemus'
 export const HakemusArviointiTab = () => {
   const hakemus = useHakemus()
   const userInfo = useUserInfo()
-  const { hakuData, helpTexts, projects } = useHakemustenArviointiSelector((state) =>
+  const { hakuData, projects } = useHakemustenArviointiSelector((state) =>
     getLoadedState(state.arviointi)
   )
   const { avustushaku } = hakuData
@@ -58,9 +58,7 @@ export const HakemusArviointiTab = () => {
   return (
     <div id="tab-content" className={hakemus.refused ? 'disabled' : ''}>
       <div id="arviointi-tab">
-        <PresenterComment
-          helpText={helpTexts['hankkeen_sivu__arviointi___valmistelijan_huomiot']}
-        />
+        <PresenterComment helpTextKey="hankkeen_sivu__arviointi___valmistelijan_huomiot" />
         <div className="koodien-valinta-elementti" data-test-id="code-value-dropdown__project">
           <h3 className="koodien-valinta-otsikko required">Projektikoodi</h3>
           <ProjectSelect
@@ -70,11 +68,7 @@ export const HakemusArviointiTab = () => {
             disabled={!allowHakemusStateChanges}
           />
         </div>
-        <TalousarviotiliSelect
-          isDisabled={!allowHakemusStateChanges}
-          hakemus={hakemus}
-          helpText={helpTexts['hankkeen_sivu__arviointi___talousarviotili']}
-        />
+        <TalousarviotiliSelect isDisabled={!allowHakemusStateChanges} hakemus={hakemus} />
         <SpecifyOppilaitos
           hakemus={hakemus}
           avustushaku={avustushaku}
@@ -89,30 +83,16 @@ export const HakemusArviointiTab = () => {
         <HakemusComments
           comments={hakemus.comments}
           allowHakemusCommenting={allowHakemusCommenting}
-          helpTexts={helpTexts}
         />
-        <SetArviointiStatus
-          hakemus={hakemus}
-          allowEditing={allowHakemusStateChanges}
-          helpTexts={helpTexts}
-        />
-        <Perustelut
-          hakemus={hakemus}
-          allowEditing={allowHakemusStateChanges}
-          helpTexts={helpTexts}
-        />
+        <SetArviointiStatus hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
+        <Perustelut hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
         <ChangeRequest
           hakemus={hakemus}
           avustushaku={avustushaku}
           allowEditing={allowHakemusStateChanges}
-          helpTexts={helpTexts}
           userInfo={userInfo}
         />
-        <SummaryComment
-          hakemus={hakemus}
-          allowEditing={allowHakemusStateChanges}
-          helpTexts={helpTexts}
-        />
+        <SummaryComment hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
         <HakemusBudgetEditing hakemus={hakemus} allowEditing={allowHakemusStateChanges} />
         {multibatchPaymentsEnabled && (
           <ApplicationPayments
@@ -142,7 +122,6 @@ export const HakemusArviointiTab = () => {
           hakemus={hakemus}
           allowEditing={allowHakemusOfficerEditing}
           status="officer_edit"
-          helpTexts={helpTexts}
         />
         {hakemus.status === 'draft' && userInfo.privileges.includes('va-admin') && (
           <div className="value-edit">
@@ -167,14 +146,8 @@ export const HakemusArviointiTab = () => {
           hakemus={hakemus}
           allowEditing={allowHakemusCancellation}
           status="cancelled"
-          helpTexts={helpTexts}
         />
-        <ReSendDecisionEmail
-          avustushaku={avustushaku}
-          hakemus={hakemus}
-          hakuData={hakuData}
-          helpTexts={helpTexts}
-        />
+        <ReSendDecisionEmail avustushaku={avustushaku} hakemus={hakemus} hakuData={hakuData} />
         <ChangeLog hakemus={hakemus} />
       </div>
     </div>
@@ -280,11 +253,10 @@ class ChangeLogRow extends React.Component<ChangeLogRowProps, ChangeLogRowState>
 
 type SetArviointiStatusProps = {
   hakemus: Hakemus
-  helpTexts: HelpTexts
   allowEditing?: boolean
 }
 
-const SetArviointiStatus = ({ hakemus, allowEditing, helpTexts }: SetArviointiStatusProps) => {
+const SetArviointiStatus = ({ hakemus, allowEditing }: SetArviointiStatusProps) => {
   const arvio = hakemus.arvio
   const status = arvio ? arvio.status : undefined
   const statuses = []
@@ -329,7 +301,7 @@ const SetArviointiStatus = ({ hakemus, allowEditing, helpTexts }: SetArviointiSt
       <label>Hakemuksen tila:</label>
       <HelpTooltip
         testId={'tooltip-tila'}
-        content={helpTexts['hankkeen_sivu__arviointi___hakemuksen_tila']}
+        textKey="hankkeen_sivu__arviointi___hakemuksen_tila"
         direction={'arviointi'}
       />
       <fieldset className="soresu-radiobutton-group">{statuses}</fieldset>
@@ -339,11 +311,10 @@ const SetArviointiStatus = ({ hakemus, allowEditing, helpTexts }: SetArviointiSt
 
 type SummaryCommentProps = {
   hakemus: Hakemus
-  helpTexts: HelpTexts
   allowEditing?: boolean
 }
 
-const SummaryComment = ({ helpTexts, allowEditing, hakemus }: SummaryCommentProps) => {
+const SummaryComment = ({ allowEditing, hakemus }: SummaryCommentProps) => {
   const dispatch = useHakemustenArviointiDispatch()
   const onChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(
@@ -366,7 +337,7 @@ const SummaryComment = ({ helpTexts, allowEditing, hakemus }: SummaryCommentProp
       <label htmlFor="summary-comment">Huomautus päätöslistaan</label>
       <HelpTooltip
         testId={'tooltip-huomautus'}
-        content={helpTexts['hankkeen_sivu__arviointi___huomautus_päätöslistaan']}
+        textKey="hankkeen_sivu__arviointi___huomautus_päätöslistaan"
         direction="arviointi-slim"
       />
       <textarea
@@ -419,10 +390,9 @@ const ProjectSelect = ({ hakemusId, projects, selectedProject, disabled }: Proje
 interface TalousarviotiliSelectProps {
   isDisabled: boolean
   hakemus: Hakemus
-  helpText: string
 }
 
-const TalousarviotiliSelect = ({ isDisabled, hakemus, helpText }: TalousarviotiliSelectProps) => {
+const TalousarviotiliSelect = ({ isDisabled, hakemus }: TalousarviotiliSelectProps) => {
   const dispatch = useHakemustenArviointiDispatch()
   const { rahoitusalue, talousarviotili } = hakemus.arvio
   const hakemusId = hakemus.id
@@ -469,7 +439,11 @@ const TalousarviotiliSelect = ({ isDisabled, hakemus, helpText }: Talousarviotil
     <div>
       <h3>
         TA-tili{' '}
-        <HelpTooltip testId={'tooltip-talousarviotili'} content={helpText} direction="left" />
+        <HelpTooltip
+          testId={'tooltip-talousarviotili'}
+          textKey="hankkeen_sivu__arviointi___talousarviotili"
+          direction="left"
+        />
         &nbsp;*
       </h3>
       <Select

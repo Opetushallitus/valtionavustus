@@ -1,15 +1,15 @@
 import React from 'react'
 
-import HelpTooltip from '../../../common-components/HelpTooltip'
+import { HelpTooltip } from '../../../common-components/HelpTooltip'
 import { useHakemustenArviointiDispatch } from '../../arviointiStore'
 import { setArvioValue, startHakemusArvioAutoSave } from '../../arviointiReducer'
 import { useHakemus } from '../../useHakemus'
 
 type PresenterCommentProps = {
-  helpText: string
+  helpTextKey: string
 }
 
-const PresenterComment = ({ helpText }: PresenterCommentProps) => {
+const PresenterComment = ({ helpTextKey }: PresenterCommentProps) => {
   const dispatch = useHakemustenArviointiDispatch()
   const hakemus = useHakemus()
 
@@ -28,7 +28,7 @@ const PresenterComment = ({ helpText }: PresenterCommentProps) => {
     <div className="value-edit">
       <label>
         Valmistelijan huomiot
-        <HelpTooltip content={helpText} direction={'valmistelijan-huomiot'} />
+        <HelpTooltip textKey={helpTextKey} direction={'valmistelijan-huomiot'} />
       </label>
       <textarea
         rows={5}
