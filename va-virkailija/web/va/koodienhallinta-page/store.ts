@@ -1,4 +1,4 @@
-import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { autoBatchEnhancer, configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import { apiSlice } from '../apiSlice'
 
@@ -26,6 +26,7 @@ export const store = configureStore({
     [apiSlice.reducerPath]: apiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiSlice.middleware),
+  enhancers: (existingEnhancers) => existingEnhancers.concat(autoBatchEnhancer()),
 })
 
 export type RootState = ReturnType<typeof store.getState>
