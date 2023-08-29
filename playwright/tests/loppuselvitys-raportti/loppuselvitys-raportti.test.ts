@@ -63,6 +63,7 @@ test('at least one loppuselvitys is not asiatarkastettu', async ({
   page,
   loppuselvitysSubmitted: { loppuselvitysFormFilled },
   hakuProps,
+  avustushakuID,
 }) => {
   expect(loppuselvitysFormFilled)
   const res = await page.request.get(
@@ -78,14 +79,11 @@ test('at least one loppuselvitys is not asiatarkastettu', async ({
     expect(sheet['A1'].v).toEqual('Avustushaku')
     expect(sheet['B1'].v).toEqual('Lukumäärä')
     expect(sheet['C1'].v).toEqual('Valmistelija')
-
-    expect(sheet['A2'].t).toEqual('n')
-    expect(sheet['B2'].t).toEqual('n')
-    expect(sheet['C2'].t).toEqual('s')
-
-    expect(sheet['A2'].v).toBeGreaterThan(0)
-    expect(sheet['B2'].v).toBeGreaterThan(0)
-    expect(sheet['C2'].v.length).toBeGreaterThan(0)
+    expectToFindRowInSheet(sheet, {
+      A: avustushakuID,
+      B: 1,
+      C: 'santeri.horttanainen@reaktor.com',
+    })
   })
 
   await test.step('Hakemukset sheet has correct data', () => {
@@ -98,18 +96,6 @@ test('at least one loppuselvitys is not asiatarkastettu', async ({
       D: 99999,
     })
   })
-
-  await test.step('Hakemukset sheet has at least one row', () => {
-    const sheet = workbook.Sheets['Hakemukset']
-    expect(sheet['A2'].t).toEqual('s')
-    expect(sheet['A2'].v.length).toBeGreaterThan(0)
-    expect(sheet['B2'].t).toEqual('s')
-    expect(sheet['B2'].v.length).toBeGreaterThan(0)
-    expect(sheet['C2'].t).toEqual('s')
-    expect(sheet['C2'].v.length).toBeGreaterThan(0)
-    expect(sheet['D2'].t).toEqual('n')
-    expect(sheet['D2'].v).toBeGreaterThan(0)
-  })
 })
 
 function expectHakemusSheetHeaders(sheet: xlsx.WorkSheet) {
@@ -119,17 +105,31 @@ function expectHakemusSheetHeaders(sheet: xlsx.WorkSheet) {
   expect(sheet['D1'].v).toEqual('Myönnetty avustus')
 }
 
-function expectToFindRowInSheet(
-  sheet: xlsx.WorkSheet,
-  expectedRow: { A: string; B: string; C: string; D: number }
-) {
+function getSheetRows(sheet: xlsx.WorkSheet) {
   const range = xlsx.utils.decode_range(sheet['!ref']!)
   const numberOfRows = range.e.r - range.s.r + 1
-  const rows = Array.from({ length: numberOfRows }, (_, i) => i + 1).map((indexFromOne) => ({
-    A: sheet[`A${indexFromOne}`].v,
-    B: sheet[`B${indexFromOne}`].v,
-    C: sheet[`C${indexFromOne}`].v,
-    D: sheet[`D${indexFromOne}`].v,
-  }))
+  return Array.from({ length: numberOfRows }, (_, i) => i + 1)
+}
+
+type AsiatarkastamatonRow = { A: number; B: number; C: string }
+type HakemuksetRow = { A: string; B: string; C: string; D: number }
+type Row = AsiatarkastamatonRow | HakemuksetRow
+
+function expectToFindRowInSheet(sheet: xlsx.WorkSheet, expectedRow: Row) {
+  const sheetRows = getSheetRows(sheet)
+  const rows = sheetRows.map((index) => {
+    const row = {
+      A: sheet[`A${index}`].v,
+      B: sheet[`B${index}`].v,
+      C: sheet[`C${index}`].v,
+    }
+    if ('D' in expectedRow) {
+      return {
+        ...row,
+        D: sheet[`D${index}`].v,
+      }
+    }
+    return row
+  })
   expect(rows).toContainEqual(expectedRow)
 }
