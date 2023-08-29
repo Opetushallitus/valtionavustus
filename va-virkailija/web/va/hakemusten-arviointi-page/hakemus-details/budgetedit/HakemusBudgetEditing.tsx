@@ -33,7 +33,7 @@ interface Props {
 }
 
 const HakemusBudgetEditing = ({ allowEditing, hakemus }: Props) => {
-  const helpTexts = useHelpTexts
+  const helpTexts = useHelpTexts()
   const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
   const { avustushaku } = hakuData
   const dispatch = useHakemustenArviointiDispatch()
