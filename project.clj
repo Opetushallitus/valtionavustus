@@ -35,8 +35,10 @@
                          [org.apache.tika/tika-core "2.8.0"]
                          [compojure "1.7.0"]
                          [http-kit "2.7.0"]
-                         [metosin/compojure-api "1.1.13"]
-                         [org.yaml/snakeyaml "1.33"] ; dependency of compojure-api -> explicitly updated for security patches
+
+                         ; dependencies under compojure-api -> explicitly updated for security patches
+                         [ring-middleware-format "0.7.5"]
+                         [org.yaml/snakeyaml "1.33"]
 
                          ;; json
                          [cheshire "5.11.0"]
@@ -75,7 +77,6 @@
                          [org.http4s/http4s-dsl_2.11 ~http4s-version]
 
                          ;; other
-                         [clj-commons/clj-yaml "1.0.26"]
                          [clojurewerkz/quartzite "2.1.0"]
                          [com.cemerick/url "0.1.1"]
                          [commons-codec "1.16.0"]
@@ -84,6 +85,7 @@
                          [metosin/ring-swagger-ui "4.18.1"]
                          [org.apache.commons/commons-email "1.5"]
                          [org.clojure/core.async "1.6.681"]
+                         [org.clojure/core.memoize "1.0.257"]
                          [org.clojure/data.xml "0.0.8"]
                          [org.clojure/tools.trace "0.7.11"]
                          [org.scala-lang.modules/scala-xml_2.11 "1.3.1"]
@@ -121,7 +123,7 @@
                  [ring/ring-session-timeout "0.3.0"]
                  [ring/ring-ssl "0.3.0"]
                  [compojure]
-                 [metosin/compojure-api]
+                 [metosin/compojure-api "1.1.13"]
                  [com.github.java-json-tools/jackson-coreutils "2.0"  :exclusions [com.google.code.findbugs/jsr305]]
                  [com.google.guava/guava "32.0.1-jre"]
                  [cheshire]
