@@ -75,7 +75,7 @@
                          [org.http4s/http4s-dsl_2.11 ~http4s-version]
 
                          ;; other
-                         [clj-commons/clj-yaml "1.0.26"]
+                         [clj-commons/clj-yaml "1.0.27"]
                          [clojurewerkz/quartzite "2.1.0"]
                          [com.cemerick/url "0.1.1"]
                          [commons-codec "1.16.0"]
