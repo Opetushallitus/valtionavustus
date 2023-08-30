@@ -30,7 +30,6 @@
                          [cider/cider-nrepl "0.37.0"]
 
                          ;; http
-                         [clout "2.2.1"]
                          [org.apache.commons/commons-compress "1.23.0"]
                          [org.apache.tika/tika-core "2.8.0"]
                          [compojure "1.7.0"]
