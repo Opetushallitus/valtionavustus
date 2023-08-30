@@ -49,12 +49,6 @@
                          [com.fasterxml.jackson.dataformat/jackson-dataformat-smile ~jackson-version]
                          [prismatic/schema "1.4.1"]
 
-                         ;; database
-                         [hikari-cp "1.8.3"]
-                         [org.flywaydb/flyway-core "4.2.0"]
-                         [org.postgresql/postgresql "42.6.0"]
-                         [yesql "0.5.3"]
-
                          ;; testing
                          [speclj "3.4.3"]
                          [speclj-junit "0.0.11"]
@@ -127,14 +121,16 @@
                  [com.google.guava/guava "32.0.1-jre"]
                  [cheshire]
                  [prismatic/schema]
-                 [org.postgresql/postgresql]
-                 [yesql]
-                 [hikari-cp]
-                 [org.flywaydb/flyway-core]
                  [environ]
                  [org.clojure/tools.logging "1.2.4"]
                  [clj-time "0.15.2"]
-                 [org.clojure/tools.trace]]
+                 [org.clojure/tools.trace]
+
+                 ;; database
+                 [hikari-cp "1.8.3"]
+                 [org.flywaydb/flyway-core "4.2.0"]
+                 [org.postgresql/postgresql "42.6.0"]
+                 [yesql "0.5.3"]]
 
   :profiles {:uberjar {:aot [oph.va.hakija.main]}
              :server-dev {:env {:config "va-hakija/config/dev.edn"
