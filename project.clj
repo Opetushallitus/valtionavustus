@@ -30,7 +30,6 @@
                          [cider/cider-nrepl "0.37.0"]
 
                          ;; http
-                         [buddy/buddy-auth "3.0.323"]
                          [clout "2.2.1"]
                          [org.apache.commons/commons-compress "1.23.0"]
                          [org.apache.tika/tika-core "2.8.0"]
@@ -69,12 +68,6 @@
                          [commons-logging "1.2"]
                          [org.log4s/log4s_2.11 "1.10.0"]
 
-                         ;; cryptography
-                         [org.bouncycastle/bcpkix-jdk18on "1.75"]
-                         [org.bouncycastle/bcprov-jdk18on "1.75"]
-                         [buddy/buddy-core "1.11.423"]
-                         [buddy/buddy-sign "3.5.351"]
-
                          ;; cas
                          [fi.vm.sade/scala-cas_2.11 "2.2.3-SNAPSHOT"]
                          [org.http4s/http4s-blaze-client_2.11 ~http4s-version]
@@ -104,8 +97,8 @@
                  [org.apache.logging.log4j/log4j-slf4j2-impl]
                  [org.apache.tika/tika-core]
                  [nrepl]
-                 [buddy/buddy-auth]
-                 [buddy/buddy-sign]
+                 [buddy/buddy-auth "3.0.323"]
+                 [buddy/buddy-sign "3.5.351"]
                  [com.cemerick/url :exclusions [com.cemerick/clojurescript.test]]
                  [dk.ative/docjure "1.19.0"]
                  [fi.vm.sade/scala-cas_2.11]
@@ -139,7 +132,6 @@
                  [org.flywaydb/flyway-core]
                  [environ]
                  [org.clojure/tools.logging "1.2.4"]
-                 [buddy/buddy-core]
                  [clj-time "0.15.2"]
                  [org.clojure/tools.trace]]
 
