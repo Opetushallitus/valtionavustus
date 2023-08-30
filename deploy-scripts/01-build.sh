@@ -24,7 +24,10 @@ function main {
   end_gh_actions_group
 
   if [ -n "${GITHUB_REF_NAME:-}" ]; then
-    readonly ref_tag="$github_registry:$GITHUB_REF_NAME"
+    # Github refs often have slashes, which are not allowed in tag names
+    # https://github.com/opencontainers/distribution-spec/blob/main/spec.md#pulling-manifests
+    readonly clean_ref_name="${GITHUB_REF_NAME//[!a-zA-Z0-9._-]/-}"
+    readonly ref_tag="$github_registry:$clean_ref_name"
     info "Tagging as $ref_tag"
     docker tag "$image_tag" "$ref_tag"
     tags_to_push+=("$ref_tag")
