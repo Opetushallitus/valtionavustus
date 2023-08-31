@@ -45,6 +45,11 @@
                          ;; [buddy/buddy-sign "3.5.351"] -> [buddy/buddy-core "1.11.423"] ->
                          [commons-codec "1.16.0"]
 
+                         ;; [clojurewerkz/quartzite "2.1.0"] ->
+                         ;; fixes https://nvd.nist.gov/vuln/detail/cve-2019-13990,
+                         ;; https://nvd.nist.gov/vuln/detail/CVE-2019-5427
+                         [org.quartz-scheduler/quartz "2.3.2"]
+
                          ;; logging API
                          [org.slf4j/slf4j-api "2.0.7"]
 
@@ -71,7 +76,6 @@
                          [org.http4s/http4s-dsl_2.11 ~http4s-version]
 
                          ;; other
-                         [clojurewerkz/quartzite "2.1.0"]
                          [metosin/ring-swagger-ui "4.18.1"]
                          
                          [org.clojure/core.memoize "1.0.257"]
@@ -144,7 +148,7 @@
                  ;; ????
                  [com.cemerick/url "0.1.1" :exclusions [com.cemerick/clojurescript.test]] ; this is basically useless, we only use one function that would be trivial to implement
                  [dk.ative/docjure "1.19.0"]
-                 [gov.nasa.earthdata/quartzite "2.2.1-SNAPSHOT"]]
+                 [clojurewerkz/quartzite "2.1.0"]]
 
   :profiles {:uberjar {:aot [oph.va.hakija.main]}
              :server-dev {:env {:config "va-hakija/config/dev.edn"
