@@ -2,6 +2,13 @@ name: Build
 on:
   workflow_call:
 
+env:
+  DOCKER_BUILDKIT: "1" # BuildKit is enabled by default starting in Docker v23, Ubuntu 22.04 has an older version
+
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     name: 01-build.sh

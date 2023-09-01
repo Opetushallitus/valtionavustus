@@ -8,76 +8,17 @@ defaults:
   run:
     shell: bash
 
-env:
-  DOCKER_BUILDKIT: "1" # BuildKit is enabled by default starting in Docker v23, Ubuntu 22.04 has an older version
-
 concurrency: deploy-master
 
 jobs:
   build:
-    name: 01-build.sh
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v3.6.0
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2.2.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run 01-build.sh
-        run: ./deploy-scripts/01-build.sh
-      - name: Upload uberjar as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: valtionavustus-standalone.jar
-          path: deploy-scripts/dist/valtionavustus-standalone-*.jar
-
-  other-tests:
-    name: 02-other-tests.sh
-    runs-on: ubuntu-22.04
-    needs: build
-    steps:
-      - uses: actions/checkout@v3.6.0
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2.2.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run 02-other-tests.sh
-        run: ./deploy-scripts/02-other-tests.sh
-
-  playwright-tests:
-    name: 03-playwright-tests.sh (shard ${{ matrix.shard }}/${{ matrix.total_shards }})
-    runs-on: ubuntu-22.04
-    needs: build
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1, 2, 3, 4, 5]
-        total_shards: [5]
-    steps:
-      - uses: actions/checkout@v3.6.0
-      - name: Run 03-playwright-tests.sh
-        run: ./deploy-scripts/03-playwright-tests.sh
-        env:
-          PLAYWRIGHT_WORKERS: 1 # GH Actions will choke to death with more workers
-          PLAYWRIGHT_SHARD: ${{ matrix.shard }}
-          PLAYWRIGHT_SHARDS_AMOUNT: ${{ matrix.total_shards }}
-      - name: Upload Playwright results
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: playwright-results-${{ matrix.shard }}
-          path: playwright-results/
+    uses: ./.github/workflows/build.yaml
+    secrets: inherit
 
   deploy-jars:
     name: 04-deploy-jars.sh
     runs-on: ubuntu-22.04
-    needs: 
-      - playwright-tests
-      - other-tests
+    needs: build
     steps:
       - uses: actions/checkout@v3.6.0
       - name: Run 04-deploy-jars.sh
