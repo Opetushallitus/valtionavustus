@@ -1,3 +1,4 @@
+import { Blob } from 'node:buffer'
 import { APIRequestContext, Download, expect } from '@playwright/test'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 import { VIRKAILIJA_URL } from '../../utils/constants'
@@ -25,14 +26,14 @@ export async function getTasmaytysraporit(
   return await res.json()
 }
 
-async function downloadToBuffer(download: Download) {
-  const downloadBufs = []
+async function downloadToBlob(download: Download): Promise<Blob> {
+  const downloadBufs: Buffer[] = []
   const stream = await download.createReadStream()
   expectToBeDefined(stream)
   for await (const buf of stream) {
     downloadBufs.push(buf)
   }
-  return Buffer.concat(downloadBufs)
+  return new Blob(downloadBufs)
 }
 
 test('tasmaytysraportti is sent when maksatuset are sent', async ({
@@ -54,7 +55,7 @@ test('tasmaytysraportti is sent when maksatuset are sent', async ({
   const tasmaytysraportitAfterMaksatukset = await getTasmaytysraporit(avustushakuID, page.request)
   expect(tasmaytysraportitAfterMaksatukset).toHaveLength(1)
   const raportti = Buffer.from(tasmaytysraportitAfterMaksatukset[0].contents, 'base64')
-  const tasmaytysraportti = await getPdfFirstPageTextContent(raportti)
+  const tasmaytysraportti = await getPdfFirstPageTextContent(new Blob([raportti]))
   await test.step('find certain fields in pdf', async () => {
     const lkpTili = '82010000'
     const code = hakuProps.talousarviotili.code
@@ -77,7 +78,7 @@ test('tasmaytysraportti is sent when maksatuset are sent', async ({
     await lahetetytMaksatukset(3).lataaTasmaytysraportti.click()
     const download = await downloadPromise
     await download.path()
-    const tasmaytysRaporttiPdf = await downloadToBuffer(download)
+    const tasmaytysRaporttiPdf = await downloadToBlob(download)
     const pdfText = await getPdfFirstPageTextContent(tasmaytysRaporttiPdf)
     expect(pdfText).toBe(tasmaytysraportti)
   })

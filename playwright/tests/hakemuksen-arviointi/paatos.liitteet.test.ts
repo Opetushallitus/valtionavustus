@@ -1,3 +1,4 @@
+import { Blob } from 'node:buffer'
 import { expect } from '@playwright/test'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
@@ -97,7 +98,7 @@ test('paatos liitteet', async ({
     expect(await yleisohjeLink.getAttribute('href')).toBe(href)
     const res = await page.request.get(`${HAKIJA_URL}${href}`)
     const pdfBody = await res.body()
-    const pdfText = await getPdfFirstPageTextContent(pdfBody)
+    const pdfText = await getPdfFirstPageTextContent(new Blob([pdfBody]))
     expect(pdfText).toContain('12.5.2023')
     expect(pdfText).toContain('YLEISOHJE')
   })
@@ -113,7 +114,7 @@ test('paatos liitteet', async ({
     expect(await pakoteohjeLink.getAttribute('href')).toBe(href)
     const res = await page.request.get(`${HAKIJA_URL}${href}`)
     const pdfBody = await res.body()
-    const pdfText = await getPdfFirstPageTextContent(pdfBody)
+    const pdfText = await getPdfFirstPageTextContent(new Blob([pdfBody]))
     expect(pdfText).toContain('Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen')
   })
   await test.step('uncheck pakoteohje', async () => {
