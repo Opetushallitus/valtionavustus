@@ -27,7 +27,7 @@
 
   :managed-dependencies [
 
-                         ;; [metosin/compojure-api 1.1.13] -> [metosin/ring-swagger 0.26.2] -> [metosin/scjsv 0.5.0] ->
+                         ;; [metosin/compojure-api 1.1.13] -> [metosin/ring-swagger 0.26.2] -> [metosin/scjsv 0.6.2] ->
                          [com.github.java-json-tools/json-schema-validator "2.2.14"]
                          ;; ... -> [com.github.java-json-tools/json-schema-validator "2.2.14"] ->
                          ;; fixes https://nvd.nist.gov/vuln/detail/cve-2020-8908
