@@ -64,7 +64,10 @@ function MultipleRecipentEmailForm(
       <form onSubmit={onSubmit} className="soresu-form">
         <div className="form-body">
           {heading && <h2 className="form-header">{heading}</h2>}
-          <SenderEmail />
+          <fieldset>
+            <legend>Lähettäjä</legend>
+            <input type="text" name="sender" disabled={true} value="no-reply@oph.fi" />
+          </fieldset>
           <MultipleEmailRecipents
             disabled={disabled}
             email={email}
@@ -145,8 +148,9 @@ function EmailContent({
 }) {
   return (
     <fieldset disabled={disabled}>
-      <legend>Aihe</legend>
+      <label htmlFor="multirecipientemailform-subject">Aihe</label>
       <input
+        id="multirecipientemailform-subject"
         data-test-id={`${formName}-email-subject`}
         onChange={(e) => setEmail({ ...email, subject: e.target.value })}
         type="text"
@@ -154,7 +158,9 @@ function EmailContent({
         value={email.subject}
         required
       />
+      <label htmlFor="multirecipientemailform-content">Sisältö</label>
       <textarea
+        id="multirecipientemailform-content"
         data-test-id={`${formName}-email-content`}
         onChange={(e) => setEmail({ ...email, content: e.target.value })}
         rows={13}
@@ -162,15 +168,6 @@ function EmailContent({
         value={email.content}
         required
       />
-    </fieldset>
-  )
-}
-
-function SenderEmail() {
-  return (
-    <fieldset>
-      <legend>Lähettäjä</legend>
-      <input type="text" name="sender" disabled={true} value="no-reply@oph.fi" />
     </fieldset>
   )
 }

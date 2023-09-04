@@ -16,6 +16,7 @@ import { createReactSelectLocators } from '../../../utils/react-select'
 import { Header } from '../Header'
 import { LoppuselvitysPage } from '../hakujen-hallinta/LoppuselvitysPage'
 import { createMuutoshakemusTab } from './MuutoshakemusTab'
+import { createViestiHankkeelleTab, ViestiHankkeelleTab } from './ViestiHankkeelleTab'
 
 const jatkoaikaTestId = 'muutoshakemus-jatkoaika'
 
@@ -112,6 +113,15 @@ export class HakemustenArviointiPage {
     await this.navigate(avustushakuId, options)
     await this.page.click(`span:text-matches("${hanke}")`)
     await this.page.waitForSelector(`#project-name div:text-matches("${hanke}")`)
+  }
+
+  async navigateToViestiHankkeelleTab(
+    avustushakuID: number,
+    hakemusID: number
+  ): Promise<ViestiHankkeelleTab> {
+    await navigate(this.page, `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/viesti/`)
+
+    return createViestiHankkeelleTab(this.page)
   }
 
   async waitForSave() {

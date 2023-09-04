@@ -6,15 +6,28 @@ import MultipleRecipentEmailForm, {
   Email,
   generateInitialEmail,
 } from '../common-components/MultipleRecipentsEmailForm'
-import { useHakemus } from '../../useHakemus'
+import { useHakemusLoadingAware } from '../../useHakemus'
 import { useHakemustenArviointiSelector } from '../../arviointiStore'
 import { getLoadedState } from '../../arviointiReducer'
+import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 
 export function ViestiHankkeelleTab() {
-  const hakemus = useHakemus()
+  const hakemus = useHakemusLoadingAware()
   const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
-
   const { avustushaku } = hakuData
+
+  if (!hakemus) {
+    return null
+  }
+  return <LoadedViestiHankkeelleTab hakemus={hakemus} avustushaku={avustushaku} />
+}
+
+type Props = {
+  avustushaku: Avustushaku
+  hakemus: Hakemus
+}
+
+function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
   const [sentEmails, setSentEmails] = useState<Message[]>([])
 
   useEffect(
@@ -30,6 +43,7 @@ export function ViestiHankkeelleTab() {
 
   const [email, setEmail] = useState<Email>(generateInitialEmail(hakemus))
   const [formErrorMessage, setFormErrorMessage] = useState<string | undefined>(undefined)
+
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault()
     e.stopPropagation()
