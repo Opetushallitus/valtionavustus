@@ -94,10 +94,6 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
           setEmail={setEmail}
           formName="viestihankkeelle"
           submitText="Lähetä viesti"
-          cancelButton={{
-            text: 'Peruuta',
-            onClick: () => {},
-          }}
           errorText={formErrorMessage}
         />
       </section>

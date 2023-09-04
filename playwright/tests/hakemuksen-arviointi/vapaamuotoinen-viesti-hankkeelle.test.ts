@@ -41,8 +41,37 @@ muutoshakemusTest(
       await expect(messageRow.recipients(row)).toHaveText(answers.contactPersonEmail)
     })
 
-    await test.step('Toisen viestin lähettäminen', async () => {})
+    const message2 = {
+      subject: 'Toinen viesti',
+      body: 'Toisen viestin sisältö',
+    }
+    const extraRecipient = 'siiri.saataja@example.com'
 
-    await test.step('Viestit näkyvät listassa', async () => {})
+    await test.step('Toisen viestin lähettäminen ylimääräisellä vastaanottajalla', async () => {
+      const { addressInputs } = form.recipients
+      await expect(addressInputs).toHaveCount(1)
+      await expect(addressInputs).toHaveValue(answers.contactPersonEmail)
+
+      await form.recipients.addButton.click()
+      await form.recipients.addressInputs.last().type(extraRecipient)
+
+      await form.subject.fill(message2.subject)
+      await form.body.fill(message2.body)
+
+      await form.sendButton.click()
+      await viestiTab.expectFormIsClear()
+    })
+
+    await test.step('Toinen viesti näkyy listassa', async () => {
+      const { messageRows, messageRow } = viestiTab.locators.messageList
+      await expect(messageRows).toHaveCount(2)
+
+      const row = messageRows.last()
+      await row.click()
+
+      await expect(messageRow.recipients(row)).toContainText(answers.contactPersonEmail)
+      await expect(messageRow.recipients(row)).toContainText(extraRecipient)
+      await expect(messageRow.subject(row)).toHaveText(message2.subject)
+    })
   }
 )
