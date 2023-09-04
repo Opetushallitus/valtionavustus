@@ -77,6 +77,11 @@
         "matchPackageNames": ["eclipse-temurin"],
         "matchUpdateTypes": ["major"],
         "enabled": false
+      },
+      {
+        "matchPackageNames": ["com.google.guava:guava"],
+        "description": "Custom versioning regex for Guava so that we keep `-android` versions",
+        "versioning": "regex:^(?<major>\\d+)(\\.(?<minor>\\d+))?(\\.(?<patch>\\d+))?(-(?<compatibility>.*))?$"
       }
     ],
     "prConcurrentLimit": 5
