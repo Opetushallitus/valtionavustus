@@ -47,5 +47,6 @@
            'subject', subject
            ) FROM virkailija.email where tapahtumaloki.email_id = id)::jsonb as email_content
      FROM virkailija.tapahtumaloki
-     WHERE avustushaku_id = ? AND tyyppi = ? AND hakemus_id = ?"
+     WHERE avustushaku_id = ? AND tyyppi = ? AND hakemus_id = ?
+     ORDER BY created_at ASC"
     [avustushaku-id tyyppi hakemus-id]))
