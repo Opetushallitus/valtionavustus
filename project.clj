@@ -111,7 +111,7 @@
                  [ring/ring-session-timeout "0.3.0"]
                  [ring/ring-ssl "0.3.0"]
                  [prismatic/schema "1.4.1"]
-                 [org.apache.tika/tika-core "2.8.0"] ; attachment handling
+                 [org.apache.tika/tika-core "2.9.0"] ; attachment handling
 
                  ;; auth
                  [buddy/buddy-auth "3.0.323"]
