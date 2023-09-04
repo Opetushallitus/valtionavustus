@@ -19,9 +19,9 @@ muutoshakemusTest(
     }
 
     await test.step('Viestin lähettäminen', async () => {
-      await expect(viestiTab.getRecipients(), 'yhteyshenkilö on vastaanottajana').resolves.toEqual([
-        answers.contactPersonEmail,
-      ])
+      const { addressInputs } = form.recipients
+      await expect(addressInputs).toHaveCount(1)
+      await expect(addressInputs).toHaveValue(answers.contactPersonEmail)
 
       await form.subject.fill(message1.subject)
       await form.body.fill(message1.body)

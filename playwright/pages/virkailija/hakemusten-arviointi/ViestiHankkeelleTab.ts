@@ -17,12 +17,6 @@ export function createViestiHankkeelleTab(page: Page) {
     sendMessageForm,
   }
 
-  async function getRecipients(): Promise<string[]> {
-    const recipientInputs = await sendMessageForm.recipients.addressInputs.all()
-    const values = recipientInputs.map((input) => input.inputValue())
-    return Promise.all(values)
-  }
-
   async function expectFormIsClear(): Promise<void> {
     const { subject, body } = locators.sendMessageForm
     await expect.soft(subject).toBeEmpty()
@@ -31,5 +25,5 @@ export function createViestiHankkeelleTab(page: Page) {
     expect(test.info().errors, 'Email form should be clear').toHaveLength(0)
   }
 
-  return { locators, expectFormIsClear, getRecipients }
+  return { locators, expectFormIsClear }
 }
