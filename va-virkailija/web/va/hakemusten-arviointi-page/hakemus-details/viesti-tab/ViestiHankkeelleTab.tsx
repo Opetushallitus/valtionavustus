@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useId, useState } from 'react'
 
 import { fetchSentEmails, sendEmail } from '../sentEmails'
 import ViestiLista, { Message } from '../ViestiLista'
@@ -75,27 +75,32 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
     send().then(fetchEmails)
   }
 
+  const listSectionHeading = useId()
+  const emailFormHeading = useId()
+
   return (
-    <div>
+    <>
       {sentEmails.length > 0 && (
-        <>
-          <h2>Aiemmin lähetetyt viestit</h2>
+        <section role="list" aria-labelledby={listSectionHeading}>
+          <h2 id={listSectionHeading}>Aiemmin lähetetyt viestit</h2>
           <ViestiLista messages={sentEmails} />
-        </>
+        </section>
       )}
-      <h2>Lähetä viesti hankkeelle</h2>
-      <MultipleRecipentEmailForm
-        onSubmit={handleSubmit}
-        email={email}
-        setEmail={setEmail}
-        formName="viestihankkeelle"
-        submitText="Lähetä viesti"
-        cancelButton={{
-          text: 'Peruuta',
-          onClick: () => {},
-        }}
-        errorText={formErrorMessage}
-      />
-    </div>
+      <section aria-labelledby={emailFormHeading}>
+        <h2 id={emailFormHeading}>Lähetä viesti hankkeelle</h2>
+        <MultipleRecipentEmailForm
+          onSubmit={handleSubmit}
+          email={email}
+          setEmail={setEmail}
+          formName="viestihankkeelle"
+          submitText="Lähetä viesti"
+          cancelButton={{
+            text: 'Peruuta',
+            onClick: () => {},
+          }}
+          errorText={formErrorMessage}
+        />
+      </section>
+    </>
   )
 }

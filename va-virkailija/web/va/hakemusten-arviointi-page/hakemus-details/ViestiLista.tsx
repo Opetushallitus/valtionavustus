@@ -50,18 +50,30 @@ export default function ViestiLista(props: Props) {
 export function ViestiDetails(props: { message: Message }) {
   const message = props.message
   return (
-    <div className={'messageDetails'}>
-      <div className={'detailRow'}>
-        <div className={'label'}>Lähettäjä</div>
-        <div className={'item'}>{message.sender}</div>
+    <div role="table" className={'messageDetails'}>
+      <div role="row" className={'detailRow'}>
+        <div role="rowheader" className={'label'}>
+          Lähettäjä
+        </div>
+        <div role="cell" className={'item'}>
+          {message.sender}
+        </div>
       </div>
-      <div className={'detailRow'}>
-        <div className={'label'}>Vastaanottajat</div>
-        <div className={'item'}>{message.receivers.join(', ')}</div>
+      <div role="row" className={'detailRow'}>
+        <div role="rowheader" className={'label'}>
+          Vastaanottajat
+        </div>
+        <div role="cell" className={'item'}>
+          {message.receivers.join(', ')}
+        </div>
       </div>
-      <div className={'detailRow'}>
-        <div className={'label'}>Aihe</div>
-        <div className={'item'}>{message.subject}</div>
+      <div role="row" className={'detailRow'}>
+        <div role="rowheader" className={'label'}>
+          Aihe
+        </div>
+        <div role="cell" className={'item'}>
+          {message.subject}
+        </div>
       </div>
       <div className={'rowMessage'}>{message.message}</div>
     </div>
@@ -88,7 +100,7 @@ export function ViestiListaRow({
   children,
 }: ViestilistaRowProps) {
   return (
-    <div className={'viestiListaItem'}>
+    <div role="listitem" className={'viestiListaItem'}>
       <div className={'viestiListaRow'} role="button" onClick={onClick} data-test-id={dataTestId}>
         {icon === 'envelope' ? <EnvelopeIcon active /> : <DoneIcon />}
         <div className={'rowDate'}>{formatDate(date)}</div>

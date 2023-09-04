@@ -30,7 +30,16 @@ muutoshakemusTest(
       await viestiTab.expectFormIsClear()
     })
 
-    await test.step('Lähetetty viesti näkyy listassa', async () => {})
+    await test.step('Lähetetty viesti näkyy listassa', async () => {
+      const { messageRows, messageRow } = viestiTab.locators.messageList
+      await expect(messageRows).toHaveCount(1)
+
+      const row = messageRows.last()
+      await row.click()
+
+      await expect(messageRow.subject(row)).toHaveText(message1.subject)
+      await expect(messageRow.recipients(row)).toHaveText(answers.contactPersonEmail)
+    })
 
     await test.step('Toisen viestin lähettäminen', async () => {})
 

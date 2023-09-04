@@ -1,20 +1,37 @@
-import { expect, test, Page } from '@playwright/test'
+import { expect, test, Page, Locator } from '@playwright/test'
 
 export type ViestiHankkeelleTab = ReturnType<typeof createViestiHankkeelleTab>
 
 export function createViestiHankkeelleTab(page: Page) {
-  const sendMessageForm = {
-    recipients: {
-      addressInputs: page.getByRole('group', { name: 'Vastaanottajat' }).getByRole('textbox'),
-      addButton: page.getByRole('button', { name: 'Lisää uusi vastaanottaja' }),
+  const messageListRegion = page.getByRole('list', { name: 'Aiemmin lähetetyt viestit' })
+  const messageList = {
+    region: messageListRegion,
+    messageRows: messageListRegion.getByRole('listitem'),
+    messageRow: {
+      subject: (messageRowLocator: Locator): Locator =>
+        messageRowLocator.getByRole('row', { name: 'Aihe' }).getByRole('cell'),
+      recipients: (messageRowLocator: Locator): Locator =>
+        messageRowLocator.getByRole('row', { name: 'Vastaanottajat' }).getByRole('cell'),
     },
-    subject: page.getByRole('textbox', { name: 'Aihe' }),
-    body: page.getByRole('textbox', { name: 'Sisältö' }),
-    sendButton: page.getByRole('button', { name: 'Lähetä viesti' }),
+  }
+
+  const sendMessageRegion = page.getByRole('region', { name: 'Lähetä viesti hankkeelle' })
+  const sendMessageForm = {
+    region: sendMessageRegion,
+    recipients: {
+      addressInputs: sendMessageRegion
+        .getByRole('group', { name: 'Vastaanottajat' })
+        .getByRole('textbox'),
+      addButton: sendMessageRegion.getByRole('button', { name: 'Lisää uusi vastaanottaja' }),
+    },
+    subject: sendMessageRegion.getByRole('textbox', { name: 'Aihe' }),
+    body: sendMessageRegion.getByRole('textbox', { name: 'Sisältö' }),
+    sendButton: sendMessageRegion.getByRole('button', { name: 'Lähetä viesti' }),
   }
 
   const locators = {
     sendMessageForm,
+    messageList,
   }
 
   async function expectFormIsClear(): Promise<void> {
