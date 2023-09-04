@@ -14,7 +14,7 @@ jobs:
     name: 01-build.sh
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3.6.0
+      - uses: actions/checkout@v4.0.0
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2.2.0
         with:
@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: build
     steps:
-      - uses: actions/checkout@v3.6.0
+      - uses: actions/checkout@v4.0.0
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2.2.0
         with:
@@ -54,7 +54,7 @@ jobs:
         shard: [1, 2, 3, 4, 5]
         total_shards: [5]
     steps:
-      - uses: actions/checkout@v3.6.0
+      - uses: actions/checkout@v4.0.0
       - name: Run 03-playwright-tests.sh
         run: ./deploy-scripts/03-playwright-tests.sh
         env:
