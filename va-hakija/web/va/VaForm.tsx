@@ -25,16 +25,18 @@ type VaFormProps<T extends BaseStateLoopState<T>> = {
   modifyApplication?: string
   isExpired?: boolean
   useBusinessIdSearch?: boolean
+  readOnly: boolean
 }
 
 export default class VaForm<T extends BaseStateLoopState<T>> extends React.Component<
   VaFormProps<T>
 > {
   render() {
-    const { controller, state, hakemusType, isExpired, refuseGrant, modifyApplication } = this.props
+    const { controller, state, hakemusType, isExpired, refuseGrant, modifyApplication, readOnly } =
+      this.props
     const registerNumber = state.saveStatus.savedObject?.['register-number']
     const { saveStatus, configuration } = state
-    const { embedForMuutoshakemus, preview } = configuration
+    const { embedForMuutoshakemus } = configuration
     const registerNumberDisplay = (
       <VaHakemusRegisterNumber
         key="register-number"
@@ -52,13 +54,9 @@ export default class VaForm<T extends BaseStateLoopState<T>> extends React.Compo
       />
     )
     const headerElements = [registerNumberDisplay, changeRequest]
-    const form =
-      preview ||
-      (hakemusType === 'loppuselvitys' && !state.saveStatus.savedObject?.['selvitys-updatable'])
-        ? FormPreview
-        : Form
+    const form = readOnly ? FormPreview : Form
     const showGrantRefuse =
-      preview &&
+      readOnly &&
       // @ts-ignore
       state.token &&
       allowedStatuses.indexOf(saveStatus.savedObject?.status ?? '') > -1 &&
@@ -66,7 +64,7 @@ export default class VaForm<T extends BaseStateLoopState<T>> extends React.Compo
     const isInApplicantEditMode = () => 'applicant_edit' === saveStatus.savedObject?.status
     const showOpenContactsEditButton =
       !showGrantRefuse && modifyApplication && !isInApplicantEditMode()
-    if (!embedForMuutoshakemus && preview) {
+    if (!embedForMuutoshakemus && readOnly) {
       saveStatus.values.value = mapAnswersWithMuutoshakemusData(
         // @ts-ignore
         state.avustushaku,

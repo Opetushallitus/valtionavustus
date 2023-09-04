@@ -16,6 +16,18 @@ import { ValiselvitysPage } from '../../pages/virkailija/hakujen-hallinta/Valise
 
 test.describe('Väliselvitys', () => {
   selvitysTest(
+    'väliselvityksen esikatelu näyttää miltä väliselvitys näyttää hakijalle',
+    async ({ page, avustushakuID }) => {
+      const hakujenHallintaPage = new HakujenHallintaPage(page)
+      const valiselvitysPage = await hakujenHallintaPage.navigateToValiselvitys(avustushakuID)
+      const previewPage = await valiselvitysPage.goToPreview()
+
+      expect(previewPage.url()).toContain('esikatselu')
+
+      await previewPage.isVisible('input#organization')
+    }
+  )
+  selvitysTest(
     'väliselvitys submitted notification is sent',
     async ({ page, acceptedHakemus: { hakemusID }, väliselvitysSubmitted }) => {
       expectToBeDefined(väliselvitysSubmitted)

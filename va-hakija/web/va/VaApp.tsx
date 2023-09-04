@@ -171,10 +171,20 @@ function initVaFormController() {
   return {
     stateProperty,
     getReactComponent: function getReactComponent(state: VaAppStateLoopState) {
+      const realPreview = Boolean(location.pathname.includes('esikatselu'))
+      const selvitysType =
+        location.pathname.indexOf('loppuselvitys') !== -1 ? 'loppuselvitys' : 'valiselvitys'
+      const preview = state.configuration.preview
+      const readOnly =
+        !realPreview &&
+        (preview ||
+          (selvitysType === 'loppuselvitys' &&
+            !state.saveStatus.savedObject?.['selvitys-updatable']))
       return (
         <VaForm
           controller={controller}
           state={state}
+          readOnly={readOnly}
           hakemusType="hakemus"
           useBusinessIdSearch={true}
           refuseGrant={urlContent.parsedQuery['refuse-grant'] as string | undefined}

@@ -53,13 +53,19 @@ export const SelvitysFormEditor = ({ selvitysType }: SelvitysFormEditorProps) =>
   const formDraft = isValiSelvitys ? valiselvitysFormDraft : loppuselvitysFormDraft
   const formDraftJson = isValiSelvitys ? valiselvitysFormDraftJson : loppuselvitysFormDraftsJson
   const previewUrlFi =
-    environment['hakija-server'].url.fi + 'avustushaku/' + avustushaku.id + '/' + selvitysType
+    environment['hakija-server'].url.fi +
+    'avustushaku/' +
+    avustushaku.id +
+    '/' +
+    selvitysType +
+    '/esikatselu'
   const previewUrlSv =
     environment['hakija-server'].url.sv +
     'avustushaku/' +
     avustushaku.id +
     '/' +
     selvitysType +
+    '/esikatselu' +
     '?lang=sv'
   const onFormChange = ({ id }: Avustushaku, newDraft: Form) => {
     dispatch(selvitysFormUpdated({ selvitysType, newDraft, avustushakuId: id }))

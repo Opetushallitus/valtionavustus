@@ -7,6 +7,8 @@ export const LoppuselvitysPage = (page: Page) => {
   const taloustarkastus = page.getByTestId('loppuselvitys-taloustarkastus')
   const locators = {
     linkToForm: page.locator('a', { hasText: 'Linkki lomakkeelle' }),
+    previewFi: page.getByTestId('form-preview-fi'),
+
     warning: page.locator('#selvitys-not-sent-warning'),
     asiatarkastettu: page.getByTestId('loppuselvitys-tarkastus').first(),
     taloustarkastettu: page.getByTestId('loppuselvitys-tarkastus').nth(1),
@@ -24,6 +26,16 @@ export const LoppuselvitysPage = (page: Page) => {
         name: 'Hyväksy ja lähetä viesti',
       }),
     },
+  }
+
+  async function goToPreview() {
+    const [previewPage] = await Promise.all([
+      page.context().waitForEvent('page'),
+      await locators.previewFi.click(),
+    ])
+    await previewPage.bringToFront()
+    await previewPage.waitForLoadState()
+    return previewPage
   }
 
   async function ensureMuistutusViestiEmailRecipientsContain(recipients: string[]) {
@@ -70,6 +82,7 @@ export const LoppuselvitysPage = (page: Page) => {
   return {
     locators,
     getSelvitysFormUrl,
+    goToPreview,
     sendLoppuselvitys,
     asiatarkastaLoppuselvitys,
     taloustarkastaLoppuselvitys,

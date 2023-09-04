@@ -32,6 +32,7 @@ const query = queryString.parse(location.search)
 const selvitysId = query[selvitysType]
 const showPreview = query.preview as string
 const lang = query.lang
+const realPreview = Boolean(location.pathname.includes('esikatselu'))
 
 function containsExistingEntityId(urlContent: UrlContent): boolean {
   const query = urlContent.parsedQuery
@@ -258,6 +259,13 @@ function initFormController() {
         window.location.href = previewUrl
       }
 
+      const preview = state.configuration.preview
+      const readOnly =
+        !realPreview &&
+        (preview ||
+          (selvitysType === 'loppuselvitys' &&
+            !state.saveStatus.savedObject?.['selvitys-updatable']))
+
       return (
         <VaForm
           controller={controller}
@@ -265,6 +273,7 @@ function initFormController() {
           hakemusType={selvitysType}
           useBusinessIdSearch={false}
           isExpired={false}
+          readOnly={readOnly}
         />
       )
     },

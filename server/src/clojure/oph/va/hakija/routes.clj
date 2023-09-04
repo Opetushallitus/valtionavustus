@@ -333,6 +333,10 @@
    (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys" [avustushaku-id] (return-html "hakija/selvitys.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/" [avustushaku-id] (return-html "hakija/login.html"))
 
+   (compojure/GET "/avustushaku/:avustushaku-id/esikatselu" [avustushaku-id] (return-html "hakija/index.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys/esikatselu" [avustushaku-id] (return-html "hakija/selvitys.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys/esikatselu" [avustushaku-id] (return-html "hakija/selvitys.html"))
+
    (compojure-api/GET "/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" [avustushaku-id user-key :as request]
      :path-params [avustushaku-id :- Long user-key :- s/Str]
      :query-params [{nolog :- s/Str nil}]

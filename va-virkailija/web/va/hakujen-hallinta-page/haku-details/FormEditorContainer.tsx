@@ -67,9 +67,9 @@ const FormEditorContainer = () => {
   const hakuUrlSv =
     environment['hakija-server'].url.sv + 'avustushaku/' + avustushaku.id + '/?lang=sv'
   const previewUrlFi =
-    environment['hakija-server'].url.fi + 'avustushaku/' + avustushaku.id + '/nayta?lang=fi'
+    environment['hakija-server'].url.fi + 'avustushaku/' + avustushaku.id + '/esikatselu?lang=fi'
   const previewUrlSv =
-    environment['hakija-server'].url.sv + 'avustushaku/' + avustushaku.id + '/nayta?lang=sv'
+    environment['hakija-server'].url.sv + 'avustushaku/' + avustushaku.id + '/esikatselu?lang=sv'
   const formattedUpdatedDate = `${DateUtil.asDateString(updatedAt)} klo ${DateUtil.asTimeString(
     updatedAt
   )}`
