@@ -304,12 +304,12 @@
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
 
-(defn on-hakemus-change-request-response [haku-id hakemus-id base-version answers]
-  (let [hakemus (va-db/get-hakemus hakemus-id)
+(defn on-hakemus-change-request-response [haku-id user-key base-version answers]
+  (let [hakemus (va-db/get-hakemus user-key)
         avustushaku (get-open-avustushaku haku-id hakemus)
         form-id (:form avustushaku)
         form (form-db/get-form form-id)
-        attachments (va-db/get-attachments hakemus-id (:id hakemus))
+        attachments (va-db/get-attachments user-key (:id hakemus))
         budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
         validation (merge (validation/validate-form form answers attachments)
                           (va-budget/validate-budget-hakija answers budget-totals form))]
@@ -319,13 +319,13 @@
               saved-submission (:body (update-form-submission form-id submission-id answers))
               submission-version (:version saved-submission)
               submitted-hakemus (va-db/submit-hakemus haku-id
-                                                      hakemus-id
+                                                      user-key
                                                       submission-id
                                                       submission-version
                                                       (:register_number hakemus)
                                                       answers
                                                       budget-totals)
-              change-requests (va-db/list-hakemus-change-requests hakemus-id)
+              change-requests (va-db/list-hakemus-change-requests user-key)
               email-of-virkailija (:user_email (last change-requests))]
           (if email-of-virkailija
             (va-email/send-change-request-responded-message-to-virkailija! [email-of-virkailija] (:id avustushaku) (-> avustushaku :content :name :fi) (:id submitted-hakemus)))
