@@ -65,6 +65,7 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
       setShowConfirmation(true)
     }
   }
+  const hakemusIsNotSubmitted = hakemus.status !== 'submitted'
   return (
     <LoppuselvitysTarkastus
       dataTestId="loppuselvitys-asiatarkastus"
@@ -73,7 +74,7 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
       heading="Loppuselvityksen asiatarkastus"
       taydennyspyyntoHeading="Asiatarkastuksen täydennyspyyntö"
       confirmButton={
-        <button disabled={disabled} onClick={onClick}>
+        <button disabled={hakemusIsNotSubmitted} onClick={onClick}>
           {showConfirmation ? 'Vahvista hyväksyntä' : 'Hyväksy'}
         </button>
       }
