@@ -9,14 +9,24 @@ import { HakijaAvustusHakuPage } from '../pages/hakija/hakijaAvustusHakuPage'
 import { defaultValues } from './defaultValues'
 import { expectToBeDefined } from '../utils/util'
 import { PaatosPage } from '../pages/virkailija/hakujen-hallinta/PaatosPage'
-import { VIRKAILIJA_URL } from '../utils/constants'
+import { TEST_Y_TUNNUS, VIRKAILIJA_URL } from '../utils/constants'
 import { Answers } from '../utils/types'
+import muutoshakemusEnabledHakuLomakeJson from './prod.hakulomake.json'
 
 export interface MuutoshakemusFixtures {
   finalAvustushakuEndDate: moment.Moment
+  businessId: string | null
+  loppuselvitysForm: string | null
+  valiselvitysForm: string | null
   avustushakuID: number
   closedAvustushaku: {
     id: number
+  }
+  startedHakemus: {
+    hakemusUrl: string
+  }
+  filledHakemus: {
+    hakemusUrl: string
   }
   submittedHakemus: {
     userKey: string
@@ -26,35 +36,80 @@ export interface MuutoshakemusFixtures {
     userKey: string
   }
   submitMultipleHakemuses: {}
+  hakulomake: string
 }
 
 export const submittedHakemusTest = defaultValues.extend<MuutoshakemusFixtures>({
   finalAvustushakuEndDate: moment().subtract(1, 'year'),
-  avustushakuID: async ({ page, hakuProps, userCache }, use, testInfo) => {
+  hakulomake: JSON.stringify(muutoshakemusEnabledHakuLomakeJson),
+  businessId: TEST_Y_TUNNUS,
+  loppuselvitysForm: null,
+  valiselvitysForm: null,
+  avustushakuID: async (
+    { page, hakuProps, userCache, loppuselvitysForm, valiselvitysForm, hakulomake },
+    use,
+    testInfo
+  ) => {
     expect(userCache).toBeDefined()
     testInfo.setTimeout(testInfo.timeout + 40_000)
 
-    const avustushakuID = await test.step('Create avustushaku', async () => {
-      const hakujenHallintaPage = new HakujenHallintaPage(page)
-      return await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
-    })
+    const hakujenHallintaPage = new HakujenHallintaPage(page)
+    const avustushakuID = await hakujenHallintaPage.createPublishedAvustushaku(
+      hakuProps,
+      hakulomake
+    )
+
+    if (valiselvitysForm) {
+      await test.step('Set väliselvitys form', async () => {
+        const valiselvitysTab = await hakujenHallintaPage.switchToValiselvitysTab()
+        await valiselvitysTab.changeLomakeJson(valiselvitysForm)
+        await valiselvitysTab.saveForm()
+      })
+    }
+
+    if (loppuselvitysForm) {
+      await test.step('Set loppuselvitys form', async () => {
+        const loppuselvitysTab = await hakujenHallintaPage.switchToLoppuselvitysTab()
+        await loppuselvitysTab.changeLomakeJson(loppuselvitysForm)
+        await loppuselvitysTab.saveForm()
+      })
+    }
+
     testInfo.annotations.push({
       type: 'avustushaku',
       description: `${VIRKAILIJA_URL}${hakuPath(avustushakuID)}`,
     })
     await use(avustushakuID)
   },
-  submittedHakemus: async ({ avustushakuID, answers, page }, use, testInfo) => {
+  startedHakemus: async ({ avustushakuID, answers, page }, use, testInfo) => {
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
+    await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
+    const hakemusUrl = await hakijaAvustusHakuPage.startApplication(
+      avustushakuID,
+      answers.contactPersonEmail
+    )
+
+    testInfo.annotations.push({
+      type: 'hakemus',
+      description: hakemusUrl,
+    })
+    await use({ hakemusUrl })
+  },
+  filledHakemus: async ({ answers, businessId, startedHakemus, page }, use) => {
+    const { hakemusUrl } = startedHakemus
+    await page.goto(hakemusUrl)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
+    await hakijaAvustusHakuPage.fillApplication(answers, businessId)
+    await hakijaAvustusHakuPage.fillMuutoshakemusEnabledHakemus(answers)
+    await use({ hakemusUrl })
+  },
+  submittedHakemus: async ({ page, filledHakemus }, use, testInfo) => {
     testInfo.setTimeout(testInfo.timeout + 15_000)
 
-    let userKey: string | null = null
-    await test.step('Submit hakemus', async () => {
-      const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
-      await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
-      userKey = (
-        await hakijaAvustusHakuPage.fillAndSendMuutoshakemusEnabledHakemus(avustushakuID, answers)
-      ).userKey
-    })
+    await page.goto(filledHakemus.hakemusUrl)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
+    const { userKey } = await hakijaAvustusHakuPage.submitApplication()
+
     expectToBeDefined(userKey)
     await use({ userKey })
   },

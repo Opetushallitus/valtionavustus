@@ -1,4 +1,4 @@
-import { expect, Locator, Page } from '@playwright/test'
+import { expect, Locator, Page, test } from '@playwright/test'
 import moment from 'moment'
 import fs from 'fs/promises'
 import path from 'path'
@@ -126,25 +126,27 @@ export class HakujenHallintaPage {
   }
 
   async copyCurrentHaku(): Promise<number> {
-    const waitForHakuCopyToBeCompleted = async (currentURL: string): Promise<void> => {
-      await this.page.waitForFunction((url) => window.location.href !== url, currentURL)
-      await this.page.waitForLoadState('networkidle')
-      await expect(hakuNameFi).toHaveText(`${currentHakuTitle} (kopio)`)
-      await expect(hakuNameFi).toBeEnabled()
-    }
-    const haunTiedotPage = HaunTiedotPage(this.page)
-    const hakuNameFi = haunTiedotPage.locators.hakuName.fi
-    const currentHakuTitle = await hakuNameFi.textContent()
-    const currentURL = this.page.url()
+    return await test.step('Copy current avustushaku', async () => {
+      const waitForHakuCopyToBeCompleted = async (currentURL: string): Promise<void> => {
+        await this.page.waitForFunction((url) => window.location.href !== url, currentURL)
+        await this.page.waitForLoadState('networkidle')
+        await expect(hakuNameFi).toHaveText(`${currentHakuTitle} (kopio)`)
+        await expect(hakuNameFi).toBeEnabled()
+      }
+      const haunTiedotPage = HaunTiedotPage(this.page)
+      const hakuNameFi = haunTiedotPage.locators.hakuName.fi
+      const currentHakuTitle = await hakuNameFi.textContent()
+      const currentURL = this.page.url()
 
-    await Promise.all([
-      waitForHakuCopyToBeCompleted(currentURL),
-      this.page.locator('a', { hasText: 'Kopioi uuden pohjaksi' }).click(),
-    ])
-    await expect(hakuNameFi).toBeEnabled()
-    const avustushakuID = parseInt(await expectQueryParameter(this.page, 'avustushaku'))
-    console.log(`Avustushaku ID: ${avustushakuID}`)
-    return avustushakuID
+      await Promise.all([
+        waitForHakuCopyToBeCompleted(currentURL),
+        this.page.locator('a', { hasText: 'Kopioi uuden pohjaksi' }).click(),
+      ])
+      await expect(hakuNameFi).toBeEnabled()
+      const avustushakuID = parseInt(await expectQueryParameter(this.page, 'avustushaku'))
+      console.log(`Avustushaku ID: ${avustushakuID}`)
+      return avustushakuID
+    })
   }
 
   async copyEsimerkkihaku(): Promise<number> {
@@ -181,67 +183,69 @@ export class HakujenHallintaPage {
     talousarviotili,
     vaCodes,
   }: HakuProps) {
-    const haunTiedotPage = HaunTiedotPage(this.page)
-    await haunTiedotPage.locators.registerNumber.fill(registerNumber)
-    await haunTiedotPage.locators.hakuName.fi.fill(avustushakuName)
-    await haunTiedotPage.locators.hakuName.sv.fill(avustushakuName + ' på svenska')
+    await test.step('Fill in avustushaku details', async () => {
+      const haunTiedotPage = HaunTiedotPage(this.page)
+      await haunTiedotPage.locators.registerNumber.fill(registerNumber)
+      await haunTiedotPage.locators.hakuName.fi.fill(avustushakuName)
+      await haunTiedotPage.locators.hakuName.sv.fill(avustushakuName + ' på svenska')
 
-    await haunTiedotPage.selectVaCodes(vaCodes)
+      await haunTiedotPage.selectVaCodes(vaCodes)
 
-    if (installment === Installment.MultipleInstallments) {
-      await this.page.locator('text=Useampi maksuerä').click()
-      await this.page.locator('text=Kaikille avustuksen saajille').click()
-      await this.page.locator('select#transaction-account').selectOption('5000')
-    }
-
-    const taTili = haunTiedotPage.locators.taTili
-    await taTili.tili(0).input.fill(talousarviotili.code)
-    await this.page.keyboard.press('ArrowDown')
-    await this.page.keyboard.press('Enter')
-    await taTili.tili(0).koulutusaste(0).input.fill('Ammatillinen koulutus')
-    await this.page.keyboard.press('ArrowDown')
-    await this.page.keyboard.press('Enter')
-
-    if (arvioituMaksupaiva) {
-      await this.page.fill('[name="arvioitu_maksupaiva"]', formatDate(arvioituMaksupaiva))
-    }
-
-    if (jaossaOlevaSumma !== undefined) {
-      await this.page.fill('#total-grant-size', String(jaossaOlevaSumma))
-    }
-
-    await this.selectTositelaji('XE')
-    await this.page.fill('#hakuaika-start', formatDate(hakuaikaStart))
-    await this.page.fill('#hakuaika-end', formatDate(hakuaikaEnd))
-    await haunTiedotPage.addValmistelija('Viivi Virkailija')
-    await haunTiedotPage.addArvioija('Päivi Pääkäyttäjä')
-
-    for (let i = 0; i < selectionCriteria.length; i++) {
-      await this.page.getByTestId('add-selection-criteria').click()
-      await this.page.fill(`#selection-criteria-${i}-fi`, selectionCriteria[i])
-      await this.page.fill(`#selection-criteria-${i}-sv`, selectionCriteria[i])
-    }
-
-    for (let i = 0; i < raportointivelvoitteet.length; i++) {
-      await this.selectRaportointilaji(i, raportointivelvoitteet[i].raportointilaji)
-      await this.page.fill(`[name="maaraaika-${i}"]`, raportointivelvoitteet[i].maaraaika)
-      await this.page.fill(`[id="asha-tunnus-${i}"]`, raportointivelvoitteet[i].ashaTunnus)
-      if (raportointivelvoitteet[i].lisatiedot) {
-        await this.page.fill(`[id="lisatiedot-${i}"]`, raportointivelvoitteet[i].lisatiedot ?? '')
+      if (installment === Installment.MultipleInstallments) {
+        await this.page.locator('text=Useampi maksuerä').click()
+        await this.page.locator('text=Kaikille avustuksen saajille').click()
+        await this.page.locator('select#transaction-account').selectOption('5000')
       }
-      await this.page.click(`[id="new-raportointivelvoite-${i}"]`)
-    }
 
-    for (const saadanto of lainsaadanto) {
-      await this.page.locator(`label:has-text("${saadanto}")`).click()
-    }
+      const taTili = haunTiedotPage.locators.taTili
+      await taTili.tili(0).input.fill(talousarviotili.code)
+      await this.page.keyboard.press('ArrowDown')
+      await this.page.keyboard.press('Enter')
+      await taTili.tili(0).koulutusaste(0).input.fill('Ammatillinen koulutus')
+      await this.page.keyboard.press('ArrowDown')
+      await this.page.keyboard.press('Enter')
 
-    const paatosTab = await this.commonHakujenHallinta.switchToPaatosTab()
-    await paatosTab.locators.hankkeenAlkamisPaiva.fill(hankkeenAlkamispaiva)
-    await paatosTab.locators.hankkeenPaattymisPaiva.fill(hankkeenPaattymispaiva)
-    await paatosTab.locators.taustaa.fill('taustaa')
-    await this.commonHakujenHallinta.switchToHaunTiedotTab()
-    await haunTiedotPage.common.waitForSave()
+      if (arvioituMaksupaiva) {
+        await this.page.fill('[name="arvioitu_maksupaiva"]', formatDate(arvioituMaksupaiva))
+      }
+
+      if (jaossaOlevaSumma !== undefined) {
+        await this.page.fill('#total-grant-size', String(jaossaOlevaSumma))
+      }
+
+      await this.selectTositelaji('XE')
+      await this.page.fill('#hakuaika-start', formatDate(hakuaikaStart))
+      await this.page.fill('#hakuaika-end', formatDate(hakuaikaEnd))
+      await haunTiedotPage.addValmistelija('Viivi Virkailija')
+      await haunTiedotPage.addArvioija('Päivi Pääkäyttäjä')
+
+      for (let i = 0; i < selectionCriteria.length; i++) {
+        await this.page.getByTestId('add-selection-criteria').click()
+        await this.page.fill(`#selection-criteria-${i}-fi`, selectionCriteria[i])
+        await this.page.fill(`#selection-criteria-${i}-sv`, selectionCriteria[i])
+      }
+
+      for (let i = 0; i < raportointivelvoitteet.length; i++) {
+        await this.selectRaportointilaji(i, raportointivelvoitteet[i].raportointilaji)
+        await this.page.fill(`[name="maaraaika-${i}"]`, raportointivelvoitteet[i].maaraaika)
+        await this.page.fill(`[id="asha-tunnus-${i}"]`, raportointivelvoitteet[i].ashaTunnus)
+        if (raportointivelvoitteet[i].lisatiedot) {
+          await this.page.fill(`[id="lisatiedot-${i}"]`, raportointivelvoitteet[i].lisatiedot ?? '')
+        }
+        await this.page.click(`[id="new-raportointivelvoite-${i}"]`)
+      }
+
+      for (const saadanto of lainsaadanto) {
+        await this.page.locator(`label:has-text("${saadanto}")`).click()
+      }
+
+      const paatosTab = await this.commonHakujenHallinta.switchToPaatosTab()
+      await paatosTab.locators.hankkeenAlkamisPaiva.fill(hankkeenAlkamispaiva)
+      await paatosTab.locators.hankkeenPaattymisPaiva.fill(hankkeenPaattymispaiva)
+      await paatosTab.locators.taustaa.fill('taustaa')
+      await this.commonHakujenHallinta.switchToHaunTiedotTab()
+      await haunTiedotPage.common.waitForSave()
+    })
   }
 
   async createHakuWithLomakeJson(
@@ -261,6 +265,16 @@ export class HakujenHallintaPage {
 
     await formEditorPage.saveForm()
     return { avustushakuID }
+  }
+
+  async createPublishedAvustushaku(hakuProps: HakuProps, hakulomake: string) {
+    return await test.step('Create avustushaku', async () => {
+      const { avustushakuID } = await this.createHakuWithLomakeJson(hakulomake, hakuProps)
+      await this.commonHakujenHallinta.switchToHaunTiedotTab()
+      const haunTiedotPage = await this.commonHakujenHallinta.switchToHaunTiedotTab()
+      await haunTiedotPage.publishAvustushaku()
+      return avustushakuID
+    })
   }
 
   async createMuutoshakemusEnabledHaku(hakuProps: HakuProps) {

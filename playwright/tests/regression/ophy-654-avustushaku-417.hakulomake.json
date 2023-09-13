@@ -1,0 +1,305 @@
+{
+  "content": [
+    {
+      "fieldClass": "wrapperElement",
+      "id": "project-info",
+      "fieldType": "theme",
+      "children": [
+        {
+          "label": {
+            "fi": "Project title",
+            "sv": "Projektets namn"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "project-name",
+          "params": {
+            "size": "small",
+            "maxlength": 200
+          },
+          "required": true,
+          "fieldType": "textField"
+        },
+        {
+          "label": {
+            "fi": "Project manager`s name",
+            "sv": "Kontaktperson"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Name of the project manager (coordinator of the applied project) within the coordinating HEI.",
+            "sv": "Med kontaktperson avses den projektansvariga i sökandeorganisationen."
+          },
+          "id": "applicant-name",
+          "params": {
+            "size": "small",
+            "maxlength": 80
+          },
+          "required": true,
+          "fieldType": "textField"
+        },
+        {
+          "label": {
+            "fi": "Project manager's email ",
+            "sv": "E-post"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "primary-email",
+          "params": {
+            "size": "small",
+            "maxlength": 80
+          },
+          "required": true,
+          "fieldType": "vaEmailNotification"
+        },
+        {
+          "label": {
+            "fi": "Project manager's telephone number",
+            "sv": "Telefon"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "textField-0",
+          "params": {
+            "size": "small",
+            "maxlength": 15
+          },
+          "required": true,
+          "fieldType": "textField"
+        }
+      ],
+      "label": {
+        "fi": "2) Project overview",
+        "sv": "UPPGIFTER OM PROJEKTET"
+      }
+    },
+    {
+      "fieldClass": "wrapperElement",
+      "id": "financing-plan",
+      "fieldType": "theme",
+      "children": [
+        {
+          "fieldClass": "infoElement",
+          "id": "financing-plan-help",
+          "fieldType": "p",
+          "params": {
+            "preview": false
+          },
+          "text": {
+            "fi": "",
+            "sv": "För statsunderstödets totala kostnader godkänns de omedelbara kostnaderna för projektet, samt för organisationens andra kostnader, de kostnadsposter, som man direkt enligt upphovsprincipen kan dokumentera som utgifter för projektet. Endast utgifter som baserar sig på faktiska och förverkligade kostnader godkänns. Sådana utgifter är t.ex. en del av utbildarens lön, hyreskostnader för arbetsutrymmen i förhållande till arbetstiden inom projektet och hyreskostnaderna för de lokaler som behövs vid genomförandet av utbildningen. Kalkylerade och procentuella kostnadsposter, som inte baserar sig omedelbart på kostnader för projektets faktiska utgifter och som skulle ha uppstått även utan detta projekt, godkänns inte som kostnader för statsunderstödsprojekt."
+          }
+        },
+        {
+          "fieldClass": "wrapperElement",
+          "id": "budget",
+          "fieldType": "vaBudget",
+          "children": [
+            {
+              "fieldClass": "wrapperElement",
+              "id": "project-budget",
+              "fieldType": "vaSummingBudgetElement",
+              "children": [
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "personnel-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "initialValue": {
+                        "fi": "-",
+                        "sv": ""
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "personnel-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "personnel-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Travel/mobility costs",
+                    "sv": "Personalkostnader"
+                  },
+                  "helpText": {
+                    "fi": "",
+                    "sv": "xx"
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "material-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "initialValue": {
+                        "fi": "-",
+                        "sv": ""
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "material-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "material-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Organisational costs",
+                    "sv": "Material, utrustning och varor"
+                  },
+                  "helpText": {
+                    "fi": "",
+                    "sv": "xx"
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "service-purchase-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "initialValue": {
+                        "fi": "-",
+                        "sv": ""
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "service-purchase-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "service-purchase-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Salaries",
+                    "sv": "Intensive course 1 budget"
+                  },
+                  "helpText": {
+                    "fi": "",
+                    "sv": "xx"
+                  }
+                }
+              ],
+              "params": {
+                "sumRowLabel": {
+                  "fi": "Total sum",
+                  "sv": "Kostnader sammanlagt"
+                },
+                "columnTitles": {
+                  "label": {
+                    "fi": "Applied TFK-project budget in total",
+                    "sv": "Kostnader"
+                  },
+                  "amount": {
+                    "fi": "Total grant requested in euros",
+                    "sv": "Totalt"
+                  },
+                  "description": {
+                    "fi": "",
+                    "sv": "Förklaring, kort beskrivning"
+                  }
+                },
+                "showColumnTitles": true
+              },
+              "label": {
+                "fi": "",
+                "sv": "Budget"
+              }
+            }
+          ]
+        }
+      ],
+      "label": {
+        "fi": "8) Budget summary",
+        "sv": "Budget"
+      }
+    }
+  ],
+  "rules": [],
+  "created_at": "2022-11-21T13:14:57Z",
+  "updated_at": "2023-01-19T08:15:55Z"
+}

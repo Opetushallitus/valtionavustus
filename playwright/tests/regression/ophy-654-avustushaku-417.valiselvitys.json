@@ -1,0 +1,501 @@
+{
+  "content": [
+    {
+      "fieldClass": "infoElement",
+      "id": "name",
+      "fieldType": "h1"
+    },
+    {
+      "fieldClass": "infoElement",
+      "id": "h3-2",
+      "fieldType": "h3",
+      "params": {},
+      "text": {
+        "fi": "INTERIM REPORT",
+        "sv": ""
+      }
+    },
+    {
+      "fieldClass": "infoElement",
+      "id": "p-0",
+      "fieldType": "p",
+      "params": {},
+      "text": {
+        "fi": "To be filled in online by 15.11.2020. You may edit the application until the deadline. ",
+        "sv": ""
+      }
+    },
+    {
+      "fieldClass": "infoElement",
+      "id": "p-5",
+      "fieldType": "p",
+      "params": {},
+      "text": {
+        "fi": "You can read further instructions by checking the blue question marks next to the questions.",
+        "sv": ""
+      }
+    },
+    {
+      "fieldClass": "infoElement",
+      "id": "p-1",
+      "fieldType": "p",
+      "params": {},
+      "text": {
+        "fi": "FIRST+ Programme period:",
+        "sv": ""
+      }
+    },
+    {
+      "fieldClass": "infoElement",
+      "id": "p-2",
+      "fieldType": "p",
+      "params": {},
+      "text": {
+        "fi": "Start date 1.6.2020",
+        "sv": ""
+      }
+    },
+    {
+      "fieldClass": "infoElement",
+      "id": "p-3",
+      "fieldType": "p",
+      "params": {},
+      "text": {
+        "fi": "End date 31.8.2021",
+        "sv": ""
+      }
+    },
+    {
+      "fieldClass": "wrapperElement",
+      "id": "applicant-info",
+      "fieldType": "theme",
+      "children": [
+        {
+          "label": {
+            "fi": "Network name",
+            "sv": "Sökandeorganisation"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": "Meddela sökandeorganisationens namn."
+          },
+          "id": "organization",
+          "params": {
+            "size": "small",
+            "maxlength": 80
+          },
+          "required": true,
+          "fieldType": "textField"
+        },
+        {
+          "label": {
+            "fi": "Network acronym",
+            "sv": "Projektets namn"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "project-name",
+          "params": {
+            "size": "small",
+            "maxlength": 200
+          },
+          "required": true,
+          "fieldType": "textField"
+        },
+        {
+          "label": {
+            "fi": "Coordinating HEI",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "textField-0",
+          "params": {
+            "size": "small",
+            "maxlength": 100
+          },
+          "required": true,
+          "fieldType": "textField"
+        },
+        {
+          "label": {
+            "fi": "Contact person email",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "textField-1",
+          "params": {
+            "size": "small",
+            "maxlength": 100
+          },
+          "required": true,
+          "fieldType": "textField"
+        },
+        {
+          "fieldClass": "wrapperElement",
+          "id": "gp-wrap",
+          "fieldType": "fieldset",
+          "children": []
+        }
+      ],
+      "label": {
+        "fi": "1) NETWORK OVERVIEW",
+        "sv": " "
+      }
+    },
+    {
+      "fieldClass": "wrapperElement",
+      "id": "part-2",
+      "fieldType": "theme",
+      "children": [
+        {
+          "fieldClass": "infoElement",
+          "id": "p-4",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "Please fill in below the numbers of mobile students and teachers as well as used/reserved funding for their exchanges. You can take into count all exchanges that have been agreed upon even if the grant has not been paid yet.",
+            "sv": ""
+          }
+        },
+        {
+          "label": {
+            "fi": "Long-term student exchanges",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "lt-network-activities-table",
+          "params": {
+            "rows": [
+              {
+                "title": {
+                  "fi": "FI->RU",
+                  "sv": "",
+                  "valueType": "integer"
+                },
+                "required": false
+              },
+              {
+                "title": {
+                  "fi": "RU->FI",
+                  "sv": "",
+                  "valueType": "integer"
+                },
+                "required": false
+              }
+            ],
+            "columns": [
+              {
+                "title": {
+                  "fi": "No. of students",
+                  "sv": ""
+                },
+                "required": false,
+                "maxlength": 10,
+                "valueType": "integer"
+              },
+              {
+                "title": {
+                  "fi": "Used/reserved funding",
+                  "sv": ""
+                },
+                "required": false,
+                "maxlength": 10,
+                "valueType": "integer",
+                "calculateSum": false
+              }
+            ]
+          },
+          "required": false,
+          "fieldType": "tableField"
+        },
+        {
+          "label": {
+            "fi": "Short-term student exchanges",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "st-network-activities-table",
+          "params": {
+            "rows": [
+              {
+                "title": {
+                  "fi": "FI->RU",
+                  "sv": ""
+                },
+                "required": false
+              }
+            ],
+            "columns": [
+              {
+                "title": {
+                  "fi": "No. of students",
+                  "sv": ""
+                },
+                "required": false,
+                "maxlength": 10,
+                "valueType": "string"
+              },
+              {
+                "title": {
+                  "fi": "Used/reserved funding",
+                  "sv": ""
+                },
+                "required": false,
+                "maxlength": 10,
+                "valueType": "integer",
+                "calculateSum": false
+              }
+            ]
+          },
+          "required": false,
+          "fieldType": "tableField"
+        },
+        {
+          "label": {
+            "fi": "Teacher exchanges",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "teacher-ex-network-activities-table",
+          "params": {
+            "rows": [
+              {
+                "title": {
+                  "fi": "FI->RU",
+                  "sv": "",
+                  "valueType": "integer"
+                },
+                "required": false
+              },
+              {
+                "title": {
+                  "fi": "RU->FI",
+                  "sv": "",
+                  "valueType": "integer"
+                },
+                "required": false
+              }
+            ],
+            "columns": [
+              {
+                "title": {
+                  "fi": "No. of teachers",
+                  "sv": ""
+                },
+                "required": false,
+                "maxlength": 10,
+                "valueType": "integer"
+              },
+              {
+                "title": {
+                  "fi": "Used/reserved funding",
+                  "sv": ""
+                },
+                "required": false,
+                "maxlength": 10,
+                "valueType": "integer",
+                "calculateSum": false
+              }
+            ]
+          },
+          "required": false,
+          "fieldType": "tableField"
+        },
+        {
+          "label": {
+            "fi": "Intensive course, used funding",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "If you received funding for an intensive course and the course has already taken place please indicate the used funding here.",
+            "sv": ""
+          },
+          "id": "textField-2",
+          "params": {
+            "size": "small",
+            "maxlength": 100
+          },
+          "required": false,
+          "fieldType": "textField"
+        },
+        {
+          "label": {
+            "fi": "Used/reserved funding TOTAL",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Please add up the used funding from all the categories above.",
+            "sv": ""
+          },
+          "id": "textField-5",
+          "params": {
+            "size": "small",
+            "maxlength": 100
+          },
+          "required": true,
+          "fieldType": "textField"
+        },
+        {
+          "label": {
+            "fi": "Estimation of unused funding",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Please give an estimation of the funding that will be returned to EDUFI at the end of the programme period.",
+            "sv": ""
+          },
+          "id": "textField-4",
+          "params": {
+            "size": "small",
+            "maxlength": 100
+          },
+          "required": false,
+          "fieldType": "textField"
+        },
+        {
+          "label": {
+            "fi": "Request for additional funding",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "If you will have more mobilities in your network that was originally granted you may insert a request for additional funding here.",
+            "sv": ""
+          },
+          "id": "textField-3",
+          "params": {
+            "size": "small",
+            "maxlength": 100
+          },
+          "required": false,
+          "fieldType": "textField"
+        },
+        {
+          "label": {
+            "fi": "If you are requesting additional funding for an intensive course from the reserve list please add the programme (and any additional info you want to give) of the course here.",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "namedAttachment-0",
+          "params": {},
+          "required": false,
+          "fieldType": "namedAttachment"
+        },
+        {
+          "label": {
+            "fi": "Justifications for unused funding or requested additional funding.",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "If you are requesting additional funding please indicate here for which types of mobilities, how many and whether the requested grants should be for category 1 or category 2.",
+            "sv": ""
+          },
+          "id": "textArea-1",
+          "params": {
+            "size": "medium",
+            "maxlength": 3000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Additional comments on the cooperation and implementation of the mobility flows.",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Please describe here also the effects of the covid-19 for the implementation of your FIRST+ project as well as possibilities/implementations of virtual mobility in your network.",
+            "sv": ""
+          },
+          "id": "textArea-2",
+          "params": {
+            "size": "medium",
+            "maxlength": 3000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        }
+      ],
+      "label": {
+        "fi": "2) NETWORK ACTIVITIES",
+        "sv": "OSIO 2"
+      }
+    },
+    {
+      "fieldClass": "wrapperElement",
+      "id": "part-4",
+      "fieldType": "theme",
+      "children": [
+        {
+          "label": {
+            "fi": "Feedback and comments on the administration  of the FIRST+ programme",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "textArea-0",
+          "params": {
+            "size": "large",
+            "maxlength": 5000
+          },
+          "required": false,
+          "fieldType": "textArea"
+        }
+      ],
+      "label": {
+        "fi": "3) FEEDBACK",
+        "sv": "OSIO 4"
+      }
+    }
+  ],
+  "rules": [
+    {
+      "type": "includeIf",
+      "triggerId": "radioButton-good-practices",
+      "targetIds": [
+        "gp-wrap"
+      ],
+      "params": {
+        "triggerValue": "kyllae"
+      }
+    }
+  ],
+  "created_at": "2022-11-21T13:14:57Z",
+  "updated_at": "2022-11-21T13:14:57Z"
+}

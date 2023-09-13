@@ -1,0 +1,779 @@
+{
+  "content": [
+    {
+      "fieldClass": "infoElement",
+      "id": "name",
+      "fieldType": "h1"
+    },
+    {
+      "fieldClass": "infoElement",
+      "id": "h3-2",
+      "fieldType": "h3",
+      "params": {},
+      "text": {
+        "fi": "FINAL REPORT",
+        "sv": ""
+      }
+    },
+    {
+      "fieldClass": "infoElement",
+      "id": "p-0",
+      "fieldType": "p",
+      "params": {},
+      "text": {
+        "fi": "To be filled in online by 15.10.2020. You may edit the form until the deadline.",
+        "sv": ""
+      }
+    },
+    {
+      "fieldClass": "infoElement",
+      "id": "p-5",
+      "fieldType": "p",
+      "params": {},
+      "text": {
+        "fi": "For those projects who have been granted permission to transfer an intensive course or a group mobility period later in the autumn, the final report will be left open in the VA system and should be completed as soon as possible after the transferred activities, but no later than the end of the year. Please save the link to this report for yourself in these cases!",
+        "sv": ""
+      }
+    },
+    {
+      "fieldClass": "wrapperElement",
+      "id": "applicant-info",
+      "fieldType": "theme",
+      "children": [
+        {
+          "label": {
+            "fi": "Network name",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "organization",
+          "params": {
+            "size": "small",
+            "maxlength": 80
+          },
+          "required": true,
+          "fieldType": "textField"
+        },
+        {
+          "label": {
+            "fi": "Network acronym",
+            "sv": "Projektets namn"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "project-name",
+          "params": {
+            "size": "small",
+            "maxlength": 200
+          },
+          "required": true,
+          "fieldType": "textField"
+        },
+        {
+          "label": {
+            "fi": "Coordinating HEI",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "textField-0",
+          "params": {
+            "size": "small",
+            "maxlength": 100
+          },
+          "required": true,
+          "fieldType": "textField"
+        },
+        {
+          "label": {
+            "fi": "Contact person email",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "textField-1",
+          "params": {
+            "size": "small",
+            "maxlength": 100
+          },
+          "required": true,
+          "fieldType": "textField"
+        },
+        {
+          "label": {
+            "fi": "Billing address of the coordinating HEI",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "textArea-7",
+          "params": {
+            "size": "small",
+            "maxlength": 1000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "fieldClass": "wrapperElement",
+          "id": "gp-wrap",
+          "fieldType": "fieldset",
+          "children": []
+        }
+      ],
+      "label": {
+        "fi": "1) NETWORK OVERVIEW",
+        "sv": " "
+      }
+    },
+    {
+      "fieldClass": "wrapperElement",
+      "id": "applicant-info2",
+      "fieldType": "theme",
+      "children": [
+        {
+          "fieldClass": "wrapperElement",
+          "id": "gp-wrap2",
+          "fieldType": "fieldset",
+          "children": []
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "h3-1",
+          "fieldType": "h3",
+          "params": {},
+          "text": {
+            "fi": "Network roles and composition",
+            "sv": ""
+          }
+        },
+        {
+          "label": {
+            "fi": "Describe and analyze the coordination of the network as well as the roles and commitment of partner institutions involved.",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "textArea-1",
+          "params": {
+            "size": "medium",
+            "maxlength": 3000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Were there any changes made to the partner composition?",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "textArea-3",
+          "params": {
+            "size": "medium",
+            "maxlength": 3000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "h3-3",
+          "fieldType": "h3",
+          "params": {},
+          "text": {
+            "fi": "Network activities and implementation",
+            "sv": ""
+          }
+        },
+        {
+          "label": {
+            "fi": "Analyze and give reasons to the realization of the mobility flows. Explain any changes or budget transfers made.",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "textArea-2",
+          "params": {
+            "size": "medium",
+            "maxlength": 3000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Describe and analyze the project implementation and how the support services for mobilities and recognition of studies have worked in both Finland and Russia.",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "textArea-4",
+          "params": {
+            "size": "medium",
+            "maxlength": 3000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Were there any challenges encountered during the project period and if so, how were they resolved?",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "textArea-6",
+          "params": {
+            "size": "medium",
+            "maxlength": 3000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "h3-4",
+          "fieldType": "h3",
+          "params": {},
+          "text": {
+            "fi": "Results and impact",
+            "sv": ""
+          }
+        },
+        {
+          "label": {
+            "fi": "Describe and analyze the results and impact reached by the project. Were the aims of the project met? ",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "textArea-5",
+          "params": {
+            "size": "medium",
+            "maxlength": 3000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Are there any best practise examples that you would like to share?",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "textArea-8",
+          "params": {
+            "size": "medium",
+            "maxlength": 3000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "h3-0",
+          "fieldType": "h3",
+          "params": {},
+          "text": {
+            "fi": "Intensive courses",
+            "sv": ""
+          }
+        },
+        {
+          "fieldClass": "wrapperElement",
+          "id": "growingFieldset-0",
+          "fieldType": "growingFieldset",
+          "children": [
+            {
+              "fieldClass": "wrapperElement",
+              "id": "growingFieldset-0-growingFieldsetChild-0",
+              "fieldType": "growingFieldsetChild",
+              "children": [
+                {
+                  "label": {
+                    "fi": "Course title",
+                    "sv": ""
+                  },
+                  "fieldClass": "formField",
+                  "helpText": {
+                    "fi": "",
+                    "sv": ""
+                  },
+                  "id": "growingFieldset-0-growingFieldsetChild-0.textField_0",
+                  "params": {
+                    "size": "small",
+                    "maxlength": 100
+                  },
+                  "required": false,
+                  "fieldType": "textField"
+                },
+                {
+                  "label": {
+                    "fi": "Describe and analyze the implementation of the course, division of labour between partner institutions, who the participants were (students and teachers), results and their dissemination as well as any changes made to the project plan.",
+                    "sv": ""
+                  },
+                  "fieldClass": "formField",
+                  "helpText": {
+                    "fi": "",
+                    "sv": ""
+                  },
+                  "id": "growingFieldset-0-growingFieldsetChild-0.textArea_0",
+                  "params": {
+                    "size": "large",
+                    "maxlength": 5000
+                  },
+                  "required": false,
+                  "fieldType": "textArea"
+                }
+              ],
+              "params": {}
+            }
+          ],
+          "params": {
+            "showOnlyFirstLabels": false
+          }
+        }
+      ],
+      "label": {
+        "fi": "2) QUALITATIVE REPORT",
+        "sv": " "
+      }
+    },
+    {
+      "fieldClass": "wrapperElement",
+      "id": "applicant-info3",
+      "fieldType": "theme",
+      "children": [
+        {
+          "fieldClass": "infoElement",
+          "id": "p-1",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "Please attach the following documents",
+            "sv": ""
+          }
+        },
+        {
+          "label": {
+            "fi": "1. Statistical and financial report in Excel form. The statistical and financial report of mobilities should be drawn up in the Excel template available on EDUFI webpage. The report should also include any mobility respecting the programme rules which has taken place without a FIRST+ grant.",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "namedAttachment-0",
+          "params": {},
+          "required": true,
+          "fieldType": "namedAttachment"
+        },
+        {
+          "label": {
+            "fi": "2. Accounting report, with total sums tallying with those in the statistical and financial report.",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "namedAttachment-1",
+          "params": {},
+          "required": true,
+          "fieldType": "namedAttachment"
+        },
+        {
+          "label": {
+            "fi": "3. The programme and participant list (with signatures) of the intensive course 1",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "namedAttachment-2",
+          "params": {},
+          "required": false,
+          "fieldType": "namedAttachment"
+        },
+        {
+          "label": {
+            "fi": "4. The programme and participant list (with signatures) of the intensive course 2",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "namedAttachment-3",
+          "params": {},
+          "required": false,
+          "fieldType": "namedAttachment"
+        },
+        {
+          "fieldClass": "wrapperElement",
+          "id": "gp-wrap3",
+          "fieldType": "fieldset",
+          "children": []
+        }
+      ],
+      "label": {
+        "fi": "3) ATTACHMENTS",
+        "sv": " "
+      }
+    },
+    {
+      "fieldClass": "wrapperElement",
+      "id": "financing-plan",
+      "fieldType": "theme",
+      "children": [
+        {
+          "fieldClass": "infoElement",
+          "id": "financing-plan-help",
+          "fieldType": "p",
+          "params": {
+            "preview": false
+          },
+          "text": {
+            "fi": "",
+            "sv": ""
+          }
+        },
+        {
+          "fieldClass": "wrapperElement",
+          "id": "budget",
+          "fieldType": "vaBudget",
+          "children": [
+            {
+              "fieldClass": "wrapperElement",
+              "id": "project-budget",
+              "fieldType": "vaSummingBudgetElement",
+              "children": [
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "personnel-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "initialValue": {
+                        "fi": "-",
+                        "sv": ""
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "personnel-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "personnel-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Finland-Russia",
+                    "sv": "Personalkostnader"
+                  },
+                  "helpText": {
+                    "fi": "",
+                    "sv": "Godtagbara kostnader är skäliga lönekostnader som direkt ansluter sig till genomförandet av projektet och lagstadgade personbikostnader för utbetalning av lönen. Över de personer som arbetar inom projektet på deltid ska föras total arbetstidsuppföljning och daglig total arbetstidsuppföljning. I förklaringspunkten ska anges hur många personer som arbetar inom projektet på heltid och på deltid."
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "material-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "initialValue": {
+                        "fi": "-",
+                        "sv": ""
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "material-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "material-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Russia-Finland",
+                    "sv": "Material, utrustning och varor"
+                  },
+                  "helpText": {
+                    "fi": "",
+                    "sv": "Kostnaderna för genomförandet av de åtgärder som ingår i projektet. Undervisnings- och utbildningsmaterial i anslutning till den verksamhet som ordnas för projektets målgrupp. Materialkostnader i anslutning till uppföljningen av projektets genomförande. Avgifter för post och digital kommunikation och telefon som hänför sig till projektet, i förhållande till använd arbetstid."
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "service-purchase-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "initialValue": {
+                        "fi": "-",
+                        "sv": ""
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "service-purchase-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "service-purchase-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Intensive course 1",
+                    "sv": "Tjänster"
+                  },
+                  "helpText": {
+                    "fi": "",
+                    "sv": "Tjänster som köps av externa serviceproducenter. Anskaffningsutgifter för sakkunnig- och utbildningstjänster i anslutning till projektets genomförande och övriga avgifter för köpta tjänster som omedelbart ansluter till projektets genomförande (till exempel kostnader för reklam och marknadsföring). Vid köp av tjänster ska lagen om offentlig upphandling följas. I förklaringspunkten utreds vilka tjänster som anskaffas."
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "rent-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "initialValue": {
+                        "fi": "-",
+                        "sv": ""
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "rent-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "rent-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Intensive course 2",
+                    "sv": "Hyror"
+                  },
+                  "helpText": {
+                    "fi": "",
+                    "sv": "I hyreskostnader kan antecknas de faktiska hyreskostnaderna för de lokaler som behövs vid genomförandet av utbildningen och övriga hyreskostnader för lokaler enligt upphovsprincipen: till exempel hyran för utbildningsplanerarens arbetsrum i förhållande till den arbetstid som använts för projektet. I förklaringspunkten anges vad för hyreskostnader det handlar om."
+                  }
+                }
+              ],
+              "params": {
+                "sumRowLabel": {
+                  "fi": "Total grant",
+                  "sv": "Kostnader sammanlagt"
+                },
+                "columnTitles": {
+                  "label": {
+                    "fi": "FIRST+ TOTAL GRANT",
+                    "sv": "Kostnader"
+                  },
+                  "amount": {
+                    "fi": "Total grant used in euros",
+                    "sv": "Totalt"
+                  },
+                  "description": {
+                    "fi": "",
+                    "sv": "Förklaring, kort beskrivning"
+                  }
+                },
+                "showColumnTitles": true
+              },
+              "label": {
+                "fi": "",
+                "sv": "Budget"
+              }
+            }
+          ]
+        }
+      ],
+      "label": {
+        "fi": "4) BUDGET SUMMARY",
+        "sv": ""
+      }
+    },
+    {
+      "fieldClass": "wrapperElement",
+      "id": "part-4",
+      "fieldType": "theme",
+      "children": [
+        {
+          "label": {
+            "fi": "Feedback and comments for EDUFI on the administration  of the FIRST+ programme",
+            "sv": ""
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "textArea-0",
+          "params": {
+            "size": "large",
+            "maxlength": 5000
+          },
+          "required": false,
+          "fieldType": "textArea"
+        }
+      ],
+      "label": {
+        "fi": "5) FEEDBACK",
+        "sv": ""
+      }
+    }
+  ],
+  "rules": [
+    {
+      "type": "includeIf",
+      "triggerId": "radioButton-good-practices",
+      "targetIds": [
+        "gp-wrap"
+      ],
+      "params": {
+        "triggerValue": "kyllae"
+      }
+    }
+  ],
+  "created_at": "2022-11-21T13:14:57Z",
+  "updated_at": "2022-11-21T13:14:57Z"
+}

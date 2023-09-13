@@ -1,6 +1,7 @@
 import { expect, Page } from '@playwright/test'
 import { Response } from 'playwright-core'
 import { navigate } from '../../../utils/navigate'
+import { saveStatusTestId } from './CommonHakujenHallintaPage'
 
 type SelvitysType = 'vali' | 'loppu'
 
@@ -8,6 +9,8 @@ export default function SelvitysTab(page: Page, type: SelvitysType) {
   const umlautType = type === 'vali' ? 'väli' : 'loppu'
 
   const locators = {
+    form: page.locator('.form-json-editor textarea'),
+    saveFormButton: page.getByRole('button', { name: 'Tallenna' }),
     tapahtumaloki: page.locator('div.tapahtumaloki'),
     linkToHakemus: page.locator('text="Linkki lomakkeelle"'),
     warning: page.locator('#selvitys-not-sent-warning'),
@@ -96,9 +99,44 @@ export default function SelvitysTab(page: Page, type: SelvitysType) {
     await page.waitForSelector(`text="Lähetetty ${expectedAmount} viestiä"`)
   }
 
+  /*
+    for some reason
+    await page.fill(".form-json-editor textarea", lomakeJson)
+    takes almost 50seconds
+  */
+  async function replaceLomakeJson(lomakeJson: string) {
+    await locators.form.evaluate((textarea, lomakeJson) => {
+      ;(textarea as HTMLTextAreaElement).value = lomakeJson
+    }, lomakeJson)
+  }
+
+  async function waitFormToBeLoaded() {
+    await expect(locators.form).toContainText('{')
+  }
+
+  async function changeLomakeJson(lomakeJson: string) {
+    await waitFormToBeLoaded()
+    await expect(locators.saveFormButton).toBeDisabled()
+    await replaceLomakeJson(lomakeJson)
+    await expect(locators.saveFormButton).toBeDisabled()
+    // trigger autosave by typing space in the end
+    await locators.form.type(' ')
+    await expect(locators.saveFormButton).toBeEnabled()
+  }
+
+  async function saveForm() {
+    const savedSuccessfully = page
+      .getByTestId(saveStatusTestId)
+      .locator('text=Kaikki tiedot tallennettu')
+    await expect(savedSuccessfully).toBeHidden()
+    await locators.saveFormButton.click()
+    await expect(savedSuccessfully).toBeVisible()
+  }
+
   return {
     getSelvitysTitleFi,
     setSelvitysTitleFi,
+    changeLomakeJson,
     openFormPreviewFi,
     openFormPreviewSv,
     acceptSelvitys,
@@ -107,6 +145,7 @@ export default function SelvitysTab(page: Page, type: SelvitysType) {
     navigateToValiselvitysTab,
     navigateToLoppuselvitysTab,
     sendSelvitysPyynnot,
+    saveForm,
     ...locators,
   }
 }

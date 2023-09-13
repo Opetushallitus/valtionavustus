@@ -22,6 +22,7 @@ export interface Answers {
   contactPersonPhoneNumber: string
   signatories?: Signatory[]
   lang?: 'fi' | 'sv'
+
   hakemusFields?: FieldAnswer[]
 }
 

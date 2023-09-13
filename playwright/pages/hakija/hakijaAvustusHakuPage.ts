@@ -22,6 +22,12 @@ export function HakijaAvustusHakuPage(page: Page) {
       },
     },
     form: {
+      muutoshakuEnabledFields: {
+        projectName: page.locator('#project-name'),
+        applicantName: page.locator('#applicant-name'),
+        primaryEmail: page.locator('#primary-email'),
+        contactPhoneNumber: page.locator('#textField-0'),
+      },
       trustedContact: {
         name: page.locator('#trusted-contact-name'),
         email: page.locator('#trusted-contact-email'),
@@ -90,7 +96,7 @@ export function HakijaAvustusHakuPage(page: Page) {
 
   async function startApplication(avustushakuID: number, contactPersonEmail: string) {
     await page.waitForSelector('#haku-not-open', { state: 'hidden' })
-    await page.fill('#primary-email', contactPersonEmail)
+    await locators.form.muutoshakuEnabledFields.primaryEmail.fill(contactPersonEmail)
     await page.click('#submit:not([disabled])')
 
     const receivedEmail = await pollUntilNewHakemusEmailArrives(avustushakuID, contactPersonEmail)
@@ -114,13 +120,8 @@ export function HakijaAvustusHakuPage(page: Page) {
     }
   }
 
-  async function fillMuutoshakemusEnabledHakemus(
-    avustushakuID: number,
-    answers: Answers,
-    beforeSubmitFn?: () => void
-  ) {
+  async function fillMuutoshakemusEnabledHakemus(answers: Answers, beforeSubmitFn?: () => void) {
     const lang = answers.lang || 'fi'
-    await startAndFillApplication(answers, avustushakuID)
 
     const getSignatoriesOrDefault = () => {
       if (!answers.signatories || answers.signatories.length < 1) {
@@ -196,22 +197,38 @@ export function HakijaAvustusHakuPage(page: Page) {
     await page.waitForSelector('#submit:not([disabled])')
   }
 
+  async function fillApplication(answers: Answers, businessId: string | null) {
+    if (businessId) {
+      await fillInBusinessId(businessId)
+    }
+
+    const { applicantName, contactPhoneNumber, projectName } = locators.form.muutoshakuEnabledFields
+    await projectName.fill(answers.projectName)
+    await applicantName.fill(answers.contactPersonName)
+    await contactPhoneNumber.fill(answers.contactPersonPhoneNumber)
+  }
+
   async function startAndFillApplication(answers: Answers, avustushakuID: number) {
     const hakemusUrl = await startApplication(avustushakuID, answers.contactPersonEmail)
     await page.goto(hakemusUrl)
-
-    await fillInBusinessId(TEST_Y_TUNNUS)
-
-    await page.fill('#applicant-name', answers.contactPersonName)
-    await page.fill("[id='textField-0']", answers.contactPersonPhoneNumber)
+    await fillApplication(answers, TEST_Y_TUNNUS)
   }
 
+  async function fillAndSendHakemus(avustushakuID: number, answers: Answers) {
+    await startAndFillApplication(answers, avustushakuID)
+
+    const { projectName } = locators.form.muutoshakuEnabledFields
+    await projectName.fill(answers.projectName)
+  }
+
+  /** @deprecated Use fillAndSendHakemus with corresponding answers */
   async function fillAndSendMuutoshakemusEnabledHakemus(
     avustushakuID: number,
     answers: Answers,
     beforeSubmitFn?: () => void
   ) {
-    await fillMuutoshakemusEnabledHakemus(avustushakuID, answers, beforeSubmitFn)
+    await startAndFillApplication(answers, avustushakuID)
+    await fillMuutoshakemusEnabledHakemus(answers, beforeSubmitFn)
     const { userKey } = await submitApplication()
     return { userKey }
   }
@@ -220,16 +237,14 @@ export function HakijaAvustusHakuPage(page: Page) {
     return await expectQueryParameter(page, 'hakemus')
   }
 
+  /** @deprecated Use fillAndSendHakemus with corresponding answers */
   async function fillKoulutusosioHakemus(
     avustushakuID: number,
     answers: Answers,
     osioType: 'koulutuspäivä' | 'opintopiste'
   ) {
-    const hakemusUrl = await startApplication(avustushakuID, answers.contactPersonEmail)
-    await page.goto(hakemusUrl)
-    await fillInBusinessId(TEST_Y_TUNNUS)
-    await page.fill('#applicant-name', answers.contactPersonName)
-    await page.fill("[id='textField-0']", answers.contactPersonPhoneNumber)
+    await startAndFillApplication(answers, avustushakuID)
+
     await page.fill('#textField-2', 'Hakaniemenranta 6')
     await page.fill('#textField-3', '00531')
     await page.fill('#textField-4', 'Helsinki')
@@ -313,6 +328,7 @@ export function HakijaAvustusHakuPage(page: Page) {
     await page.locator(`[id="own-income-row.amount"]`).fill('500')
   }
 
+  /** @deprecated Use fillAndSendHakemus with corresponding answers */
   async function fillBudjettimuutoshakemusEnabledHakemus(
     avustushakuID: number,
     answers: Answers,
@@ -373,23 +389,25 @@ export function HakijaAvustusHakuPage(page: Page) {
   return {
     page,
     ...locators,
-    navigate,
-    navigateToYhteyshenkilöChangePage,
-    navigateToExistingHakemusPage,
-    getUserKey,
+    fillApplication,
+    fillAndSendHakemus,
+    fillAndSendMuutoshakemusEnabledHakemus,
+    fillBudjettimuutoshakemusEnabledHakemus,
     fillInBusinessId,
+    fillKoulutusosioHakemus,
+    fillMuutoshakemusEnabledHakemus,
+    fillSignatories,
+    getUserKey,
+    navigate,
+    navigateToExistingHakemusPage,
+    navigateToYhteyshenkilöChangePage,
+    selectMaakuntaFromDropdown,
+    startAndFillApplication,
+    startApplication,
+    submitApplication,
+    submitChangeRequestResponse,
+    submitOfficerEdit,
     waitForEditSaved,
     waitForPreview,
-    startApplication,
-    fillKoulutusosioHakemus,
-    startAndFillApplication,
-    fillSignatories,
-    selectMaakuntaFromDropdown,
-    fillBudjettimuutoshakemusEnabledHakemus,
-    fillAndSendMuutoshakemusEnabledHakemus,
-    fillMuutoshakemusEnabledHakemus,
-    submitApplication,
-    submitOfficerEdit,
-    submitChangeRequestResponse,
   }
 }

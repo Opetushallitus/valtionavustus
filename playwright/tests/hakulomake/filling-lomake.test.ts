@@ -61,7 +61,8 @@ test('can add and validate different fields', async ({
   await haunTiedotPage.publishAvustushaku()
   const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
   await hakijaAvustusHakuPage.navigate(avustushakuID, 'fi')
-  await hakijaAvustusHakuPage.fillMuutoshakemusEnabledHakemus(avustushakuID, answers, async () => {
+  await hakijaAvustusHakuPage.startAndFillApplication(answers, avustushakuID)
+  await hakijaAvustusHakuPage.fillMuutoshakemusEnabledHakemus(answers, async () => {
     await page.locator('#koodistoField-0_input').click()
     await page.keyboard.press('ArrowDown')
     await page.keyboard.press('Enter')

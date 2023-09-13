@@ -2,6 +2,7 @@
   "extends": "../common-tsconfig.json",
   "compilerOptions": {
     "esModuleInterop": true,
+    "resolveJsonModule": true,
     "sourceMap": true,
     "allowJs": true,
     "jsx": "react-jsx"
