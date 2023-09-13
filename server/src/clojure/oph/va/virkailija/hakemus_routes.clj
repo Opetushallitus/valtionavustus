@@ -39,6 +39,10 @@
 (defn- map-email-field-value [field]
       (map :value (filter #(formutil/has-field-type? "vaEmailNotification" %) field)))
 
+(defn- cancel-taydennyspyynto [hakemus identity]
+  (hakija-api/update-hakemus-status hakemus "submitted" "Täydennyspyyntö peruttu" identity)
+  (http/ok {:status "ok"}))
+
 (compojure-api/defroutes hakemus-routes
   (compojure-api/GET "/project" [haku-id hakemus-id]
     :path-params [avustushaku-id :- Long hakemus-id :- Long]
@@ -156,6 +160,18 @@
                         :avustushaku-id avustushaku-id})]
           (tapahtumaloki/create-log-entry type avustushaku-id hakemus-id identity "" {} email-id true))
         (http/created))))
+
+  (when (feature-enabled? :loppuselvitys-taydennyspyynto)
+    (compojure-api/PUT "/loppuselvitys/cancel-taydennyspyynto" [avustushaku-id hakemus-id :as request]
+      :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+      :return s/Any
+      :summary "Cancel täydennyspyynto"
+      (let [identity (authentication/get-request-identity request)
+            loppuselvitys-hakemus-id (hakija-db/get-loppuselvitys-hakemus-id hakemus-id)
+            loppuselvitys-hakemus (hakija-api/get-hakemus loppuselvitys-hakemus-id)]
+        (if (= "pending_change_request" (:status loppuselvitys-hakemus))
+          (cancel-taydennyspyynto loppuselvitys-hakemus identity)
+          (http/bad-request!)))))
 
   (compojure-api/POST "/re-send-paatos" request
                       :path-params [avustushaku-id :- Long hakemus-id :- Long]

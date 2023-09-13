@@ -6,6 +6,7 @@
             [oph.soresu.form.routes
              :refer [update-form-submission]]
             [oph.va.budget :as va-budget]
+            [oph.va.hakija.api :as hakija-api]
             [oph.va.hakija.db :as va-db]
             [oph.va.hakija.email :as va-email]
             [oph.va.hakija.handlers :as handlers]

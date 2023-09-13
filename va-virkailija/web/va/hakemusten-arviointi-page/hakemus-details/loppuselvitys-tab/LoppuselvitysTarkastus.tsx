@@ -91,6 +91,11 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
             }
           : undefined
       }
+      showCancelButton={
+        hakemus.selvitys?.loppuselvitys.status === 'pending_change_request' &&
+        !hakemus['loppuselvitys-information-verified-at'] &&
+        !hakemus['loppuselvitys-taloustarkastettu-at']
+      }
     />
   )
 }
@@ -184,6 +189,11 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
             {'Hyväksy'}
           </button>
         }
+        showCancelButton={
+          hakemus.selvitys?.loppuselvitys.status === 'pending_change_request' &&
+          !!hakemus['loppuselvitys-information-verified-at'] &&
+          !hakemus['loppuselvitys-taloustarkastettu-at']
+        }
       />
       {!isTaloustarkastettu && showEmail && (
         <div style={{ marginTop: '8px' }}>
@@ -226,6 +236,7 @@ interface LoppuselvitysTarkastusProps {
     heading: string
     component?: React.ReactNode
   }
+  showCancelButton: boolean
 }
 
 function LoppuselvitysTarkastus({
@@ -236,6 +247,7 @@ function LoppuselvitysTarkastus({
   taydennyspyyntoType,
   confirmButton,
   completedBy,
+  showCancelButton,
 }: LoppuselvitysTarkastusProps) {
   const hakemus = useHakemus()
   const avustushakuId = useAvustushakuId()
@@ -252,6 +264,8 @@ function LoppuselvitysTarkastus({
   const [email, setEmail] = useState(createInitialTaydennyspyyntoEmail(hakemus))
   const revealEmailForm = () => emailFormRef.current?.scrollIntoView({ behavior: 'smooth' })
   const [showMessage, setShowMessage] = useState(false)
+  const [cancellingTaydennys, setCancellingTaydennys] = useState(false)
+  const [cancelErrorMsg, setCancelErrorMsg] = useState<string>()
 
   useEffect(() => {
     if (showEmailForm) {
@@ -297,8 +311,22 @@ function LoppuselvitysTarkastus({
     }
   }
 
-  const noBottomBorder = !!sentEmails?.length || showEmailForm || completedBy
+  async function cancelTaydennyspyynto() {
+    try {
+      setCancellingTaydennys(true)
+      setCancelErrorMsg('')
+      await HttpUtil.put(
+        `/api/avustushaku/${avustushakuId}/hakemus/${hakemus.id}/loppuselvitys/cancel-taydennyspyynto`
+      )
+      await dispatch(loadSelvitys({ avustushakuId, hakemusId: hakemus.id })).unwrap()
+    } catch (e) {
+      setCancelErrorMsg('Peruminen epäonnistui')
+    } finally {
+      setCancellingTaydennys(false)
+    }
+  }
 
+  const noBottomBorder = !!sentEmails?.length || showEmailForm || completedBy
   return (
     <>
       <div
@@ -309,16 +337,31 @@ function LoppuselvitysTarkastus({
       >
         <h2>{heading}</h2>
         <div>
-          <button
-            onClick={openOrRevealEmailForm}
-            disabled={disabled || showEmailForm}
-            className="writeMuistutusviestiButton"
-          >
-            Täydennyspyyntö
-          </button>
+          {showCancelButton ? (
+            <button
+              onClick={cancelTaydennyspyynto}
+              disabled={cancellingTaydennys}
+              style={{ marginRight: '14px' }}
+            >
+              Peru täydennyspyyntö
+            </button>
+          ) : (
+            <button
+              onClick={openOrRevealEmailForm}
+              disabled={disabled || showEmailForm}
+              className="writeMuistutusviestiButton"
+            >
+              Täydennyspyyntö
+            </button>
+          )}
           {confirmButton}
         </div>
       </div>
+      {cancelErrorMsg && (
+        <div className="error">
+          <span>{cancelErrorMsg}</span>
+        </div>
+      )}
       <ViestiLista heading="Täydennyspyyntö" messages={sentEmails ?? []} />
       {completedBy && (
         <ViestiListaRow

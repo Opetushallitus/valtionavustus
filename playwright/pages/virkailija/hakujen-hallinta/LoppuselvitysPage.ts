@@ -5,6 +5,11 @@ import moment from 'moment/moment'
 export const LoppuselvitysPage = (page: Page) => {
   const asiatarkastus = page.getByTestId('loppuselvitys-asiatarkastus')
   const taloustarkastus = page.getByTestId('loppuselvitys-taloustarkastus')
+  const taydennyspyynto = page.getByRole('button', { name: 'Täydennyspyyntö' })
+  const accept = page.getByRole('button', { name: 'Hyväksy' })
+  const confirm = page.getByRole('button', {
+    name: 'Vahvista hyväksyntä',
+  })
   const locators = {
     linkToForm: page.locator('a', { hasText: 'Linkki lomakkeelle' }),
     previewFi: page.getByTestId('form-preview-fi'),
@@ -12,19 +17,16 @@ export const LoppuselvitysPage = (page: Page) => {
     warning: page.locator('#selvitys-not-sent-warning'),
     asiatarkastettu: page.getByTestId('loppuselvitys-tarkastus').first(),
     taloustarkastettu: page.getByTestId('loppuselvitys-tarkastus').nth(1),
+    cancelTaydennyspyynto: page.getByRole('button', { name: 'Peru täydennyspyyntö' }),
     asiatarkastus: {
-      taydennyspyynto: asiatarkastus.getByText('Täydennyspyyntö'),
-      accept: asiatarkastus.getByRole('button', { name: 'Hyväksy' }),
-      confirmAcceptance: asiatarkastus.getByRole('button', {
-        name: 'Vahvista hyväksyntä',
-      }),
+      taydennyspyynto: asiatarkastus.locator(taydennyspyynto),
+      accept: asiatarkastus.locator(accept),
+      confirmAcceptance: asiatarkastus.locator(confirm),
     },
     taloustarkastus: {
-      taydennyspyynto: taloustarkastus.getByText('Täydennyspyyntö'),
-      accept: taloustarkastus.getByRole('button', { name: 'Hyväksy' }),
-      confirmAcceptance: page.getByRole('button', {
-        name: 'Hyväksy ja lähetä viesti',
-      }),
+      taydennyspyynto: taloustarkastus.locator(taydennyspyynto),
+      accept: taloustarkastus.locator(accept),
+      confirmAcceptance: asiatarkastus.locator(confirm),
     },
   }
 
@@ -79,7 +81,18 @@ export const LoppuselvitysPage = (page: Page) => {
     await expect(locators.taloustarkastettu).toContainText('Hyväksytty')
   }
 
+  async function openLoppuselvitysForm() {
+    const [hakijaSelvitysFormPage] = await Promise.all([
+      page.context().waitForEvent('page'),
+      await page.getByRole('link', { name: 'Linkki lomakkeelle' }).click(),
+    ])
+    await hakijaSelvitysFormPage.bringToFront()
+    await hakijaSelvitysFormPage.waitForLoadState()
+    return hakijaSelvitysFormPage
+  }
+
   return {
+    page,
     locators,
     getSelvitysFormUrl,
     goToPreview,
@@ -87,6 +100,7 @@ export const LoppuselvitysPage = (page: Page) => {
     asiatarkastaLoppuselvitys,
     taloustarkastaLoppuselvitys,
     ensureMuistutusViestiEmailRecipientsContain,
+    openLoppuselvitysForm,
     ...SelvitysTab(page, 'loppu'),
   }
 }
