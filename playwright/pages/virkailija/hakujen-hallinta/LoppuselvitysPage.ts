@@ -1,15 +1,19 @@
-import { expect, Page } from '@playwright/test'
+import { expect, Locator, Page } from '@playwright/test'
 import SelvitysTab from './CommonSelvitysPage'
 import moment from 'moment/moment'
 
+function createLoppuselvitysPhaseLocators(baseLocator: Locator) {
+  return {
+    taydennyspyynto: baseLocator.getByRole('button', { name: 'Täydennyspyyntö' }),
+    accept: baseLocator.getByRole('button', { name: 'Hyväksy' }),
+    confirmAcceptance: baseLocator.getByRole('button', {
+      name: 'Vahvista hyväksyntä',
+    }),
+    cancelTaydennyspyynto: baseLocator.getByRole('button', { name: 'Peru täydennyspyyntö' }),
+  }
+}
+
 export const LoppuselvitysPage = (page: Page) => {
-  const asiatarkastus = page.getByTestId('loppuselvitys-asiatarkastus')
-  const taloustarkastus = page.getByTestId('loppuselvitys-taloustarkastus')
-  const taydennyspyynto = page.getByRole('button', { name: 'Täydennyspyyntö' })
-  const accept = page.getByRole('button', { name: 'Hyväksy' })
-  const confirm = page.getByRole('button', {
-    name: 'Vahvista hyväksyntä',
-  })
   const locators = {
     linkToForm: page.locator('a', { hasText: 'Linkki lomakkeelle' }),
     previewFi: page.getByTestId('form-preview-fi'),
@@ -17,17 +21,12 @@ export const LoppuselvitysPage = (page: Page) => {
     warning: page.locator('#selvitys-not-sent-warning'),
     asiatarkastettu: page.getByTestId('loppuselvitys-tarkastus').first(),
     taloustarkastettu: page.getByTestId('loppuselvitys-tarkastus').nth(1),
-    cancelTaydennyspyynto: page.getByRole('button', { name: 'Peru täydennyspyyntö' }),
-    asiatarkastus: {
-      taydennyspyynto: asiatarkastus.locator(taydennyspyynto),
-      accept: asiatarkastus.locator(accept),
-      confirmAcceptance: asiatarkastus.locator(confirm),
-    },
-    taloustarkastus: {
-      taydennyspyynto: taloustarkastus.locator(taydennyspyynto),
-      accept: taloustarkastus.locator(accept),
-      confirmAcceptance: asiatarkastus.locator(confirm),
-    },
+    asiatarkastus: createLoppuselvitysPhaseLocators(
+      page.getByTestId('loppuselvitys-asiatarkastus')
+    ),
+    taloustarkastus: createLoppuselvitysPhaseLocators(
+      page.getByTestId('loppuselvitys-taloustarkastus')
+    ),
   }
 
   async function goToPreview() {
