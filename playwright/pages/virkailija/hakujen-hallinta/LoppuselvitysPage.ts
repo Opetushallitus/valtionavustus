@@ -1,32 +1,32 @@
-import { expect, Locator, Page } from '@playwright/test'
+import { expect, Page } from '@playwright/test'
 import SelvitysTab from './CommonSelvitysPage'
 import moment from 'moment/moment'
 
-function createLoppuselvitysPhaseLocators(baseLocator: Locator) {
-  return {
-    taydennyspyynto: baseLocator.getByRole('button', { name: 'Täydennyspyyntö' }),
-    accept: baseLocator.getByRole('button', { name: 'Hyväksy' }),
-    confirmAcceptance: baseLocator.getByRole('button', {
-      name: 'Vahvista hyväksyntä',
-    }),
-    cancelTaydennyspyynto: baseLocator.getByRole('button', { name: 'Peru täydennyspyyntö' }),
-  }
-}
-
 export const LoppuselvitysPage = (page: Page) => {
+  const asiatarkastus = page.getByTestId('loppuselvitys-asiatarkastus')
+  const taloustarkastus = page.getByTestId('loppuselvitys-taloustarkastus')
   const locators = {
     linkToForm: page.locator('a', { hasText: 'Linkki lomakkeelle' }),
     previewFi: page.getByTestId('form-preview-fi'),
-
     warning: page.locator('#selvitys-not-sent-warning'),
     asiatarkastettu: page.getByTestId('loppuselvitys-tarkastus').first(),
     taloustarkastettu: page.getByTestId('loppuselvitys-tarkastus').nth(1),
-    asiatarkastus: createLoppuselvitysPhaseLocators(
-      page.getByTestId('loppuselvitys-asiatarkastus')
-    ),
-    taloustarkastus: createLoppuselvitysPhaseLocators(
-      page.getByTestId('loppuselvitys-taloustarkastus')
-    ),
+    asiatarkastus: {
+      taydennyspyynto: asiatarkastus.getByRole('button', { name: 'Täydennyspyyntö' }),
+      cancelTaydennyspyynto: asiatarkastus.getByRole('button', { name: 'Peru täydennyspyyntö' }),
+      accept: asiatarkastus.getByRole('button', { name: 'Hyväksy' }),
+      confirmAcceptance: asiatarkastus.getByRole('button', {
+        name: 'Vahvista hyväksyntä',
+      }),
+    },
+    taloustarkastus: {
+      taydennyspyynto: taloustarkastus.getByRole('button', { name: 'Täydennyspyyntö' }),
+      cancelTaydennyspyynto: taloustarkastus.getByRole('button', { name: 'Peru täydennyspyyntö' }),
+      accept: taloustarkastus.getByRole('button', { name: 'Hyväksy' }),
+      confirmAcceptance: page.getByRole('button', {
+        name: 'Hyväksy ja lähetä viesti',
+      }),
+    },
   }
 
   async function goToPreview() {
