@@ -66,6 +66,7 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
     }
   }
   const hakemusIsNotSubmitted = hakemus.status !== 'submitted'
+  const disableAcceptButton = hakemusIsNotSubmitted || disabled
   return (
     <LoppuselvitysTarkastus
       dataTestId="loppuselvitys-asiatarkastus"
@@ -74,7 +75,7 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
       heading="Loppuselvityksen asiatarkastus"
       taydennyspyyntoHeading="Asiatarkastuksen täydennyspyyntö"
       confirmButton={
-        <button disabled={hakemusIsNotSubmitted} onClick={onClick}>
+        <button disabled={disableAcceptButton} onClick={onClick}>
           {showConfirmation ? 'Vahvista hyväksyntä' : 'Hyväksy'}
         </button>
       }
@@ -148,6 +149,9 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
     await dispatch(refreshHakemukset({ avustushakuId: avustushaku.id, hakemusId: hakemus.id }))
   }
 
+  const hakemusIsNotSubmitted = hakemus.status !== 'submitted'
+  const disableAcceptButton = hakemusIsNotSubmitted || disabled
+
   return (
     <>
       <LoppuselvitysTarkastus
@@ -182,7 +186,7 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
         }
         confirmButton={
           <button
-            disabled={disabled || showEmail}
+            disabled={disableAcceptButton || showEmail}
             onClick={() => {
               toggleEmail((show) => !show)
             }}
