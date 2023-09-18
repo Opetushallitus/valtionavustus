@@ -115,60 +115,56 @@
                           (on-integration-healthcheck)))
 
 (compojure-api/defroutes resource-routes
-                         (compojure-api/GET "/translations.json" []
-                                            :summary "Translated messages (localization)"
-                                            (va-routes/get-translations))
+  (compojure-api/GET "/translations.json" []
+                    :summary "Translated messages (localization)"
+                    (va-routes/get-translations))
 
-                         (compojure-api/undocumented
-                          (compojure/GET "/" [] (return-html "virkailija/index.html"))
+  (compojure-api/undocumented
+  (compojure/GET "/" [] (return-html "virkailija/index.html"))
 
-                          (compojure/GET "/admin/*" [] (return-html "virkailija/admin.html"))
+  (compojure/GET "/admin/*" [] (return-html "virkailija/admin.html"))
 
-                          (compojure/GET "/yhteenveto/*" [] (return-html "virkailija/summary.html"))
+  (compojure/GET "/yhteenveto/*" [] (return-html "virkailija/summary.html"))
 
-                          (compojure/GET "/haku/*" [] (return-html "virkailija/search.html"))
+  (compojure/GET "/haku/*" [] (return-html "virkailija/search.html"))
 
-                          (compojure-api/GET "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
-                                             :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
-                                             :query-params [{decision-version :- s/Bool false}]
-                                             (on-hakemus-preview avustushaku-id hakemus-user-key decision-version))
+  (compojure-api/GET "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
+                      :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
+                      :query-params [{decision-version :- s/Bool false}]
+                      (on-hakemus-preview avustushaku-id hakemus-user-key decision-version))
 
-                          (compojure-api/GET "/hakemus-edit/:avustushaku-id/:hakemus-user-key" request
-                                             :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
-                                             (on-hakemus-edit avustushaku-id hakemus-user-key))
+  (compojure-api/GET "/hakemus-edit/:avustushaku-id/:hakemus-user-key" request
+                      :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
+                      (on-hakemus-edit avustushaku-id hakemus-user-key))
 
-                          (compojure-api/GET "/public/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" []
-                                             :path-params [avustushaku-id :- Long, user-key :- s/Str]
-                                             (on-paatos-preview avustushaku-id user-key))
+  (compojure-api/GET "/public/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" []
+                      :path-params [avustushaku-id :- Long, user-key :- s/Str]
+                      (on-paatos-preview avustushaku-id user-key))
 
-                          (compojure-api/GET "/selvitys/avustushaku/:avustushaku-id/:selvitys-type" []
-                                             :path-params [avustushaku-id :- Long, selvitys-type :- s/Str]
-                                             :query-params [{hakemus :- s/Str nil},{preview :- s/Str "false"}]
-                                             (on-selvitys avustushaku-id hakemus selvitys-type preview))
+  (compojure-api/GET "/selvitys/avustushaku/:avustushaku-id/:selvitys-type" []
+                      :path-params [avustushaku-id :- Long, selvitys-type :- s/Str]
+                      :query-params [{hakemus :- s/Str nil},{preview :- s/Str "false"}]
+                      (on-selvitys avustushaku-id hakemus selvitys-type preview))
 
-                          (compojure/GET "/avustushaku/:id" [id] (return-html "virkailija/index.html"))
-                          (compojure/GET "/avustushaku/:id/*" [id] (return-html "virkailija/index.html"))
+  (compojure/GET "/avustushaku/:id" [id] (return-html "virkailija/index.html"))
+  (compojure/GET "/avustushaku/:id/*" [id] (return-html "virkailija/index.html"))
 
-                          (compojure-api/GET "/admin-ui/va-code-values/" request
-                              (va-code-values-routes/with-admin request
-                                (return-html "virkailija/codevalues.html")
-                                (resp/status (return-html "virkailija/unauthorized.html") 401)))
+  (compojure-api/context "/admin-ui/va-code-values" []
+    (compojure-api/GET "*" request
+        (va-code-values-routes/with-admin request
+          (return-html "virkailija/codevalues.html")
+          (resp/status (return-html "virkailija/unauthorized.html") 401))))
 
-                          (compojure-api/GET "/admin-ui/va-code-values/*" request
-                              (va-code-values-routes/with-admin request
-                                (return-html "virkailija/codevalues.html")
-                                (resp/status (return-html "virkailija/unauthorized.html") 401)))
+  (compojure-api/GET "/admin-ui/search/" [search order]
+    (if (:and search order)
+      (resp/redirect (str "/haku/" "?" (codec/form-encode { :search search :order order })))
+      (resp/redirect "/haku/")))
 
-                          (compojure-api/GET "/admin-ui/search/" [search order]
-                            (if (:and search order)
-                              (resp/redirect (str "/haku/" "?" (codec/form-encode { :search search :order order })))
-                              (resp/redirect "/haku/")))
+  va-routes/logo-route
 
-                          va-routes/logo-route
+  (compojure-route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
 
-                          (compojure-route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
-
-                          (compojure-route/not-found "<p>Page not found.</p>")))
+  (compojure-route/not-found "<p>Page not found.</p>")))
 
 
 (defn get-emails [hakemus-id email-type]
