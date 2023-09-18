@@ -67,6 +67,8 @@ test('can send taydennyspyynto for loppuselvitys', async ({
   })
   await test.step('waiting T-icon as täydennys has been sent', async () => {
     await expect(odottaaTaydennysta).toBeVisible()
+    await expect(loppuselvitysPage.locators.asiatarkastus.accept).toBeDisabled()
+    await expect(loppuselvitysPage.locators.taloustarkastus.accept).toBeDisabled()
     await expect(taydennykseenVastattu).toBeHidden()
   })
   const tavoiteLocator = page.locator('[id="project-description.project-description-1.goal"]')
