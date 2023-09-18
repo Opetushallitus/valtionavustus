@@ -65,8 +65,8 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
       setShowConfirmation(true)
     }
   }
-  const hakemusIsNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
-  const disableAcceptButton = hakemusIsNotSubmitted || disabled
+  const hakemusLoppuselvitysNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
+  const disableAcceptButton = hakemusLoppuselvitysNotSubmitted || disabled
   return (
     <LoppuselvitysTarkastus
       dataTestId="loppuselvitys-asiatarkastus"
@@ -149,8 +149,8 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
     await dispatch(refreshHakemukset({ avustushakuId: avustushaku.id, hakemusId: hakemus.id }))
   }
 
-  const hakemusIsNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
-  const disableAcceptButton = hakemusIsNotSubmitted || disabled
+  const hakemusLoppuselvitysNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
+  const disableAcceptButton = hakemusLoppuselvitysNotSubmitted || disabled
 
   return (
     <>
