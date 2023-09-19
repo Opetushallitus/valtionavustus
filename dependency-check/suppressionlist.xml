@@ -21,10 +21,10 @@
     <packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
     <cve>CVE-2022-1471</cve>
   </suppress>
-  <suppress until="2023-09-19">
+  <suppress>
     <notes><![CDATA[
    Might be non issue https://github.com/FasterXML/jackson-databind/issues/3972
-   Also no fix as of 19.6.2023
+   Also no fix as of 19.9.2023. Suppressed indefinitely as it's most likely there will be no fix
    ]]></notes>
     <cve>CVE-2023-35116</cve>
   </suppress>
