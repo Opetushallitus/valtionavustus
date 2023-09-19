@@ -27,7 +27,7 @@ export default class FormPreviewComponent extends React.Component {
       emailField: BasicValue,
       moneyField: MoneyValue,
       fixedMultiplierMoneyField: MoneyValue,
-      fixedMultiplierField: MoneyValue,
+      fixedMultiplierField: BasicValue,
       integerField: IntegerValue,
       decimalField: DecimalValue,
       finnishBusinessIdField: BasicValue,
