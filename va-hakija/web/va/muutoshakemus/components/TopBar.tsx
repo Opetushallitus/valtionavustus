@@ -23,7 +23,7 @@ export function TopBar({ env, f }: TopBarProps) {
       <div id="top-container">
         <img
           id="logo"
-          src="img/logo-240x68@2x.png"
+          src="/img/logo-240x68@2x.png"
           width="240"
           height="68"
           alt="Opetushallitus / Utbildningsstyrelsen"
