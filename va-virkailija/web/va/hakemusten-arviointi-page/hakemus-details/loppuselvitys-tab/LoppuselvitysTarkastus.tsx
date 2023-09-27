@@ -17,7 +17,7 @@ import {
 } from '../../../apiSlice'
 import { hasFetchErrorMsg } from '../../../isFetchBaseQueryError'
 import { useUserInfo } from '../../../initial-data-context'
-import { getLoadedState, loadSelvitys, refreshHakemukset } from '../../arviointiReducer'
+import { getLoadedState, refreshHakemus } from '../../arviointiReducer'
 import {
   useHakemustenArviointiDispatch,
   useHakemustenArviointiSelector,
@@ -49,12 +49,7 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
       `/api/avustushaku/${avustushakuId}/hakemus/${hakemus.id}/loppuselvitys/verify-information`,
       { message: '' }
     )
-    dispatch(
-      refreshHakemukset({
-        avustushakuId,
-        hakemusId: hakemus.id,
-      })
-    )
+    dispatch(refreshHakemus({ hakemusId: hakemus.id }))
   }
   const onClick = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault()
@@ -145,8 +140,7 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
       to: email.receivers,
       subject: email.subject,
     })
-    await dispatch(loadSelvitys({ avustushakuId: avustushaku.id, hakemusId: hakemus.id }))
-    await dispatch(refreshHakemukset({ avustushakuId: avustushaku.id, hakemusId: hakemus.id }))
+    await dispatch(refreshHakemus({ hakemusId: hakemus.id }))
   }
 
   const hakemusLoppuselvitysNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
@@ -304,7 +298,7 @@ function LoppuselvitysTarkastus({
           to: email.receivers,
         },
       }).unwrap()
-      await dispatch(loadSelvitys({ avustushakuId, hakemusId: hakemus.id })).unwrap()
+      dispatch(refreshHakemus({ hakemusId: hakemus.id }))
       setFormErrorMessage(undefined)
       cancelForm()
     } catch (err) {
@@ -323,7 +317,7 @@ function LoppuselvitysTarkastus({
       await HttpUtil.put(
         `/api/avustushaku/${avustushakuId}/hakemus/${hakemus.id}/loppuselvitys/cancel-taydennyspyynto`
       )
-      await dispatch(loadSelvitys({ avustushakuId, hakemusId: hakemus.id })).unwrap()
+      dispatch(refreshHakemus({ hakemusId: hakemus.id }))
     } catch (e) {
       setCancelErrorMsg('Peruminen epäonnistui')
     } finally {

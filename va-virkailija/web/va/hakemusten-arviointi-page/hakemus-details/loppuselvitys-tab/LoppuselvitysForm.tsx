@@ -6,7 +6,7 @@ import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 import { Role, UserInfo } from '../../../types'
 import { useFeature } from '../../../initial-data-context'
 import { useHakemustenArviointiDispatch } from '../../arviointiStore'
-import { refreshHakemukset } from '../../arviointiReducer'
+import { refreshHakemus } from '../../arviointiReducer'
 import { VerificationBox } from './VerificationBox'
 import { Taloustarkastus, Asiatarkastus } from './LoppuselvitysTarkastus'
 
@@ -39,8 +39,7 @@ export const LoppuselvitysForm = ({
       { message }
     )
     dispatch(
-      refreshHakemukset({
-        avustushakuId: avustushaku.id,
+      refreshHakemus({
         hakemusId: hakemus.id,
       })
     )

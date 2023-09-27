@@ -6,7 +6,7 @@ import { Hakemus, Selvitys, SelvitysEmail } from 'soresu-form/web/va/types'
 
 import { VerificationBox } from './VerificationBox'
 import { useHakemustenArviointiDispatch } from '../../arviointiStore'
-import { loadSelvitys, refreshHakemukset } from '../../arviointiReducer'
+import { refreshHakemus } from '../../arviointiReducer'
 import { initialRecipientEmails } from '../emailRecipients'
 import MultipleRecipentEmailForm from '../common-components/MultipleRecipentsEmailForm'
 
@@ -58,8 +58,7 @@ export const TaloustarkastusEmail = ({
       to: email.receivers,
       subject: email.subject,
     })
-    await dispatch(loadSelvitys({ avustushakuId, hakemusId: hakemus.id }))
-    await dispatch(refreshHakemukset({ avustushakuId, hakemusId: hakemus.id }))
+    dispatch(refreshHakemus({ hakemusId: hakemus.id }))
   }
 
   return (

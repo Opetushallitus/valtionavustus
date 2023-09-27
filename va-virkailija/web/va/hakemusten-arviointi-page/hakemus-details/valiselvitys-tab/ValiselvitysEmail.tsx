@@ -11,7 +11,7 @@ import translations from '../../../../../../server/resources/public/translations
 
 import { UserInfo } from '../../../types'
 import { useHakemustenArviointiDispatch } from '../../arviointiStore'
-import { loadSelvitys, refreshHakemukset } from '../../arviointiReducer'
+import { refreshHakemus } from '../../arviointiReducer'
 import { initialRecipientEmails } from '../emailRecipients'
 
 interface ValiselvitysEmailProps {
@@ -76,7 +76,7 @@ export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
     setRecipientEmails(newRecipients)
   }
 
-  function onSendMessage() {
+  async function onSendMessage() {
     const request = {
       message,
       'selvitys-hakemus-id': valiselvitys.id,
@@ -85,19 +85,16 @@ export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
     }
     const url = `/api/avustushaku/${avustushaku.id}/selvitys/valiselvitys/send`
 
-    HttpUtil.post(url, request)
-      .then(async () => {
-        await dispatch(loadSelvitys({ avustushakuId: avustushaku.id, hakemusId: hakemus.id }))
-        await dispatch(
-          refreshHakemukset({
-            avustushakuId: avustushaku.id,
-            hakemusId: hakemus.id,
-          })
-        )
-      })
-      .catch((error) => {
-        console.error(`Error in sending selvitys email, POST ${url}`, error)
-      })
+    try {
+      await HttpUtil.post(url, request)
+      await dispatch(
+        refreshHakemus({
+          hakemusId: hakemus.id,
+        })
+      )
+    } catch (error) {
+      console.error(`Error in sending selvitys email, POST ${url}`, error)
+    }
   }
 
   const sentSelvitysEmail = valiselvitys['selvitys-email']
