@@ -17,7 +17,6 @@ import {
   ChangeRequest,
   Comment,
   Hakemus,
-  HakemusSelvitys,
   HakemusStatus,
   LoadedHakemusData,
   NormalizedHakemusData,
