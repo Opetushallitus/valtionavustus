@@ -38,6 +38,17 @@ select  h.id,
         h.refused_comment,
         h.refused_at,
         h.keskeytetty_aloittamatta,
+        (SELECT count(*) > 0
+              FROM hakija.hakemukset
+              WHERE parent_id = h.id
+              AND hakemus_type='loppuselvitys'
+              AND status = 'pending_change_request'
+              AND version_closed IS null) AS loppuselvitys_change_request_pending,
+        (SELECT count(id) > 0
+              FROM hakija.hakemukset
+              WHERE status = 'pending_change_request'
+              AND hakemus_type='loppuselvitys'
+              AND parent_id = h.id) AS loppuselvitys_change_request_sent,
         submitted_version
   from hakija.hakemukset h
   join hakija.form_submissions s on (h.form_submission_id = s.id and h.form_submission_version = s.version)

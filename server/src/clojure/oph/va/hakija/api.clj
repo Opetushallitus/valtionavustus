@@ -214,7 +214,10 @@
    :refused-comment (:refused_comment hakemus)
    :refused-at (:refused_at hakemus)
    :keskeytetty-aloittamatta (:keskeytetty_aloittamatta hakemus)
-   :submitted-version (:submitted_version hakemus)})
+   :submitted-version (:submitted_version hakemus)
+   :loppuselvitys-change-request-pending (:loppuselvitys_change_request_pending hakemus)
+   :loppuselvitys-change-request-sent (:loppuselvitys_change_request_sent hakemus)
+   })
 
 (defn- paatos-sent-emails->json [paatos]
   {:id (:id paatos)

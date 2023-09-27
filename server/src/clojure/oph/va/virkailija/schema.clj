@@ -200,6 +200,8 @@
                       :loppuselvitys-information-verification (s/maybe s/Str)
                       :selvitys-email (s/maybe s/Str)
                       :answers [soresu-schema/Answer]
+                      (s/optional-key :loppuselvitys-change-request-pending) (s/maybe s/Bool)
+                      (s/optional-key :loppuselvitys-change-request-sent) (s/maybe s/Bool)
                       (s/optional-key :submitted-version) (s/maybe s/Int)
                       (s/optional-key :keskeytetty-aloittamatta) (s/maybe s/Bool)
                       (s/optional-key :refused) (s/maybe s/Bool)

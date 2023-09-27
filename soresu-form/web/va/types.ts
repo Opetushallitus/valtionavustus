@@ -291,6 +291,8 @@ export interface Hakemus {
   'loppuselvitys-information-verification'?: string
   'loppuselvitys-taloustarkastanut-name'?: string
   'loppuselvitys-taloustarkastettu-at'?: string
+  'loppuselvitys-change-request-pending'?: boolean
+  'loppuselvitys-change-request-sent'?: boolean
   project?: VaCodeValue
   talousarviotilit?: TalousarviotiliWithKoulutusasteet[]
   accessControl?: HakemusAccessControl
