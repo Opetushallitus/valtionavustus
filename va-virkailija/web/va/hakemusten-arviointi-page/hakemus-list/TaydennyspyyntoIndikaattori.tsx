@@ -1,32 +1,29 @@
 import React from 'react'
 import ClassNames from 'classnames'
-import { HakemusStatus } from 'soresu-form/web/va/types'
 import styles from './TaydennyspyyntoIndikaattori.module.less'
 
 export const TaydennyspyyntoIndikaattori = ({
   hakemusId,
-  hakemusStatus,
+  pendingChangeRequest,
   hakemukselleLahetettyTaydennyspyynto,
 }: {
   hakemusId: number
-  hakemusStatus: HakemusStatus
+  pendingChangeRequest: boolean
   hakemukselleLahetettyTaydennyspyynto: boolean
 }) => {
   if (!hakemukselleLahetettyTaydennyspyynto) {
     return <div className={styles.container}></div>
   }
 
-  const taydennyspyyntoOdottaaVastausta = hakemusStatus === 'pending_change_request'
-
-  const testId = taydennyspyyntoOdottaaVastausta
+  const testId = pendingChangeRequest
     ? `taydennyspyynto-odottaa-vastausta-${hakemusId}`
     : `taydennyspyyntoon-vastattu-${hakemusId}`
 
-  const vastausStyle = taydennyspyyntoOdottaaVastausta
+  const vastausStyle = pendingChangeRequest
     ? styles.odottaaVastausta
     : styles.taydennyspyyntoonVastattu
 
-  const vastausTitle = taydennyspyyntoOdottaaVastausta
+  const vastausTitle = pendingChangeRequest
     ? 'Täydennyspyyntö odottaa vastausta'
     : 'Täydennyspyyntöön vastattu'
 

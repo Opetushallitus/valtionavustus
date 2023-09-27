@@ -336,7 +336,6 @@ export default function HakemusListing(props: Props) {
             setSorting={setSorting}
             toggleUkotusModal={toggleUkotusModal}
             onHakemusClick={onHakemusClick}
-            hakemuksetWithTaydennyspyynto={hakemuksetWithTaydennyspyynto}
           />
         ) : (
           <HakemusTable
@@ -623,7 +622,7 @@ function HakemusTable({
               <td>
                 <TaydennyspyyntoIndikaattori
                   hakemusId={hakemus.id}
-                  hakemusStatus={hakemus.status}
+                  pendingChangeRequest={hakemus.status === 'pending_change_request'}
                   hakemukselleLahetettyTaydennyspyynto={hakemuksetWithTaydennyspyynto.includes(
                     hakemus.id
                   )}
@@ -717,7 +716,6 @@ interface ResolvedTableProps {
   sortingState: SortState
   toggleUkotusModal: (hakemusId: number | undefined) => void
   onHakemusClick: (hakemusId: number) => void
-  hakemuksetWithTaydennyspyynto: number[]
 }
 
 function ResolvedTable(props: ResolvedTableProps) {
@@ -1049,15 +1047,15 @@ function ResolvedTable(props: ResolvedTableProps) {
               <td>
                 <div className={styles.organizationCell}>
                   {hakemus['organization-name']}
-                  {hakemus.selvitys?.loppuselvitys && (
+                  {
                     <TaydennyspyyntoIndikaattori
                       hakemusId={hakemus.id}
-                      hakemusStatus={hakemus.selvitys?.loppuselvitys.status}
-                      hakemukselleLahetettyTaydennyspyynto={props.hakemuksetWithTaydennyspyynto.includes(
-                        hakemus.selvitys?.loppuselvitys.id
-                      )}
+                      pendingChangeRequest={!!hakemus['loppuselvitys-change-request-pending']}
+                      hakemukselleLahetettyTaydennyspyynto={
+                        !!hakemus['loppuselvitys-change-request-sent']
+                      }
                     />
-                  )}
+                  }
                 </div>
               </td>
               <td className="project-name-cell">{getProject(hakemus)}</td>
