@@ -213,4 +213,9 @@ Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avu
     await expect(hakijaSelvitysPage.taydennysButton).toBeHidden()
     await expect(hakijaSelvitysPage.submitButton).toBeHidden()
   })
+
+  await test.step('täydennyspyyntö T-icon is shown when hakemus list is loaded', async () => {
+    await hakemustenArviointiPage.navigate(avustushakuID)
+    await expect(taydennykseenVastattu).toBeVisible()
+  })
 })
