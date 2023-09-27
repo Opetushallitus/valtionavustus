@@ -249,15 +249,6 @@ export const startHakemusArvioAutoSave = createAction<{ hakemusId: number }>(
   'arviointi/startHakemusArvioAutoSave'
 )
 
-export const loadSelvitys = createAsyncThunk<
-  HakemusSelvitys,
-  { avustushakuId: number; hakemusId: number }
->('arviointi/loadSelvitykset', async ({ hakemusId, avustushakuId }) => {
-  return await HttpUtil.get<HakemusSelvitys>(
-    `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/selvitys`
-  )
-})
-
 export const updateHakemusStatus = createAsyncThunk<
   ChangeRequest[],
   { hakemusId: number; status: HakemusStatus; comment: string },
@@ -490,10 +481,6 @@ const arviointiSlice = createSlice({
         const hakemus = getHakemus(state, meta.arg.hakemusId)
         hakemus.arvio.hasChanges = false
         hakemus.arvio['budget-granted'] = payload.budgetGranted
-      })
-      .addCase(loadSelvitys.fulfilled, (state, { meta, payload }) => {
-        const hakemus = getHakemus(state, meta.arg.hakemusId)
-        hakemus.selvitys = payload
       })
       .addCase(updateHakemukset.fulfilled, (state, { payload }) => {
         const loadedState = getLoadedState(state)
