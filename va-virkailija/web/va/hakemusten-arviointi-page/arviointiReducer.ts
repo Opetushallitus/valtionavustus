@@ -289,12 +289,11 @@ export const updateHakemukset = createAsyncThunk<HakuData, { avustushakuId: numb
   }
 )
 
-export const refreshHakemukset = createAsyncThunk<
+export const refreshHakemus = createAsyncThunk<
   void,
-  { avustushakuId: number; hakemusId: number },
+  { hakemusId: number },
   { state: HakemustenArviointiRootState }
->('arviointi/refreshHakemukset', async ({ avustushakuId, hakemusId }, thunkAPI) => {
-  await thunkAPI.dispatch(updateHakemukset({ avustushakuId }))
+>('arviointi/refreshHakemus', async ({ hakemusId }, thunkAPI) => {
   await thunkAPI.dispatch(selectHakemus(hakemusId))
 })
 
