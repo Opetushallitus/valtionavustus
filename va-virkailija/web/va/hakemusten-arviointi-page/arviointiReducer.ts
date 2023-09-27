@@ -127,7 +127,6 @@ export const selectHakemus = createAsyncThunk<
   { state: HakemustenArviointiRootState }
 >('arviointi/selectHakemus', async (hakemusId, thunkAPI) => {
   const { hakuData } = getLoadedState(thunkAPI.getState().arviointi)
-  const hakemus = getHakemus(thunkAPI.getState().arviointi, hakemusId)
   const { avustushaku, privileges } = hakuData
   const avustushakuId = avustushaku.id
   const [
@@ -141,6 +140,7 @@ export const selectHakemus = createAsyncThunk<
     selvitys,
     changeRequests,
     attachmentVersions,
+    newHakuData,
   ] = await Promise.all([
     HttpUtil.get<VaCodeValue>(`/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/project`),
     HttpUtil.get<TalousarviotiliWithKoulutusasteet[]>(
@@ -166,7 +166,11 @@ export const selectHakemus = createAsyncThunk<
     HttpUtil.get<unknown[]>(
       `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/attachments/versions`
     ),
+    HttpUtil.get<HakuData>(`/api/avustushaku/${avustushakuId}`),
   ])
+  const updatedHakemus = newHakuData.hakemukset.find((e) => e.id === hakemusId)
+  if (!updatedHakemus) throw new Error(`No hakemus found for ID ${hakemusId}`)
+
   const hakuIsPublishedAndEnded =
     avustushaku.status === 'published' && avustushaku.phase === 'ended'
   const accessControl = {
@@ -178,7 +182,7 @@ export const selectHakemus = createAsyncThunk<
       avustushaku.status !== 'resolved' && privileges['change-hakemus-state'],
   }
   let mutatedArvio = false
-  let clonedForWeirdMutations = _.cloneDeep(hakemus)
+  let clonedForWeirdMutations = _.cloneDeep(updatedHakemus)
   if (accessControl.allowHakemusStateChanges) {
     const mbyMutated1 = mutateDefaultBudgetValuesForSelectedHakemusOverriddenAnswers(
       clonedForWeirdMutations,
