@@ -169,7 +169,7 @@
 
 (defn get-emails [hakemus-id email-type]
   (log/info (str "Fetching emails for hakemus with id: " hakemus-id))
-  (let [emails (query "SELECT formatted, to_address, bcc, cc, subject, reply_to FROM virkailija.email
+  (let [emails (query "SELECT formatted, to_address, bcc, cc, subject, reply_to, from_address FROM virkailija.email
                        JOIN email_event ON (email.id = email_event.email_id)
                        WHERE hakemus_id = ? AND email_type = ?::email_type"
                       [hakemus-id email-type])]

@@ -342,11 +342,11 @@
    Throws on validation error or if email cannot be inserted to db.
 
    Returns the id of the email added to db"
-  [raw-email & {:keys [hakemus-id avustushaku-id muutoshakemus-id]}]
+  [raw-email & {:keys [hakemus-id avustushaku-id muutoshakemus-id from]}]
   (let [email (clean-email-fields raw-email)]
     (if (s/valid? :email/message email)
       (let [lang (:lang email)
-            from (-> smtp-config :from lang)
+            from (or from (-> smtp-config :from lang))
             sender (-> smtp-config :sender)
             {email-id :id} (insert-email! email from sender)]
         (go (send-email-once! email from sender email-id avustushaku-id hakemus-id muutoshakemus-id))

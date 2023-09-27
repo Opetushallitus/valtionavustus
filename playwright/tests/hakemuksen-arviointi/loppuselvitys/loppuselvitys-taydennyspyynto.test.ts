@@ -150,6 +150,7 @@ Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avu
     const emailsAfter = await getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails(hakemusID)
     expect(emailsAfter).toHaveLength(1)
     expect(emailsAfter[0].subject).toBe(subject)
+    expect(emailsAfter[0]['from-address']).toBe('santeri.horttanainen@reaktor.com')
   })
   await test.step('waiting T-icon is shown again as new täydennyspyyntö', async () => {
     await expect(odottaaTaydennysta).toBeVisible()

@@ -64,7 +64,8 @@
    (s/optional-key :subject) (s/maybe s/Str)
    (s/optional-key :reply-to) (s/maybe s/Str)
    :bcc (s/maybe s/Str)
-   :cc [s/Str]})
+   :cc [s/Str]
+   (s/optional-key :from-address) (s/maybe s/Str)})
 
 (s/defschema DbEmails
   "Emails stored in database"
