@@ -66,7 +66,13 @@ function MultipleRecipentEmailForm(
           {heading && <h2 className="form-header">{heading}</h2>}
           <fieldset>
             <legend>Lähettäjä</legend>
-            <input type="text" name="sender" disabled={true} value="no-reply@oph.fi" />
+            <input
+              data-test-id={'email-form-message-sender'}
+              type="text"
+              name="sender"
+              disabled={true}
+              value="no-reply@oph.fi"
+            />
           </fieldset>
           <MultipleEmailRecipents
             disabled={disabled}

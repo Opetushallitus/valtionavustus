@@ -38,7 +38,8 @@ test('virkailija can accept loppuselvitys', async ({
 
   await test.step('and sees which email was sent to hakija afterward', async () => {
     await loppuselvitysPage.locators.taloustarkastettu.click()
-    await expect(page.getByText('Lähettäjäno-reply@oph.fi')).toBeVisible()
+    const lahettaja = page.getByTestId('viesti-details-email-sender')
+    await expect(lahettaja).toContainText('no-reply@oph.fi')
     await expect(
       page.getByText(
         `Vastaanottajaterkki.esimerkki@example.com, akaan.kaupunki@akaa.fi, ${additionalReceiver}`

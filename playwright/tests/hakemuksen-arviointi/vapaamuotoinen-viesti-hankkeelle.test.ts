@@ -20,6 +20,8 @@ muutoshakemusTest(
 
     await test.step('Viestin lähettäminen', async () => {
       const { addressInputs } = form.recipients
+      const sender = page.getByTestId('email-form-message-sender')
+      await expect(sender).toHaveValue('no-reply@oph.fi')
       await expect(addressInputs).toHaveCount(1)
       await expect(addressInputs).toHaveValue(answers.contactPersonEmail)
 
@@ -36,6 +38,9 @@ muutoshakemusTest(
 
       const row = messageRows.last()
       await row.click()
+
+      const sender = page.getByTestId('viesti-details-email-sender')
+      await expect(sender).toHaveText('no-reply@valtionavustukset.oph.fi')
 
       await expect(messageRow.subject(row)).toHaveText(message1.subject)
       await expect(messageRow.recipients(row)).toHaveText(answers.contactPersonEmail)

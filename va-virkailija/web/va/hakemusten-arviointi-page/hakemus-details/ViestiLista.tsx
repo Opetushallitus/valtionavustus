@@ -55,7 +55,7 @@ export function ViestiDetails(props: { message: Message }) {
         <div role="rowheader" className={'label'}>
           Lähettäjä
         </div>
-        <div role="cell" className={'item'}>
+        <div data-test-id={'viesti-details-email-sender'} role="cell" className={'item'}>
           {message.sender}
         </div>
       </div>
