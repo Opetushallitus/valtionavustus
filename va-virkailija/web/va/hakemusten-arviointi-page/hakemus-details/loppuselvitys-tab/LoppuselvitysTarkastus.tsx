@@ -98,6 +98,7 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
 }
 
 export function Taloustarkastus({ disabled }: { disabled: boolean }) {
+  const loggedInUser = useUserInfo()
   const hakemus = useHakemus()
   const avustushaku = useHakemustenArviointiSelector(
     (s) => getLoadedState(s.arviointi).hakuData.avustushaku
@@ -168,7 +169,7 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
                       id: 123456789,
                       date: hakemus['loppuselvitys-taloustarkastettu-at'],
                       virkailija: hakemus['loppuselvitys-taloustarkastanut-name'],
-                      sender: 'no-reply@oph.fi',
+                      sender: loggedInUser.email,
                       receivers: selvitysEmail?.to,
                       message: selvitysEmail?.message,
                       subject: selvitysEmail?.subject,

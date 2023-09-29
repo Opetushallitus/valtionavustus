@@ -5,6 +5,7 @@ import { IconTrashcan } from 'soresu-form/web/va/img/IconTrashcan'
 import { Hakemus, Language } from 'soresu-form/web/va/types'
 
 import './MultipleRecipentsEmailForm.less'
+import { useUserInfo } from '../../../initial-data-context'
 
 export type Email = {
   lang: Language
@@ -59,6 +60,7 @@ function MultipleRecipentEmailForm(
   }: Props,
   ref: ForwardedRef<HTMLDivElement>
 ) {
+  const loggedInUser = useUserInfo()
   return (
     <div ref={ref} data-test-id={`${formName}-email`} className="form">
       <form onSubmit={onSubmit} className="soresu-form">
@@ -71,7 +73,7 @@ function MultipleRecipentEmailForm(
               type="text"
               name="sender"
               disabled={true}
-              value="no-reply@oph.fi"
+              value={loggedInUser.email}
             />
           </fieldset>
           <MultipleEmailRecipents

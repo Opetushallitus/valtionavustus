@@ -128,8 +128,9 @@
                                               to
                                               subject
                                               body)
-                        {:hakemus-id hakemus-id
-                         :avustushaku-id avustushaku-id})]
+                        {:hakemus-id     hakemus-id
+                         :avustushaku-id avustushaku-id
+                         :from           (:email identity)})]
           (tapahtumaloki/create-log-entry email-type-str avustushaku-id hakemus-id identity "" {} email-id true))
         (http/created))))
 
@@ -156,9 +157,9 @@
                                                to
                                                subject
                                                body)
-                       {:hakemus-id hakemus-id
+                       {:hakemus-id     hakemus-id
                         :avustushaku-id avustushaku-id
-                        :from (:email identity)})]
+                        :from           (:email identity)})]
           (log/info  (str "Sent with FROM address " (:email identity)))
           (tapahtumaloki/create-log-entry type avustushaku-id hakemus-id identity "" {} email-id true))
         (http/created))))
