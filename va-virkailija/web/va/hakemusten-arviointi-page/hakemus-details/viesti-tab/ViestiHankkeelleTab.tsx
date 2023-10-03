@@ -10,16 +10,29 @@ import { useHakemusLoadingAware } from '../../useHakemus'
 import { useHakemustenArviointiSelector } from '../../arviointiStore'
 import { getLoadedState } from '../../arviointiReducer'
 import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
+import { useUserInfo } from '../../../initial-data-context'
+import type { UserInfo } from '../../../types'
 
-export function ViestiHankkeelleTab() {
-  const hakemus = useHakemusLoadingAware()
-  const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
-  const { avustushaku } = hakuData
+function addHeaderAndFooter(email: Email, hakemus: Hakemus, userInfo: UserInfo): Email {
+  const registerNumber = hakemus['register-number']
+  const registerNumberStr = registerNumber ? ` (${registerNumber})` : ''
 
-  if (!hakemus) {
-    return null
+  const header = `Hyvä vastaanottaja,
+
+tämä viesti koskee avustusta ${hakemus['project-name']}${registerNumberStr}.`
+
+  const footer = `Tarvittaessa tarkempia lisätietoja voi kysyä viestin lähettäjältä.
+
+Ystävällisin terveisin,
+${userInfo['first-name']} ${userInfo.surname}
+${userInfo.email}`
+
+  return {
+    ...email,
+    subject: 'Viesti Opetushallituksen avustukseen liittyen',
+    header,
+    footer,
   }
-  return <LoadedViestiHankkeelleTab hakemus={hakemus} avustushaku={avustushaku} />
 }
 
 type Props = {
@@ -28,6 +41,7 @@ type Props = {
 }
 
 function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
+  const userInfo = useUserInfo()
   const [sentEmails, setSentEmails] = useState<Message[]>([])
 
   useEffect(
@@ -41,7 +55,10 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
     [avustushaku, hakemus]
   )
 
-  const [email, setEmail] = useState<Email>(generateInitialEmail(hakemus))
+  const [email, setEmail] = useState<Email>(
+    addHeaderAndFooter(generateInitialEmail(hakemus), hakemus, userInfo)
+  )
+
   const [formErrorMessage, setFormErrorMessage] = useState<string | undefined>(undefined)
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -49,13 +66,14 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
     e.stopPropagation()
 
     async function send() {
+      const content = [email.header, email.content, email.footer].join('\n\n')
       try {
         setFormErrorMessage(undefined)
         await sendEmail(
           'vapaa-viesti',
           avustushaku,
           hakemus,
-          email.content,
+          content,
           email.subject,
           email.receivers
         )
@@ -99,4 +117,15 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
       </section>
     </>
   )
+}
+
+export function ViestiHankkeelleTab() {
+  const hakemus = useHakemusLoadingAware()
+  const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
+  const { avustushaku } = hakuData
+
+  if (!hakemus) {
+    return null
+  }
+  return <LoadedViestiHankkeelleTab hakemus={hakemus} avustushaku={avustushaku} />
 }

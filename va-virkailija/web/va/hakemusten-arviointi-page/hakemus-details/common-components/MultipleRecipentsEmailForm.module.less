@@ -6,17 +6,17 @@
   border: 1px solid #eaeaea;
   background: @background-blue;
 
-  .form-body {
+  .formBody {
     padding: 1rem;
     box-sizing: border-box;
   }
 
-  .form-header {
+  .formHeader {
     font: 'Open Sans';
     margin: 0 0 1rem;
   }
 
-  .form-footer {
+  .formFooter {
     padding: 0 1rem 1rem 1rem;
     box-sizing: border-box;
     display: flex;
@@ -28,7 +28,7 @@
     }
   }
 
-  .form-add-receiver {
+  .formAddReceiver {
     align-self: flex-start;
     background-color: white;
     color: #499CC7;
@@ -40,7 +40,7 @@
     }
   }
 
-  .form-receiver-row {
+  .formReceiverRow {
     display: flex;
     flex-direction: row;
 
@@ -49,7 +49,7 @@
       border: 1px solid @middle-gray;
     }
 
-    .form-trashcan {
+    .formTrashcan {
       cursor: pointer;
       padding: 1rem;
     }
@@ -79,7 +79,12 @@
   }
 }
 
-.error-message {
+pre.emailFixedContent {
+  text-wrap: wrap;
+  overflow-wrap: anywhere;
+}
+
+.errorMessage {
   color: @bright-red;
   padding-left: 1rem;
 }

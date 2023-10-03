@@ -4,13 +4,15 @@ import { isString } from 'lodash'
 import { IconTrashcan } from 'soresu-form/web/va/img/IconTrashcan'
 import { Hakemus, Language } from 'soresu-form/web/va/types'
 
-import './MultipleRecipentsEmailForm.less'
 import { useUserInfo } from '../../../initial-data-context'
+import styles from './MultipleRecipentsEmailForm.module.less'
 
 export type Email = {
   lang: Language
   subject: string
+  header?: string
   content: string
+  footer?: string
   receivers: string[]
 }
 
@@ -62,10 +64,10 @@ function MultipleRecipentEmailForm(
 ) {
   const loggedInUser = useUserInfo()
   return (
-    <div ref={ref} data-test-id={`${formName}-email`} className="form">
+    <div ref={ref} data-test-id={`${formName}-email`} className={styles.form}>
       <form onSubmit={onSubmit} className="soresu-form">
-        <div className="form-body">
-          {heading && <h2 className="form-header">{heading}</h2>}
+        <div className={styles.formBody}>
+          {heading && <h2 className={styles.formHeader}>{heading}</h2>}
           <fieldset>
             <legend>Lähettäjä</legend>
             <input
@@ -118,7 +120,7 @@ function SubmitContainer({
       {disabled && disabledComponent ? (
         <DisabledComponent />
       ) : (
-        <div className="form-footer">
+        <div className={styles.formFooter}>
           <div>
             <button
               disabled={disabled}
@@ -128,10 +130,10 @@ function SubmitContainer({
             >
               {submitText}
             </button>
-            <span className="error-message">{errorText}</span>
+            <span className={styles.errorMessage}>{errorText}</span>
           </div>
           {cancelButton && (
-            <button type="button" className="cancelButton" onClick={cancelButton.onClick}>
+            <button type="button" className={styles.cancelButton} onClick={cancelButton.onClick}>
               {cancelButton.text}
             </button>
           )}
@@ -151,7 +153,7 @@ function EmailContent({
   setEmail: React.Dispatch<
     React.SetStateAction<{ lang: Language; subject: string; content: string; receivers: any[] }>
   >
-  email: { lang: Language; subject: string; content: string; receivers: any[] }
+  email: Email
   formName: string
 }) {
   return (
@@ -167,6 +169,7 @@ function EmailContent({
         required
       />
       <label htmlFor="multirecipientemailform-content">Sisältö</label>
+      {email.header && <pre className={styles.emailFixedContent}>{email.header}</pre>}
       <textarea
         id="multirecipientemailform-content"
         data-test-id={`${formName}-email-content`}
@@ -176,6 +179,7 @@ function EmailContent({
         value={email.content}
         required
       />
+      {email.footer && <pre className={styles.emailFixedContent}>{email.footer}</pre>}
     </fieldset>
   )
 }
@@ -197,7 +201,7 @@ function MultipleEmailRecipents({
       <legend>Vastaanottajat</legend>
       {receivers.map((address, idx) => {
         return (
-          <div className={`form-receiver-row`} key={idx}>
+          <div className={styles.formReceiverRow} key={idx}>
             <input
               data-test-id={`${formName}-receiver-${idx}`}
               type="email"
@@ -212,7 +216,7 @@ function MultipleEmailRecipents({
             />
             {!disabled && receivers.length > 1 && (
               <span
-                className={'form-trashcan'}
+                className={styles.formTrashcan}
                 onClick={() => {
                   const newReceivers = [...receivers]
                   newReceivers.splice(idx, 1)
@@ -229,7 +233,7 @@ function MultipleEmailRecipents({
         <button
           data-test-id={`${formName}-add-receiver`}
           type="button"
-          className="form-add-receiver"
+          className={styles.formAddReceiver}
           onClick={() => {
             setEmail({ ...email, receivers: [...receivers, ''] })
           }}
