@@ -29,6 +29,7 @@ muutoshakemusTest(
       await form.subject.fill(message1.subject)
       await form.body.fill(message1.body)
 
+      await form.previewButton.click()
       await form.sendButton.click()
       await viestiTab.expectFormIsClear()
     })
@@ -64,6 +65,7 @@ muutoshakemusTest(
       await form.subject.fill(message2.subject)
       await form.body.fill(message2.body)
 
+      await form.previewButton.click()
       await form.sendButton.click()
       await viestiTab.expectFormIsClear()
     })

@@ -26,6 +26,7 @@ export function createViestiHankkeelleTab(page: Page) {
     },
     subject: sendMessageRegion.getByRole('textbox', { name: 'Aihe' }),
     body: sendMessageRegion.getByRole('textbox', { name: 'Sisältö' }),
+    previewButton: sendMessageRegion.getByRole('button', { name: 'Esikatsele' }),
     sendButton: sendMessageRegion.getByRole('button', { name: 'Lähetä viesti' }),
   }
 

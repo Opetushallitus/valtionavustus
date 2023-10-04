@@ -113,6 +113,7 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
           formName="viestihankkeelle"
           submitText="Lähetä viesti"
           errorText={formErrorMessage}
+          preview
         />
       </section>
     </>

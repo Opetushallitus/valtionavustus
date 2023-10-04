@@ -1,4 +1,4 @@
-import React, { ForwardedRef, ReactElement, forwardRef } from 'react'
+import React, { ForwardedRef, ReactElement, forwardRef, useId, useState } from 'react'
 import { isString } from 'lodash'
 
 import { IconTrashcan } from 'soresu-form/web/va/img/IconTrashcan'
@@ -45,27 +45,59 @@ type Props = {
   disabledSubmitButton?: ReactElement
   cancelButton?: CancelButton
   errorText?: string
+  preview?: boolean
 }
 
 function MultipleRecipentEmailForm(
   {
     heading,
-    disabled = false,
+    disabled: disabledProp = false,
     email,
-    onSubmit,
+    onSubmit: onSubmitProp,
     setEmail,
     submitText,
     formName,
     disabledSubmitButton,
-    cancelButton,
+    cancelButton: cancelButtonProp,
     errorText,
+    preview,
   }: Props,
   ref: ForwardedRef<HTMLDivElement>
 ) {
   const loggedInUser = useUserInfo()
+  const [isPreviewing, setPreviewing] = useState<boolean>(false)
+
+  const setPreviewMode = (e: React.FormEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setPreviewing(true)
+  }
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+    e.preventDefault()
+    e.stopPropagation()
+    onSubmitProp(e)
+    setPreviewing(false)
+  }
+  const handleSubmit = preview && !isPreviewing ? setPreviewMode : onSubmit
+  const handleContentChange = (content: string) => setEmail((email) => ({ ...email, content }))
+
+  const subjectId = useId()
+
+  const disabled = disabledProp || isPreviewing
+  const cancelButton: CancelButton | undefined =
+    preview && isPreviewing
+      ? {
+          text: 'Peruuta',
+          onClick() {
+            setPreviewing(false)
+          },
+        }
+      : cancelButtonProp
+
   return (
     <div ref={ref} data-test-id={`${formName}-email`} className={styles.form}>
-      <form onSubmit={onSubmit} className="soresu-form">
+      <form onSubmit={handleSubmit} className="soresu-form">
         <div className={styles.formBody}>
           {heading && <h2 className={styles.formHeader}>{heading}</h2>}
           <fieldset>
@@ -84,11 +116,28 @@ function MultipleRecipentEmailForm(
             setEmail={setEmail}
             formName={formName}
           />
-          <EmailContent disabled={disabled} setEmail={setEmail} email={email} formName={formName} />
+          <fieldset disabled={disabled}>
+            <label htmlFor={subjectId}>Aihe</label>
+            <input
+              id={subjectId}
+              data-test-id={`${formName}-email-subject`}
+              onChange={(e) => setEmail({ ...email, subject: e.target.value })}
+              type="text"
+              name="subject"
+              value={email.subject}
+              required
+            />
+            <EmailContent
+              onContentChange={handleContentChange}
+              email={email}
+              formName={formName}
+              isPreviewing={isPreviewing}
+            />
+          </fieldset>
         </div>
         <SubmitContainer
-          submitText={submitText}
-          disabled={disabled}
+          submitText={preview && !isPreviewing ? 'Esikatsele' : submitText}
+          disabled={disabledProp}
           disabledComponent={disabledSubmitButton}
           formName={formName}
           cancelButton={cancelButton}
@@ -145,42 +194,45 @@ function SubmitContainer({
 
 function EmailContent({
   email,
-  setEmail,
-  disabled,
+  onContentChange,
   formName,
+  isPreviewing,
 }: {
-  disabled: boolean
-  setEmail: React.Dispatch<
-    React.SetStateAction<{ lang: Language; subject: string; content: string; receivers: any[] }>
-  >
+  onContentChange: (content: string) => void
   email: Email
   formName: string
+  isPreviewing: boolean
 }) {
+  const contentId = useId()
+
+  if (isPreviewing) {
+    const header = email.header ? `${email.header}\n\n` : ''
+    const footer = email.footer ? `\n\n${email.footer}` : ''
+    const content = [header, email.content, footer].join('')
+
+    return (
+      <>
+        <label>Sisältö</label>
+        <pre className={styles.emailFixedContent}>{content}</pre>
+      </>
+    )
+  }
+
   return (
-    <fieldset disabled={disabled}>
-      <label htmlFor="multirecipientemailform-subject">Aihe</label>
-      <input
-        id="multirecipientemailform-subject"
-        data-test-id={`${formName}-email-subject`}
-        onChange={(e) => setEmail({ ...email, subject: e.target.value })}
-        type="text"
-        name="subject"
-        value={email.subject}
-        required
-      />
-      <label htmlFor="multirecipientemailform-content">Sisältö</label>
+    <>
+      <label htmlFor={contentId}>Sisältö</label>
       {email.header && <pre className={styles.emailFixedContent}>{email.header}</pre>}
       <textarea
-        id="multirecipientemailform-content"
+        id={contentId}
         data-test-id={`${formName}-email-content`}
-        onChange={(e) => setEmail({ ...email, content: e.target.value })}
+        onChange={(e) => onContentChange(e.target.value)}
         rows={13}
         name="content"
         value={email.content}
         required
       />
       {email.footer && <pre className={styles.emailFixedContent}>{email.footer}</pre>}
-    </fieldset>
+    </>
   )
 }
 
