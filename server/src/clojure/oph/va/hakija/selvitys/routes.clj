@@ -169,9 +169,18 @@
               lang (keyword (:language hakemus))
               parent-hakemus-id (:parent_id hakemus)
               id (:id hakemus)
-              email-of-virkailija (get-email-of-virkailija id)]
+              email-of-virkailija (get-email-of-virkailija id)
+              email-of-hakija (get-hakemus-contact-email parent-hakemus-id)
+              avustushaku-name-fi (-> avustushaku :content :name :fi)]
           (va-db/update-loppuselvitys-status id "submitted")
-          (va-email/send-loppuselvitys-change-request-responded-message-to-virkailija! [email-of-virkailija] avustushaku-id (-> avustushaku :content :name :fi) parent-hakemus-id)
+          (va-email/send-loppuselvitys-change-request-responded-message-to-virkailija! [email-of-virkailija]
+                                                                                       avustushaku-id
+                                                                                       avustushaku-name-fi
+                                                                                       parent-hakemus-id)
+          (va-email/send-loppuselvitys-change-request-received-message-to-hakija! [email-of-hakija]
+                                                                                  avustushaku-id
+                                                                                  avustushaku-name-fi
+                                                                                  parent-hakemus-id)
           (handlers/hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (handlers/hakemus-conflict-response hakemus))
       (http/bad-request! validation))))

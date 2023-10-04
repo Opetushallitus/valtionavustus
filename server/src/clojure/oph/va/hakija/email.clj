@@ -15,6 +15,8 @@
                                             :sv "Automatiskt meddelande: er ansökan om understöd har kompletterats"}
    :hakemus-change-request-responded {:fi "Automaattinen viesti: avustushakemusta on täydennetty"}
    :loppuselvitys-change-request-responded {:fi "Automaattinen viesti: avustushakemuksen loppuselvitystä on täydennetty"}
+   :loppuselvitys-change-request-response-received {:fi "Automaattinen viesti: avustushakemuksenne loppuselvitystä on täydennetty"
+                                           :sv "(SV) Automaattinen viesti: avustushakemuksenne loppuselvitystä on täydennetty"}
    :valiselvitys-submitted-notification {:fi "Väliselvityksenne on vastaanotettu"
                                          :sv "Er mellanredovisning har emottagits"}
    :loppuselvitys-submitted-notification {:fi "Loppuselvityksenne on vastaanotettu"
@@ -34,6 +36,8 @@
                        :sv (email/load-template "email-templates/hakemus-submitted.plain.sv")}
    :hakemus-change-request-responded {:fi (email/load-template "email-templates/hakemus-change-request-responded.plain.fi")}
    :loppuselvitys-change-request-responded {:fi (email/load-template "email-templates/loppuselvitys-change-request-responded.plain.fi")}
+   :loppuselvitys-change-request-response-received {:fi (email/load-template "email-templates/loppuselvitys-change-request-received.plain.fi")
+                                           :sv (email/load-template "email-templates/loppuselvitys-change-request-received.plain.sv")}
    :valiselvitys-submitted-notification {:fi (email/load-template "email-templates/valiselvitys-submitted-notification.plain.fi")
                                          :sv (email/load-template "email-templates/valiselvitys-submitted-notification.plain.sv")}
    :loppuselvitys-submitted-notification {:fi (email/load-template "email-templates/loppuselvitys-submitted-notification.plain.fi")
@@ -216,6 +220,20 @@
              :url url}
         body (render-body msg)]
     (log/info "Url would be: " url)
+    (email/enqueue-message-to-be-send msg body)))
+
+(defn send-loppuselvitys-change-request-received-message-to-hakija! [to avustushaku-id avustushaku-name-fi parent-hakemus-id]
+  (let [lang :fi
+        msg {:operation :send
+             :email-type :loppuselvitys-change-request-response-received
+             :lang lang
+             :hakemus-id parent-hakemus-id
+             :from (-> email/smtp-config :from lang)
+             :sender (-> email/smtp-config :sender)
+             :subject (get-in mail-titles [:loppuselvitys-change-request-response-received lang])
+             :to to
+             :avustushaku avustushaku-name-fi}
+        body (render-body msg)]
     (email/enqueue-message-to-be-send msg body)))
 
 (defn send-hakemus-submitted-message! [is-change-request-response? lang to avustushaku-id avustushaku user-key start-date end-date hakemus-id]

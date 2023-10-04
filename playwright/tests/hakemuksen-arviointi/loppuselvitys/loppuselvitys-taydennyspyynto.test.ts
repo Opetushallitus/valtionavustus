@@ -5,6 +5,7 @@ import { HakemustenArviointiPage } from '../../../pages/virkailija/hakemusten-ar
 import {
   getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails,
   getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails,
+  getLoppuselvitysTaydennysReceivedHakijaNotificationEmails,
   getLoppuselvitysTaydennysReceivedEmails,
   getSelvitysEmails,
 } from '../../../utils/emails'
@@ -104,6 +105,16 @@ test('can send taydennyspyynto for loppuselvitys', async ({
     expect(emails[0].formatted).toBe(`Avustushaku: ${avustushakuName}
 
 Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/loppuselvitys/
+`)
+  })
+  await test.step('hakija receives täydennys received email after creating submission', async () => {
+    const emails = await getLoppuselvitysTaydennysReceivedHakijaNotificationEmails(hakemusID)
+    expect(emails).toHaveLength(1)
+    expect(emails[0].subject).toBe(
+      'Automaattinen viesti: avustushakemuksenne loppuselvitystä on täydennetty'
+    )
+    expect(emails[0]['to-address']).toStrictEqual(['erkki.esimerkki@example.com'])
+    expect(emails[0].formatted).toBe(`TODO(received)
 `)
   })
   await test.step('hakija täydennys is shown as diff', async () => {

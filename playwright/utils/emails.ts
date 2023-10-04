@@ -82,7 +82,9 @@ export const getSelvitysEmails = getEmailsWithAvustushaku('selvitys')
 export const getLoppuselvitysTaydennysReceivedEmails = getEmails(
   'loppuselvitys-change-request-responded'
 )
-
+export const getLoppuselvitysTaydennysReceivedHakijaNotificationEmails = getEmails(
+  'loppuselvitys-change-request-response-received'
+)
 export const getValiselvitysSubmittedNotificationEmails = getEmails(
   'valiselvitys-submitted-notification'
 )
