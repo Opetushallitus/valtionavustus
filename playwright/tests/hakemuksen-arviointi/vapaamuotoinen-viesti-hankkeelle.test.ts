@@ -3,9 +3,23 @@ import { expect, test } from '@playwright/test'
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
 
+// Assumes that the hakemus is first one in avustushaku, so it gets asianumero 1
+const message = (content: string, hakuAsianumero: string) =>
+  `Hyvä vastaanottaja,
+
+tämä viesti koskee avustusta Rahassa kylpijät Ky Ay Oy (1/${hakuAsianumero}).
+
+${content}
+
+Tarvittaessa tarkempia lisätietoja voi kysyä viestin lähettäjältä.
+
+Ystävällisin terveisin,
+_ valtionavustus
+santeri.horttanainen@reaktor.com`
+
 muutoshakemusTest(
   'Vapaamuotoisen viestin lähettäminen hankkeelle',
-  async ({ page, answers, avustushakuID, acceptedHakemus }) => {
+  async ({ page, answers, avustushakuID, hakuProps, acceptedHakemus }) => {
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     const viestiTab = await hakemustenArviointiPage.navigateToViestiHankkeelleTab(
       avustushakuID,
@@ -19,7 +33,7 @@ muutoshakemusTest(
       body: 'Ensimmäisen viestin sisältö',
     }
 
-    await test.step('Viestin lähettäminen', async () => {
+    await test.step('Viestin täyttäminen', async () => {
       const { addressInputs } = form.recipients
       const sender = page.getByTestId('email-form-message-sender')
       await expect(sender).toHaveValue(expectedSenderEmailAddress)
@@ -28,8 +42,18 @@ muutoshakemusTest(
 
       await form.subject.fill(message1.subject)
       await form.body.fill(message1.body)
+    })
 
+    await test.step('Viestin esikatselu ja lähettäminen', async () => {
       await form.previewButton.click()
+
+      await expect(form.recipients.addButton).not.toBeVisible()
+      await expect(form.recipients.addressInputs).toBeDisabled()
+      await expect(form.subject).toBeDisabled()
+      await expect(form.subject).toHaveValue(message1.subject)
+      await expect(form.body).toBeDisabled()
+      await expect(form.body).toHaveValue(message(message1.body, hakuProps.registerNumber))
+
       await form.sendButton.click()
       await viestiTab.expectFormIsClear()
     })

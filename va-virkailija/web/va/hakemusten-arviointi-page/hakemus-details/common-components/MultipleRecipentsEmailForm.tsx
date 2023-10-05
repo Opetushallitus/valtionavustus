@@ -205,33 +205,28 @@ function EmailContent({
 }) {
   const contentId = useId()
 
-  if (isPreviewing) {
-    const header = email.header ? `${email.header}\n\n` : ''
-    const footer = email.footer ? `\n\n${email.footer}` : ''
-    const content = [header, email.content, footer].join('')
-
-    return (
-      <>
-        <label>Sisältö</label>
-        <pre className={styles.emailFixedContent}>{content}</pre>
-      </>
-    )
-  }
+  const completeContent = [email.header, email.content, email.footer].join('')
+  const content = isPreviewing ? completeContent : email.content
 
   return (
     <>
       <label htmlFor={contentId}>Sisältö</label>
-      {email.header && <pre className={styles.emailFixedContent}>{email.header}</pre>}
+      {!isPreviewing && email.header && (
+        <pre className={styles.emailFixedContent}>{email.header}</pre>
+      )}
       <textarea
         id={contentId}
         data-test-id={`${formName}-email-content`}
         onChange={(e) => onContentChange(e.target.value)}
         rows={13}
         name="content"
-        value={email.content}
+        value={content}
+        disabled={isPreviewing}
         required
       />
-      {email.footer && <pre className={styles.emailFixedContent}>{email.footer}</pre>}
+      {!isPreviewing && email.footer && (
+        <pre className={styles.emailFixedContent}>{email.footer}</pre>
+      )}
     </>
   )
 }

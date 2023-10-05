@@ -14,14 +14,19 @@ import { useUserInfo } from '../../../initial-data-context'
 import type { UserInfo } from '../../../types'
 
 function addHeaderAndFooter(email: Email, hakemus: Hakemus, userInfo: UserInfo): Email {
+  if (hakemus.language !== 'fi') {
+    // No translation yet
+    return email
+  }
+
   const registerNumber = hakemus['register-number']
   const registerNumberStr = registerNumber ? ` (${registerNumber})` : ''
 
   const header = `Hyvä vastaanottaja,
 
-tämä viesti koskee avustusta ${hakemus['project-name']}${registerNumberStr}.`
+tämä viesti koskee avustusta ${hakemus['project-name']}${registerNumberStr}.\n\n`
 
-  const footer = `Tarvittaessa tarkempia lisätietoja voi kysyä viestin lähettäjältä.
+  const footer = `\n\nTarvittaessa tarkempia lisätietoja voi kysyä viestin lähettäjältä.
 
 Ystävällisin terveisin,
 ${userInfo['first-name']} ${userInfo.surname}
