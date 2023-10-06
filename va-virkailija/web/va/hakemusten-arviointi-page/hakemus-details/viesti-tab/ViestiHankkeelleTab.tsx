@@ -10,10 +10,18 @@ import { useHakemusLoadingAware } from '../../useHakemus'
 import { useHakemustenArviointiSelector } from '../../arviointiStore'
 import { getLoadedState } from '../../arviointiReducer'
 import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
-import { useUserInfo } from '../../../initial-data-context'
+import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
+import { useEnvironment, useUserInfo } from '../../../initial-data-context'
 import type { UserInfo } from '../../../types'
+import PaatosUrl from '../../../PaatosUrl'
 
-function addHeaderAndFooter(email: Email, hakemus: Hakemus, userInfo: UserInfo): Email {
+function generateEmailWithHeaderAndFooter(
+  environment: EnvironmentApiResponse,
+  avustushakuId: number,
+  hakemus: Hakemus,
+  userInfo: UserInfo
+): Email {
+  const email = generateInitialEmail(hakemus)
   if (hakemus.language !== 'fi') {
     // No translation yet
     return email
@@ -21,12 +29,14 @@ function addHeaderAndFooter(email: Email, hakemus: Hakemus, userInfo: UserInfo):
 
   const registerNumber = hakemus['register-number']
   const registerNumberStr = registerNumber ? ` (${registerNumber})` : ''
-
   const header = `Hyvä vastaanottaja,
 
 tämä viesti koskee avustusta ${hakemus['project-name']}${registerNumberStr}.\n\n`
 
-  const footer = `\n\nTarvittaessa tarkempia lisätietoja voi kysyä viestin lähettäjältä.
+  const paatosUrl = PaatosUrl.hakijaPublicLink(environment, avustushakuId, hakemus)
+  const footer = `\n\nLinkki avustuspäätökseen: ${paatosUrl}
+
+Tarvittaessa tarkempia lisätietoja voi kysyä viestin lähettäjältä.
 
 Ystävällisin terveisin,
 ${userInfo['first-name']} ${userInfo.surname}
@@ -47,6 +57,7 @@ type Props = {
 
 function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
   const userInfo = useUserInfo()
+  const environment = useEnvironment()
   const [sentEmails, setSentEmails] = useState<Message[]>([])
 
   useEffect(
@@ -61,7 +72,7 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
   )
 
   const [email, setEmail] = useState<Email>(
-    addHeaderAndFooter(generateInitialEmail(hakemus), hakemus, userInfo)
+    generateEmailWithHeaderAndFooter(environment, avustushaku.id, hakemus, userInfo)
   )
 
   const [formErrorMessage, setFormErrorMessage] = useState<string | undefined>(undefined)
@@ -82,7 +93,7 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
           email.subject,
           email.receivers
         )
-        setEmail(generateInitialEmail(hakemus))
+        setEmail(generateEmailWithHeaderAndFooter(environment, avustushaku.id, hakemus, userInfo))
       } catch (err: any) {
         if (err?.name === 'HttpResponseError' && err?.response?.status === 400) {
           setFormErrorMessage(err.response.data.error)
