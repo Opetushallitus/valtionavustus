@@ -17,6 +17,7 @@
             [oph.soresu.form.schema :refer :all]
             [oph.va.routes :as va-routes]
             [oph.soresu.form.routes :as soresu-routes]
+            [oph.va.hakija.api.muutoshakemus :refer [muutoshakemus-routes]]
             [oph.va.hakija.db :as hakija-db]
             [oph.va.hakija.schema :refer :all]
             [oph.va.hakija.handlers :refer :all]
@@ -177,52 +178,12 @@
     :summary "Open application for applicant edit"
     (ok (on-hakemus-applicant-edit-open haku-id hakemus-id))))
 
-(defn- get-muutoshakemus-paatos []
-  (compojure-api/GET "/paatos/:user-key" [user-key]
-                     :path-params [user-key :- s/Str]
-                     :return MuutoshakemusPaatosDocument
-                     :summary "Get data for rendering a muutoshakemus paatos document"
-                     (let [paatos (hakija-db/get-paatos user-key)
-                           muutoshakemukset (hakija-db/get-muutoshakemukset-by-paatos-user-key user-key)
-                           muutoshakemus (first (filter #(= user-key (:paatos-user-key %)) muutoshakemukset))
-                           muutoshakemus-url (hakija-db/get-muutoshakemus-url-by-hakemus-id (:hakemus-id muutoshakemus))
-                           presenter (hakija-db/get-valmistelija-assigned-to-hakemus (:hakemus-id muutoshakemus))
-                           avustushaku (hakija-db/get-avustushaku-by-paatos-user-key user-key)
-                           hakemus (hakija-db/get-normalized-hakemus-by-id (:hakemus-id muutoshakemus))
-                           is-decided-by-ukotettu-valmistelija (= (:decider muutoshakemus)
-                                                                  (:name presenter))]
-                       (if (nil? paatos)
-                        (not-found)
-                        (ok {:paatos paatos
-                            :muutoshakemus muutoshakemus
-                            :muutoshakemusUrl muutoshakemus-url
-                            :muutoshakemukset muutoshakemukset
-                            :presenter {:name (:name presenter) :email (:email presenter)}
-                            :isDecidedByUkotettuValmistelija is-decided-by-ukotettu-valmistelija
-                            :avustushaku {:hankkeen-alkamispaiva (:hankkeen-alkamispaiva avustushaku) :hankkeen-paattymispaiva (:hankkeen-paattymispaiva avustushaku)}
-                            :hakemus hakemus}))
-                     )
-  )
-)
-
 (defn- get-muutoshakemukset []
   (compojure-api/GET "/:avustushaku-id/hakemus/:user-key/muutoshakemus" [user-key]
                      :path-params [user-key :- s/Str]
                      :return MuutoshakemusList
                      :summary "Get muutoshakemukset"
                      (ok (hakija-db/get-muutoshakemukset-by-user-key user-key))))
-
-(defn- post-muutoshakemus []
-  (compojure-api/POST "/:user-key" [ user-key :as request]
-    :path-params [user-key :- s/Str]
-    :return nil
-    :body [muutoshakemus (compojure-api/describe MuutoshakemusRequest "Application change request")]
-    :summary "Apply for changes to application"
-    (if-let [errors (validate-muutoshakemus user-key muutoshakemus)]
-      (do
-        (log/warn "error posting muutoshakemus with user key" user-key ":" errors)
-        (bad-request))
-      (on-post-muutoshakemus user-key muutoshakemus))))
 
 (defn- get-attachments []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
@@ -372,11 +333,6 @@
       (if organisation-info
         (ok organisation-info)
         (not-found)))))
-
-(compojure-api/defroutes muutoshakemus-routes
-  "APIs for hakemus changes after the hakemus has already been approved"
-  (get-muutoshakemus-paatos)
-  (post-muutoshakemus))
 
 (def api-config
   {:formats [:json-kw]

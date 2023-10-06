@@ -90,41 +90,6 @@
           (internal-server-error!)))
       (bad-request! security-validation))))
 
-(defn- sum-normalized-hakemus-budget [hakemus]
-  (when-let [talousarvio (:talousarvio hakemus)]
-    (reduce (fn [sum menoluokka] (+ sum (:amount menoluokka))) 0 talousarvio)))
-
-(defn- sum-muutoshakemus-budget [muutoshakemus]
-  (when-let [talousarvio (:talousarvio muutoshakemus)]
-    (reduce (fn [sum [type amount]] (+ sum amount)) 0 talousarvio)))
-
-(defn validate-muutoshakemus [user-key muutoshakemus]
-  (let [muutoshakemus-budget (sum-muutoshakemus-budget muutoshakemus)
-        hakemus (when muutoshakemus-budget (va-db/get-normalized-hakemus user-key))
-        hakemus-budget (when hakemus (sum-normalized-hakemus-budget hakemus))]
-    (when (and muutoshakemus-budget (not= hakemus-budget muutoshakemus-budget))
-      [(str "muutoshakemus budget was " muutoshakemus-budget " (should be " hakemus-budget ")")])))
-
-(defn- should-notify-valimistelija-of-new-muutoshakemus [muutoshakemus]
-  (or (:talousarvio muutoshakemus)
-      (get-in muutoshakemus [:jatkoaika :haenKayttoajanPidennysta])
-      (get-in muutoshakemus [:sisaltomuutos :haenSisaltomuutosta])))
-
-(defn on-post-muutoshakemus [user-key muutoshakemus]
-  (let [hakemus (va-db/get-hakemus user-key)
-        avustushaku-id (:avustushaku hakemus)
-        hakemus-id (:id hakemus)
-        register-number (:register_number hakemus)
-        normalized-hakemus (va-db/get-normalized-hakemus user-key)
-        hanke (:project-name normalized-hakemus)
-        valmistelija-email (:email (va-db/get-valmistelija-assigned-to-hakemus hakemus-id))]
-    (va-db/on-muutoshakemus user-key hakemus-id avustushaku-id muutoshakemus)
-    (if (should-notify-valimistelija-of-new-muutoshakemus muutoshakemus)
-      (if (nil? valmistelija-email)
-        (log/info "Hakemus" hakemus-id "is missing valmistelija. Can't send notification of new muutoshakemus.")
-        (va-email/notify-valmistelija-of-new-muutoshakemus [valmistelija-email] avustushaku-id register-number hanke hakemus-id)))
-    (ok (va-db/get-normalized-hakemus user-key))))
-
 (defn on-get-decision-answers [haku-id hakemus-id form-key]
   (let [avustushaku (va-db/get-avustushaku haku-id)
         form-id (form-key avustushaku)
