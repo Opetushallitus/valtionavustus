@@ -54,7 +54,9 @@ test('virkailija can send muistutusviesti for loppuselvitys', async ({
   })
 
   await test.step('sent muistutusviesti is shown in list', async () => {
-    await expect(page.getByText(formatDate(new Date()))).toBeVisible()
+    await expect(
+      page.getByTestId('hakemus-details-loppuselvitys').getByText(formatDate(new Date()))
+    ).toBeVisible()
     await page.getByTestId('open-email-0').click()
     await expect(
       page.getByText('Vastaanottajaterkki.esimerkki@example.com, karri@kojootti.dog')

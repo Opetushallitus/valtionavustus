@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test'
 
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
+import { HAKIJA_URL } from '../../utils/constants'
 
 // Assumes that the hakemus is first one in avustushaku, so it gets asianumero 1
 const message = (content: string, hakuAsianumero: string) =>
@@ -16,6 +17,8 @@ Tarvittaessa tarkempia lisätietoja voi kysyä viestin lähettäjältä.
 Ystävällisin terveisin,
 _ valtionavustus
 santeri.horttanainen@reaktor.com`
+
+const DEFAULT_SUBJECT = 'Viesti Opetushallituksen avustukseen liittyen'
 
 muutoshakemusTest(
   'Vapaamuotoisen viestin lähettäminen hankkeelle',
@@ -55,7 +58,7 @@ muutoshakemusTest(
       await expect(form.body).toHaveValue(message(message1.body, hakuProps.registerNumber))
 
       await form.sendButton.click()
-      await viestiTab.expectFormIsClear()
+      await viestiTab.expectFormIsClear(DEFAULT_SUBJECT)
     })
 
     await test.step('Lähetetty viesti näkyy listassa', async () => {
@@ -91,7 +94,7 @@ muutoshakemusTest(
 
       await form.previewButton.click()
       await form.sendButton.click()
-      await viestiTab.expectFormIsClear()
+      await viestiTab.expectFormIsClear(DEFAULT_SUBJECT)
     })
 
     await test.step('Toinen viesti näkyy listassa', async () => {

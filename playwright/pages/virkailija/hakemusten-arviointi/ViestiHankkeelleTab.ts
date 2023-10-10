@@ -35,9 +35,13 @@ export function createViestiHankkeelleTab(page: Page) {
     messageList,
   }
 
-  async function expectFormIsClear(): Promise<void> {
+  async function expectFormIsClear(defaultSubject?: string): Promise<void> {
     const { subject, body } = locators.sendMessageForm
-    await expect.soft(subject).toBeEmpty()
+    if (defaultSubject) {
+      await expect.soft(subject).toHaveValue(defaultSubject)
+    } else {
+      await expect.soft(subject).toBeEmpty()
+    }
     await expect.soft(body).toBeEmpty()
 
     expect(test.info().errors, 'Email form should be clear').toHaveLength(0)

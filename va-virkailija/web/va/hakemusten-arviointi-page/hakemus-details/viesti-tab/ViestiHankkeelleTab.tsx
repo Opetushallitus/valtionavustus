@@ -13,7 +13,8 @@ import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 import { useUserInfo } from '../../../initial-data-context'
 import type { UserInfo } from '../../../types'
 
-function addHeaderAndFooter(email: Email, hakemus: Hakemus, userInfo: UserInfo): Email {
+function generateEmailWithHeaderAndFooter(hakemus: Hakemus, userInfo: UserInfo): Email {
+  const email = generateInitialEmail(hakemus)
   if (hakemus.language !== 'fi') {
     // No translation yet
     return email
@@ -60,9 +61,7 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
     [avustushaku, hakemus]
   )
 
-  const [email, setEmail] = useState<Email>(
-    addHeaderAndFooter(generateInitialEmail(hakemus), hakemus, userInfo)
-  )
+  const [email, setEmail] = useState<Email>(generateEmailWithHeaderAndFooter(hakemus, userInfo))
 
   const [formErrorMessage, setFormErrorMessage] = useState<string | undefined>(undefined)
 
@@ -82,7 +81,7 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
           email.subject,
           email.receivers
         )
-        setEmail(generateInitialEmail(hakemus))
+        setEmail(generateEmailWithHeaderAndFooter(hakemus, userInfo))
       } catch (err: any) {
         if (err?.name === 'HttpResponseError' && err?.response?.status === 400) {
           setFormErrorMessage(err.response.data.error)
