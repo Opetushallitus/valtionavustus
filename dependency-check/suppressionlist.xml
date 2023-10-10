@@ -28,11 +28,10 @@
    ]]></notes>
     <cve>CVE-2023-35116</cve>
   </suppress>
-  <suppress until="2023-10-10">
+  <suppress>
     <notes><![CDATA[
-   file name: quartz-2.3.2.jar
-   Vulnerability is in quartz-jobs and not in quartz
-   https://github.com/jeremylong/DependencyCheck/issues/5862
+      Vulnerability is in JMS API, which is not being used. CVE is also disputed as possibly non-exploitable
+      https://github.com/quartz-scheduler/quartz/issues/943
    ]]></notes>
     <packageUrl regex="true">^pkg:maven/org\.quartz\-scheduler/quartz@.*$</packageUrl>
     <cve>CVE-2023-39017</cve>
