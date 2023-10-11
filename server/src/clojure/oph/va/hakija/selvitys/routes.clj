@@ -1,5 +1,6 @@
 (ns oph.va.hakija.selvitys.routes
   (:require [oph.soresu.common.db :refer [query]]
+            [oph.soresu.common.config :refer [feature-enabled?]]
             [oph.soresu.form.validation :as validation]
             [oph.soresu.form.schema :as soresu-schema]
             [oph.soresu.form.db :as form-db]
@@ -144,7 +145,7 @@
       (:contact-email normalized-hakemus)
       (find-contact-person-email-from-last-hakemus-version hakemus-id))))
 
-(defn on-loppuselvitys-change-request-response [avustushaku-id selvitys-user-key base-version answers]
+(defn- on-loppuselvitys-change-request-response [avustushaku-id selvitys-user-key base-version answers]
   (let [selvitys-type "loppuselvitys"
         selvitys-field-keyword (selvitys-form-keyword selvitys-type)
         avustushaku (va-db/get-avustushaku avustushaku-id)
@@ -186,14 +187,15 @@
       (http/bad-request! validation))))
 
 (defn post-loppuselvitys-change-request-response []
-  (compojure-api/POST "/:avustushaku-id/selvitys/loppuselvitys/:selvitys-key/:version/change-request-response" [avustushaku-id selvitys-key version :as request]
-    :path-params [avustushaku-id :- Long, selvitys-key :- s/Str version :- Long]
-    :body    [answers (compojure-api/describe soresu-schema/Answers "New answers")]
-    :return  nil
-    :summary "Submit response for loppuselvitys change request"
-    (if (handlers/can-update-hakemus avustushaku-id selvitys-key answers nil)
-      (on-loppuselvitys-change-request-response avustushaku-id selvitys-key version answers)
-      (http/bad-request! { :error "can not update loppuselvitys"}))))
+  (when (feature-enabled? :loppuselvitys-taydennyspyynto)
+    (compojure-api/POST "/:avustushaku-id/selvitys/loppuselvitys/:selvitys-key/:version/change-request-response" [avustushaku-id selvitys-key version :as request]
+      :path-params [avustushaku-id :- Long, selvitys-key :- s/Str version :- Long]
+      :body    [answers (compojure-api/describe soresu-schema/Answers "New answers")]
+      :return  nil
+      :summary "Submit response for loppuselvitys change request"
+      (if (handlers/can-update-hakemus avustushaku-id selvitys-key answers nil)
+        (on-loppuselvitys-change-request-response avustushaku-id selvitys-key version answers)
+        (http/bad-request! { :error "can not update loppuselvitys"})))))
 
 (defn- get-hakemus-contact-email [hakemus-id]
   (let [normalized-hakemus (va-db/get-normalized-hakemus-by-id hakemus-id)]
