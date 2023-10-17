@@ -14,6 +14,7 @@ import {
   usePostRaportointivelvoiteMutation,
   usePutRaportointivelvoiteMutation,
 } from '../../apiSlice'
+import { useCurrentAvustushaku } from '../useAvustushaku'
 
 type RaportointivelvoitteetProps = {
   avustushaku: Avustushaku
@@ -83,6 +84,9 @@ const Raportointivelvoite = ({
   const [postRaportointivelvoite] = usePostRaportointivelvoiteMutation()
   const [deleteRaportointivelvoite] = useDeleteRaportointivelvoiteMutation()
   const dispatch = useHakujenHallintaDispatch()
+  const avustushaku = useCurrentAvustushaku()
+  const status = avustushaku?.status
+  const editable = status === 'new' || status === 'draft'
   const startAutoSave = () => dispatch(startManuallySaving())
   const saveSuccessful =
     (success = true) =>
@@ -154,6 +158,7 @@ const Raportointivelvoite = ({
             raportointilaji ? { value: raportointilaji, label: raportointilaji } : undefined
           }
           components={{ Option }}
+          isDisabled={!editable}
         />
       </div>
       <div className="raportointivelvoitteet_maaraaika">
@@ -170,7 +175,7 @@ const Raportointivelvoite = ({
           defaultValue={maaraaika ? new Date(maaraaika) : undefined}
           allowEmpty={true}
           placeholder="Päivämäärä"
-          disabled={!raportointilaji}
+          disabled={!editable && !raportointilaji}
         />
       </div>
       <div className="raportointivelvoitteet_asha-tunnus">
@@ -182,7 +187,7 @@ const Raportointivelvoite = ({
           id={`asha-tunnus-${index}`}
           value={ashaTunnus}
           onChange={(e) => setAshaTunnus(e.target.value)}
-          disabled={!raportointilaji}
+          disabled={!editable && !raportointilaji}
         />
       </div>
       <div className="raportointivelvoitteet_lisatiedot">
@@ -196,7 +201,7 @@ const Raportointivelvoite = ({
           id={`lisatiedot-${index}`}
           value={lisatiedot}
           onChange={(e) => setLisatiedot(e.target.value)}
-          disabled={!raportointilaji}
+          disabled={!editable && !raportointilaji}
         />
       </div>
       <div className="raportointivelvoitteet_buttons">
