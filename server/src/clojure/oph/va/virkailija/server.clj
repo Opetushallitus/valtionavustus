@@ -20,6 +20,8 @@
             [oph.va.virkailija.va-users :as va-users]
             [oph.va.virkailija.notification-scheduler :as notification-scheduler]
             [oph.va.virkailija.rondo-scheduling :as rondo-scheduling]
+            [oph.va.virkailija.muistutus-scheduling :as muistutus-scheduling]
+            [oph.soresu.common.config :refer [feature-enabled?]]
             [oph.va.virkailija.routes :refer [all-routes opintopolku-login-url virkailija-login-url]]
             [oph.va.virkailija.healthcheck :as healthcheck]))
 
@@ -41,6 +43,8 @@
   (when (get-in config [:integration-healthcheck :enabled?])
     (log/info "Starting scheduled healthcheck")
     (healthcheck/start-schedule-status-update!))
+  (when (feature-enabled? :automaattimuistutus-raportointivelvoitteille)
+    (muistutus-scheduling/schedule-raportointivelvoite-muistutusviestit))
   (when (get-in config [:email :persistent-retry :enabled? ])
     (email/start-persistent-retry-job)))
 
@@ -55,6 +59,8 @@
   (notification-scheduler/stop-notification-scheduler)
   (when (get-in config [:integration-healthcheck :enabled?])
     (healthcheck/stop-schedule-status-update!))
+  (when (feature-enabled? :automaattimuistutus-raportointivelvoitteille)
+    (muistutus-scheduling/stop-schedule-raportointivelvoite-muistutusviestit))
   (when (get-in config [:email :persistent-retry :enabled? ])
     (email/stop-persistent-retry-job))
   (db/close-datasource!))
