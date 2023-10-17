@@ -150,6 +150,7 @@ const Raportointivelvoite = ({
       <div className="raportointivelvoitteet_raportointilaji">
         <h3 className="raportointivelvoitteet_label">Raportointilaji</h3>
         <Select
+          data-test-id={`raportointilaji-dropdown-${index}`}
           id={`raportointilaji-dropdown-${index}`}
           placeholder="Valitse raportointilaji"
           options={options}
@@ -170,6 +171,7 @@ const Raportointivelvoite = ({
           />
         </h3>
         <DateInput
+          data-test-id={`maaraaika-${index}`}
           id={`maaraaika-${index}`}
           onChange={(_id, date) => setMaaraaika(date.format('YYYY-MM-DD'))}
           defaultValue={maaraaika ? new Date(maaraaika) : undefined}
@@ -184,6 +186,7 @@ const Raportointivelvoite = ({
           <HelpTooltip content={helpTexts['hakujen_hallinta__haun_tiedot___asha-tunnus']} />
         </h3>
         <input
+          data-test-id={`asha-tunnus-${index}`}
           id={`asha-tunnus-${index}`}
           value={ashaTunnus}
           onChange={(e) => setAshaTunnus(e.target.value)}
@@ -198,6 +201,7 @@ const Raportointivelvoite = ({
           />
         </h3>
         <input
+          data-test-id={`lisatiedot-${index}`}
           id={`lisatiedot-${index}`}
           value={lisatiedot}
           onChange={(e) => setLisatiedot(e.target.value)}
