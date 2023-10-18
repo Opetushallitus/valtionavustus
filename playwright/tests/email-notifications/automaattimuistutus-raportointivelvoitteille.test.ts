@@ -104,34 +104,45 @@ cutoffMuistutusTest(
 )
 
 happyCaseMuistutusTest(
-  'Muistutusviesti valtionavustuksen raportoinnista lähtee',
+  'Muistutusviesti valtionavustuksen raportoinnista',
   async ({ page, userCache, closedAvustushaku, avustushakuID, avustushakuName }) => {
     expectToBeDefined(userCache)
     expectToBeDefined(closedAvustushaku)
 
-    await new HakujenHallintaPage(page).navigate(avustushakuID)
+    const hakujenhallintaPage = new HakujenHallintaPage(page)
+    const hauntiedot = await hakujenhallintaPage.navigate(avustushakuID)
     const haunTiedotUrl = page.url()
-
-    await sendLahetaRaporttienMuistutusviestit(page)
-
-    await test.step('avustuspäätöksille', async () => {
-      const email = await waitForOnlyEmail(getMuistutusAvustuspäätöksetEmails)
-      expectCorrectMuistutusViesti(email, avustushakuName, haunTiedotUrl)
+    await test.step('ei lähde jos luonnos tilassa', async () => {
+      await hauntiedot.setAvustushakuInDraftState()
+      await sendLahetaRaporttienMuistutusviestit(page)
+      expect(await getMuistutusAvustuspäätöksetEmails(avustushakuID)).toHaveLength(0)
+      expect(await getMuistutusVäliraporttiEmails(avustushakuID)).toHaveLength(0)
+      expect(await getMuistutusLoppuraporttiEmails(avustushakuID)).toHaveLength(0)
+      expect(await getMuistutusMuuraporttiEmails(avustushakuID)).toHaveLength(0)
     })
 
-    await test.step('väliraporteille', async () => {
-      const email = await waitForOnlyEmail(getMuistutusVäliraporttiEmails)
-      expectCorrectMuistutusViesti(email, avustushakuName, haunTiedotUrl)
-    })
+    await test.step('lähtee jos julkaistu', async () => {
+      await hauntiedot.publishAvustushaku()
+      await sendLahetaRaporttienMuistutusviestit(page)
+      await test.step('avustuspäätöksille', async () => {
+        const email = await waitForOnlyEmail(getMuistutusAvustuspäätöksetEmails)
+        expectCorrectMuistutusViesti(email, avustushakuName, haunTiedotUrl)
+      })
 
-    await test.step('loppuraporteille', async () => {
-      const email = await waitForOnlyEmail(getMuistutusLoppuraporttiEmails)
-      expectCorrectMuistutusViesti(email, avustushakuName, haunTiedotUrl)
-    })
+      await test.step('väliraporteille', async () => {
+        const email = await waitForOnlyEmail(getMuistutusVäliraporttiEmails)
+        expectCorrectMuistutusViesti(email, avustushakuName, haunTiedotUrl)
+      })
 
-    await test.step('muille raporteille', async () => {
-      const email = await waitForOnlyEmail(getMuistutusMuuraporttiEmails)
-      expectCorrectMuistutusViesti(email, avustushakuName, haunTiedotUrl)
+      await test.step('loppuraporteille', async () => {
+        const email = await waitForOnlyEmail(getMuistutusLoppuraporttiEmails)
+        expectCorrectMuistutusViesti(email, avustushakuName, haunTiedotUrl)
+      })
+
+      await test.step('muille raporteille', async () => {
+        const email = await waitForOnlyEmail(getMuistutusMuuraporttiEmails)
+        expectCorrectMuistutusViesti(email, avustushakuName, haunTiedotUrl)
+      })
     })
 
     async function waitForOnlyEmail(emailFunc: (avustushakuID: number) => Promise<Email[]>) {

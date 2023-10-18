@@ -22,6 +22,7 @@
                                                         FROM raportointivelvoite r
                                                         JOIN avustushaut a ON a.id = r.avustushaku_id
                                                         WHERE r.muistutus_lahetetty IS NULL AND
+                                                              (a.status = 'published' OR a.status = 'resolved') AND
                                                               r.maaraaika > now()::date AND
                                                               r.maaraaika <= (now() + '30 days'::interval)::date
                                                       ), valmistelijas AS (
