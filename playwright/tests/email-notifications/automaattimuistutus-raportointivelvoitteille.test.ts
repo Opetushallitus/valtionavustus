@@ -15,7 +15,7 @@ import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hak
 
 const deadline = moment().add(30, 'days').format('DD.MM.YYYY')
 
-export const muistutusEmailTest = muutoshakemusTest.extend({
+export const happyCaseMuistutusTest = muutoshakemusTest.extend({
   hakuProps: ({ hakuProps }, use) =>
     use({
       ...hakuProps,
@@ -48,7 +48,62 @@ export const muistutusEmailTest = muutoshakemusTest.extend({
     }),
 })
 
-muistutusEmailTest(
+export const cutoffMuistutusTest = muutoshakemusTest.extend({
+  hakuProps: ({ hakuProps }, use) =>
+    use({
+      ...hakuProps,
+      raportointivelvoitteet: [
+        {
+          raportointilaji: 'Muu raportti',
+          maaraaika: moment().subtract(1, 'days').format('DD.MM.YYYY'),
+          ashaTunnus: 'ASHA-1',
+          lisatiedot: 'Eilen ei näy',
+        },
+        {
+          raportointilaji: 'Väliraportti',
+          maaraaika: deadline,
+          ashaTunnus: 'ASHA-2',
+          lisatiedot: 'Näkyy',
+        },
+        {
+          raportointilaji: 'Loppuraportti',
+          maaraaika: moment().add(31, 'days').format('DD.MM.YYYY'),
+          ashaTunnus: 'ASHA-3',
+          lisatiedot: '31 päivää tulevaisuudessa ei näy',
+        },
+      ],
+    }),
+})
+
+cutoffMuistutusTest(
+  'Muistutus ei lähde kuin 30pv sisällä oleville',
+  async ({ page, userCache, closedAvustushaku, avustushakuID, avustushakuName }) => {
+    expectToBeDefined(userCache)
+    expectToBeDefined(closedAvustushaku)
+
+    await new HakujenHallintaPage(page).navigate(avustushakuID)
+    const haunTiedotUrl = page.url()
+
+    await sendLahetaRaporttienMuistutusviestit(page)
+
+    await test.step('eli väliraportille', async () => {
+      const emails = await waitUntilMinEmails(
+        (avustushakuId) => getMuistutusVäliraporttiEmails(avustushakuId),
+        1,
+        avustushakuID
+      )
+      expect(emails).toHaveLength(1)
+      expectCorrectMuistutusViesti(emails[0], avustushakuName, haunTiedotUrl)
+    })
+    await test.step('muttei muille', async () => {
+      expect(await getMuistutusAvustuspäätöksetEmails(avustushakuID)).toHaveLength(0)
+      expect(await getMuistutusLoppuraporttiEmails(avustushakuID)).toHaveLength(0)
+      expect(await getMuistutusMuuraporttiEmails(avustushakuID)).toHaveLength(0)
+    })
+  }
+)
+
+happyCaseMuistutusTest(
   'Muistutusviesti valtionavustuksen raportoinnista lähtee',
   async ({ page, userCache, closedAvustushaku, avustushakuID, avustushakuName }) => {
     expectToBeDefined(userCache)
@@ -57,50 +112,52 @@ muistutusEmailTest(
     await new HakujenHallintaPage(page).navigate(avustushakuID)
     const haunTiedotUrl = page.url()
 
-    test.fail()
     await sendLahetaRaporttienMuistutusviestit(page)
 
     await test.step('avustuspäätöksille', async () => {
       const email = await waitForOnlyEmail(getMuistutusAvustuspäätöksetEmails)
-      expectCorrectMuistutusViesti(email)
+      expectCorrectMuistutusViesti(email, avustushakuName, haunTiedotUrl)
     })
 
     await test.step('väliraporteille', async () => {
       const email = await waitForOnlyEmail(getMuistutusVäliraporttiEmails)
-      expectCorrectMuistutusViesti(email)
+      expectCorrectMuistutusViesti(email, avustushakuName, haunTiedotUrl)
     })
 
     await test.step('loppuraporteille', async () => {
       const email = await waitForOnlyEmail(getMuistutusLoppuraporttiEmails)
-      expectCorrectMuistutusViesti(email)
+      expectCorrectMuistutusViesti(email, avustushakuName, haunTiedotUrl)
     })
 
     await test.step('muille raporteille', async () => {
       const email = await waitForOnlyEmail(getMuistutusMuuraporttiEmails)
-      expectCorrectMuistutusViesti(email)
+      expectCorrectMuistutusViesti(email, avustushakuName, haunTiedotUrl)
     })
 
     async function waitForOnlyEmail(emailFunc: (avustushakuID: number) => Promise<Email[]>) {
       const emails = await waitUntilMinEmails(emailFunc, 1, avustushakuID)
-      if (emails.length !== 1) throw new Error('Found more than one email, cannot continue')
-
+      expect(emails).toHaveLength(1)
       return emails[0]
-    }
-
-    function expectCorrectMuistutusViesti(email: Email) {
-      expect(email.formatted).toBe(emailBody(avustushakuName, haunTiedotUrl))
-      expect(email['to-address']).toEqual([
-        'santeri.horttanainen@reaktor.com',
-        'viivi.virkailja@exmaple.com',
-      ])
-      expect(email.subject).toBe('Muistutus valtionavustuksen raportoinnista')
-      expect(email['reply-to']).toBeNull()
     }
   }
 )
 
+function expectCorrectMuistutusViesti(
+  email: Email,
+  avustushakuName: string,
+  haunTiedotUrl: string
+) {
+  expect(email.formatted).toBe(emailBody(avustushakuName, haunTiedotUrl))
+  expect(email['to-address']).toEqual([
+    'santeri.horttanainen@reaktor.com',
+    'viivi.virkailja@exmaple.com',
+  ])
+  expect(email.subject).toBe('Muistutus valtionavustuksen raportoinnista')
+  expect(email['reply-to']).toBeUndefined()
+}
+
 async function sendLahetaRaporttienMuistutusviestit(page: Page) {
-  await page.request.post(`${VIRKAILIJA_URL}/api/test/send-raporttien-muistutusviestit`, {
+  await page.request.post(`${VIRKAILIJA_URL}/api/test/trigger-raportointivelvoite-muistustus`, {
     failOnStatusCode: true,
   })
 }
@@ -117,4 +174,5 @@ Raportoinnissa tulee noudattaa määrärahan asettajan ohjauskirjeessä asettami
 
 Yleiset ohjeet raportin laadintaan, tallentamiseen ja lähettämiseen löydät täältä: https://intra.oph.fi/display/VALA/Raportointi+ja+vaikutusten+arviointi
 
-Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi`
+Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
+`

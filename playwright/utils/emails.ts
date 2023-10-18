@@ -70,11 +70,17 @@ export const getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails = getEmails(
 
 // ???? emails
 export const getMuistutusAvustuspäätöksetEmails = getEmailsWithAvustushaku(
-  'muistutus-avustuspaatokset'
+  'raportointivelvoite-muistutus-avustuspaatokset'
 )
-export const getMuistutusVäliraporttiEmails = getEmailsWithAvustushaku('muistutus-valiraportti')
-export const getMuistutusLoppuraporttiEmails = getEmailsWithAvustushaku('muistutus-loppuraportti')
-export const getMuistutusMuuraporttiEmails = getEmailsWithAvustushaku('muistutus-muu-raportti')
+export const getMuistutusVäliraporttiEmails = getEmailsWithAvustushaku(
+  'raportointivelvoite-muistutus-valiraportti'
+)
+export const getMuistutusLoppuraporttiEmails = getEmailsWithAvustushaku(
+  'raportointivelvoite-muistutus-loppuraportti'
+)
+export const getMuistutusMuuraporttiEmails = getEmailsWithAvustushaku(
+  'raportointivelvoite-muistutus-muu-raportti'
+)
 
 export const getTäydennyspyyntöEmails = getEmails('taydennyspyynto')
 export const getHakemusSubmitted = getEmails('hakemus-submitted')

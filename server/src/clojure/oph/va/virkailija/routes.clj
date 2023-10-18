@@ -33,6 +33,7 @@
             [oph.va.virkailija.reports.routes :as reporting-routes]
             [oph.va.virkailija.maksatukset-and-tasmaytysraportti-routes :as maksatukset-and-tasmaytysraportti-routes]
             [oph.va.virkailija.rondo-scheduling :refer [processMaksupalaute put-maksupalaute-to-maksatuspalvelu]]
+            [oph.va.virkailija.muistutus-scheduling :refer [send-muistutusviestit]]
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.schema :as virkailija-schema]
             [oph.va.virkailija.va-code-values-routes :as va-code-values-routes]
@@ -282,6 +283,12 @@
     :return {:ok s/Str}
     (log/info "test-api: send valiselvitys palauttamatta notifications")
     (virkailija-notifications/send-valiselvitys-palauttamatta-notifications)
+    (ok {:ok "ok"}))
+
+  (compojure-api/POST "/trigger-raportointivelvoite-muistustus" []
+    :return {:ok s/Str}
+    (log/info "test-api: trigger raportointivelvoite muistustus")
+    (send-muistutusviestit)
     (ok {:ok "ok"}))
 
   (compojure-api/POST "/send-muutoshakemuksia-kasittelematta-notifications" []

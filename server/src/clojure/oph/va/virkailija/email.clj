@@ -21,6 +21,7 @@
             :sv "Automatiskt meddelande: Er ansökan om understöd har behandlats – Länk till beslutet"}
    :muutoshakemus-paatos {:fi "Automaattinen viesti: organisaationne muutoshakemus on käsitelty - Linkki päätösasiakirjaan"
             :sv "Automatiskt meddelande: Er ändringsansökan har behandlats - Länk till beslutet"}
+   :raportointivelvoite-muistutus {:fi "Muistutus valtionavustuksen raportoinnista"}
    :selvitys {:fi "Väliselvitys käsitelty"
               :sv "Mellanredovisning behandlat"}
    :valiselvitys-notification {:fi "Väliselvitys täytettävissä haulle"
@@ -67,6 +68,7 @@
                           :sv (email/load-template "email-templates/hakuaika-paattymassa.sv")}
    :hakuaika-paattynyt {:fi (email/load-template "email-templates/hakuaika-paattynyt.fi")}
    :paatokset-lahetetty {:fi (email/load-template "email-templates/paatokset-lahetetty.fi")}
+   :raportointivelvoite-muistutus {:fi (email/load-template "email-templates/raportointivelvoite-muistutus.fi")}
    :valiselvitys-palauttamatta {:fi (email/load-template "email-templates/valiselvitys-palauttamatta.fi")
                                 :sv (email/load-template "email-templates/valiselvitys-palauttamatta.sv")}
    :loppuselvitys-palauttamatta {:fi (email/load-template "email-templates/loppuselvitys-palauttamatta.fi")
@@ -454,6 +456,27 @@
              :body mail-message}
         body (render-body msg)]
     (email/enqueue-message-to-be-send msg body)))
+
+(defn send-raportointivelvoite-muistutus [to avustushaku-id avustushaku-name-fi maaraaika type]
+  (let [lang (keyword "fi")
+        email-template-type (keyword "raportointivelvoite-muistutus")
+        linkki (str (-> config :server :virkailija-url) "/admin/haku-editor/?avustushaku=" avustushaku-id)
+        msg {
+             :operation :send
+             :avustushaku-id avustushaku-id
+             :email-type email-template-type
+             :lang lang
+             :from (-> email/smtp-config :from lang)
+             :sender (-> email/smtp-config :sender)
+             :subject (get-in mail-titles [email-template-type lang])
+             :to to
+             :linkki linkki
+             :maaraaika maaraaika
+             :avustushaku-name-fi avustushaku-name-fi
+             }
+        template (get-in mail-templates [email-template-type lang])
+        body (render template msg)]
+    (email/enqueue-message-to-be-send (merge msg {:email-type type}) body)))
 
 (defn send-selvitys-notification! [to avustushaku hakemus selvitys-type arvio roles uuid identity]
   (let [lang-str (:language hakemus)
