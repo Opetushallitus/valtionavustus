@@ -1,6 +1,6 @@
 Hyvä vastaanottaja,
 
-tämä viesti koskee avustusta: {{& register-number }} {{ avustushaku-name }}
+tämä viesti koskee avustusta: {{& register-number }} {{ project-name }}
 
 Olemme vastaanottaneet loppuselvitystänne koskevat täydennykset ja selvityksenne tarkastus siirtyy seuraavaan vaiheeseen. Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan viralliseen sähköpostiosoitteeseen sekä yhteyshenkilöille.
 

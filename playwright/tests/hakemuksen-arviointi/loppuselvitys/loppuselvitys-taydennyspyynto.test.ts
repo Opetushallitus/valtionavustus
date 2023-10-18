@@ -9,6 +9,7 @@ import {
   getLoppuselvitysTaydennysReceivedEmails,
   getSelvitysEmails,
   waitUntilMinEmails,
+  getHakemusTokenAndRegisterNumber,
 } from '../../../utils/emails'
 import { HakijaSelvitysPage } from '../../../pages/hakija/hakijaSelvitysPage'
 import { navigate } from '../../../utils/navigate'
@@ -18,13 +19,12 @@ import { Answers } from '../../../utils/types'
 test.extend<{ answers: Answers }>({
   answers: swedishAnswers,
 })(
-  'reminder mail is sent in swedish for swedish hakemus',
+  'Loppuselvitys change request received swedish version to hakija',
   async ({
     page,
     acceptedHakemus: { hakemusID },
     avustushakuID,
     loppuselvitysSubmitted: { loppuselvitysFormUrl },
-    hakuProps,
   }) => {
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     const loppuselvitysPage = await hakemustenArviointiPage.navigateToHakemusArviointiLoppuselvitys(
@@ -74,13 +74,15 @@ test.extend<{ answers: Answers }>({
         1,
         hakemusID
       )
+      const { 'register-number': registerNumber } =
+        await getHakemusTokenAndRegisterNumber(hakemusID)
 
       expect(emails[0].subject).toBe(
-        'Automaattinen viesti: avustushakemuksenne loppuselvitystä on täydennetty'
+        `Organisaationne loppuselvitystä on täydennetty: ${registerNumber} Vi Simmar i Pengar Ab`
       )
       expect(emails[0].formatted).toBe(`Hyvä vastaanottaja,
 
-tämä viesti koskee avustusta: ${hakuProps.registerNumber} ${hakuProps.avustushakuName} på svenska
+tämä viesti koskee avustusta: ${registerNumber} Vi Simmar i Pengar Ab
 
 Olemme vastaanottaneet loppuselvitystänne koskevat täydennykset ja selvityksenne tarkastus siirtyy seuraavaan vaiheeseen. Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan viralliseen sähköpostiosoitteeseen sekä yhteyshenkilöille.
 
@@ -186,17 +188,17 @@ Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avu
 `)
   })
   await test.step('hakija receives täydennys received email after creating submission', async () => {
+    const { 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
     const emails = await getLoppuselvitysTaydennysReceivedHakijaNotificationEmails(hakemusID)
     expect(emails).toHaveLength(1)
     expect(emails[0].subject).toBe(
-      'Automaattinen viesti: avustushakemuksenne loppuselvitystä on täydennetty'
+      `Organisaationne loppuselvitystä on täydennetty: ${registerNumber} Rahassa kylpijät Ky Ay Oy`
     )
     expect(emails[0]['to-address']).toStrictEqual(['erkki.esimerkki@example.com'])
-    const { registerNumber, avustushakuName } = hakuProps
 
     expect(emails[0].formatted).toBe(`Hyvä vastaanottaja,
 
-tämä viesti koskee avustusta: ${registerNumber} ${avustushakuName}
+tämä viesti koskee avustusta: ${registerNumber} Rahassa kylpijät Ky Ay Oy
 
 Olemme vastaanottaneet loppuselvitystänne koskevat täydennykset ja selvityksenne tarkastus siirtyy seuraavaan vaiheeseen. Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan viralliseen sähköpostiosoitteeseen sekä yhteyshenkilöille.
 

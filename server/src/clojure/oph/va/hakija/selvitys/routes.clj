@@ -176,8 +176,9 @@
               virkailija-last-name (-> virkailija-name-and-email :user-last-name)
               email-of-hakija (get-hakemus-contact-email parent-hakemus-id)
               avustushaku-name-fi (-> avustushaku :content :name :fi)
-              avustushaku-name (-> avustushaku :content :name lang)
-              register-number (-> avustushaku :register_number)
+              register-number (-> hakemus :register_number)
+              parent-hakemus (va-db/get-hakemus-by-id parent-hakemus-id)
+              project-name (-> parent-hakemus :project-name)
               ]
 
           (va-db/update-loppuselvitys-status id "submitted")
@@ -189,8 +190,8 @@
                                                                                   avustushaku-id
                                                                                   parent-hakemus-id
                                                                                   lang
-                                                                                  avustushaku-name
                                                                                   register-number
+                                                                                  project-name
                                                                                   email-of-virkailija
                                                                                   virkailija-first-name
                                                                                   virkailija-last-name
