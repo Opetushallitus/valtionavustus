@@ -7,7 +7,7 @@ const outcomeLocator = (page: Page, radioNumber: number) =>
 const goodPracticeLocator = (page: Page, radioNumber: 0 | 1) =>
   page.locator(`label[for='radioButton-good-practices.radio.${radioNumber}']`)
 
-export const HakijaSelvitysPage = (page: Page) => {
+export const HakijaSelvitysPage = (page: Page, lang: 'fi' | 'sv' = 'fi') => {
   const locators = {
     page,
     organization: page.locator(`[name='organization']`),
@@ -30,7 +30,12 @@ export const HakijaSelvitysPage = (page: Page) => {
     },
     firstAttachment: page.locator(`[name='namedAttachment-0']`),
     submitButton: page.locator('#submit'),
-    taydennysButton: page.getByRole('button', { name: 'Lähetä täydennys käsiteltäväksi' }),
+    taydennysButton: page.getByRole('button', {
+      name:
+        lang === 'fi'
+          ? 'Lähetä täydennys käsiteltäväksi'
+          : 'Skicka kompletteringen för handläggning',
+    }),
     valiselvitysWarning: page.locator('text="Väliselvityksen jättämisen määräaika on umpeutunut"'),
     loppuselvitysWarning: page.locator(
       'text="Loppuselvityksen jättämisen määräaika on umpeutunut"'

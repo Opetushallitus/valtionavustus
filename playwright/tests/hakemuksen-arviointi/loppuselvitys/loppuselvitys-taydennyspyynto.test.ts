@@ -8,10 +8,88 @@ import {
   getLoppuselvitysTaydennysReceivedHakijaNotificationEmails,
   getLoppuselvitysTaydennysReceivedEmails,
   getSelvitysEmails,
+  waitUntilMinEmails,
 } from '../../../utils/emails'
 import { HakijaSelvitysPage } from '../../../pages/hakija/hakijaSelvitysPage'
 import { navigate } from '../../../utils/navigate'
-import { VIRKAILIJA_URL } from '../../../utils/constants'
+import { VIRKAILIJA_URL, swedishAnswers } from '../../../utils/constants'
+import { Answers } from '../../../utils/types'
+
+test.extend<{ answers: Answers }>({
+  answers: swedishAnswers,
+})(
+  'reminder mail is sent in swedish for swedish hakemus',
+  async ({
+    page,
+    acceptedHakemus: { hakemusID },
+    avustushakuID,
+    loppuselvitysSubmitted: { loppuselvitysFormUrl },
+    hakuProps,
+  }) => {
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    const loppuselvitysPage = await hakemustenArviointiPage.navigateToHakemusArviointiLoppuselvitys(
+      avustushakuID,
+      hakemusID
+    )
+
+    const emails = await getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails(hakemusID)
+    expect(emails).toHaveLength(0)
+    await test.step('can send täydennyspyyntö email in asiatarkastus phase', async () => {
+      await loppuselvitysPage.locators.asiatarkastus.taydennyspyynto.click()
+      const subject = 'Behöver mer ångfartygspengar'
+      await page
+        .getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-email-subject')
+        .fill(subject)
+      await page
+        .getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-email-content')
+        .fill('Det fanns inte tillräckligt med pengar för ångfartyg')
+      await page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-submit').click()
+
+      expect
+        .poll(async () => {
+          return (await getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails(hakemusID)).length
+        })
+        .toBe(1)
+    })
+    const tavoiteLocator = page.locator('[id="project-description.project-description-1.goal"]')
+    const defaultTavoite = 'Tavoite'
+    const asiatarkastusTaydennysTavoite = 'Tavoite parannettu'
+    const yhteenvetoLocator = page.locator('[id="textArea-0"]')
+    const defaultYhteenveto = 'Yhteenveto'
+    const asiatarkastusTaydennysYhteenveto = 'Yhteenveto parempi'
+    await test.step('hakija can send täydennys', async () => {
+      expect(await getLoppuselvitysTaydennysReceivedEmails(hakemusID)).toHaveLength(0)
+      await navigate(page, loppuselvitysFormUrl)
+      const hakijaSelvitysPage = HakijaSelvitysPage(page, 'sv')
+      await expect(tavoiteLocator).toHaveValue(defaultTavoite)
+      await expect(yhteenvetoLocator).toHaveValue(defaultYhteenveto)
+      await tavoiteLocator.fill(asiatarkastusTaydennysTavoite)
+      await yhteenvetoLocator.fill(asiatarkastusTaydennysYhteenveto)
+      await hakijaSelvitysPage.taydennysButton.click()
+    })
+
+    await test.step('hakija receives täydennys received email after creating submission', async () => {
+      const emails = await waitUntilMinEmails(
+        getLoppuselvitysTaydennysReceivedHakijaNotificationEmails,
+        1,
+        hakemusID
+      )
+
+      expect(emails[0].subject).toBe(
+        'Automaattinen viesti: avustushakemuksenne loppuselvitystä on täydennetty'
+      )
+      expect(emails[0].formatted).toBe(`Hyvä vastaanottaja,
+
+tämä viesti koskee avustusta: ${hakuProps.registerNumber} ${hakuProps.avustushakuName} på svenska
+
+Olemme vastaanottaneet loppuselvitystänne koskevat täydennykset ja selvityksenne tarkastus siirtyy seuraavaan vaiheeseen. Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan viralliseen sähköpostiosoitteeseen sekä yhteyshenkilöille.
+
+Ystävällisin terveisin,
+_ valtionavustus
+santeri.horttanainen@reaktor.com`)
+    })
+  }
+)
 
 test('can send taydennyspyynto for loppuselvitys', async ({
   page,

@@ -7,6 +7,7 @@ import { expect, test } from '@playwright/test'
 import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { LoppuselvitysPage } from '../pages/virkailija/hakujen-hallinta/LoppuselvitysPage'
 import { ValiselvitysPage } from '../pages/virkailija/hakujen-hallinta/ValiselvitysPage'
+import translations from '../../server/resources/public/translations.json'
 
 interface SelvitysFixtures {
   väliselvityspyyntöSent: {}
@@ -101,7 +102,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     await use({})
   },
   loppuselvitysSubmitted: async (
-    { page, loppuselvityspyyntöSent, avustushakuID, acceptedHakemus: { hakemusID } },
+    { page, loppuselvityspyyntöSent, avustushakuID, acceptedHakemus: { hakemusID }, answers },
     use,
     testInfo
   ) => {
@@ -131,9 +132,12 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
 
     await hakijaSelvitysPage.firstAttachment.setInputFiles(dummyPdfPath)
 
-    await expect(hakijaSelvitysPage.submitButton).toHaveText('Lähetä käsiteltäväksi')
+    const lang = answers.lang || 'fi'
+    const submitButtonText = lang === 'fi' ? 'Lähetä käsiteltäväksi' : 'Sänd för behandling'
+    const submittedText = lang === 'fi' ? 'Loppuselvitys lähetetty' : 'Slutredovisning sänd'
+    await expect(hakijaSelvitysPage.submitButton).toHaveText(submitButtonText)
     await hakijaSelvitysPage.submitButton.click()
-    await expect(hakijaSelvitysPage.submitButton).toHaveText('Loppuselvitys lähetetty')
+    await expect(hakijaSelvitysPage.submitButton).toHaveText(submittedText)
     await hakijaSelvitysPage.submitButton.isDisabled()
 
     await use({
