@@ -16,7 +16,7 @@
    :hakemus-change-request-responded {:fi "Automaattinen viesti: avustushakemusta on täydennetty"}
    :loppuselvitys-change-request-responded {:fi "Automaattinen viesti: avustushakemuksen loppuselvitystä on täydennetty"}
    :loppuselvitys-change-request-response-received {:fi "Automaattinen viesti: avustushakemuksenne loppuselvitystä on täydennetty"
-                                           :sv "(SV) Automaattinen viesti: avustushakemuksenne loppuselvitystä on täydennetty"}
+                                           :sv "Automaattinen viesti: avustushakemuksenne loppuselvitystä on täydennetty"}
    :valiselvitys-submitted-notification {:fi "Väliselvityksenne on vastaanotettu"
                                          :sv "Er mellanredovisning har emottagits"}
    :loppuselvitys-submitted-notification {:fi "Loppuselvityksenne on vastaanotettu"
@@ -222,9 +222,9 @@
     (log/info "Url would be: " url)
     (email/enqueue-message-to-be-send msg body)))
 
-(defn send-loppuselvitys-change-request-received-message-to-hakija! [to avustushaku-id avustushaku-name-fi parent-hakemus-id]
-  (let [lang :fi
-        msg {:operation :send
+(defn send-loppuselvitys-change-request-received-message-to-hakija! [to avustushaku-id parent-hakemus-id lang avustushaku-name register-number email-of-virkailija virkailija-first-name virkailija-last-name]
+  (let [msg {
+             :operation :send
              :email-type :loppuselvitys-change-request-response-received
              :lang lang
              :hakemus-id parent-hakemus-id
@@ -232,7 +232,12 @@
              :sender (-> email/smtp-config :sender)
              :subject (get-in mail-titles [:loppuselvitys-change-request-response-received lang])
              :to to
-             :avustushaku avustushaku-name-fi}
+             :avustushaku-name avustushaku-name
+             :register-number register-number
+             :email-of-virkailija email-of-virkailija
+             :virkailija-first-name virkailija-first-name
+             :virkailija-last-name virkailija-last-name
+             }
         body (render-body msg)]
     (email/enqueue-message-to-be-send msg body)))
 

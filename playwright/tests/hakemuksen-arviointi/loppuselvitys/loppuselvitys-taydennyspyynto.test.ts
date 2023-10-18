@@ -114,8 +114,17 @@ Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avu
       'Automaattinen viesti: avustushakemuksenne loppuselvitystä on täydennetty'
     )
     expect(emails[0]['to-address']).toStrictEqual(['erkki.esimerkki@example.com'])
-    expect(emails[0].formatted).toBe(`TODO(received)
-`)
+    const { registerNumber, avustushakuName } = hakuProps
+
+    expect(emails[0].formatted).toBe(`Hyvä vastaanottaja,
+
+tämä viesti koskee avustusta: ${registerNumber} ${avustushakuName}
+
+Olemme vastaanottaneet loppuselvitystänne koskevat täydennykset ja selvityksenne tarkastus siirtyy seuraavaan vaiheeseen. Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan viralliseen sähköpostiosoitteeseen sekä yhteyshenkilöille.
+
+Ystävällisin terveisin,
+_ valtionavustus
+santeri.horttanainen@reaktor.com`)
   })
   await test.step('hakija täydennys is shown as diff', async () => {
     await hakemustenArviointiPage.navigateToHakemusArviointiLoppuselvitys(avustushakuID, hakemusID)
