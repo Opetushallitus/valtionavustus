@@ -1,3 +1,4 @@
+import type { SetStateAction, Dispatch } from 'react'
 import { debounce } from 'lodash'
 import React, { PropsWithChildren, useCallback, useEffect, useState } from 'react'
 import Select, { components, OptionProps, GroupBase } from 'react-select'
@@ -27,6 +28,8 @@ type RaportointivelvoiteProps = {
   raportointivelvoite?: Raportointivelvoite
   helpTexts: HelpTexts
   avustushakuId: number
+  getAllSelectedRaportointilaji: ExistingRaportointiSelection[]
+  setAllSelectedRaportointilaji: Dispatch<SetStateAction<ExistingRaportointiSelection[]>>
 }
 
 const AddButton = () => (
@@ -75,6 +78,8 @@ const Raportointivelvoite = ({
   raportointivelvoite,
   helpTexts,
   avustushakuId,
+  getAllSelectedRaportointilaji,
+  setAllSelectedRaportointilaji,
 }: RaportointivelvoiteProps) => {
   const [raportointilaji, setRaportointilaji] = useState(raportointivelvoite?.raportointilaji)
   const [maaraaika, setMaaraaika] = useState(raportointivelvoite?.maaraaika)
@@ -145,6 +150,33 @@ const Raportointivelvoite = ({
     }
   }, [raportointilaji, maaraaika, ashaTunnus, lisatiedot])
 
+  function onChangeRaportointilaji(selectedLaji: string | undefined) {
+    setRaportointilaji(selectedLaji)
+
+    if (selectedLaji) {
+      setAllSelectedRaportointilaji((allSelections) => {
+        const existingSelectionsWithoutThisComponent = allSelections.filter(
+          (selection) => selection.id !== raportointivelvoite?.id
+        )
+        return [
+          ...existingSelectionsWithoutThisComponent,
+          { id: raportointivelvoite?.id, raportointilaji: selectedLaji },
+        ]
+      })
+    }
+  }
+
+  function isRaportointilajiPreviouslySelected(laji: string) {
+    return getAllSelectedRaportointilaji.some((selection) => selection.raportointilaji === laji)
+  }
+
+  const possiblyDisabledOptions = options.map((option) => ({
+    ...option,
+    isDisabled: isRaportointilajiPreviouslySelected(option.value),
+  }))
+
+  const currentSelection = options.find((o) => o.value === raportointilaji)
+
   return (
     <div className="raportointivelvoitteet_row">
       <div className="raportointivelvoitteet_raportointilaji">
@@ -153,11 +185,9 @@ const Raportointivelvoite = ({
           data-test-id={`raportointilaji-dropdown-${index}`}
           id={`raportointilaji-dropdown-${index}`}
           placeholder="Valitse raportointilaji"
-          options={options}
-          onChange={(newValue) => setRaportointilaji(newValue?.value)}
-          defaultValue={
-            raportointilaji ? { value: raportointilaji, label: raportointilaji } : undefined
-          }
+          options={possiblyDisabledOptions}
+          onChange={(newValue) => onChangeRaportointilaji(newValue?.value)}
+          value={currentSelection}
           components={{ Option }}
           isDisabled={!editable}
         />
@@ -237,14 +267,39 @@ const Raportointivelvoite = ({
   )
 }
 
+interface ExistingRaportointiSelection {
+  id: number | undefined
+  raportointilaji: string
+}
+
+interface PlaceholderRaportointivelvoite extends Raportointivelvoite {
+  placeholderId?: number
+}
+
 export const Raportointivelvoitteet = ({ avustushaku, helpTexts }: RaportointivelvoitteetProps) => {
   const { data } = useGetRaportointiveloitteetQuery(avustushaku.id)
-  const raportointiveloitteet = (data ?? []).concat([
-    {
-      'asha-tunnus': '',
-      lisatiedot: '',
-    } as Raportointivelvoite,
-  ])
+  const [raportointiveloitteet, setRaportointiveloitteet] = useState<
+    PlaceholderRaportointivelvoite[] | undefined
+  >(data)
+  const [getAllSelectedRaportointilaji, setAllSelectedRaportointilaji] = useState<
+    ExistingRaportointiSelection[]
+  >([])
+
+  useEffect(() => {
+    const velvoitteet = (data ?? []).concat([
+      {
+        'asha-tunnus': '',
+        lisatiedot: '',
+        placeholderId: Math.random(),
+      } as PlaceholderRaportointivelvoite,
+    ])
+
+    setRaportointiveloitteet(velvoitteet)
+    setAllSelectedRaportointilaji(
+      velvoitteet.map((v) => ({ id: v.id, raportointilaji: v.raportointilaji }))
+    )
+  }, [data])
+
   return (
     <div className="raportointivelvoitteet">
       <h1>OPH:lle asetetut raportointivelvoitteet</h1>
@@ -256,12 +311,14 @@ export const Raportointivelvoitteet = ({ avustushaku, helpTexts }: Raportointive
       </span>
       {raportointiveloitteet?.map((r, i) => (
         <Raportointivelvoite
-          key={`raportointivelvoite-${i}-${r.id}`}
+          key={`raportointivelvoite-${i}-${r.id}-${r.placeholderId}`}
           index={i}
           last={raportointiveloitteet?.length === i + 1}
           raportointivelvoite={r}
           helpTexts={helpTexts}
           avustushakuId={avustushaku.id}
+          setAllSelectedRaportointilaji={setAllSelectedRaportointilaji}
+          getAllSelectedRaportointilaji={getAllSelectedRaportointilaji}
         />
       ))}
     </div>
