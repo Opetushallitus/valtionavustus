@@ -5,7 +5,6 @@
             [clojurewerkz.quartzite.jobs :as j]
             [clojurewerkz.quartzite.triggers :as t]
             [oph.va.virkailija.email :as email]
-            [oph.va.virkailija.db :as virkailija-db]
             [clojurewerkz.quartzite.schedule.simple :refer [schedule with-interval-in-minutes, repeat-forever]])
   (:import (java.time.format DateTimeFormatter)))
 
@@ -25,15 +24,23 @@
                                                         WHERE r.muistutus_lahetetty IS NULL AND
                                                               r.maaraaika > now()::date AND
                                                               r.maaraaika <= (now() + '30 days'::interval)::date
+                                                      ), valmistelijas AS (
+                                                        SELECT avustushaku,
+                                                               jsonb_agg(DISTINCT email) as emails
+                                                        FROM avustushaku_roles
+                                                        JOIN raportointivelvoitteet rt ON rt.avustushaku_id = avustushaku
+                                                        WHERE (role = 'presenting_officer' OR role = 'vastuuvalmistelija')
+                                                        GROUP BY avustushaku
                                                       )
                                                       UPDATE raportointivelvoite
                                                       SET muistutus_lahetetty = now()
                                                       FROM raportointivelvoitteet rt
+                                                      JOIN valmistelijas v ON v.avustushaku = rt.avustushaku_id
                                                       WHERE raportointivelvoite.id  = rt.id
-                                                      RETURNING rt.id, rt.avustushaku_id, rt.name, maaraaika, rt.raportointilaji" [])]
+                                                      RETURNING rt.id, rt.avustushaku_id, rt.name, maaraaika, rt.raportointilaji, v.emails as to" [])]
                  (doseq [raportointivelvoite raportointivelvoitteet]
                    (let [avustushaku-id (:avustushaku-id raportointivelvoite)
-                         to (virkailija-db/get-valmistelija-emails-assigned-to-avustushaku avustushaku-id)
+                         to (:to raportointivelvoite)
                          name (:name raportointivelvoite)
                          type (case (:raportointilaji raportointivelvoite)
                                     "Avustuspäätökset" "raportointivelvoite-muistutus-avustuspaatokset"
