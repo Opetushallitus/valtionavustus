@@ -6,9 +6,6 @@
  ; https://jira.eduuni.fi/browse/VA-373
  :muistutusviesti-loppuselvityksesta [:dev :va-test]
 
- ;https://jira.eduuni.fi/browse/VA-374
- :loppuselvitys-taydennyspyynto [:dev :va-test :va-prod]
-
  ;https://jira.eduuni.fi/browse/VA-375
  :vapaamuotoinen-viesti-hankkeelle [:dev :va-test]
 

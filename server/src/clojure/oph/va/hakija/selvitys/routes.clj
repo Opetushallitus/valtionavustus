@@ -201,15 +201,14 @@
       (http/bad-request! validation))))
 
 (defn post-loppuselvitys-change-request-response []
-  (when (feature-enabled? :loppuselvitys-taydennyspyynto)
-    (compojure-api/POST "/:avustushaku-id/selvitys/loppuselvitys/:selvitys-key/:version/change-request-response" [avustushaku-id selvitys-key version :as request]
-      :path-params [avustushaku-id :- Long, selvitys-key :- s/Str version :- Long]
-      :body    [answers (compojure-api/describe soresu-schema/Answers "New answers")]
-      :return  nil
-      :summary "Submit response for loppuselvitys change request"
-      (if (handlers/can-update-hakemus avustushaku-id selvitys-key answers nil)
-        (on-loppuselvitys-change-request-response avustushaku-id selvitys-key version answers)
-        (http/bad-request! { :error "can not update loppuselvitys"})))))
+  (compojure-api/POST "/:avustushaku-id/selvitys/loppuselvitys/:selvitys-key/:version/change-request-response" [avustushaku-id selvitys-key version :as request]
+    :path-params [avustushaku-id :- Long, selvitys-key :- s/Str version :- Long]
+    :body    [answers (compojure-api/describe soresu-schema/Answers "New answers")]
+    :return  nil
+    :summary "Submit response for loppuselvitys change request"
+    (if (handlers/can-update-hakemus avustushaku-id selvitys-key answers nil)
+      (on-loppuselvitys-change-request-response avustushaku-id selvitys-key version answers)
+      (http/bad-request! { :error "can not update loppuselvitys"}))))
 
 (defn- get-hakemus-contact-email [hakemus-id]
   (let [normalized-hakemus (va-db/get-normalized-hakemus-by-id hakemus-id)]

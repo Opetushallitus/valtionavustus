@@ -134,47 +134,45 @@
           (tapahtumaloki/create-log-entry email-type-str avustushaku-id hakemus-id identity "" {} email-id true))
         (http/created))))
 
-  (when (feature-enabled? :loppuselvitys-taydennyspyynto)
-    (compojure-api/POST
-      "/loppuselvitys/taydennyspyynto" request
-      :path-params [avustushaku-id :- Long hakemus-id :- Long]
-      :body [{:keys [body subject to type  lang]} {:lang s/Str
-                                             :body s/Str
-                                             :subject s/Str
-                                             :type (s/enum "taydennyspyynto-asiatarkastus" "taydennyspyynto-taloustarkastus")
-                                             :to [s/Str]}]
-      :return s/Any
-      :summary "Send taydennyspyynto to hakija"
-      (let [identity (authentication/get-request-identity request)]
-        (when (not (seq (filter notEmptyString to)))
-          (http/bad-request! {:error "Viestillä on oltava vähintään yksi vastaanottaja"}))
-        (let [loppuselvitys-hakemus-id (hakija-db/get-loppuselvitys-hakemus-id hakemus-id)
-              loppuselvitys-hakemus (hakija-api/get-hakemus loppuselvitys-hakemus-id)]
-          (hakija-api/update-hakemus-status loppuselvitys-hakemus "pending_change_request" "Täydennyspyyntö kts. sähköposti" identity))
-        (let [email-id (common-email/try-send-email!
-                       (common-email/message (keyword lang)
-                                               (keyword type)
-                                               to
-                                               subject
-                                               body)
-                       {:hakemus-id     hakemus-id
-                        :avustushaku-id avustushaku-id
-                        :from           (:email identity)})]
-          (log/info  (str "Sent with FROM address " (:email identity)))
-          (tapahtumaloki/create-log-entry type avustushaku-id hakemus-id identity "" {} email-id true))
-        (http/created))))
-
-  (when (feature-enabled? :loppuselvitys-taydennyspyynto)
-    (compojure-api/PUT "/loppuselvitys/cancel-taydennyspyynto" [avustushaku-id hakemus-id :as request]
-      :path-params [avustushaku-id :- Long, hakemus-id :- Long]
-      :return s/Any
-      :summary "Cancel täydennyspyynto"
-      (let [identity (authentication/get-request-identity request)
-            loppuselvitys-hakemus-id (hakija-db/get-loppuselvitys-hakemus-id hakemus-id)
+  (compojure-api/POST
+    "/loppuselvitys/taydennyspyynto" request
+    :path-params [avustushaku-id :- Long hakemus-id :- Long]
+    :body [{:keys [body subject to type  lang]} {:lang s/Str
+                                            :body s/Str
+                                            :subject s/Str
+                                            :type (s/enum "taydennyspyynto-asiatarkastus" "taydennyspyynto-taloustarkastus")
+                                            :to [s/Str]}]
+    :return s/Any
+    :summary "Send taydennyspyynto to hakija"
+    (let [identity (authentication/get-request-identity request)]
+      (when (not (seq (filter notEmptyString to)))
+        (http/bad-request! {:error "Viestillä on oltava vähintään yksi vastaanottaja"}))
+      (let [loppuselvitys-hakemus-id (hakija-db/get-loppuselvitys-hakemus-id hakemus-id)
             loppuselvitys-hakemus (hakija-api/get-hakemus loppuselvitys-hakemus-id)]
-        (if (= "pending_change_request" (:status loppuselvitys-hakemus))
-          (cancel-taydennyspyynto loppuselvitys-hakemus identity)
-          (http/bad-request!)))))
+        (hakija-api/update-hakemus-status loppuselvitys-hakemus "pending_change_request" "Täydennyspyyntö kts. sähköposti" identity))
+      (let [email-id (common-email/try-send-email!
+                      (common-email/message (keyword lang)
+                                              (keyword type)
+                                              to
+                                              subject
+                                              body)
+                      {:hakemus-id     hakemus-id
+                      :avustushaku-id avustushaku-id
+                      :from           (:email identity)})]
+        (log/info  (str "Sent with FROM address " (:email identity)))
+        (tapahtumaloki/create-log-entry type avustushaku-id hakemus-id identity "" {} email-id true))
+      (http/created)))
+
+  (compojure-api/PUT "/loppuselvitys/cancel-taydennyspyynto" [avustushaku-id hakemus-id :as request]
+    :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+    :return s/Any
+    :summary "Cancel täydennyspyynto"
+    (let [identity (authentication/get-request-identity request)
+          loppuselvitys-hakemus-id (hakija-db/get-loppuselvitys-hakemus-id hakemus-id)
+          loppuselvitys-hakemus (hakija-api/get-hakemus loppuselvitys-hakemus-id)]
+      (if (= "pending_change_request" (:status loppuselvitys-hakemus))
+        (cancel-taydennyspyynto loppuselvitys-hakemus identity)
+        (http/bad-request!))))
 
   (compojure-api/POST "/re-send-paatos" request
                       :path-params [avustushaku-id :- Long hakemus-id :- Long]
