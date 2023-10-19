@@ -177,7 +177,7 @@ const Raportointivelvoite = ({
           defaultValue={maaraaika ? new Date(maaraaika) : undefined}
           allowEmpty={true}
           placeholder="Päivämäärä"
-          disabled={!editable && !raportointilaji}
+          disabled={!editable || !raportointilaji}
         />
       </div>
       <div className="raportointivelvoitteet_asha-tunnus">
@@ -190,7 +190,7 @@ const Raportointivelvoite = ({
           id={`asha-tunnus-${index}`}
           value={ashaTunnus}
           onChange={(e) => setAshaTunnus(e.target.value)}
-          disabled={!editable && !raportointilaji}
+          disabled={!editable || !raportointilaji}
         />
       </div>
       <div className="raportointivelvoitteet_lisatiedot">
@@ -205,7 +205,7 @@ const Raportointivelvoite = ({
           id={`lisatiedot-${index}`}
           value={lisatiedot}
           onChange={(e) => setLisatiedot(e.target.value)}
-          disabled={!editable && !raportointilaji}
+          disabled={!editable || !raportointilaji}
         />
       </div>
       <div className="raportointivelvoitteet_buttons">

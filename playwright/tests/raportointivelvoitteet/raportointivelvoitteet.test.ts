@@ -15,6 +15,7 @@ test('raportointivelvoite', async ({ page, hakuProps, userCache }) => {
       hankkeenAlkamispaiva: '17.10.2023',
       hankkeenPaattymispaiva: '17.11.2023',
     })
+    await hakujenHallintaPage.selectRaportointilaji(0, 'Avustuspäätökset')
     expect(await hakujenHallintaPage.page.getByTestId(`asha-tunnus-0`).isEnabled()).toBe(true)
     expect(await hakujenHallintaPage.page.getByTestId(`lisatiedot-0`).isEnabled()).toBe(true)
   })
