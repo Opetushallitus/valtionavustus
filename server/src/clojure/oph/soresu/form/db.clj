@@ -11,11 +11,14 @@
   (->> (exec queries/get-form {:id id})
        first))
 
-(defn update-form! [form]
+(defn update-form! [tx form]
   ;; NOTE: looks like yesql unwraps sequence parameters, thats why we wrap them one extra time here
-  (let [params {:id (:id form) :content (list (:content form)) :rules (list (:rules form))}]
-    (exec-all [queries/archive-form! params
-                   queries/update-form! params])))
+    (let [id (:id form)
+          content (:content form)
+          rules (:rules form)]
+      (execute! tx "INSERT INTO archived_forms (form_id, created_at, content, rules)
+    SELECT id, created_at, content, rules FROM forms WHERE id = ?" [id])
+      (execute! tx "UPDATE forms SET content = ?, rules = ? WHERE id = ?" [content rules id])))
 
 (defn submission-exists? [form-id submission-id]
   (->> {:form_id form-id :submission_id submission-id}

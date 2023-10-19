@@ -1,6 +1,6 @@
 (ns oph.va.hakija.hakija-server-spec
   (:use [clojure.tools.trace]
-        [oph.soresu.common.db :only [generate-hash-id exec]])
+        [oph.soresu.common.db :only [generate-hash-id exec with-tx]])
   (:require [clojure.string :as string]
             [speclj.core :refer :all]
             [org.httpkit.client :as http]
@@ -512,7 +512,7 @@
                 field))]
       (let [old-form (form-db/get-form 1)
             new-form (update old-form :content (partial map update-if-financing-plan))]
-        (form-db/update-form! new-form)
+        (with-tx (fn [tx] (form-db/update-form! tx new-form)))
         (_))))
 
   (around-all [_]

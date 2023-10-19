@@ -456,7 +456,7 @@
                     (get-form-by-avustushaku)
                     :id)
         form-to-save (assoc form :form_id form-id)]
-    (try (update-form! form-to-save)
+    (try ((with-tx (fn [tx] update-form! tx form-to-save)))
          (catch Exception e (throw (get-next-exception-or-original e))))
     (get-form-by-avustushaku avustushaku-id)))
 
@@ -473,7 +473,7 @@
 
 (defn update-form  [form-id form]
   (let [form-to-save (assoc form :form_id form-id)]
-    (try (update-form! form-to-save)
+    (try (with-tx (fn [tx] (update-form! tx form-to-save)))
          (catch Exception e (throw (get-next-exception-or-original e))))
     (get-form-by-id form-id)))
 

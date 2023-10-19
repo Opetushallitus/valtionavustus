@@ -15,7 +15,7 @@
 (defn update-forms! [forms-to-transform transformation]
   (doseq [form forms-to-transform]
     (let [changed-form (formutil/transform-form-content form transformation)]
-      (db/update-form! changed-form))))
+      (common-db/with-tx (fn [tx] (db/update-form! tx changed-form))))))
 
 (migrations/defmigration migrate-organization-email-of-form1 "1.10"
   "Change organization email description of form 1"
@@ -33,7 +33,7 @@
                                                         (if (= (:id node) "organization-email")
                                                           new-organization-email-field
                                                           node)))]
-    (db/update-form! changed-form)))
+    (common-db/with-tx (fn [tx] (db/update-form! tx changed-form)))))
 
 (defquery update-avustushaku-content! "db/migration/queries/m1_15-update-avustushaku-content.sql")
 
@@ -56,7 +56,7 @@
              node))]
   (doseq [form (db/list-forms)]
     (let [changed-form (formutil/transform-form-content form rename-attributes)]
-      (db/update-form! changed-form)))))
+      (common-db/with-tx (fn [tx] (db/update-form! tx changed-form)))))))
 
 (defquery list-all-submission-versions "db/migration/queries/m1_18-list-all-submission-versions.sql")
 (defquery update-submission-directly! "db/migration/queries/m1_18-update-submission-directly.sql")
