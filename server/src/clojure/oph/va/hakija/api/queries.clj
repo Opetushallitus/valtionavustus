@@ -32,7 +32,6 @@
 (defquery get-form-by-avustushaku "sql/hakija/form/get-by-avustushaku.sql")
 (defquery get-form-by-id "sql/hakija/form/get.sql")
 (defquery archive-form! "sql/hakija/form/archive.sql")
-(defquery update-form! "sql/hakija/form/update.sql")
 (defquery create-form<! "sql/hakija/form/create.sql")
 
 (defquery list-attachments "sql/hakija/attachment/list.sql")

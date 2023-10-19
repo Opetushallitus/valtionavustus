@@ -4,6 +4,7 @@
         [clojure.pprint :only [pprint]])
   (:require [clojure.java.io :as io]
             [oph.soresu.common.db :refer [exec exec-all execute! query with-transaction with-tx get-next-exception-or-original escape-like-pattern]]
+            [oph.soresu.form.db :refer [update-form!]]
             [oph.soresu.form.formhandler :as formhandler]
             [oph.va.jdbc.enums]
             [oph.va.hakija.api.queries :as hakija-queries]
@@ -450,19 +451,12 @@
     (exec hakija-queries/create-form<! params)))
 
 
-(defn- update-form! [form-id form-content]
-  ;; NOTE: looks like yesql unwraps sequence parameters, thats way we wrap them one extra time here
-  ;; TODO: Consolidate with oph.soresu.form.db currently in soresu-form
-  (let [params {:form_id form-id :content (list (:content form-content)) :rules (list (:rules form-content))}]
-    (exec-all [hakija-queries/archive-form! { :form_id form-id }
-                          hakija-queries/update-form! params])))
-
 (defn update-form-by-avustushaku [avustushaku-id form]
   (let [form-id (-> avustushaku-id
                     (get-form-by-avustushaku)
                     :id)
         form-to-save (assoc form :form_id form-id)]
-    (try (update-form! form-id form-to-save)
+    (try (update-form! form-to-save)
          (catch Exception e (throw (get-next-exception-or-original e))))
     (get-form-by-avustushaku avustushaku-id)))
 
@@ -479,7 +473,7 @@
 
 (defn update-form  [form-id form]
   (let [form-to-save (assoc form :form_id form-id)]
-    (try (update-form! form-id form-to-save)
+    (try (update-form! form-to-save)
          (catch Exception e (throw (get-next-exception-or-original e))))
     (get-form-by-id form-id)))
 
