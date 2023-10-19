@@ -1,9 +1,14 @@
 ---
 # install manually yum repo: jenkins.repo
 
+- name: jenkins-install | Add new 2023 lts release key
+  rpm_key:
+    key: https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+  become: yes
+
 - name: jenkins-install | Install jenkins
   yum:
-    pkg: [curl, jenkins]
+    pkg: [curl, jenkins-2.414.3]
   become: yes
 
 # vim:sw=2
