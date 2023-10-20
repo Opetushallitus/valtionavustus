@@ -31,29 +31,6 @@
 
 - community.general.jenkins_plugin:
     name: "{{ item.name }}"
-    version: "{{ item.version }}"
-    jenkins_home: "{{ jenkins_home }}"
-    url_username: "{{ jenkins_username }}"
-    url_password: "{{ jenkins_password }}"
-    state: latest
-    url: "{{ jenkins_url }}"
-    with_dependencies: yes
-    timeout: 60
-  with_items:
-    - name: github
-      version: "1.34.5"
-    - name: slack
-      version: "616.v03b_1e98d13dd"
-    - name: mailer
-      version: "414.vcc4c33714601"
-
-  notify:
-    - jenkins check web ready
-    - jenkins check cli ready
-    - jenkins restart
-
-- community.general.jenkins_plugin:
-    name: "{{ item.name }}"
     jenkins_home: "{{ jenkins_home }}"
     url_username: "{{ jenkins_username }}"
     url_password: "{{ jenkins_password }}"
@@ -76,6 +53,9 @@
       - name: script-security
       - name: matrix-auth
       - name: instance-identity
+      - name: mailer
+      - name: slack
+      - name: github
   notify:
     - jenkins check web ready
     - jenkins check cli ready
