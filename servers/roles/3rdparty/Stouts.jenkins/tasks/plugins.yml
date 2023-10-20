@@ -10,6 +10,22 @@
 
 - community.general.jenkins_plugin:
     name: "{{ item.name }}"
+    jenkins_home: "{{ jenkins_home }}"
+    url_username: "{{ jenkins_username }}"
+    url_password: "{{ jenkins_password }}"
+    state: absent
+    url: "{{ jenkins_url }}"
+    with_dependencies: yes
+    timeout: 60
+  with_items:
+    - name: ldap
+  notify:
+    - jenkins check web ready
+    - jenkins check cli ready
+    - jenkins restart
+
+- community.general.jenkins_plugin:
+    name: "{{ item.name }}"
     version: "{{ item.version }}"
     jenkins_home: "{{ jenkins_home }}"
     url_username: "{{ jenkins_username }}"
