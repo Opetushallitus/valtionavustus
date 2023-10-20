@@ -24,10 +24,6 @@
     - name: popper-api
     - name: popper2-api
     - name: greenballs
-  notify:
-    - jenkins check web ready
-    - jenkins check cli ready
-    - jenkins restart
 
 - community.general.jenkins_plugin:
     name: "{{ item.name }}"
