@@ -281,8 +281,7 @@
                       :return form-schema/Form
                       :summary "Update form description that is linked to avustushaku"
                       (if-let [avustushaku (hakija-api/get-avustushaku-by-status avustushaku-id ["new" "draft"])]
-                        (let [response (hakija-api/update-form-by-avustushaku avustushaku-id updated-form)
-                              menoluokka-rows (virkailija-db/upsert-menoluokka-rows avustushaku-id updated-form)]
+                        (let [response (hakija-api/update-form-by-avustushaku avustushaku-id updated-form)]
                             (if response
                               (http/ok (without-id response))
                               (http/not-found)))

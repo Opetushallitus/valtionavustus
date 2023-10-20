@@ -7,6 +7,7 @@
             [oph.soresu.form.db :refer [update-form!]]
             [oph.soresu.form.formhandler :as formhandler]
             [oph.va.jdbc.enums]
+            [oph.va.menoluokka.db :refer [upsert-menoluokka-rows]]
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.hakemus.db :as hakemus-copy]
             [oph.va.hakija.domain :as hakija-domain]
@@ -456,7 +457,8 @@
                     (get-form-by-avustushaku)
                     :id)
         form-to-save (assoc form :id form-id)]
-    (try (with-tx (fn [tx] (update-form! tx form-to-save)))
+    (try (with-tx (fn [tx] ((update-form! tx form-to-save)
+                            (upsert-menoluokka-rows tx avustushaku-id form-to-save))))
          (catch Exception e (throw (get-next-exception-or-original e))))
     (get-form-by-avustushaku avustushaku-id)))
 
