@@ -158,8 +158,15 @@ export class HakujenHallintaPage {
     return `[id="raportointilaji-dropdown-${index}"]`
   }
 
+  async openRaportointilajiSelector(index: number): Promise<string> {
+    const selector = `${this.raportointilajiSelector(index)} > div`
+    await this.page.click(selector)
+
+    return selector
+  }
+
   async selectRaportointilaji(index: number, raportointilaji: string): Promise<void> {
-    await this.page.click(`${this.raportointilajiSelector(index)} > div`)
+    await this.openRaportointilajiSelector(index)
     await this.page.getByTestId(raportointilaji).click()
   }
 
@@ -225,15 +232,7 @@ export class HakujenHallintaPage {
         await this.page.fill(`#selection-criteria-${i}-sv`, selectionCriteria[i])
       }
 
-      for (let i = 0; i < raportointivelvoitteet.length; i++) {
-        await this.selectRaportointilaji(i, raportointivelvoitteet[i].raportointilaji)
-        await this.page.fill(`[name="maaraaika-${i}"]`, raportointivelvoitteet[i].maaraaika)
-        await this.page.fill(`[id="asha-tunnus-${i}"]`, raportointivelvoitteet[i].ashaTunnus)
-        if (raportointivelvoitteet[i].lisatiedot) {
-          await this.page.fill(`[id="lisatiedot-${i}"]`, raportointivelvoitteet[i].lisatiedot ?? '')
-        }
-        await this.page.click(`[id="new-raportointivelvoite-${i}"]`)
-      }
+      await this.fillRaportointiVelvoitteet(raportointivelvoitteet)
 
       for (const saadanto of lainsaadanto) {
         await this.page.locator(`label:has-text("${saadanto}")`).click()
@@ -246,6 +245,18 @@ export class HakujenHallintaPage {
       await this.commonHakujenHallinta.switchToHaunTiedotTab()
       await haunTiedotPage.common.waitForSave()
     })
+  }
+
+  async fillRaportointiVelvoitteet(raportointivelvoitteet: Raportointivelvoite[]) {
+    for (let i = 0; i < raportointivelvoitteet.length; i++) {
+      await this.selectRaportointilaji(i, raportointivelvoitteet[i].raportointilaji)
+      await this.page.fill(`[name="maaraaika-${i}"]`, raportointivelvoitteet[i].maaraaika)
+      await this.page.fill(`[id="asha-tunnus-${i}"]`, raportointivelvoitteet[i].ashaTunnus)
+      if (raportointivelvoitteet[i].lisatiedot) {
+        await this.page.fill(`[id="lisatiedot-${i}"]`, raportointivelvoitteet[i].lisatiedot ?? '')
+      }
+      await this.page.click(`[id="new-raportointivelvoite-${i}"]`)
+    }
   }
 
   async createHakuWithLomakeJson(
