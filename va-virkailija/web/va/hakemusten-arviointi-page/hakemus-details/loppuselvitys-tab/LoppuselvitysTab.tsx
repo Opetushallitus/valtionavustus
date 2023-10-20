@@ -1,7 +1,6 @@
 import React from 'react'
 
 import { LoppuselvitysForm } from './LoppuselvitysForm'
-import { TaloustarkastusEmail } from './TaloustarkastusEmail'
 import SelvitysPreview from '../common-components/SelvitysPreview'
 import SelvitysNotFilled from '../common-components/SelvitysNotFilled'
 import SelvitysLink from '../common-components/SelvitysLink'
@@ -41,15 +40,7 @@ const LoppuselvitysTab = () => {
   const selvitysHakemus = hakemus.selvitys?.loppuselvitys
   const form = hakemus.selvitys?.loppuselvitysForm
 
-  const loppuselvitysStatus = hakemus['status-loppuselvitys']
-
-  const loppuselvitys = hakemus.selvitys?.loppuselvitys
-  const renderTaloustarkastusEmail =
-    loppuselvitysStatus === 'information_verified' || loppuselvitysStatus === 'accepted'
-  const lang = hakemus.language
-
   const muistusviestiEnabled = useFeature('muistutusviesti-loppuselvityksesta')
-  const taydennyspyyntoEnabled = useFeature('loppuselvitys-taydennyspyynto')
 
   return (
     <div id="tab-content" className={hakemus.refused ? 'disabled' : ''}>
@@ -110,15 +101,6 @@ const LoppuselvitysTab = () => {
             avustushaku={avustushaku}
             presenter={hakemukselleUkotettuValmistelija}
             userInfo={userInfo}
-          />
-        )}
-        {loppuselvitys && renderTaloustarkastusEmail && !taydennyspyyntoEnabled && (
-          <TaloustarkastusEmail
-            avustushakuId={avustushaku.id}
-            hakemus={hakemus}
-            loppuselvitys={loppuselvitys}
-            userInfo={userInfo}
-            avustushakuName={avustushaku.content.name[lang]}
           />
         )}
       </div>
