@@ -44,6 +44,7 @@
       - name: ansicolor
       - name: git
       - name: htmlpublisher
+      - name: workflow-job
       - name: email-ext
       - name: junit
       - name: credentials
