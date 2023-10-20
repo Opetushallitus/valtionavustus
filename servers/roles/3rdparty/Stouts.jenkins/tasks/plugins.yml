@@ -15,10 +15,15 @@
     url_password: "{{ jenkins_password }}"
     state: absent
     url: "{{ jenkins_url }}"
-    with_dependencies: yes
     timeout: 60
   with_items:
     - name: ldap
+    - name: bootstrap4-api
+    - name: windows-slaves
+    - name: icon-shim
+    - name: popper-api
+    - name: popper2-api
+    - name: greenballs
   notify:
     - jenkins check web ready
     - jenkins check cli ready
@@ -61,7 +66,6 @@
       - name: structs
       - name: ansicolor
       - name: git
-      - name: greenballs
       - name: htmlpublisher
       - name: email-ext
       - name: junit
@@ -69,7 +73,6 @@
       - name: git-client
       - name: ssh-credentials
       - name: external-monitor-job
-      - name: windows-slaves
       - name: script-security
       - name: matrix-auth
       - name: instance-identity
