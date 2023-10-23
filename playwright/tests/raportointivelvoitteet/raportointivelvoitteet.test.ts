@@ -16,9 +16,18 @@ test('raportointivelvoite', async ({ page, hakuProps, userCache }) => {
       hankkeenAlkamispaiva: '17.10.2023',
       hankkeenPaattymispaiva: '17.11.2023',
     })
-    await hakujenHallintaPage.selectRaportointilaji(0, 'Avustuspäätökset')
-    expect(await hakujenHallintaPage.page.getByTestId(`asha-tunnus-0`).isEnabled()).toBe(true)
-    expect(await hakujenHallintaPage.page.getByTestId(`lisatiedot-0`).isEnabled()).toBe(true)
+    await hakujenHallintaPage.fillRaportointiVelvoitteet([
+      {
+        raportointilaji: 'Väliraportti',
+        maaraaika: moment().format('DD.MM.YYYY'),
+        ashaTunnus: 'pasha-1',
+        lisatiedot: 'lisätiedot',
+      },
+    ])
+    await hakujenHallintaPage.selectRaportointilaji(1, 'Avustuspäätökset')
+    expect(await hakujenHallintaPage.page.getByTestId(`asha-tunnus-1`).isEnabled()).toBe(true)
+    expect(await hakujenHallintaPage.page.getByTestId(`lisatiedot-1`).isEnabled()).toBe(true)
+    await page.getByTestId('remove-button-0').click()
   })
 
   await test.step('Cannot fill duplicate raportointilaji', async () => {
@@ -41,8 +50,27 @@ test('raportointivelvoite', async ({ page, hakuProps, userCache }) => {
   })
 
   await test.step('cannot be edited in published mode', async () => {
-    await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
+    await hakujenHallintaPage.createMuutoshakemusEnabledHaku({
+      ...hakuProps,
+      raportointivelvoitteet: [
+        {
+          raportointilaji: 'Väliraportti',
+          maaraaika: moment().format('DD.MM.YYYY'),
+          ashaTunnus: 'pasha-1',
+          lisatiedot: 'lisätiedot 1',
+        },
+        {
+          raportointilaji: 'Muu raportti',
+          maaraaika: moment().format('DD.MM.YYYY'),
+          ashaTunnus: 'pasha-2',
+          lisatiedot: 'lisätiedot 2',
+        },
+      ],
+    })
     expect(await hakujenHallintaPage.page.getByTestId(`asha-tunnus-0`).isEnabled()).toBe(false)
     expect(await hakujenHallintaPage.page.getByTestId(`lisatiedot-0`).isEnabled()).toBe(false)
+
+    expect(await hakujenHallintaPage.page.getByTestId(`asha-tunnus-1`).isEnabled()).toBe(false)
+    expect(await hakujenHallintaPage.page.getByTestId(`lisatiedot-1`).isEnabled()).toBe(false)
   })
 })

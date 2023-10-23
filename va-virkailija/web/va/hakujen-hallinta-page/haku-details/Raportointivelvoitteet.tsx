@@ -246,6 +246,7 @@ const Raportointivelvoite = ({
         ) : (
           <button
             className="raportointivelvoitteet_button"
+            data-test-id={`remove-button-${index}`}
             onClick={() => {
               if (raportointivelvoite?.id) {
                 startAutoSave()
