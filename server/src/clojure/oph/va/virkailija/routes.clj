@@ -329,6 +329,16 @@
         (log/error e)
         (internal-server-error {:message "error"}))))
 
+  (compojure-api/GET "/avustushaku/:avustushaku-id/get-menoluokat" []
+    :path-params [avustushaku-id :- Long]
+    :return [{:id s/Num :avustushaku-id s/Num :type s/Str :translation-fi s/Str :translation-sv s/Str :created-at java.sql.Timestamp}]
+    (log/info "test-api: get menoluokat for avustushaku-id")
+    (try
+        (ok (query "SELECT * FROM menoluokka WHERE avustushaku_id = ?" [avustushaku-id]))
+      (catch Exception e
+        (log/error e)
+        (internal-server-error {:message "error"}))))
+
   (compojure-api/GET "/avustushaku/:avustushaku-id/get-tasmaytysraportti-email" []
     :path-params [avustushaku-id :- Long]
     :return [{:avustushaku-id s/Num :contents s/Any :mailed-at java.sql.Timestamp :mailed-to s/Str}]
