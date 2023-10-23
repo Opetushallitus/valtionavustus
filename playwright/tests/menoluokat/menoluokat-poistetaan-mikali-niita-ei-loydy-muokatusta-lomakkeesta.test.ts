@@ -22,8 +22,8 @@ export async function getMenoluokat(
       id: string
       'avustushaku-id': string
       type: string
-      "translation-fi": string
-      "translation-sv": string
+      'translation-fi': string
+      'translation-sv': string
       'created-at': string
     },
   ]
@@ -36,11 +36,16 @@ export async function getMenoluokat(
 }
 
 test.describe('Menoluokat', () => {
-  test('poistetaan menoluokat-taulusta, mikäli niitä ei löydy lomakkeesta', async ({ avustushakuID, page, hakuProps, userCache }) => {
+  test('poistetaan menoluokat-taulusta, mikäli niitä ei löydy lomakkeesta', async ({
+    avustushakuID,
+    page,
+    hakuProps,
+    userCache,
+  }) => {
     expectToBeDefined(userCache)
     const hakujenHallintaPage = new HakujenHallintaPage(page)
 
-    await test.step("Avustushaku on muutoshakukelpoinen", async  () => {
+    await test.step('Avustushaku on muutoshakukelpoinen', async () => {
       await hakujenHallintaPage.navigateToFormEditor(avustushakuID)
       const okBannerText = await page.innerText('[data-test-id="validation-ok"]')
       expect(okBannerText).toEqual(
@@ -48,7 +53,7 @@ test.describe('Menoluokat', () => {
       )
     })
 
-    await test.step("Avustushaulla on eritellyt menoluokat menoluokka-taulussa", async () => {
+    await test.step('Avustushaulla on eritellyt menoluokat menoluokka-taulussa', async () => {
       const menoluokat = await getMenoluokat(avustushakuID, page.request)
       expect(menoluokat).toHaveLength(1)
     })
@@ -62,14 +67,14 @@ test.describe('Menoluokat', () => {
       await formEditorPage.saveForm()
     })
 
-    await test.step("Muutettu avustushaku ei ole muutoshakukelpoinen", async  () => {
+    await test.step('Muutettu avustushaku ei ole muutoshakukelpoinen', async () => {
       const formEditorPage = HakulomakePage(page)
       await expect(formEditorPage.locators.lomakeWarning.nth(1)).toHaveText(
         'Lomakkeesta puuttuu muutoshakemukselle tarpeellinen kenttä. Muutoshaku ei ole mahdollista.'
       )
     })
 
-    await test.step("Avustushaulla on eritellyt menoluokat menoluokka-taulussa", async () => {
+    await test.step('Avustushaulla on eritellyt menoluokat menoluokka-taulussa', async () => {
       const menoluokat = await getMenoluokat(newAvustushakuID, page.request)
       expect(menoluokat).toHaveLength(0)
     })
