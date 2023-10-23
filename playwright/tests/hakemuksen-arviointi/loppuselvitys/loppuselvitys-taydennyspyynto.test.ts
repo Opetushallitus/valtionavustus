@@ -78,15 +78,15 @@ test.extend<{ answers: Answers }>({
         await getHakemusTokenAndRegisterNumber(hakemusID)
 
       expect(emails[0].subject).toBe(
-        `Organisaationne loppuselvitystä on täydennetty: ${registerNumber} Vi Simmar i Pengar Ab`
+        `Slutredovisningen för er organisation är kompletterad: ${registerNumber} Vi Simmar i Pengar Ab`
       )
-      expect(emails[0].formatted).toBe(`Hyvä vastaanottaja,
+      expect(emails[0].formatted).toBe(`Bästa mottagare
 
-tämä viesti koskee avustusta: ${registerNumber} Vi Simmar i Pengar Ab
+det här meddelandet gäller statsunderstödet: ${registerNumber} Vi Simmar i Pengar Ab
 
-Olemme vastaanottaneet loppuselvitystänne koskevat täydennykset ja selvityksenne tarkastus siirtyy seuraavaan vaiheeseen. Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan viralliseen sähköpostiosoitteeseen sekä yhteyshenkilöille.
+Vi har tagit emot kompletteringarna till er slutredovisning och den går nu vidare till nästa skede av granskningen. När slutredovisningen är slutbehandlad sänder vi  ett e-postmeddelande till organisationens officiella e-postadress och kontaktpersonen för mottagaren av statsunderstödet.
 
-Ystävällisin terveisin,
+Med vänlig hälsning
 _ valtionavustus
 santeri.horttanainen@reaktor.com`)
     })

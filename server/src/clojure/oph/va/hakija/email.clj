@@ -16,7 +16,7 @@
    :hakemus-change-request-responded {:fi "Automaattinen viesti: avustushakemusta on täydennetty"}
    :loppuselvitys-change-request-responded {:fi "Automaattinen viesti: avustushakemuksen loppuselvitystä on täydennetty"}
    :loppuselvitys-change-request-response-received {:fi "Organisaationne loppuselvitystä on täydennetty:"
-                                           :sv "Organisaationne loppuselvitystä on täydennetty:"}
+                                           :sv "Slutredovisningen för er organisation är kompletterad:"}
    :valiselvitys-submitted-notification {:fi "Väliselvityksenne on vastaanotettu"
                                          :sv "Er mellanredovisning har emottagits"}
    :loppuselvitys-submitted-notification {:fi "Loppuselvityksenne on vastaanotettu"
