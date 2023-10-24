@@ -85,7 +85,7 @@
                          [org.clojure/core.memoize "1.0.257"]
 
                          [org.scala-lang.modules/scala-xml_2.11 "1.3.1"]
-                         [org.scala-lang/scala-library "2.11.12"]]
+                         [org.scala-lang/scala-library "2.13.12"]]
 
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [nrepl "1.0.0"]
