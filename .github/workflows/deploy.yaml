@@ -20,6 +20,6 @@ jobs:
     runs-on: ubuntu-22.04
     needs: build
     steps:
-      - uses: actions/checkout@v4.0.0
+      - uses: actions/checkout@v4.1.1
       - name: Run 04-deploy-jars.sh
         run: ./deploy-scripts/04-deploy-jars.sh
