@@ -28,6 +28,7 @@ test('raportointivelvoite', async ({ page, hakuProps, userCache }) => {
     expect(await hakujenHallintaPage.page.getByTestId(`asha-tunnus-1`).isEnabled()).toBe(true)
     expect(await hakujenHallintaPage.page.getByTestId(`lisatiedot-1`).isEnabled()).toBe(true)
     await page.getByTestId('remove-button-0').click()
+    await hakujenHallintaPage.waitForSave()
   })
 
   await test.step('Cannot fill duplicate raportointilaji', async () => {
@@ -41,9 +42,7 @@ test('raportointivelvoite', async ({ page, hakuProps, userCache }) => {
     await hakujenHallintaPage.fillRaportointiVelvoitteet([laji])
     const selectModalSelector = await hakujenHallintaPage.openRaportointilajiSelector(1)
 
-    const duplicateSelectOption = await page
-      .locator(selectModalSelector)
-      .getByText(laji.raportointilaji)
+    const duplicateSelectOption = page.locator(selectModalSelector).getByText(laji.raportointilaji)
 
     // https://github.com/JedWatson/react-select/issues/4195
     await expect(duplicateSelectOption).toHaveAttribute('aria-disabled', 'true')
