@@ -6,7 +6,6 @@ import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '
 import { getLoadedState, selectHakemus } from '../arviointiReducer'
 import { NavLinkWithQuery } from '../../NavLinkWithQuery'
 import { EnvelopeIcon } from '../../common-components/icons'
-import { useFeature } from '../../initial-data-context'
 
 import './hakemusDetails.less'
 
@@ -20,7 +19,6 @@ export const HakemusDetails = () => {
     (state) => getLoadedState(state.arviointi).hakuData
   )
   const { avustushaku, hakemukset } = hakuData
-  const vapaamuotoinenViestiEnabled = useFeature('vapaamuotoinen-viesti-hankkeelle')
 
   useEffect(() => {
     dispatch(selectHakemus(selectedHakemusId))
@@ -91,11 +89,9 @@ export const HakemusDetails = () => {
           <NavLinkWithQuery to="seuranta" className={isLinkActive} data-test-id="tab-seuranta">
             Seuranta
           </NavLinkWithQuery>
-          {vapaamuotoinenViestiEnabled && (
-            <NavLinkWithQuery to="viesti" className={isLinkActive}>
-              {({ isActive }) => <EnvelopeIcon active={isActive} />}
-            </NavLinkWithQuery>
-          )}
+          <NavLinkWithQuery to="viesti" className={isLinkActive}>
+            {({ isActive }) => <EnvelopeIcon active={isActive} />}
+          </NavLinkWithQuery>
         </div>
         <div id="hakemus-arviointi" className="fixed-content">
           <Outlet />

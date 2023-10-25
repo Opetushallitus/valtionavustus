@@ -16,12 +16,7 @@ import { Hakemus } from 'soresu-form/web/va/types'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 import { HeaderContainer } from '../common-components/Header'
-import {
-  InitialDataProvider,
-  useEnvironment,
-  useFeature,
-  useUserInfo,
-} from '../initial-data-context'
+import { InitialDataProvider, useEnvironment, useUserInfo } from '../initial-data-context'
 import AvustushakuDropdown from './avustushaku-dropdown/AvustushakuDropdown'
 import HakemusDetails from './hakemus-details/HakemusDetails'
 import { MODAL_ROOT_ID } from './hakemus-details/Modal'
@@ -69,7 +64,6 @@ const unwantedHakemukset = ({ status }: Hakemus) => {
 }
 
 const AppRoutes = () => {
-  const viestiTabEnabled = useFeature('vapaamuotoinen-viesti-hankkeelle')
   return (
     <Routes>
       <Route path="avustushaku/:avustushakuId" element={<App />}>
@@ -80,7 +74,7 @@ const AppRoutes = () => {
           <Route path="loppuselvitys" element={<LoppuselvitysTab />} />
           <Route path="muutoshakemukset" element={<MuutoshakemusTab />} />
           <Route path="seuranta" element={<SeurantaTab />} />
-          {viestiTabEnabled && <Route path="viesti" element={<ViestiHankkeelleTab />} />}
+          <Route path="viesti" element={<ViestiHankkeelleTab />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to={`/avustushaku/${defaultHakuId}`} replace />} />
