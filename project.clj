@@ -80,7 +80,7 @@
                          [org.http4s/http4s-dsl_2.11 ~http4s-version]
 
                          ;; other
-                         [metosin/ring-swagger-ui "4.18.1"]
+                         [metosin/ring-swagger-ui "4.19.1"]
                          
                          [org.clojure/core.memoize "1.0.257"]
 
