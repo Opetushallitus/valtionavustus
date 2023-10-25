@@ -14,6 +14,7 @@ import {
   getSelvitysEmails,
   getValiselvitysEmails,
   lastOrFail,
+  Email,
 } from '../utils/emails'
 import { HakijaMuutoshakemusPage } from '../pages/hakija/hakijaMuutoshakemusPage'
 import { navigate } from '../utils/navigate'
@@ -299,11 +300,16 @@ test('varayhteyshenkilo flow', async ({
     ])
     await virkailijaLoppuselvitysPage.asiatarkastaLoppuselvitys('Ok')
     await virkailijaLoppuselvitysPage.taloustarkastaLoppuselvitys()
-    const emailsAfterAcceptance = await getSelvitysEmails(avustushakuID)
-    const latestMail = lastOrFail(emailsAfterAcceptance)
-    expect(latestMail['subject']).toContain('Loppuselvitys')
-    expect(latestMail['to-address']).not.toContain(answers.trustedContact.email)
-    expect(latestMail['to-address']).toContain(newEmail)
+    let latestMail: Email | undefined
+    await expect
+      .poll(async () => {
+        const emailsAfterAcceptance = await getSelvitysEmails(avustushakuID)
+        latestMail = lastOrFail(emailsAfterAcceptance)
+        return latestMail['subject']
+      })
+      .toContain('Loppuselvitys')
+    expect(latestMail?.['to-address']).not.toContain(answers.trustedContact.email)
+    expect(latestMail?.['to-address']).toContain(newEmail)
   })
 })
 
