@@ -14,7 +14,6 @@ export const LoppuselvitysPage = (page: Page) => {
     asiatarkastus: {
       taydennyspyynto: asiatarkastus.getByRole('button', { name: 'Täydennyspyyntö' }),
       cancelTaydennyspyynto: asiatarkastus.getByRole('button', { name: 'Peru täydennyspyyntö' }),
-      accept: asiatarkastus.getByRole('button', { name: 'Hyväksy' }),
       acceptMessage: page.getByPlaceholder('Kirjaa tähän mahdolliset huomiot asiatarkastuksesta'),
       confirmAcceptance: page.getByRole('button', {
         name: 'Hyväksy asiatarkastus ja lähetä taloustarkastukseen',
@@ -63,8 +62,6 @@ export const LoppuselvitysPage = (page: Page) => {
 
   async function asiatarkastaLoppuselvitys(message: string) {
     await expect(locators.asiatarkastettu).toBeHidden()
-    await locators.asiatarkastus.accept.click()
-    await expect(locators.asiatarkastus.accept).toBeDisabled()
     await expect(locators.asiatarkastus.confirmAcceptance).toBeDisabled()
     await locators.asiatarkastus.acceptMessage.fill(message)
     await locators.asiatarkastus.confirmAcceptance.click()

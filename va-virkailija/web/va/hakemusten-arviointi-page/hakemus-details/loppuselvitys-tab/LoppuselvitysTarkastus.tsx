@@ -37,7 +37,6 @@ function createInitialTaydennyspyyntoEmail(hakemus: Hakemus) {
 }
 
 export function Asiatarkastus({ disabled }: { disabled: boolean }) {
-  const [showConfirmation, setShowConfirmation] = useState(false)
   const dispatch = useHakemustenArviointiDispatch()
   const hakemus = useHakemus()
   const avustushakuId = useAvustushakuId()
@@ -54,15 +53,9 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
     )
     dispatch(refreshHakemus({ hakemusId: hakemus.id })).unwrap()
     setMessage('')
-    setShowConfirmation(false)
-  }
-  const onClick = async (e: React.FormEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setShowConfirmation(true)
   }
   const hakemusLoppuselvitysNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
-  const disableAcceptButton = hakemusLoppuselvitysNotSubmitted || showConfirmation || disabled
+  const disableAcceptButton = hakemusLoppuselvitysNotSubmitted || !message || disabled
   return (
     <>
       <LoppuselvitysTarkastus
@@ -71,11 +64,7 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
         disabled={disabled}
         heading="Loppuselvityksen asiatarkastus"
         taydennyspyyntoHeading="Asiatarkastuksen täydennyspyyntö"
-        confirmButton={
-          <button disabled={disableAcceptButton} onClick={onClick}>
-            Hyväksy
-          </button>
-        }
+        confirmButton={<></>}
         completedBy={
           verifiedAt && verifiedBy
             ? {
@@ -96,7 +85,7 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
           !hakemus['loppuselvitys-taloustarkastettu-at']
         }
       />
-      {showConfirmation && (
+      {!disabled && (
         <form onSubmit={onSubmit}>
           <div className="verification-comment">
             <textarea
@@ -107,7 +96,7 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
             />
           </div>
           <div className="verification-footer">
-            <button type="submit" name="submit-verification" disabled={!message}>
+            <button type="submit" name="submit-verification" disabled={disableAcceptButton}>
               Hyväksy asiatarkastus ja lähetä taloustarkastukseen
             </button>
           </div>

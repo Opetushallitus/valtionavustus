@@ -32,7 +32,7 @@ test('virkailija can accept loppuselvitys', async ({
     await expect(loppuselvitysPage.locators.taloustarkastus.confirmAcceptance).toBeHidden()
     await expect(loppuselvitysPage.locators.taloustarkastettu).toBeVisible()
     await expect(loppuselvitysPage.locators.taloustarkastus.accept).toBeDisabled()
-    await expect(loppuselvitysPage.locators.asiatarkastus.accept).toBeDisabled()
+    await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeHidden()
     expect(emailSendApiCalled).toEqual(1)
   })
 
