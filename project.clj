@@ -124,7 +124,7 @@
                  [org.http4s/http4s-blaze-client_2.11]
 
                  ;; json
-                 [cheshire "5.11.0"]
+                 [cheshire "5.12.0"]
                  [org.clojure/data.json "2.4.0"]
 
                  ;; database
