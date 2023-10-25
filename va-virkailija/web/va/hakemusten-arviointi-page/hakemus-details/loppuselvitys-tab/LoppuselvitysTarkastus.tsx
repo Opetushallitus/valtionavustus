@@ -41,59 +41,79 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
   const dispatch = useHakemustenArviointiDispatch()
   const hakemus = useHakemus()
   const avustushakuId = useAvustushakuId()
+  const [message, setMessage] = useState<string>()
   const verifiedBy = hakemus['loppuselvitys-information-verified-by']
   const verifiedAt = hakemus['loppuselvitys-information-verified-at']
   const verification = hakemus['loppuselvitys-information-verification']
-  const onSubmit = async () => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
     await HttpUtil.post(
       `/api/avustushaku/${avustushakuId}/hakemus/${hakemus.id}/loppuselvitys/verify-information`,
-      { message: '' }
+      { message }
     )
-    dispatch(refreshHakemus({ hakemusId: hakemus.id }))
+    dispatch(refreshHakemus({ hakemusId: hakemus.id })).unwrap()
+    setMessage('')
+    setShowConfirmation(false)
   }
   const onClick = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault()
     e.stopPropagation()
-    if (showConfirmation) {
-      await onSubmit()
-    } else {
-      setShowConfirmation(true)
-    }
+    setShowConfirmation(true)
   }
   const hakemusLoppuselvitysNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
-  const disableAcceptButton = hakemusLoppuselvitysNotSubmitted || disabled
+  const disableAcceptButton = hakemusLoppuselvitysNotSubmitted || showConfirmation || disabled
   return (
-    <LoppuselvitysTarkastus
-      dataTestId="loppuselvitys-asiatarkastus"
-      taydennyspyyntoType="taydennyspyynto-asiatarkastus"
-      disabled={disabled}
-      heading="Loppuselvityksen asiatarkastus"
-      taydennyspyyntoHeading="Asiatarkastuksen täydennyspyyntö"
-      confirmButton={
-        <button disabled={disableAcceptButton} onClick={onClick}>
-          {showConfirmation ? 'Vahvista hyväksyntä' : 'Hyväksy'}
-        </button>
-      }
-      completedBy={
-        verifiedAt && verifiedBy
-          ? {
-              name: verifiedBy,
-              date: verifiedAt,
-              heading: 'Asiatarkastettu',
-              component: (
-                <div className={'messageDetails'}>
-                  <div className={'rowMessage'}>{verification}</div>
-                </div>
-              ),
-            }
-          : undefined
-      }
-      showCancelButton={
-        hakemus.selvitys?.loppuselvitys.status === 'pending_change_request' &&
-        !hakemus['loppuselvitys-information-verified-at'] &&
-        !hakemus['loppuselvitys-taloustarkastettu-at']
-      }
-    />
+    <>
+      <LoppuselvitysTarkastus
+        dataTestId="loppuselvitys-asiatarkastus"
+        taydennyspyyntoType="taydennyspyynto-asiatarkastus"
+        disabled={disabled}
+        heading="Loppuselvityksen asiatarkastus"
+        taydennyspyyntoHeading="Asiatarkastuksen täydennyspyyntö"
+        confirmButton={
+          <button disabled={disableAcceptButton} onClick={onClick}>
+            Hyväksy
+          </button>
+        }
+        completedBy={
+          verifiedAt && verifiedBy
+            ? {
+                name: verifiedBy,
+                date: verifiedAt,
+                heading: 'Asiatarkastettu',
+                component: (
+                  <div className={'messageDetails'}>
+                    <div className={'rowMessage'}>{verification}</div>
+                  </div>
+                ),
+              }
+            : undefined
+        }
+        showCancelButton={
+          hakemus.selvitys?.loppuselvitys.status === 'pending_change_request' &&
+          !hakemus['loppuselvitys-information-verified-at'] &&
+          !hakemus['loppuselvitys-taloustarkastettu-at']
+        }
+      />
+      {showConfirmation && (
+        <form onSubmit={onSubmit}>
+          <div className="verification-comment">
+            <textarea
+              onChange={(e) => setMessage(e.target.value)}
+              rows={5}
+              name="information-verification"
+              placeholder="Kirjaa tähän mahdolliset huomiot asiatarkastuksesta"
+            />
+          </div>
+          <div className="verification-footer">
+            <button type="submit" name="submit-verification" disabled={!message}>
+              Hyväksy asiatarkastus ja lähetä taloustarkastukseen
+            </button>
+          </div>
+        </form>
+      )}
+    </>
   )
 }
 

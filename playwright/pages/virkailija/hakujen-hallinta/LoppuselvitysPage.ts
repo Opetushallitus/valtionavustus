@@ -15,8 +15,9 @@ export const LoppuselvitysPage = (page: Page) => {
       taydennyspyynto: asiatarkastus.getByRole('button', { name: 'Täydennyspyyntö' }),
       cancelTaydennyspyynto: asiatarkastus.getByRole('button', { name: 'Peru täydennyspyyntö' }),
       accept: asiatarkastus.getByRole('button', { name: 'Hyväksy' }),
-      confirmAcceptance: asiatarkastus.getByRole('button', {
-        name: 'Vahvista hyväksyntä',
+      acceptMessage: page.getByPlaceholder('Kirjaa tähän mahdolliset huomiot asiatarkastuksesta'),
+      confirmAcceptance: page.getByRole('button', {
+        name: 'Hyväksy asiatarkastus ja lähetä taloustarkastukseen',
       }),
     },
     taloustarkastus: {
@@ -60,14 +61,21 @@ export const LoppuselvitysPage = (page: Page) => {
     await page.waitForSelector(`text="Lähetetty ${expectedAmount} viestiä"`)
   }
 
-  async function asiatarkastaLoppuselvitys(_: string) {
+  async function asiatarkastaLoppuselvitys(message: string) {
     await expect(locators.asiatarkastettu).toBeHidden()
     await locators.asiatarkastus.accept.click()
+    await expect(locators.asiatarkastus.accept).toBeDisabled()
+    await expect(locators.asiatarkastus.confirmAcceptance).toBeDisabled()
+    await locators.asiatarkastus.acceptMessage.fill(message)
     await locators.asiatarkastus.confirmAcceptance.click()
     await expect(locators.asiatarkastettu).toBeVisible()
     await expect(locators.asiatarkastettu).toContainText('Asiatarkastettu')
     await expect(locators.asiatarkastettu).toContainText('_ valtionavustus')
     await expect(locators.asiatarkastettu).toContainText([moment().format('DD.MM.YYYY')])
+    const messageLocator = page.getByText(message, { exact: true })
+    await expect(messageLocator).not.toBeVisible()
+    await locators.asiatarkastettu.click()
+    await expect(messageLocator).toBeVisible()
   }
 
   async function taloustarkastaLoppuselvitys() {

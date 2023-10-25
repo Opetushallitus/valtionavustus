@@ -35,7 +35,7 @@ test('can cancel taydennyspyynto for loppuselvitys', async ({
     await previewPageAgain.close()
   })
   await test.step('asiatarkasta loppuselvitys', async () => {
-    await loppuselvitysPage.asiatarkastaLoppuselvitys('')
+    await loppuselvitysPage.asiatarkastaLoppuselvitys('Ok')
     const previewPage = await loppuselvitysPage.openLoppuselvitysForm()
     await expect(
       previewPage.getByText('Loppuselvityksen jättämisen määräaika on umpeutunut')
