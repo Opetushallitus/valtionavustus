@@ -346,7 +346,11 @@ function LoppuselvitysTarkastus({
       >
         <h2>{heading}</h2>
         <div>
-          {showCancelButton ? (
+          {showEmailForm ? (
+            <button onClick={() => setShowEmailForm(false)} style={{ marginRight: '14px' }}>
+              Peruuta lähetys
+            </button>
+          ) : showCancelButton ? (
             <button
               onClick={cancelTaydennyspyynto}
               disabled={cancellingTaydennys}
