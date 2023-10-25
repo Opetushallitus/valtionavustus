@@ -4,8 +4,8 @@
  ; :muistutusviesti-loppuselvityksesta [:dev :test]}
 
  ; https://jira.eduuni.fi/browse/VA-373
- :muistutusviesti-loppuselvityksesta [:dev :test :va-test :va-prod]
+ :muistutusviesti-loppuselvityksesta [:dev :va-test :va-prod]
 
  ;https://jira.eduuni.fi/browse/VA-342
- :automaattimuistutus-raportointivelvoitteille [:dev :va-test :test :va-prod]
+ :automaattimuistutus-raportointivelvoitteille [:dev :va-test :va-prod]
 }
