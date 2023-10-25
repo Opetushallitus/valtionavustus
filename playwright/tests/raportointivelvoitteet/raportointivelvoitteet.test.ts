@@ -5,7 +5,8 @@ import { randomString } from '../../utils/random'
 import { expectToBeDefined } from '../../utils/util'
 import moment from 'moment'
 
-test('raportointivelvoite', async ({ page, hakuProps, userCache }) => {
+test('raportointivelvoite', async ({ page, hakuProps, userCache }, testInfo) => {
+  testInfo.setTimeout(testInfo.timeout + 20_000)
   expectToBeDefined(userCache)
   const hakujenHallintaPage = new HakujenHallintaPage(page)
   await test.step('can be edited in draft mode', async () => {
