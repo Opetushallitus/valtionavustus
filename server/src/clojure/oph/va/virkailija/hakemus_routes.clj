@@ -106,8 +106,7 @@
     :summary "Get specific hakemus tapahtumaloki"
     (http/ok (tapahtumaloki/get-hakemus-tapahtumaloki-entries tyyppi avustushaku-id hakemus-id)))
 
-  (when (or (feature-enabled? :muistutusviesti-loppuselvityksesta)
-            (feature-enabled? :vapaamuotoinen-viesti-hankkeelle))
+  (when (or (feature-enabled? :muistutusviesti-loppuselvityksesta))
     (compojure-api/POST
       "/send-email/:email-type-str" request
       :path-params [avustushaku-id :- Long

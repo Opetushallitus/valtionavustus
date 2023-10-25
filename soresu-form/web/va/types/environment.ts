@@ -1,6 +1,6 @@
 type LegacyFeatureFlag = { 'enabled?': boolean }
 
-export type FeatureFlag = 'muistutusviesti-loppuselvityksesta' | 'vapaamuotoinen-viesti-hankkeelle'
+export type FeatureFlag = 'muistutusviesti-loppuselvityksesta'
 
 export interface EnvironmentApiResponse {
   name: string
