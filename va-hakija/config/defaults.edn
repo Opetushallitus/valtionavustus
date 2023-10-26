@@ -59,6 +59,7 @@
                                                :admin-privilege-name "ADMIN"
                                                :user-privilege-name  "USER"}
  :rondo-scheduler                             {:enabled? false}
+ :reminder-scheduler                          {:enabled? true}
  :notifications                               {:asiatarkastus                   {:enabled? false
                                                                                  :schedule "0 0 7 ? * 2"}
                                                :taloustarkastus                 {:enabled? false
