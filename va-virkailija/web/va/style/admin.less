@@ -632,9 +632,13 @@ table.translation {
   }
 
   &__liite-version {
-    display: block;
+    display: flex;
+    flex-direction: row;
     width: fit-content;
     margin-left: 22px;
+    label, input {
+      cursor: pointer;
+    }
   }
 
   &__link {

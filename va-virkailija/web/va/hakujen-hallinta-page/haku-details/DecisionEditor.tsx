@@ -363,24 +363,26 @@ const LiiteVersion = ({
 }) => {
   const isSelected = selectedVersions[attachment.id] === versionSpec.id
   return (
-    <label key={'v' + versionSpec.id} className="decision-liite-selection__liite-version">
-      <input
-        type="radio"
-        className="decision-liite-selection__liite-version-input"
-        data-liite={attachment.id}
-        name={'decision-liite-version--' + attachment.id}
-        value={versionSpec.id}
-        checked={isSelected}
-        onChange={onChangeLiiteVersions}
-        disabled={isDisabled || !isLiiteSelected}
-      />
-      {versionSpec.description}
+    <div className="decision-liite-selection__liite-version">
+      <label key={'v' + versionSpec.id}>
+        <input
+          type="radio"
+          className="decision-liite-selection__liite-version-input"
+          data-liite={attachment.id}
+          name={'decision-liite-version--' + attachment.id}
+          value={versionSpec.id}
+          checked={isSelected}
+          onChange={onChangeLiiteVersions}
+          disabled={isDisabled || !isLiiteSelected}
+        />
+        {versionSpec.description}
+      </label>
       <LiiteVersionLinks
         attachmentId={attachment.id}
         versionSuffix={versionSpec.id}
         environment={environment}
       />
-    </label>
+    </div>
   )
 }
 
