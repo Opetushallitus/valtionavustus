@@ -362,9 +362,10 @@ const LiiteVersion = ({
   onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void
 }) => {
   const isSelected = selectedVersions[attachment.id] === versionSpec.id
+  const disabled = isDisabled || !isLiiteSelected
   return (
     <div className="decision-liite-selection__liite-version">
-      <label key={'v' + versionSpec.id}>
+      <label key={'v' + versionSpec.id} className={disabled ? 'disabled' : undefined}>
         <input
           type="radio"
           className="decision-liite-selection__liite-version-input"
@@ -373,7 +374,7 @@ const LiiteVersion = ({
           value={versionSpec.id}
           checked={isSelected}
           onChange={onChangeLiiteVersions}
-          disabled={isDisabled || !isLiiteSelected}
+          disabled={disabled}
         />
         {versionSpec.description}
       </label>
