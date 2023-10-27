@@ -1,42 +1,41 @@
-import { defaultValues } from '../fixtures/defaultValues'
 import { expectToBeDefined } from '../utils/util'
-import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { randomString } from '../utils/random'
+import { muutoshakemusTest } from '../fixtures/muutoshakemusTest'
+import { HakemustenArviointiPage } from '../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
+import { expect } from '@playwright/test'
 
-const test = defaultValues
-
-test('virkailija can set and unset selvitysvelvollisuus dates', async ({
+const test = muutoshakemusTest.extend({
+  hakuProps: async ({ hakuProps }, use) => {
+    {
+      await use({
+        ...hakuProps,
+        avustushakuName: `Selvityspäivämäärä test - haku ${randomString()}`,
+        hankkeenAlkamispaiva: '20.04.1969',
+        hankkeenPaattymispaiva: '29.12.1969',
+        valiselvitysDeadline: '12.6.2023',
+        loppuselvitysDeadline: '12.5.2023',
+      })
+    }
+  },
+})
+test('Make sure that selvityksen deadline date is formatted in finnish way', async ({
   page,
-  hakuProps,
   userCache,
+  submittedHakemus,
+  avustushakuID,
+  answers,
 }) => {
   expectToBeDefined(userCache)
-  const hakujenHallintaPage = new HakujenHallintaPage(page)
-  let avustushakuID = await hakujenHallintaPage.copyEsimerkkihaku()
-  await hakujenHallintaPage.fillAvustushaku({
-    ...hakuProps,
-    avustushakuName: `Selvityspäivämäärä test - haku ${randomString()}`,
-    hankkeenAlkamispaiva: '20.04.1969',
-    hankkeenPaattymispaiva: '29.12.1969',
-  })
-  await hakujenHallintaPage.navigate(avustushakuID)
-  const paatosPage = await hakujenHallintaPage.commonHakujenHallinta.switchToPaatosTab()
-  const { valiselvitysDate, loppuselvitysDate } = paatosPage.locators
-  await test.step('virkailija can set selvitysvelvollisuus dates', async () => {
-    await valiselvitysDate.fill('12.5.2023')
-    await page.keyboard.press('Tab')
-    await paatosPage.common.waitForSave()
-    await loppuselvitysDate.fill('12.6.2023')
-    await page.keyboard.press('Tab')
-    await paatosPage.common.waitForSave()
-  })
+  expectToBeDefined(submittedHakemus)
 
-  await test.step('virkailija can unset selvitysvelvollisuus dates', async () => {
-    await valiselvitysDate.fill('')
-    await page.keyboard.press('Tab')
-    await paatosPage.common.waitForSave()
-    await loppuselvitysDate.fill('')
-    await page.keyboard.press('Tab')
-    await paatosPage.common.waitForSave()
-  })
+  const arviointiPage = new HakemustenArviointiPage(page)
+  await arviointiPage.navigateToHakemus(avustushakuID, answers.projectName)
+  await arviointiPage.page.getByRole('link', { name: 'Loppuselvitys' }).click()
+  await expect(
+    arviointiPage.page.getByText(`Selvityksen viimeinen toimituspäivämäärä on 12.5.2023`)
+  ).toBeVisible()
+  await arviointiPage.page.getByRole('link', { name: 'Väliselvitys' }).click()
+  await expect(
+    arviointiPage.page.getByText(`Selvityksen viimeinen toimituspäivämäärä on 12.6.2023`)
+  ).toBeVisible()
 })
