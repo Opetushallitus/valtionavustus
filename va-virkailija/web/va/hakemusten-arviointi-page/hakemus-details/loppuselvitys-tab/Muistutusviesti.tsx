@@ -1,15 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { translations } from 'soresu-form/web/va/i18n/translations'
 import cn from 'classnames'
 
 import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 
 import MultipleRecipentEmailForm, {
+  Email,
   generateInitialEmail,
 } from '../common-components/MultipleRecipentsEmailForm'
 import ViestiLista, { Message } from '../ViestiLista'
 import { fetchSentEmails, sendEmail } from '../sentEmails'
 
 import './muistutusviesti.less'
+import { useUserInfo } from '../../../initial-data-context'
 
 type MuistutusviestiProps = {
   hakemus: Hakemus
@@ -21,11 +24,30 @@ async function fetchMuistutusViestiSentEmails(avustushaku: Avustushaku, hakemus:
 }
 
 export default function MuistutusViesti({ avustushaku, hakemus }: MuistutusviestiProps) {
+  const user = useUserInfo()
   const [sentEmails, setSentEmails] = useState<Message[]>([])
   const [formErrorMessage, setFormErrorMessage] = useState<string>()
   const containsSentEmails = sentEmails.length > 0
   const initialEmail = generateInitialEmail(hakemus)
-  const [email, setEmail] = useState(initialEmail)
+
+  const asiatunnus = hakemus['register-number'] || ''
+  const hakemusNimi = hakemus['project-name']
+
+  const userKey = hakemus['user-key']
+  const publicUrl = `${window.location.origin}/selvitys/avustushaku/${avustushaku.id}/loppuselvitys?hakemus=${userKey}`
+  const reminderEmail: Email = {
+    ...initialEmail,
+    header: translations[initialEmail.lang].muistutusviesti.header(asiatunnus, hakemusNimi),
+    footer: translations[initialEmail.lang].muistutusviesti.footer(
+      publicUrl,
+      `${user['first-name']} ${user.surname}`,
+      user.email
+    ),
+    subject: translations[initialEmail.lang].muistutusviesti.subject(asiatunnus, hakemusNimi),
+    content: translations[initialEmail.lang].muistutusviesti.content,
+  }
+
+  const [email, setEmail] = useState(reminderEmail)
 
   useEffect(() => {
     async function fetchEmails() {
@@ -75,7 +97,7 @@ export default function MuistutusViesti({ avustushaku, hakemus }: Muistutusviest
   }
 
   function cancelForm() {
-    setEmail(initialEmail)
+    setEmail(reminderEmail)
     setShowEmailForm(false)
     setFormErrorMessage(undefined)
   }
@@ -106,6 +128,7 @@ export default function MuistutusViesti({ avustushaku, hakemus }: Muistutusviest
             onClick: cancelForm,
           }}
           errorText={formErrorMessage}
+          preview={true}
         />
       )}
     </>

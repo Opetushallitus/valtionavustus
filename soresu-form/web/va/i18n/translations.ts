@@ -159,6 +159,36 @@ export const translationsFi = {
   calendar: {
     moveToday: 'tänään',
   },
+  muistutusviesti: {
+    header: (asiatunnus: string, hankeNimi: string) => `Hyvä vastaanottaja,
+
+tämä viesti koskee avustusta: ${asiatunnus} ${hankeNimi}
+
+`,
+    subject: (asiatunnus: string, hankeNimi: string) =>
+      `Viesti Opetushallituksen avustuksen palauttamattomaan loppuselvitykseen liittyen: ${asiatunnus} ${hankeNimi}`,
+    content: `Valtionavustusjärjestelmämme mukaan loppuselvityksenne on pyynnöstä huolimatta palauttamatta.
+
+Valtionavustuksen saajan on annettava avustuspäätöksen ehtojen noudattamisen valvomiseksi oikeat ja riittävät tiedot loppuselvityksessä. Valtionavustus voidaan periä takaisin, jos loppuselvitystä ei ole palautettu. (Valtionavustuslaki 688/2001, § 14 ja § 22.)
+
+Loppuselvitys tulee palauttaa Opetushallituksen sähköiseen valtionapujärjestelmään mahdollisimman pian, kuitenkin viimeistään 21 vuorokauden kuluessa. Vaihtoehtoisesti avustuksen saajan tulee palauttaa koko avustus ja sen korot omaehtoisesti 21 vuorokauden kuluessa.
+
+`,
+    footer: (
+      loppuSelvitysLink: string,
+      senderName: string,
+      senderEmail: string
+    ) => `Loppuselvityslomakkeenne: ${loppuSelvitysLink}
+
+Korkolaskuri ja palautusohjeet: https://www.oph.fi/fi/yleisia-ohjeita-valtionavustusten-hakijoille-ja-kayttajille
+
+Tarvittaessa tarkempia lisätietoja voi kysyä viestin lähettäjältä.
+
+Ystävällisin terveisin,
+${senderName}
+${senderEmail}
+`,
+  },
 }
 
 const translationsSv: Translations = {
@@ -329,6 +359,34 @@ const translationsSv: Translations = {
   },
   logo: {
     alt: 'Utbildningsstyrelsen',
+  },
+  muistutusviesti: {
+    header: (asiatunnus: string, hankeNimi: string) => `Bästa mottagare
+
+det här meddelandet gäller statsunderstödet: ${asiatunnus} ${hankeNimi}
+`,
+    subject: (asiatunnus: string, hankeNimi: string) =>
+      `Meddelande om oinlämnad slutredovisning för statsunderstöd från Utbildningsstyrelsen: ${asiatunnus} ${hankeNimi}`,
+    content: `Enligt vårt statsunderstödssystem har er slutredovisning trots begäran inte lämnats in.
+
+Mottagaren av statsunderstöd ska för övervakningen av att villkoren som fastställts i beslutet om statsunderstöd uppfylls lämna in riktiga och tillräckliga uppgifter i slutredovisningen. Statsunderstödet kan återkrävas om slutredovisningen inte har lämnats in. (Statsunderstödslagen 688/2001, § 14 och § 22.)
+
+Slutredovisningen ska lämnas in i Utbildningsstyrelsens digitala statsunderstödssystem så fort som möjligt, men allra senast inom 21 dygn. Alternativt kan mottagaren av statsunderstöd på eget initiativ återbetala hela statsunderstödet med ränta inom 21 dygn.
+`,
+    footer: (
+      loppuSelvitysLink: string,
+      senderName: string,
+      senderEmail: string
+    ) => `Er blankett för slutredovisning: ${loppuSelvitysLink}
+
+Ränteräknare och anvisningar för återbetalning: https://www.oph.fi/sv/tjanster/statsunderstod-och-finansiering-internationalisering
+
+Vid behov kan ni be om mer information av avsändaren till detta meddelande.
+
+Med vänlig hälsning
+${senderName}
+${senderEmail}
+`,
   },
 }
 
