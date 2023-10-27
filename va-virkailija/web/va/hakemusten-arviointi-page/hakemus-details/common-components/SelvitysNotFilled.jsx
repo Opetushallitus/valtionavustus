@@ -1,3 +1,4 @@
+import { isDate } from 'moment'
 import React, { Component } from 'react'
 
 export default class SelvitysNotFilled extends Component {
@@ -5,11 +6,14 @@ export default class SelvitysNotFilled extends Component {
     const { avustushaku, selvitysType } = this.props
     const title = selvitysType === 'valiselvitys' ? 'Väliselvitys' : 'Loppuselvitys'
     const date = avustushaku[selvitysType + 'date']
+    const maybeDate = new Date(date)
+    const dateString = isDate(maybeDate) ? maybeDate.toLocaleDateString('fi') : ''
+
     return (
       <div>
         <p>{title} ei ole vielä saapunut.</p>
         <p>
-          Selvityksen viimeinen toimituspäivämäärä on {date} tai 2 kuukautta hankkeen päättymisen
+          Selvityksen viimeinen toimituspäivämäärä on {dateString} tai 2 kuukautta hankkeen päättymisen
           jälkeen.
         </p>
 
