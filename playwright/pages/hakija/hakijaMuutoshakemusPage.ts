@@ -75,11 +75,9 @@ export class HakijaMuutoshakemusPage {
   }
 
   async expectMuutoshakemusToBeSubmittedSuccessfully(isApplication: boolean) {
-    const notification = await this.page.textContent('div[class="auto-hide success"]')
-
     // The text is different if we are actually applying for jatkoaika/budjettimuutos/sisältömuutos
     const notificationText = isApplication ? 'Muutoshakemus lähetetty' : 'Muutokset tallennettu'
-    expect(notification).toBe(notificationText)
+    await expect(this.page.getByText(notificationText)).toBeVisible()
   }
 
   async getMuutoshakemusSisaltomuutosPerustelut() {
