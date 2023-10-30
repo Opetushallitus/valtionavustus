@@ -61,12 +61,15 @@
                          [ring-middleware-format "0.7.5"]
                          [org.yaml/snakeyaml "1.33"]
 
-
-
-                         ;;; ???-section starts here
-                         [com.fasterxml.jackson.core/jackson-core ~jackson-version]
+                         ;; [metosin/compojure-api "1.1.13"] ->
+                         ;;   ... -> [com.fasterxml.jackson.core/jackson-databind "2.15.3"] ->
+                         ;;             [com.fasterxml.jackson.core/jackson-annotations "2.15.3"]
                          [com.fasterxml.jackson.core/jackson-databind ~jackson-version]
                          [com.fasterxml.jackson.core/jackson-annotations ~jackson-version]
+
+
+                         ;; [cheshire "5.12.0"] -> [com.fasterxml.jackson.core/jackson-core "2.15.3"]
+                         [com.fasterxml.jackson.core/jackson-core ~jackson-version]
                          [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor ~jackson-version]
                          [com.fasterxml.jackson.dataformat/jackson-dataformat-smile ~jackson-version]
 
@@ -148,10 +151,15 @@
                                       ; and clj-time
                  [de.ubercode.clostache/clostache "1.4.0"] ; email templates and some html templating somewhere
 
+                 ;; excel spreadsheets
+                 [dk.ative/docjure "1.19.0"]
+
+                 ;; job scheduling
+                 [clojurewerkz/quartzite "2.1.0"]
+
                  ;; ????
                  [com.cemerick/url "0.1.1" :exclusions [com.cemerick/clojurescript.test]] ; this is basically useless, we only use one function that would be trivial to implement
-                 [dk.ative/docjure "1.19.0"]
-                 [clojurewerkz/quartzite "2.1.0"]]
+  ]
 
   :profiles {:uberjar {:aot [oph.va.hakija.main]}
              :server-dev {:env {:config "va-hakija/config/dev.edn"
