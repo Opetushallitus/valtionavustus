@@ -32,10 +32,16 @@ test('Make sure that selvityksen deadline date is formatted in finnish way', asy
   await arviointiPage.navigateToHakemus(avustushakuID, answers.projectName)
   await arviointiPage.page.getByRole('link', { name: 'Loppuselvitys' }).click()
   await expect(
-    arviointiPage.page.getByText(`Selvityksen viimeinen toimituspäivämäärä on 12.5.2023`)
+    arviointiPage.page.getByText(
+      `Selvityksen viimeinen toimituspäivämäärä on 12.5.2023 tai 2 kuukautta hankkeen päättymisen jälkeen.`
+    )
   ).toBeVisible()
+
   await arviointiPage.page.getByRole('link', { name: 'Väliselvitys' }).click()
   await expect(
-    arviointiPage.page.getByText(`Selvityksen viimeinen toimituspäivämäärä on 12.6.2023`)
+    arviointiPage.page.getByText('Selvityksen viimeinen toimituspäivämäärä on 12.6.2023.')
   ).toBeVisible()
+  await expect(
+    arviointiPage.page.getByText('tai 2 kuukautta hankkeen päättymisen jälkeen.')
+  ).toBeHidden()
 })
