@@ -73,7 +73,11 @@ const TalousarvioSelect = ({
         <div>
           <div>
             TA-tili
-            <HelpTooltip content={helpTexts['hakujen_hallinta__haun_tiedot___ta_tili']} /> *
+            <HelpTooltip
+              direction="left"
+              content={helpTexts['hakujen_hallinta__haun_tiedot___ta_tili']}
+            />
+            {' *'}
           </div>
           <Select<TalousarviotiliOption>
             value={selectedTalousarvioTiliOption}
