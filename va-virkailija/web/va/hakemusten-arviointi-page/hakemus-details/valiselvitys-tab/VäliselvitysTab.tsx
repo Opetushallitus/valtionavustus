@@ -48,7 +48,7 @@ const VäliselvitysTab = () => {
             form={form}
           />
         ) : (
-          <SelvitysNotFilled avustushaku={avustushaku} selvitysType="valiselvitys" />
+          <SelvitysNotFilled avustushaku={avustushaku} selvitysType="Väliselvitys" />
         )}
         {multibatchPaymentsEnabled && (
           <ApplicationPayments

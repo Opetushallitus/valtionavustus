@@ -61,7 +61,7 @@ const LoppuselvitysTab = () => {
             form={form}
           />
         ) : (
-          <SelvitysNotFilled avustushaku={avustushaku} selvitysType="loppuselvitys" />
+          <SelvitysNotFilled avustushaku={avustushaku} selvitysType="Loppuselvitys" />
         )}
         {multibatchPaymentsEnabled && (
           <ApplicationPayments
