@@ -33,12 +33,12 @@
                          ;; fixes https://nvd.nist.gov/vuln/detail/cve-2020-8908
                          [com.google.guava/guava "32.1.3-android"]
 
-                         ;; [org.postgresql/postgresql "42.6.0"] -> 
+                         ;; [org.postgresql/postgresql "42.6.0"] ->
                          ;; ... -> [com.google.guava/guava "32.1.3-android"] ->
                          [org.checkerframework/checker-qual "3.39.0"]
 
-                         ;; [yesql "0.5.3"] -> 
-                         ;; ... -> [clout "2.2.1"] -> 
+                         ;; [yesql "0.5.3"] ->
+                         ;; ... -> [clout "2.2.1"] ->
                          [instaparse "1.4.12"]
 
                          ;; [clj-pdf "2.6.5"] ->
@@ -81,7 +81,7 @@
 
                          ;; other
                          [metosin/ring-swagger-ui "4.19.1"]
-                         
+
                          [org.clojure/core.memoize "1.0.257"]
 
                          [org.scala-lang.modules/scala-xml_2.11 "1.3.1"]
@@ -140,8 +140,7 @@
                  [clj-pdf "2.6.5" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
 
                  ;; maksatuspalvelu
-                 [nivekuil/clj-ssh "d11634acf9857da4c7fc98258719a333af523cb8" :exclusions [com.jcraft/jsch.agentproxy.usocket-nc]]
-                 [com.jcraft/jsch "0.1.55"]
+                 [org.clj-commons/clj-ssh "0.6.2"]
 
                  ;; miscellaneous
                  [clj-time "0.15.2"]
