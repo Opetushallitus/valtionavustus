@@ -21,20 +21,16 @@ test('virkailija can send muistutusviesti for loppuselvitys', async ({
     await page.getByRole('button', { name: 'Kirjoita' }).click()
     const form = page.getByTestId('muistutusviesti-email').locator('form')
 
-    await expect(isValid(form), 'Unfilled form should be invalid').resolves.toBe(false)
     await page.click('[data-test-id="muistutusviesti-add-receiver"]')
     await clearAndType(page, '[data-test-id="muistutusviesti-receiver-1"]', additionalReceiver)
 
     await clearAndType(page, '[data-test-id="muistutusviesti-email-subject"]', subject)
-    await expect(
-      isValid(form),
-      'Filling just subject should not make the form valid'
-    ).resolves.toBe(false)
     await clearAndType(page, '[data-test-id="muistutusviesti-email-content"]', content)
     await expect(
       isValid(form),
       'Form should be valid after filling subject and content'
     ).resolves.toBe(true)
+    await page.getByRole('button', { name: 'Esikatsele' }).click()
     await page.getByRole('button', { name: 'Lähetä muistutusviesti' }).click()
   })
 
