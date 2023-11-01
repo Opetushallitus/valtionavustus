@@ -56,6 +56,7 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
   }
   const hakemusLoppuselvitysNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
   const disableAcceptButton = hakemusLoppuselvitysNotSubmitted || !message || disabled
+  const asiatarkastusVerified = verifiedAt && verifiedBy
   return (
     <>
       <LoppuselvitysTarkastus
@@ -66,7 +67,7 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
         taydennyspyyntoHeading="Asiatarkastuksen täydennyspyyntö"
         confirmButton={<></>}
         completedBy={
-          verifiedAt && verifiedBy
+          asiatarkastusVerified
             ? {
                 name: verifiedBy,
                 date: verifiedAt,
@@ -85,12 +86,13 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
           !hakemus['loppuselvitys-taloustarkastettu-at']
         }
       />
-      {!disabled && (
+      {!asiatarkastusVerified && (
         <form onSubmit={onSubmit}>
           <div className="verification-comment">
             <textarea
               onChange={(e) => setMessage(e.target.value)}
               rows={5}
+              disabled={disabled}
               name="information-verification"
               placeholder="Kirjaa tähän mahdolliset huomiot asiatarkastuksesta"
             />

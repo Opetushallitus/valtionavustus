@@ -24,8 +24,8 @@ export const LoppuselvitysForm = ({ hakemus, userInfo, presenter }: Loppuselvity
   const taloustarkastusEnabled = status === 'information_verified' || status === 'accepted'
   return (
     <div className="information-verification">
-      {showTaydennyspyynto && allowedToDoAsiatarkastus && (
-        <Asiatarkastus disabled={taloustarkastusEnabled} />
+      {showTaydennyspyynto && (
+        <Asiatarkastus disabled={!allowedToDoAsiatarkastus || taloustarkastusEnabled} />
       )}
       {showTaydennyspyynto && (
         <Taloustarkastus disabled={asiatarkastusEnabled || status === 'accepted'} />
