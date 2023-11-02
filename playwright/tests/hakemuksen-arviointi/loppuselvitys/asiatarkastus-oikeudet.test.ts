@@ -56,7 +56,7 @@ test('loppuselvitys asiatarkastus oikeudet käyttäjille', async ({
     await expectAsiastarkastusTextIsShown()
     await switchUserIdentityTo(page, 'valtionavustus')
     await expectAsiastarkastusTextIsShown()
-    await switchUserIdentityTo(page, 'paivipaakayttaja')
+    await switchUserIdentityTo(page, 'viivivirkailija')
     await expectAsiastarkastusTextIsShown()
   })
 })
