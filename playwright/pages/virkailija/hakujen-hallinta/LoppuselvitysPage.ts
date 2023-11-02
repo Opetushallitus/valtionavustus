@@ -27,6 +27,17 @@ export const LoppuselvitysPage = (page: Page) => {
         name: 'Hyväksy ja lähetä viesti',
       }),
     },
+    muistutusviesti: {
+      open: page.getByRole('button', { name: 'Kirjoita' }),
+      subject: page.getByTestId('muistutusviesti-email-subject'),
+      header: page.locator('pre').first(),
+      content: page.getByTestId('muistutusviesti-email-content'),
+      footer: page.locator('pre').last(),
+      preview: page.getByRole('button', { name: 'Esikatsele' }),
+      send: page.getByRole('button', { name: 'Lähetä muistutusviesti' }),
+      addReceiver: page.getByTestId('muistutusviesti-add-receiver'),
+      nthReceiver: (nth: number) => page.getByTestId(`muistutusviesti-receiver-${nth}`),
+    },
   }
 
   async function goToPreview() {
