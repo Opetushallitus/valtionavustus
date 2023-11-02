@@ -161,10 +161,12 @@ export const HaunTiedotPage = (page: Page) => {
     await selectCode('operation', codes.operation)
   }
 
-  async function addValmistelija(name: string) {
+  async function addValmistelija(name: string, waitForSave = true) {
     await locators.hakuRole.searchInput.fill(name)
     await page.locator('a').getByText(name).click()
-    await common.waitForSave()
+    if (waitForSave) {
+      await common.waitForSave()
+    }
   }
 
   async function setUserRole(
@@ -177,11 +179,13 @@ export const HaunTiedotPage = (page: Page) => {
     await page.keyboard.press('Tab')
   }
 
-  async function addArvioija(name: string) {
+  async function addArvioija(name: string, waitForSave = true) {
     await locators.hakuRole.searchInput.fill(name)
     await page.locator('a').getByText(name).click()
     await setUserRole(name, 'evaluator')
-    await common.waitForSave()
+    if (waitForSave) {
+      await common.waitForSave()
+    }
   }
 
   async function addVastuuvalmistelija(name: string) {

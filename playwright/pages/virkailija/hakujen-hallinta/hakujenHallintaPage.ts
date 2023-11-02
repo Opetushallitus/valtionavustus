@@ -123,6 +123,11 @@ export class HakujenHallintaPage {
     return LoppuselvitysPage(this.page)
   }
 
+  async switchToHakulomakeTab() {
+    await this.page.getByTestId('hakulomake-välilehti').click()
+    return HakulomakePage(this.page)
+  }
+
   async waitForSave() {
     await waitForSave(this.page)
   }
@@ -208,28 +213,7 @@ export class HakujenHallintaPage {
         await this.page.locator('select#transaction-account').selectOption('5000')
       }
 
-      const taTili = haunTiedotPage.locators.taTili
-      await taTili.tili(0).input.fill(talousarviotili.code)
-      await this.page.keyboard.press('ArrowDown')
-      await this.page.keyboard.press('Enter')
-      await taTili.tili(0).koulutusaste(0).input.fill('Ammatillinen koulutus')
-      await this.page.keyboard.press('ArrowDown')
-      await this.page.keyboard.press('Enter')
-
-      if (arvioituMaksupaiva) {
-        await this.page.fill('[name="arvioitu_maksupaiva"]', formatDate(arvioituMaksupaiva))
-      }
-
-      if (jaossaOlevaSumma !== undefined) {
-        await this.page.fill('#total-grant-size', String(jaossaOlevaSumma))
-      }
-
       await this.selectTositelaji('XE')
-      await this.page.fill('#hakuaika-start', formatDate(hakuaikaStart))
-      await this.page.fill('#hakuaika-end', formatDate(hakuaikaEnd))
-      await haunTiedotPage.addValmistelija('Viivi Virkailija')
-      await haunTiedotPage.addArvioija('Päivi Pääkäyttäjä')
-
       for (let i = 0; i < selectionCriteria.length; i++) {
         await this.page.getByTestId('add-selection-criteria').click()
         await this.page.fill(`#selection-criteria-${i}-fi`, selectionCriteria[i])
@@ -241,6 +225,27 @@ export class HakujenHallintaPage {
       for (const saadanto of lainsaadanto) {
         await this.page.locator(`label:has-text("${saadanto}")`).click()
       }
+
+      if (arvioituMaksupaiva) {
+        await this.page.fill('[name="arvioitu_maksupaiva"]', formatDate(arvioituMaksupaiva))
+      }
+
+      if (jaossaOlevaSumma !== undefined) {
+        await this.page.fill('#total-grant-size', String(jaossaOlevaSumma))
+      }
+
+      const taTili = haunTiedotPage.locators.taTili
+      await taTili.tili(0).input.fill(talousarviotili.code)
+      await this.page.keyboard.press('ArrowDown')
+      await this.page.keyboard.press('Enter')
+      await taTili.tili(0).koulutusaste(0).input.fill('Ammatillinen koulutus')
+      await this.page.keyboard.press('ArrowDown')
+      await this.page.keyboard.press('Enter')
+
+      await this.page.fill('#hakuaika-start', formatDate(hakuaikaStart))
+      await this.page.fill('#hakuaika-end', formatDate(hakuaikaEnd))
+      await haunTiedotPage.addValmistelija('Viivi Virkailija', false)
+      await haunTiedotPage.addArvioija('Päivi Pääkäyttäjä', false)
 
       const paatosTab = await this.commonHakujenHallinta.switchToPaatosTab()
       await paatosTab.locators.hankkeenAlkamisPaiva.fill(hankkeenAlkamispaiva)
@@ -275,7 +280,8 @@ export class HakujenHallintaPage {
   ): Promise<{ avustushakuID: number }> {
     const avustushakuID = await this.copyEsimerkkihaku()
     await this.fillAvustushaku(hakuProps)
-    const formEditorPage = await this.navigateToFormEditor(avustushakuID)
+    const formEditorPage = await this.switchToHakulomakeTab()
+    await formEditorPage.waitFormToBeLoaded()
 
     if (hakuProps.hakemusFields.length) {
       const newJson = addFieldsToHakemusJson(lomakeJson, hakuProps.hakemusFields)
