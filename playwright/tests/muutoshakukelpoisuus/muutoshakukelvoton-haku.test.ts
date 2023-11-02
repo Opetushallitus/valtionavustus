@@ -13,7 +13,7 @@ import {
   lastOrFail,
   waitUntilMinEmails,
 } from '../../utils/emails'
-import { clickElementWithText, waitForElementWithText, waitForNewTab } from '../../utils/util'
+import { waitForNewTab } from '../../utils/util'
 
 test.describe.parallel('Avustushaku that was marked as muutoshakukelvoton', () => {
   test('turns into muutoshakukelpoinen when copied', async ({ avustushakuID, page }) => {
@@ -63,11 +63,11 @@ test.describe.parallel('Avustushaku that was marked as muutoshakukelvoton', () =
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
 
-    await clickElementWithText(page, 'button', 'Muokkaa hakemusta')
-    await page.type('[data-test-id="virkailija-edit-comment"]', 'Kuhan tässä nyt muokkaillaan')
+    await page.getByRole('button', { name: 'Muokkaa hakemusta' }).click()
+    await page.getByTestId('virkailija-edit-comment').fill('Kuhan tässä nyt muokkaillaan')
 
     const newPagePromise = waitForNewTab(page)
-    await clickElementWithText(page, 'button', 'Siirry muokkaamaan')
+    await page.getByRole('button', { name: 'Siirry muokkaamaan' }).click()
     const modificationPage = await newPagePromise
 
     await modificationPage.bringToFront()
@@ -108,16 +108,9 @@ test.describe.parallel('Avustushaku that was marked as muutoshakukelvoton', () =
     const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     await hakijaAvustusHakuPage.navigateToYhteyshenkilöChangePage(avustushakuID, userKey, token)
 
-    await waitForElementWithText(page, 'button', 'Aloita yhteystietojen muokkaus')
-    await clickElementWithText(page, 'button', 'Aloita yhteystietojen muokkaus')
-    await waitForElementWithText(page, 'button', 'Tallenna muutos ja lopeta muokkaus')
+    await page.getByRole('button', { name: 'Aloita yhteystietojen muokkaus' }).click()
     await page.fill('#applicant-name', 'Etunimi Takanimi')
-    await page.waitForFunction(
-      () =>
-        (document.querySelector('#applicant-edit-submit') as HTMLInputElement).disabled === false
-    )
-    await clickElementWithText(page, 'button', 'Tallenna muutos ja lopeta muokkaus')
-
+    await page.getByRole('button', { name: 'Tallenna muutos ja lopeta muokkaus' }).click()
     const emails = await waitUntilMinEmails(getYhteystiedotMuutettuEmails, 1, hakemusID)
     expect(emails).toHaveLength(1)
   })

@@ -4,7 +4,6 @@ import { URLSearchParams } from 'url'
 import { muutoshakemusTest as test } from '../fixtures/muutoshakemusTest'
 import { HakemustenArviointiPage } from '../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { HakijaAvustusHakuPage } from '../pages/hakija/hakijaAvustusHakuPage'
-import { waitForElementWithText } from '../utils/util'
 
 test('virkailija can edit hakemus', async ({ page, avustushakuID, submittedHakemus: hakemus }) => {
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
@@ -25,7 +24,7 @@ test('virkailija can edit hakemus', async ({ page, avustushakuID, submittedHakem
 
     await hakemustenArviointiPage.page.bringToFront()
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
-    await waitForElementWithText(page, 'span', 'Itä-Uusimaa')
+    await expect(page.locator('span')).toHaveText('Itä-Uusimaa')
   })
 
   await test.step('when the avustushaku has been closed', async () => {
@@ -41,7 +40,7 @@ test('virkailija can edit hakemus', async ({ page, avustushakuID, submittedHakem
 
     await hakemustenArviointiPage.page.bringToFront()
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
-    await waitForElementWithText(page, 'span', 'Etelä-Savo')
+    await expect(page.locator('span')).toHaveText('Etelä-Savo')
   })
 
   await test.step('when hakemus has been handled', async () => {
@@ -57,7 +56,7 @@ test('virkailija can edit hakemus', async ({ page, avustushakuID, submittedHakem
 
     await hakemustenArviointiPage.page.bringToFront()
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
-    await waitForElementWithText(page, 'span', 'Etelä-Karjala')
+    await expect(page.locator('span')).toHaveText('Etelä-Karjala')
   })
 })
 
@@ -71,7 +70,7 @@ test('hakija', async ({ page, avustushakuID, submittedHakemus: hakemus }) => {
     await hakemusPage.waitForEditSaved()
 
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
-    await waitForElementWithText(page, 'span', 'Etelä-Savo')
+    await expect(page.locator('span')).toHaveText('Etelä-Savo')
   })
 
   await test.step('can edit hakemus when a change request has been made', async () => {
@@ -86,7 +85,7 @@ test('hakija', async ({ page, avustushakuID, submittedHakemus: hakemus }) => {
     await hakemusPage.submitChangeRequestResponse()
 
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
-    await waitForElementWithText(page, 'span', 'Ahvenanmaa')
+    await expect(page.locator('span')).toHaveText('Ahvenanmaa')
   })
 
   await test.step('can not edit hakemus when a change request has been cancelled', async () => {

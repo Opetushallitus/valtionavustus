@@ -17,11 +17,6 @@ export async function expectQueryParameter(page: Page, paramName: string): Promi
   return value
 }
 
-export async function clickElementWithTextStrict(page: Page, elementType: string, text: string) {
-  const selector = `${elementType}:text-is("${text}")`
-  await page.click(selector)
-}
-
 export async function clickElementWithText(page: Page, elementType: string, text: string) {
   const selector = `${elementType}:has-text("${text}")`
   await page.click(selector)
@@ -32,19 +27,6 @@ export async function switchUserIdentityTo(page: Page, identity: FakeIdentity): 
   await page.request.post(`${VIRKAILIJA_URL}/api/test/set-fake-identity/${identity}`)
   await page.reload()
 }
-
-export async function waitForElementWithText(
-  page: Page,
-  elementType: string,
-  text: string,
-  state: 'visible' | 'hidden' = 'visible'
-) {
-  return page.waitForSelector(`${elementType}:has-text("${text}")`, {
-    state,
-    timeout: 5000,
-  })
-}
-
 export function expectToBeDefined<T>(val: T): asserts val is NonNullable<T> {
   expect(val).toBeDefined()
 }
