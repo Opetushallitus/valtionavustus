@@ -45,7 +45,7 @@ test.extend<{ answers: Answers }>({
         .fill('Det fanns inte tillräckligt med pengar för ångfartyg')
       await page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-submit').click()
 
-      expect
+      await expect
         .poll(async () => {
           return (await getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails(hakemusID)).length
         })
