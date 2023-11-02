@@ -1,35 +1,63 @@
 import { Locator, expect } from '@playwright/test'
-import { clearAndType } from '../../../utils/util'
 import { selvitysTest as test } from '../../../fixtures/selvitysTest'
 import SelvitysTab from '../../../pages/virkailija/hakujen-hallinta/CommonSelvitysPage'
 import { getLoppuselvitysMuistutusviestiEmails, waitUntilMinEmails } from '../../../utils/emails'
 import moment from 'moment'
+import { HAKIJA_URL } from '../../../utils/constants'
 
 test('virkailija can send muistutusviesti for loppuselvitys', async ({
   page,
   answers,
-  acceptedHakemus: { hakemusID },
+  acceptedHakemus: { hakemusID, userKey },
+  hakuProps,
   avustushakuID,
 }) => {
   const subject = 'Akaan kaupungin loppuselvitys muistutus'
   const content = 'Hei! Muistattehan täyttää kaikki kentät?'
   const additionalReceiver = 'karri@kojootti.dog'
+  await SelvitysTab(page, 'loppu').navigateToLoppuselvitysTab(avustushakuID, hakemusID)
+  await page.getByRole('button', { name: 'Kirjoita' }).click()
+  const header = `Hyvä vastaanottaja,
 
-  await test.step('virkailija can fill and submit muistutusviesti form', async () => {
-    await SelvitysTab(page, 'loppu').navigateToLoppuselvitysTab(avustushakuID, hakemusID)
+tämä viesti koskee avustusta: 1/${hakuProps.registerNumber} ${answers.projectName}
+`
+  const footer = `Loppuselvityslomakkeenne: ${HAKIJA_URL}/selvitys/avustushaku/${avustushakuID}/loppuselvitys?hakemus=${userKey}
 
-    await page.getByRole('button', { name: 'Kirjoita' }).click()
+Korkolaskuri ja palautusohjeet: https://www.oph.fi/fi/yleisia-ohjeita-valtionavustusten-hakijoille-ja-kayttajille
+
+Tarvittaessa tarkempia lisätietoja voi kysyä viestin lähettäjältä.
+
+Ystävällisin terveisin,
+_ valtionavustus
+santeri.horttanainen@reaktor.com`
+
+  await test.step('muistutusviesti on esitäytetty oikein', async () => {
+    await expect(page.getByTestId('muistutusviesti-email-subject')).toHaveValue(
+      `Viesti Opetushallituksen avustuksen palauttamattomaan loppuselvitykseen liittyen: 1/${hakuProps.registerNumber} ${answers.projectName}`
+    )
+    await expect(page.locator('pre').first()).toHaveText(header)
+    await expect(page.getByTestId('muistutusviesti-email-content'))
+      .toHaveValue(`Valtionavustusjärjestelmämme mukaan loppuselvityksenne on pyynnöstä huolimatta palauttamatta.
+
+Valtionavustuksen saajan on annettava avustuspäätöksen ehtojen noudattamisen valvomiseksi oikeat ja riittävät tiedot loppuselvityksessä. Valtionavustus voidaan periä takaisin, jos loppuselvitystä ei ole palautettu. (Valtionavustuslaki 688/2001, § 14 ja § 22.)
+
+Loppuselvitys tulee palauttaa Opetushallituksen sähköiseen valtionapujärjestelmään mahdollisimman pian, kuitenkin viimeistään 21 vuorokauden kuluessa. Vaihtoehtoisesti avustuksen saajan tulee palauttaa koko avustus ja sen korot omaehtoisesti 21 vuorokauden kuluessa.
+
+`)
+    await expect(page.locator('pre').last()).toHaveText(footer)
+  })
+  await test.step('virkailija voi muokata viestiä', async () => {
     const form = page.getByTestId('muistutusviesti-email').locator('form')
 
     await page.click('[data-test-id="muistutusviesti-add-receiver"]')
-    await clearAndType(page, '[data-test-id="muistutusviesti-receiver-1"]', additionalReceiver)
-
-    await clearAndType(page, '[data-test-id="muistutusviesti-email-subject"]', subject)
-    await clearAndType(page, '[data-test-id="muistutusviesti-email-content"]', content)
-    await expect(
-      isValid(form),
-      'Form should be valid after filling subject and content'
-    ).resolves.toBe(true)
+    await page.getByTestId('muistutusviesti-receiver-1').fill(additionalReceiver)
+    await page.getByTestId('muistutusviesti-email-subject').fill('')
+    await page.getByTestId('muistutusviesti-email-content').fill(content)
+    await expect.poll(() => isValid(form), 'Form should be invalid').toBeFalsy()
+    await page.getByTestId('muistutusviesti-email-subject').fill(subject)
+    await expect
+      .poll(() => isValid(form), 'Form should be valid after filling subject and content')
+      .toBeTruthy()
     await page.getByRole('button', { name: 'Esikatsele' }).click()
     await page.getByRole('button', { name: 'Lähetä muistutusviesti' }).click()
   })
@@ -40,13 +68,15 @@ test('virkailija can send muistutusviesti for loppuselvitys', async ({
 
     const email = emails[0]
     expect(email.subject).toEqual(subject)
-    expect(email.formatted).toEqual(content)
+    expect(email.formatted).toEqual(`${header}
+
+${content}
+
+${footer}`)
     expect(email.bcc).toBeNull()
     expect(email.cc).toEqual([])
     expect(email['reply-to']).toBe(null)
-
-    const { contactPersonEmail } = answers
-    expect(email['to-address']).toEqual([contactPersonEmail, additionalReceiver])
+    expect(email['to-address']).toEqual([answers.contactPersonEmail, additionalReceiver])
   })
 
   await test.step('sent muistutusviesti is shown in list', async () => {
