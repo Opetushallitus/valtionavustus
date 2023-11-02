@@ -550,6 +550,7 @@ export class HakemustenArviointiPage {
     const trustedContactName = '#trusted-contact-name'
     const trustedContactEmail = '#trusted-contact-email'
     const trustedContactPhone = '#trusted-contact-phone'
+    const koodisto = '#koodistoField-1'
     return {
       printableLink: this.page.locator('text="Tulostusversio"'),
       oldAnswers: {
@@ -559,6 +560,7 @@ export class HakemustenArviointiPage {
         trustedContactName: oldAnswer.locator(trustedContactName),
         trustedContactEmail: oldAnswer.locator(trustedContactEmail),
         trustedContactPhone: oldAnswer.locator(trustedContactPhone),
+        koodisto: oldAnswer.locator(koodisto),
       },
       newAnswers: {
         applicantName: newAnswer.locator(applicantName),
@@ -567,7 +569,9 @@ export class HakemustenArviointiPage {
         trustedContactName: newAnswer.locator(trustedContactName),
         trustedContactEmail: newAnswer.locator(trustedContactEmail),
         trustedContactPhone: newAnswer.locator(trustedContactPhone),
+        koodisto: newAnswer.locator(koodisto),
       },
+      koodisto: this.page.locator(koodisto),
       trustedContact: {
         name: this.page.locator('#trusted-contact-name'),
         email: this.page.locator('#trusted-contact-email'),
