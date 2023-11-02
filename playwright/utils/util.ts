@@ -3,11 +3,6 @@ import { expect, Page } from '@playwright/test'
 
 import { VIRKAILIJA_URL } from './constants'
 
-export async function clearAndType(page: Page, selector: string, content: string) {
-  await page.fill(selector, '')
-  await page.type(selector, content)
-}
-
 export async function waitForNewTab(currentPage: Page): Promise<Page> {
   return new Promise((resolve) => currentPage.once('popup', (newPage) => resolve(newPage)))
 }

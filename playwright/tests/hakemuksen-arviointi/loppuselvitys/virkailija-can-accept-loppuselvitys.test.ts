@@ -1,7 +1,5 @@
 import { expect } from '@playwright/test'
 
-import { clearAndType } from '../../../utils/util'
-
 import { HakemustenArviointiPage } from '../../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { selvitysTest as test } from '../../../fixtures/selvitysTest'
 import { LoppuselvitysPage } from '../../../pages/virkailija/hakujen-hallinta/LoppuselvitysPage'
@@ -24,10 +22,9 @@ test('virkailija can accept loppuselvitys', async ({
     })
     await loppuselvitysPage.locators.taloustarkastus.accept.click()
     await page.click('[data-test-id="taloustarkastus-add-receiver"]')
-    await clearAndType(page, '[data-test-id="taloustarkastus-receiver-2"]', additionalReceiver)
-
-    await clearAndType(page, '[data-test-id="taloustarkastus-email-subject"]', subject)
-    await clearAndType(page, '[data-test-id="taloustarkastus-email-content"]', content)
+    await page.getByTestId('taloustarkastus-receiver-2').fill(additionalReceiver)
+    await page.getByTestId('taloustarkastus-email-subject').fill(subject)
+    await page.getByTestId('taloustarkastus-email-content').fill(content)
     await loppuselvitysPage.locators.taloustarkastus.confirmAcceptance.click()
     await expect(loppuselvitysPage.locators.taloustarkastus.confirmAcceptance).toBeHidden()
     await expect(loppuselvitysPage.locators.taloustarkastettu).toBeVisible()
