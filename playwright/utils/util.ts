@@ -17,11 +17,6 @@ export async function expectQueryParameter(page: Page, paramName: string): Promi
   return value
 }
 
-export async function clickElementWithText(page: Page, elementType: string, text: string) {
-  const selector = `${elementType}:has-text("${text}")`
-  await page.click(selector)
-}
-
 type FakeIdentity = 'valtionavustus' | 'paivipaakayttaja' | 'viivivirkailija'
 export async function switchUserIdentityTo(page: Page, identity: FakeIdentity): Promise<void> {
   await page.request.post(`${VIRKAILIJA_URL}/api/test/set-fake-identity/${identity}`)

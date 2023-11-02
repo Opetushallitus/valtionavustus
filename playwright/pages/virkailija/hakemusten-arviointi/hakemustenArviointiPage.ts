@@ -2,7 +2,6 @@ import { expect, Locator, Page } from '@playwright/test'
 
 import { navigate } from '../../../utils/navigate'
 import {
-  clickElementWithText,
   expectToBeDefined,
   getChangedBudgetTableCells,
   getExistingBudgetTableCells,
@@ -203,7 +202,7 @@ export class HakemustenArviointiPage {
   }
 
   async fillTäydennyspyyntöField(täydennyspyyntöText: string): Promise<void> {
-    await clickElementWithText(this.page, 'button', 'Pyydä täydennystä')
+    await this.page.getByRole('button', { name: 'Pyydä täydennystä' }).click()
     await this.taydennyspyynto.fill(täydennyspyyntöText)
   }
 
@@ -355,7 +354,7 @@ export class HakemustenArviointiPage {
 
   /** @deprecated use MuutoshakemusTab */
   async selectVakioperusteluInFinnish() {
-    await clickElementWithText(this.page, 'a', 'Lisää vakioperustelu suomeksi')
+    await this.page.getByText('Lisää vakioperustelu suomeksi').click()
   }
 
   /** @deprecated use MuutoshakemusTab */

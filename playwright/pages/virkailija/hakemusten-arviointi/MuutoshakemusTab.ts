@@ -1,11 +1,7 @@
 import { Page, expect } from '@playwright/test'
 import { MuutoshakemusValues, PaatosStatus, PaatosValues } from '../../../utils/types'
 import { BudgetAmount } from '../../../utils/budget'
-import {
-  clickElementWithText,
-  getChangedBudgetTableCells,
-  getExistingBudgetTableCells,
-} from '../../../utils/util'
+import { getChangedBudgetTableCells, getExistingBudgetTableCells } from '../../../utils/util'
 
 export type MuutoshakemusTab = ReturnType<typeof createMuutoshakemusTab>
 
@@ -108,7 +104,7 @@ export function createMuutoshakemusTab(page: Page) {
   }
 
   async function selectVakioperusteluInFinnish() {
-    await clickElementWithText(page, 'a', 'Lisää vakioperustelu suomeksi')
+    await page.getByText('Lisää vakioperustelu suomeksi').click()
   }
 
   async function getAcceptedBudgetInputAmounts(): Promise<{ name: string; value: string }[]> {

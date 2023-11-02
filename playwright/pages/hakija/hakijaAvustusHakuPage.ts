@@ -2,7 +2,7 @@ import { Page } from '@playwright/test'
 
 import { navigateHakija } from '../../utils/navigate'
 import { dummyExcelPath, TEST_Y_TUNNUS } from '../../utils/constants'
-import { clickElementWithText, expectQueryParameter, expectToBeDefined } from '../../utils/util'
+import { expectQueryParameter, expectToBeDefined } from '../../utils/util'
 import { getHakemusUrlFromEmail, pollUntilNewHakemusEmailArrives } from '../../utils/emails'
 import { Budget, fillBudget } from '../../utils/budget'
 import { Answers, Signatory } from '../../utils/types'
@@ -138,13 +138,14 @@ export function HakijaAvustusHakuPage(page: Page) {
 
     await fillSignatories(getSignatoriesOrDefault())
 
-    await clickElementWithText(
-      page,
-      'label',
-      lang === 'fi'
-        ? 'Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko'
-        : 'Kommun/samkommun, kommunalt ägda bolag, kyrkan'
-    )
+    await page
+      .getByText(
+        lang === 'fi'
+          ? 'Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko'
+          : 'Kommun/samkommun, kommunalt ägda bolag, kyrkan'
+      )
+      .click()
+
     await page.click("[id='koodistoField-1_input']")
     await selectMaakuntaFromDropdown(lang === 'fi' ? 'Kainuu' : 'Åland')
     await locators.form.bank.iban.fill('FI95 6682 9530 0087 65')
@@ -154,11 +155,9 @@ export function HakijaAvustusHakuPage(page: Page) {
     await page.fill('#project-name', answers.projectName)
     await page.click(`[for='language.radio.${lang === 'sv' ? 1 : 0}']`)
     await page.click("[for='checkboxButton-0.checkbox.0']")
-    await clickElementWithText(
-      page,
-      'label',
-      lang === 'fi' ? 'Opetuksen lisääminen' : 'Ordnande av extra undervisning'
-    )
+    await page
+      .getByText(lang === 'fi' ? 'Opetuksen lisääminen' : 'Ordnande av extra undervisning')
+      .click()
     await page.fill(
       "[id='project-description.project-description-1.goal']",
       'Tarvitsemme kuutio tonneittain rahaa jotta voimme kylpeä siinä.'
@@ -338,13 +337,13 @@ export function HakijaAvustusHakuPage(page: Page) {
     await startAndFillApplication(answers, avustushakuID)
     await page.fill("[id='signatories-fieldset-1.name']", 'Erkki Esimerkki')
     await page.fill("[id='signatories-fieldset-1.email']", 'erkki.esimerkki@example.com')
-    await clickElementWithText(
-      page,
-      'label',
-      lang === 'fi'
-        ? 'Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko'
-        : 'Kommun/samkommun, kommunalt ägda bolag, kyrkan'
-    )
+    await page
+      .getByText(
+        lang === 'fi'
+          ? 'Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko'
+          : 'Kommun/samkommun, kommunalt ägda bolag, kyrkan'
+      )
+      .click()
     await page.click("[id='koodistoField-1_input']")
     await selectMaakuntaFromDropdown(lang === 'fi' ? 'Kainuu' : 'Åland')
     await locators.form.bank.iban.fill('FI95 6682 9530 0087 65')
@@ -354,11 +353,9 @@ export function HakijaAvustusHakuPage(page: Page) {
     await page.fill('#project-name', answers.projectName)
     await page.click(`[for='language.radio.${lang === 'sv' ? 1 : 0}']`)
     await page.click("[for='checkboxButton-0.checkbox.0']")
-    await clickElementWithText(
-      page,
-      'label',
-      lang === 'fi' ? 'Opetuksen lisääminen' : 'Ordnande av extra undervisning'
-    )
+    await page
+      .getByText(lang === 'fi' ? 'Opetuksen lisääminen' : 'Ordnande av extra undervisning')
+      .click()
     await page.fill(
       "[id='project-description.project-description-1.goal']",
       'Jonain päivänä teemme maailman suurimman aallon.'

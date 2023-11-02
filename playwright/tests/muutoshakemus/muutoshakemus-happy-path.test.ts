@@ -11,7 +11,7 @@ import {
   lastOrFail,
   waitUntilMinEmails,
 } from '../../utils/emails'
-import { clickElementWithText, waitForNewTab } from '../../utils/util'
+import { waitForNewTab } from '../../utils/util'
 import { HAKIJA_URL, TEST_Y_TUNNUS, VIRKAILIJA_URL } from '../../utils/constants'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 import { MuutoshakemusValues } from '../../utils/types'
@@ -77,11 +77,11 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
     await hakemustenArviointiPage.navigate(avustushakuID)
     await hakemustenArviointiPage.clickHakemus(hakemusID)
     hakemusRegisterNumber = await page.locator('section.va-register-number span.value').innerText()
-    await clickElementWithText(page, 'button', 'Muokkaa hakemusta')
+    await page.getByRole('button', { name: 'Muokkaa hakemusta' }).click()
 
     const [modificationPage] = await Promise.all([
       context.waitForEvent('page'),
-      clickElementWithText(page, 'button', 'Siirry muokkaamaan'),
+      await page.getByRole('button', { name: 'Siirry muokkaamaan' }).click(),
     ])
     expect(modificationPage.url()).toContain(
       `${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?hakemus=`

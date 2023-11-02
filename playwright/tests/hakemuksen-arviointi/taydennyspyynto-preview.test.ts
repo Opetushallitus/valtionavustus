@@ -2,7 +2,6 @@ import { expect } from '@playwright/test'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
-import { clickElementWithText } from '../../utils/util'
 
 test.setTimeout(180000)
 
@@ -24,7 +23,7 @@ test('Virkailija can preview täydennyspyyntö', async ({
 
   const täydennyspyyntöText = 'Jaahas miltäköhän tämä täydennyspyyntö mahtaa näyttää sähköpostissa?'
   await hakemustenArviointiPage.fillTäydennyspyyntöField(täydennyspyyntöText)
-  await clickElementWithText(page, 'a', 'Esikatsele')
+  await page.getByText('Esikatsele').click()
 
   expect(await page.textContent("[data-test-id='change-request-preview-subject']")).toStrictEqual(
     `Otsikko: Täydennyspyyntö avustushakemukseesi`
