@@ -12,7 +12,7 @@ import ViestiLista, { Message } from '../ViestiLista'
 import { fetchSentEmails, sendEmail } from '../sentEmails'
 
 import './muistutusviesti.less'
-import { useUserInfo } from '../../../initial-data-context'
+import { useEnvironment, useUserInfo } from '../../../initial-data-context'
 
 type MuistutusviestiProps = {
   hakemus: Hakemus
@@ -34,7 +34,10 @@ export default function MuistutusViesti({ avustushaku, hakemus }: Muistutusviest
   const hakemusNimi = hakemus['project-name']
 
   const userKey = hakemus['user-key']
-  const publicUrl = `${window.location.origin}/selvitys/avustushaku/${avustushaku.id}/loppuselvitys?hakemus=${userKey}`
+  const environment = useEnvironment()
+  const publicUrl = `${environment['hakija-server'].url[initialEmail.lang]}selvitys/avustushaku/${
+    avustushaku.id
+  }/loppuselvitys?hakemus=${userKey}`
   const loppuselvitysNimi = `${asiatunnus} ${hakemusNimi}`.trim()
   const reminderEmail: Email = {
     ...initialEmail,
@@ -74,12 +77,18 @@ export default function MuistutusViesti({ avustushaku, hakemus }: Muistutusviest
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     e.stopPropagation()
+    const { header = '', content, footer = '' } = email
+    const emailContent = `${header}
+
+${content}
+
+${footer}`.trim()
     try {
       await sendEmail(
         'loppuselvitys-muistutus',
         avustushaku,
         hakemus,
-        email.content,
+        emailContent,
         email.subject,
         email.receivers
       )
