@@ -160,13 +160,12 @@ export const translationsFi = {
     moveToday: 'tänään',
   },
   muistutusviesti: {
-    header: (asiatunnus: string, hankeNimi: string) => `Hyvä vastaanottaja,
+    header: (nimi: string) => `Hyvä vastaanottaja,
 
-tämä viesti koskee avustusta: ${asiatunnus} ${hankeNimi}
-
+tämä viesti koskee avustusta: ${nimi}
 `,
-    subject: (asiatunnus: string, hankeNimi: string) =>
-      `Viesti Opetushallituksen avustuksen palauttamattomaan loppuselvitykseen liittyen: ${asiatunnus} ${hankeNimi}`,
+    subject: (nimi: string) =>
+      `Viesti Opetushallituksen avustuksen palauttamattomaan loppuselvitykseen liittyen: ${nimi}`,
     content: `Valtionavustusjärjestelmämme mukaan loppuselvityksenne on pyynnöstä huolimatta palauttamatta.
 
 Valtionavustuksen saajan on annettava avustuspäätöksen ehtojen noudattamisen valvomiseksi oikeat ja riittävät tiedot loppuselvityksessä. Valtionavustus voidaan periä takaisin, jos loppuselvitystä ei ole palautettu. (Valtionavustuslaki 688/2001, § 14 ja § 22.)
@@ -361,12 +360,12 @@ const translationsSv: Translations = {
     alt: 'Utbildningsstyrelsen',
   },
   muistutusviesti: {
-    header: (asiatunnus: string, hankeNimi: string) => `Bästa mottagare
+    header: (nimi) => `Bästa mottagare
 
-det här meddelandet gäller statsunderstödet: ${asiatunnus} ${hankeNimi}
+det här meddelandet gäller statsunderstödet: ${nimi}
 `,
-    subject: (asiatunnus: string, hankeNimi: string) =>
-      `Meddelande om oinlämnad slutredovisning för statsunderstöd från Utbildningsstyrelsen: ${asiatunnus} ${hankeNimi}`,
+    subject: (nimi: string) =>
+      `Meddelande om oinlämnad slutredovisning för statsunderstöd från Utbildningsstyrelsen: ${nimi}`,
     content: `Enligt vårt statsunderstödssystem har er slutredovisning trots begäran inte lämnats in.
 
 Mottagaren av statsunderstöd ska för övervakningen av att villkoren som fastställts i beslutet om statsunderstöd uppfylls lämna in riktiga och tillräckliga uppgifter i slutredovisningen. Statsunderstödet kan återkrävas om slutredovisningen inte har lämnats in. (Statsunderstödslagen 688/2001, § 14 och § 22.)

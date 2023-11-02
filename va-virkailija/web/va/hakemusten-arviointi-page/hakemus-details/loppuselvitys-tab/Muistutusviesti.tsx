@@ -35,15 +35,16 @@ export default function MuistutusViesti({ avustushaku, hakemus }: Muistutusviest
 
   const userKey = hakemus['user-key']
   const publicUrl = `${window.location.origin}/selvitys/avustushaku/${avustushaku.id}/loppuselvitys?hakemus=${userKey}`
+  const loppuselvitysNimi = `${asiatunnus} ${hakemusNimi}`.trim()
   const reminderEmail: Email = {
     ...initialEmail,
-    header: translations[initialEmail.lang].muistutusviesti.header(asiatunnus, hakemusNimi),
+    header: translations[initialEmail.lang].muistutusviesti.header(loppuselvitysNimi),
     footer: translations[initialEmail.lang].muistutusviesti.footer(
       publicUrl,
       `${user['first-name']} ${user.surname}`,
       user.email
     ),
-    subject: translations[initialEmail.lang].muistutusviesti.subject(asiatunnus, hakemusNimi),
+    subject: translations[initialEmail.lang].muistutusviesti.subject(loppuselvitysNimi),
     content: translations[initialEmail.lang].muistutusviesti.content,
   }
 
