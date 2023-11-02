@@ -40,7 +40,7 @@ test('virkailija can edit hakemus', async ({ page, avustushakuID, submittedHakem
 
     await hakemustenArviointiPage.page.bringToFront()
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
-    await expect(page.locator('#koodistoField-1')).toHaveText('Etelä-Savo')
+    await expect(hakemustenArviointiPage.sidebarLocators().koodisto).toHaveText('Etelä-Savo')
   })
 
   await test.step('when hakemus has been handled', async () => {
@@ -73,7 +73,6 @@ test('hakija', async ({ page, avustushakuID, submittedHakemus: hakemus }) => {
     await hakemusPage.waitForEditSaved()
 
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
-    await expect(page.locator('#koodistoField-1')).toHaveText('Etelä-Savo')
     await expect(hakemustenArviointiPage.sidebarLocators().koodisto).toHaveText('Etelä-Savo')
   })
 
