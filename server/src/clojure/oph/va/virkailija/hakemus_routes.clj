@@ -106,32 +106,31 @@
     :summary "Get specific hakemus tapahtumaloki"
     (http/ok (tapahtumaloki/get-hakemus-tapahtumaloki-entries tyyppi avustushaku-id hakemus-id)))
 
-  (when (or (feature-enabled? :muistutusviesti-loppuselvityksesta))
-    (compojure-api/POST
-      "/send-email/:email-type-str" request
-      :path-params [avustushaku-id :- Long
-                    hakemus-id :- Long
-                    email-type-str :- (s/enum "loppuselvitys-muistutus" "vapaa-viesti")]
-      :body [{:keys [body subject to lang]} {:lang s/Str
-                                             :body s/Str
-                                             :subject s/Str
-                                             :to [s/Str]}]
-      :summary "Send email to hakija"
-      (let [identity (authentication/get-request-identity request)
-            email-type (keyword email-type-str)]
-        (when (not (seq (filter notEmptyString to)))
-          (http/bad-request! {:error "Viestillä on oltava vähintään yksi vastaanottaja"}))
-        (let [email-id (common-email/try-send-email!
-                        (common-email/message (keyword lang)
-                                              email-type
-                                              to
-                                              subject
-                                              body)
-                        {:hakemus-id     hakemus-id
-                         :avustushaku-id avustushaku-id
-                         :from           (:email identity)})]
-          (tapahtumaloki/create-log-entry email-type-str avustushaku-id hakemus-id identity "" {} email-id true))
-        (http/created))))
+  (compojure-api/POST
+    "/send-email/:email-type-str" request
+    :path-params [avustushaku-id :- Long
+                  hakemus-id :- Long
+                  email-type-str :- (s/enum "loppuselvitys-muistutus" "vapaa-viesti")]
+    :body [{:keys [body subject to lang]} {:lang s/Str
+                                           :body s/Str
+                                           :subject s/Str
+                                           :to [s/Str]}]
+    :summary "Send email to hakija"
+    (let [identity (authentication/get-request-identity request)
+          email-type (keyword email-type-str)]
+      (when (not (seq (filter notEmptyString to)))
+        (http/bad-request! {:error "Viestillä on oltava vähintään yksi vastaanottaja"}))
+      (let [email-id (common-email/try-send-email!
+                       (common-email/message (keyword lang)
+                                             email-type
+                                             to
+                                             subject
+                                             body)
+                       {:hakemus-id     hakemus-id
+                        :avustushaku-id avustushaku-id
+                        :from           (:email identity)})]
+        (tapahtumaloki/create-log-entry email-type-str avustushaku-id hakemus-id identity "" {} email-id true))
+      (http/created)))
 
   (compojure-api/POST
     "/loppuselvitys/taydennyspyynto" request

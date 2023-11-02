@@ -19,7 +19,7 @@ import {
 import { useHakemus } from '../../useHakemus'
 import { useUserRoles } from '../../arviointiSelectors'
 import MuistutusViesti from './Muistutusviesti'
-import { useFeature, useUserInfo } from '../../../initial-data-context'
+import { useUserInfo } from '../../../initial-data-context'
 
 const LoppuselvitysTab = () => {
   const hakemus = useHakemus()
@@ -40,13 +40,11 @@ const LoppuselvitysTab = () => {
   const selvitysHakemus = hakemus.selvitys?.loppuselvitys
   const form = hakemus.selvitys?.loppuselvitysForm
 
-  const muistusviestiEnabled = useFeature('muistutusviesti-loppuselvityksesta')
-
   return (
     <div id="tab-content" className={hakemus.refused ? 'disabled' : ''}>
       <div data-test-id="hakemus-details-loppuselvitys">
         <PresenterComment helpTextKey="hankkeen_sivu__loppuselvitys___linkki_lomakkeelle" />
-        {hasSelvitys && !loadingHakemus && muistusviestiEnabled && (
+        {hasSelvitys && !loadingHakemus && (
           <MuistutusViesti avustushaku={avustushaku} hakemus={hakemus} />
         )}
         {hasSelvitys ? (
@@ -92,7 +90,7 @@ const LoppuselvitysTab = () => {
           helpTextKey="hankkeen_sivu__loppuselvitys___linkki_lomakkeelle"
           selvitysPyynnotSent={loppuselvitysPyynnotSent}
         />
-        {!hasSelvitys && !loadingHakemus && muistusviestiEnabled && (
+        {!hasSelvitys && !loadingHakemus && (
           <MuistutusViesti avustushaku={avustushaku} hakemus={hakemus} />
         )}
         {hasSelvitys && (
