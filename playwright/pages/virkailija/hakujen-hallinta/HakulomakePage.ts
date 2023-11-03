@@ -38,7 +38,7 @@ export function HakulomakePage(page: Page) {
     await replaceLomakeJson(lomakeJson)
     await expect(locators.saveFormButton).toBeDisabled()
     // trigger autosave by typing space in the end
-    await locators.form.type(' ')
+    await locators.form.pressSequentially(' ')
     await expect(locators.saveFormButton).toBeEnabled()
   }
 
