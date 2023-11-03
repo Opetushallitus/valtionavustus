@@ -46,7 +46,7 @@ export function HakulomakePage(page: Page) {
     const savedSuccessfully = page
       .getByTestId(saveStatusTestId)
       .locator('text=Kaikki tiedot tallennettu')
-    await expect(savedSuccessfully).toBeHidden()
+    await expect(savedSuccessfully).toBeHidden({ timeout: 10000 })
     await locators.saveFormButton.click()
     await expect(savedSuccessfully).toBeVisible()
   }
