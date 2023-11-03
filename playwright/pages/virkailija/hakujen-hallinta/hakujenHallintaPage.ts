@@ -165,15 +165,14 @@ export class HakujenHallintaPage {
     return `[id="raportointilaji-dropdown-${index}"]`
   }
 
-  async openRaportointilajiSelector(index: number): Promise<string> {
+  async toggleRaportointilajiSelector(index: number): Promise<string> {
     const selector = `${this.raportointilajiSelector(index)} > div`
     await this.page.click(selector)
-
     return selector
   }
 
   async selectRaportointilaji(index: number, raportointilaji: string): Promise<void> {
-    await this.openRaportointilajiSelector(index)
+    await this.toggleRaportointilajiSelector(index)
     await this.page.getByTestId(raportointilaji).click()
   }
 
@@ -269,14 +268,18 @@ export class HakujenHallintaPage {
     })
   }
 
+  async fillRaportointivelvoite(velvoite: Raportointivelvoite, raporttiIndex: number) {
+    await this.selectRaportointilaji(raporttiIndex, velvoite.raportointilaji)
+    await this.page.fill(`[name="maaraaika-${raporttiIndex}"]`, velvoite.maaraaika)
+    await this.page.fill(`[id="asha-tunnus-${raporttiIndex}"]`, velvoite.ashaTunnus)
+    if (velvoite.lisatiedot) {
+      await this.page.fill(`[id="lisatiedot-${raporttiIndex}"]`, velvoite.lisatiedot!)
+    }
+  }
+
   async fillRaportointiVelvoitteet(raportointivelvoitteet: Raportointivelvoite[]) {
     for (let i = 0; i < raportointivelvoitteet.length; i++) {
-      await this.selectRaportointilaji(i, raportointivelvoitteet[i].raportointilaji)
-      await this.page.fill(`[name="maaraaika-${i}"]`, raportointivelvoitteet[i].maaraaika)
-      await this.page.fill(`[id="asha-tunnus-${i}"]`, raportointivelvoitteet[i].ashaTunnus)
-      if (raportointivelvoitteet[i].lisatiedot) {
-        await this.page.fill(`[id="lisatiedot-${i}"]`, raportointivelvoitteet[i].lisatiedot ?? '')
-      }
+      await this.fillRaportointivelvoite(raportointivelvoitteet[i], i)
       await this.page.click(`[id="new-raportointivelvoite-${i}"]`)
     }
   }
