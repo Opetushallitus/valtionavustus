@@ -43,7 +43,10 @@ test('virkailija can edit hakemus', async ({ page, avustushakuID, submittedHakem
 
     await hakemustenArviointiPage.page.bringToFront()
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
-    await expect(hakemustenArviointiPage.sidebarLocators().koodisto).toHaveText('Etelä-Savo')
+    await expect(hakemustenArviointiPage.sidebarLocators().oldAnswers.koodisto).toHaveText('Kainuu')
+    await expect(hakemustenArviointiPage.sidebarLocators().newAnswers.koodisto).toHaveText(
+      'Etelä-Savo'
+    )
   })
 
   await test.step('when hakemus has been handled', async () => {
