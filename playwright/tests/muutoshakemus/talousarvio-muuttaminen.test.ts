@@ -251,10 +251,16 @@ muutosTest(
     })
     await test.step('paatospage shows correct data', async () => {
       const hakijaMuutoshakemusPaatosPage = new HakijaMuutoshakemusPaatosPage(page)
-      const currentBudget = await getCurrentBudget(hakijaMuutoshakemusPaatosPage.page)
-      expect(currentBudget).toMatchObject(acceptedBudget)
-      const muutoshakemusBudget = await getMuutoshakemusBudget(hakijaMuutoshakemusPaatosPage.page)
-      expect(muutoshakemusBudget).toMatchObject(muutoshakemus2Budget)
+      await expect
+        .poll(async () => {
+          return await getCurrentBudget(hakijaMuutoshakemusPaatosPage.page)
+        })
+        .toMatchObject(acceptedBudget)
+      await expect
+        .poll(async () => {
+          return await getMuutoshakemusBudget(hakijaMuutoshakemusPaatosPage.page)
+        })
+        .toMatchObject(muutoshakemus2Budget)
       await expect(
         hakijaMuutoshakemusPaatosPage.locators().currentTalousarvioPerustelut
       ).toHaveText(muutoshakemus2Perustelut)
