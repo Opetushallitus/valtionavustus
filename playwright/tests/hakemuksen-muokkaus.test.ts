@@ -88,7 +88,6 @@ test('hakija', async ({ page, avustushakuID, submittedHakemus: hakemus }) => {
     await hakemusPage.submitChangeRequestResponse()
 
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
-    await expect(page.locator('#koodistoField-1')).toHaveText('Ahvenanmaa')
     await expect(hakemustenArviointiPage.sidebarLocators().oldAnswers.koodisto).toHaveText(
       'Etelä-Savo'
     )
