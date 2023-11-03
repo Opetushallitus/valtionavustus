@@ -201,6 +201,16 @@ export class HakujenHallintaPage {
   }: HakuProps) {
     await test.step('Fill in avustushaku details', async () => {
       const haunTiedotPage = HaunTiedotPage(this.page)
+
+      const taTili = haunTiedotPage.locators.taTili
+      await taTili.tili(0).input.fill(talousarviotili.code)
+      await this.page.keyboard.press('ArrowDown')
+      await this.page.keyboard.press('Enter')
+      await taTili.tili(0).koulutusaste(0).input.fill('Ammatillinen koulutus')
+      await this.page.keyboard.press('ArrowDown')
+      await this.page.keyboard.press('Enter')
+
+      await haunTiedotPage.locators.status.draft.click()
       await haunTiedotPage.locators.registerNumber.fill(registerNumber)
       await haunTiedotPage.locators.hakuName.fi.fill(avustushakuName)
       await haunTiedotPage.locators.hakuName.sv.fill(avustushakuName + ' på svenska')
@@ -233,14 +243,6 @@ export class HakujenHallintaPage {
       if (jaossaOlevaSumma !== undefined) {
         await this.page.fill('#total-grant-size', String(jaossaOlevaSumma))
       }
-
-      const taTili = haunTiedotPage.locators.taTili
-      await taTili.tili(0).input.fill(talousarviotili.code)
-      await this.page.keyboard.press('ArrowDown')
-      await this.page.keyboard.press('Enter')
-      await taTili.tili(0).koulutusaste(0).input.fill('Ammatillinen koulutus')
-      await this.page.keyboard.press('ArrowDown')
-      await this.page.keyboard.press('Enter')
 
       await this.page.fill('#hakuaika-start', formatDate(hakuaikaStart))
       await this.page.fill('#hakuaika-end', formatDate(hakuaikaEnd))
