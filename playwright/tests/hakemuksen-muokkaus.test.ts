@@ -24,7 +24,10 @@ test('virkailija can edit hakemus', async ({ page, avustushakuID, submittedHakem
 
     await hakemustenArviointiPage.page.bringToFront()
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
-    await expect(hakemustenArviointiPage.sidebarLocators().koodisto).toHaveText('Itä-Uusimaa')
+    await expect(hakemustenArviointiPage.sidebarLocators().oldAnswers.koodisto).toHaveText('Kainuu')
+    await expect(hakemustenArviointiPage.sidebarLocators().newAnswers.koodisto).toHaveText(
+      'Itä-Uusimaa'
+    )
   })
 
   await test.step('when the avustushaku has been closed', async () => {
