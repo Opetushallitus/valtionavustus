@@ -107,8 +107,3 @@
       accepted?
       (exec hakija-queries/list-open-applications
             {}))))
-
-(defn get-application-id-by-token [token]
-  (first
-   (exec hakija-queries/get-application-id-by-token
-         {:token token})))

@@ -1,8 +1,7 @@
 (ns oph.va.virkailija.external
   (:require [clojure.tools.logging :as log]
             [compojure.api.sweet :as compojure-api]
-            [oph.soresu.common.config :refer [config environment without-authentication?]]
-            [oph.va.virkailija.application-data :as application-data]
+            [oph.soresu.common.config :refer [config without-authentication?]]
             [oph.va.virkailija.cas :as cas]
             [oph.va.virkailija.external-data :as external-data]
             [oph.va.virkailija.schema :as schema]
@@ -53,15 +52,4 @@
     :query-params []
     :summary "This endpoint exists for authentication purposes only"
     :description "Other external API endpoints use this endpoint in the authentication ticket"
-    (response/not-found "unused endpoint"))
-
-  (when (or (= environment "dev") (= environment "test"))
-    (s/defschema ExternalId
-      "Hankkeen id tunnisteen perusteella"
-      {:id s/Int})
-
-    (compojure-api/GET "/hakemus/id/:token" request
-      :path-params [token :- s/Str]
-      :return ExternalId
-      :summary ""
-      (response/ok (application-data/get-application-id-by-token token)))))
+    (response/not-found "unused endpoint")))

@@ -73,5 +73,3 @@
 
 (defquery list-open-applications
   "sql/hakija/hakemus/list-open.sql")
-(defquery get-application-id-by-token
-  "sql/hakija/hakemus/get-application-id-by-token.sql")
