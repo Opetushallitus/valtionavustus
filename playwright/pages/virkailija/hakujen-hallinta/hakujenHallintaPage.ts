@@ -289,7 +289,7 @@ export class HakujenHallintaPage {
     hakuProps: HakuProps
   ): Promise<{ avustushakuID: number }> {
     const avustushakuID = await this.copyEsimerkkihaku()
-    await this.fillAvustushakuWithoutWaitingForSave(hakuProps)
+    await this.fillAvustushaku(hakuProps)
     const formEditorPage = await this.switchToHakulomakeTab()
     await formEditorPage.waitFormToBeLoaded()
 
