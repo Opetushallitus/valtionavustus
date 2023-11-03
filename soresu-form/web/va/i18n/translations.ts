@@ -162,8 +162,7 @@ export const translationsFi = {
   muistutusviesti: {
     header: (nimi: string) => `Hyvä vastaanottaja,
 
-tämä viesti koskee avustusta: ${nimi}
-`,
+tämä viesti koskee avustusta: ${nimi}`,
     subject: (nimi: string) =>
       `Viesti Opetushallituksen avustuksen palauttamattomaan loppuselvitykseen liittyen: ${nimi}`,
     content: `Valtionavustusjärjestelmämme mukaan loppuselvityksenne on pyynnöstä huolimatta palauttamatta.
@@ -362,8 +361,7 @@ const translationsSv: Translations = {
   muistutusviesti: {
     header: (nimi) => `Bästa mottagare
 
-det här meddelandet gäller statsunderstödet: ${nimi}
-`,
+det här meddelandet gäller statsunderstödet: ${nimi}`,
     subject: (nimi: string) =>
       `Meddelande om oinlämnad slutredovisning för statsunderstöd från Utbildningsstyrelsen: ${nimi}`,
     content: `Enligt vårt statsunderstödssystem har er slutredovisning trots begäran inte lämnats in.

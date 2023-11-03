@@ -205,7 +205,7 @@ function EmailContent({
 }) {
   const contentId = useId()
 
-  const completeContent = [email.header, email.content, email.footer].join('')
+  const completeContent = [email.header, email.content, email.footer].join('\n\n')
   const content = isPreviewing ? completeContent : email.content
 
   return (

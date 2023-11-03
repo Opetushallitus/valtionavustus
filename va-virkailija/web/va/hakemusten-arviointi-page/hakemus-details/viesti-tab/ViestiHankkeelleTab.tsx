@@ -70,7 +70,7 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
     e.stopPropagation()
 
     async function send() {
-      const content = [email.header, email.content, email.footer].join('\n\n')
+      const content = [email.header, email.content, email.footer].join('\n')
       try {
         setFormErrorMessage(undefined)
         await sendEmail(
