@@ -38,8 +38,8 @@
 (defmacro try3 [& body]
   `(try-n-times (fn [] ~@body) 3))
 
-(defn validate-service-ticket [^String virkailija-login-url ^String cas-ticket]
+(defn validate-service-ticket [^String service ^String cas-ticket]
   (try3 (-> @cas-client
-        (.validateServiceTicketWithVirkailijaUsername virkailija-login-url cas-ticket)
+        (.validateServiceTicketWithVirkailijaUsername service cas-ticket)
         .run)))
 

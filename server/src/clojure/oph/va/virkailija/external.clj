@@ -9,7 +9,7 @@
             [ring.util.http-response :as response]
             [schema.core :as s]))
 
-(def virkailija-login-url
+(def external-api-service-url
   (when-not *compile-files*
     (str (-> config :server :virkailija-url) "/api/v2/external/hankkeet/")))
 
@@ -22,7 +22,7 @@
     :summary ""
     (try
       (if (or (without-authentication?) (and (some? ticket)
-               (cas/validate-service-ticket virkailija-login-url ticket)))
+               (cas/validate-service-ticket external-api-service-url ticket)))
         (response/ok (external-data/get-grants-for-year year))
         (response/unauthorized {:error "Unauthorized"}))
       (catch Exception e
@@ -38,7 +38,7 @@
     :summary ""
     (try
       (if (or (without-authentication?) (and (some? ticket)
-               (cas/validate-service-ticket virkailija-login-url ticket)))
+               (cas/validate-service-ticket external-api-service-url ticket)))
         (response/ok (external-data/get-applications-by-grant-id avustushaku-id))
         (response/unauthorized {:error "Unauthorized"}))
       (catch Exception e
@@ -48,19 +48,10 @@
         (response/unauthorized {:error "Unauthorized"}))))
 
   (compojure-api/GET "/hankkeet/" request
-    :query-params [{ticket :- s/Str nil}]
-    :return [schema/ExternalHanke]
-    :summary ""
-    (try
-      (if (or (without-authentication?) (and (some? ticket)
-               (cas/validate-service-ticket virkailija-login-url ticket)))
-        (response/ok (application-data/get-open-applications))
-        (response/unauthorized {:error "Unauthorized"}))
-      (catch Exception e
-        (if (and (.getMessage e) (.contains (.getMessage e) "INVALID_TICKET"))
-          (log/warn "Invalid ticket: " (str e))
-          (log/error "Error in login ticket handling" e))
-        (response/unauthorized {:error "Unauthorized"}))))
+    :query-params []
+    :summary "This endpoint exists for authentication purposes only"
+    :description "Other external API endpoints use this endpoint in the authentication ticket"
+    (response/not-found "unused endpoint"))
 
   (when (or (= environment "dev") (= environment "test"))
     (s/defschema ExternalId
