@@ -181,7 +181,13 @@ export class HakujenHallintaPage {
     await this.page.selectOption('select#document-type', value)
   }
 
-  async fillAvustushaku({
+  async fillAvustushaku(hakuProps: HakuProps) {
+    const haunTiedotPage = HaunTiedotPage(this.page)
+    await this.fillAvustushakuWithoutWaitingForSave(hakuProps)
+    await haunTiedotPage.common.waitForSave()
+  }
+
+  async fillAvustushakuWithoutWaitingForSave({
     avustushakuName,
     registerNumber,
     hakuaikaStart,
@@ -260,7 +266,6 @@ export class HakujenHallintaPage {
         await paatosTab.locators.loppuselvitysDate.fill(loppuselvitysDeadline)
       }
       await this.commonHakujenHallinta.switchToHaunTiedotTab()
-      await haunTiedotPage.common.waitForSave()
     })
   }
 
@@ -281,7 +286,7 @@ export class HakujenHallintaPage {
     hakuProps: HakuProps
   ): Promise<{ avustushakuID: number }> {
     const avustushakuID = await this.copyEsimerkkihaku()
-    await this.fillAvustushaku(hakuProps)
+    await this.fillAvustushakuWithoutWaitingForSave(hakuProps)
     const formEditorPage = await this.switchToHakulomakeTab()
     await formEditorPage.waitFormToBeLoaded()
 
