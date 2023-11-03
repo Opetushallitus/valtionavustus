@@ -26,9 +26,10 @@
         (response/ok (external-data/get-grants-for-year year))
         (response/unauthorized {:error "Unauthorized"}))
       (catch Exception e
-        (if (and (.getMessage e) (.contains (.getMessage e) "INVALID_TICKET"))
-          (log/warn "Invalid ticket: " (str e))
-          (log/error "Error in login ticket handling" e))
+        (cond
+          (and (.getMessage e) (.contains (.getMessage e) "INVALID_TICKET")) (log/warn "Invalid ticket: " (str e))
+          (and (.getMessage e) (.contains (.getMessage e) "INVALID_SERVICE")) (log/warn "Invalid service in ticket: " (str e))
+          :else (log/error "Error in login ticket handling" e))
         (response/unauthorized {:error "Unauthorized"}))))
 
   (compojure-api/GET "/avustushaku/:avustushaku-id/hakemukset" request
@@ -42,9 +43,10 @@
         (response/ok (external-data/get-applications-by-grant-id avustushaku-id))
         (response/unauthorized {:error "Unauthorized"}))
       (catch Exception e
-        (if (and (.getMessage e) (.contains (.getMessage e) "INVALID_TICKET"))
-          (log/warn "Invalid ticket: " (str e))
-          (log/error "Error in login ticket handling" e))
+        (cond
+          (and (.getMessage e) (.contains (.getMessage e) "INVALID_TICKET")) (log/warn "Invalid ticket: " (str e))
+          (and (.getMessage e) (.contains (.getMessage e) "INVALID_SERVICE")) (log/warn "Invalid service in ticket: " (str e))
+          :else (log/error "Error in login ticket handling" e))
         (response/unauthorized {:error "Unauthorized"}))))
 
   (compojure-api/GET "/hankkeet/" request
