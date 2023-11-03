@@ -25,9 +25,9 @@ function generateEmailWithHeaderAndFooter(hakemus: Hakemus, userInfo: UserInfo):
 
   const header = `Hyvä vastaanottaja,
 
-tämä viesti koskee avustusta ${hakemus['project-name']}${registerNumberStr}.\n\n`
+tämä viesti koskee avustusta ${hakemus['project-name']}${registerNumberStr}.`
 
-  const footer = `\n\nTarvittaessa tarkempia lisätietoja voi kysyä viestin lähettäjältä.
+  const footer = `Tarvittaessa tarkempia lisätietoja voi kysyä viestin lähettäjältä.
 
 Ystävällisin terveisin,
 ${userInfo['first-name']} ${userInfo.surname}

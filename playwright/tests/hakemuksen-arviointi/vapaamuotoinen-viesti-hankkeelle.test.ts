@@ -2,7 +2,6 @@ import { expect, test } from '@playwright/test'
 
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
-import { HAKIJA_URL } from '../../utils/constants'
 
 // Assumes that the hakemus is first one in avustushaku, so it gets asianumero 1
 const message = (content: string, hakuAsianumero: string) =>
