@@ -696,3 +696,56 @@
 
     (.write wb output)
     (.toByteArray output)))
+
+(def main-sheet-name-hallinnoiavustuksia "VA")
+(def hallinnoiavustuksia-column-labels
+  [
+     "valtionapuviranomainen"
+     "avustushakuAsianumero"
+     "avustushakuNimi"
+     "avustushakuAvustuslaji"
+     "avustushakuAlkaaPvm"
+     "avustushakuPaattyyPvm"
+     "avustushakuURL"
+     "avustusasiaAsianumero"
+     "avustusasiaVireilletuloPvm"
+     "avustusasiaKieli"
+     "avustusasiaVireillepanijaHenkiloTunnus"
+     "avustusasiaVireillepanijaHenkiloNimi"
+     "avustusasiaVireillepanijaYhteisoTunnus"
+     "avustusasiaVireillepanijaYhteisoNimi"
+     "avustushakemusHaettuKayttotarkoitus"
+     "avustushakemusHaettuAvustus"
+     "avustushakemusAlueKunnat"
+     "avustushakemusAlueMaakunnat"
+     "avustushakemusAlueHyvinvointialueet"
+     "avustushakemusAlueValtiot"
+     "avustuspaatosPvm"
+     "avustuspaatosPerustelu"
+     "avustuspaatosTyyppi"
+     "avustuspaatosMyonnettyAvustus"
+     "avustuspaatosHyvaksyttyKayttotarkoitus"
+     "avustuspaatosKayttoaikaAlkaaPvm"
+     "avustuspaatosKayttoaikaPaattyyPvm"
+     "avustuspaatosMaksettuAvustus"
+     "piilotaKayttotarkoitus"
+     "piilotaVireillepanija"
+   ])
+
+(defn hallinnoiavustuksia-main-sheet-columns []
+  [hallinnoiavustuksia-column-labels] )
+
+
+(defn export-avustushaku-for-hallinnoiavustuksia []
+  (let [output                (ByteArrayOutputStream.)
+        wb                    (spreadsheet/create-workbook main-sheet-name-hallinnoiavustuksia
+                                                           (hallinnoiavustuksia-main-sheet-columns))
+        main-sheet            {:sheet              (spreadsheet/select-sheet main-sheet-name-hallinnoiavustuksia wb)
+                               :header-row-indexes #{0}}
+        safe-formula-style    (doto (.createCellStyle wb)
+                                (.setQuotePrefixed true))
+        header-style          (spreadsheet/create-cell-style! wb {:font       {:bold true}})]
+
+    (adjust-cells-style! main-sheet header-style safe-formula-style)
+    (.write wb output)
+    (.toByteArray output)))
