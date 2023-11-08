@@ -1,8 +1,7 @@
-import * as xlsx from 'xlsx'
 import { expect } from '@playwright/test'
-import { navigate } from '../utils/navigate'
 import { expectToBeDefined } from '../utils/util'
 import { selvitysTest } from '../fixtures/selvitysTest'
+import { downloadExcelExport } from '../utils/downloadExcel'
 
 selvitysTest.use({
   acceptDownloads: true,
@@ -12,16 +11,8 @@ selvitysTest(
   'Excel export contains väliselvitys sheet',
   async ({ page, avustushakuID, väliselvitysSubmitted }) => {
     expectToBeDefined(väliselvitysSubmitted)
-    const [download] = await Promise.all([
-      page.waitForEvent('download'),
-      navigate(page, `/api/avustushaku/${avustushakuID}/export.xslx`).catch((_) => undefined),
-    ])
 
-    const path = await download.path()
-    if (!path) {
-      throw new Error('no download path? wat?')
-    }
-    const workbook = xlsx.readFile(path)
+    const workbook = await downloadExcelExport(page, avustushakuID)
 
     expect(workbook.SheetNames).toMatchObject([
       'Hakemukset',

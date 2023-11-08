@@ -1,5 +1,4 @@
 import { Page } from '@playwright/test'
-
 import { HAKIJA_URL, VIRKAILIJA_URL } from './constants'
 
 export async function navigate(page: Page, path: string, waitForNetworkIdle?: boolean) {
@@ -8,6 +7,13 @@ export async function navigate(page: Page, path: string, waitForNetworkIdle?: bo
         waitUntil: 'networkidle',
       } as const)
     : undefined
+  return await navigateWithOptions(page, path, opts)
+}
+
+type GotoParams = Parameters<Page['goto']>
+type GotoOptions = GotoParams[1]
+
+export async function navigateWithOptions(page: Page, path: string, opts: GotoOptions) {
   return await page.goto(`${VIRKAILIJA_URL}${path}`, opts)
 }
 
