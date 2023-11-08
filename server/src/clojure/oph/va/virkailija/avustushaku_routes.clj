@@ -184,11 +184,13 @@
   (compojure-api/GET "/:avustushaku-id/hallinnoiavustuksia.xslx" [haku-id]
                      :path-params [avustushaku-id :- Long]
                      :summary "Export Excel XLSX document for hallinnoiavustuksia.fi / tutkiavustuksia.fi"
-                     (let [document (-> (export/export-avustushaku-for-hallinnoiavustuksia)
-                                        (ByteArrayInputStream.))]
-                       (-> (http/ok document)
-                           (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
-                           (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"hallinnoiavustuksia-" avustushaku-id ".xlsx\""))))))
+                     (if (hakija-api/get-avustushaku avustushaku-id)
+                       (let [document (-> (export/export-avustushaku-for-hallinnoiavustuksia)
+                                          (ByteArrayInputStream.))]
+                         (-> (http/ok document)
+                             (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
+                             (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"hallinnoiavustuksia-" avustushaku-id ".xlsx\""))))
+                       (http/not-found))))
 
 (defn- get-avustushaku-role []
   (compojure-api/GET "/:avustushaku-id/role" [avustushaku-id]
