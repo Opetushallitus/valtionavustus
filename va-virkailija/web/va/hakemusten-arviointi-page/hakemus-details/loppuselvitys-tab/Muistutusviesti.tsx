@@ -35,7 +35,7 @@ export default function MuistutusViesti({ avustushaku, hakemus }: Muistutusviest
 
   const userKey = hakemus['user-key']
   const environment = useEnvironment()
-  const publicUrl = `${environment['hakija-server'].url[initialEmail.lang]}selvitys/avustushaku/${
+  const publicUrl = `${environment['hakija-server'].url[initialEmail.lang]}avustushaku/${
     avustushaku.id
   }/loppuselvitys?hakemus=${userKey}`
   const loppuselvitysNimi = `${asiatunnus} ${hakemusNimi}`.trim()

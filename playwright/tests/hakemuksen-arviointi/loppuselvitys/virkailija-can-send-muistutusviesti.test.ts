@@ -22,7 +22,7 @@ test('virkailija can send muistutusviesti for loppuselvitys', async ({
   const header = `Hyvä vastaanottaja,
 
 tämä viesti koskee avustusta: 1/${hakuProps.registerNumber} ${answers.projectName}`
-  const footer = `Loppuselvityslomakkeenne: ${HAKIJA_URL}/selvitys/avustushaku/${avustushakuID}/loppuselvitys?hakemus=${userKey}
+  const footer = `Loppuselvityslomakkeenne: ${HAKIJA_URL}/avustushaku/${avustushakuID}/loppuselvitys?hakemus=${userKey}
 
 Korkolaskuri ja palautusohjeet: https://www.oph.fi/fi/yleisia-ohjeita-valtionavustusten-hakijoille-ja-kayttajille
 
