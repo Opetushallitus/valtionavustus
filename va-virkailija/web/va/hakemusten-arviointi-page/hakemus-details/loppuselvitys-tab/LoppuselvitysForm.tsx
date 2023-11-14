@@ -22,6 +22,19 @@ export const LoppuselvitysForm = ({ hakemus, userInfo, presenter }: Loppuselvity
     isPääkäyttäjä(userInfo) || presenter?.oid === userInfo['person-oid']
   const asiatarkastusEnabled = status === 'submitted' && allowedToDoAsiatarkastus
   const taloustarkastusEnabled = status === 'information_verified' || status === 'accepted'
+  const approvedBeforeAsiatarkastusFeature =
+    hakemus['status-loppuselvitys'] === 'accepted' &&
+    !hakemus['loppuselvitys-information-verified-at'] &&
+    !hakemus['loppuselvitys-information-verified-at'] &&
+    !hakemus['loppuselvitys-taloustarkastettu-at'] &&
+    !hakemus['loppuselvitys-taloustarkastanut-name']
+  if (approvedBeforeAsiatarkastusFeature) {
+    return (
+      <div className="information-verification">
+        Loppuselvitys hyväksytty ennen asiatarkastus toiminnallisuuden lisäämistä
+      </div>
+    )
+  }
   return (
     <div className="information-verification">
       {showTaydennyspyynto && (
