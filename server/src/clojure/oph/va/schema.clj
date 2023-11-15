@@ -164,6 +164,10 @@
            :use-overridden-detailed-costs (s/maybe s/Bool)
     ))
 
+(s/defschema ArviointiDropdownAvustushaut {:id Long
+                                           :name s/Str
+})
+
 (s/defschema HakemusStatus
   "Status from the applicant point of view"
   (s/enum "new" "draft" "submitted" "pending_change_request"

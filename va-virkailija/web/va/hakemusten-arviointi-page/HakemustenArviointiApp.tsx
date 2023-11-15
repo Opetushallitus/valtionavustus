@@ -115,9 +115,7 @@ const LoadedApp = () => {
   const [showAllHakemukset, toggleShowAllHakemukset] = useState(
     () => new URLSearchParams(location.search).get(SHOW_ALL) === 'true'
   )
-  const { avustushakuList, hakuData } = useHakemustenArviointiSelector((state) =>
-    getLoadedState(state.arviointi)
-  )
+  const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
   const userInfo = useUserInfo()
   const environment = useEnvironment()
   const { hakemusId } = useParams()
@@ -147,7 +145,7 @@ const LoadedApp = () => {
       <section className="section-container">
         <div id="list-container" className={hasSelected ? 'has-selected' : ''}>
           <div id="list-heading">
-            <AvustushakuDropdown avustushaku={avustushaku} avustushakuList={avustushakuList} />
+            <AvustushakuDropdown />
             <div className="right-side">
               <button
                 className="hakemus-btn"

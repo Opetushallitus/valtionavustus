@@ -46,6 +46,14 @@
                        (http/ok response)
                        (http/not-found))))
 
+(defn- get-arviointi-dropdown-avustushaut []
+  (compojure-api/GET "/arviointi/dropdown" []
+    :return [va-schema/ArviointiDropdownAvustushaut]
+    :summary "Return avustushaku data to be shown in arviointi dropdown"
+    (if-let [response (virkailija-db/get-arviointi-dropdown-avustushaut)]
+      (http/ok response)
+      (http/not-found))))
+
 (defn- identity->str [{:keys [first-name surname person-oid]}]
   (str first-name " " surname " (" person-oid ")"))
 
@@ -430,4 +438,5 @@
   (post-projects)
   (get-avustushaku-talousarviotilit)
   (post-avustushaku-talousarviotilit)
+  (get-arviointi-dropdown-avustushaut)
   (get-tapahtumaloki))

@@ -614,6 +614,21 @@
           WHERE avustushaku_id = ?
           ORDER BY id" [avustushaku-id]))
 
+(defn get-arviointi-dropdown-avustushaut []
+  (query "
+  WITH avustukset AS (
+  SELECT
+    id,
+    content->'name'->'fi' as name,
+    to_char((content->'duration'->>'start')::timestamp at time zone 'UTC' at time zone 'Europe/Helsinki', 'DD.MM.YYYY') as start_date
+    FROM avustushaut
+    WHERE (status = 'resolved' OR status = 'published')
+    order by to_date(content#>>'{duration,start}','yyyy-MM-ddTHH24:MI:SS.MS') desc, id desc
+  )
+  SELECT id,
+         concat(name, ' (', start_date, ')') as name
+  FROM avustukset", []))
+
 (defn insert-raportointivelvoite [avustushaku-id velvoite]
   (let [id (query "INSERT INTO raportointivelvoite (avustushaku_id, raportointilaji, asha_tunnus, maaraaika, lisatiedot)
                    VALUES (?, ?, ?, ?, ?)

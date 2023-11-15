@@ -1,33 +1,28 @@
 import React from 'react'
 
 import DropdownList from 'react-widgets/DropdownList'
-import moment from 'moment-timezone'
-import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'
-import { Avustushaku } from 'soresu-form/web/va/types'
 
 import styles from './avustushaku-dropdown.module.less'
 import { useNavigate } from 'react-router-dom'
-import { useHakemustenArviointiDispatch } from '../arviointiStore'
-import { fetchInitialState } from '../arviointiReducer'
+import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '../arviointiStore'
+import { DropdownAvustushaku, fetchAvustushakuInfo, getLoadedState } from '../arviointiReducer'
 
-interface Props {
-  avustushaku: Avustushaku
-  avustushakuList: Avustushaku[]
-}
-
-export default function AvustushakuDropdown({ avustushaku, avustushakuList }: Props) {
+export default function AvustushakuDropdown() {
   const navigate = useNavigate()
   const dispatch = useHakemustenArviointiDispatch()
+  const avustushaut = useHakemustenArviointiSelector(
+    (state) => getLoadedState(state.arviointi).avustushaut
+  )
+  const { id: defaultHakuId } = useHakemustenArviointiSelector(
+    (state) => getLoadedState(state.arviointi).hakuData.avustushaku
+  )
   // at this time react-widget typings has textField fn parameter as unknown :(
-  const avustushakuToText = (avustushaku: unknown) => {
-    const { content } = avustushaku as Avustushaku
-    const name = content.name.fi
-    const date = moment(content.duration.start).tz('Europe/Helsinki').format(fiShortFormat)
-    return name + ' (' + date + ')'
+  const avustushakuToText = (avustushaku: any) => {
+    return avustushaku.name
   }
-  const onChange = (value: Avustushaku) => {
+  const onChange = (value: DropdownAvustushaku) => {
     navigate(`/avustushaku/${value.id}`)
-    dispatch(fetchInitialState(value.id))
+    dispatch(fetchAvustushakuInfo(value.id))
   }
   const messages = {
     filterPlaceholder: '',
@@ -40,8 +35,8 @@ export default function AvustushakuDropdown({ avustushaku, avustushakuList }: Pr
         dataKey="id"
         containerClassName={styles.dropdownList}
         textField={avustushakuToText}
-        data={avustushakuList}
-        defaultValue={avustushaku}
+        data={avustushaut}
+        defaultValue={avustushaut.find(({ id }) => id === defaultHakuId)}
         renderValue={AvustushakuEntry}
         filter="contains"
         onChange={onChange}
@@ -51,12 +46,6 @@ export default function AvustushakuDropdown({ avustushaku, avustushakuList }: Pr
   )
 }
 
-function AvustushakuEntry({ item }: { item: Avustushaku; dataKey: unknown; text: string }) {
-  const name = item.content.name.fi
-  const date = moment(item.content.duration.start).tz('Europe/Helsinki').format(fiShortFormat)
-  return (
-    <span>
-      {name}&nbsp;({date})
-    </span>
-  )
+function AvustushakuEntry({ item }: { item: DropdownAvustushaku; dataKey: unknown; text: string }) {
+  return <span>{item.name}</span>
 }

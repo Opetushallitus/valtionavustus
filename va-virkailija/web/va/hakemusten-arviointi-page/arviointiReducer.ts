@@ -13,7 +13,6 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import {
   Answer,
   Arvio,
-  Avustushaku,
   ChangeRequest,
   Comment,
   Hakemus,
@@ -68,8 +67,13 @@ async function getEarliestPaymentCreatedAt(avustushakuId: number) {
   return payments.map((p) => p['created-at']).sort()[0]
 }
 
+export interface DropdownAvustushaku {
+  id: number
+  name: string
+}
+
 interface InitialData {
-  avustushakuList: Avustushaku[]
+  avustushaut: DropdownAvustushaku[]
   hakuData: HakuData
   projects: VaCodeValue[]
   lahetykset: LahetysStatuses
@@ -79,16 +83,34 @@ interface InitialData {
 export const fetchInitialState = createAsyncThunk<InitialData, number>(
   'arviointi/fetchInitialState',
   async (avustushakuId) => {
-    const [avustushakuList, hakuData, projects, lahetykset, earliestPaymentCreatedAt] =
+    const [avustushaut, hakuData, projects, lahetykset, earliestPaymentCreatedAt] =
       await Promise.all([
-        HttpUtil.get<Avustushaku[]>('/api/avustushaku/?status=published&status=resolved'),
+        HttpUtil.get('/api/avustushaku/arviointi/dropdown'),
         HttpUtil.get<HakuData>(`/api/avustushaku/${avustushakuId}`),
         HttpUtil.get<VaCodeValue[]>(`/api/avustushaku/${avustushakuId}/projects`),
         getLahetysStatuses(avustushakuId),
         getEarliestPaymentCreatedAt(avustushakuId),
       ])
     return {
-      avustushakuList,
+      avustushaut,
+      hakuData,
+      projects,
+      lahetykset,
+      earliestPaymentCreatedAt,
+    }
+  }
+)
+
+export const fetchAvustushakuInfo = createAsyncThunk<Omit<InitialData, 'avustushaut'>, number>(
+  'arviointi/fetchAvustushakuInfo',
+  async (avustushakuId) => {
+    const [hakuData, projects, lahetykset, earliestPaymentCreatedAt] = await Promise.all([
+      HttpUtil.get<HakuData>(`/api/avustushaku/${avustushakuId}`),
+      HttpUtil.get<VaCodeValue[]>(`/api/avustushaku/${avustushakuId}/projects`),
+      getLahetysStatuses(avustushakuId),
+      getEarliestPaymentCreatedAt(avustushakuId),
+    ])
+    return {
       hakuData,
       projects,
       lahetykset,
@@ -518,6 +540,26 @@ const arviointiSlice = createSlice({
         const hakemus = getHakemus(state, meta.arg.hakemusId)
         hakemus.arvio.scoring = payload.scoring
         hakemus.scores = payload.scores
+      })
+      .addCase(fetchAvustushakuInfo.pending, (state) => {
+        if (state.initialData.loading === false) {
+          // done to show "loading" different avustushakus data
+          state.initialData.data.hakuData.hakemukset = []
+        } else {
+          throw Error(
+            'Started fetching avustushaku info without initial state. This should never happen.'
+          )
+        }
+      })
+      .addCase(fetchAvustushakuInfo.fulfilled, (state, { payload }) => {
+        if (state.initialData.loading === false) {
+          state.initialData.data.hakuData = payload.hakuData
+          state.initialData.data.earliestPaymentCreatedAt = payload.earliestPaymentCreatedAt
+          state.initialData.data.lahetykset = payload.lahetykset
+          state.initialData.data.projects = payload.projects
+        } else {
+          throw Error('Fetched avustushaku info without initial state. This should never happen.')
+        }
       })
       .addMatcher(isAnyOf(isRejected(...saveStatusAwareActions)), (state) => {
         state.saveStatus = {
