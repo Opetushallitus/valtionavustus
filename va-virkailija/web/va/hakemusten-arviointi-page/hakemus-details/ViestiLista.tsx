@@ -5,7 +5,10 @@ import { EnvelopeIcon } from '../../common-components/icons'
 moment.locale('fi')
 
 const formatDate = (date: string) => {
-  return `${moment(date).format('DD.MM.YYYY')} klo ${moment(date).format('HH.mm')}`
+  if (moment(date).isValid()) {
+    return `${moment(date).format('DD.MM.YYYY')} klo ${moment(date).format('HH.mm')}`
+  }
+  return date
 }
 
 export interface Message {

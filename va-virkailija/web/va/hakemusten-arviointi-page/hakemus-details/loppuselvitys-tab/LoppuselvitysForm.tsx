@@ -6,6 +6,7 @@ import { Role, UserInfo } from '../../../types'
 import { Taloustarkastus, Asiatarkastus } from './LoppuselvitysTarkastus'
 
 import './LoppuselvitysForm.less'
+import ViestiLista from '../ViestiLista'
 
 type LoppuselvitysFormProps = {
   avustushaku: Avustushaku
@@ -28,12 +29,29 @@ export const LoppuselvitysForm = ({ hakemus, userInfo, presenter }: Loppuselvity
     !hakemus['loppuselvitys-information-verified-at'] &&
     !hakemus['loppuselvitys-taloustarkastettu-at'] &&
     !hakemus['loppuselvitys-taloustarkastanut-name']
-  if (approvedBeforeAsiatarkastusFeature) {
+  const loppuselvitysEmail = hakemus.selvitys?.loppuselvitys?.['selvitys-email']
+  if (approvedBeforeAsiatarkastusFeature && loppuselvitysEmail) {
     return (
-      <div className="information-verification">
-        Loppuselvitys on hyväksytty ennen kuin asiatarkastustus-toiminnallisuuden lisäämistä
-        järjestelmään, jonka vuoksi asiatarkastuksen kommentteja ei voida näyttää.
-      </div>
+      <>
+        <div className="information-verification">
+          Loppuselvitys on hyväksytty ennen kuin asiatarkastustus-toiminnallisuuden lisäämistä
+          järjestelmään, jonka vuoksi asiatarkastuksen kommentteja ei voida näyttää.
+        </div>
+        <ViestiLista
+          messages={[
+            {
+              id: 0,
+              receivers: loppuselvitysEmail.to,
+              subject: loppuselvitysEmail.subject,
+              message: loppuselvitysEmail.message,
+              date: loppuselvitysEmail.send,
+              sender: 'no-reply@oph.fi',
+              virkailija: '',
+            },
+          ]}
+          heading="Hyväksytty"
+        ></ViestiLista>
+      </>
     )
   }
   return (
