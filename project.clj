@@ -143,7 +143,7 @@
                  [clj-pdf "2.6.6" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
 
                  ;; maksatuspalvelu
-                 [org.clj-commons/clj-ssh "0.6.2"]
+                 [org.clj-commons/clj-ssh "0.6.5"]
 
                  ;; miscellaneous
                  [clj-time "0.15.2"]
