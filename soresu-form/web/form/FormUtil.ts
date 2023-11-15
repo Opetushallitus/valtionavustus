@@ -9,8 +9,8 @@ type FieldOrArray = Field | Field[] | ImmutableArray<Field>
 type ReturnType<T> = T extends ImmutableArray<infer R>
   ? Immutable<R>
   : T extends Array<infer R>
-  ? R
-  : T
+    ? R
+    : T
 
 export default class FormUtil {
   static scrollTo(element: Element, duration: number, afterScroll?: () => any) {

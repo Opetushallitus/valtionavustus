@@ -112,8 +112,8 @@ const createPreviewHakemusFormState = ({
     hakemusFormState.changeRequests && hakemusFormState.changeRequests.length > 0
       ? hakemusFormState.changeRequests[0].answers
       : hakemus.muutoshakemukset?.length
-      ? hakemus.answers
-      : {}
+        ? hakemus.answers
+        : {}
   const combinedAnswersForPopulatingGrowingFieldsets = _.mergeWith(
     _.cloneDeep(currentAnswers),
     _.cloneDeep(oldestAnswers),

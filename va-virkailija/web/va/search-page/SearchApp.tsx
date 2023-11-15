@@ -59,8 +59,8 @@ const orderByCreatedAt = <T extends { 'created-at': string }>(array: T[], order:
         ? 1
         : -1
       : a['created-at'] < b['created-at']
-      ? 1
-      : -1
+        ? 1
+        : -1
   )
   return newArray
 }

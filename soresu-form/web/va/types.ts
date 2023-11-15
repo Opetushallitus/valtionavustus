@@ -342,8 +342,8 @@ type Underscore<S extends string> = S extends ' ' ? never : S
 type ToUnderscore<T extends string, P extends string = ''> = string extends T
   ? string
   : T extends `${infer C0}${infer R}`
-  ? ToUnderscore<R, `${P}${C0 extends Underscore<C0> ? '' : '_'}${C0}`>
-  : P
+    ? ToUnderscore<R, `${P}${C0 extends Underscore<C0> ? '' : '_'}${C0}`>
+    : P
 
 type Keyprefix<Prefix extends string, Key> = Key extends string
   ? `${Prefix}${ToUnderscore<Key>}`

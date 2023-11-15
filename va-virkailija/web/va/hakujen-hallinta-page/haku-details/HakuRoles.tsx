@@ -238,8 +238,8 @@ const RoleRow = ({
     disableEditing && userHasEditPrivilege
       ? 'Et voi poistaa itseltäsi oikeuksia hakuun'
       : disableChangingVastuuvalmistelija
-      ? 'Vastuuvalmistelijaa ei voi poistaa'
-      : 'Poista'
+        ? 'Vastuuvalmistelijaa ei voi poistaa'
+        : 'Poista'
   const onDelete = () => dispatch(deleteRole({ avustushakuId: avustushaku.id, roleId: role.id }))
 
   return (

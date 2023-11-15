@@ -49,10 +49,10 @@ export default class VaUrlCreator extends UrlCreator {
           (isChangeRequest
             ? '/change-request-response'
             : isVirkailijaEdit
-            ? '/officer-edit-submit'
-            : isApplicantEdit
-            ? '/applicant-edit-submit'
-            : '/submit')
+              ? '/officer-edit-submit'
+              : isApplicantEdit
+                ? '/applicant-edit-submit'
+                : '/submit')
         )
       },
       loadEntityApiUrl: function (urlContent) {
@@ -146,8 +146,8 @@ export default class VaUrlCreator extends UrlCreator {
     return sanitizedLangQueryParam === 'fi' || sanitizedLangQueryParam === 'sv'
       ? sanitizedLangQueryParam
       : hostname.indexOf('statsunderstod.oph.fi') > -1
-      ? 'sv'
-      : 'fi'
+        ? 'sv'
+        : 'fi'
   }
 
   static parseAvustusHakuId(urlContent) {
