@@ -146,105 +146,115 @@ export const selectHakemus = createAsyncThunk<
   { hakemus: Hakemus; extra: LoadedHakemusData },
   number,
   { state: HakemustenArviointiRootState }
->('arviointi/selectHakemus', async (hakemusId, thunkAPI) => {
-  const { hakuData } = getLoadedState(thunkAPI.getState().arviointi)
-  const { avustushaku, privileges } = hakuData
-  const avustushakuId = avustushaku.id
-  const [
-    project,
-    talousarviotilit,
-    normalizedData,
-    muutoshakemukset,
-    { scoring, scores },
-    payments,
-    comments,
-    selvitys,
-    changeRequests,
-    attachmentVersions,
-    newHakuData,
-  ] = await Promise.all([
-    HttpUtil.get<VaCodeValue>(`/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/project`),
-    HttpUtil.get<TalousarviotiliWithKoulutusasteet[]>(
-      `/api/avustushaku/${avustushakuId}/talousarviotilit`
-    ),
-    HttpUtil.get<NormalizedHakemusData>(
-      `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/normalized`
-    ).catch(() => undefined),
-    HttpUtil.get<MuutoshakemusType[]>(
-      `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/muutoshakemus/`
-    ),
-    HttpUtil.get<{ scores: Score[]; scoring: Scoring }>(
-      `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/scores`
-    ),
-    HttpUtil.get<Payment[]>(`/api/v2/applications/${hakemusId}/payments/`),
-    HttpUtil.get<Comment[]>(`/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/comments`),
-    HttpUtil.get<Hakemus['selvitys']>(
-      `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/selvitys`
-    ),
-    HttpUtil.get<ChangeRequest[]>(
-      `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/change-requests`
-    ),
-    HttpUtil.get<unknown[]>(
-      `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/attachments/versions`
-    ),
-    HttpUtil.get<HakuData>(`/api/avustushaku/${avustushakuId}`),
-  ])
-  const updatedHakemus = newHakuData.hakemukset.find((e) => e.id === hakemusId)
-  if (!updatedHakemus) throw new Error(`No hakemus found for ID ${hakemusId}`)
-
-  const hakuIsPublishedAndEnded =
-    avustushaku.status === 'published' && avustushaku.phase === 'ended'
-  const accessControl = {
-    allowHakemusCommenting: hakuIsPublishedAndEnded,
-    allowHakemusStateChanges: hakuIsPublishedAndEnded && privileges['change-hakemus-state'],
-    allowHakemusScoring: hakuIsPublishedAndEnded && privileges['score-hakemus'],
-    allowHakemusOfficerEditing: privileges['change-hakemus-state'],
-    allowHakemusCancellation:
-      avustushaku.status !== 'resolved' && privileges['change-hakemus-state'],
-  }
-  let mutatedArvio = false
-  let clonedForWeirdMutations = _.cloneDeep(updatedHakemus)
-  if (accessControl.allowHakemusStateChanges) {
-    const mbyMutated1 = mutateDefaultBudgetValuesForSelectedHakemusOverriddenAnswers(
-      clonedForWeirdMutations,
-      hakuData
-    )
-    const mbyMutated2 = mutateDefaultTraineeDayValuesForSelectedHakemusOverriddenAnswers(
-      clonedForWeirdMutations,
-      hakuData
-    )
-    mutatedArvio = mbyMutated1 || mbyMutated2
-  }
-  if (mutatedArvio) {
-    thunkAPI.dispatch(
-      setArvioValue({
-        hakemusId,
-        key: 'hasChanges',
-        value: true,
-      })
-    )
-    await thunkAPI.dispatch(saveHakemusArvio({ hakemusId }))
-  }
-  mutatesDefaultBudgetValuesForSelectedHakemusSeurantaAnswers(clonedForWeirdMutations, hakuData)
-
-  return {
-    hakemus: clonedForWeirdMutations,
-    extra: {
+>(
+  'arviointi/selectHakemus',
+  async (hakemusId, thunkAPI) => {
+    const { hakuData } = getLoadedState(thunkAPI.getState().arviointi)
+    const { avustushaku, privileges } = hakuData
+    const avustushakuId = avustushaku.id
+    const [
       project,
       talousarviotilit,
       normalizedData,
       muutoshakemukset,
-      scores,
-      scoring,
+      { scoring, scores },
       payments,
       comments,
       selvitys,
       changeRequests,
       attachmentVersions,
-      accessControl,
+      newHakuData,
+    ] = await Promise.all([
+      HttpUtil.get<VaCodeValue>(`/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/project`),
+      HttpUtil.get<TalousarviotiliWithKoulutusasteet[]>(
+        `/api/avustushaku/${avustushakuId}/talousarviotilit`
+      ),
+      HttpUtil.get<NormalizedHakemusData>(
+        `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/normalized`
+      ).catch(() => undefined),
+      HttpUtil.get<MuutoshakemusType[]>(
+        `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/muutoshakemus/`
+      ),
+      HttpUtil.get<{ scores: Score[]; scoring: Scoring }>(
+        `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/scores`
+      ),
+      HttpUtil.get<Payment[]>(`/api/v2/applications/${hakemusId}/payments/`),
+      HttpUtil.get<Comment[]>(`/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/comments`),
+      HttpUtil.get<Hakemus['selvitys']>(
+        `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/selvitys`
+      ),
+      HttpUtil.get<ChangeRequest[]>(
+        `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/change-requests`
+      ),
+      HttpUtil.get<unknown[]>(
+        `/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/attachments/versions`
+      ),
+      HttpUtil.get<HakuData>(`/api/avustushaku/${avustushakuId}`),
+    ])
+    const updatedHakemus = newHakuData.hakemukset.find((e) => e.id === hakemusId)
+    if (!updatedHakemus) throw new Error(`No hakemus found for ID ${hakemusId}`)
+
+    const hakuIsPublishedAndEnded =
+      avustushaku.status === 'published' && avustushaku.phase === 'ended'
+    const accessControl = {
+      allowHakemusCommenting: hakuIsPublishedAndEnded,
+      allowHakemusStateChanges: hakuIsPublishedAndEnded && privileges['change-hakemus-state'],
+      allowHakemusScoring: hakuIsPublishedAndEnded && privileges['score-hakemus'],
+      allowHakemusOfficerEditing: privileges['change-hakemus-state'],
+      allowHakemusCancellation:
+        avustushaku.status !== 'resolved' && privileges['change-hakemus-state'],
+    }
+    let mutatedArvio = false
+    let clonedForWeirdMutations = _.cloneDeep(updatedHakemus)
+    if (accessControl.allowHakemusStateChanges) {
+      const mbyMutated1 = mutateDefaultBudgetValuesForSelectedHakemusOverriddenAnswers(
+        clonedForWeirdMutations,
+        hakuData
+      )
+      const mbyMutated2 = mutateDefaultTraineeDayValuesForSelectedHakemusOverriddenAnswers(
+        clonedForWeirdMutations,
+        hakuData
+      )
+      mutatedArvio = mbyMutated1 || mbyMutated2
+    }
+    if (mutatedArvio) {
+      thunkAPI.dispatch(
+        setArvioValue({
+          hakemusId,
+          key: 'hasChanges',
+          value: true,
+        })
+      )
+      await thunkAPI.dispatch(saveHakemusArvio({ hakemusId }))
+    }
+    mutatesDefaultBudgetValuesForSelectedHakemusSeurantaAnswers(clonedForWeirdMutations, hakuData)
+
+    return {
+      hakemus: clonedForWeirdMutations,
+      extra: {
+        project,
+        talousarviotilit,
+        normalizedData,
+        muutoshakemukset,
+        scores,
+        scoring,
+        payments,
+        comments,
+        selvitys,
+        changeRequests,
+        attachmentVersions,
+        accessControl,
+      },
+    }
+  },
+  {
+    condition: (hakemusId, { getState }) => {
+      const loadingHakemusId = getState().arviointi.saveStatus.loadingHakemusId
+      const fetchInProgress = hakemusId === loadingHakemusId
+      return !fetchInProgress
     },
   }
-})
+)
 
 export const saveHakemusArvio = createAsyncThunk<
   { budgetGranted: number | undefined },
@@ -380,7 +390,7 @@ interface SaveStatus {
   saveInProgress: boolean
   saveTime: string | null
   serverError: string
-  loadingHakemus?: boolean
+  loadingHakemusId?: number
 }
 
 export interface ArviointiState {
@@ -481,16 +491,16 @@ const arviointiSlice = createSlice({
         hakemus.refused = payload.refused
       })
       .addCase(selectHakemus.rejected, (state) => {
-        state.saveStatus.loadingHakemus = false
+        state.saveStatus.loadingHakemusId = undefined
       })
-      .addCase(selectHakemus.pending, (state) => {
-        state.saveStatus.loadingHakemus = true
+      .addCase(selectHakemus.pending, (state, { meta }) => {
+        state.saveStatus.loadingHakemusId = meta.arg
       })
       .addCase(selectHakemus.fulfilled, (state, { payload, meta }) => {
         const hakemusId = meta.arg
         const { hakemukset } = getLoadedState(state).hakuData
         const index = hakemukset.findIndex((h) => h.id === hakemusId)
-        state.saveStatus.loadingHakemus = false
+        state.saveStatus.loadingHakemusId = undefined
         if (index != -1) {
           hakemukset[index] = {
             ...payload.hakemus,
