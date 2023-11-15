@@ -1,4 +1,4 @@
-import { isDate } from 'moment'
+import * as moment from 'moment'
 import React from 'react'
 import { Avustushaku } from 'soresu-form/web/va/types'
 
@@ -19,7 +19,7 @@ export default function SelvitysNotFilled({ avustushaku, selvitysType }: Props) 
   const date =
     selvitysType === 'Loppuselvitys' ? avustushaku.loppuselvitysdate : avustushaku.valiselvitysdate
   const maybeDate = date && new Date(date)
-  const dateString = isDate(maybeDate) ? maybeDate.toLocaleDateString('fi') : ''
+  const dateString = moment.isDate(maybeDate) ? maybeDate.toLocaleDateString('fi') : ''
   const deadlineText = createDeadlineText(dateString, selvitysType)
   return (
     <div>

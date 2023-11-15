@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 import DateUtil from 'soresu-form/web/DateUtil'
-import { Comment } from 'soresu-form/web/va/types'
+import { Comment as CommentType } from 'soresu-form/web/va/types'
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
 
 import { HelpTooltip } from '../../../common-components/HelpTooltip'
@@ -10,7 +10,7 @@ import { addHakemusComment } from '../../arviointiReducer'
 import { useHakemus } from '../../useHakemus'
 
 type HakemusCommentsProps = {
-  comments?: Comment[]
+  comments?: CommentType[]
   allowHakemusCommenting?: boolean
 }
 
@@ -65,7 +65,7 @@ const HakemusComments = ({ allowHakemusCommenting, comments }: HakemusCommentsPr
   )
 }
 
-const Comment = ({ comment }: { comment: Comment }) => {
+const Comment = ({ comment }: { comment: CommentType }) => {
   const firstName = NameFormatter.onlyFirstForename(comment.first_name)
   const lastName = comment.last_name
   const nameShort = NameFormatter.shorten(firstName, lastName)

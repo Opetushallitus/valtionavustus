@@ -61,7 +61,7 @@ const virkailijaRollupOptions: RollupOptions = {
     search: resolve(__dirname, 'va-virkailija/web/va/search.html'),
   },
   output: {
-    dir: resolve(__dirname, 'va-virkailija/resources/public/virkailija/'),
+    dir: resolve(__dirname, 'server/resources/public/virkailija/'),
   },
 }
 

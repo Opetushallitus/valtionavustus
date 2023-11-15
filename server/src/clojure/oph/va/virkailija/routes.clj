@@ -121,13 +121,13 @@
                     (va-routes/get-translations))
 
   (compojure-api/undocumented
-  (compojure/GET "/" [] (return-html "virkailija/index.html"))
+  (compojure/GET "/" [] (return-html "virkailija/va-virkailija/web/va/index.html"))
 
-  (compojure/GET "/admin/*" [] (return-html "virkailija/admin.html"))
+  (compojure/GET "/admin/*" [] (return-html "virkailija/va-virkailija/web/va/admin.html"))
 
-  (compojure/GET "/yhteenveto/*" [] (return-html "virkailija/summary.html"))
+  (compojure/GET "/yhteenveto/*" [] (return-html "virkailija/va-virkailija/web/va/summary.html"))
 
-  (compojure/GET "/haku/*" [] (return-html "virkailija/search.html"))
+  (compojure/GET "/haku/*" [] (return-html "virkailija/va-virkailija/web/va/search.html"))
 
   (compojure-api/GET "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
                       :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
@@ -147,14 +147,14 @@
                       :query-params [{hakemus :- s/Str nil},{preview :- s/Str "false"}]
                       (on-selvitys avustushaku-id hakemus selvitys-type preview))
 
-  (compojure/GET "/avustushaku/:id" [id] (return-html "virkailija/index.html"))
-  (compojure/GET "/avustushaku/:id/*" [id] (return-html "virkailija/index.html"))
+  (compojure/GET "/avustushaku/:id" [id] (return-html "virkailija/va-virkailija/web/va/index.html"))
+  (compojure/GET "/avustushaku/:id/*" [id] (return-html "virkailija/va-virkailija/web/va/index.html"))
 
   (compojure-api/context "/admin-ui/va-code-values" []
     (compojure-api/GET "*" request
         (va-code-values-routes/with-admin request
-          (return-html "virkailija/codevalues.html")
-          (resp/status (return-html "virkailija/unauthorized.html") 401))))
+          (return-html "virkailija/va-virkailija/web/va/codevalues.html")
+          (resp/status (return-html "virkailija/va-virkailija/web/va/unauthorized.html") 401))))
 
   (compojure-api/GET "/admin-ui/search/" [search order]
     (if (:and search order)
@@ -552,7 +552,7 @@
                                          (-> (resp/redirect (str opintopolku-logout-url virkailija-login-url))
                                              (assoc :session nil)))
 
-                          (compojure/GET "/logged-out" [] (return-html "virkailija/login.html")))
+                          (compojure/GET "/logged-out" [] (return-html "virkailija/va-virkailija/web/va/login.html")))
 
                          (compojure-api/GET
                           "/sessions/" [:as request]
