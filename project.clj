@@ -68,7 +68,7 @@
                          [com.fasterxml.jackson.core/jackson-annotations ~jackson-version]
 
 
-                         ;; [cheshire "5.12.0"] -> [com.fasterxml.jackson.core/jackson-core "2.15.3"]
+                         ;; [cheshire "5.12.0"] -> [com.fasterxml.jackson.core/jackson-core "2.16.0"]
                          [com.fasterxml.jackson.core/jackson-core ~jackson-version]
                          [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor ~jackson-version]
                          [com.fasterxml.jackson.dataformat/jackson-dataformat-smile ~jackson-version]
