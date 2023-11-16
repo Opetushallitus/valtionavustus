@@ -34,7 +34,7 @@ export const LoppuselvitysForm = ({ hakemus, userInfo, presenter }: Loppuselvity
     return (
       <>
         <div className="information-verification">
-          Loppuselvitys on hyväksytty ennen kuin asiatarkastustus-toiminnallisuuden lisäämistä
+          Loppuselvitys on hyväksytty ennen asiatarkastustus-toiminnallisuuden lisäämistä
           järjestelmään, jonka vuoksi asiatarkastuksen kommentteja ei voida näyttää.
         </div>
         <ViestiLista
