@@ -11,11 +11,12 @@ import {
 } from 'soresu-form/web/va/types'
 
 import useOutsideClick from '../../useOutsideClick'
-import { useCurrentAvustushaku } from '../useAvustushaku'
+import { tryToUseCurrentAvustushaku } from '../useAvustushaku'
 import { Pill } from '../../common-components/Pill'
-import { Avustushaku } from '../hakuReducer'
+import { Avustushaku, selectLoadedInitialData } from '../hakuReducer'
 import styles from './HakuListing.module.less'
 import buttonStyles from '../../style/Button.module.less'
+import { useHakujenHallintaSelector } from '../hakujenHallintaStore'
 
 export const AVUSTUSHAKU_STATUSES_AVAILABLE_FOR_FILTER = AVUSTUSHAKU_STATUSES.filter(
   (status) => status !== 'deleted'
@@ -266,10 +267,6 @@ const TableHeader: React.FC<SortButtonProps & { children: React.ReactNode }> = (
   </th>
 )
 
-interface Props {
-  hakuList: Avustushaku[]
-}
-
 const toShortDate = (date: Date | string) => moment(date).format('DD.MM.YY')
 
 interface TableFilterState {
@@ -343,8 +340,9 @@ const filterReducer = (state: TableFilterState, action: FilterAction): TableFilt
   }
 }
 
-export const HakuListing: React.FC<Props> = ({ hakuList }) => {
-  const selectedHaku = useCurrentAvustushaku()
+export const HakuListing = () => {
+  const { hakuList } = useHakujenHallintaSelector(selectLoadedInitialData)
+  const selectedHaku = tryToUseCurrentAvustushaku()
   const [sortKey, setSortKey] = useState<SortKey | undefined>()
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
   const [filterState, dispatch] = useReducer(filterReducer, defaultFilterState)
@@ -511,7 +509,7 @@ export const HakuListing: React.FC<Props> = ({ hakuList }) => {
               <MemoizedAvustushakuItem
                 key={avustushaku.id}
                 avustushaku={avustushaku}
-                selectedHakuId={selectedHaku.id}
+                selectedHakuId={selectedHaku?.id}
               />
             ))}
           </tbody>
@@ -536,7 +534,7 @@ const AvustushakuItem = ({
   selectedHakuId,
 }: {
   avustushaku: Avustushaku
-  selectedHakuId: number
+  selectedHakuId?: number
 }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const onClick = () => {

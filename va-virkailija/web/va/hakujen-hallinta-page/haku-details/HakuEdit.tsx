@@ -28,10 +28,19 @@ import {
   updateField,
 } from '../hakuReducer'
 import { Talousarviotilit } from './Talousarviotilit'
-import { useCurrentAvustushaku } from '../useAvustushaku'
+import { tryToUseCurrentAvustushaku, useCurrentAvustushaku } from '../useAvustushaku'
 import { useSearchParams } from 'react-router-dom'
+import ChooseAvustushaku from './ChooseAvustushaku'
 
 export const HakuEdit = () => {
+  const avustushaku = tryToUseCurrentAvustushaku()
+  if (!avustushaku) {
+    return <ChooseAvustushaku />
+  }
+  return <HakuEditor />
+}
+
+const HakuEditor = () => {
   const avustushaku = useCurrentAvustushaku()
   const { codeOptions, lainsaadantoOptions, helpTexts, userInfo } =
     useHakujenHallintaSelector(selectLoadedInitialData)

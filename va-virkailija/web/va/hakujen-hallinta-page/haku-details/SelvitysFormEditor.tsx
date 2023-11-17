@@ -19,13 +19,14 @@ import {
   selvitysFormJsonUpdated,
   selvitysFormUpdated,
 } from '../hakuReducer'
-import { useCurrentAvustushaku } from '../useAvustushaku'
+import { tryToUseCurrentAvustushaku, useCurrentAvustushaku } from '../useAvustushaku'
+import ChooseAvustushaku from './ChooseAvustushaku'
 
 type SelvitysFormEditorProps = {
   selvitysType: 'valiselvitys' | 'loppuselvitys'
 }
 
-export const SelvitysFormEditor = ({ selvitysType }: SelvitysFormEditorProps) => {
+const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
   const avustushaku = useCurrentAvustushaku()
   const isValiSelvitys = selvitysType === 'valiselvitys'
   const { environment, helpTexts } = useHakujenHallintaSelector(selectLoadedInitialData)
@@ -274,4 +275,12 @@ export const SelvitysFormEditor = ({ selvitysType }: SelvitysFormEditorProps) =>
       </div>
     </div>
   )
+}
+
+export const SelvitysFormEditor = (props: SelvitysFormEditorProps) => {
+  const avustushaku = tryToUseCurrentAvustushaku()
+  if (!avustushaku) {
+    return <ChooseAvustushaku />
+  }
+  return <SelvitysFormEditorPage selvitysType={props.selvitysType} />
 }

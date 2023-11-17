@@ -6,10 +6,10 @@ import { useHakujenHallintaSelector } from '../hakujenHallintaStore'
 import { selectLoadedInitialData } from '../hakuReducer'
 import { NavLinkWithQuery } from '../../NavLinkWithQuery'
 import { useLocation } from 'react-router-dom'
-import { useCurrentAvustushaku } from '../useAvustushaku'
+import { tryToUseCurrentAvustushaku } from '../useAvustushaku'
 
 export const EditorSelector = ({ children }: { children: React.ReactNode }) => {
-  const avustushaku = useCurrentAvustushaku()
+  const avustushaku = tryToUseCurrentAvustushaku()
   const { helpTexts } = useHakujenHallintaSelector(selectLoadedInitialData)
   const { pathname } = useLocation()
   const isSelected = ({ isActive }: { isActive: boolean }): string | undefined =>
@@ -69,7 +69,8 @@ export const EditorSelector = ({ children }: { children: React.ReactNode }) => {
         <NavLinkWithQuery
           to="maksatukset"
           className={({ isActive }) =>
-            avustushaku.status !== 'published' && avustushaku.status !== 'resolved'
+            !avustushaku ||
+            (avustushaku.status !== 'published' && avustushaku.status !== 'resolved')
               ? 'disabled'
               : ClassNames({ selected: isActive })
           }

@@ -12,9 +12,10 @@ import {
   selectHakuState,
   selectLoadedInitialData,
 } from '../hakuReducer'
-import { useCurrentAvustushaku } from '../useAvustushaku'
+import { tryToUseCurrentAvustushaku, useCurrentAvustushaku } from '../useAvustushaku'
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import { ValidationResult } from '../../types'
+import ChooseAvustushaku from './ChooseAvustushaku'
 
 const trustedContact = {
   name: {
@@ -51,7 +52,7 @@ const hasVarayhteyshenkiloFields = (formContent: Field[] = []): ValidationResult
   }
 }
 
-const FormEditorContainer = () => {
+const FormEditorPage = () => {
   const dispatch = useHakujenHallintaDispatch()
   const avustushaku = useCurrentAvustushaku()
   const { environment, helpTexts } = useHakujenHallintaSelector(selectLoadedInitialData)
@@ -149,6 +150,14 @@ const FormEditorContainer = () => {
       <FormJsonEditor avustushaku={avustushaku} formDraftJson={formDraftJson} />
     </section>
   )
+}
+
+const FormEditorContainer = () => {
+  const avustushaku = tryToUseCurrentAvustushaku()
+  if (!avustushaku) {
+    return <ChooseAvustushaku />
+  }
+  return <FormEditorPage />
 }
 
 export default FormEditorContainer

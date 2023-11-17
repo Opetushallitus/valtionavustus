@@ -660,7 +660,7 @@ const initialState: State = {
     saveInProgress: false,
     saveTime: null,
     serverError: '',
-    loadingAvustushaku: true,
+    loadingAvustushaku: false,
   },
   formDrafts: {},
   formDraftsJson: {},
@@ -838,8 +838,7 @@ const hakuSlice = createSlice({
       })
       .addCase(saveHaku.fulfilled, (state, action) => {
         const response = action.payload
-        const hakuList = getHakuList(state)
-        const oldHaku = getAvustushakuFromList(hakuList, response.id)
+        const oldHaku = selectAvustushaku(state, response.id)
         oldHaku.status = response.status
         oldHaku.phase = response.phase
         oldHaku.decision!.updatedAt = response.decision?.updatedAt
@@ -980,17 +979,18 @@ const getHakuList = (state: State | HakujenHallintaRootState): Avustushaku[] => 
   }
   return state.initialData.data.hakuList
 }
-const getAvustushakuFromList = (hakuList: Avustushaku[], avustushakuId: number) => {
+export const getAvustushakuFromState = (state: State, avustushakuId: number) => {
+  const hakuList = getHakuList(state)
   const haku = hakuList.find(({ id }) => id === avustushakuId)
-  if (!haku) {
-    throw Error(`Could not find avustushaku with id=${avustushakuId} from list`)
-  }
   return haku
 }
 
 export const selectAvustushaku = (state: State, avustushakuId: number) => {
-  const hakuList = getHakuList(state)
-  return getAvustushakuFromList(hakuList, avustushakuId)
+  const avustushaku = getAvustushakuFromState(state, avustushakuId)
+  if (!avustushaku) {
+    throw Error(`Expected to find avustushaku with id=${avustushakuId}`)
+  }
+  return avustushaku
 }
 
 export const selectLoadedInitialData = (state: HakujenHallintaRootState) => {

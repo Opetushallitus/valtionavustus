@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom'
 import { useHakujenHallintaSelector } from './hakujenHallintaStore'
-import { Avustushaku, selectAvustushaku } from './hakuReducer'
+import { Avustushaku, getAvustushakuFromState, selectAvustushaku } from './hakuReducer'
 
 export const useAvustushaku = (): number => {
   const [searchParams] = useSearchParams()
@@ -15,6 +15,14 @@ export const useCurrentAvustushaku = (): Avustushaku => {
   const avustushakuId = useAvustushaku()
   const avustushaku = useHakujenHallintaSelector((state) =>
     selectAvustushaku(state.haku, avustushakuId)
+  )
+  return avustushaku
+}
+
+export const tryToUseCurrentAvustushaku = (): Avustushaku | undefined => {
+  const avustushakuId = useAvustushaku()
+  const avustushaku = useHakujenHallintaSelector((state) =>
+    getAvustushakuFromState(state.haku, avustushakuId)
   )
   return avustushaku
 }

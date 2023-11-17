@@ -35,25 +35,25 @@ const HakujenHallintaApp = () => {
   const [searchParams] = useSearchParams()
   const avustushakuId = Number(searchParams.get('avustushaku'))
   useEffect(() => {
-    if (!initialDataLoading) {
+    if (!initialDataLoading && avustushakuId) {
       dispatch(selectHaku(avustushakuId))
     }
   }, [avustushakuId, initialDataLoading])
   if (initialDataLoading) {
     return null
   }
-  const { environment, hakuList, userInfo } = initialData.data
+
   return (
     <Localization date={momentLocalizer} messages={translationsFi.calendar}>
       <HeaderContainer
         activeTab="admin"
-        environment={environment}
-        userInfo={userInfo}
+        environment={initialData.data.environment}
+        userInfo={initialData.data.userInfo}
         saveStatus={saveStatus}
         avustushakuId={avustushakuId}
       />
       <section>
-        <HakuListing hakuList={hakuList} />
+        <HakuListing />
         <EditorSelector>
           <Outlet />
         </EditorSelector>

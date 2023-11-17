@@ -18,7 +18,8 @@ import {
   startManuallySaving,
   selectLoadedInitialData,
 } from '../hakuReducer'
-import { useCurrentAvustushaku } from '../useAvustushaku'
+import { tryToUseCurrentAvustushaku, useCurrentAvustushaku } from '../useAvustushaku'
+import ChooseAvustushaku from './ChooseAvustushaku'
 
 type MaksatuksetTab = 'outgoing' | 'sent'
 
@@ -30,7 +31,7 @@ const isSent = (p: Maksatus) => ['sent', 'paid'].includes(p['paymentstatus-id'])
 const today = moment().format(fiShortFormat)
 const isToday = (p: Maksatus) => moment(p['created-at']).format(fiShortFormat) === today
 
-export const Maksatukset = () => {
+const MaksatuksetPage = () => {
   const avustushaku = useCurrentAvustushaku()
   const {
     codeOptions: codeValues,
@@ -249,4 +250,12 @@ const AdminTools = ({ avustushaku, environment, refreshPayments }: AdminToolsPro
       )}
     </div>
   )
+}
+
+export const Maksatukset = () => {
+  const avustushaku = tryToUseCurrentAvustushaku()
+  if (!avustushaku) {
+    return <ChooseAvustushaku />
+  }
+  return <MaksatuksetPage />
 }

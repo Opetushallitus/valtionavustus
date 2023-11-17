@@ -22,7 +22,8 @@ import {
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 import { Avustushaku, selectLoadedInitialData, updateField } from '../hakuReducer'
 import { useHakujenHallintaDispatch, useHakujenHallintaSelector } from '../hakujenHallintaStore'
-import { useCurrentAvustushaku } from '../useAvustushaku'
+import { tryToUseCurrentAvustushaku, useCurrentAvustushaku } from '../useAvustushaku'
+import ChooseAvustushaku from './ChooseAvustushaku'
 
 interface DecisionProps {
   title: string
@@ -1137,7 +1138,7 @@ const getUniqueKoulutusasteet = (talousarviotilit: Avustushaku['talousarviotilit
   return [...new Set(allKoulutusasteet)]
 }
 
-const DecisionEditor = () => {
+const DecisionEditorPage = () => {
   const dispatch = useHakujenHallintaDispatch()
   const avustushaku = useCurrentAvustushaku()
   const { decisionLiitteet, environment, helpTexts } =
@@ -1285,6 +1286,14 @@ const DecisionEditor = () => {
       />
     </div>
   )
+}
+
+const DecisionEditor = () => {
+  const avustushaku = tryToUseCurrentAvustushaku()
+  if (!avustushaku) {
+    return <ChooseAvustushaku />
+  }
+  return <DecisionEditorPage />
 }
 
 export default DecisionEditor
