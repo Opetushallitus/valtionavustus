@@ -62,7 +62,7 @@
                          [org.yaml/snakeyaml "1.33"]
 
                          ;; [metosin/compojure-api "1.1.13"] ->
-                         ;;   ... -> [com.fasterxml.jackson.core/jackson-databind "2.15.3"] ->
+                         ;;   ... -> [com.fasterxml.jackson.core/jackson-databind "2.16.0"] ->
                          ;;             [com.fasterxml.jackson.core/jackson-annotations "2.16.0"]
                          [com.fasterxml.jackson.core/jackson-databind ~jackson-version]
                          [com.fasterxml.jackson.core/jackson-annotations ~jackson-version]
