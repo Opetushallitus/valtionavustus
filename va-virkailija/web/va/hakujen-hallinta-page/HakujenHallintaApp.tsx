@@ -14,7 +14,7 @@ import store, {
 } from './hakujenHallintaStore'
 import { Provider } from 'react-redux'
 import { fetchInitialState, selectHaku } from './hakuReducer'
-import { BrowserRouter, Outlet, Route, Routes, useSearchParams } from 'react-router-dom'
+import { BrowserRouter, Navigate, Outlet, Route, Routes, useSearchParams } from 'react-router-dom'
 import { HakuEdit } from './haku-details/HakuEdit'
 import FormEditorContainer from './haku-details/FormEditorContainer'
 import DecisionEditor from './haku-details/DecisionEditor'
@@ -72,6 +72,7 @@ const AppRoutes = () => (
       <Route path="valiselvitys" element={<SelvitysFormEditor selvitysType="valiselvitys" />} />
       <Route path="loppuselvitys" element={<SelvitysFormEditor selvitysType="loppuselvitys" />} />
       <Route path="maksatukset" element={<Maksatukset />} />
+      <Route index element={<Navigate to="/admin/haku-editor" />} />
     </Route>
   </Routes>
 )
