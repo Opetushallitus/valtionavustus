@@ -16,7 +16,12 @@ import { Hakemus } from 'soresu-form/web/va/types'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 import { HeaderContainer } from '../common-components/Header'
-import { InitialDataProvider, useEnvironment, useUserInfo } from '../initial-data-context'
+import {
+  InitialData,
+  InitialDataProvider,
+  useEnvironment,
+  useUserInfo,
+} from '../initial-data-context'
 import AvustushakuDropdown from './avustushaku-dropdown/AvustushakuDropdown'
 import HakemusDetails from './hakemus-details/HakemusDetails'
 import { MODAL_ROOT_ID } from './hakemus-details/Modal'
@@ -41,6 +46,7 @@ import { getLoadedState, initialize } from './arviointiReducer'
 import './../style/main.less'
 import './hakemusten-arviointi.less'
 import { UserInfo } from '../types'
+import LoadingSitePage from '../common-components/LoadingSitePage'
 
 const SHOW_ALL = 'showAll' as const
 const SHOW_ADDITIONAL_INFO = 'showAdditionalInfo' as const
@@ -213,25 +219,46 @@ const LoadedApp = () => {
 const app = document.getElementById('app')
 const root = createRoot(app!)
 
-Promise.all([
-  HttpUtil.get<EnvironmentApiResponse>('/environment'),
-  HttpUtil.get<UserInfo>('/api/userinfo'),
-  HttpUtil.get<Record<string, string>>('/api/help-texts/all'),
-]).then(([environment, userInfo, helpTexts]) => {
-  const initialData = {
-    environment,
-    userInfo,
-    helpTexts,
-  }
+function LoadingWrapper() {
+  const [initialData, setInitialData] = useState<InitialData | null>(null)
+  useEffect(() => {
+    let unmounted = false
+    async function loadData() {
+      const [environment, userInfo, helpTexts] = await Promise.all([
+        HttpUtil.get<EnvironmentApiResponse>('/environment'),
+        HttpUtil.get<UserInfo>('/api/userinfo'),
+        HttpUtil.get<Record<string, string>>('/api/help-texts/all'),
+      ])
+      const initialData = {
+        environment,
+        userInfo,
+        helpTexts,
+      }
+      if (!unmounted) {
+        setInitialData(initialData)
+      }
+    }
+    void loadData()
+    return () => {
+      unmounted = true
+    }
+  }, [])
 
-  root.render(
-    <BrowserRouter>
-      <Provider store={store}>
-        <InitialDataProvider value={initialData}>
-          <AppRoutes />
-          <div id={MODAL_ROOT_ID} />
-        </InitialDataProvider>
-      </Provider>
-    </BrowserRouter>
+  if (!initialData) {
+    return <LoadingSitePage />
+  }
+  return (
+    <InitialDataProvider value={initialData}>
+      <AppRoutes />
+      <div id={MODAL_ROOT_ID} />
+    </InitialDataProvider>
   )
-})
+}
+
+root.render(
+  <BrowserRouter>
+    <Provider store={store}>
+      <LoadingWrapper />
+    </Provider>
+  </BrowserRouter>
+)

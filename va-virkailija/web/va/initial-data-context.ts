@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react'
 import { EnvironmentApiResponse, FeatureFlag } from 'soresu-form/web/va/types/environment'
 import { UserInfo } from './types'
 
-type InitialData = {
+export type InitialData = {
   environment: EnvironmentApiResponse
   userInfo: UserInfo
   helpTexts: Record<string, string>

@@ -12,6 +12,7 @@ import HakemusArviointiStatuses from '../HakemusArviointiStatuses'
 import 'oph-virkailija-style-guide/oph-styles-min.css'
 import '../style/main.less'
 import styles from './Search.module.less'
+import LoadingSitePage from '../common-components/LoadingSitePage'
 
 interface Data {
   environment: EnvironmentApiResponse
@@ -32,7 +33,7 @@ const SearchApp = () => {
   }, [])
 
   if (!data) {
-    return null
+    return <LoadingSitePage />
   } else {
     return (
       <>

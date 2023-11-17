@@ -23,6 +23,7 @@ import { Maksatukset } from './haku-details/Maksatukset'
 
 import '../style/virkailija.less'
 import '../style/admin.less'
+import LoadingSitePage from '../common-components/LoadingSitePage'
 
 moment.locale('fi')
 const momentLocalizer = new MomentLocalizer(moment)
@@ -40,7 +41,7 @@ const HakujenHallintaApp = () => {
     }
   }, [avustushakuId, initialDataLoading])
   if (initialDataLoading) {
-    return null
+    return <LoadingSitePage />
   }
 
   return (

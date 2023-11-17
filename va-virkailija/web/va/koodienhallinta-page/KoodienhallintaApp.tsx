@@ -12,11 +12,12 @@ import { TalousarviotilienHallinta } from './TalousarviotilienHallinta'
 
 import 'oph-virkailija-style-guide/oph-styles-min.css'
 import '../style/main.less'
+import LoadingSitePage from '../common-components/LoadingSitePage'
 
 const KoodienhallintaApp = () => {
   const { data, isSuccess } = useGetEnvironmentAndUserInfoQuery()
   if (!isSuccess) {
-    return null
+    return <LoadingSitePage />
   }
   const { environment, userInfo } = data
   return (
