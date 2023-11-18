@@ -78,13 +78,10 @@
   "private": false,
   "scripts": {
     "playwright:test": "playwright test --config=playwright/playwright.config.ts",
-    "build": "webpack --progress",
-    "build-production": "NODE_ENV=production npm run build",
+    "build-production": "NODE_ENV=production npm run build-virkailija && npm run build-hakija",
     "build-watch": "webpack --progress --watch",
     "prettier-check-project": "prettier --check .",
     "prettier-fix": "prettier --write .",
-    "dev": "vite",
-    "vite-build": "npm run build-virkailija && npm run build-hakija",
     "build-virkailija": "vite build va-virkailija/web/va",
     "build-hakija": "vite build va-hakija/web/va"
   }

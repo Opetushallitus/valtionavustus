@@ -60,6 +60,8 @@ export default defineConfig(({ command }) => {
       }),
     ],
     server: {
+      port: 5172,
+      strictPort: true,
       proxy: {
         '/api/': {
           target: serverPath,

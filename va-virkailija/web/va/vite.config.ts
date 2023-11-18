@@ -51,15 +51,15 @@ export default defineConfig(({ command }) => {
         name: 'dev-rewrite-middleware',
         configureServer(serve) {
           serve.middlewares.use((req, _res, next) => {
-            console.log('before', req.url)
             req.url = getHtmlFilePath(req.url) ?? req.url
-            console.log(req.url)
             next()
           })
         },
       },
     ],
     server: {
+      port: 5173,
+      strictPort: true,
       proxy: {
         '/api/': {
           target: serverPath,

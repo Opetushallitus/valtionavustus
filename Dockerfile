@@ -14,10 +14,9 @@ COPY soresu-form/web/ soresu-form/web/
 COPY va-virkailija/web/ va-virkailija/web/
 COPY server/resources/public/translations.json server/resources/public/translations.json
 COPY va-hakija/web/ va-hakija/web/
-COPY webpack.config.js .
 COPY common-tsconfig.json tsconfig.json ./
-COPY .babelrc .
 
+RUN npx tsc --noEmit
 RUN npm run build-production
 
 
@@ -45,8 +44,8 @@ RUN ./lein compile :all
 COPY server/config/ ./server/config/
 COPY va-hakija/config/ ./va-hakija/config/
 
-COPY --from=web-builder /app/server/resources/public/hakija/js/ server/resources/public/hakija/js/
-COPY --from=web-builder /app/server/resources/public/virkailija/js/ server/resources/public/virkailija/js/
+COPY --from=web-builder /app/server/resources/public/hakija/ server/resources/public/hakija/
+COPY --from=web-builder /app/server/resources/public/virkailija/ server/resources/public/virkailija/
 
 
 #
