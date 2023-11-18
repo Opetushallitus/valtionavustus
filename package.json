@@ -84,7 +84,8 @@
     "prettier-check-project": "prettier --check .",
     "prettier-fix": "prettier --write .",
     "dev": "vite",
-    "vite-build": "vite build",
-    "preview": "vite preview"
+    "vite-build": "npm run build-virkailija && npm run build-hakija",
+    "build-virkailija": "vite build va-virkailija/web/va",
+    "build-hakija": "vite build va-hakija/web/va"
   }
 }

@@ -3,7 +3,7 @@ import { debounce } from 'lodash'
 import React, { PropsWithChildren, useCallback, useEffect, useState } from 'react'
 import Select, { components, OptionProps, GroupBase } from 'react-select'
 
-import { HelpTexts, Raportointivelvoite } from 'soresu-form/web/va/types'
+import type { HelpTexts, Raportointivelvoite } from 'soresu-form/web/va/types'
 
 import HelpTooltip from '../../common-components/HelpTooltip'
 import { DateInput } from './DateInput'
