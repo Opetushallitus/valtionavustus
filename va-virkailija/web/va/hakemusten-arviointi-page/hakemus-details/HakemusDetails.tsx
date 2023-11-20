@@ -3,7 +3,7 @@ import { Outlet, useParams, useSearchParams } from 'react-router-dom'
 
 import HakemusPreview from './hakemus-preview-pane/HakemusPreview'
 import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '../arviointiStore'
-import { getLoadedState, selectHakemus } from '../arviointiReducer'
+import { selectHakemus } from '../arviointiReducer'
 import { NavLinkWithQuery } from '../../NavLinkWithQuery'
 import { EnvelopeIcon } from '../../common-components/icons'
 
@@ -16,9 +16,8 @@ export const HakemusDetails = () => {
   const selectedHakemusId = Number(hakemusId)
   const dispatch = useHakemustenArviointiDispatch()
   const hakuData = useHakemustenArviointiSelector(
-    (state) => getLoadedState(state.arviointi).hakuData
+    (state) => state.arviointi.avustushakuData?.hakuData
   )
-  const { avustushaku, hakemukset } = hakuData
 
   useEffect(() => {
     dispatch(selectHakemus(selectedHakemusId))
@@ -40,9 +39,9 @@ export const HakemusDetails = () => {
     }
     return false
   }
-
-  const hakemus = hakemukset.find((h) => h.id === selectedHakemusId)
-  if (hakemus === undefined) {
+  const avustushaku = hakuData?.avustushaku
+  const hakemus = hakuData?.hakemukset.find((h) => h.id === selectedHakemusId)
+  if (!avustushaku || !hakemus) {
     return null
   }
 

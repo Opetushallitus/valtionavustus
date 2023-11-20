@@ -1,7 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-
-import { Role } from '../../types'
+import { useHakemustenArviointiSelector } from '../arviointiStore'
 
 import styles from './Person.module.less'
 
@@ -13,7 +12,6 @@ const getRoleButtonAriaLabel = (roleField: RoleField, name: string) => {
 
 interface ControlledSelectPanelProps {
   onClickClose: () => void
-  roles: Role[]
   roleField: RoleField
   onClickRole: (id: number) => void
   activeId?: number
@@ -21,18 +19,20 @@ interface ControlledSelectPanelProps {
 
 export function ControlledSelectPanel({
   roleField,
-  roles,
   onClickClose,
   onClickRole,
   activeId,
 }: ControlledSelectPanelProps) {
+  const roles = useHakemustenArviointiSelector(
+    (state) => state.arviointi.avustushakuData?.hakuData.roles
+  )
   const roleName = {
     presenter: 'Valmistelija',
     evaluator: 'Arvioija',
   }
   const roleFieldRoles =
     roleField === 'presenter'
-      ? roles.filter((r) => ['presenting_officer', 'vastuuvalmistelija'].includes(r.role))
+      ? roles?.filter((r) => ['presenting_officer', 'vastuuvalmistelija'].includes(r.role))
       : roles
   return (
     <React.Fragment>
@@ -43,7 +43,7 @@ export function ControlledSelectPanel({
       />
       <div className={styles.roleTitle}>{[roleName[roleField]]}</div>
       <div className={styles.roleContainer}>
-        {roleFieldRoles.map(({ id, name }) => {
+        {roleFieldRoles?.map(({ id, name }) => {
           const active = id === activeId
           return (
             <button

@@ -3,11 +3,11 @@ import { Provider } from 'react-redux'
 import { createRoot } from 'react-dom/client'
 import {
   BrowserRouter,
+  matchRoutes,
   Navigate,
   Outlet,
-  Route,
-  Routes,
   useParams,
+  useRoutes,
   useSearchParams,
 } from 'react-router-dom'
 
@@ -37,11 +37,8 @@ import HakemusFilter from './hakemus-filter/HakemusFilter'
 import { AvustushakuDetails } from './hakemus-list/AvustushakuDetails'
 import HakemusListing from './hakemus-list/HakemusListing'
 import { Switch } from './hakemus-list/Switch'
-import store, {
-  useHakemustenArviointiDispatch,
-  useHakemustenArviointiSelector,
-} from './arviointiStore'
-import { getLoadedState, initialize } from './arviointiReducer'
+import store, { useHakemustenArviointiSelector } from './arviointiStore'
+import { initialize } from './arviointiReducer'
 
 import './../style/main.less'
 import './hakemusten-arviointi.less'
@@ -50,8 +47,6 @@ import LoadingSitePage from '../common-components/LoadingSitePage'
 
 const SHOW_ALL = 'showAll' as const
 const SHOW_ADDITIONAL_INFO = 'showAdditionalInfo' as const
-
-const defaultHakuId = 1
 
 const setUrlParams = (key: string, value: boolean) => {
   const searchParams = new URLSearchParams(location.search)
@@ -69,65 +64,18 @@ const unwantedHakemukset = ({ status }: Hakemus) => {
   )
 }
 
-const AppRoutes = () => {
-  return (
-    <Routes>
-      <Route path="avustushaku/:avustushakuId" element={<App />}>
-        <Route path="hakemus/:hakemusId" element={<HakemusDetails />}>
-          <Route index element={<HakemusArviointiTab />} />
-          <Route path="arviointi" element={<HakemusArviointiTab />} />
-          <Route path="valiselvitys" element={<VäliselvitysTab />} />
-          <Route path="loppuselvitys" element={<LoppuselvitysTab />} />
-          <Route path="muutoshakemukset" element={<MuutoshakemusTab />} />
-          <Route path="seuranta" element={<SeurantaTab />} />
-          <Route path="viesti" element={<ViestiHankkeelleTab />} />
-        </Route>
-      </Route>
-      <Route path="*" element={<Navigate to={`/avustushaku/${defaultHakuId}`} replace />} />
-    </Routes>
-  )
-}
-
 const App = () => {
-  const initialDataLoading = useHakemustenArviointiSelector(
-    (state) => state.arviointi.initialData.loading
-  )
-  if (initialDataLoading) {
-    return <InitialApp />
-  }
-  return <LoadedApp />
-}
-
-const InitialApp = () => {
-  const dispatch = useHakemustenArviointiDispatch()
-  const { avustushakuId, hakemusId } = useParams()
-  useEffect(() => {
-    const routeParamAvustushakuId = Number(avustushakuId)
-    const initializeWithAvustushakuId = isNaN(routeParamAvustushakuId)
-      ? defaultHakuId
-      : routeParamAvustushakuId
-    const routeParamsHakemusId = Number(hakemusId)
-    dispatch(
-      initialize({
-        avustushakuId: initializeWithAvustushakuId,
-        hakemusId: routeParamsHakemusId,
-      })
-    )
-  }, [])
-  return null
-}
-
-const LoadedApp = () => {
   const [showAllHakemukset, toggleShowAllHakemukset] = useState(
     () => new URLSearchParams(location.search).get(SHOW_ALL) === 'true'
   )
-  const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
+  const saveStatus = useHakemustenArviointiSelector((state) => state.arviointi.saveStatus)
   const userInfo = useUserInfo()
   const environment = useEnvironment()
+  const avustushakuData = useHakemustenArviointiSelector((state) => state.arviointi.avustushakuData)
   const { hakemusId } = useParams()
+  const { hakuData } = avustushakuData ?? {}
   const selectedHakemusId = hakemusId ? Number(hakemusId) : undefined
-  const saveStatus = useHakemustenArviointiSelector((state) => state.arviointi.saveStatus)
-  const { avustushaku, hakemukset } = hakuData
+  const { avustushaku, hakemukset = [] } = hakuData ?? {}
   const hakemusList = showAllHakemukset ? hakemukset : hakemukset.filter(unwantedHakemukset)
   const hasSelected = selectedHakemusId !== undefined
   const [searchParams] = useSearchParams()
@@ -135,7 +83,7 @@ const LoadedApp = () => {
   const [showInfo, setShowInfo] = useState(
     () => new URLSearchParams(location.search).get(SHOW_ADDITIONAL_INFO) === 'true'
   )
-  const isResolved = avustushaku.status === 'resolved'
+  const isResolved = avustushaku?.status === 'resolved'
   const selectedHakemus = selectedHakemusId
     ? hakemusList.find((h) => h.id === selectedHakemusId)
     : undefined
@@ -146,7 +94,7 @@ const LoadedApp = () => {
         environment={environment}
         userInfo={userInfo}
         saveStatus={saveStatus}
-        avustushakuId={avustushaku.id}
+        avustushakuId={avustushaku?.id}
       />
       <section className="section-container">
         <div id="list-container" className={hasSelected ? 'has-selected' : ''}>
@@ -175,18 +123,21 @@ const LoadedApp = () => {
                   label="Näytä keskeneräiset"
                 />
               )}
-              <a
-                className="excel-export"
-                href={`/api/avustushaku/${avustushaku.id}/export.xslx`}
-                target="_"
-              >
-                Lataa Excel
-              </a>
+              {avustushaku && (
+                <a
+                  className="excel-export"
+                  href={`/api/avustushaku/${avustushaku.id}/export.xslx`}
+                  target="_"
+                >
+                  Lataa Excel
+                </a>
+              )}
             </div>
           </div>
           <div>
-            {showInfo && (
+            {showInfo && avustushakuData && (
               <AvustushakuDetails
+                {...avustushakuData}
                 acceptedHakemus={hakemusList.find((h) => h.arvio.status === 'accepted')}
               />
             )}
@@ -201,7 +152,7 @@ const LoadedApp = () => {
         </div>
         <Outlet />
         <div hidden={!hasSelected} id="footer">
-          {selectedHakemus?.['user-key'] && (
+          {avustushaku && selectedHakemus?.['user-key'] && (
             <>
               <HakemusHakijaSidePreviewLink
                 hakemusUserKey={selectedHakemus['user-key']}
@@ -216,11 +167,35 @@ const LoadedApp = () => {
   )
 }
 
-const app = document.getElementById('app')
-const root = createRoot(app!)
+const routes = [
+  {
+    path: 'avustushaku/:avustushakuId?',
+    element: <App />,
+    children: [
+      {
+        path: 'hakemus/:hakemusId',
+        element: <HakemusDetails />,
+        children: [
+          {
+            element: <HakemusArviointiTab />,
+            index: true,
+          },
+          { path: 'arviointi', element: <HakemusArviointiTab /> },
+          { path: 'valiselvitys', element: <VäliselvitysTab /> },
+          { path: 'loppuselvitys', element: <LoppuselvitysTab /> },
+          { path: 'muutoshakemukset', element: <MuutoshakemusTab /> },
+          { path: 'seuranta', element: <SeurantaTab /> },
+          { path: 'viesti', element: <ViestiHankkeelleTab /> },
+        ],
+      },
+    ],
+  },
+  { path: '*', element: <Navigate to={`/avustushaku/`} replace /> },
+]
 
 function LoadingWrapper() {
   const [initialData, setInitialData] = useState<InitialData | null>(null)
+  const routeElement = useRoutes(routes)
   useEffect(() => {
     let unmounted = false
     async function loadData() {
@@ -249,11 +224,28 @@ function LoadingWrapper() {
   }
   return (
     <InitialDataProvider value={initialData}>
-      <AppRoutes />
+      {routeElement}
       <div id={MODAL_ROOT_ID} />
     </InitialDataProvider>
   )
 }
+
+const app = document.getElementById('app')
+const root = createRoot(app!)
+
+const initialRouteMatches = matchRoutes(routes, window.location.pathname)
+const { avustushakuId, hakemusId } = initialRouteMatches?.[0].params ?? {}
+const getAsNumberOrUndefined = (value: unknown): number | undefined => {
+  const maybeNum = Number(value)
+  return isNaN(maybeNum) ? undefined : maybeNum
+}
+
+store.dispatch(
+  initialize({
+    avustushakuId: getAsNumberOrUndefined(avustushakuId),
+    hakemusId: getAsNumberOrUndefined(hakemusId),
+  })
+)
 
 root.render(
   <BrowserRouter>

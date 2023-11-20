@@ -17,7 +17,7 @@ import {
 } from '../../../apiSlice'
 import { hasFetchErrorMsg } from '../../../isFetchBaseQueryError'
 import { useUserInfo } from '../../../initial-data-context'
-import { getLoadedState, refreshHakemus } from '../../arviointiReducer'
+import { getLoadedAvustushakuData, refreshHakemus } from '../../arviointiReducer'
 import {
   useHakemustenArviointiDispatch,
   useHakemustenArviointiSelector,
@@ -112,7 +112,7 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
   const loggedInUser = useUserInfo()
   const hakemus = useHakemus()
   const avustushaku = useHakemustenArviointiSelector(
-    (s) => getLoadedState(s.arviointi).hakuData.avustushaku
+    (s) => getLoadedAvustushakuData(s.arviointi).hakuData.avustushaku
   )
   const [showEmail, toggleEmail] = useState(false)
   const userInfo = useUserInfo()

@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Muutoshakemus } from './Muutoshakemus'
 import { useHakemustenArviointiSelector } from '../../arviointiStore'
-import { getLoadedState } from '../../arviointiReducer'
+import { getLoadedAvustushakuData } from '../../arviointiReducer'
 import { useHakemus } from '../../useHakemus'
 import { useEnvironment, useUserInfo } from '../../../initial-data-context'
 
@@ -10,7 +10,9 @@ const MuutoshakemusTab = () => {
   const hakemus = useHakemus()
   const userInfo = useUserInfo()
   const environment = useEnvironment()
-  const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
+  const { hakuData } = useHakemustenArviointiSelector((state) =>
+    getLoadedAvustushakuData(state.arviointi)
+  )
   const { avustushaku } = hakuData
   const { muutoshakemukset, language } = hakemus
   const lang = language || 'fi'

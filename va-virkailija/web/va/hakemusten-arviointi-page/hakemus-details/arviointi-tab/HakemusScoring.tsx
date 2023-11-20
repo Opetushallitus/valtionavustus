@@ -19,7 +19,7 @@ import {
   useHakemustenArviointiSelector,
 } from '../../arviointiStore'
 import {
-  getLoadedState,
+  getLoadedAvustushakuData,
   removeScore,
   setScore,
   toggleShowOthersScore,
@@ -34,7 +34,9 @@ interface Props {
 const HakemusScoring = ({ allowHakemusScoring }: Props) => {
   const hakemus = useHakemus()
   const myUserInfo = useUserInfo()
-  const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
+  const { hakuData } = useHakemustenArviointiSelector((state) =>
+    getLoadedAvustushakuData(state.arviointi)
+  )
   const { avustushaku } = hakuData
   const showOthersScoresState = useHakemustenArviointiSelector(
     (state) => state.arviointi.showOthersScores

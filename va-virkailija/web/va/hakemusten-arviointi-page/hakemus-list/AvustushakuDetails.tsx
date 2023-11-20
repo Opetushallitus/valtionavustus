@@ -3,17 +3,18 @@ import React from 'react'
 import moment from 'moment'
 
 import styles from './AvustushakuDetails.module.less'
-import { useHakemustenArviointiSelector } from '../arviointiStore'
-import { getLoadedState } from '../arviointiReducer'
+import { AvustushakuData } from '../arviointiReducer'
 
-interface Props {
+type Props = AvustushakuData & {
   acceptedHakemus: Hakemus | undefined
 }
 
-export const AvustushakuDetails = ({ acceptedHakemus }: Props) => {
-  const { hakuData, lahetykset, earliestPaymentCreatedAt } = useHakemustenArviointiSelector(
-    (state) => getLoadedState(state.arviointi)
-  )
+export const AvustushakuDetails = ({
+  acceptedHakemus,
+  hakuData,
+  lahetykset,
+  earliestPaymentCreatedAt,
+}: Props) => {
   const { avustushaku, toimintayksikko } = hakuData
   const vastuuvalmistelija = hakuData.roles.find((r) => r.role === 'vastuuvalmistelija')
   return (

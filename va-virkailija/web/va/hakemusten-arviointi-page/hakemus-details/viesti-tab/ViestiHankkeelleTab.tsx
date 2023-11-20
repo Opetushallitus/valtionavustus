@@ -8,7 +8,7 @@ import MultipleRecipentEmailForm, {
 } from '../common-components/MultipleRecipentsEmailForm'
 import { useHakemusLoadingAware } from '../../useHakemus'
 import { useHakemustenArviointiSelector } from '../../arviointiStore'
-import { getLoadedState } from '../../arviointiReducer'
+import { getLoadedAvustushakuData } from '../../arviointiReducer'
 import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 import { useUserInfo } from '../../../initial-data-context'
 import type { UserInfo } from '../../../types'
@@ -126,7 +126,9 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
 
 export function ViestiHankkeelleTab() {
   const hakemus = useHakemusLoadingAware()
-  const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
+  const { hakuData } = useHakemustenArviointiSelector((state) =>
+    getLoadedAvustushakuData(state.arviointi)
+  )
   const { avustushaku } = hakuData
 
   if (!hakemus) {

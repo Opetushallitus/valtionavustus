@@ -13,7 +13,6 @@ import {
   TAG_ID,
   toggleFilter,
 } from '../filterReducer'
-import { getLoadedState } from '../arviointiReducer'
 
 const ToggleFilterButton = () => {
   const dispatch = useHakemustenArviointiDispatch()
@@ -117,14 +116,15 @@ interface Question {
 const FilterList = () => {
   const dispatch = useHakemustenArviointiDispatch()
   const hakuData = useHakemustenArviointiSelector(
-    (state) => getLoadedState(state.arviointi).hakuData
+    (state) => state.arviointi.avustushakuData?.hakuData
   )
-  const { form, hakemukset } = hakuData
+  const { form, hakemukset = [] } = hakuData ?? {}
+  const formContent = form?.content ?? []
   const hakemusFilter = useHakemustenArviointiSelector((state) => state.filter)
   const open = hakemusFilter.isOpen
-  const radioQuestions = FormUtil.findFieldsByFieldType(form.content, 'radioButton')
-  const checkboxQuestions = FormUtil.findFieldsByFieldType(form.content, 'checkboxButton')
-  const dropdownQuestions = FormUtil.findFieldsByFieldType(form.content, 'dropdown')
+  const radioQuestions = FormUtil.findFieldsByFieldType(formContent, 'radioButton')
+  const checkboxQuestions = FormUtil.findFieldsByFieldType(formContent, 'checkboxButton')
+  const dropdownQuestions = FormUtil.findFieldsByFieldType(formContent, 'dropdown')
   const questions = radioQuestions.concat(checkboxQuestions).concat(dropdownQuestions)
   const answers = hakemusFilter.answers
 

@@ -18,7 +18,7 @@ import {
   useHakemustenArviointiSelector,
 } from '../../arviointiStore'
 import {
-  getLoadedState,
+  getLoadedAvustushakuData,
   setArvioFieldValue,
   startHakemusArvioAutoSave,
 } from '../../arviointiReducer'
@@ -32,7 +32,9 @@ interface Props {
 
 const TraineeDayEditing = ({ hakemus, allowEditing }: Props) => {
   const dispatch = useHakemustenArviointiDispatch()
-  const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
+  const { hakuData } = useHakemustenArviointiSelector((state) =>
+    getLoadedAvustushakuData(state.arviointi)
+  )
   const { avustushaku } = hakuData
   const traineeDayCalcs = VaTraineeDayUtil.collectCalculatorSpecifications(
     hakuData.form.content,

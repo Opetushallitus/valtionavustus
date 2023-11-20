@@ -32,7 +32,7 @@ newHakemusTest('an unsubmitted (draft) hakemus', async ({ avustushakuID, newHake
   await test.step('is not shown in showAll list when new', async () => {
     await hakemusListPage.navigate(avustushakuID)
     await hakemusListPage.showUnfinished.check()
-    expect(await hakemusListPage.hakemusRows.count()).toBe(0)
+    await expect(hakemusListPage.hakemusRows).toHaveCount(0)
   })
 
   await test.step('is shown in showAll list after applicant has edited application for the first time', async () => {
@@ -44,7 +44,7 @@ newHakemusTest('an unsubmitted (draft) hakemus', async ({ avustushakuID, newHake
     await hakemusListPage.showUnfinished.check()
     await hakemusListPage.hakemusListing.waitFor({ timeout: 5000 })
     const rows = hakemusListPage.hakemusRows
-    expect(await rows.count()).toBe(1)
+    await expect(rows).toHaveCount(1)
     const row = rows.first()
     await row.locator('text=Keskeneräinen').waitFor()
   })
@@ -56,7 +56,7 @@ newHakemusTest('an unsubmitted (draft) hakemus', async ({ avustushakuID, newHake
 
     await hakemusListPage.navigate(avustushakuID)
     await hakemusListPage.showUnfinished.uncheck()
-    expect(await hakemusListPage.hakemusRows.count()).toBe(1)
+    await expect(hakemusListPage.hakemusRows).toHaveCount(1)
     expect(
       await hakemusListPage.hakemusRows.first().locator('text=Käsittelemättä').isVisible()
     ).toBeTruthy()

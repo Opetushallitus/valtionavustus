@@ -147,6 +147,7 @@
                       :query-params [{hakemus :- s/Str nil},{preview :- s/Str "false"}]
                       (on-selvitys avustushaku-id hakemus selvitys-type preview))
 
+  (compojure/GET "/avustushaku/" [id] (return-html "virkailija/index.html"))
   (compojure/GET "/avustushaku/:id" [id] (return-html "virkailija/index.html"))
   (compojure/GET "/avustushaku/:id/*" [id] (return-html "virkailija/index.html"))
 

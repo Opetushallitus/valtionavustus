@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
 import { Hakemus, HakemusArviointiStatus, SelvitysStatus } from 'soresu-form/web/va/types'
 
 import styles from './HakemusListing.module.less'
@@ -9,7 +9,7 @@ import { MuutoshakemusStatus } from 'soresu-form/web/va/types/muutoshakemus'
 import { HakemusSelvitys, Loppuselvitys, Muutoshakemus } from 'soresu-form/web/va/status'
 import HakemusArviointiStatuses from '../../HakemusArviointiStatuses'
 import { Pill, PillProps } from '../../common-components/Pill'
-import { HakemusFilter, Role } from '../../types'
+import { HakemusFilter } from '../../types'
 
 import useOutsideClick from '../../useOutsideClick'
 import { isEvaluator, isPresenter, isPresenterRole, PersonSelectPanel } from './PersonSelectPanel'
@@ -17,7 +17,6 @@ import classNames from 'classnames'
 import { ControlledSelectPanel, RoleField } from './ControlledSelectPanel'
 import { AddRoleImage } from './AddRoleImage'
 import { useHakemustenArviointiSelector } from '../arviointiStore'
-import { getLoadedState } from '../arviointiReducer'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { NavigateFunction, useNavigate, useSearchParams } from 'react-router-dom'
 import { TAG_ID } from '../filterReducer'
@@ -49,6 +48,7 @@ interface FilterState {
 }
 
 type FilterKeys = keyof FilterState['status']
+type Filters<FilterKey extends FilterKeys> = FilterState['status'][FilterKey]
 type FilterValue<FilterKey extends FilterKeys> = FilterState['status'][FilterKey][number]
 
 const SORTING_KEYS = [
@@ -92,6 +92,7 @@ const hakemusSorter =
 
 type StatusFilterAction<Filter extends FilterKeys> =
   | { type: `set-status-filter`; filter: Filter; value: FilterValue<Filter> }
+  | { type: `set-status-filters`; filter: Filter; value: Filters<Filter> }
   | { type: `unset-status-filter`; filter: Filter; value: FilterValue<Filter> }
   | { type: `clear-status-filter`; filter: Filter }
 
@@ -203,6 +204,15 @@ const reducer = (state: FilterState, action: Action): FilterState => {
         },
       }
     }
+    case 'set-status-filters': {
+      return {
+        ...state,
+        status: {
+          ...state.status,
+          [action.filter]: action.value,
+        },
+      }
+    }
     case 'unset-status-filter': {
       const cloned = [...state.status[action.filter]]
       return {
@@ -264,21 +274,20 @@ const useSorting = (): [SortState, (newSortKey?: SortKey) => void] => {
 
 export default function HakemusListing(props: Props) {
   const { selectedHakemus, hakemusList, splitView, isResolved, additionalInfoOpen } = props
-
-  const { roles, privileges, avustushaku } = useHakemustenArviointiSelector(
-    (state) => getLoadedState(state.arviointi).hakuData
-  )
   const [showUkotusModalForHakemusId, setShowUkotusModal] = useState<number | undefined>(undefined)
   const toggleUkotusModal = (selectedHakemusId: number | undefined) =>
     setShowUkotusModal(selectedHakemusId)
-  const { data: hakemuksetWithTaydennyspyynto = [] } = useGetHakemusIdsHavingTaydennyspyyntoQuery(
-    avustushaku.id
-  )
 
-  const allowHakemusScoring = privileges['score-hakemus']
   const hakemusFilterState = useHakemustenArviointiSelector((state) => state.filter)
   const selectedHakemusId = selectedHakemus ? selectedHakemus.id : undefined
   const [filterState, dispatch] = useReducer(reducer, getDefaultState(isResolved))
+  useEffect(() => {
+    dispatch({
+      type: 'set-status-filters',
+      filter: 'hakemus',
+      value: getDefaultState(isResolved).status.hakemus,
+    })
+  }, [isResolved])
   const [sortingState, setSorting] = useSorting()
   const filteredList = hakemusList
     .filter(hakemusFilter(filterState))
@@ -298,8 +307,11 @@ export default function HakemusListing(props: Props) {
         ? styles.smallFixedContainer
         : styles.largeFixedContainer
       : styles.tableContainer
-  const onYhteenvetoClick = async () => {
-    const savedSearchResponse = await HttpUtil.put(`/api/avustushaku/${avustushaku.id}/searches`, {
+  const onYhteenvetoClick = async (avustushakuId?: number) => {
+    if (avustushakuId === undefined) {
+      return
+    }
+    const savedSearchResponse = await HttpUtil.put(`/api/avustushaku/${avustushakuId}/searches`, {
       'hakemus-ids': filteredList.map((h) => h.id),
     })
     window.localStorage.setItem('va.arviointi.admin.summary.url', savedSearchResponse['search-url'])
@@ -330,7 +342,6 @@ export default function HakemusListing(props: Props) {
             filteredList={filteredList}
             list={hakemusList}
             dispatch={dispatch}
-            roles={roles}
             totalBudgetGranted={totalBudgetGranted}
             sortingState={sortingState}
             setSorting={setSorting}
@@ -345,12 +356,9 @@ export default function HakemusListing(props: Props) {
             filteredList={filteredList}
             list={hakemusList}
             dispatch={dispatch}
-            roles={roles}
             totalBudgetGranted={totalBudgetGranted}
             sortingState={sortingState}
             setSorting={setSorting}
-            allowHakemusScoring={allowHakemusScoring}
-            hakemuksetWithTaydennyspyynto={hakemuksetWithTaydennyspyynto}
             toggleUkotusModal={toggleUkotusModal}
             onHakemusClick={onHakemusClick}
           />
@@ -366,13 +374,10 @@ interface HakemusTableProps {
   list: Hakemus[]
   filteredList: Hakemus[]
   dispatch: React.Dispatch<Action>
-  onYhteenvetoClick: () => void
-  roles: Role[]
+  onYhteenvetoClick: (avustushakuId?: number) => void
   totalBudgetGranted: number
   setSorting: (sortKey?: SortKey) => void
   sortingState: SortState
-  allowHakemusScoring: boolean
-  hakemuksetWithTaydennyspyynto: number[]
   toggleUkotusModal: (hakemusId: number | undefined) => void
   onHakemusClick: (hakemusId: number) => void
 }
@@ -388,15 +393,22 @@ function HakemusTable({
   filteredList,
   selectedHakemusId,
   onYhteenvetoClick,
-  roles,
   totalBudgetGranted,
   sortingState,
   setSorting,
-  allowHakemusScoring,
-  hakemuksetWithTaydennyspyynto,
   toggleUkotusModal,
   onHakemusClick,
 }: HakemusTableProps) {
+  const avustushakuId = useHakemustenArviointiSelector(
+    (state) => state.arviointi.avustushakuData?.hakuData.avustushaku.id
+  )
+  const allowHakemusScoring = useHakemustenArviointiSelector(
+    (state) => state.arviointi.avustushakuData?.hakuData.privileges['score-hakemus'] === true
+  )
+  const { data: hakemuksetWithTaydennyspyynto = [] } = useGetHakemusIdsHavingTaydennyspyyntoQuery(
+    avustushakuId ?? 0,
+    { skip: avustushakuId === undefined }
+  )
   const onOrganizationInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({
       type: 'set-organization-name-filter',
@@ -538,7 +550,6 @@ function HakemusTable({
             <PersonTableLabel
               text="Valmistelija"
               roleField="presenter"
-              roles={roles}
               onClickRole={(id) => dispatch({ type: 'set-presenter-filter', id })}
               activeId={filterState.presenter}
               showDeleteButton={
@@ -559,7 +570,6 @@ function HakemusTable({
             <PersonTableLabel
               text="Arvioija"
               roleField="evaluator"
-              roles={roles}
               onClickRole={(id) => dispatch({ type: 'set-evaluator-filter', id })}
               activeId={filterState.evaluator}
               showDeleteButton={
@@ -659,7 +669,6 @@ function HakemusTable({
               </td>
               <td>
                 <PeopleRoleButton
-                  roles={roles}
                   hakemus={hakemus}
                   selectedRole="presenter"
                   toggleUkotusModal={onRoleButtonClick}
@@ -667,7 +676,6 @@ function HakemusTable({
               </td>
               <td>
                 <PeopleRoleButton
-                  roles={roles}
                   hakemus={hakemus}
                   selectedRole="evaluators"
                   toggleUkotusModal={onRoleButtonClick}
@@ -685,7 +693,7 @@ function HakemusTable({
               className={styles.yhteenveto}
               href="/yhteenveto/"
               target="_blank"
-              onClick={() => onYhteenvetoClick()}
+              onClick={() => onYhteenvetoClick(avustushakuId)}
             >
               Päätöslista
             </a>
@@ -709,8 +717,7 @@ interface ResolvedTableProps {
   list: Hakemus[]
   filteredList: Hakemus[]
   dispatch: React.Dispatch<Action>
-  onYhteenvetoClick: () => void
-  roles: Role[]
+  onYhteenvetoClick: (avustushakuId?: number) => void
   totalBudgetGranted: number
   setSorting: (sortKey?: SortKey) => void
   sortingState: SortState
@@ -724,7 +731,6 @@ function ResolvedTable(props: ResolvedTableProps) {
     filterState,
     dispatch,
     onYhteenvetoClick,
-    roles,
     filteredList,
     list,
     totalBudgetGranted,
@@ -733,6 +739,9 @@ function ResolvedTable(props: ResolvedTableProps) {
     toggleUkotusModal,
     onHakemusClick,
   } = props
+  const avustushakuId = useHakemustenArviointiSelector(
+    (state) => state.arviointi.avustushakuData?.hakuData.avustushaku.id
+  )
   const onOrganizationInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({
       type: 'set-organization-name-filter',
@@ -982,7 +991,6 @@ function ResolvedTable(props: ResolvedTableProps) {
             <PersonTableLabel
               text="Valmistelija"
               roleField="presenter"
-              roles={roles}
               onClickRole={(id) => dispatch({ type: 'set-presenter-filter', id })}
               activeId={filterState.presenter}
               showDeleteButton={
@@ -1003,7 +1011,6 @@ function ResolvedTable(props: ResolvedTableProps) {
             <PersonTableLabel
               text="Arvioija"
               roleField="evaluator"
-              roles={roles}
               onClickRole={(id) => dispatch({ type: 'set-evaluator-filter', id })}
               activeId={filterState.evaluator}
               showDeleteButton={
@@ -1094,7 +1101,6 @@ function ResolvedTable(props: ResolvedTableProps) {
               </td>
               <td>
                 <PeopleRoleButton
-                  roles={roles}
                   hakemus={hakemus}
                   selectedRole="presenter"
                   toggleUkotusModal={onRoleButtonClick}
@@ -1102,7 +1108,6 @@ function ResolvedTable(props: ResolvedTableProps) {
               </td>
               <td>
                 <PeopleRoleButton
-                  roles={roles}
                   hakemus={hakemus}
                   selectedRole="evaluators"
                   toggleUkotusModal={onRoleButtonClick}
@@ -1120,7 +1125,7 @@ function ResolvedTable(props: ResolvedTableProps) {
               className={styles.yhteenveto}
               href="/yhteenveto/"
               target="_blank"
-              onClick={() => onYhteenvetoClick()}
+              onClick={() => onYhteenvetoClick(avustushakuId)}
             >
               Päätöslista
             </a>
@@ -1148,21 +1153,15 @@ const getProject = (hakemus: Hakemus) => {
 }
 
 interface PeopleRoleButton {
-  roles: Role[]
   hakemus: Hakemus
   selectedRole: 'evaluators' | 'presenter'
   toggleUkotusModal: (hakemusId: number | undefined) => void
 }
 
-const PeopleRoleButton = ({
-  roles,
-  selectedRole,
-  hakemus,
-  toggleUkotusModal,
-}: PeopleRoleButton) => {
+const PeopleRoleButton = ({ selectedRole, hakemus, toggleUkotusModal }: PeopleRoleButton) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const hakuData = useHakemustenArviointiSelector(
-    (state) => getLoadedState(state.arviointi).hakuData
+    (state) => state.arviointi.avustushakuData?.hakuData
   )
   const onClickCallback = async (e: React.SyntheticEvent<HTMLButtonElement>) => {
     e.stopPropagation()
@@ -1171,18 +1170,19 @@ const PeopleRoleButton = ({
     toggleUkotusModal(hakemus.id)
   }
   const presentersWanted = selectedRole === 'presenter'
-  const filteredRoles = roles.filter((role) =>
-    presentersWanted
-      ? isPresenterRole(role) && isPresenter(hakemus, role)
-      : isEvaluator(hakemus, role)
-  )
+  const filteredRoles =
+    hakuData?.roles.filter((role) =>
+      presentersWanted
+        ? isPresenterRole(role) && isPresenter(hakemus, role)
+        : isEvaluator(hakemus, role)
+    ) ?? []
   const title = filteredRoles.map((f) => f.name).join('\n')
   const buttonInitials = filteredRoles
     .map(({ name }) =>
       name.split(/\s+/).reduce((initials, name) => initials + name.slice(0, 1), '')
     )
     .join(', ')
-  const disallowChangeHakemusState = !hakuData.privileges['change-hakemus-state']
+  const disallowChangeHakemusState = !hakuData?.privileges['change-hakemus-state']
   const ariaLabel = presentersWanted
     ? 'Lisää valmistelija hakemukselle'
     : 'Lisää arvioija hakemukselle'
@@ -1290,7 +1290,6 @@ const TableLabel: React.FC<TableLabelProps> = ({ text, disabled, showDeleteButto
 }
 
 interface PersonTableLabel extends TableLabelProps {
-  roles: Role[]
   onClickRole: (id: number) => void
   roleField: RoleField
   activeId?: number
@@ -1301,7 +1300,6 @@ const PersonTableLabel: React.FC<PersonTableLabel> = ({
   disabled,
   showDeleteButton,
   roleField,
-  roles,
   onClickRole,
   activeId,
 }) => {
@@ -1331,7 +1329,6 @@ const PersonTableLabel: React.FC<PersonTableLabel> = ({
       {toggled && (
         <div className={popupStyle} ref={ref}>
           <ControlledSelectPanel
-            roles={roles}
             onClickClose={onOutsideClick}
             onClickRole={onClickRole}
             roleField={roleField}

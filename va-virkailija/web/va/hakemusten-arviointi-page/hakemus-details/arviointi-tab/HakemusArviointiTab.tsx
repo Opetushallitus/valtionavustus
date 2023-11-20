@@ -29,7 +29,6 @@ import {
 } from '../../arviointiStore'
 import {
   addPayment,
-  getLoadedState,
   hasMultibatchPayments,
   removePayment,
   selectProject as selectProjectThunk,
@@ -42,11 +41,14 @@ import { useHakemus } from '../../useHakemus'
 export const HakemusArviointiTab = () => {
   const hakemus = useHakemus()
   const userInfo = useUserInfo()
-  const { hakuData, projects } = useHakemustenArviointiSelector((state) =>
-    getLoadedState(state.arviointi)
-  )
-  const { avustushaku } = hakuData
+  const avustushakuData = useHakemustenArviointiSelector((state) => state.arviointi.avustushakuData)
   const multibatchPaymentsEnabled = useHakemustenArviointiSelector(hasMultibatchPayments)
+  const dispatch = useHakemustenArviointiDispatch()
+  if (!avustushakuData) {
+    return null
+  }
+  const { hakuData, projects } = avustushakuData
+  const { avustushaku } = hakuData
   const {
     allowHakemusCommenting,
     allowHakemusStateChanges,
@@ -54,7 +56,6 @@ export const HakemusArviointiTab = () => {
     allowHakemusOfficerEditing,
     allowHakemusCancellation,
   } = hakemus.accessControl ?? {}
-  const dispatch = useHakemustenArviointiDispatch()
   return (
     <div id="tab-content" className={hakemus.refused ? 'disabled' : ''}>
       <div id="arviointi-tab">

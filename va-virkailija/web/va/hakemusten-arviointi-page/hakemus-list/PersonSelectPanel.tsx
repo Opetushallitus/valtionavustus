@@ -6,7 +6,11 @@ import { Hakemus } from 'soresu-form/web/va/types'
 import { Role } from '../../types'
 
 import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '../arviointiStore'
-import { getLoadedState, setArvioValue, startHakemusArvioAutoSave } from '../arviointiReducer'
+import {
+  getLoadedAvustushakuData,
+  setArvioValue,
+  startHakemusArvioAutoSave,
+} from '../arviointiReducer'
 
 import styles from './Person.module.less'
 
@@ -106,7 +110,7 @@ type PersonSelectButtonProps = {
 
 export const PersonSelectPanel = ({ hakemus, toggleUkotusModal }: PersonSelectButtonProps) => {
   const hakuDataRoles = useHakemustenArviointiSelector(
-    (state) => getLoadedState(state.arviointi).hakuData.roles
+    (state) => getLoadedAvustushakuData(state.arviointi).hakuData.roles
   )
   const roles = [...hakuDataRoles].sort((a, b) => (a.name > b.name ? -1 : 1))
   const presenters = roles.filter(isPresenterRole)

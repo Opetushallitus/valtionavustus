@@ -72,36 +72,7 @@ export interface DropdownAvustushaku {
   name: string
 }
 
-interface InitialData {
-  avustushaut: DropdownAvustushaku[]
-  hakuData: HakuData
-  projects: VaCodeValue[]
-  lahetykset: LahetysStatuses
-  earliestPaymentCreatedAt?: string
-}
-
-export const fetchInitialState = createAsyncThunk<InitialData, number>(
-  'arviointi/fetchInitialState',
-  async (avustushakuId) => {
-    const [avustushaut, hakuData, projects, lahetykset, earliestPaymentCreatedAt] =
-      await Promise.all([
-        HttpUtil.get('/api/avustushaku/arviointi/dropdown'),
-        HttpUtil.get<HakuData>(`/api/avustushaku/${avustushakuId}`),
-        HttpUtil.get<VaCodeValue[]>(`/api/avustushaku/${avustushakuId}/projects`),
-        getLahetysStatuses(avustushakuId),
-        getEarliestPaymentCreatedAt(avustushakuId),
-      ])
-    return {
-      avustushaut,
-      hakuData,
-      projects,
-      lahetykset,
-      earliestPaymentCreatedAt,
-    }
-  }
-)
-
-export const fetchAvustushakuInfo = createAsyncThunk<Omit<InitialData, 'avustushaut'>, number>(
+export const fetchAvustushakuInfo = createAsyncThunk<AvustushakuData, number>(
   'arviointi/fetchAvustushakuInfo',
   async (avustushakuId) => {
     const [hakuData, projects, lahetykset, earliestPaymentCreatedAt] = await Promise.all([
@@ -121,13 +92,24 @@ export const fetchAvustushakuInfo = createAsyncThunk<Omit<InitialData, 'avustush
 
 export const initialize = createAsyncThunk<
   void,
-  { avustushakuId: number; hakemusId: number },
+  { avustushakuId?: number; hakemusId?: number },
   { state: HakemustenArviointiRootState }
 >('arviointi/initialize', async ({ avustushakuId, hakemusId }, thunkAPI) => {
-  await thunkAPI.dispatch(fetchInitialState(avustushakuId))
-  if (!isNaN(hakemusId)) {
-    thunkAPI.dispatch(selectHakemus(hakemusId))
+  await thunkAPI.dispatch(fetchAvustushaut())
+  if (avustushakuId) {
+    await thunkAPI.dispatch(fetchAvustushakuInfo(avustushakuId))
   }
+  if (hakemusId) {
+    await thunkAPI.dispatch(selectHakemus(hakemusId))
+  }
+})
+
+const fetchAvustushaut = createAsyncThunk<
+  DropdownAvustushaku[],
+  void,
+  { state: HakemustenArviointiRootState }
+>('arviointi/avustushaut', async (_) => {
+  return await HttpUtil.get<DropdownAvustushaku[]>('/api/avustushaku/arviointi/dropdown')
 })
 
 export const setKeskeytettyAloittamatta = createAsyncThunk<
@@ -135,7 +117,7 @@ export const setKeskeytettyAloittamatta = createAsyncThunk<
   { hakemusId: number; keskeyta: boolean },
   { state: HakemustenArviointiRootState }
 >('arviointi/setKeskeytettyAloittamatta', async ({ hakemusId, keskeyta }, thunkAPI) => {
-  const { hakuData } = getLoadedState(thunkAPI.getState().arviointi)
+  const { hakuData } = getLoadedAvustushakuData(thunkAPI.getState().arviointi)
   return await HttpUtil.put(
     `/api/avustushaku/${hakuData.avustushaku.id}/hakemus/${hakemusId}/keskeyta-aloittamatta`,
     { keskeyta }
@@ -149,7 +131,7 @@ export const selectHakemus = createAsyncThunk<
 >(
   'arviointi/selectHakemus',
   async (hakemusId, thunkAPI) => {
-    const { hakuData } = getLoadedState(thunkAPI.getState().arviointi)
+    const { hakuData } = getLoadedAvustushakuData(thunkAPI.getState().arviointi)
     const { avustushaku, privileges } = hakuData
     const avustushakuId = avustushaku.id
     const [
@@ -261,7 +243,8 @@ export const saveHakemusArvio = createAsyncThunk<
   { hakemusId: number },
   { state: { arviointi: ArviointiState } }
 >('arviointi/saveHakemusArvio', async ({ hakemusId }, thunkAPI) => {
-  const avustushakuId = getLoadedState(thunkAPI.getState().arviointi).hakuData.avustushaku.id
+  const avustushakuId = getLoadedAvustushakuData(thunkAPI.getState().arviointi).hakuData.avustushaku
+    .id
   const hakemus = getHakemus(thunkAPI.getState().arviointi, hakemusId)
   const { hasChanges, ...actualArvio } = hakemus.arvio
   if (hasChanges) {
@@ -286,7 +269,7 @@ export const updateHakemusStatus = createAsyncThunk<
   { state: HakemustenArviointiRootState; rejectValue: string }
 >('arviointi/updateHakemusStatus', async ({ hakemusId, status, comment }, thunkAPI) => {
   const state = thunkAPI.getState().arviointi
-  const { hakuData } = getLoadedState(state)
+  const { hakuData } = getLoadedAvustushakuData(state)
   const avustushakuId = hakuData.avustushaku.id
   await HttpUtil.post(`/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/status`, {
     status,
@@ -302,7 +285,8 @@ export const addHakemusComment = createAsyncThunk<
   { hakemusId: number; comment: string },
   { state: HakemustenArviointiRootState }
 >('arviointi/addHakemusComment', async ({ hakemusId, comment }, thunkAPI) => {
-  const avustushakuId = getLoadedState(thunkAPI.getState().arviointi).hakuData.avustushaku.id
+  const avustushakuId = getLoadedAvustushakuData(thunkAPI.getState().arviointi).hakuData.avustushaku
+    .id
   return await HttpUtil.post(`/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/comments`, {
     comment,
   })
@@ -358,7 +342,8 @@ export const setScore = createAsyncThunk<
   { selectionCriteriaIndex: number; newScore: number; hakemusId: number },
   { state: HakemustenArviointiRootState }
 >('arviointi/setScore', async ({ newScore, selectionCriteriaIndex, hakemusId }, thunkAPI) => {
-  const avustushakuId = getLoadedState(thunkAPI.getState().arviointi).hakuData.avustushaku.id
+  const avustushakuId = getLoadedAvustushakuData(thunkAPI.getState().arviointi).hakuData.avustushaku
+    .id
   return await HttpUtil.post(`/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/scores`, {
     'selection-criteria-index': selectionCriteriaIndex,
     score: newScore,
@@ -372,7 +357,8 @@ export const removeScore = createAsyncThunk<
 >('arviointi/removeScore', async ({ index, hakemusId }, thunkAPI) => {
   const evaluationId = getHakemus(thunkAPI.getState().arviointi, hakemusId).arvio.id
   await HttpUtil.delete(`/api/avustushaku/evaluations/${evaluationId}/scores/${index}/`)
-  const avustushakuId = getLoadedState(thunkAPI.getState().arviointi).hakuData.avustushaku.id
+  const avustushakuId = getLoadedAvustushakuData(thunkAPI.getState().arviointi).hakuData.avustushaku
+    .id
   return await HttpUtil.get(`/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/scores`)
 })
 
@@ -381,7 +367,8 @@ export const selectProject = createAsyncThunk<
   { hakemusId: number; project: VaCodeValue },
   { state: HakemustenArviointiRootState }
 >('arviointi/selectProject', async ({ project, hakemusId }, thunkAPI) => {
-  const avustushakuId = getLoadedState(thunkAPI.getState().arviointi).hakuData.avustushaku.id
+  const avustushakuId = getLoadedAvustushakuData(thunkAPI.getState().arviointi).hakuData.avustushaku
+    .id
   await HttpUtil.post(`/api/avustushaku/${avustushakuId}/hakemus/${hakemusId}/project`, project)
   return project
 })
@@ -391,17 +378,27 @@ interface SaveStatus {
   saveTime: string | null
   serverError: string
   loadingHakemusId?: number
+  loadingAvustushakuId?: number
+}
+
+export interface AvustushakuData {
+  hakuData: HakuData
+  projects: VaCodeValue[]
+  lahetykset: LahetysStatuses
+  earliestPaymentCreatedAt?: string
 }
 
 export interface ArviointiState {
-  initialData: { loading: true } | { loading: false; data: InitialData }
+  avustushaut?: DropdownAvustushaku[]
+  avustushakuData?: AvustushakuData
   saveStatus: SaveStatus
   modal: JSX.Element | undefined
   showOthersScores?: boolean
 }
 
 const initialState: ArviointiState = {
-  initialData: { loading: true },
+  avustushaut: undefined,
+  avustushakuData: undefined,
   saveStatus: {
     saveInProgress: false,
     saveTime: null,
@@ -469,11 +466,8 @@ const arviointiSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchInitialState.fulfilled, (state, { payload }) => {
-        state.initialData = {
-          loading: false,
-          data: payload,
-        }
+      .addCase(fetchAvustushaut.fulfilled, (state, { payload }) => {
+        state.avustushaut = payload
       })
       .addCase(setKeskeytettyAloittamatta.pending, (state, { meta }) => {
         const hakemus = getHakemus(state, meta.arg.hakemusId)
@@ -498,7 +492,7 @@ const arviointiSlice = createSlice({
       })
       .addCase(selectHakemus.fulfilled, (state, { payload, meta }) => {
         const hakemusId = meta.arg
-        const { hakemukset } = getLoadedState(state).hakuData
+        const { hakemukset } = getLoadedAvustushakuData(state).hakuData
         const index = hakemukset.findIndex((h) => h.id === hakemusId)
         state.saveStatus.loadingHakemusId = undefined
         if (index != -1) {
@@ -514,7 +508,7 @@ const arviointiSlice = createSlice({
         hakemus.arvio['budget-granted'] = payload.budgetGranted
       })
       .addCase(updateHakemukset.fulfilled, (state, { payload }) => {
-        const loadedState = getLoadedState(state)
+        const loadedState = getLoadedAvustushakuData(state)
         loadedState.hakuData = payload
       })
       .addCase(addPayment.fulfilled, (state, { payload, meta }) => {
@@ -551,25 +545,13 @@ const arviointiSlice = createSlice({
         hakemus.arvio.scoring = payload.scoring
         hakemus.scores = payload.scores
       })
-      .addCase(fetchAvustushakuInfo.pending, (state) => {
-        if (state.initialData.loading === false) {
-          // done to show "loading" different avustushakus data
-          state.initialData.data.hakuData.hakemukset = []
-        } else {
-          throw Error(
-            'Started fetching avustushaku info without initial state. This should never happen.'
-          )
-        }
+      .addCase(fetchAvustushakuInfo.pending, (state, { meta }) => {
+        state.avustushakuData = undefined
+        state.saveStatus.loadingAvustushakuId = meta.arg
       })
       .addCase(fetchAvustushakuInfo.fulfilled, (state, { payload }) => {
-        if (state.initialData.loading === false) {
-          state.initialData.data.hakuData = payload.hakuData
-          state.initialData.data.earliestPaymentCreatedAt = payload.earliestPaymentCreatedAt
-          state.initialData.data.lahetykset = payload.lahetykset
-          state.initialData.data.projects = payload.projects
-        } else {
-          throw Error('Fetched avustushaku info without initial state. This should never happen.')
-        }
+        state.avustushakuData = payload
+        state.saveStatus.loadingAvustushakuId = undefined
       })
       .addMatcher(isAnyOf(isRejected(...saveStatusAwareActions)), (state) => {
         state.saveStatus = {
@@ -598,15 +580,15 @@ const arviointiSlice = createSlice({
   },
 })
 
-export const getLoadedState = (state: ArviointiState) => {
-  if (state.initialData.loading) {
+export const getLoadedAvustushakuData = (state: ArviointiState) => {
+  if (state.saveStatus.loadingAvustushakuId || !state.avustushakuData) {
     throw Error('Tried to access data before it was loaded')
   }
-  return state.initialData.data
+  return state.avustushakuData
 }
 
 export const getHakemus = (state: ArviointiState, hakemusId: number) => {
-  const { hakuData } = getLoadedState(state)
+  const { hakuData } = getLoadedAvustushakuData(state)
   const hakemus = hakuData.hakemukset.find((h) => h.id === hakemusId)
   if (!hakemus) {
     throw Error(`Hakemus with id ${hakemusId} not found`)
@@ -615,7 +597,7 @@ export const getHakemus = (state: ArviointiState, hakemusId: number) => {
 }
 
 export const hasMultibatchPayments = ({ arviointi }: HakemustenArviointiRootState): boolean => {
-  const { hakuData } = getLoadedState(arviointi)
+  const { hakuData } = getLoadedAvustushakuData(arviointi)
   const { avustushaku } = hakuData
   const multiplemaksuera = avustushaku.content.multiplemaksuera === true
   return multiplemaksuera

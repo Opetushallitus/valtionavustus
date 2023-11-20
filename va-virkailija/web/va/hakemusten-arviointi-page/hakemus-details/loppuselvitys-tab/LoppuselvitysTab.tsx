@@ -8,7 +8,7 @@ import PresenterComment from '../common-components/PresenterComment'
 import ApplicationPayments from '../common-components/ApplicationPayments'
 import {
   addPayment,
-  getLoadedState,
+  getLoadedAvustushakuData,
   hasMultibatchPayments,
   removePayment,
 } from '../../arviointiReducer'
@@ -26,13 +26,16 @@ const LoppuselvitysTab = () => {
   const loadingHakemus = useHakemustenArviointiSelector(
     (state) => !!state.arviointi.saveStatus.loadingHakemusId
   )
-  const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
+  const { hakuData } = useHakemustenArviointiSelector((state) =>
+    getLoadedAvustushakuData(state.arviointi)
+  )
   const userInfo = useUserInfo()
 
   const { avustushaku } = hakuData
   const dispatch = useHakemustenArviointiDispatch()
   const loppuselvitysPyynnotSent = useHakemustenArviointiSelector(
-    (state) => getLoadedState(state.arviointi).lahetykset.loppuselvitysPyynnotSentAt !== undefined
+    (state) =>
+      getLoadedAvustushakuData(state.arviointi).lahetykset.loppuselvitysPyynnotSentAt !== undefined
   )
   const multibatchPaymentsEnabled = useHakemustenArviointiSelector(hasMultibatchPayments)
   const { isPresentingOfficer, hakemukselleUkotettuValmistelija } = useUserRoles(hakemus.id)

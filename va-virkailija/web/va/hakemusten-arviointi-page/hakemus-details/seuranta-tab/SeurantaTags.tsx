@@ -6,7 +6,11 @@ import {
   useHakemustenArviointiDispatch,
   useHakemustenArviointiSelector,
 } from '../../arviointiStore'
-import { getLoadedState, setArvioValue, startHakemusArvioAutoSave } from '../../arviointiReducer'
+import {
+  getLoadedAvustushakuData,
+  setArvioValue,
+  startHakemusArvioAutoSave,
+} from '../../arviointiReducer'
 
 interface Props {
   hakemus: Hakemus
@@ -15,7 +19,7 @@ interface Props {
 const SeurantaTags = ({ hakemus }: Props) => {
   const dispatch = useHakemustenArviointiDispatch()
   const hakemukset = useHakemustenArviointiSelector(
-    (state) => getLoadedState(state.arviointi).hakuData.hakemukset
+    (state) => getLoadedAvustushakuData(state.arviointi).hakuData.hakemukset
   )
   const [newTag, setNewTag] = useState('')
   const currentTags = hakemus.arvio?.tags?.value ?? []

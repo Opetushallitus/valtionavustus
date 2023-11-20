@@ -9,13 +9,15 @@ import KeskeytaAloittamatta from './KeskeytaAloittamatta'
 import AllowVisibilityInExternalSystem from './AllowVisibilityInExternalSystem'
 import ShouldPayComments from './ShouldPayComments'
 import { useHakemustenArviointiSelector } from '../../arviointiStore'
-import { getLoadedState } from '../../arviointiReducer'
+import { getLoadedAvustushakuData } from '../../arviointiReducer'
 import { useHakemus } from '../../useHakemus'
 import { useUserInfo } from '../../../initial-data-context'
 
 const SeurantaTab = () => {
   const hakemus = useHakemus()
-  const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
+  const { hakuData } = useHakemustenArviointiSelector((state) =>
+    getLoadedAvustushakuData(state.arviointi)
+  )
   const userInfo = useUserInfo()
   const { avustushaku } = hakuData
   const { muutoshakemukset } = hakemus

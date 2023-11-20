@@ -12,7 +12,7 @@ import {
 } from '../../arviointiStore'
 import {
   addPayment,
-  getLoadedState,
+  getLoadedAvustushakuData,
   hasMultibatchPayments,
   removePayment,
 } from '../../arviointiReducer'
@@ -22,12 +22,15 @@ import { useUserInfo } from '../../../initial-data-context'
 
 const VäliselvitysTab = () => {
   const hakemus = useHakemus()
-  const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
+  const { hakuData } = useHakemustenArviointiSelector((state) =>
+    getLoadedAvustushakuData(state.arviointi)
+  )
   const userInfo = useUserInfo()
   const { avustushaku } = hakuData
   const multibatchPaymentsEnabled = useHakemustenArviointiSelector(hasMultibatchPayments)
   const valiselvitysPyynnotSent = useHakemustenArviointiSelector(
-    (state) => getLoadedState(state.arviointi).lahetykset.valiselvitysPyynnostSentAt !== undefined
+    (state) =>
+      getLoadedAvustushakuData(state.arviointi).lahetykset.valiselvitysPyynnostSentAt !== undefined
   )
   const hasSelvitysAnswers = !!hakemus.selvitys?.valiselvitys?.answers
   const valiselvitys = hakemus.selvitys?.valiselvitys

@@ -18,7 +18,7 @@ import {
 } from '../../arviointiStore'
 import { Answer, Field, Hakemus } from 'soresu-form/web/va/types'
 import {
-  getLoadedState,
+  getLoadedAvustushakuData,
   setArvioFieldValue,
   setArvioValue,
   startHakemusArvioAutoSave,
@@ -34,7 +34,9 @@ interface Props {
 
 const HakemusBudgetEditing = ({ allowEditing, hakemus }: Props) => {
   const helpTexts = useHelpTexts()
-  const { hakuData } = useHakemustenArviointiSelector((state) => getLoadedState(state.arviointi))
+  const { hakuData } = useHakemustenArviointiSelector((state) =>
+    getLoadedAvustushakuData(state.arviointi)
+  )
   const { avustushaku } = hakuData
   const dispatch = useHakemustenArviointiDispatch()
   const isEditingAllowed = (
