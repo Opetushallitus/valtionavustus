@@ -127,6 +127,7 @@
   (compojure/GET "/avustushaku/:id" [id] (return-html "virkailija/index.html"))
   (compojure/GET "/avustushaku/:id/*" [id] (return-html "virkailija/index.html"))
 
+  (middleware/wrap-canonical-redirect (compojure/GET "/admin" [id] (return-html "virkailija/admin.html")))
   (compojure/GET "/admin/*" [] (return-html "virkailija/admin.html"))
 
   (compojure/GET "/yhteenveto/*" [] (return-html "virkailija/summary.html"))

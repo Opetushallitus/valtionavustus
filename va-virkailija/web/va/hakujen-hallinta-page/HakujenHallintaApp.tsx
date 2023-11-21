@@ -72,7 +72,7 @@ const AppRoutes = () => (
       <Route path="valiselvitys" element={<SelvitysFormEditor selvitysType="valiselvitys" />} />
       <Route path="loppuselvitys" element={<SelvitysFormEditor selvitysType="loppuselvitys" />} />
       <Route path="maksatukset" element={<Maksatukset />} />
-      <Route index element={<Navigate to="/admin/haku-editor" />} />
+      <Route index element={<Navigate to="/admin/haku-editor" replace />} />
     </Route>
   </Routes>
 )
