@@ -13,6 +13,7 @@ import { TalousarviotilienHallinta } from './TalousarviotilienHallinta'
 import 'oph-virkailija-style-guide/oph-styles-min.css'
 import '../style/main.less'
 import LoadingSitePage from '../common-components/LoadingSitePage'
+import ErrorBoundary from '../common-components/ErrorBoundary'
 
 const KoodienhallintaApp = () => {
   const { data, isSuccess } = useGetEnvironmentAndUserInfoQuery()
@@ -39,9 +40,11 @@ const KoodienhallintaApp = () => {
 const app = document.getElementById('app')
 const root = createRoot(app!)
 root.render(
-  <Provider store={store}>
-    <BrowserRouter>
-      <KoodienhallintaApp />
-    </BrowserRouter>
-  </Provider>
+  <ErrorBoundary>
+    <Provider store={store}>
+      <BrowserRouter>
+        <KoodienhallintaApp />
+      </BrowserRouter>
+    </Provider>
+  </ErrorBoundary>
 )

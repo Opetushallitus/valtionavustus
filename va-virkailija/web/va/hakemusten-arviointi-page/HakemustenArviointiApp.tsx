@@ -44,6 +44,7 @@ import './../style/main.less'
 import './hakemusten-arviointi.less'
 import { UserInfo } from '../types'
 import LoadingSitePage from '../common-components/LoadingSitePage'
+import ErrorBoundary from '../common-components/ErrorBoundary'
 
 const SHOW_ALL = 'showAll' as const
 const SHOW_ADDITIONAL_INFO = 'showAdditionalInfo' as const
@@ -248,9 +249,11 @@ store.dispatch(
 )
 
 root.render(
-  <BrowserRouter>
-    <Provider store={store}>
-      <LoadingWrapper />
-    </Provider>
-  </BrowserRouter>
+  <ErrorBoundary>
+    <BrowserRouter>
+      <Provider store={store}>
+        <LoadingWrapper />
+      </Provider>
+    </BrowserRouter>
+  </ErrorBoundary>
 )

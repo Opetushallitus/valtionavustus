@@ -8,6 +8,7 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import '../style/virkailija.less'
 import './login.less'
 import styles from '../common-components/Header.module.less'
+import ErrorBoundary from '../common-components/ErrorBoundary'
 
 export default class Login extends React.Component {
   render() {
@@ -65,5 +66,9 @@ const root = createRoot(app)
 
 initialState.onValue(function (state) {
   const properties = { model: state }
-  root.render(<Login {...properties} />)
+  root.render(
+    <ErrorBoundary>
+      <Login {...properties} />
+    </ErrorBoundary>
+  )
 })

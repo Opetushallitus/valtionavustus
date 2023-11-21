@@ -13,6 +13,7 @@ import 'oph-virkailija-style-guide/oph-styles-min.css'
 import '../style/main.less'
 import styles from './Search.module.less'
 import LoadingSitePage from '../common-components/LoadingSitePage'
+import ErrorBoundary from '../common-components/ErrorBoundary'
 
 interface Data {
   environment: EnvironmentApiResponse
@@ -251,4 +252,8 @@ const renderHakemus = (hakemus: HakemusV2) => {
 
 const app = document.getElementById('app')
 const root = createRoot(app!)
-root.render(<SearchApp />)
+root.render(
+  <ErrorBoundary>
+    <SearchApp />
+  </ErrorBoundary>
+)

@@ -24,6 +24,7 @@ import { Maksatukset } from './haku-details/Maksatukset'
 import '../style/virkailija.less'
 import '../style/admin.less'
 import LoadingSitePage from '../common-components/LoadingSitePage'
+import ErrorBoundary from '../common-components/ErrorBoundary'
 
 moment.locale('fi')
 const momentLocalizer = new MomentLocalizer(moment)
@@ -83,9 +84,11 @@ const root = createRoot(app!)
 store.dispatch(fetchInitialState())
 
 root.render(
-  <BrowserRouter>
-    <Provider store={store}>
-      <AppRoutes />
-    </Provider>
-  </BrowserRouter>
+  <ErrorBoundary>
+    <BrowserRouter>
+      <Provider store={store}>
+        <AppRoutes />
+      </Provider>
+    </BrowserRouter>
+  </ErrorBoundary>
 )

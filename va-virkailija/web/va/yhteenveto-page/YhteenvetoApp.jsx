@@ -10,6 +10,7 @@ import DateUtil from 'soresu-form/web/DateUtil'
 
 import '../style/main.less'
 import './summary.less'
+import ErrorBoundary from '../common-components/ErrorBoundary'
 
 class SummaryApp extends Component {
   render() {
@@ -309,6 +310,10 @@ const root = createRoot(app)
 
 stateP.onValue((state) => {
   if (state.hakuData && state.userInfo) {
-    root.render(<SummaryApp state={state} controller={controller} />)
+    root.render(
+      <ErrorBoundary>
+        <SummaryApp state={state} controller={controller} />
+      </ErrorBoundary>
+    )
   }
 })
