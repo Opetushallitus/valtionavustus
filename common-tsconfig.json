@@ -9,6 +9,10 @@
     "target": "es6",
     "module": "commonjs",
     "lib": ["dom", "es2021"],
-    "rootDir": "."
+    "rootDir": ".",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "jsx": "react",
+    "sourceMap": true
   }
 }
