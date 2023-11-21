@@ -34,6 +34,7 @@ export default function AvustushakuDropdown() {
     <div id="avustushaku-dropdown">
       <DropdownList
         dataKey="id"
+        data-test-id="avustushaku-dropdown"
         busy={loadingAvustushaut}
         disabled={loadingAvustushaut}
         containerClassName={styles.dropdownList}

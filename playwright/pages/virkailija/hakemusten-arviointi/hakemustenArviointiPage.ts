@@ -541,6 +541,12 @@ export class HakemustenArviointiPage {
     }
   }
 
+  locators() {
+    return {
+      dropdown: this.page.getByTestId('avustushaku-dropdown'),
+    }
+  }
+
   sidebarLocators() {
     const oldAnswer = this.page.locator('.answer-old-value')
     const newAnswer = this.page.locator('.answer-new-value')

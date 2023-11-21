@@ -2,6 +2,7 @@
   (:require [cemerick.url :refer [map->query]]
             [clojure.tools.logging :as log]
             [compojure.api.exception :as compojure-ex]
+            [compojure.middleware :as middleware]
             [compojure.api.sweet :as compojure-api]
             [compojure.core :as compojure]
             [compojure.route :as compojure-route]
@@ -122,6 +123,9 @@
 
   (compojure-api/undocumented
   (compojure/GET "/" [] (return-html "virkailija/index.html"))
+  (middleware/wrap-canonical-redirect (compojure/GET "/avustushaku" [id] (return-html "virkailija/index.html")))
+  (compojure/GET "/avustushaku/:id" [id] (return-html "virkailija/index.html"))
+  (compojure/GET "/avustushaku/:id/*" [id] (return-html "virkailija/index.html"))
 
   (compojure/GET "/admin/*" [] (return-html "virkailija/admin.html"))
 
@@ -146,10 +150,6 @@
                       :path-params [avustushaku-id :- Long, selvitys-type :- s/Str]
                       :query-params [{hakemus :- s/Str nil},{preview :- s/Str "false"}]
                       (on-selvitys avustushaku-id hakemus selvitys-type preview))
-
-  (compojure/GET "/avustushaku/" [id] (return-html "virkailija/index.html"))
-  (compojure/GET "/avustushaku/:id" [id] (return-html "virkailija/index.html"))
-  (compojure/GET "/avustushaku/:id/*" [id] (return-html "virkailija/index.html"))
 
   (compojure-api/context "/admin-ui/va-code-values" []
     (compojure-api/GET "*" request
