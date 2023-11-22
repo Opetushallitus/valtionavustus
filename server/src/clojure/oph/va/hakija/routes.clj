@@ -122,7 +122,8 @@
     (if (can-update-hakemus haku-id hakemus-id answers (:identity request))
       (try
         (on-hakemus-update haku-id hakemus-id base-version answers)
-        (catch PSQLException e (bad-request! {:error "can not update hakemus"})))
+        (catch PSQLException e (do (log/warn e "Could not update hakemus")
+                                   (bad-request! {:error "can not update hakemus"}))))
       (bad-request! { :error "can not update hakemus"}))))
 
 (defn- post-hakemus-submit []
