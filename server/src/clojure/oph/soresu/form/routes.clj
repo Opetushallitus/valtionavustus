@@ -36,6 +36,14 @@
         (http/ok submission)
         (http/internal-server-error!)))))
 
+(defn update-form-submission-tx [tx form-id form-submission-id answers]
+  (if (not (form-db/submission-exists-tx? tx form-id form-submission-id))
+    (http/not-found!)
+    (let [submission (form-db/update-submission-tx! tx form-id form-submission-id answers)]
+      (if submission
+        (http/ok submission)
+        (http/internal-server-error!)))))
+
 (defn- form-to-return [form]
   (->> form
        (without-id)

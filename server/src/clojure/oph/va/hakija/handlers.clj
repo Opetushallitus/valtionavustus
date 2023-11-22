@@ -8,7 +8,7 @@
             [oph.soresu.form.db :as form-db]
             [oph.soresu.form.validation :as validation]
             [oph.soresu.form.routes
-             :refer [get-form-submission without-id update-form-submission]]
+             :refer [get-form-submission without-id update-form-submission update-form-submission-tx]]
             [oph.soresu.form.formutil :refer :all]
             [oph.va.routes :refer :all]
             [oph.soresu.form.schema :refer :all]
@@ -27,6 +27,13 @@
 
 (defn- get-open-avustushaku [haku-id hakemus]
   (let [avustushaku (va-db/get-avustushaku haku-id)
+        phase (avustushaku-phase avustushaku)]
+    (if (or (= phase "current") (= (:status hakemus) "pending_change_request") (= (:status hakemus) "officer_edit") (= (:status hakemus) "applicant_edit"))
+      avustushaku
+      (method-not-allowed! {:phase phase}))))
+
+(defn- get-open-avustushaku-tx [tx haku-id hakemus]
+  (let [avustushaku (va-db/get-avustushaku-tx tx haku-id)
         phase (avustushaku-phase avustushaku)]
     (if (or (= phase "current") (= (:status hakemus) "pending_change_request") (= (:status hakemus) "officer_edit") (= (:status hakemus) "applicant_edit"))
       avustushaku
@@ -177,29 +184,34 @@
            officer-edit-authorized?))))
 
 (defn on-hakemus-update [haku-id hakemus-id base-version answers]
-  (let [hakemus (va-db/get-hakemus hakemus-id)
-        avustushaku (get-open-avustushaku haku-id hakemus)
-        form-id (:form avustushaku)
-        form (form-db/get-form form-id)
-        security-validation (validation/validate-form-security form answers)]
-    (if (every? empty? (vals security-validation))
-      (if (= base-version (:version hakemus))
-        (let [attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
-              budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
-              validation (merge (validation/validate-form form answers attachments)
-                                (va-budget/validate-budget-hakija answers budget-totals form))
-              updated-submission (:body (update-form-submission form-id (:form_submission_id hakemus) answers))
-              updated-hakemus (va-db/update-submission haku-id
-                                                       hakemus-id
-                                                       (:form_submission_id hakemus)
-                                                       (:version updated-submission)
-                                                       (:register_number hakemus)
-                                                       answers
-                                                       budget-totals)
-              normalized-hakemus-success (try-store-normalized-hakemus (:id hakemus) hakemus answers haku-id)]
-          (hakemus-ok-response updated-hakemus updated-submission validation nil))
-        (hakemus-conflict-response hakemus))
-      (bad-request! security-validation))))
+  (with-tx (fn [tx]
+     (let [hakemus-version (va-db/lock-hakemus-version-for-update tx hakemus-id base-version)
+           hakemus (va-db/get-hakemus-by-user-key-tx tx hakemus-id)
+           avustushaku (get-open-avustushaku-tx tx haku-id hakemus)
+           form-id (:form avustushaku)
+           form-submission-id (:form_submission_id hakemus)
+           form (form-db/get-form-tx tx form-id)
+           security-validation (validation/validate-form-security form answers)]
+       (if (every? empty? (vals security-validation))
+         (if (= base-version (:version hakemus))
+           (let [attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
+                 budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
+                 validation (merge (validation/validate-form form answers attachments)
+                                   (va-budget/validate-budget-hakija answers budget-totals form))
+                 updated-submission (:body (update-form-submission-tx tx form-id form-submission-id answers))
+                 updated-hakemus (va-db/update-submission-tx tx
+                                                          haku-id
+                                                          hakemus-id
+                                                          (:form_submission_id hakemus)
+                                                          (:version updated-submission)
+                                                          (:register_number hakemus)
+                                                          answers
+                                                          budget-totals)
+                 normalized-hakemus-success (try-store-normalized-hakemus (:id hakemus) hakemus answers haku-id)]
+             (hakemus-ok-response updated-hakemus updated-submission validation nil))
+           (hakemus-conflict-response hakemus))
+         (bad-request! security-validation))))
+  ))
 
 (defn- is-valmistelija? [role]
   (or

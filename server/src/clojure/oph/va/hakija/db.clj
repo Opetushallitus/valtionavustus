@@ -9,6 +9,7 @@
             [oph.soresu.common.jdbc.extensions :refer :all]
             [oph.soresu.form.formutil :as form-util]
             [oph.va.hakemus.db :as hakemus-copy]
+            [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.jdbc.extensions :refer :all]
             [oph.soresu.common.config :refer [config]]
             [oph.va.hakija.db.queries :as queries]))
@@ -29,6 +30,9 @@
 (defn get-avustushaku [id]
   (->> (exec queries/get-avustushaku {:id id})
        first))
+
+(defn get-avustushaku-tx [tx id]
+  (first (hakija-queries/get-avustushaku {:id id} {:connection tx})))
 
 (defn get-avustushaku-roles [avustushaku-id]
   (exec queries/get-avustushaku-roles {:avustushaku avustushaku-id}))
@@ -58,8 +62,14 @@
        (exec queries/get-hakemus-by-user-key)
        first))
 
+(defn lock-hakemus-version-for-update [tx id version]
+  (first (query tx "SELECT * FROM hakemukset WHERE user_key = ? AND version = ? FOR UPDATE NOWAIT" [id version])))
+
 (defn get-hakemus-by-id-tx [tx id]
   (first (query tx "SELECT * FROM hakemukset WHERE id = ? AND version_closed IS NULL" [id])))
+
+(defn get-hakemus-by-user-key-tx [tx user-key]
+  (first (query-original-identifiers tx "SELECT * FROM hakemukset WHERE user_key = ? AND version_closed IS NULL" [user-key])))
 
 (defn get-hakemus-by-id [id]
   (with-tx (fn [tx] (get-hakemus-by-id-tx tx id))))
@@ -403,8 +413,7 @@
      (when (contains? muutoshakemus :varayhteyshenkilo)
       (change-normalized-hakemus-trusted-contact-person-details tx user-key hakemus-id (get muutoshakemus :varayhteyshenkilo))))))
 
-(defn update-submission [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
-  (with-tx (fn [tx]
+(defn update-submission-tx [tx avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
   (let [register-number (or register-number
                             (generate-register-number avustushaku-id hakemus-id))
         new-hakemus (hakemus-copy/create-new-hakemus-version-from-user-key-form-submission-id tx hakemus-id submission-id)
@@ -421,7 +430,11 @@
                    (merge (convert-budget-totals budget-totals))
                    (merge-calculated-params avustushaku-id answers))]
 
-    (queries/update-hakemus-submission<! params {:connection tx})))))
+    (queries/update-hakemus-submission<! params {:connection tx})))
+
+(defn update-submission [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
+  (with-tx (fn [tx]
+             (update-submission-tx tx avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals ))))
 
 (defn- update-status [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals status status-change-comment]
   (with-tx (fn [tx]
