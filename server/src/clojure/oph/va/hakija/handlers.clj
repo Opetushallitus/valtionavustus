@@ -23,6 +23,7 @@
   (conflict! {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
               :status (:status hakemus)
               :version (:version hakemus)
+              :version-closed (:version_closed hakemus)
               :version-date (:last_status_change_at hakemus)}))
 
 (defn- get-open-avustushaku [haku-id hakemus]
@@ -185,15 +186,14 @@
 
 (defn on-hakemus-update [haku-id hakemus-id base-version answers]
   (with-tx (fn [tx]
-     (let [hakemus-version (va-db/lock-hakemus-version-for-update tx hakemus-id base-version)
-           hakemus (va-db/get-hakemus-by-user-key-tx tx hakemus-id)
+     (let [hakemus (va-db/get-locked-hakemus-version-for-update tx hakemus-id base-version)
            avustushaku (get-open-avustushaku-tx tx haku-id hakemus)
            form-id (:form avustushaku)
            form-submission-id (:form_submission_id hakemus)
            form (form-db/get-form-tx tx form-id)
            security-validation (validation/validate-form-security form answers)]
        (if (every? empty? (vals security-validation))
-         (if (= base-version (:version hakemus))
+         (if (nil? (:version_closed hakemus))
            (let [attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
                  budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
                  validation (merge (validation/validate-form form answers attachments)

@@ -62,14 +62,11 @@
        (exec queries/get-hakemus-by-user-key)
        first))
 
-(defn lock-hakemus-version-for-update [tx id version]
-  (first (query tx "SELECT * FROM hakemukset WHERE user_key = ? AND version = ? FOR UPDATE NOWAIT" [id version])))
+(defn get-locked-hakemus-version-for-update [tx id version]
+  (first (query-original-identifiers tx "SELECT * FROM hakemukset WHERE user_key = ? AND version = ? FOR UPDATE NOWAIT" [id version])))
 
 (defn get-hakemus-by-id-tx [tx id]
   (first (query tx "SELECT * FROM hakemukset WHERE id = ? AND version_closed IS NULL" [id])))
-
-(defn get-hakemus-by-user-key-tx [tx user-key]
-  (first (query-original-identifiers tx "SELECT * FROM hakemukset WHERE user_key = ? AND version_closed IS NULL" [user-key])))
 
 (defn get-hakemus-by-id [id]
   (with-tx (fn [tx] (get-hakemus-by-id-tx tx id))))
