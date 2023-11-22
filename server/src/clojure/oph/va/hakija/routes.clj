@@ -23,7 +23,8 @@
             [oph.va.hakija.handlers :refer :all]
             [oph.va.hakija.selvitys.routes :as selvitys-routes]
             [oph.va.environment :as va-env]
-            [oph.common.organisation-service :as org]))
+            [oph.common.organisation-service :as org])
+  (:import (org.postgresql.util PSQLException)))
 
 (defn- on-healthcheck []
   (if (hakija-db/health-check)
@@ -119,7 +120,9 @@
     :return  Hakemus
     :summary "Update hakemus values"
     (if (can-update-hakemus haku-id hakemus-id answers (:identity request))
-      (on-hakemus-update haku-id hakemus-id base-version answers)
+      (try
+        (on-hakemus-update haku-id hakemus-id base-version answers)
+        (catch PSQLException e (bad-request! {:error "can not update hakemus"})))
       (bad-request! { :error "can not update hakemus"}))))
 
 (defn- post-hakemus-submit []
