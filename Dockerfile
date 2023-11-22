@@ -1,7 +1,7 @@
 #
 # Builder for frontend JS
 #
-FROM node:16.20.2-alpine AS web-builder
+FROM node:20.9.0-alpine AS web-builder
 
 WORKDIR /app
 COPY package.json package-lock.json ./
