@@ -22,11 +22,36 @@ const shard = (function () {
   return null
 })()
 
-const config: PlaywrightTestConfig = {
+export interface SmokeTestConfig {
+  env: 'qa' | 'prod'
+}
+
+const config: PlaywrightTestConfig<SmokeTestConfig> = {
   forbidOnly: !allowOnly,
   retries,
   workers,
-  testDir: 'tests',
+  projects: [
+    {
+      name: 'smoke-test-qa',
+      testDir: 'smoke-tests',
+      use: {
+        env: 'qa',
+        baseURL: 'https://testi.virkailija.valtionavustukset.oph.fi/',
+      },
+    },
+    {
+      name: 'smoke-test-prod',
+      testDir: 'smoke-tests',
+      use: {
+        env: 'prod',
+        baseURL: 'https://virkailija.valtionavustukset.oph.fi/',
+      },
+    },
+    {
+      name: 'Default',
+      testDir: 'tests',
+    },
+  ],
   timeout: 90000,
   quiet,
   shard,
