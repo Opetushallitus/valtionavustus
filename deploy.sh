@@ -44,15 +44,22 @@ function do_deploy_jar {
   scp -pr -i ${SSH_KEY} ${module_name}-hakija/config ${SSH_USER}@"${target_server_name}":${TARGET_DIR}
   $SSH ln -sfT ${TARGET_DIR} ${CURRENT_DIR}
   restart_application ${module_name}
-  CAT_LOG_COMMAND="$SSH tail -n 100 /logs/valtionavustus/${module_name}_run.log /logs/valtionavustus/${module_name}_application.log"
-  HEALTH_CHECK_COMMAND="`dirname $0`/ci/health_check.bash ${SSH_USER} ${SSH_KEY} ${target_server_name} ${virkailija_port} $CAT_LOG_COMMAND"
-  echo "Checking that application responds to healthcheck ($HEALTH_CHECK_COMMAND)..."
-  $HEALTH_CHECK_COMMAND
   run_smoke_test
+  cat_latest_application_log
   echo "Success in starting $module_name"
   echo "Removing old artifcats"
   $SSH "find ${BASE_DIR} -maxdepth 1 -type d -name \"*${module_name}*\" -not -path ${TARGET_DIR} -exec rm -r {} \;"
   echo "Finished removing old artifacts"
+}
+
+function cat_latest_application_log() {
+  cat_log_command="$SSH tail -n 100 /logs/valtionavustus/${module_name}_run.log /logs/valtionavustus/${module_name}_application.log"
+
+  echo
+  echo "*** Latest application log (by $cat_log_command ): ***"
+  eval $cat_log_command
+  echo "*** /Latest application log ends *********************"
+  echo
 }
 
 function run_smoke_test {
