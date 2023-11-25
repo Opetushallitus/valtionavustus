@@ -48,10 +48,22 @@ function do_deploy_jar {
   HEALTH_CHECK_COMMAND="`dirname $0`/ci/health_check.bash ${SSH_USER} ${SSH_KEY} ${target_server_name} ${virkailija_port} $CAT_LOG_COMMAND"
   echo "Checking that application responds to healthcheck ($HEALTH_CHECK_COMMAND)..."
   $HEALTH_CHECK_COMMAND
+  run_smoke_test
   echo "Success in starting $module_name"
   echo "Removing old artifcats"
   $SSH "find ${BASE_DIR} -maxdepth 1 -type d -name \"*${module_name}*\" -not -path ${TARGET_DIR} -exec rm -r {} \;"
   echo "Finished removing old artifacts"
+}
+
+function run_smoke_test {
+  echo "Running smoke tests"
+  local -r test_command="npm run playwright:smoketest-${ENV}"
+
+  if running_on_jenkins || running_on_gh_actions; then
+    docker compose -f "${DOCKER_COMPOSE_FILE}" run --entrypoint="${test_command}" test-runner --no-deps
+  else
+    eval "${test_command}"
+  fi
 }
 
 function restart_application {
