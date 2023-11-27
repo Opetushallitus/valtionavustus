@@ -11,6 +11,7 @@
                                                :require-https?          false
                                                :virkailija-url          "http://va:8081"
                                                :payment-service-sftp    {:enabled?         true
+                                                                         :timeout          60000
                                                                          :host-ip          "maksatuspalvelu"
                                                                          :port             22
                                                                          :local-path       "/tmp/"

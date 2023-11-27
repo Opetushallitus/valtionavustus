@@ -6,6 +6,20 @@
             [clojure.string :as strc]
             [oph.va.virkailija.payments-data :as payments-data]))
 
+; clj-ssh with-connection does not accept timeout
+; https://github.com/clj-commons/clj-ssh/issues/12#issuecomment-726409579
+(defmacro with-connection-timeout
+    "Creates a context in which the session is connected. Ensures the session is
+  disconnected on exit. Will timeout after the provided number of milliseconds if not succesfully connected."
+    [session timeout & body]
+    `(let [session# ~session timeout# ~timeout]
+       (try
+         (when-not (ssh/connected? session#)
+           (ssh/connect session# timeout#))
+         ~@body
+         (finally
+           (ssh/disconnect session#)))))
+
 
 (defn create-session
   [config]
@@ -19,7 +33,7 @@
 (defn put-maksupalaute-to-maksatuspalvelu [file config]
     (let [session (create-session config)
           remote (:remote_path_from config)]
-      (ssh/with-connection session
+      (with-connection-timeout session (:timeout config)
         (let [channel (ssh/ssh-sftp session)]
           (ssh/with-channel-connection channel
              (ssh/sftp channel {} :put file remote)))))
@@ -28,7 +42,7 @@
 (defn do-sftp! [& {:keys [file method path config]}]
   (let [session (create-session config)
         remote (:remote_path config)]
-    (ssh/with-connection session
+    (with-connection-timeout session (:timeout config)
       (let [channel (ssh/ssh-sftp session)]
         (ssh/with-channel-connection channel
           (cond

@@ -9,14 +9,7 @@
                                                :url                     {:fi "http://127.0.0.1:8080/"
                                                                          :sv "http://127.0.0.1:8080/"}
                                                :payment-service-sftp    {:enabled?         true
-                                                                         :host-ip          "maksatuspalvelu"
-                                                                         :port             22
-                                                                         :local-path       "/tmp/"
-                                                                         :remote_path      "./to_handi/va/"
-                                                                         :remote_path_from "./from_handi/va/"
-                                                                         :username         "demo"
-                                                                         :password         "pass"}
-                                               :rondo-sftp              {:enabled?         true
+                                                                         :timeout          60000
                                                                          :host-ip          "maksatuspalvelu"
                                                                          :port             22
                                                                          :local-path       "/tmp/"
