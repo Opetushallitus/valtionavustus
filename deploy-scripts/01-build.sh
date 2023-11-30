@@ -19,7 +19,11 @@ function main {
 
   start_gh_actions_group "Building $image_tag"
   export VA_SERVER_TAG="$image_tag"
-  docker build --tag "$image_tag" "$repo"
+  docker build \
+      --build-arg "REVISION=${revision}" \
+      --tag "$image_tag" \
+      "$repo"
+
   tags_to_push+=("$image_tag")
   end_gh_actions_group
 
@@ -54,6 +58,7 @@ function build_jar {
   info "lein uberjar"
   docker build --output "type=local,dest=$deploy_dist_dir" \
     --build-arg "UBERJAR_NAME=$standalone_jar_name" \
+    --build-arg "REVISION=${revision}" \
     --target va-uberjar \
     "$repo"
   end_gh_actions_group
