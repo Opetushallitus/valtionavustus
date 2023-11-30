@@ -7,6 +7,8 @@ if [ -d "$repo/../valtionavustus-secret/" ]; then
   compose="$compose -f docker-compose.with-secret.yml"
 fi
 mkdir -p tmp
+echo "${revision}" > "${repo}/tmp/version.txt"
+
 compose="$compose -f docker-compose.local-dev.yml"
 readonly compose
 

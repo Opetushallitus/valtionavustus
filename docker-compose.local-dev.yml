@@ -11,6 +11,9 @@ services:
       - type: bind
         source: ./tmp/
         target: /tmp/
+      - type: bind
+        source: ./tmp/version.txt
+        target: /app/server/resources/public/version.txt
 
   db:
     ports:
