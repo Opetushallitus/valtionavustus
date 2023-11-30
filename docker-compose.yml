@@ -22,6 +22,8 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
+      args:
+        - REVISION
     image: ${VA_SERVER_IMAGE-va-server:latest}
     pull_policy: missing
     volumes:

@@ -2,6 +2,7 @@
 # Builder for frontend JS
 #
 FROM node:16.20.2-alpine AS web-builder
+ARG REVISION
 
 WORKDIR /app
 COPY package.json package-lock.json ./
@@ -17,6 +18,10 @@ COPY va-hakija/web/ va-hakija/web/
 COPY webpack.config.js .
 COPY common-tsconfig.json tsconfig.json ./
 COPY .babelrc .
+
+# add git version ID. Fail if missing
+RUN test -n "${REVISION}"
+RUN echo ${REVISION} > server/resources/public/version.txt
 
 RUN npm run build-production
 
@@ -47,7 +52,7 @@ COPY va-hakija/config/ ./va-hakija/config/
 
 COPY --from=web-builder /app/server/resources/public/hakija/js/ server/resources/public/hakija/js/
 COPY --from=web-builder /app/server/resources/public/virkailija/js/ server/resources/public/virkailija/js/
-
+COPY --from=web-builder /app/server/resources/public/version.txt server/resources/public/version.txt
 
 #
 # uberjar builder

@@ -9,6 +9,7 @@ readonly COMMON_FUNCTIONS_SOURCED="true"
 
 
 repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )" && readonly repo
+readonly revision="${GITHUB_SHA:-$(git rev-parse HEAD)}"
 readonly VA_SECRETS_REPO="$repo/../valtionavustus-secret"
 node_version="$(cat "$repo/.nvmrc")" && readonly node_version
 readonly ansible_version="8.1.0"
