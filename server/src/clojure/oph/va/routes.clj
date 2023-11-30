@@ -30,6 +30,10 @@
     :summary "Translated messages (localization)"
     (get-translations))
 
+  (compojure-api/GET "/version.txt" []
+    :summary "Application version"
+    (return-from-classpath "version.json" "text/plain; charset=utf-8"))
+
   (compojure-api/POST "/errorlogger" []
     :body [stacktrace (compojure-api/describe s/Any "JavaScript stack trace")]
     :return nil
