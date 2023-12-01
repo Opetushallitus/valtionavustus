@@ -2,7 +2,8 @@
 set -o errexit -o nounset -o pipefail
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functions.sh"
 
-compose="env REVISION=${revision} docker compose -f docker-compose.yml"
+export REVISION=${revision}
+compose="docker compose -f docker-compose.yml"
 if [ -d "$repo/../valtionavustus-secret/" ]; then
   compose="$compose -f docker-compose.with-secret.yml"
 fi
