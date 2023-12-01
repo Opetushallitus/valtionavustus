@@ -20,10 +20,6 @@ readonly HAKIJA_HOSTNAME=${HAKIJA_HOSTNAME:-"localhost"}
 readonly VIRKAILIJA_HOSTNAME=${VIRKAILIJA_HOSTNAME:-"localhost"}
 readonly DOCKER_COMPOSE_FILE="$repo"/docker-compose-test.yml
 
-function remove_all_files_ignored_or_untracked_by_git {
-  git clean -xdf
-}
-
 function docker-compose () {
     if running_on_jenkins; then
       "$repo"/scripts/docker-compose "$@"

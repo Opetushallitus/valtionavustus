@@ -10,3 +10,7 @@ function install_docker_compose {
   chmod u+x "$repo/scripts/docker-compose"
   "$repo/scripts/docker-compose" --version
 }
+
+function remove_all_files_ignored_or_untracked_by_git {
+  git clean -xdf
+}
