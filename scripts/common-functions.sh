@@ -290,7 +290,9 @@ function build_jars {
   init_nodejs
 
   make clean
+  echo "${revision}" > "${repo}"/server/resources/public/version.txt
   make build
+  rm "${repo}"/server/resources/public/version.txt
 }
 
 function current-commit-is-not-tested {
