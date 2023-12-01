@@ -67,9 +67,9 @@ function run_smoke_test {
   local -r test_command="npm run playwright:smoketest-${ENV}"
 
   if running_on_jenkins || running_on_gh_actions; then
-    docker-compose -f "${DOCKER_COMPOSE_FILE}" run --entrypoint="${test_command}" test-runner --no-deps
+    docker-compose -f "${DOCKER_COMPOSE_FILE}" run -e REVISION=${revision} --entrypoint="${test_command}" test-runner --no-deps
   else
-    eval "${test_command}"
+    eval "REVISION=${revision} ${test_command}"
   fi
 }
 
