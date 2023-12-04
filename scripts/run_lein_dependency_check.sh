@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/common-functions.sh"
+source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../deploy-scripts/jenkins-functions.sh"
 readonly LEIN="$repo/lein"
 
 function delete_temp_files_if_running_on_jenkins () {
