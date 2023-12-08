@@ -33,6 +33,7 @@ export interface Signatory {
 
 export interface VaCodeValues {
   operationalUnit: string
+  operationalUnitName?: string
   project: string[]
   operation: string
 }

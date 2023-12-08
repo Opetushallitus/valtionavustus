@@ -45,7 +45,10 @@ export const KoodienhallintaPage = (page: Page) => {
   }
   const createCodeValues = async (codeValues: VaCodeValues): Promise<VaCodeValues> => {
     await navigateToKoodienhallinta()
-    await createCode('Toimintayksikkö', codeValues.operationalUnit)
+    await createCode(
+      codeValues.operationalUnitName ?? 'Toimintayksikkö',
+      codeValues.operationalUnit
+    )
     await clickKoodienhallintaTab('project')
     const year = '2020'
     await locators.yearInput.fill(year)
