@@ -83,11 +83,15 @@ const VaFormTopbar = <T extends BaseStateLoopState<T>>(props: Props<T>) => {
   const isJotpaHakemusCustomizationEnabled = configuration.environment['feature-flags'].includes(
     'jotpa-hakemuksen-kustomointi'
   )
+  const isJotpaAvustushaku = avustushaku['operational-unit-code'] === '6600105300'
 
   return (
     <section id="topbar">
       <div id="top-container">
-        <Logo showJotpaLogo={false && isJotpaHakemusCustomizationEnabled} lang={lang} />
+        <Logo
+          showJotpaLogo={isHakemus && isJotpaAvustushaku && isJotpaHakemusCustomizationEnabled}
+          lang={lang}
+        />
         <div className="topbar-right">
           <div className="topbar-title-and-save-status">
             <h1 id="topic">
