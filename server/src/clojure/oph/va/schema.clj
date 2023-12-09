@@ -148,6 +148,7 @@
                           (s/optional-key :form_valiselvitys) (s/maybe Long)
                           (s/optional-key :operation-id) (s/maybe s/Int)
                           (s/optional-key :operational-unit-id) (s/maybe s/Int)
+                          (s/optional-key :operational-unit-code) (s/maybe s/Str)
                           :allow_visibility_in_external_system s/Bool
                           :arvioitu_maksupaiva (s/maybe java.time.LocalDate)
                           :muutoshakukelpoinen s/Bool})
