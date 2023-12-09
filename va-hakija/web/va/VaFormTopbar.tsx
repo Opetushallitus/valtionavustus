@@ -12,6 +12,7 @@ import FormErrorSummary from 'soresu-form/web/form/component/FormErrorSummary.js
 import ServerError from 'soresu-form/web/form/component/ServerError.jsx'
 import FormController from 'soresu-form/web/form/FormController'
 import { BaseStateLoopState } from 'soresu-form/web/form/types/Form'
+import { Logo } from './Logo'
 
 interface Props<T extends BaseStateLoopState<T>> {
   controller: FormController<T>
@@ -79,16 +80,14 @@ const VaFormTopbar = <T extends BaseStateLoopState<T>>(props: Props<T>) => {
   // selvitys-updatable can be undefined, we only care if its false
   const selvitysNotUpdateable = (isValiselvitys || isLoppuselvitys) && selvitysUpdateable === false
   const previewOrSelvitysNotUpdateable = preview || selvitysNotUpdateable
+  const isJotpaHakemusCustomizationEnabled = configuration.environment['feature-flags'].includes(
+    'jotpa-hakemuksen-kustomointi'
+  )
+
   return (
     <section id="topbar">
       <div id="top-container">
-        <img
-          id="logo"
-          src="/img/logo-240x68@2x.png"
-          width="240"
-          height="68"
-          alt="Opetushallitus / Utbildningsstyrelsen"
-        />
+        <Logo showJotpaLogo={false && isJotpaHakemusCustomizationEnabled} lang={lang} />
         <div className="topbar-right">
           <div className="topbar-title-and-save-status">
             <h1 id="topic">
