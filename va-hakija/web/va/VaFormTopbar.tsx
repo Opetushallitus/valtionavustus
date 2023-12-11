@@ -13,6 +13,7 @@ import ServerError from 'soresu-form/web/form/component/ServerError.jsx'
 import FormController from 'soresu-form/web/form/FormController'
 import { BaseStateLoopState } from 'soresu-form/web/form/types/Form'
 import { Logo } from './Logo'
+import { isJotpaAvustushaku, isJotpaHakemusCustomizationEnabled } from './jotpa'
 
 interface Props<T extends BaseStateLoopState<T>> {
   controller: FormController<T>
@@ -80,18 +81,15 @@ const VaFormTopbar = <T extends BaseStateLoopState<T>>(props: Props<T>) => {
   // selvitys-updatable can be undefined, we only care if its false
   const selvitysNotUpdateable = (isValiselvitys || isLoppuselvitys) && selvitysUpdateable === false
   const previewOrSelvitysNotUpdateable = preview || selvitysNotUpdateable
-  const isJotpaHakemusCustomizationEnabled = configuration.environment['feature-flags'].includes(
-    'jotpa-hakemuksen-kustomointi'
-  )
-  const isJotpaAvustushaku = avustushaku['operational-unit-code'] === '6600105300'
+  const showJotpaLogo =
+    isHakemus &&
+    isJotpaAvustushaku(avustushaku) &&
+    isJotpaHakemusCustomizationEnabled(configuration)
 
   return (
     <section id="topbar">
       <div id="top-container">
-        <Logo
-          showJotpaLogo={isHakemus && isJotpaAvustushaku && isJotpaHakemusCustomizationEnabled}
-          lang={lang}
-        />
+        <Logo showJotpaLogo={showJotpaLogo} lang={lang} />
         <div className="topbar-right">
           <div className="topbar-title-and-save-status">
             <h1 id="topic">
