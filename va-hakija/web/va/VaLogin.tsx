@@ -107,6 +107,8 @@ export default class VaLogin extends React.Component<VaLoginProps, VaLoginState>
     const canSend = () => email === sent || emailIsInvalid()
     const hakemusPreviewUrl = urlCreator.existingSubmissionEditUrl(avustushaku.id, '', lang)
 
+    const isJotpaAvustushaku = avustushaku['operational-unit-code'] === '6600105300'
+
     return (
       <div>
         <VaLoginTopbar environment={environment} translations={translations} lang={lang} />
@@ -149,7 +151,7 @@ export default class VaLogin extends React.Component<VaLoginProps, VaLoginState>
               translationKey="heading"
               lang={lang}
             />
-            <HelpTooltip content={translations.login.help} lang={lang} />
+            <HelpTooltip content={translations.login.help} lang={lang} useJotpaColour={isJotpaAvustushaku} />
           </h2>
           <form onSubmit={this.submit.bind(this)}>
             <input type="hidden" name="language" value={lang} />
@@ -178,6 +180,7 @@ export default class VaLogin extends React.Component<VaLoginProps, VaLoginState>
               translations={translations.login}
               translationKey="submit"
               lang={lang}
+              useJotpaColour={isJotpaAvustushaku}
             />
             <div className="message-container">
               <LocalizedString

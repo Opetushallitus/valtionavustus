@@ -10,6 +10,7 @@ interface Props {
   translations: LegacyTranslationDict
   translationKey: string
   lang: Language
+  useJotpaColour?: boolean
 }
 
 /**
@@ -19,7 +20,7 @@ const TextButton = (props: Props) => {
   return (
     <button
       id={props.htmlId}
-      className="soresu-text-button"
+      className={ props.useJotpaColour ? "jotpa-text-button" : "soresu-text-button"}
       type="button"
       onClick={props.onClick}
       disabled={props.disabled}

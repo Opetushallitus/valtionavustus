@@ -589,6 +589,15 @@ button[disabled].soresu-text-button {
   border: 1px solid @light-gray;
 }
 
+button.jotpa-text-button, input.jotpa-text-button {
+  &:extend(button.soresu-text-button);
+  background-color: @jotpa-green;
+}
+
+button[disabled].jotpa-text-button {
+  &:extend(button[disabled].soresu-text-button);
+}
+
 @soresu-dropdown-width: 350px;
 .soresu-dropdown {
   position: relative;
