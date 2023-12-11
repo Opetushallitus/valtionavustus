@@ -7,7 +7,7 @@ JotpaTest('Jotpa-hakemuksen täyttäminen', async ({ page, avustushakuID }) => {
   const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
 
   await JotpaTest.step(
-    'Suomenkielisellä hakemuksella näkyy suomenkielinen Jotpan logo',
+    'Suomenkielisellä hakemuksella',
     async () => {
       await hakijaAvustusHakuPage.navigate(avustushakuID, 'fi')
       const hakemusUrl = await hakijaAvustusHakuPage.startApplication(
@@ -16,7 +16,17 @@ JotpaTest('Jotpa-hakemuksen täyttäminen', async ({ page, avustushakuID }) => {
       )
 
       await JotpaTest.step('Etusivulla', async () => {
-        expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-fi.png')
+        await JotpaTest.step('Näyttää jotpan suomenkielisen logon', async () => {
+          expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-fi.png')
+        })
+
+        await JotpaTest.step('Infopallura on jotpan väreissä', async () => {
+          await expect(page.locator('.jotpa-help-icon')).toBeVisible()
+        })
+
+        await JotpaTest.step('Luo uusi hakemus nappula on jotpan väreissä', async () => {
+          await expect(page.locator('.jotpa-text-button')).toBeVisible()
+        })
       })
 
       await JotpaTest.step('Hakemussivulla', async () => {
@@ -29,7 +39,7 @@ JotpaTest('Jotpa-hakemuksen täyttäminen', async ({ page, avustushakuID }) => {
   )
 
   await JotpaTest.step(
-    'Ruotsinkielisellä hakemuksella näkyy ruotsinkielinen Jotpan logo',
+    'Ruotsinkielisellä hakemuksella',
     async () => {
       await hakijaAvustusHakuPage.navigate(avustushakuID, 'sv')
       const hakemusUrl = await hakijaAvustusHakuPage.startApplication(
@@ -38,7 +48,9 @@ JotpaTest('Jotpa-hakemuksen täyttäminen', async ({ page, avustushakuID }) => {
       )
 
       await JotpaTest.step('Etusivulla', async () => {
-        expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-sv.png')
+        await JotpaTest.step('Näyttää jotpan ruotsinkielisen logon', async () => {
+          expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-sv.png')
+        })
       })
 
       await JotpaTest.step('Hakemussivulla', async () => {
