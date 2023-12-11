@@ -111,7 +111,12 @@ export default class VaLogin extends React.Component<VaLoginProps, VaLoginState>
 
     return (
       <div>
-        <VaLoginTopbar environment={environment} translations={translations} lang={lang} />
+        <VaLoginTopbar
+          environment={environment}
+          translations={translations}
+          lang={lang}
+          avustushaku={avustushaku}
+        />
         <section id="container" className="soresu-fieldset">
           <H1InfoElement htmlId="name" lang={lang} values={content} />
           <DateRangeInfoElement

@@ -14,10 +14,17 @@ JotpaTest('Jotpa-hakemuksen täyttäminen', async ({ page, avustushakuID }) => {
         avustushakuID,
         'buffy.summers@askjeeves.com'
       )
-      await page.goto(hakemusUrl)
-      await hakijaAvustusHakuPage.fillInBusinessId(TEST_Y_TUNNUS)
 
-      expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-fi.png')
+      await JotpaTest.step('Etusivulla', async () => {
+        expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-fi.png')
+      })
+
+      await JotpaTest.step('Hakemussivulla', async () => {
+        await page.goto(hakemusUrl)
+        await hakijaAvustusHakuPage.fillInBusinessId(TEST_Y_TUNNUS)
+
+        expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-fi.png')
+      })
     }
   )
 
@@ -29,10 +36,17 @@ JotpaTest('Jotpa-hakemuksen täyttäminen', async ({ page, avustushakuID }) => {
         avustushakuID,
         'faith.lehane@altavista.com'
       )
-      await page.goto(hakemusUrl)
-      await hakijaAvustusHakuPage.fillInBusinessId(TEST_Y_TUNNUS)
 
-      expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-sv.png')
+      await JotpaTest.step('Etusivulla', async () => {
+        expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-sv.png')
+      })
+
+      await JotpaTest.step('Hakemussivulla', async () => {
+        await page.goto(hakemusUrl)
+        await hakijaAvustusHakuPage.fillInBusinessId(TEST_Y_TUNNUS)
+
+        expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-sv.png')
+      })
     }
   )
 })
