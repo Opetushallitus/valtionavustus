@@ -31,7 +31,9 @@ JotpaTest('Jotpa-hakemuksen täyttäminen', async ({ page, avustushakuID }) => {
       await page.goto(hakemusUrl)
       await hakijaAvustusHakuPage.fillInBusinessId(TEST_Y_TUNNUS)
 
-      expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-fi.png')
+      await JotpaTest.step('Näyttää jotpan suomenkielisen logon', async () => {
+        expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-fi.png')
+      })
     })
   })
 
@@ -52,7 +54,9 @@ JotpaTest('Jotpa-hakemuksen täyttäminen', async ({ page, avustushakuID }) => {
       await page.goto(hakemusUrl)
       await hakijaAvustusHakuPage.fillInBusinessId(TEST_Y_TUNNUS)
 
-      expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-sv.png')
+      await JotpaTest.step('Näyttää jotpan ruotsinkielisen logon', async () => {
+        expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-sv.png')
+      })
     })
   })
 })
