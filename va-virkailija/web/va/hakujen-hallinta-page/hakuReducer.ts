@@ -108,12 +108,14 @@ export type SaveStatus = {
   saveInProgress: boolean
   saveTime: string | null
   serverError: string
-  loadingAvustushaku: boolean
 } & Partial<ExtraSavingStates>
 
 interface State {
   initialData: { loading: false; data: InitialData } | { loading: true }
   saveStatus: SaveStatus
+  loadStatus: {
+    loadingAvustushaku: boolean
+  }
   formDrafts: Record<number, Form>
   formDraftsJson: Record<number, string>
   loppuselvitysFormDrafts: Record<number, Form>
@@ -654,11 +656,13 @@ const initialState: State = {
   initialData: {
     loading: true,
   },
+  loadStatus: {
+    loadingAvustushaku: false,
+  },
   saveStatus: {
     saveInProgress: false,
     saveTime: null,
     serverError: '',
-    loadingAvustushaku: false,
   },
   formDrafts: {},
   formDraftsJson: {},
@@ -807,10 +811,10 @@ const hakuSlice = createSlice({
         }
       })
       .addCase(selectHaku.pending, (state) => {
-        state.saveStatus.loadingAvustushaku = true
+        state.loadStatus.loadingAvustushaku = true
       })
       .addCase(selectHaku.rejected, (state) => {
-        state.saveStatus.loadingAvustushaku = true
+        state.loadStatus.loadingAvustushaku = true
       })
       .addCase(selectHaku.fulfilled, (state, action) => {
         const { avustushaku, valiselvitysForm, loppuselvitysForm, ...rest } = action.payload
@@ -833,7 +837,7 @@ const hakuSlice = createSlice({
           valiselvitysForm,
           loppuselvitysForm,
         }
-        state.saveStatus.loadingAvustushaku = false
+        state.loadStatus.loadingAvustushaku = false
       })
       .addCase(saveHaku.fulfilled, (state, action) => {
         const response = action.payload

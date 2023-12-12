@@ -204,7 +204,7 @@ const PakoteLiite = () => {
     selectLoadedInitialData(state)
   )
   const loadingAvustushaku = useHakujenHallintaSelector(
-    (state) => state.haku.saveStatus.loadingAvustushaku
+    (state) => state.haku.loadStatus.loadingAvustushaku
   )
   const avustushaku = useCurrentAvustushaku()
   const key = 'dont-include-pakote-ohje'
@@ -1145,7 +1145,7 @@ const DecisionEditorPage = () => {
     useHakujenHallintaSelector(selectLoadedInitialData)
   const koulutusasteet = getUniqueKoulutusasteet(avustushaku.talousarviotilit)
   const loadingAvustushaku = useHakujenHallintaSelector(
-    (state) => state.haku.saveStatus.loadingAvustushaku
+    (state) => state.haku.loadStatus.loadingAvustushaku
   )
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(updateField({ avustushaku, field: e.target, newValue: e.target.value }))

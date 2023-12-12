@@ -6,7 +6,7 @@ import { AVUSTUSHAKU_STATUSES, AvustushakuStatus, HelpTexts } from 'soresu-form/
 
 import { HakuRoles } from './HakuRoles'
 import AutoCompleteCodeValue, { CodeType } from '../../common-components/AutoCompleteCodeValue'
-import HelpTooltip from '../../common-components/HelpTooltip'
+import { CustomHelpTooltip } from '../../common-components/HelpTooltip'
 import WarningBanner from '../../WarningBanner'
 import { VaCodeValue } from '../../types'
 import { DateInput } from './DateInput'
@@ -45,7 +45,7 @@ const HakuEditor = () => {
   const { codeOptions, lainsaadantoOptions, helpTexts, userInfo } =
     useHakujenHallintaSelector(selectLoadedInitialData)
   const loadingAvustushaku = useHakujenHallintaSelector(
-    (state) => state.haku.saveStatus.loadingAvustushaku
+    (state) => state.haku.loadStatus.loadingAvustushaku
   )
   const hasPayments = !!avustushaku.payments?.length
   const dispatch = useHakujenHallintaDispatch()
@@ -141,7 +141,7 @@ const HakuEditor = () => {
           <tr>
             <th>
               Haun nimi
-              <HelpTooltip
+              <CustomHelpTooltip
                 content={helpTexts['hakujen_hallinta__haun_tiedot___haun_nimi']}
                 direction="left"
               />
@@ -181,7 +181,7 @@ const HakuEditor = () => {
         >
           <h3 className="koodien-valinta-otsikko required">
             Toimintayksikkö
-            <HelpTooltip
+            <CustomHelpTooltip
               content={helpTexts['hakujen_hallinta__haun_tiedot___toimintayksikkö']}
               direction="left"
             />
@@ -197,7 +197,7 @@ const HakuEditor = () => {
         <div className="koodien-valinta-elementti" data-test-id="code-value-dropdown__project">
           <h3 className="koodien-valinta-otsikko required">
             Projekti
-            <HelpTooltip
+            <CustomHelpTooltip
               content={helpTexts['hakujen_hallinta__haun_tiedot___projekti']}
               direction="left"
             />
@@ -211,7 +211,7 @@ const HakuEditor = () => {
         <div className="koodien-valinta-elementti" data-test-id="code-value-dropdown__operation">
           <h3 className="koodien-valinta-otsikko required">
             Toiminto
-            <HelpTooltip
+            <CustomHelpTooltip
               content={helpTexts['hakujen_hallinta__haun_tiedot___toiminto']}
               direction="left"
             />
@@ -238,7 +238,7 @@ const HakuEditor = () => {
             <div className="haku-duration-edit-container">
               <h3>
                 {avustushaku.content.duration.label.fi}
-                <HelpTooltip
+                <CustomHelpTooltip
                   content={helpTexts['hakujen_hallinta__haun_tiedot___hakuaika']}
                   direction="left"
                 />
@@ -313,7 +313,7 @@ const HakuEditor = () => {
         <div className="multibatch-fields">
           <h3>
             Maksatus
-            <HelpTooltip
+            <CustomHelpTooltip
               content={helpTexts['hakujen_hallinta__haun_tiedot___maksatus']}
               direction="left"
             />
@@ -329,7 +329,7 @@ const HakuEditor = () => {
             <div className="haku-edit-field-container">
               <h3>
                 Hakijan omarahoitusvaatimus
-                <HelpTooltip
+                <CustomHelpTooltip
                   content={helpTexts['hakujen_hallinta__haun_tiedot___hakijan_omarahoitusvaatimus']}
                 />
               </h3>
@@ -419,7 +419,7 @@ const HakuEditor = () => {
               <label>
                 <h3>
                   Maksuliikemenotili
-                  <HelpTooltip
+                  <CustomHelpTooltip
                     content={helpTexts['hakujen_hallinta__haun_tiedot___maksuliikennemenotili']}
                     direction="left"
                   />
@@ -443,7 +443,9 @@ const HakuEditor = () => {
               <label>
                 <h3>
                   Tositelaji
-                  <HelpTooltip content={helpTexts['hakujen_hallinta__haun_tiedot___tositelaji']} />
+                  <CustomHelpTooltip
+                    content={helpTexts['hakujen_hallinta__haun_tiedot___tositelaji']}
+                  />
                 </h3>
                 <select
                   id="document-type"
@@ -463,7 +465,7 @@ const HakuEditor = () => {
           <div>
             <h3 className="required">
               Määräraha
-              <HelpTooltip
+              <CustomHelpTooltip
                 content={helpTexts['hakujen_hallinta__haun_tiedot___määräraha']}
                 direction="left"
               />
@@ -482,7 +484,7 @@ const HakuEditor = () => {
           <div>
             <h3>
               Arvioitu maksupäivä
-              <HelpTooltip
+              <CustomHelpTooltip
                 content={helpTexts['hakujen_hallinta__haun_tiedot___arvioitu_maksupäivä']}
                 direction="left"
               />
@@ -560,7 +562,7 @@ const CreateHaku = ({ avustushaku, helpTexts }: CreateHakuProps) => {
       <a id="create-haku" onClick={onClick}>
         Kopioi uuden pohjaksi
       </a>
-      <HelpTooltip
+      <CustomHelpTooltip
         content={helpTexts['hakujen_hallinta__haun_tiedot___kopioi_uuden_pohjaksi']}
         direction="right"
       />
@@ -670,7 +672,7 @@ const SelectionCriteria = ({
         <tr>
           <th>
             {selectionCriteria.label.fi}
-            <HelpTooltip
+            <CustomHelpTooltip
               content={helpTexts['hakujen_hallinta__haun_tiedot___valintaperusteet']}
               direction="left"
             />
@@ -755,7 +757,7 @@ const FocusArea = ({
         <tr>
           <th>
             {focusAreas.label.fi}
-            <HelpTooltip
+            <CustomHelpTooltip
               content={helpTexts['hakujen_hallinta__haun_tiedot___painopistealueet']}
               direction="left"
             />
@@ -824,7 +826,7 @@ const HakuType = ({ hakuType, disabled, onChange, helpTexts }: HakuTypeProps) =>
     <div id="set-haku-type">
       <h3>
         Avustuslaji
-        <HelpTooltip
+        <CustomHelpTooltip
           content={helpTexts['hakujen_hallinta__haun_tiedot___hakutyyppi']}
           direction="left"
         />
@@ -870,7 +872,7 @@ const AcademySize = ({ value, disabled, onChange, helpTexts }: AcademySizeProps)
     <div id="set-academysize">
       <h3>
         Oppilaitoksen koko
-        <HelpTooltip
+        <CustomHelpTooltip
           content={helpTexts['hakujen_hallinta__haun_tiedot___oppilaitoksen_koko']}
           direction="left"
         />
@@ -971,7 +973,10 @@ const SetStatus = ({
     <div>
       <h3>
         Tila
-        <HelpTooltip content={helpTexts['hakujen_hallinta__haun_tiedot___tila']} direction="left" />
+        <CustomHelpTooltip
+          content={helpTexts['hakujen_hallinta__haun_tiedot___tila']}
+          direction="left"
+        />
       </h3>
       <fieldset className="soresu-radiobutton-group">{statuses}</fieldset>
     </div>
@@ -1018,7 +1023,7 @@ const RegisterNumber = ({
     <div className="haku-edit-registernumber">
       <h3 className="required">
         Asianumero
-        <HelpTooltip
+        <CustomHelpTooltip
           content={helpTexts['hakujen_hallinta__haun_tiedot___asianumero']}
           direction="left"
         />
