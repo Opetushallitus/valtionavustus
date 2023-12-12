@@ -112,7 +112,7 @@ export default class VaLogin extends React.Component<VaLoginProps, VaLoginState>
       isJotpaAvustushaku(avustushaku) && isJotpaHakemusCustomizationEnabled({ environment })
 
     return (
-      <div>
+      <div className={useJotpaColour ? 'use-jotpa-font' : ''}>
         <VaLoginTopbar
           environment={environment}
           translations={translations}
