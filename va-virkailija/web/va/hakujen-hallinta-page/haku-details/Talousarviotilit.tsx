@@ -4,7 +4,7 @@ import { useHakujenHallintaDispatch, useHakujenHallintaSelector } from '../hakuj
 import { replaceTalousarviotilit, TalousarviotiliWithKoulutusasteet } from '../hakuReducer'
 import { useGetTalousarvioTilitQuery } from '../../apiSlice'
 import { TalousarviotiliWithUsageInfo } from '../../koodienhallinta-page/types'
-import HelpTooltip from '../../common-components/HelpTooltip'
+import { CustomHelpTooltip } from '../../common-components/HelpTooltip'
 
 import styles from './Talousarviotilit.module.less'
 import { HelpTexts, Koulutusasteet } from 'soresu-form/web/va/types'
@@ -73,7 +73,7 @@ const TalousarvioSelect = ({
         <div>
           <div>
             TA-tili
-            <HelpTooltip
+            <CustomHelpTooltip
               direction="left"
               content={helpTexts['hakujen_hallinta__haun_tiedot___ta_tili']}
             />
@@ -143,7 +143,8 @@ const KoulutusasteSelect = ({
       <div>
         <div>
           Koulutusaste
-          <HelpTooltip content={helpTexts['hakujen_hallinta__haun_tiedot___koulutusaste']} /> *
+          <CustomHelpTooltip content={helpTexts['hakujen_hallinta__haun_tiedot___koulutusaste']} />
+          {' *'}
         </div>
         <Select
           isDisabled={isDisabled}
@@ -165,10 +166,10 @@ const KoulutusasteSelect = ({
             {index === 0 && (
               <div>
                 Koulutusaste
-                <HelpTooltip
+                <CustomHelpTooltip
                   content={helpTexts['hakujen_hallinta__haun_tiedot___koulutusaste']}
-                />{' '}
-                *
+                />
+                {' *'}
               </div>
             )}
             <div className={styles.koulutusasteSelect}>

@@ -3,7 +3,7 @@ import React, { ChangeEvent, useEffect, useState } from 'react'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { HelpTexts } from 'soresu-form/web/va/types'
 
-import HelpTooltip from '../../common-components/HelpTooltip'
+import { CustomHelpTooltip } from '../../common-components/HelpTooltip'
 import { useHakujenHallintaDispatch } from '../hakujenHallintaStore'
 import {
   completeManualSave,
@@ -48,7 +48,7 @@ export const Lainsaadanto = ({
     <div className="lainsaadanto">
       <h3>
         Lainsäädäntö
-        <HelpTooltip
+        <CustomHelpTooltip
           content={helpTexts['hakujen_hallinta__haun_tiedot___lainsaadanto']}
           direction="left"
         />
