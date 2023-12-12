@@ -13,7 +13,7 @@ import {
 import useOutsideClick from '../../useOutsideClick'
 import { tryToUseCurrentAvustushaku } from '../useAvustushaku'
 import { Pill } from '../../common-components/Pill'
-import { Avustushaku, selectLoadedInitialData } from '../hakuReducer'
+import { VirkailijaAvustushaku, selectLoadedInitialData } from '../hakuReducer'
 import styles from './HakuListing.module.less'
 import buttonStyles from '../../style/Button.module.less'
 import { useHakujenHallintaSelector } from '../hakujenHallintaStore'
@@ -45,7 +45,7 @@ type SortOrder = 'asc' | 'desc'
 type SortKey = (typeof SORTING_KEYS)[number]
 
 type SorterMap = {
-  [k in SortKey]: (h: Avustushaku) => number | string
+  [k in SortKey]: (h: VirkailijaAvustushaku) => number | string
 }
 
 interface SortContext {
@@ -80,7 +80,7 @@ const sortValueMap: SorterMap = {
 
 const avustushakuSorter =
   (sortKey: SortKey | undefined, sortOrder: SortOrder) =>
-  (a: Avustushaku, b: Avustushaku): number => {
+  (a: VirkailijaAvustushaku, b: VirkailijaAvustushaku): number => {
     const sortOrderCoef = sortOrder === 'asc' ? -1 : 1
     const sortResult = sortKey && sortValueMap[sortKey](a) > sortValueMap[sortKey](b) ? 1 : -1
     return sortOrderCoef * sortResult
@@ -533,7 +533,7 @@ const AvustushakuItem = ({
   avustushaku,
   selectedHakuId,
 }: {
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   selectedHakuId?: number
 }) => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -660,7 +660,7 @@ const maybeDateWithoutTime = (date: Date | null) => (date ? getDateWithoutTime(d
 
 const tableFilterMap: Record<
   keyof TableFilterState,
-  (state: TableFilterState, avustushaku: Avustushaku) => boolean
+  (state: TableFilterState, avustushaku: VirkailijaAvustushaku) => boolean
 > = {
   hakuName: ({ hakuName }, haku) =>
     haku.content.name.fi.toLowerCase().includes(hakuName.toLowerCase()),
@@ -684,10 +684,10 @@ const tableFilterMap: Record<
 
 const tableFilterKeys = Object.keys(tableFilterMap) as (keyof TableFilterState)[]
 
-const filterWithState = (state: TableFilterState) => (avustushaku: Avustushaku) =>
+const filterWithState = (state: TableFilterState) => (avustushaku: VirkailijaAvustushaku) =>
   tableFilterKeys.every((filterKey) => tableFilterMap[filterKey](state, avustushaku))
 
-const getBudget = (avustushaku: Avustushaku): string => {
+const getBudget = (avustushaku: VirkailijaAvustushaku): string => {
   if (avustushaku['use-overridden-detailed-costs'] === true) {
     return 'Menoluokittelu'
   }

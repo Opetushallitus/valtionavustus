@@ -4,10 +4,10 @@ import ProjectSelector from '../../common-components/ProjectSelector'
 
 import './projektien-valinta.less'
 import { useHakujenHallintaDispatch, useHakujenHallintaSelector } from '../hakujenHallintaStore'
-import { Avustushaku, updateProjects } from '../hakuReducer'
+import { VirkailijaAvustushaku, updateProjects } from '../hakuReducer'
 
 interface ProjectSelectorsProps {
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   codeOptions: VaCodeValue[]
   disabled: boolean
 }

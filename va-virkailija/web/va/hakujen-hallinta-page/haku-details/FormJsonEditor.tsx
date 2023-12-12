@@ -2,14 +2,14 @@ import React from 'react'
 import _ from 'lodash'
 import { Form } from 'soresu-form/web/va/types'
 import { useHakujenHallintaDispatch } from '../hakujenHallintaStore'
-import { Avustushaku, formJsonUpdated, formUpdated, saveForm } from '../hakuReducer'
+import { VirkailijaAvustushaku, formJsonUpdated, formUpdated, saveForm } from '../hakuReducer'
 
 function scrollToTop() {
   window.scrollTo(0, 0)
 }
 
 interface FormEditorProps {
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   formDraftJson: string
 }
 

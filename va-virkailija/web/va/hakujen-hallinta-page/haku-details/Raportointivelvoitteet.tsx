@@ -8,7 +8,7 @@ import { HelpTexts, Raportointivelvoite } from 'soresu-form/web/va/types'
 import HelpTooltip from '../../common-components/HelpTooltip'
 import { DateInput } from './DateInput'
 import { useHakujenHallintaDispatch } from '../hakujenHallintaStore'
-import { Avustushaku, completeManualSave, startManuallySaving } from '../hakuReducer'
+import { VirkailijaAvustushaku, completeManualSave, startManuallySaving } from '../hakuReducer'
 import {
   useDeleteRaportointivelvoiteMutation,
   useGetRaportointiveloitteetQuery,
@@ -18,7 +18,7 @@ import {
 import { useCurrentAvustushaku } from '../useAvustushaku'
 
 type RaportointivelvoitteetProps = {
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   helpTexts: HelpTexts
 }
 

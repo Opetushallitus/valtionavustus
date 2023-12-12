@@ -19,7 +19,7 @@ import { useHakujenHallintaDispatch, useHakujenHallintaSelector } from '../hakuj
 import {
   addFocusArea,
   addSelectionCriteria,
-  Avustushaku,
+  VirkailijaAvustushaku,
   createHaku,
   deleteFocusArea,
   removeSelectionCriteria,
@@ -95,7 +95,7 @@ const HakuEditor = () => {
   }
 
   const updateCodeValue =
-    (id: CodeType, avustushaku: Avustushaku) => (option: VaCodeValue | null) => {
+    (id: CodeType, avustushaku: VirkailijaAvustushaku) => (option: VaCodeValue | null) => {
       if (option == null) {
         dispatch(updateField({ avustushaku, field: { id }, newValue: null }))
       } else {
@@ -540,7 +540,7 @@ const avustushakuStatusDescription = {
 } satisfies Record<AvustushakuStatus, string>
 
 type CreateHakuProps = {
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   helpTexts: HelpTexts
 }
 
@@ -605,7 +605,7 @@ const DateField = ({ id, disabled, avustushakuId, value, onBlur }: DateFieldProp
 type TextAreaProps = {
   allowAllHakuEdits: boolean
   allowNondisruptiveHakuEdits: boolean
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   helpTexts: HelpTexts
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
 }
@@ -980,12 +980,12 @@ const SetStatus = ({
 
 type RegisterNumberProps = {
   allowAllHakuEdits: boolean
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   helpTexts: HelpTexts
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const isValidRegisterNumber = (registerNumber: string) => {
+const isValidRegisterNumber = (registerNumber: string | null) => {
   return registerNumber == null ? false : /^\d{1,5}\/\d{2,6}$/.test(registerNumber)
 }
 
@@ -1038,7 +1038,7 @@ const RegisterNumber = ({
   )
 }
 
-function checkIfAvustushakuIsValid(avustushaku: Avustushaku) {
+function checkIfAvustushakuIsValid(avustushaku: VirkailijaAvustushaku) {
   return (
     isValidRegisterNumber(avustushaku['register-number']) &&
     avustushaku['hankkeen-alkamispaiva'] != null &&

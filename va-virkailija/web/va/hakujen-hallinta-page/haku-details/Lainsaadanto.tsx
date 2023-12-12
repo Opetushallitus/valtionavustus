@@ -8,12 +8,12 @@ import { useHakujenHallintaDispatch } from '../hakujenHallintaStore'
 import {
   completeManualSave,
   LainsaadantoOption,
-  Avustushaku,
+  VirkailijaAvustushaku,
   startManuallySaving,
 } from '../hakuReducer'
 
 type LainsaadantoProps = {
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   lainsaadantoOptions: LainsaadantoOption[]
   helpTexts: HelpTexts
 }

@@ -10,20 +10,20 @@ import VaPreviewComponentFactory from 'soresu-form/web/va/VaPreviewComponentFact
 
 import FakeFormController from '../../form/FakeFormController'
 import FakeFormState from '../../form/FakeFormState'
-import { Avustushaku, Field, Form, Koodistos } from 'soresu-form/web/va/types'
+import { Field, Form, Koodistos } from 'soresu-form/web/va/types'
 import _ from 'lodash'
 import { useHakujenHallintaDispatch } from '../hakujenHallintaStore'
-import { ensureKoodistoLoaded } from '../hakuReducer'
+import { VirkailijaAvustushaku, ensureKoodistoLoaded } from '../hakuReducer'
 
 interface FormEditorProps {
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   koodistos: Koodistos
   formDraft: Form
-  onFormChange: (avustushaku: Avustushaku, newDraft: Form) => void
+  onFormChange: (avustushaku: VirkailijaAvustushaku, newDraft: Form) => void
 }
 
 const cloneDeeplyBecauseYouCannotMutateStateDirectlyWithRedux = (
-  avustushaku: Avustushaku,
+  avustushaku: VirkailijaAvustushaku,
   formDraft: Form
 ) => ({
   avustushaku: _.cloneDeep(avustushaku),
@@ -41,7 +41,7 @@ const FormEditor = ({
     originalFormDraft
   )
   const dispatch = useHakujenHallintaDispatch()
-  const allowEditing = avustushaku.privileges && avustushaku.privileges['edit-haku']
+  const allowEditing = !!avustushaku.privileges && avustushaku.privileges['edit-haku']
   const ensureLoaded = useCallback(() => {
     dispatch(ensureKoodistoLoaded())
   }, [])

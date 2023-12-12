@@ -20,14 +20,14 @@ import {
   LiiteAttachmentVersion,
 } from 'soresu-form/web/va/types'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
-import { Avustushaku, selectLoadedInitialData, updateField } from '../hakuReducer'
+import { VirkailijaAvustushaku, selectLoadedInitialData, updateField } from '../hakuReducer'
 import { useHakujenHallintaDispatch, useHakujenHallintaSelector } from '../hakujenHallintaStore'
 import { tryToUseCurrentAvustushaku, useCurrentAvustushaku } from '../useAvustushaku'
 import ChooseAvustushaku from './ChooseAvustushaku'
 
 interface DecisionProps {
   title: string
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   id: string
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
   helpText?: string
@@ -94,7 +94,7 @@ const DecisionFields: React.FC<Omit<DecisionProps, 'language'>> = ({
 )
 
 interface DateFieldProps {
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   field: 'maksudate' | 'date'
   label: string
   helpTexts: HelpTexts
@@ -458,7 +458,7 @@ const makeSelectedVersions = (decisionLiitteet: Liite[], selectedLiitteet: Decis
 }
 
 interface LiitteetSelectionProps {
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   decisionLiitteet: Liite[]
   helpTexts: HelpTexts
   disabled: boolean
@@ -553,7 +553,7 @@ const LiitteetSelection = ({
 }
 
 interface RegenerateDecisionsProps {
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   helpTexts: HelpTexts
 }
 
@@ -621,7 +621,7 @@ class RegenerateDecisions extends React.Component<
 }
 
 interface ResendDecisionProps {
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   helpTexts: HelpTexts
   reload: () => void
   sent?: number
@@ -719,7 +719,7 @@ class ResendDecisions extends React.Component<ResendDecisionProps, ResendDecisio
 }
 
 interface DecisionDateAndSendProps {
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   environment: EnvironmentApiResponse
   helpTexts: HelpTexts
   disabled: boolean
@@ -1133,7 +1133,7 @@ class DecisionDateAndSend extends React.Component<DecisionDateAndSendProps, Deci
   }
 }
 
-const getUniqueKoulutusasteet = (talousarviotilit: Avustushaku['talousarviotilit']) => {
+const getUniqueKoulutusasteet = (talousarviotilit: VirkailijaAvustushaku['talousarviotilit']) => {
   const allKoulutusasteet = talousarviotilit?.flatMap((t) => t?.koulutusasteet ?? []) ?? []
   return [...new Set(allKoulutusasteet)]
 }

@@ -405,8 +405,6 @@ export type Avustushaku = {
   form: number
   form_loppuselvitys: number
   form_valiselvitys: number
-  loppuselvitysForm?: Form
-  valiselvitysForm?: Form
   'haku-type': AvustushakuType
   'hankkeen-alkamispaiva'?: string
   'hankkeen-paattymispaiva'?: string
@@ -417,9 +415,8 @@ export type Avustushaku = {
   'operation-id'?: unknown
   'operational-unit-id'?: unknown
   phase: AvustushakuPhase
-  'register-number': string
+  'register-number': string | null
   status: AvustushakuStatus
-  privileges?: any
   allow_visibility_in_external_system: boolean
   arvioitu_maksupaiva?: string
 }

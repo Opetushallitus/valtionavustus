@@ -14,7 +14,7 @@ import { MaksatuksetTable } from './MaksatuksetTable'
 import { useHakujenHallintaDispatch, useHakujenHallintaSelector } from '../hakujenHallintaStore'
 import {
   completeManualSave,
-  Avustushaku,
+  VirkailijaAvustushaku,
   startManuallySaving,
   selectLoadedInitialData,
 } from '../hakuReducer'
@@ -128,7 +128,7 @@ const AvustushakuInfo = ({
   avustushaku,
   codeValues,
 }: {
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   codeValues: VaCodeValue[]
 }) => {
   return (
@@ -211,7 +211,7 @@ const MaksatuseräTable = ({ batches, payments, testId }: MaksatuseräTable) => 
 }
 
 type AdminToolsProps = {
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   environment: EnvironmentApiResponse
   refreshPayments: () => Promise<void>
 }

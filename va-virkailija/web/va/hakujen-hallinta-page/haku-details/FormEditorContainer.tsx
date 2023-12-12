@@ -6,7 +6,7 @@ import { ValidationContainer, ScrollAwareValidationContainer } from './Validatio
 import { Field, Form } from 'soresu-form/web/va/types'
 import { useHakujenHallintaDispatch, useHakujenHallintaSelector } from '../hakujenHallintaStore'
 import {
-  Avustushaku,
+  VirkailijaAvustushaku,
   formJsonUpdated,
   formUpdated,
   selectHakuState,
@@ -75,7 +75,7 @@ const FormEditorPage = () => {
     updatedAt
   )}`
   const varayhteyshenkiloResult = hasVarayhteyshenkiloFields(formDraft?.content)
-  const onFormChange = ({ id: avustushakuId }: Avustushaku, newDraft: Form) => {
+  const onFormChange = ({ id: avustushakuId }: VirkailijaAvustushaku, newDraft: Form) => {
     dispatch(formUpdated({ avustushakuId, newForm: newDraft }))
     dispatch(
       formJsonUpdated({

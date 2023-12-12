@@ -10,10 +10,15 @@ import HelpTooltip from '../../common-components/HelpTooltip'
 import { Role, RoleType, UserInfo, VaUserSearch } from '../../types'
 import { minimumSearchInputLength, useVaUserSearch } from '../../VaUserSearch'
 import { useHakujenHallintaDispatch } from '../hakujenHallintaStore'
-import { createHakuRole, deleteRole, Avustushaku, debouncedSaveRole } from '../hakuReducer'
+import {
+  createHakuRole,
+  deleteRole,
+  VirkailijaAvustushaku,
+  debouncedSaveRole,
+} from '../hakuReducer'
 
 type HakuRolesProps = {
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   userHasEditPrivilege: boolean
   userHasEditMyHakuRolePrivilege: boolean
   userInfo: UserInfo
@@ -120,7 +125,7 @@ export const HakuRoles = ({
 
 type PersonSelectListProps = {
   vaUserSearch: VaUserSearch
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   input: string
   roleType?: RoleType
 }
@@ -198,7 +203,7 @@ const PersonSelectList = ({
 }
 
 type RoleRowProps = {
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   role: Role
   userInfo: UserInfo
   userHasEditPrivilege: boolean

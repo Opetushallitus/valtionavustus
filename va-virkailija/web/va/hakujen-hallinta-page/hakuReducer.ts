@@ -32,14 +32,14 @@ export interface TalousarviotiliWithKoulutusasteet extends TalousarviotiliWithUs
 const ValiselvitysForm = require('../data/ValiselvitysForm.json') as Form
 const LoppuselvitysForm = require('../data/LoppuselvitysForm.json') as Form
 
-export interface Avustushaku extends BaseAvustushaku {
+export interface VirkailijaAvustushaku extends BaseAvustushaku {
   roles?: Role[]
   payments?: Payment[]
   privileges?: Privileges
   formContent?: Form
+  loppuselvitysForm?: Form
+  valiselvitysForm?: Form
   muutoshakukelpoisuus?: ValidationResult
-  allow_visibility_in_external_system: boolean
-  arvioitu_maksupaiva?: string
   vastuuvalmistelija?: string
   'paatokset-lahetetty'?: string
   'maksatukset-lahetetty'?: string
@@ -57,7 +57,7 @@ export interface LainsaadantoOption {
 }
 
 interface InitialData {
-  hakuList: Avustushaku[]
+  hakuList: VirkailijaAvustushaku[]
   userInfo: UserInfo
   environment: EnvironmentApiResponse
   codeOptions: VaCodeValue[]
@@ -81,12 +81,9 @@ interface OnSelectHakuData {
 
 type ExtraSavingStateKeys = 'saveInProgress' | keyof ExtraSavingStates
 
-const startSaving = ({ saveStatus }: State, key: ExtraSavingStateKeys): SaveStatus => {
-  return {
-    ...saveStatus,
-    [key]: true,
-    saveTime: null,
-  }
+const startSaving = (key: ExtraSavingStateKeys) => (state: State) => {
+  state.saveStatus[key] = true
+  state.saveStatus.saveTime = null
 }
 
 const saveSuccess = ({ saveStatus }: State, key: ExtraSavingStateKeys): SaveStatus => {
@@ -128,8 +125,8 @@ interface State {
 }
 
 function appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing(
-  avustushaku: Avustushaku
-): Avustushaku {
+  avustushaku: VirkailijaAvustushaku
+): VirkailijaAvustushaku {
   const today = new Date().toISOString().split('T')[0]
   return {
     ...avustushaku,
@@ -221,7 +218,7 @@ export const fetchInitialState = createAsyncThunk<
     decisionLiitteet,
     helpTexts,
   ] = await Promise.all([
-    HttpUtil.get<Avustushaku[]>('/api/avustushaku/listing'),
+    HttpUtil.get<VirkailijaAvustushaku[]>('/api/avustushaku/listing'),
     HttpUtil.get<UserInfo>('/api/userinfo'),
     HttpUtil.get<EnvironmentApiResponse>('/environment'),
     HttpUtil.get<VaCodeValue[]>('/api/v2/va-code-values/'),
@@ -331,7 +328,7 @@ export const selectHaku = createAsyncThunk<
   }
 })
 
-function avustusHakuPayload(haku: Avustushaku) {
+function avustusHakuPayload(haku: VirkailijaAvustushaku) {
   const payload = _.omit(haku, [
     'roles',
     'formContent',
@@ -358,24 +355,25 @@ function avustusHakuPayload(haku: Avustushaku) {
   }
 }
 
-const saveHaku = createAsyncThunk<Avustushaku, Avustushaku, { rejectValue: string }>(
-  'haku/saveHaku',
-  async (selectedHaku, { rejectWithValue }) => {
-    try {
-      const data = await HttpUtil.post(
-        `/api/avustushaku/${selectedHaku.id}`,
-        avustusHakuPayload(selectedHaku)
-      )
-      return data as BaseAvustushaku
-    } catch (error: any) {
-      if (error.response && error.response.status === 400) {
-        return rejectWithValue('validation-error')
-      } else {
-        return rejectWithValue('unexpected-save-error')
-      }
+const saveHaku = createAsyncThunk<
+  VirkailijaAvustushaku,
+  VirkailijaAvustushaku,
+  { rejectValue: string }
+>('haku/saveHaku', async (selectedHaku, { rejectWithValue }) => {
+  try {
+    const data = await HttpUtil.post(
+      `/api/avustushaku/${selectedHaku.id}`,
+      avustusHakuPayload(selectedHaku)
+    )
+    return data as BaseAvustushaku
+  } catch (error: any) {
+    if (error.response && error.response.status === 400) {
+      return rejectWithValue('validation-error')
+    } else {
+      return rejectWithValue('unexpected-save-error')
     }
   }
-)
+})
 
 export const createHaku = createAsyncThunk<number, number, { state: HakujenHallintaRootState }>(
   'haku/createHaku',
@@ -495,7 +493,7 @@ const selvitysFormDraftJsonMap = {
 export const recreateSelvitysForm = createAsyncThunk<
   void,
   {
-    avustushaku: Avustushaku
+    avustushaku: VirkailijaAvustushaku
     selvitysType: Selvitys
   }
 >('haku/recreateSelvitysForm', async ({ avustushaku, selvitysType }, thunkAPI) => {
@@ -568,7 +566,7 @@ export const saveForm = createAsyncThunk<
 export const updateField = createAsyncThunk<
   void,
   {
-    avustushaku: Avustushaku
+    avustushaku: VirkailijaAvustushaku
     field: { id: string; name?: string; dataset?: any }
     newValue: any // TODO: should really be string | number | null
   },
@@ -679,9 +677,7 @@ const hakuSlice = createSlice({
   name: 'haku',
   initialState,
   reducers: {
-    startManuallySaving: (state) => {
-      state.saveStatus = startSaving(state, 'savingManuallyRefactorToOwnActionsAtSomepoint')
-    },
+    startManuallySaving: startSaving('savingManuallyRefactorToOwnActionsAtSomepoint'),
     startSendingMaksatuksetAndTasmaytysraportti: (state) => {
       state.saveStatus.sendingMaksatuksetAndTasmaytysraportti = true
     },
@@ -745,7 +741,7 @@ const hakuSlice = createSlice({
       const hakuList = getHakuList(state)
       hakuList.unshift(payload)
     },
-    updateAvustushaku: (state, { payload }: PayloadAction<Avustushaku>) => {
+    updateAvustushaku: (state, { payload }: PayloadAction<VirkailijaAvustushaku>) => {
       const hakuList = getHakuList(state)
       const index = hakuList.findIndex(({ id }) => id === payload.id)
       hakuList[index] = payload
@@ -813,6 +809,9 @@ const hakuSlice = createSlice({
       .addCase(selectHaku.pending, (state) => {
         state.saveStatus.loadingAvustushaku = true
       })
+      .addCase(selectHaku.rejected, (state) => {
+        state.saveStatus.loadingAvustushaku = true
+      })
       .addCase(selectHaku.fulfilled, (state, action) => {
         const { avustushaku, valiselvitysForm, loppuselvitysForm, ...rest } = action.payload
         const avustushakuId = avustushaku.id
@@ -851,12 +850,8 @@ const hakuSlice = createSlice({
         state.saveStatus.serverError = action.payload ?? 'unexpected-save-error'
         state.saveStatus.saveInProgress = false
       })
-      .addCase(startAutoSaveForAvustushaku.pending, (state) => {
-        state.saveStatus = startSaving(state, 'saveInProgress')
-      })
-      .addCase(createHakuRole.pending, (state) => {
-        state.saveStatus = startSaving(state, 'savingRoles')
-      })
+      .addCase(startAutoSaveForAvustushaku.pending, startSaving('saveInProgress'))
+      .addCase(createHakuRole.pending, startSaving('savingRoles'))
       .addCase(createHakuRole.fulfilled, (state, action) => {
         state.saveStatus = saveSuccess(state, 'savingRoles')
         const { avustushakuId, roles, privileges } = action.payload
@@ -868,9 +863,7 @@ const hakuSlice = createSlice({
         state.saveStatus.serverError = 'unexpected-create-error'
         state.saveStatus.saveInProgress = false
       })
-      .addCase(debouncedSaveRole.pending, (state) => {
-        state.saveStatus = startSaving(state, 'savingRoles')
-      })
+      .addCase(debouncedSaveRole.pending, startSaving('savingRoles'))
       .addCase(saveRole.fulfilled, (state, action) => {
         state.saveStatus = saveSuccess(state, 'savingRoles')
         const payload = action.payload
@@ -881,9 +874,7 @@ const hakuSlice = createSlice({
           haku.privileges = payload.privileges
         }
       })
-      .addCase(deleteRole.pending, (state) => {
-        state.saveStatus = startSaving(state, 'savingRoles')
-      })
+      .addCase(deleteRole.pending, startSaving('savingRoles'))
       .addCase(deleteRole.fulfilled, (state, action) => {
         state.saveStatus = saveSuccess(state, 'savingRoles')
         const payload = action.payload
@@ -891,9 +882,7 @@ const hakuSlice = createSlice({
         haku.privileges = payload.privileges
         haku.roles = payload.roles
       })
-      .addCase(saveForm.pending, (state) => {
-        state.saveStatus = startSaving(state, 'savingForm')
-      })
+      .addCase(saveForm.pending, startSaving('savingForm'))
       .addCase(saveForm.fulfilled, (state, action) => {
         const { avustushakuId, form, muutoshakukelpoinen } = action.payload
         const haku = selectAvustushaku(state, avustushakuId)
@@ -907,9 +896,7 @@ const hakuSlice = createSlice({
         state.saveStatus.savingForm = false
         state.saveStatus.serverError = action.payload ?? 'unexpected-save-error'
       })
-      .addCase(saveSelvitysForm.pending, (state) => {
-        state.saveStatus = startSaving(state, 'savingForm')
-      })
+      .addCase(saveSelvitysForm.pending, startSaving('savingForm'))
       .addCase(saveSelvitysForm.fulfilled, (state, action) => {
         const { avustushakuId, form, selvitysType } = action.payload
         const haku = selectAvustushaku(state, avustushakuId)
@@ -933,9 +920,7 @@ const hakuSlice = createSlice({
         state.koodistos.content = null
         state.koodistos.loading = false
       })
-      .addCase(replaceTalousarviotilit.pending, (state) => {
-        state.saveStatus = startSaving(state, 'savingTalousarviotilit')
-      })
+      .addCase(replaceTalousarviotilit.pending, startSaving('savingTalousarviotilit'))
       .addCase(replaceTalousarviotilit.fulfilled, (state) => {
         state.saveStatus = saveSuccess(state, 'savingTalousarviotilit')
       })
@@ -967,7 +952,7 @@ export const {
 
 export default hakuSlice.reducer
 
-const getHakuList = (state: State | HakujenHallintaRootState): Avustushaku[] => {
+const getHakuList = (state: State | HakujenHallintaRootState): VirkailijaAvustushaku[] => {
   if ('haku' in state) {
     if (state.haku.initialData.loading) {
       return []

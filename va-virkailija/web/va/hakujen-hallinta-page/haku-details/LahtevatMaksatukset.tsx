@@ -11,7 +11,7 @@ import { Maksatus } from './Maksatukset'
 import { MaksatuksetTable } from './MaksatuksetTable'
 import { useVaUserSearch } from '../../VaUserSearch'
 import {
-  Avustushaku,
+  VirkailijaAvustushaku,
   startSendingMaksatuksetAndTasmaytysraportti,
   startIndicatingThatSendingMaksatuksetAndTasmaytysraporttiFailed,
   stopSendingMaksatuksetAndTasmaytysraportti,
@@ -20,7 +20,7 @@ import { useHakujenHallintaDispatch, useHakujenHallintaSelector } from '../hakuj
 import { createDefaultErapaiva } from './erapaiva'
 
 type LahtevatMaksatuksetProps = {
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   helpTexts: HelpTexts
   payments: Maksatus[]
   refreshPayments: () => Promise<void>
@@ -235,7 +235,7 @@ export const LahtevatMaksatukset = ({
 }
 
 type DocumentEditorProps = {
-  avustushaku: Avustushaku
+  avustushaku: VirkailijaAvustushaku
   documents: Document[]
   helpTexts: HelpTexts
   phase: number
