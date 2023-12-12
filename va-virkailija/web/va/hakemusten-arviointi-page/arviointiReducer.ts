@@ -505,6 +505,7 @@ const arviointiSlice = createSlice({
         const { hakemukset } = getLoadedAvustushakuData(state).hakuData
         const index = hakemukset.findIndex((h) => h.id === hakemusId)
         state.loadStatus.loadingHakemusId = null
+        state.loadStatus.loadError = false
         if (index != -1) {
           hakemukset[index] = {
             ...payload.hakemus,

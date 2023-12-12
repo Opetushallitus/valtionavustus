@@ -18,10 +18,15 @@ export const HakemusDetails = () => {
   const hakuData = useHakemustenArviointiSelector(
     (state) => state.arviointi.avustushakuData?.hakuData
   )
+  const loadingAvustushaku = useHakemustenArviointiSelector(
+    (state) => state.arviointi.loadStatus.loadingAvustushaku
+  )
 
   useEffect(() => {
-    dispatch(selectHakemus(selectedHakemusId))
-  }, [selectedHakemusId])
+    if (!loadingAvustushaku) {
+      dispatch(selectHakemus(selectedHakemusId))
+    }
+  }, [selectedHakemusId, loadingAvustushaku])
 
   const onToggle = (e: React.MouseEvent) => {
     e.preventDefault()
