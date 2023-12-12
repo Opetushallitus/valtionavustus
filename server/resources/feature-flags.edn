@@ -3,4 +3,7 @@
  ; https://jira.eduuni.fi/browse/VA-402
  :jotpa-hakemuksen-kustomointi [:dev :test :va-test]
 
+ ; https://jira.eduuni.fi/browse/VA-400
+ :jotpa-hakemuksen-lomakkeen-kustomointi [:dev :test]
+
 }

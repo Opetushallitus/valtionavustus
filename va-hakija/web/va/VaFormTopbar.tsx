@@ -13,7 +13,7 @@ import ServerError from 'soresu-form/web/form/component/ServerError.jsx'
 import FormController from 'soresu-form/web/form/FormController'
 import { BaseStateLoopState } from 'soresu-form/web/form/types/Form'
 import { Logo } from './Logo'
-import { isJotpaAvustushaku, isJotpaHakemusCustomizationEnabled } from './jotpa'
+import { isJotpaAvustushaku, isJotpaHakemusLomakeCustomizationEnabled } from './jotpa'
 
 interface Props<T extends BaseStateLoopState<T>> {
   controller: FormController<T>
@@ -84,7 +84,7 @@ const VaFormTopbar = <T extends BaseStateLoopState<T>>(props: Props<T>) => {
   const showJotpaLogo =
     isHakemus &&
     isJotpaAvustushaku(avustushaku) &&
-    isJotpaHakemusCustomizationEnabled(configuration)
+    isJotpaHakemusLomakeCustomizationEnabled(configuration)
 
   return (
     <section id="topbar">

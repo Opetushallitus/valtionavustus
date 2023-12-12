@@ -10,3 +10,11 @@ export function isJotpaHakemusCustomizationEnabled(configuration: {
 }) {
   return configuration.environment['feature-flags'].includes('jotpa-hakemuksen-kustomointi')
 }
+
+export function isJotpaHakemusLomakeCustomizationEnabled(configuration: {
+  environment: EnvironmentApiResponse
+}) {
+  return configuration.environment['feature-flags'].includes(
+    'jotpa-hakemuksen-lomakkeen-kustomointi'
+  )
+}
