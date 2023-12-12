@@ -15,7 +15,7 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import { Hakemus } from 'soresu-form/web/va/types'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
-import { HeaderContainer } from '../common-components/Header'
+import { HeaderContainer, HeaderSaveStatus } from '../common-components/Header'
 import {
   InitialData,
   InitialDataProvider,
@@ -70,6 +70,7 @@ const App = () => {
     () => new URLSearchParams(location.search).get(SHOW_ALL) === 'true'
   )
   const saveStatus = useHakemustenArviointiSelector((state) => state.arviointi.saveStatus)
+  const loadStatus = useHakemustenArviointiSelector((state) => state.arviointi.loadStatus)
   const userInfo = useUserInfo()
   const environment = useEnvironment()
   const avustushakuData = useHakemustenArviointiSelector((state) => state.arviointi.avustushakuData)
@@ -88,13 +89,21 @@ const App = () => {
   const selectedHakemus = selectedHakemusId
     ? hakemusList.find((h) => h.id === selectedHakemusId)
     : undefined
+
+  const headerSaveStatus: HeaderSaveStatus = {
+    saveInProgress: saveStatus.saveInProgress,
+    saveTime: saveStatus.saveTime,
+    serverError: saveStatus.serverError,
+    loading: loadStatus.loadingAvustushaku || loadStatus.loadingHakemusId !== null,
+    loadError: loadStatus.loadError ? 'arviointi-load-error' : undefined,
+  }
   return (
     <section className={splitView ? 'split-view' : ''}>
       <HeaderContainer
         activeTab="arviointi"
         environment={environment}
         userInfo={userInfo}
-        saveStatus={saveStatus}
+        saveStatus={headerSaveStatus}
         avustushakuId={avustushaku?.id}
       />
       <section className="section-container">

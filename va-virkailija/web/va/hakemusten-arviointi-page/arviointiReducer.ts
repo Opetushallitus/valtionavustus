@@ -231,7 +231,7 @@ export const selectHakemus = createAsyncThunk<
   },
   {
     condition: (hakemusId, { getState }) => {
-      const loadingHakemusId = getState().arviointi.saveStatus.loadingHakemusId
+      const loadingHakemusId = getState().arviointi.loadStatus.loadingHakemusId
       const fetchInProgress = hakemusId === loadingHakemusId
       return !fetchInProgress
     },
@@ -377,8 +377,6 @@ interface SaveStatus {
   saveInProgress: boolean
   saveTime: string | null
   serverError: string
-  loadingHakemusId?: number
-  loadingAvustushakuId?: number
 }
 
 export interface AvustushakuData {
@@ -392,6 +390,11 @@ export interface ArviointiState {
   avustushaut?: DropdownAvustushaku[]
   avustushakuData?: AvustushakuData
   saveStatus: SaveStatus
+  loadStatus: {
+    loadingHakemusId: number | null
+    loadingAvustushaku: boolean
+    loadError: boolean
+  }
   modal: JSX.Element | undefined
   showOthersScores?: boolean
 }
@@ -399,6 +402,11 @@ export interface ArviointiState {
 const initialState: ArviointiState = {
   avustushaut: undefined,
   avustushakuData: undefined,
+  loadStatus: {
+    loadingAvustushaku: false,
+    loadingHakemusId: null,
+    loadError: false,
+  },
   saveStatus: {
     saveInProgress: false,
     saveTime: null,
@@ -484,17 +492,19 @@ const arviointiSlice = createSlice({
         hakemus['keskeytetty-aloittamatta'] = payload['keskeytetty-aloittamatta']
         hakemus.refused = payload.refused
       })
-      .addCase(selectHakemus.rejected, (state) => {
-        state.saveStatus.loadingHakemusId = undefined
-      })
       .addCase(selectHakemus.pending, (state, { meta }) => {
-        state.saveStatus.loadingHakemusId = meta.arg
+        state.loadStatus.loadingHakemusId = meta.arg
+        state.loadStatus.loadError = false
+      })
+      .addCase(selectHakemus.rejected, (state) => {
+        state.loadStatus.loadingHakemusId = null
+        state.loadStatus.loadError = true
       })
       .addCase(selectHakemus.fulfilled, (state, { payload, meta }) => {
         const hakemusId = meta.arg
         const { hakemukset } = getLoadedAvustushakuData(state).hakuData
         const index = hakemukset.findIndex((h) => h.id === hakemusId)
-        state.saveStatus.loadingHakemusId = undefined
+        state.loadStatus.loadingHakemusId = null
         if (index != -1) {
           hakemukset[index] = {
             ...payload.hakemus,
@@ -545,13 +555,18 @@ const arviointiSlice = createSlice({
         hakemus.arvio.scoring = payload.scoring
         hakemus.scores = payload.scores
       })
-      .addCase(fetchAvustushakuInfo.pending, (state, { meta }) => {
+      .addCase(fetchAvustushakuInfo.pending, (state) => {
         state.avustushakuData = undefined
-        state.saveStatus.loadingAvustushakuId = meta.arg
+        state.loadStatus.loadingAvustushaku = true
+        state.loadStatus.loadError = false
+      })
+      .addCase(fetchAvustushakuInfo.rejected, (state) => {
+        state.loadStatus.loadingAvustushaku = false
+        state.loadStatus.loadError = true
       })
       .addCase(fetchAvustushakuInfo.fulfilled, (state, { payload }) => {
         state.avustushakuData = payload
-        state.saveStatus.loadingAvustushakuId = undefined
+        state.loadStatus.loadingAvustushaku = false
       })
       .addMatcher(isAnyOf(isRejected(...saveStatusAwareActions)), (state) => {
         state.saveStatus = {
@@ -581,7 +596,7 @@ const arviointiSlice = createSlice({
 })
 
 export const getLoadedAvustushakuData = (state: ArviointiState) => {
-  if (state.saveStatus.loadingAvustushakuId || !state.avustushakuData) {
+  if (state.loadStatus.loadingAvustushaku || !state.avustushakuData) {
     throw Error('Tried to access data before it was loaded')
   }
   return state.avustushakuData

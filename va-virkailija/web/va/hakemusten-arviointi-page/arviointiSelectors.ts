@@ -29,4 +29,4 @@ export const useUserRoles = (hakemusId: number) => {
 }
 
 export const isHakemusLoading = (state: ArviointiState): boolean =>
-  !!state.saveStatus.loadingHakemusId
+  state.loadStatus.loadingHakemusId !== null

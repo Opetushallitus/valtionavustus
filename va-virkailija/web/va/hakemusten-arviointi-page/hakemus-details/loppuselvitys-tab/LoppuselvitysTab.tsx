@@ -24,7 +24,7 @@ import { useUserInfo } from '../../../initial-data-context'
 const LoppuselvitysTab = () => {
   const hakemus = useHakemus()
   const loadingHakemus = useHakemustenArviointiSelector(
-    (state) => !!state.arviointi.saveStatus.loadingHakemusId
+    (state) => state.arviointi.loadStatus.loadingHakemusId !== null
   )
   const { hakuData } = useHakemustenArviointiSelector((state) =>
     getLoadedAvustushakuData(state.arviointi)

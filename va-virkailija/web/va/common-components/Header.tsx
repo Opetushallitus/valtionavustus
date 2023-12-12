@@ -11,8 +11,6 @@ export interface HeaderSaveStatus {
   saveInProgress: boolean
   saveTime: Date | string | null
   serverError?: string
-  /** @deprecated use generic loading prop instead */
-  loadingHakemusId?: number
   loading?: boolean
   loadError?: string
   sendingMaksatuksetAndTasmaytysraportti?: boolean
@@ -70,7 +68,6 @@ export const HeaderContainer = ({
     saveStatus?.serverError,
     saveStatus?.sendingMaksatuksetAndTasmaytysraportti,
     saveStatus?.sendingMaksatuksetAndTasmaytysraporttiFailed,
-    saveStatus?.loadingHakemusId,
     saveStatus?.loadError,
     saveStatus?.loading,
   ])
@@ -199,7 +196,7 @@ function getNotificationContent(saveStatus?: HeaderSaveStatus): NotificationProp
       notificationIcon: okIcon,
       status: 'ok',
     }
-  } else if (saveStatus?.loading || !!saveStatus?.loadingHakemusId) {
+  } else if (saveStatus?.loading) {
     return {
       notification: 'Ladataan tietoja',
       notificationIcon: saveInProgressIcon,
