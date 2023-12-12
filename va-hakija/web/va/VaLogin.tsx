@@ -107,7 +107,6 @@ export default class VaLogin extends React.Component<VaLoginProps, VaLoginState>
       !!SyntaxValidator.validateEmail(this.state.email) && this.state.email !== ''
     const canSend = () => email === sent || emailIsInvalid()
     const hakemusPreviewUrl = urlCreator.existingSubmissionEditUrl(avustushaku.id, '', lang)
-
     const useJotpaColour =
       isJotpaAvustushaku(avustushaku) && isJotpaHakemusCustomizationEnabled({ environment })
 
@@ -117,7 +116,7 @@ export default class VaLogin extends React.Component<VaLoginProps, VaLoginState>
           environment={environment}
           translations={translations}
           lang={lang}
-          avustushaku={avustushaku}
+          isJotpaTopBar={useJotpaColour}
         />
         <section id="container" className="soresu-fieldset">
           <H1InfoElement htmlId="name" lang={lang} values={content} />
