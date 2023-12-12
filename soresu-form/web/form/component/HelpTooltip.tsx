@@ -7,9 +7,15 @@ interface HelpTooltipProps {
   content: LegacyTranslationDict
   lang: Language
   useJotpaColour?: boolean
+  direction?: 'up' | 'down' | 'left' | 'right'
 }
 
-export default function HelpTooltip({ content, lang, useJotpaColour }: HelpTooltipProps) {
+export default function HelpTooltip({
+  content,
+  lang,
+  useJotpaColour,
+  direction = 'up',
+}: HelpTooltipProps) {
   const translator = new Translator({ content })
   const helpText = content[lang]
   if (!helpText || '' === helpText) {
@@ -19,7 +25,7 @@ export default function HelpTooltip({ content, lang, useJotpaColour }: HelpToolt
   return (
     <a
       className={
-        'soresu-tooltip soresu-tooltip-up ' +
+        `soresu-tooltip soresu-tooltip-${direction} ` +
         (useJotpaColour ? 'jotpa-help-icon' : 'soresu-help-icon')
       }
     >

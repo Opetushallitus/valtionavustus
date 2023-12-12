@@ -162,6 +162,7 @@ export default class VaLogin extends React.Component<VaLoginProps, VaLoginState>
               content={translations.login.help}
               lang={lang}
               useJotpaColour={useJotpaColour}
+              direction="left"
             />
           </h2>
           <form onSubmit={this.submit.bind(this)}>
