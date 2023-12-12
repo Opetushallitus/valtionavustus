@@ -24,5 +24,10 @@ export const tryToUseCurrentAvustushaku = (): VirkailijaAvustushaku | undefined 
   const avustushaku = useHakujenHallintaSelector((state) =>
     getAvustushakuFromState(state.haku, avustushakuId)
   )
+  const loadingError = useHakujenHallintaSelector((state) => state.haku.loadStatus.error)
+  if (loadingError) {
+    return undefined
+  }
+
   return avustushaku
 }

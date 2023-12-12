@@ -91,7 +91,7 @@ const saveSuccess = ({ saveStatus }: State, key: ExtraSavingStateKeys): SaveStat
     ...saveStatus,
     [key]: false,
     saveTime: new Date().toISOString(),
-    serverError: '',
+    serverError: undefined,
   }
 }
 
@@ -104,17 +104,18 @@ type ExtraSavingStates = {
   sendingMaksatuksetAndTasmaytysraporttiFailed: boolean
 }
 
-export type SaveStatus = {
+type SaveStatus = {
   saveInProgress: boolean
   saveTime: string | null
-  serverError: string
-} & Partial<ExtraSavingStates>
+  serverError?: string
+} & ExtraSavingStates
 
 interface State {
   initialData: { loading: false; data: InitialData } | { loading: true }
   saveStatus: SaveStatus
   loadStatus: {
     loadingAvustushaku: boolean
+    error: boolean
   }
   formDrafts: Record<number, Form>
   formDraftsJson: Record<number, string>
@@ -658,11 +659,18 @@ const initialState: State = {
   },
   loadStatus: {
     loadingAvustushaku: false,
+    error: false,
   },
   saveStatus: {
     saveInProgress: false,
     saveTime: null,
     serverError: '',
+    savingRoles: false,
+    savingForm: false,
+    savingTalousarviotilit: false,
+    savingManuallyRefactorToOwnActionsAtSomepoint: false,
+    sendingMaksatuksetAndTasmaytysraportti: false,
+    sendingMaksatuksetAndTasmaytysraporttiFailed: false,
   },
   formDrafts: {},
   formDraftsJson: {},
@@ -814,7 +822,8 @@ const hakuSlice = createSlice({
         state.loadStatus.loadingAvustushaku = true
       })
       .addCase(selectHaku.rejected, (state) => {
-        state.loadStatus.loadingAvustushaku = true
+        state.loadStatus.loadingAvustushaku = false
+        state.loadStatus.error = true
       })
       .addCase(selectHaku.fulfilled, (state, action) => {
         const { avustushaku, valiselvitysForm, loppuselvitysForm, ...rest } = action.payload
@@ -838,6 +847,7 @@ const hakuSlice = createSlice({
           loppuselvitysForm,
         }
         state.loadStatus.loadingAvustushaku = false
+        state.loadStatus.error = false
       })
       .addCase(saveHaku.fulfilled, (state, action) => {
         const response = action.payload

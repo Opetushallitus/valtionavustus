@@ -4,7 +4,7 @@ import moment from 'moment'
 // @ts-ignore react-widgets-moment doesn't have proper types
 import MomentLocalizer from 'react-widgets-moment'
 import Localization from 'react-widgets/Localization'
-import { HeaderContainer } from '../common-components/Header'
+import { HeaderContainer, HeaderSaveStatus } from '../common-components/Header'
 import { EditorSelector } from './haku-details/EditorSelector'
 import { translationsFi } from 'soresu-form/web/va/i18n/translations'
 import { HakuListing } from './haku-list/HakuListing'
@@ -31,7 +31,7 @@ const momentLocalizer = new MomentLocalizer(moment)
 
 const HakujenHallintaApp = () => {
   const state = useHakujenHallintaSelector((state) => state.haku)
-  const { saveStatus, initialData } = state
+  const { saveStatus, loadStatus, initialData } = state
   const { loading: initialDataLoading } = initialData
   const dispatch = useHakujenHallintaDispatch()
   const [searchParams] = useSearchParams()
@@ -45,13 +45,31 @@ const HakujenHallintaApp = () => {
     return <LoadingSitePage />
   }
 
+  const saveInProgress =
+    saveStatus.saveInProgress ||
+    saveStatus.savingRoles ||
+    saveStatus.savingForm ||
+    saveStatus.savingTalousarviotilit ||
+    saveStatus.savingManuallyRefactorToOwnActionsAtSomepoint
+
+  const headerSaveStatus: HeaderSaveStatus = {
+    loading: loadStatus.loadingAvustushaku,
+    loadError: loadStatus.error ? 'avustushaku-load-error' : undefined,
+    saveInProgress,
+    saveTime: saveStatus.saveTime,
+    serverError: saveStatus.serverError,
+    sendingMaksatuksetAndTasmaytysraportti: saveStatus.sendingMaksatuksetAndTasmaytysraportti,
+    sendingMaksatuksetAndTasmaytysraporttiFailed:
+      saveStatus.sendingMaksatuksetAndTasmaytysraporttiFailed,
+  }
+
   return (
     <Localization date={momentLocalizer} messages={translationsFi.calendar}>
       <HeaderContainer
         activeTab="admin"
         environment={initialData.data.environment}
         userInfo={initialData.data.userInfo}
-        saveStatus={saveStatus}
+        saveStatus={headerSaveStatus}
         avustushakuId={avustushakuId}
       />
       <section>

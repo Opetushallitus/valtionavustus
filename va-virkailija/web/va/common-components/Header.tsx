@@ -7,18 +7,16 @@ import { UserInfo } from '../types'
 import styles from './Header.module.less'
 import useScrollingUp from '../useScrollingUp'
 
-interface HeaderSaveStatus {
+export interface HeaderSaveStatus {
   saveInProgress: boolean
   saveTime: Date | string | null
-  serverError: string
-  loadingAvustushaku?: boolean
-  savingRoles?: boolean
-  savingForm?: boolean
-  savingTalousarviotilit?: boolean
-  savingManuallyRefactorToOwnActionsAtSomepoint?: boolean
+  serverError?: string
+  /** @deprecated use generic loading prop instead */
+  loadingHakemusId?: number
+  loading?: boolean
+  loadError?: string
   sendingMaksatuksetAndTasmaytysraportti?: boolean
   sendingMaksatuksetAndTasmaytysraporttiFailed?: boolean
-  loadingHakemusId?: number
 }
 
 type NotificationStatus = 'ok' | 'error' | 'warning' | 'info'
@@ -57,8 +55,8 @@ export const HeaderContainer = ({
     const content = getNotificationContent(saveStatus)
     setNotificationContent(content)
     const timeout = setTimeout(() => {
-      const nothingPending = Object.values(saveStatus ?? {}).some((status) => status === true)
-      if (!nothingPending) {
+      const somethingPending = Object.values(saveStatus ?? {}).some((status) => status === true)
+      if (!somethingPending) {
         setNotificationContent(undefined)
       }
     }, 5000)
@@ -70,14 +68,11 @@ export const HeaderContainer = ({
     saveStatus?.saveInProgress,
     saveStatus?.saveTime,
     saveStatus?.serverError,
-    saveStatus?.savingRoles,
-    saveStatus?.loadingAvustushaku,
-    saveStatus?.savingForm,
-    saveStatus?.savingTalousarviotilit,
-    saveStatus?.savingManuallyRefactorToOwnActionsAtSomepoint,
     saveStatus?.sendingMaksatuksetAndTasmaytysraportti,
     saveStatus?.sendingMaksatuksetAndTasmaytysraporttiFailed,
     saveStatus?.loadingHakemusId,
+    saveStatus?.loadError,
+    saveStatus?.loading,
   ])
 
   return (
@@ -180,13 +175,7 @@ const Notification = ({ notification, notificationIcon, status }: NotificationPr
 }
 
 function getNotificationContent(saveStatus?: HeaderSaveStatus): NotificationProps | undefined {
-  if (
-    saveStatus?.saveInProgress ||
-    saveStatus?.savingRoles ||
-    saveStatus?.savingForm ||
-    saveStatus?.savingTalousarviotilit ||
-    saveStatus?.savingManuallyRefactorToOwnActionsAtSomepoint
-  ) {
+  if (saveStatus?.saveInProgress) {
     return {
       notification: 'Tallennetaan',
       notificationIcon: saveInProgressIcon,
@@ -198,13 +187,19 @@ function getNotificationContent(saveStatus?: HeaderSaveStatus): NotificationProp
         ? 'Jossain kentässä puutteita. Tarkasta arvot.'
         : 'Virhe tallennuksessa. Lataa sivu uudelleen.'
     return { notification, notificationIcon: errorIcon, status: 'error' }
+  } else if (saveStatus?.loadError) {
+    return {
+      notification: 'Virhe tietojen lataamisessa. Yritä uudelleen.',
+      notificationIcon: errorIcon,
+      status: 'error',
+    }
   } else if (saveStatus?.saveTime) {
     return {
       notification: 'Kaikki tiedot tallennettu',
       notificationIcon: okIcon,
       status: 'ok',
     }
-  } else if (saveStatus?.loadingAvustushaku || !!saveStatus?.loadingHakemusId) {
+  } else if (saveStatus?.loading || !!saveStatus?.loadingHakemusId) {
     return {
       notification: 'Ladataan tietoja',
       notificationIcon: saveInProgressIcon,
