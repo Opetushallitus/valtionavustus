@@ -27,11 +27,10 @@ export interface SmokeTestConfig {
 }
 
 const config: PlaywrightTestConfig<SmokeTestConfig> = {
-
-  expect:{
+  expect: {
     toMatchSnapshot: {
-      maxDiffPixelRatio: 0.015
-    }
+      maxDiffPixelRatio: 0.015,
+    },
   },
   forbidOnly: !allowOnly,
   retries,
