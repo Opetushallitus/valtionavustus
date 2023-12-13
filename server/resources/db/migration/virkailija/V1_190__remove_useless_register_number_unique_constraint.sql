@@ -1,0 +1,1 @@
+ALTER TABLE hakemukset DROP CONSTRAINT hakemus_register_number_unique_constraint;
