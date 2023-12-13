@@ -4,8 +4,11 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const plugins = [new ForkTsCheckerWebpackPlugin()]
 
 const makeConfig = (basedir, componentName) => {
+  const env = process.env.NODE_ENV || 'development'
+  const devtool = env === 'production' ? 'source-map' : 'eval'
   return {
-    mode: process.env.NODE_ENV || 'development',
+    mode: env,
+    devtool,
     output: {
       path: path.resolve(basedir, `../server/resources/public/${componentName}`),
       filename: 'js/[name].js',
