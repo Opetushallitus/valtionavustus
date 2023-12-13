@@ -17,6 +17,12 @@ JotpaTest('Jotpa-hakemuksen täyttäminen', async ({ page, avustushakuID }) => {
       await JotpaTest.step('Näyttää jotpan suomenkielisen logon', async () => {
         expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-fi.png')
       })
+      await JotpaTest.step('Näyttää Jotpan faviconin', async () => {
+        await expect(page.locator('#favicon')).toHaveAttribute(
+          'href',
+          '/img/jotpa/jotpa-favicon.ico'
+        )
+      })
 
       await JotpaTest.step('Infopallura on jotpan väreissä', async () => {
         await expect(page.locator('.jotpa-help-icon')).toBeVisible()

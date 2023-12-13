@@ -92,6 +92,42 @@ export default class VaLogin extends React.Component<VaLoginProps, VaLoginState>
       })
   }
 
+  setCorrectFavicon() {
+    if (this.useJotpaCustomization()) {
+      this.changeFaviconIconTo('jotpa')
+    } else {
+      this.changeFaviconIconTo('oph')
+    }
+  }
+
+  changeFaviconIconTo(favicon: 'oph' | 'jotpa') {
+    const faviconElement = document.querySelector<HTMLLinkElement>('#favicon')
+    if (!faviconElement) return
+
+    if (favicon === 'oph') {
+      faviconElement.href = '/favicon.ico'
+    } else {
+      faviconElement.href = '/img/jotpa/jotpa-favicon.ico'
+    }
+  }
+
+  componentDidMount() {
+    this.setCorrectFavicon()
+  }
+  componentDidUpdate() {
+    this.setCorrectFavicon()
+  }
+  componentWillUnmount() {
+    this.changeFaviconIconTo('oph')
+  }
+
+  useJotpaCustomization() {
+    return (
+      isJotpaAvustushaku(this.props.model.avustushaku) &&
+      isJotpaHakemusCustomizationEnabled({ environment: this.props.model.environment })
+    )
+  }
+
   render() {
     const model = this.props.model
     const lang = model.lang
@@ -107,16 +143,14 @@ export default class VaLogin extends React.Component<VaLoginProps, VaLoginState>
       !!SyntaxValidator.validateEmail(this.state.email) && this.state.email !== ''
     const canSend = () => email === sent || emailIsInvalid()
     const hakemusPreviewUrl = urlCreator.existingSubmissionEditUrl(avustushaku.id, '', lang)
-    const useJotpaColour =
-      isJotpaAvustushaku(avustushaku) && isJotpaHakemusCustomizationEnabled({ environment })
 
     return (
-      <div className={useJotpaColour ? 'use-jotpa-font' : ''}>
+      <div className={this.useJotpaCustomization() ? 'use-jotpa-font' : ''}>
         <VaLoginTopbar
           environment={environment}
           translations={translations}
           lang={lang}
-          isJotpaTopBar={useJotpaColour}
+          isJotpaTopBar={this.useJotpaCustomization()}
         />
         <section id="container" className="soresu-fieldset">
           <H1InfoElement htmlId="name" lang={lang} values={content} />
@@ -160,7 +194,7 @@ export default class VaLogin extends React.Component<VaLoginProps, VaLoginState>
             <HelpTooltip
               content={translations.login.help}
               lang={lang}
-              useJotpaColour={useJotpaColour}
+              useJotpaColour={this.useJotpaCustomization()}
               direction="left"
             />
           </h2>
@@ -191,7 +225,7 @@ export default class VaLogin extends React.Component<VaLoginProps, VaLoginState>
               translations={translations.login}
               translationKey="submit"
               lang={lang}
-              useJotpaColour={useJotpaColour}
+              useJotpaColour={this.useJotpaCustomization()}
             />
             <div className="message-container">
               <LocalizedString
