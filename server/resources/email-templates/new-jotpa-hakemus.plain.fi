@@ -1,0 +1,25 @@
+Avustushakemus: {{ avustushaku }}
+
+Hakuaika: {{ start-date }} klo {{ start-time }} — {{ end-date }} klo {{ end-time }}
+
+Pääset täyttämään ja muokkaamaan avustushakemusta tästä linkistä: {{& url }}
+
+Hakemusta on mahdollista muokata hakuajan loppuun asti. Hakemukset käsitellään hakuajan jälkeen.
+
+Hakemus muokkauksineen tallentuu automaattisesti Opetushallituksen valtionavustusjärjestelmään,
+mutta tullakseen vireille on se lähetettävä käsiteltäväksi ennen hakuajan päättymistä.
+
+Huom! Voit jakaa tämän viestien muille hankkeen kumppaneille, mutta huomaa että
+jokainen linkin tietävä voi muokata hakemusta.
+
+Lisätietoja avustuksen hakemisesta voitte kysyä hausta vastaavalta valmistelijalta (mainittu hakutiedotteessa).
+
+Hakemuslomakkeen täyttämiseen liittyvissä teknisissä kysymyksissä voitte olla yhteydessä osoitteeseen rahoitus@jotpa.fi.
+
+Jatkuvan oppimisen ja työllisyyden palvelukeskus
+Hakaniemenranta 6
+PL 380, 00531 Helsinki
+
+puhelin 029 533 1000
+faksi 029 533 1035
+etunimi.sukunimi@jotpa.fi

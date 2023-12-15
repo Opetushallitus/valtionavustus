@@ -181,7 +181,7 @@
 
 (defn get-avustushaku-emails [avustushaku-id email-type]
   (log/info (str "Fetching emails for avustushaku with id: " avustushaku-id))
-  (let [emails (query "SELECT formatted, to_address, bcc, cc, subject FROM virkailija.email
+  (let [emails (query "SELECT formatted, from_address, to_address, bcc, cc, subject FROM virkailija.email
                        JOIN email_event ON (email.id = email_event.email_id)
                        WHERE avustushaku_id = ? AND email_type = ?::virkailija.email_type"
                        [avustushaku-id email-type])]

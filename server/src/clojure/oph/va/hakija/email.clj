@@ -9,6 +9,8 @@
 (def mail-titles
   {:new-hakemus {:fi "Linkki organisaationne avustushakemukseen"
                  :sv "Länk till er organisations ansökan om understöd"}
+   :new-jotpa-hakemus {:fi "Linkki organisaationne avustushakemukseen"
+                       :sv "Länk till er organisations ansökan om understöd"}
    :hakemus-submitted {:fi "Automaattinen viesti: organisaationne avustushakemus on kirjattu vastaanotetuksi"
                        :sv "Automatisk meddelande: er organisations ansökan om understöd har mottagits"}
    :hakemus-submitted-after-change-request {:fi "Automaattinen viesti: organisaationne avustushakemusta on täydennetty"
@@ -32,6 +34,8 @@
 (def mail-templates
   {:new-hakemus {:fi (email/load-template "email-templates/new-hakemus.plain.fi")
                  :sv (email/load-template "email-templates/new-hakemus.plain.sv")}
+   :new-jotpa-hakemus {:fi (email/load-template "email-templates/new-jotpa-hakemus.plain.fi")
+                       :sv (email/load-template "email-templates/new-jotpa-hakemus.plain.sv")}
    :hakemus-submitted {:fi (email/load-template "email-templates/hakemus-submitted.plain.fi")
                        :sv (email/load-template "email-templates/hakemus-submitted.plain.sv")}
    :hakemus-change-request-responded {:fi (email/load-template "email-templates/hakemus-change-request-responded.plain.fi")}
@@ -92,6 +96,30 @@
                               :register-number register-number
                               :preview-url preview-url}
                              (partial render template))))
+
+(defn send-new-jotpa-hakemus-message! [lang to avustushaku-id avustushaku user-key start-date end-date]
+  (let [start-date-string (datetime/date-string start-date)
+        start-time-string (datetime/time-string start-date)
+        end-date-string (datetime/date-string end-date)
+        end-time-string (datetime/time-string end-date)
+        url (email-utils/generate-url avustushaku-id lang user-key false)
+        msg {:operation :send
+             :email-type :new-hakemus
+             :lang lang
+             :from "no-reply@jotpa.fi"
+             :sender (-> email/smtp-config :sender)
+             :subject (get-in mail-titles [:new-jotpa-hakemus lang])
+             :to to
+             :avustushaku avustushaku
+             :avustushaku-id avustushaku-id
+             :start-date start-date-string
+             :start-time start-time-string
+             :end-date end-date-string
+             :end-time end-time-string
+             :url url}
+        body (render-body (assoc msg :email-type :new-jotpa-hakemus))]
+    (log/info "Url would be: " url)
+    (email/enqueue-message-to-be-send msg body)))
 
 (defn send-new-hakemus-message! [lang to avustushaku-id avustushaku user-key start-date end-date]
   (let [start-date-string (datetime/date-string start-date)

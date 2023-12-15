@@ -58,6 +58,9 @@
 (defn hakemus-ok-response [hakemus submission validation parent-hakemus]
   (ok (hakemus-response hakemus submission validation parent-hakemus)))
 
+(defn is-jotpa-avustushaku [avustushaku]
+  (= (:operational_unit_code avustushaku) "6600105300"))
+
 (defn on-hakemus-create [haku-id answers]
   (let [avustushaku (get-open-avustushaku haku-id {})
         avustushaku-content (:content avustushaku)
@@ -87,13 +90,21 @@
                                           (datetime/parse))
                 email (find-answer-value answers "primary-email")
                 user-key (-> new-hakemus :hakemus :user_key)]
-            (va-email/send-new-hakemus-message! language
+            (if (is-jotpa-avustushaku avustushaku)
+              (va-email/send-new-jotpa-hakemus-message! language
                                                 [email]
                                                 haku-id
                                                 avustushaku-title
                                                 user-key
                                                 avustushaku-start-date
                                                 avustushaku-end-date)
+              (va-email/send-new-hakemus-message! language
+                                                [email]
+                                                haku-id
+                                                avustushaku-title
+                                                user-key
+                                                avustushaku-start-date
+                                                avustushaku-end-date))
             (hakemus-ok-response (:hakemus new-hakemus) (without-id (:submission new-hakemus)) validation nil))
           (internal-server-error!)))
       (bad-request! security-validation))))
