@@ -5,6 +5,7 @@ import { TEST_Y_TUNNUS } from '../../utils/constants'
 import { pollUntilNewHakemusEmailArrives } from '../../utils/emails'
 
 const jotpaFont = 'Montserrat, sans-serif'
+const jotpaColour = 'rgb(0, 155, 98)'
 
 JotpaTest('Suomenkielisen Jotpa-hakemuksen täyttäminen', async ({ page, avustushakuID }) => {
   const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
@@ -41,6 +42,12 @@ JotpaTest('Suomenkielisen Jotpa-hakemuksen täyttäminen', async ({ page, avustu
       await expect(page.locator('#topbar h1')).toHaveCSS('font-family', jotpaFont)
       await expect(page.locator('.soresu-form h1')).toHaveCSS('font-family', jotpaFont)
       await expect(page.locator('#project-info')).toHaveCSS('font-family', jotpaFont)
+    })
+
+    await JotpaTest.step('Näyttää aktiivisen nappulan jotpan väreissä', async () => {
+      const yliopistoButton = page.getByText('Yliopisto')
+      await yliopistoButton.click()
+      await expect(yliopistoButton).toHaveCSS('border-color', jotpaColour)
     })
   })
 

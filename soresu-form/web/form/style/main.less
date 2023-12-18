@@ -409,6 +409,15 @@ section.soresu-theme {
   }
 }
 
+.use-jotpa-font {
+  .soresu-radio, .soresu-checkbox {
+    input[type=radio]:checked + label, input[type=checkbox]:checked + label {
+      border-color: @jotpa-green;
+    }
+  }
+}
+
+
 .soresu-table {
   @content-padding: 4px 10px;
 
