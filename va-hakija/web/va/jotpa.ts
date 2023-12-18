@@ -5,12 +5,6 @@ export function isJotpaAvustushaku(avustushaku: HakijaAvustusHaku) {
   return avustushaku['operational-unit-code'] === '6600105300'
 }
 
-export function isJotpaHakemusCustomizationEnabled(configuration: {
-  environment: EnvironmentApiResponse
-}) {
-  return configuration.environment['feature-flags'].includes('jotpa-hakemuksen-kustomointi')
-}
-
 export function isJotpaHakemusLomakeCustomizationEnabled(configuration: {
   environment: EnvironmentApiResponse
 }) {

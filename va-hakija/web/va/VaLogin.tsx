@@ -19,7 +19,7 @@ import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 import VaLoginTopbar from './VaLoginTopbar'
 import VaUrlCreator from './VaUrlCreator.js'
-import { isJotpaAvustushaku, isJotpaHakemusCustomizationEnabled } from './jotpa'
+import { isJotpaAvustushaku, isJotpaHakemusLomakeCustomizationEnabled } from './jotpa'
 
 type VaLoginProps = {
   model: {
@@ -124,7 +124,7 @@ export default class VaLogin extends React.Component<VaLoginProps, VaLoginState>
   useJotpaCustomization() {
     return (
       isJotpaAvustushaku(this.props.model.avustushaku) &&
-      isJotpaHakemusCustomizationEnabled({ environment: this.props.model.environment })
+      isJotpaHakemusLomakeCustomizationEnabled({ environment: this.props.model.environment })
     )
   }
 
