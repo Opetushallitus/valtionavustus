@@ -4,6 +4,8 @@ import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
 import { TEST_Y_TUNNUS } from '../../utils/constants'
 import { pollUntilNewHakemusEmailArrives } from '../../utils/emails'
 
+const jotpaFont = 'Montserrat, sans-serif'
+
 JotpaTest('Suomenkielisen Jotpa-hakemuksen täyttäminen', async ({ page, avustushakuID }) => {
   const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
   const buffyEmail = 'buffy.summers@askjeeves.com'
@@ -33,6 +35,12 @@ JotpaTest('Suomenkielisen Jotpa-hakemuksen täyttäminen', async ({ page, avustu
 
     await JotpaTest.step('Näyttää jotpan suomenkielisen logon', async () => {
       expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-fi.png')
+    })
+
+    await JotpaTest.step('Näyttää Jotpan fontin', async () => {
+      await expect(page.locator('#topbar h1')).toHaveCSS('font-family', jotpaFont)
+      await expect(page.locator('.soresu-form h1')).toHaveCSS('font-family', jotpaFont)
+      await expect(page.locator('#project-info')).toHaveCSS('font-family', jotpaFont)
     })
   })
 

@@ -14,6 +14,7 @@ import GrantRefuse from './GrantRefuse'
 import OpenContactsEdit from './OpenContactsEdit'
 
 import './style/main.less'
+import { isJotpaAvustushaku, isJotpaHakemusLomakeCustomizationEnabled } from './jotpa'
 
 const allowedStatuses = ['officer_edit', 'submitted', 'pending_change_request', 'applicant_edit']
 
@@ -36,7 +37,7 @@ export default class VaForm<T extends BaseStateLoopState<T>> extends React.Compo
       this.props
     const registerNumber = state.saveStatus.savedObject?.['register-number']
     const { saveStatus, configuration } = state
-    const { embedForMuutoshakemus } = configuration
+    const { embedForMuutoshakemus, environment } = configuration
     const registerNumberDisplay = (
       <VaHakemusRegisterNumber
         key="register-number"
@@ -75,9 +76,13 @@ export default class VaForm<T extends BaseStateLoopState<T>> extends React.Compo
         state.normalizedHakemus
       )
     }
+    const isJotpaHakemus =
+      hakemusType === 'hakemus' &&
+      isJotpaAvustushaku(state.avustushaku) &&
+      isJotpaHakemusLomakeCustomizationEnabled({ environment })
 
     return (
-      <div>
+      <div className={isJotpaHakemus ? 'use-jotpa-font' : ''}>
         {!embedForMuutoshakemus && (
           <VaFormTopbar
             controller={controller}
