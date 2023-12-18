@@ -145,7 +145,7 @@ export default class VaLogin extends React.Component<VaLoginProps, VaLoginState>
     const hakemusPreviewUrl = urlCreator.existingSubmissionEditUrl(avustushaku.id, '', lang)
 
     return (
-      <div className={this.useJotpaCustomization() ? 'use-jotpa-font' : ''}>
+      <div className={this.useJotpaCustomization() ? 'jotpa-customizations' : ''}>
         <VaLoginTopbar
           environment={environment}
           translations={translations}

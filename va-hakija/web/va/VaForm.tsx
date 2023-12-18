@@ -82,7 +82,7 @@ export default class VaForm<T extends BaseStateLoopState<T>> extends React.Compo
       isJotpaHakemusLomakeCustomizationEnabled({ environment })
 
     return (
-      <div className={isJotpaHakemus ? 'use-jotpa-font' : ''}>
+      <div className={isJotpaHakemus ? 'jotpa-customizations' : ''}>
         {!embedForMuutoshakemus && (
           <VaFormTopbar
             controller={controller}
