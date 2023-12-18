@@ -20,6 +20,36 @@ readonly HAKIJA_HOSTNAME=${HAKIJA_HOSTNAME:-"localhost"}
 readonly VIRKAILIJA_HOSTNAME=${VIRKAILIJA_HOSTNAME:-"localhost"}
 readonly DOCKER_COMPOSE_FILE="$repo"/docker-compose-test.yml
 
+readonly AWS_CLI_VERSION="2.15.1"
+
+function require_federation_session {
+  session_expiration="$(aws configure get expiration --profile oph-federation)"
+  now_timestamp="$(date +"%Y-%m-%dT%H:%M:%S")"
+
+  if [ "$session_expiration" = "None" ]; then
+    fatal "No session for oph-federation"
+  elif [[ "$session_expiration" < "$now_timestamp" ]]; then
+    fatal "oph-federation session expired ($session_expiration)"
+  else
+    info "oph-federation session ok (expires $session_expiration)"
+  fi
+}
+
+function aws {
+  docker run --interactive --rm \
+    --env AWS_PROFILE \
+    --env AWS_REGION \
+    --env AWS_DEFAULT_REGION \
+    --env AWS_ACCESS_KEY_ID \
+    --env AWS_SECRET_ACCESS_KEY \
+    --env AWS_SESSION_TOKEN \
+    --env AWS_CONFIG_FILE=/aws_config \
+    --volume "$VA_SECRETS_REPO/aws_config:/aws_config" \
+    --volume "$HOME/.aws:/root/.aws" \
+    "public.ecr.aws/aws-cli/aws-cli:$AWS_CLI_VERSION" \
+    "$@"
+}
+
 function docker-compose () {
     if running_on_jenkins; then
       "$repo"/scripts/docker-compose "$@"
