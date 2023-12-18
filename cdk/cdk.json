@@ -1,5 +1,6 @@
 {
-  "app": "npx tsx bin/cdk.ts",
+  "app": "bin/cdk.js",
+  "build": "npm run build",
   "watch": {
     "include": [
       "**"
