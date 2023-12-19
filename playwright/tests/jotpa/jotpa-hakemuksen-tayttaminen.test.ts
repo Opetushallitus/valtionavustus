@@ -36,11 +36,6 @@ JotpaTest(
       const hakemusUrl = await hakijaAvustusHakuPage.startApplication(avustushakuID, buffyEmail)
       await page.goto(hakemusUrl)
       await hakijaAvustusHakuPage.fillApplication(answers, TEST_Y_TUNNUS)
-      await hakijaAvustusHakuPage.fillMuutoshakemusEnabledHakemus(answers, async () => {
-        await hakijaAvustusHakuPage.page
-          .locator('#previous-income-statement-and-balance-sheet [type="file"]')
-          .setInputFiles(dummyPdfPath)
-      })
 
       await JotpaTest.step('Näyttää jotpan suomenkielisen logon', async () => {
         expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-fi.png')
@@ -58,9 +53,21 @@ JotpaTest(
         await expect(yliopistoButton).toHaveCSS('border-color', jotpaColour)
       })
 
+      await JotpaTest.step('Näyttää liitetiedoston lisäysnappulan Jotpan väreissä', async () => {
+        await expect(page.locator('.soresu-file-upload .soresu-upload-button').first()).toHaveCSS(
+          'background-color',
+          jotpaColour
+        )
+      })
+
       await JotpaTest.step(
-        'Näyttää aktiivisen "Lähetä käsiteltäväksi" nappulan jotpan väreissä',
+        'Näyttää aktiivisen "Lähetä käsiteltäväksi" nappulan Jotpan väreissä',
         async () => {
+          await hakijaAvustusHakuPage.fillMuutoshakemusEnabledHakemus(answers, async () => {
+            await hakijaAvustusHakuPage.page
+              .locator('#previous-income-statement-and-balance-sheet [type="file"]')
+              .setInputFiles(dummyPdfPath)
+          })
           await expect(page.locator('#topbar #submit')).toHaveCSS('background-color', jotpaColour)
         }
       )
