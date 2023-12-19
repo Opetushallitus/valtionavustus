@@ -23,11 +23,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Run 01-build.sh
         run: ./deploy-scripts/01-build.sh
-      - name: Upload uberjar as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: valtionavustus-standalone.jar
-          path: deploy-scripts/dist/valtionavustus-standalone-*.jar
 
   other-tests:
     name: 02-other-tests.sh

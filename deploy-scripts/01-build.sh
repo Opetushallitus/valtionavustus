@@ -37,7 +37,7 @@ function main {
     tags_to_push+=("$ref_tag")
   fi
 
-  if [ "${GITHUB_ACTIONS:-}" == "true" ]; then
+  if running_on_gh_actions; then
     start_gh_actions_group "Pushing tags"
     for tag in "${tags_to_push[@]}"
     do
@@ -48,20 +48,6 @@ function main {
   else
     info "Not pushing tags when running locally"
   fi
-
-  build_jar
-}
-
-function build_jar {
-  start_gh_actions_group "lein uberjar"
-
-  info "lein uberjar"
-  docker build --output "type=local,dest=$deploy_dist_dir" \
-    --build-arg "UBERJAR_NAME=$standalone_jar_name" \
-    --build-arg "REVISION=${revision}" \
-    --target va-uberjar \
-    "$repo"
-  end_gh_actions_group
 }
 
 main
