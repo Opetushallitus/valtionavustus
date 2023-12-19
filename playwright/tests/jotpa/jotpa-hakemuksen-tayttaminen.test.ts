@@ -54,6 +54,11 @@ JotpaTest(
         await yliopistoButton.click()
         await expect(yliopistoButton).toHaveCSS('border-color', jotpaColour)
       })
+
+      await JotpaTest.step('Näyttää "Lähetä käsiteltäväksi" nappulan jotpan väreissä', async () => {
+        await hakijaAvustusHakuPage.fillApplication(answers, null)
+        await expect(page.locator('#topbar #submit')).toHaveCSS('background-color', jotpaColour)
+      })
     })
 
     await JotpaTest.step('Sähköpostissa', async () => {
