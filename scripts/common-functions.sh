@@ -35,6 +35,12 @@ function require_federation_session {
   fi
 }
 
+function require_cdk_context {
+  if ! running_on_gh_actions; then
+    source "$VA_SECRETS_REPO/cdk_context.sh"
+  fi
+}
+
 function configure_aws {
   export AWS_REGION="eu-west-1"
   if ! running_on_gh_actions; then
