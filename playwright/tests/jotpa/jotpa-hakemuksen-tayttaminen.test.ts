@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test'
 import { JotpaTest } from '../../fixtures/JotpaTest'
 import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
-import { TEST_Y_TUNNUS } from '../../utils/constants'
+import { dummyPdfPath, TEST_Y_TUNNUS } from '../../utils/constants'
 import { pollUntilNewHakemusEmailArrives } from '../../utils/emails'
 
 const jotpaFont = 'Montserrat, sans-serif'
@@ -35,7 +35,12 @@ JotpaTest(
     await JotpaTest.step('Hakemussivulla', async () => {
       const hakemusUrl = await hakijaAvustusHakuPage.startApplication(avustushakuID, buffyEmail)
       await page.goto(hakemusUrl)
-      await hakijaAvustusHakuPage.fillInBusinessId(TEST_Y_TUNNUS)
+      await hakijaAvustusHakuPage.fillApplication(answers, TEST_Y_TUNNUS)
+      await hakijaAvustusHakuPage.fillMuutoshakemusEnabledHakemus(answers, async () => {
+        await hakijaAvustusHakuPage.page
+          .locator('#previous-income-statement-and-balance-sheet [type="file"]')
+          .setInputFiles(dummyPdfPath)
+      })
 
       await JotpaTest.step('Näyttää jotpan suomenkielisen logon', async () => {
         expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-fi.png')
@@ -53,10 +58,12 @@ JotpaTest(
         await expect(yliopistoButton).toHaveCSS('border-color', jotpaColour)
       })
 
-      await JotpaTest.step('Näyttää "Lähetä käsiteltäväksi" nappulan jotpan väreissä', async () => {
-        await hakijaAvustusHakuPage.fillApplication(answers, null)
-        await expect(page.locator('#topbar #submit')).toHaveCSS('background-color', jotpaColour)
-      })
+      await JotpaTest.step(
+        'Näyttää aktiivisen "Lähetä käsiteltäväksi" nappulan jotpan väreissä',
+        async () => {
+          await expect(page.locator('#topbar #submit')).toHaveCSS('background-color', jotpaColour)
+        }
+      )
     })
 
     await JotpaTest.step('Sähköpostissa', async () => {
