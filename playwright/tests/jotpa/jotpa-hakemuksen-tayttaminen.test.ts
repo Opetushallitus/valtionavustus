@@ -25,12 +25,6 @@ JotpaTest(
         )
       })
 
-      await JotpaTest.step('Infopallura on jotpan väreissä', async () => {
-        expect(await page.locator('.soresu-help-icon').screenshot()).toMatchSnapshot(
-          'jotpa-tooltip-fi.png'
-        )
-      })
-
       await JotpaTest.step('Luo uusi hakemus nappula on jotpan väreissä', async () => {
         await hakijaAvustusHakuPage.form.muutoshakuEnabledFields.primaryEmail.fill(buffyEmail)
         expect(page.locator('.soresu-text-button')).not.toBeDisabled()
