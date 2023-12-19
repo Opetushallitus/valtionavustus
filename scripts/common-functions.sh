@@ -35,6 +35,16 @@ function require_federation_session {
   fi
 }
 
+function configure_aws {
+  export AWS_REGION="eu-west-1"
+  if ! running_on_gh_actions; then
+    check_env
+    export AWS_PROFILE="oph-va-$ENV"
+    export AWS_CONFIG_FILE="$VA_SECRETS_REPO/aws_config"
+    info "Using AWS config from secrets repo, with profile $AWS_PROFILE"
+  fi
+}
+
 function aws {
   docker run --interactive --rm \
     --env AWS_PROFILE \
@@ -48,6 +58,16 @@ function aws {
     --volume "$HOME/.aws:/root/.aws" \
     "public.ecr.aws/aws-cli/aws-cli:$AWS_CLI_VERSION" \
     "$@"
+}
+
+function check_env {
+  if [ -z "${ENV:-}" ]; then
+    fatal "\$ENV not set"
+  fi
+
+  if [[ "$ENV" != "dev" && "$ENV" != "qa" && "$ENV" != "prod" ]]; then
+    fatal "Unknown env '$ENV'"
+  fi
 }
 
 function docker-compose () {

@@ -6,11 +6,12 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../scripts/common-func
 
 function main {
   parse_env_from_script_name "aws"
+  configure_aws
 
   require_docker
   require_federation_session
 
-  AWS_PROFILE="oph-va-$ENV" aws "$@"
+  aws "$@"
 }
 
 main "$@"

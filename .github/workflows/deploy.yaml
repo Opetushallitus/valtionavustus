@@ -16,10 +16,8 @@ jobs:
     secrets: inherit
 
   deploy-jars:
-    name: 04-deploy-jars.sh
+    name: 04-deploy-aws.sh
     runs-on: ubuntu-22.04
     needs: build
     steps:
       - uses: actions/checkout@v4.1.1
-      - name: Run 04-deploy-jars.sh
-        run: ./deploy-scripts/04-deploy-jars.sh
