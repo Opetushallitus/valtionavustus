@@ -191,12 +191,7 @@ export default class VaLogin extends React.Component<VaLoginProps, VaLoginState>
               translationKey="heading"
               lang={lang}
             />
-            <HelpTooltip
-              content={translations.login.help}
-              lang={lang}
-              useJotpaColour={this.useJotpaCustomization()}
-              direction="left"
-            />
+            <HelpTooltip content={translations.login.help} lang={lang} direction="left" />
           </h2>
           <form onSubmit={this.submit.bind(this)}>
             <input type="hidden" name="language" value={lang} />

@@ -20,7 +20,7 @@ const TextButton = (props: Props) => {
   return (
     <button
       id={props.htmlId}
-      className={props.useJotpaColour ? 'jotpa-text-button' : 'soresu-text-button'}
+      className="soresu-text-button"
       type="button"
       onClick={props.onClick}
       disabled={props.disabled}

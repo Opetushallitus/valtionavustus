@@ -6,16 +6,10 @@ import { Language, LegacyTranslationDict } from 'soresu-form/web/va/types'
 interface HelpTooltipProps {
   content: LegacyTranslationDict
   lang: Language
-  useJotpaColour?: boolean
   direction?: 'up' | 'down' | 'left' | 'right'
 }
 
-export default function HelpTooltip({
-  content,
-  lang,
-  useJotpaColour,
-  direction = 'up',
-}: HelpTooltipProps) {
+export default function HelpTooltip({ content, lang, direction = 'up' }: HelpTooltipProps) {
   const translator = new Translator({ content })
   const helpText = content[lang]
   if (!helpText || '' === helpText) {
@@ -23,12 +17,7 @@ export default function HelpTooltip({
   }
   const value = translator.translate('content', lang)
   return (
-    <a
-      className={
-        `soresu-tooltip soresu-tooltip-${direction} ` +
-        (useJotpaColour ? 'jotpa-help-icon' : 'soresu-help-icon')
-      }
-    >
+    <a className={`soresu-tooltip soresu-tooltip-${direction} soresu-help-icon`}>
       <span>{value}</span>
     </a>
   )

@@ -13,7 +13,6 @@ JotpaTest(
     const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     const buffyEmail = 'buffy.summers@askjeeves.com'
     await hakijaAvustusHakuPage.navigate(avustushakuID, 'fi')
-    const hakemusUrl = await hakijaAvustusHakuPage.startApplication(avustushakuID, buffyEmail)
 
     await JotpaTest.step('Etusivulla', async () => {
       await JotpaTest.step('Näyttää jotpan suomenkielisen logon', async () => {
@@ -27,15 +26,20 @@ JotpaTest(
       })
 
       await JotpaTest.step('Infopallura on jotpan väreissä', async () => {
-        await expect(page.locator('.jotpa-help-icon')).toBeVisible()
+        expect(await page.locator('.soresu-help-icon').screenshot()).toMatchSnapshot(
+          'jotpa-tooltip-fi.png'
+        )
       })
 
       await JotpaTest.step('Luo uusi hakemus nappula on jotpan väreissä', async () => {
-        await expect(page.locator('.jotpa-text-button')).toBeVisible()
+        await hakijaAvustusHakuPage.form.muutoshakuEnabledFields.primaryEmail.fill(buffyEmail)
+        expect(page.locator('.soresu-text-button')).not.toBeDisabled()
+        await expect(page.locator('.soresu-text-button')).toHaveCSS('background-color', jotpaColour)
       })
     })
 
     await JotpaTest.step('Hakemussivulla', async () => {
+      const hakemusUrl = await hakijaAvustusHakuPage.startApplication(avustushakuID, buffyEmail)
       await page.goto(hakemusUrl)
       await hakijaAvustusHakuPage.fillInBusinessId(TEST_Y_TUNNUS)
 
