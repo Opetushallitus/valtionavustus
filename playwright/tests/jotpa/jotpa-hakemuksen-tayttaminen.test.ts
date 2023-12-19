@@ -27,7 +27,7 @@ JotpaTest(
 
       await JotpaTest.step('Luo uusi hakemus nappula on jotpan väreissä', async () => {
         await hakijaAvustusHakuPage.form.muutoshakuEnabledFields.primaryEmail.fill(buffyEmail)
-        expect(page.locator('.soresu-text-button')).not.toBeDisabled()
+        await expect(page.locator('.soresu-text-button')).not.toBeDisabled()
         await expect(page.locator('.soresu-text-button')).toHaveCSS('background-color', jotpaColour)
       })
     })
