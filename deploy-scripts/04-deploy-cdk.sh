@@ -9,6 +9,15 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/deploy-functions.sh"
 
 readonly cdk_out="cdk.out.deploy"
 
+function print_env {
+  local env_name="$1"
+  local env_value="${!env_name}"
+
+  local env_begin="${env_value:0:3}"
+  local env_rest="${env_value:3}"
+  echo "$env_name: ${env_begin}${env_rest//?/*}"
+}
+
 function setup {
   require_command docker
   require_built_image
@@ -28,6 +37,11 @@ function main {
   check_env
 
   info "Deploying to environment $ENV"
+
+  require_cdk_context
+  print_env "AWS_ACCOUNT_ID_DEV"
+  print_env "AWS_ACCOUNT_ID_QA"
+  print_env "AWS_ACCOUNT_ID_PROD"
 
   start_gh_actions_group "Setup"
   setup
