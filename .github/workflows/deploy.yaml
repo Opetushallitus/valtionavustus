@@ -17,15 +17,12 @@ jobs:
     name: Deploy to ${{ inputs.env }}
     runs-on: ubuntu-22.04
     environment: ${{ inputs.env }}
+    env:
+      AWS_ACCOUNT_ID_DEV: ${{ secrets.AWS_ACCOUNT_ID_DEV }}
     permissions:
       id-token: write
     steps:
       - uses: actions/checkout@v4.1.1
-
-      - name: Export CDK context variables
-        run: ./cdk/scripts/get_cdk_context_from_github.sh
-        env:
-          GH_TOKEN: ${{ github.token }}
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -33,4 +30,6 @@ jobs:
           role-to-assume: ${{ secrets.DEPLOY_ROLE_ARN }}
 
       - name: 04-deploy-cdk.sh
-        run: aws sts get-caller-identity
+        run: |
+          aws sts get-caller-identity
+          echo "$AWS_ACCOUNT_ID_DEV" | cut -c -3
