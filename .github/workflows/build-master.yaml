@@ -8,3 +8,21 @@ jobs:
   build:
     uses: ./.github/workflows/build.yaml
     secrets: inherit
+
+  push-green:
+    name: Push to green-master and deploy to dev
+    needs: build
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update green-master and run deploy-dev.yaml workflow
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git push origin master:green-master
+          gh workflow run deploy-dev.yaml --ref green-master
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

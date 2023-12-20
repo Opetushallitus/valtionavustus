@@ -1,5 +1,6 @@
 name: Deploy dev
 on:
+  workflow_dispatch:
   push:
     branches:
       - green-master
