@@ -24,6 +24,8 @@ jobs:
 
       - name: Export CDK context variables
         run: ./cdk/scripts/get_cdk_context_from_github.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
