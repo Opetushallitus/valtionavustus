@@ -43,7 +43,10 @@ function main {
   end_gh_actions_group
 
   start_gh_actions_group "Deploy stacks"
-  cdk-built-app deploy "$ENV/*"
+  cdk-built-app deploy \
+    --exclusively \
+    --require-approval never \
+    "$ENV/*"
   end_gh_actions_group
 }
 
