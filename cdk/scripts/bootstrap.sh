@@ -6,7 +6,7 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../scripts/common-f
 
 readonly gh_org="opetushallitus"
 readonly gh_repo="valtionavustus"
-readonly gh_deployment_role_secret_prefix="DEPLOYMENT_ROLE"
+readonly gh_deployment_role_secret="DEPLOY_ROLE_ARN"
 readonly dist_dir="$repo/cdk/dist"
 
 function create_env_in_github {
@@ -56,11 +56,10 @@ function bootstrap_cdk {
 function set_deployment_role_secret {
   info "Setting deployment role ARN in Github Actions secrets"
   role_arn=$(jq --raw-output --exit-status ".[\"$ENV-github-actions-role\"].GithubActionOidcIamRoleArn" "$cdk_outputs")
-  readonly secret_name="${gh_deployment_role_secret_prefix}_$env_upper"
   info "Deployment role ARN: $role_arn"
-  info "Setting $secret_name in $ENV"
+  info "Setting $gh_deployment_role_secret in $ENV"
   echo -n "$role_arn" | \
-    gh secret set "$secret_name" \
+    gh secret set "$gh_deployment_role_secret" \
     --app actions \
     --repo "$gh_org/$gh_repo" \
     --env "$ENV"

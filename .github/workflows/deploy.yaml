@@ -1,23 +1,34 @@
 name: Deploy
 on:
-  push:
-    branches:
-      - master
+  workflow_call:
+    inputs:
+      env:
+        type: string
+        required: true
 
 defaults:
   run:
     shell: bash
 
-concurrency: deploy-master
+concurrency: deploy-${{ inputs.env }}
 
 jobs:
-  build:
-    uses: ./.github/workflows/build.yaml
-    secrets: inherit
-
-  deploy-jars:
-    name: 04-deploy-aws.sh
+  deploy:
+    name: Deploy to ${{ inputs.env }}
     runs-on: ubuntu-22.04
-    needs: build
+    environment: ${{ inputs.env }}
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@v4.1.1
+
+      - name: Export CDK context variables
+        run: ./cdk/scripts/get_cdk_context_from_github.sh
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-west-1
+          role-to-assume: ${{ secrets.DEPLOY_ROLE_ARN }}
+
+      - name: 04-deploy-cdk.sh
+        run: aws sts get-caller-identity

@@ -1,0 +1,10 @@
+name: Build and test master
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yaml
+    secrets: inherit

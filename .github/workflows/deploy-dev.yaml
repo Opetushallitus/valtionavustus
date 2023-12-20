@@ -1,0 +1,16 @@
+name: Deploy dev
+on:
+  push:
+    branches:
+      - green-master
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/deploy.yaml
+    secrets: inherit
+    with:
+      env: dev
