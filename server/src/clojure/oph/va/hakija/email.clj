@@ -276,10 +276,11 @@
         end-date-string (datetime/date-string end-date)
         end-time-string (datetime/time-string end-date)
         url (email-utils/generate-url avustushaku-id lang user-key true)
+        from (if is-jotpa-avustushaku? "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
         user-message {:operation :send
                       :email-type  :hakemus-submitted
                       :lang lang
-                      :from (-> email/smtp-config :from lang)
+                      :from from
                       :sender (-> email/smtp-config :sender)
                       :subject (get-in mail-titles [(if is-change-request-response? :hakemus-submitted-after-change-request :hakemus-submitted) lang])
                       :to to
