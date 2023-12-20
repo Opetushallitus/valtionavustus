@@ -8,7 +8,7 @@ import {
 } from '../lib/bootstrap/github-actions-aws-auth-cdk-stack'
 
 const repositoryConfig = {
-  owner: 'opetushallitus',
+  owner: 'Opetushallitus',
   repo: 'valtionavustus',
 } satisfies GithubActionsAwsAuthCdkStackProps['repositoryConfig']
 
