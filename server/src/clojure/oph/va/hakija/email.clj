@@ -270,7 +270,7 @@
         body (render-body msg)]
     (email/enqueue-message-to-be-send msg body)))
 
-(defn send-hakemus-submitted-message! [is-change-request-response? lang to avustushaku-id avustushaku user-key start-date end-date hakemus-id]
+(defn send-hakemus-submitted-message! [is-change-request-response? is-jotpa-avustushaku? lang to avustushaku-id avustushaku user-key start-date end-date hakemus-id]
   (let [start-date-string (datetime/date-string start-date)
         start-time-string (datetime/time-string start-date)
         end-date-string (datetime/date-string end-date)
@@ -290,6 +290,7 @@
                       :end-time end-time-string
                       :url url
                       :avustushaku-id avustushaku-id
+                      :is-jotpa-hakemus is-jotpa-avustushaku?
                       :hakemus-id hakemus-id}
         body (render-body user-message)]
     (log/info "Urls would be: " url)

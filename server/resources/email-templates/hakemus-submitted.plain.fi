@@ -8,7 +8,7 @@ Hakija voi muokata jo lähetettyä hakemusta alkuperäisen hakemuslinkin kautta 
 
 Hausta vastaava valmistelija on mainittu hakutiedotteessa.
 
-Opetushallitus
+{{^is-jotpa-hakemus}}Opetushallitus{{/is-jotpa-hakemus}}{{#is-jotpa-hakemus}}Jatkuvan oppimisen ja työllisyyden palvelukeskus{{/is-jotpa-hakemus}}
 Hakaniemenranta 6
 PL 380, 00531 Helsinki
 

@@ -3,6 +3,7 @@
         [clojure.pprint :only [pprint]])
    (:require [oph.common.datetime :as datetime]
              [oph.common.email :refer [legacy-email-field-ids]]
+             [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
              [oph.soresu.form.formutil :refer :all]))
 
 (defn is-notification-email-field [field]
@@ -30,9 +31,11 @@
                                     :end
                                     (datetime/parse))
         destination-emails     (find-emails-to-notify answers)
-        user-key               (-> submitted-hakemus :user_key)]
+        user-key               (-> submitted-hakemus :user_key)
+        is-jotpa-avustushaku?  (is-jotpa-avustushaku avustushaku)]
     (when (not-empty destination-emails)
       (send! is-change-request-response?
+             is-jotpa-avustushaku?
              language
              destination-emails
              haku-id

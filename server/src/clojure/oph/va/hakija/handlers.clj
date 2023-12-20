@@ -2,7 +2,7 @@
   (:require [clojure.tools.logging :as log]
             [ring.util.http-response :as http]
             [ring.util.http-response :refer :all]
-            [oph.soresu.common.config :refer [config feature-enabled?]]
+            [oph.soresu.common.config :refer [config]]
             [oph.soresu.common.db :refer [with-tx query]]
             [oph.common.datetime :as datetime]
             [oph.soresu.form.db :as form-db]
@@ -17,6 +17,7 @@
             [oph.va.hakija.notification-formatter :as va-submit-notification]
             [oph.va.hakija.attachment-validator :as attachment-validator]
             [oph.va.hakija.email :as va-email]
+            [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
             [oph.va.hakija.officer-edit-auth :as officer-edit-auth]))
 
 (defn hakemus-conflict-response [hakemus]
@@ -57,10 +58,6 @@
 
 (defn hakemus-ok-response [hakemus submission validation parent-hakemus]
   (ok (hakemus-response hakemus submission validation parent-hakemus)))
-
-(defn is-jotpa-avustushaku [avustushaku]
-  (and (feature-enabled? :jotpa-hakemuksen-lomakkeen-kustomointi)
-       (= (:operational_unit_code avustushaku) "6600105300")))
 
 (defn on-hakemus-create [haku-id answers]
   (let [avustushaku (get-open-avustushaku haku-id {})
