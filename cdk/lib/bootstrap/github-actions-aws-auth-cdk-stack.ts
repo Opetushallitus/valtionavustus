@@ -5,9 +5,10 @@
 import * as cdk from 'aws-cdk-lib'
 import { Construct } from 'constructs'
 import { aws_iam as iam } from 'aws-cdk-lib'
+import { getEnv } from '../va-context'
 
 export interface GithubActionsAwsAuthCdkStackProps extends cdk.StackProps {
-  readonly repositoryConfig: { owner: string; repo: string; filter?: string }
+  readonly repositoryConfig: { owner: string; repo: string }
 }
 
 export class GithubActionsAwsAuthCdkStack extends cdk.Stack {
@@ -21,15 +22,13 @@ export class GithubActionsAwsAuthCdkStack extends cdk.Stack {
       url,
       clientIds: ['sts.amazonaws.com'],
     })
-    const { owner, repo, filter } = props.repositoryConfig
-    const iamRepoDeployAccess = `repo:${owner}/${repo}:${filter ?? '*'}`
+    const { owner, repo } = props.repositoryConfig
+    const environment = getEnv(this)
+    const iamRepoDeployAccess = `repo:${owner}/${repo}:environment:${environment}`
 
     const conditions: iam.Conditions = {
-      StringLike: {
-        [`${githubDomain}:sub`]: iamRepoDeployAccess,
-      },
       StringEquals: {
-        [`${githubDomain}:iss`]: url,
+        [`${githubDomain}:sub`]: iamRepoDeployAccess,
         [`${githubDomain}:aud`]: 'sts.amazonaws.com',
       },
     }
