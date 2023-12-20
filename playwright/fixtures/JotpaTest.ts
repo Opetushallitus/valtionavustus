@@ -2,6 +2,8 @@ import { KoodienhallintaPage } from '../pages/virkailija/koodienHallintaPage'
 import { randomString } from '../utils/random'
 import { muutoshakemusTest } from './muutoshakemusTest'
 import muutoshakemusEnabledHakuLomakeJson from './prod.hakulomake.json'
+import { Answers } from '../utils/types'
+import { swedishAnswers } from '../utils/constants'
 
 const jotpaToimintayksikkö = {
   name: 'Jatkuvan oppimisen ja työllisyyden palvelukeskus',
@@ -65,3 +67,5 @@ export const JotpaTest = muutoshakemusTest.extend<JotpaFixtures>({
     await use(codes)
   },
 })
+
+export const SwedishJotpaTest = JotpaTest.extend<{ answers: Answers }>({ answers: swedishAnswers })

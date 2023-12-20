@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test'
-import { JotpaTest } from '../../fixtures/JotpaTest'
+import { JotpaTest, SwedishJotpaTest } from '../../fixtures/JotpaTest'
 import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
 import { dummyPdfPath, TEST_Y_TUNNUS } from '../../utils/constants'
 import {
@@ -7,6 +7,7 @@ import {
   pollUntilNewHakemusEmailArrives,
   waitUntilMinEmails,
 } from '../../utils/emails'
+import { Answers } from '../../utils/types'
 
 const jotpaFont = 'Montserrat, sans-serif'
 const jotpaColour = 'rgb(0, 155, 98)'
@@ -67,11 +68,7 @@ JotpaTest(
       await JotpaTest.step(
         'Näyttää aktiivisen "Lähetä käsiteltäväksi" nappulan Jotpan väreissä',
         async () => {
-          await hakijaAvustusHakuPage.fillMuutoshakemusEnabledHakemus(answers, async () => {
-            await hakijaAvustusHakuPage.page
-              .locator('#previous-income-statement-and-balance-sheet [type="file"]')
-              .setInputFiles(dummyPdfPath)
-          })
+          await fillJotpaHakemus(hakijaAvustusHakuPage, answers)
           await expect(page.locator('#topbar #submit')).toHaveCSS('background-color', jotpaColour)
         }
       )
@@ -125,49 +122,82 @@ Hakaniemenranta 6`
   }
 )
 
-JotpaTest('Ruotsinkielisen Jotpa-hakemuksen täyttäminen', async ({ page, avustushakuID }) => {
-  const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
-  const faithEmail = 'faith.lehane@altavista.com'
-  await hakijaAvustusHakuPage.navigate(avustushakuID, 'sv')
-  const hakemusUrl = await hakijaAvustusHakuPage.startApplication(avustushakuID, faithEmail)
+SwedishJotpaTest(
+  'Ruotsinkielisen Jotpa-hakemuksen täyttäminen',
+  async ({ page, avustushakuID, answers }) => {
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
+    const faithEmail = 'faith.lehane@altavista.com'
+    await hakijaAvustusHakuPage.navigate(avustushakuID, 'sv')
+    const hakemusUrl = await hakijaAvustusHakuPage.startApplication(avustushakuID, faithEmail)
 
-  await JotpaTest.step('Etusivulla', async () => {
-    await JotpaTest.step('Näyttää etusivulla Jotpan ruotsinkielisen logon', async () => {
-      expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-sv.png')
+    await SwedishJotpaTest.step('Etusivulla', async () => {
+      await SwedishJotpaTest.step('Näyttää etusivulla Jotpan ruotsinkielisen logon', async () => {
+        expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-sv.png')
+      })
     })
-  })
 
-  await JotpaTest.step('Hakemussivulla', async () => {
-    await page.goto(hakemusUrl)
-    await hakijaAvustusHakuPage.fillInBusinessId(TEST_Y_TUNNUS)
+    await SwedishJotpaTest.step('Hakemussivulla', async () => {
+      await page.goto(hakemusUrl)
+      await hakijaAvustusHakuPage.fillApplication(answers, TEST_Y_TUNNUS)
 
-    await JotpaTest.step('Näyttää jotpan ruotsinkielisen logon', async () => {
-      expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-sv.png')
+      await SwedishJotpaTest.step('Näyttää jotpan ruotsinkielisen logon', async () => {
+        expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-sv.png')
+      })
     })
-  })
 
-  await JotpaTest.step('Sähköpostissa', async () => {
-    const newHakemusEmail = (await pollUntilNewHakemusEmailArrives(avustushakuID, faithEmail))[0]
+    await SwedishJotpaTest.step('"Linkki avustushakemukseen"-Sähköpostissa', async () => {
+      const newHakemusEmail = (await pollUntilNewHakemusEmailArrives(avustushakuID, faithEmail))[0]
 
-    await JotpaTest.step('oph on korvattu jotpalla niiltä osin kuin on sovittu', async () => {
-      expect(newHakemusEmail['from-address']).toEqual('no-reply@jotpa.fi')
+      await SwedishJotpaTest.step(
+        'oph on korvattu jotpalla niiltä osin kuin on sovittu',
+        async () => {
+          expect(newHakemusEmail['from-address']).toEqual('no-reply@jotpa.fi')
 
-      expect(newHakemusEmail.formatted).not.toContain(
-        'per e-post på adressen statsunderstod@oph.fi'
-      )
-      expect(newHakemusEmail.formatted).toContain('per e-post på adressen rahoitus@jotpa.fi')
+          expect(newHakemusEmail.formatted).not.toContain(
+            'per e-post på adressen statsunderstod@oph.fi'
+          )
+          expect(newHakemusEmail.formatted).toContain('per e-post på adressen rahoitus@jotpa.fi')
 
-      expect(newHakemusEmail.formatted).not.toContain(
-        `Utbildningsstyrelsen
+          expect(newHakemusEmail.formatted).not.toContain(
+            `Utbildningsstyrelsen
 Hagnäskajen 6`
-      )
-      expect(newHakemusEmail.formatted).toContain(
-        `Servicecentret för kontinuerligt lärande och sysselsättning
+          )
+          expect(newHakemusEmail.formatted).toContain(
+            `Servicecentret för kontinuerligt lärande och sysselsättning
 Hagnäskajen 6`
-      )
+          )
 
-      expect(newHakemusEmail.formatted).not.toContain('fornamn.efternamn@oph.fi')
-      expect(newHakemusEmail.formatted).toContain('fornamn.efternamn@jotpa.fi')
+          expect(newHakemusEmail.formatted).not.toContain('fornamn.efternamn@oph.fi')
+          expect(newHakemusEmail.formatted).toContain('fornamn.efternamn@jotpa.fi')
+        }
+      )
     })
+
+    await SwedishJotpaTest.step('"Hakemus vastaanotettu"-Sähköpostissa', async () => {
+      await fillJotpaHakemus(hakijaAvustusHakuPage, answers)
+      const { userKey } = await hakijaAvustusHakuPage.submitApplication()
+      const hakemusID = await hakijaAvustusHakuPage.getHakemusID(avustushakuID, userKey)
+      const email = (await waitUntilMinEmails(getHakemusSubmitted, 1, hakemusID))[0]
+      console.log(email)
+
+      await SwedishJotpaTest.step('on oikean lähettäjän osoite', async () => {
+        expect(email['from-address']).toEqual('no-reply@jotpa.fi')
+      })
+
+      await SwedishJotpaTest.step('on oikean lähettäjän nimi', async () => {
+        expect(email.formatted).not.toContain(`Utbildningsstyrelsen`)
+        expect(email.formatted).toContain(
+          `Servicecentret för kontinuerligt lärande och sysselsättning`
+        )
+      })
+    })
+  }
+)
+
+async function fillJotpaHakemus(page: ReturnType<typeof HakijaAvustusHakuPage>, answers: Answers) {
+  await page.fillMuutoshakemusEnabledHakemus(answers, async () => {
+    await page.page
+      .locator('#previous-income-statement-and-balance-sheet [type="file"]')
+      .setInputFiles(dummyPdfPath)
   })
-})
+}
