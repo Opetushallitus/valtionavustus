@@ -6,6 +6,7 @@ import { expectQueryParameter, expectToBeDefined } from '../../utils/util'
 import { getHakemusUrlFromEmail, pollUntilNewHakemusEmailArrives } from '../../utils/emails'
 import { Budget, fillBudget } from '../../utils/budget'
 import { Answers, Signatory } from '../../utils/types'
+import { getNormalizedHakemus } from '../../utils/hakemus'
 
 export function HakijaAvustusHakuPage(page: Page) {
   const locators = {
@@ -46,6 +47,11 @@ export function HakijaAvustusHakuPage(page: Page) {
 
   async function navigateToExistingHakemusPage(avustushakuID: number, userKey: string) {
     await navigateHakija(page, `/avustushaku/${avustushakuID}/nayta?hakemus=${userKey}`)
+  }
+
+  async function getHakemusID(avustushakuID: number, userKey: string): Promise<number> {
+    const normalizedHakemus = await getNormalizedHakemus(page, avustushakuID, userKey)
+    return normalizedHakemus['hakemus-id']
   }
 
   async function navigateToYhteyshenkilöChangePage(
@@ -395,6 +401,7 @@ export function HakijaAvustusHakuPage(page: Page) {
     fillMuutoshakemusEnabledHakemus,
     fillSignatories,
     getUserKey,
+    getHakemusID,
     navigate,
     navigateToExistingHakemusPage,
     navigateToYhteyshenkilöChangePage,

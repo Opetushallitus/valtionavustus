@@ -2,7 +2,11 @@ import { expect } from '@playwright/test'
 import { JotpaTest } from '../../fixtures/JotpaTest'
 import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
 import { dummyPdfPath, TEST_Y_TUNNUS } from '../../utils/constants'
-import { pollUntilNewHakemusEmailArrives } from '../../utils/emails'
+import {
+  getHakemusSubmitted,
+  pollUntilNewHakemusEmailArrives,
+  waitUntilMinEmails,
+} from '../../utils/emails'
 
 const jotpaFont = 'Montserrat, sans-serif'
 const jotpaColour = 'rgb(0, 155, 98)'
@@ -73,7 +77,7 @@ JotpaTest(
       )
     })
 
-    await JotpaTest.step('Sähköpostissa', async () => {
+    await JotpaTest.step('"Linkki avustushakemukseen"-Sähköpostissa', async () => {
       const newHakemusEmail = (await pollUntilNewHakemusEmailArrives(avustushakuID, buffyEmail))[0]
 
       console.log(newHakemusEmail)
@@ -98,6 +102,24 @@ Hakaniemenranta 6`
 
         expect(newHakemusEmail.formatted).not.toContain('etunimi.sukunimi@oph.fi')
         expect(newHakemusEmail.formatted).toContain('etunimi.sukunimi@jotpa.fi')
+      })
+    })
+
+    await JotpaTest.step('"Hakemus vastaanotettu"-Sähköpostissa', async () => {
+      await hakijaAvustusHakuPage.submitApplication()
+
+      const userKey = await hakijaAvustusHakuPage.getUserKey()
+      const hakemusID = await hakijaAvustusHakuPage.getHakemusID(avustushakuID, userKey)
+      const email = (await waitUntilMinEmails(getHakemusSubmitted, 1, hakemusID))[0]
+      console.log(email)
+
+      await JotpaTest.step('on oikean lähettäjän osoite', async () => {
+        expect(email['from-address']).toEqual('no-reply@jotpa.fi')
+      })
+
+      await JotpaTest.step('on oikean lähettäjän nimi', async () => {
+        expect(email.formatted).not.toContain(`Opetushallitus`)
+        expect(email.formatted).toContain(`Jatkuvan oppimisen ja työllisyyden palvelukeskus`)
       })
     })
   }
