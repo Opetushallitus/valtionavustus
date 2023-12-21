@@ -207,9 +207,17 @@
         "fi": "OPH:n myöntämä avustus",
         "sv": "Understöd som ansöks av Utbildningsstyrelsen"
       },
+      "jotpaFinancingAmount": {
+        "fi": "Jotpan myöntämä avustus",
+        "sv": "Understöd som ansöks av SKOLS"
+      },
       "ophFinancingPercentage": {
         "fi": "OPH:n rahoitus-%",
         "sv": "Utbildningsstyrelsens finansieringsandel (%)"
+      },
+      "jotpaFinancingPercentage": {
+        "fi": "Jotpan rahoitus-%",
+        "sv": "SKOLS finansieringsandel (%)"
       },
       "selfFinancingAmount": {
         "fi": "Omarahoitus",

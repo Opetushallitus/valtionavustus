@@ -6,6 +6,12 @@ import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip'
 import { percentageOf, roundDecimal, formatDecimal } from '../MathUtil'
 import Translator from 'soresu-form/web/form/Translator'
 
+export function isJotpaAvustushaku(avustushaku) {
+  if (!avustushaku) return false
+
+  return avustushaku['operational-unit-code'] === '6600105300'
+}
+
 export default class VaBudgetElement extends React.Component {
   constructor(props) {
     super(props)
@@ -180,6 +186,8 @@ export class BudgetSummaryElement extends React.Component {
       error: !isFinancingResultValid,
     })
 
+    const isJotpaHakemus = isJotpaAvustushaku(this.props.customProps.avustushaku)
+
     return (
       <section id={htmlId} className="budget-summary">
         <h4 className={financingNeededClassNames}>
@@ -234,7 +242,9 @@ export class BudgetSummaryElement extends React.Component {
                   <td className="amount-label-column">
                     <LocalizedString
                       translations={translations}
-                      translationKey="ophFinancingAmount"
+                      translationKey={
+                        isJotpaHakemus ? 'jotpaFinancingAmount' : 'ophFinancingAmount'
+                      }
                       lang={lang}
                     />
                   </td>
@@ -274,7 +284,9 @@ export class BudgetSummaryElement extends React.Component {
                   <td className="percentage-label-column">
                     <LocalizedString
                       translations={translations}
-                      translationKey="ophFinancingPercentage"
+                      translationKey={
+                        isJotpaHakemus ? 'jotpaFinancingPercentage' : 'ophFinancingPercentage'
+                      }
                       lang={lang}
                     />
                   </td>

@@ -65,6 +65,16 @@ JotpaTest(
         )
       })
 
+      await JotpaTest.step('Näyttää jotpan myöntämä avustus tekstin', async () => {
+        await expect(page.getByText('Jotpan myöntämä avustus')).toBeVisible()
+        await expect(page.getByText('OPH:n myöntämä avustus')).not.toBeVisible()
+      })
+
+      await JotpaTest.step('Näyttää jotpan rahoitus tekstin', async () => {
+        await expect(page.getByText('Jotpan rahoitus-%')).toBeVisible()
+        await expect(page.getByText('OPH:n rahoitus-%')).not.toBeVisible()
+      })
+
       await JotpaTest.step(
         'Näyttää aktiivisen "Lähetä käsiteltäväksi" nappulan Jotpan väreissä',
         async () => {
