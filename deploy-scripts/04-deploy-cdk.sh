@@ -33,7 +33,7 @@ function cdk-built-app {
 }
 
 function main {
-  readonly ENV="$1"
+  parse_env_from_script_name "04-deploy-cdk"
   check_env
 
   info "Deploying to environment $ENV"
