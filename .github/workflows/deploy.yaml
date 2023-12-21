@@ -30,6 +30,4 @@ jobs:
           role-to-assume: ${{ secrets.DEPLOY_ROLE_ARN }}
 
       - name: 04-deploy-cdk.sh
-        run: |
-          aws sts get-caller-identity
-          echo "$AWS_ACCOUNT_ID_DEV" | cut -c -3
+        run: ./deploy-scripts/04-deploy-cdk-${{ inputs.env }}.sh
