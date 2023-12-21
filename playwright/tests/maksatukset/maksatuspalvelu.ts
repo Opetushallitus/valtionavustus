@@ -1,5 +1,7 @@
-import { APIRequestContext } from '@playwright/test'
+import { APIRequestContext, expect } from '@playwright/test'
 import { VIRKAILIJA_URL } from '../../utils/constants'
+
+const SECOND_IN_MILLIS = 1000
 
 function getUniqueFileName(): string {
   return `va_${new Date().getTime()}.xml`
@@ -14,11 +16,21 @@ export async function putMaksupalauteToMaksatuspalveluAndProcessIt(
     xml: xml.trimStart(),
     filename: getUniqueFileName(),
   }
-  await request.post(`${VIRKAILIJA_URL}/api/test/process-maksupalaute`, {
-    data,
-    timeout: 30000,
-    failOnStatusCode: true,
-  })
+
+  async function postMaksupalaute() {
+    try {
+      await request.post(`${VIRKAILIJA_URL}/api/test/process-maksupalaute`, {
+        data,
+        timeout: SECOND_IN_MILLIS * 5,
+        failOnStatusCode: true,
+      })
+      return true
+    } catch (e) {
+      return false
+    }
+  }
+
+  await expect.poll(postMaksupalaute, { timeout: SECOND_IN_MILLIS * 60 }).toBeTruthy()
 }
 
 export async function getAllMaksatuksetFromMaksatuspalvelu(
