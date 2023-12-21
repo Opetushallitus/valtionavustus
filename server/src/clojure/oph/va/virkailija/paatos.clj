@@ -30,7 +30,7 @@
 
 (defn- emails-from-answers [answers has-normalized-contact-email?]
   (let [email-answers (formutil/filter-values #(is-notification-email-field? % has-normalized-contact-email?) answers)
-        emails (vec (remove nil? (distinct (map :value email-answers))))]
+        emails (vec (remove clojure.string/blank? (distinct (map :value email-answers))))]
     emails))
 
 (defn- emails-for-hakemus-without-signatories [hakemus contact-email trusted-contact-email]
