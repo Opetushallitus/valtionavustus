@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import ClassNames from 'classnames'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'
+import { isValidEmail } from 'soresu-form/web/form/SyntaxValidator'
 import Translator from 'soresu-form/web/form/Translator'
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
 import { Avustushaku, Hakemus, Selvitys } from 'soresu-form/web/va/types'
@@ -26,7 +26,7 @@ type Email = { value: string; isValid: boolean }
 
 const makeFormRecipientEmail = (value = '') => ({
   value,
-  isValid: !SyntaxValidator.validateEmail(value),
+  isValid: isValidEmail(value),
 })
 const makeEmptyRecipientEmail = () => ({ value: '', isValid: true })
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
