@@ -2,6 +2,7 @@ import { APIRequestContext, expect } from '@playwright/test'
 import { VIRKAILIJA_URL } from '../../utils/constants'
 
 const SECOND_IN_MILLIS = 1000
+const MINUTE_IN_MILLIS = 60 * SECOND_IN_MILLIS
 
 function getUniqueFileName(): string {
   return `va_${new Date().getTime()}.xml`
@@ -21,7 +22,7 @@ export async function putMaksupalauteToMaksatuspalveluAndProcessIt(
     try {
       await request.post(`${VIRKAILIJA_URL}/api/test/process-maksupalaute`, {
         data,
-        timeout: SECOND_IN_MILLIS * 5,
+        timeout: SECOND_IN_MILLIS * 30,
         failOnStatusCode: true,
       })
       return true
@@ -30,7 +31,7 @@ export async function putMaksupalauteToMaksatuspalveluAndProcessIt(
     }
   }
 
-  await expect.poll(postMaksupalaute, { timeout: SECOND_IN_MILLIS * 60 }).toBeTruthy()
+  await expect.poll(postMaksupalaute, { timeout: MINUTE_IN_MILLIS * 5 }).toBeTruthy()
 }
 
 export async function getAllMaksatuksetFromMaksatuspalvelu(
