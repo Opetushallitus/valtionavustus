@@ -19,6 +19,8 @@ jobs:
     environment: ${{ inputs.env }}
     env:
       AWS_ACCOUNT_ID_DEV: ${{ secrets.AWS_ACCOUNT_ID_DEV }}
+      AWS_ACCOUNT_ID_QA: ${{ secrets.AWS_ACCOUNT_ID_QA }}
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
     permissions:
       id-token: write
     steps:
