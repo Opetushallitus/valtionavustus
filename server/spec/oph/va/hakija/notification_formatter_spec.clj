@@ -111,6 +111,7 @@
      :label {:fi "Hakuaika" :sv "Ansökningstid"}}}})
 
 (defn fake-sender [is-change-request-response?
+                   is-jotpa-avustushaku?
                    language
                    to
                    haku-id
