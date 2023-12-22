@@ -33,6 +33,7 @@ export const HaunTiedotPage = (page: Page) => {
       resolved: page.locator("label[for='set-status-resolved']"),
     },
     registerNumber: page.locator('#register-number'),
+    hallinoiavustuskiaRegisterNumber: page.getByPlaceholder('Esim. va-oph-2023-6'),
     hakuRole: {
       vastuuvalmistelija: {
         name: page.getByTestId('vastuuvalmistelija-name'),

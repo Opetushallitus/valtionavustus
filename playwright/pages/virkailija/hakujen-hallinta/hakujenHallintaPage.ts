@@ -29,6 +29,7 @@ export interface HakuProps {
   avustushakuName: string
   randomName: string
   registerNumber: string
+  hallinoiavustuskiaRegisterNumber?: string
   vaCodes: VaCodeValues
   hakuaikaStart: Date
   hakuaikaEnd: Date
@@ -189,6 +190,7 @@ export class HakujenHallintaPage {
   async fillAvustushakuWithoutWaitingForSave({
     avustushakuName,
     registerNumber,
+    hallinoiavustuskiaRegisterNumber,
     hakuaikaStart,
     hakuaikaEnd,
     hankkeenAlkamispaiva,
@@ -217,6 +219,11 @@ export class HakujenHallintaPage {
 
       await haunTiedotPage.locators.status.draft.click()
       await haunTiedotPage.locators.registerNumber.fill(registerNumber)
+      if (hallinoiavustuskiaRegisterNumber) {
+        await haunTiedotPage.locators.hallinoiavustuskiaRegisterNumber.fill(
+          hallinoiavustuskiaRegisterNumber
+        )
+      }
       await haunTiedotPage.locators.hakuName.fi.fill(avustushakuName)
       await haunTiedotPage.locators.hakuName.sv.fill(avustushakuName + ' på svenska')
 
@@ -307,7 +314,6 @@ export class HakujenHallintaPage {
   async createPublishedAvustushaku(hakuProps: HakuProps, hakulomake: string) {
     return await test.step('Create avustushaku', async () => {
       const { avustushakuID } = await this.createHakuWithLomakeJson(hakulomake, hakuProps)
-      await this.commonHakujenHallinta.switchToHaunTiedotTab()
       const haunTiedotPage = await this.commonHakujenHallinta.switchToHaunTiedotTab()
       await haunTiedotPage.publishAvustushaku()
       return avustushakuID

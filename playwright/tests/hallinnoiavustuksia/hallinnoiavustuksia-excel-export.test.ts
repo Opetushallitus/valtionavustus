@@ -6,14 +6,22 @@ import { expectToFindRowWithValuesInSheet, SheetRow } from '../../utils/sheet'
 import { JotpaTest } from '../../fixtures/JotpaTest'
 import muutoshakemusEnabledHakuLomakeJson from '../../fixtures/prod.hakulomake.json'
 
-twoAcceptedHakemusTest.use({
+const ophTest = twoAcceptedHakemusTest.extend({
+  hakuProps: ({ hakuProps }, use) =>
+    use({
+      ...hakuProps,
+      hallinoiavustuskiaRegisterNumber: 'va-oph-2023-6',
+    }),
+})
+
+ophTest.use({
   acceptDownloads: true,
 })
 
 const SheetName = 'VA'
 
 test.describe('OPH', () => {
-  twoAcceptedHakemusTest(
+  ophTest(
     'Hallinnoiavustuksia.fi Excel export',
     async ({ page, avustushakuID, acceptedHakemukset, hakuProps }) => {
       expectToBeDefined(avustushakuID)
@@ -58,9 +66,10 @@ test.describe('OPH', () => {
           },
           {
             A2: 'OPH',
+            B2: 'va-oph-2023-6',
             H2: `1/${hakuProps.registerNumber}`,
           },
-          { A3: 'OPH', H3: `2/${hakuProps.registerNumber}` },
+          { A3: 'OPH', B3: 'va-oph-2023-6', H3: `2/${hakuProps.registerNumber}` },
         ]
         expectToFindRowWithValuesInSheet(sheet, expectedRows)
       })
@@ -70,21 +79,31 @@ test.describe('OPH', () => {
 
 const Jotpa = JotpaTest.extend<{ hakulomake: string }>({
   hakulomake: JSON.stringify(muutoshakemusEnabledHakuLomakeJson),
+  hakuProps: ({ hakuProps }, use) =>
+    use({
+      ...hakuProps,
+      hallinoiavustuskiaRegisterNumber: 'va-oph-2023-7',
+    }),
 })
 
 test.describe('JOTPA', () => {
-  Jotpa('Hallinnoiavustuksia.fi Excel export', async ({ page, acceptedHakemus, avustushakuID }) => {
-    expectToBeDefined(acceptedHakemus)
-    const workbook = await downloadHallinnoiAvustuksiaExcel(page, avustushakuID)
-    const expectedRows: SheetRow[] = [
-      {
-        A1: 'valtionapuviranomainen',
-      },
-      {
-        A2: `OPH`,
-      },
-    ]
-    const sheet = workbook.Sheets[SheetName]
-    expectToFindRowWithValuesInSheet(sheet, expectedRows)
-  })
+  Jotpa(
+    'Hallinnoiavustuksia.fi Excel export',
+    async ({ page, acceptedHakemus, hakuProps, avustushakuID }) => {
+      expectToBeDefined(acceptedHakemus)
+      const workbook = await downloadHallinnoiAvustuksiaExcel(page, avustushakuID)
+      const expectedRows: SheetRow[] = [
+        {
+          A1: 'valtionapuviranomainen',
+        },
+        {
+          A2: `OPH`,
+          B2: 'va-oph-2023-7',
+          H2: `1/${hakuProps.registerNumber}`,
+        },
+      ]
+      const sheet = workbook.Sheets[SheetName]
+      expectToFindRowWithValuesInSheet(sheet, expectedRows)
+    }
+  )
 })

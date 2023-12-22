@@ -740,13 +740,13 @@
 (def avustushaku->hallinoi-sheet-rows
   (juxt
     (constantly "OPH") ;(comp get-valtionapuviranomainen) ;"valtionapuviranomainen"
-    (constantly "") ;"avustushakuAsianumero"
+    :avustushaku-asianumero ;"avustushakuAsianumero"
     (constantly "") ;"avustushakuNimi"
     (constantly "") ;"avustushakuAvustuslaji"
     (constantly "") ;"avustushakuAlkaaPvm"
     (constantly "") ;"avustushakuPaattyyPvm"
     (constantly "") ;"avustushakuURL"
-    :asiatunnus     ;"avustusasiaAsianumero"
+    :asianumero     ;"avustusasiaAsianumero"
     (constantly "") ;"avustusasiaVireilletuloPvm"
     (constantly "") ;"avustusasiaKieli"
     (constantly "") ;"avustusasiaVireillepanijaHenkiloTunnus"
@@ -774,7 +774,8 @@
 (defn export-avustushaku-for-hallinnoiavustuksia [avustushaku-id]
   (let [data (query "SELECT
                         hakemukset.id,
-                        hakemukset.register_number AS asiatunnus,
+                        hakemukset.register_number AS asianumero,
+                        avustushaku.hallinnoiavustuksia_register_number AS avustushaku_asianumero,
                         koodi.code as toimintayksikko
                       FROM hakemukset
                       LEFT JOIN arviot ON arviot.hakemus_id = hakemukset.id
