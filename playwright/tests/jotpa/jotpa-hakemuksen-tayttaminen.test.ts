@@ -52,6 +52,13 @@ JotpaTest(
         await expect(page.locator('#project-info')).toHaveCSS('font-family', jotpaFont)
       })
 
+      await JotpaTest.step('Näyttää Jotpan faviconin', async () => {
+        await expect(page.locator('#favicon')).toHaveAttribute(
+          'href',
+          '/img/jotpa/jotpa-favicon.ico'
+        )
+      })
+
       await JotpaTest.step('Näyttää aktiivisen nappulan jotpan väreissä', async () => {
         const yliopistoButton = page.getByText('Yliopisto')
         await yliopistoButton.click()

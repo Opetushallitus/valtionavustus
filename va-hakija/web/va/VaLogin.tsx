@@ -21,17 +21,7 @@ import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 import VaLoginTopbar from './VaLoginTopbar'
 import VaUrlCreator from './VaUrlCreator.js'
 import { isJotpaAvustushaku, isJotpaHakemusLomakeCustomizationEnabled } from './jotpa'
-
-function changeFaviconIconTo(favicon: 'oph' | 'jotpa') {
-  const faviconElement = document.querySelector<HTMLLinkElement>('#favicon')
-  if (!faviconElement) return
-
-  if (favicon === 'oph') {
-    faviconElement.href = '/favicon.ico'
-  } else {
-    faviconElement.href = '/img/jotpa/jotpa-favicon.ico'
-  }
-}
+import { changeFaviconIconTo } from './favicon'
 
 type VaLoginProps = {
   model: {
@@ -48,17 +38,11 @@ type VaLoginState = {
   error: boolean
 }
 export default function VaLogin(props: VaLoginProps) {
-  useEffect(() => {
-    setCorrectFavicon()
-    return function cleanup() {
-      changeFaviconIconTo('oph')
-    }
-  }, [])
-
-  const [state, setState] = useState<VaLoginState>({
-    email: '',
-    error: false,
-  })
+  const model = props.model
+  const lang = model.lang
+  const translations = model.translations
+  const avustushaku = model.avustushaku
+  const environment = model.environment
 
   const useJotpaCustomization = () => {
     return (
@@ -66,6 +50,20 @@ export default function VaLogin(props: VaLoginProps) {
       isJotpaHakemusLomakeCustomizationEnabled({ environment: environment })
     )
   }
+
+  const isJotpaHakemus = useJotpaCustomization()
+
+  useEffect(() => {
+    setCorrectFavicon()
+    return function cleanup() {
+      changeFaviconIconTo('oph')
+    }
+  }, [isJotpaHakemus])
+
+  const [state, setState] = useState<VaLoginState>({
+    email: '',
+    error: false,
+  })
 
   const setCorrectFavicon = () => {
     if (useJotpaCustomization()) {
@@ -121,11 +119,6 @@ export default function VaLogin(props: VaLoginProps) {
       })
   }
 
-  const model = props.model
-  const lang = model.lang
-  const translations = model.translations
-  const avustushaku = model.avustushaku
-  const environment = model.environment
   const content = avustushaku.content
   const isOpen = avustushaku.phase === 'current'
 
