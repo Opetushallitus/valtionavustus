@@ -124,7 +124,7 @@ const HakuEditor = () => {
         </WarningBanner>
       )}
       <div id="haku-edit-header" className="editor-header">
-        <div className="field-register-number">
+        <div>
           <RegisterNumber
             avustushaku={avustushaku}
             allowAllHakuEdits={allowAllHakuEdits}
@@ -132,6 +132,15 @@ const HakuEditor = () => {
             helpTexts={helpTexts}
           />
         </div>
+        <div>
+          <HallinnoiavustuksiaRegisterNumber
+            avustushaku={avustushaku}
+            allowAllHakuEdits={allowAllHakuEdits}
+            onChange={onChange}
+            helpTexts={helpTexts}
+          />
+        </div>
+
         <div className="editor-header-element">
           <CreateHaku avustushaku={avustushaku} helpTexts={helpTexts} />
         </div>
@@ -1020,7 +1029,7 @@ const RegisterNumber = ({
   }
 
   return (
-    <div className="haku-edit-registernumber">
+    <div>
       <h3 className="required registerNumberHeading">
         Asianumero
         <CustomHelpTooltip
@@ -1039,6 +1048,34 @@ const RegisterNumber = ({
         value={registerNumber}
       />
       <div>{errorString}</div>
+    </div>
+  )
+}
+const HallinnoiavustuksiaRegisterNumber = ({
+  avustushaku,
+  allowAllHakuEdits,
+  helpTexts,
+  onChange,
+}: RegisterNumberProps) => {
+  const registerNumber = avustushaku['hallinnoiavustuksia-register-number'] || ''
+  return (
+    <div>
+      <h3 className="registerNumberHeading">
+        Asianumero hallinnoiavustuksia.fi-palvelussa
+        <CustomHelpTooltip
+          content={helpTexts['hakujen_hallinta__haun_tiedot___hallinnoiavustuksia_asianumero']}
+          direction="up"
+        />
+      </h3>
+      <input
+        type="text"
+        disabled={!allowAllHakuEdits}
+        onChange={onChange}
+        maxLength={128}
+        placeholder="Esim. va-oph-2023-6"
+        id="hallinnoiavustuksia-register-number"
+        value={registerNumber}
+      />
     </div>
   )
 }

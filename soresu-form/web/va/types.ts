@@ -416,6 +416,7 @@ export type Avustushaku = {
   'operational-unit-id'?: unknown
   phase: AvustushakuPhase
   'register-number': string | null
+  'hallinnoiavustuksia-register-number': string | null
   status: AvustushakuStatus
   allow_visibility_in_external_system: boolean
   arvioitu_maksupaiva?: string

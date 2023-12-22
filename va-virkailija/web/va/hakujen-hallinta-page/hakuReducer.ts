@@ -576,7 +576,12 @@ export const updateField = createAsyncThunk<
   { state: HakujenHallintaRootState }
 >('haku/updateField', async (update, thunkAPI) => {
   const fieldId = update.field.id
-  const basicFields = ['loppuselvitysdate', 'valiselvitysdate', 'register-number'] as const
+  const basicFields = [
+    'loppuselvitysdate',
+    'valiselvitysdate',
+    'register-number',
+    'hallinnoiavustuksia-register-number',
+  ] as const
   let avustushaku = _.cloneDeep(update.avustushaku)
   if (basicFields.indexOf(fieldId as any) > -1) {
     avustushaku[fieldId as (typeof basicFields)[number]] = update.newValue
