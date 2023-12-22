@@ -1021,7 +1021,7 @@ const RegisterNumber = ({
 
   return (
     <div className="haku-edit-registernumber">
-      <h3 className="required">
+      <h3 className="required registerNumberHeading">
         Asianumero
         <CustomHelpTooltip
           content={helpTexts['hakujen_hallinta__haun_tiedot___asianumero']}
