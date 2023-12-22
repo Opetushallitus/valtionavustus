@@ -748,7 +748,7 @@
     (constantly "") ;"avustushakuURL"
     :asianumero     ;"avustusasiaAsianumero"
     (constantly "") ;"avustusasiaVireilletuloPvm"
-    (constantly "") ;"avustusasiaKieli"
+    :language ;"avustusasiaKieli"
     (constantly "") ;"avustusasiaVireillepanijaHenkiloTunnus"
     (constantly "") ;"avustusasiaVireillepanijaHenkiloNimi"
     (constantly "") ;"avustusasiaVireillepanijaYhteisoTunnus"
@@ -776,7 +776,8 @@
                         hakemukset.id,
                         hakemukset.register_number AS asianumero,
                         avustushaku.hallinnoiavustuksia_register_number AS avustushaku_asianumero,
-                        koodi.code as toimintayksikko
+                        koodi.code as toimintayksikko,
+                        hakemukset.language
                       FROM hakemukset
                       LEFT JOIN arviot ON arviot.hakemus_id = hakemukset.id
                       LEFT JOIN avustushaut avustushaku ON avustushaku.id = ?

@@ -68,8 +68,9 @@ test.describe('OPH', () => {
             A2: 'OPH',
             B2: 'va-oph-2023-6',
             H2: `1/${hakuProps.registerNumber}`,
+            J2: 'fi',
           },
-          { A3: 'OPH', B3: 'va-oph-2023-6', H3: `2/${hakuProps.registerNumber}` },
+          { A3: 'OPH', B3: 'va-oph-2023-6', H3: `2/${hakuProps.registerNumber}`, J3: 'fi' },
         ]
         expectToFindRowWithValuesInSheet(sheet, expectedRows)
       })
@@ -79,6 +80,7 @@ test.describe('OPH', () => {
 
 const Jotpa = JotpaTest.extend<{ hakulomake: string }>({
   hakulomake: JSON.stringify(muutoshakemusEnabledHakuLomakeJson),
+  answers: ({ answers }, use) => use({ ...answers, lang: 'sv' }),
   hakuProps: ({ hakuProps }, use) =>
     use({
       ...hakuProps,
@@ -94,12 +96,10 @@ test.describe('JOTPA', () => {
       const workbook = await downloadHallinnoiAvustuksiaExcel(page, avustushakuID)
       const expectedRows: SheetRow[] = [
         {
-          A1: 'valtionapuviranomainen',
-        },
-        {
           A2: `OPH`,
           B2: 'va-oph-2023-7',
           H2: `1/${hakuProps.registerNumber}`,
+          J2: 'sv',
         },
       ]
       const sheet = workbook.Sheets[SheetName]
