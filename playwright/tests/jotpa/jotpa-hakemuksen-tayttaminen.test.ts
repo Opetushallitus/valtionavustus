@@ -17,6 +17,7 @@ JotpaTest(
   async ({ page, avustushakuID, answers }) => {
     const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     const buffyEmail = 'buffy.summers@askjeeves.com'
+    let hakemusUrl: string
     await hakijaAvustusHakuPage.navigate(avustushakuID, 'fi')
 
     await JotpaTest.step('Etusivulla', async () => {
@@ -38,7 +39,7 @@ JotpaTest(
     })
 
     await JotpaTest.step('Hakemussivulla', async () => {
-      const hakemusUrl = await hakijaAvustusHakuPage.startApplication(avustushakuID, buffyEmail)
+      hakemusUrl = await hakijaAvustusHakuPage.startApplication(avustushakuID, buffyEmail)
       await page.goto(hakemusUrl)
       await hakijaAvustusHakuPage.fillApplication(answers, TEST_Y_TUNNUS)
 
@@ -134,6 +135,27 @@ Hakaniemenranta 6`
       await JotpaTest.step('on oikean lähettäjän nimi', async () => {
         expect(email.formatted).not.toContain(`Opetushallitus`)
         expect(email.formatted).toContain(`Jatkuvan oppimisen ja työllisyyden palvelukeskus`)
+      })
+    })
+
+    await JotpaTest.step('Hakemuksen esikatselu sivulla', async () => {
+      await page.goto(hakemusUrl + '&preview=true')
+
+      await JotpaTest.step('Näyttää jotpan suomenkielisen logon', async () => {
+        expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-fi.png')
+      })
+
+      await JotpaTest.step('Näyttää Jotpan fontin', async () => {
+        await expect(page.locator('#topbar h1')).toHaveCSS('font-family', jotpaFont)
+        await expect(page.locator('.soresu-preview h1')).toHaveCSS('font-family', jotpaFont)
+        await expect(page.locator('#project-info')).toHaveCSS('font-family', jotpaFont)
+      })
+
+      await JotpaTest.step('Näyttää Jotpan faviconin', async () => {
+        await expect(page.locator('#favicon')).toHaveAttribute(
+          'href',
+          '/img/jotpa/jotpa-favicon.ico'
+        )
       })
     })
   }
