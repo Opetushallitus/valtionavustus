@@ -137,6 +137,7 @@
                           :haku-type HakuType
                           :is_academysize s/Bool
                           :register-number (s/maybe s/Str)
+                          :hallinnoiavustuksia-register-number (s/maybe s/Str)
                           :content AvustusHakuContent
                           (s/optional-key :hankkeen-alkamispaiva) (s/maybe java.time.LocalDate)
                           (s/optional-key :hankkeen-paattymispaiva) (s/maybe java.time.LocalDate)

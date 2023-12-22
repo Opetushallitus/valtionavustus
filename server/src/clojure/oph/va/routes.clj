@@ -55,6 +55,7 @@
   {:id          (:id avustushaku)
    :status      (:status avustushaku)
    :register-number (:register_number avustushaku)
+   :hallinnoiavustuksia-register-number (:hallinnoiavustuksia_register_number avustushaku)
    :haku-type   (:haku_type avustushaku)
    :is_academysize (:is_academysize avustushaku)
    :phase       (avustushaku-phase avustushaku)

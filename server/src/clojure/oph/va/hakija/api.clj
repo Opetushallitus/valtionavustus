@@ -87,6 +87,7 @@
                                    :status haku-status
                                    :content content
                                    :register_number (:register-number avustushaku)
+                                   :hallinnoiavustuksia_register_number (:hallinnoiavustuksia-register-number avustushaku)
                                    :is_academysize (:is_academysize avustushaku)
                                    :haku_type (new HakuType (:haku-type avustushaku))
                                    :hankkeen_alkamispaiva (:hankkeen-alkamispaiva avustushaku)
@@ -102,8 +103,8 @@
             diff-result (diff-paatos previous-paatos-version new-paatos-version)]
         (if (and (= nil (first diff-result)) (= nil (first (rest diff-result))))
           (hakija-queries/update-avustushaku! avustushaku-to-save db-options)
-          (let [updated-paatos (merge new-paatos-version { :updatedAt (clj-time/now) })
-                avustushaku-with-updated-decision (merge avustushaku-to-save { :decision updated-paatos })]
+          (let [updated-paatos (merge new-paatos-version {:updatedAt (clj-time/now)})
+                avustushaku-with-updated-decision (merge avustushaku-to-save {:decision updated-paatos})]
             (hakija-queries/update-avustushaku! avustushaku-with-updated-decision db-options)))))
     (->> avustushaku-to-save
          (exec hakija-queries/get-avustushaku)
