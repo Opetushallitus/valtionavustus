@@ -734,9 +734,12 @@
      "piilotaVireillepanija"
    ])
 
+(defn get-valtionapuviranomainen [data]
+  (if (= (:toimintayksikko data) "6600105300") "JOTPA" "OPH"))
+
 (def avustushaku->hallinoi-sheet-rows
   (juxt
-    (constantly "") ;"valtionapuviranomainen"
+    (constantly "OPH") ;(comp get-valtionapuviranomainen) ;"valtionapuviranomainen"
     (constantly "") ;"avustushakuAsianumero"
     (constantly "") ;"avustushakuNimi"
     (constantly "") ;"avustushakuAvustuslaji"
@@ -771,14 +774,17 @@
 (defn export-avustushaku-for-hallinnoiavustuksia [avustushaku-id]
   (let [data (query "SELECT
                         hakemukset.id,
-                        register_number AS asiatunnus
+                        hakemukset.register_number AS asiatunnus,
+                        koodi.code as toimintayksikko
                       FROM hakemukset
                       LEFT JOIN arviot ON arviot.hakemus_id = hakemukset.id
+                      LEFT JOIN avustushaut avustushaku ON avustushaku.id = ?
+                      LEFT JOIN va_code_values koodi ON koodi.id = avustushaku.operational_unit_id
                       WHERE version_closed IS NULL AND
                             hakemus_type = 'hakemus' AND
                             arviot.status in ('accepted', 'rejected') AND
                             avustushaku = ?
-                      ORDER BY hakemukset.id ASC" [avustushaku-id])
+                      ORDER BY hakemukset.id ASC" [avustushaku-id avustushaku-id])
         output                (ByteArrayOutputStream.)
         wb                    (spreadsheet/create-workbook main-sheet-name-hallinnoiavustuksia
                                                            (apply conj
