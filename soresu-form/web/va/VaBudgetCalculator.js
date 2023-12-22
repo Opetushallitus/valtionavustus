@@ -4,7 +4,7 @@ import FormUtil from 'soresu-form/web/form/FormUtil'
 import JsUtil from 'soresu-form/web/JsUtil'
 import { ratioShareRoundedUpOf, percentageShareRoundedUpOf } from '../MathUtil'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
-import { validateMoney } from 'soresu-form/web/form/MoneyValidator'
+import { isValidMoney } from 'soresu-form/web/form/MoneyValidator'
 
 export default class VaBudgetCalculator {
   constructor(onSumCalculatedCallback) {
@@ -70,7 +70,7 @@ export default class VaBudgetCalculator {
       const descriptionField = itemField.children[0]
       const amountField = itemField.children[1]
       const amountValue = InputValueStorage.readValue(null, answersObject, amountField.id)
-      const isAmountValid = isNotEmpty(amountValue) && !validateMoney(amountValue)
+      const isAmountValid = isNotEmpty(amountValue) && isValidMoney(amountValue)
       const valueToUse = isAmountValid ? amountValue : 0
       descriptionField.required = isAmountValid && valueToUse > 0 // mutation!
       if (sumCalculatedCallback) {
@@ -181,7 +181,7 @@ export default class VaBudgetCalculator {
         (answer) => answer.key === selfFinancingSpecField.id
       )
 
-      if (!selfFinancingAnswer || validateMoney(selfFinancingAnswer.value || '')) {
+      if (!selfFinancingAnswer || !isValidMoney(selfFinancingAnswer.value || '')) {
         return _.assign(result, {
           selfValue: null,
           ophValue: null,

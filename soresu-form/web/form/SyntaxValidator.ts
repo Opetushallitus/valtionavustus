@@ -1,11 +1,10 @@
 import _ from 'lodash'
 
 import BankAccountValidator from './BankAccountValidator'
-import { validateMoney } from './MoneyValidator'
-import IntegerValidator from './IntegerValidator'
-import DecimalValidator from './DecimalValidator'
+import { isValidMoney } from './MoneyValidator'
 import TableValidator from './TableValidator'
 import { Field } from '../va/types'
+import { representsInteger, representsDecimal } from '../MathUtil'
 
 export type ValidationError = { error: string }
 export abstract class Validator {
@@ -22,6 +21,14 @@ function isFalsyButNotZero(value: any): boolean {
   if (value === 0) return false
 
   return !value
+}
+
+function isValidInteger(input: any) {
+  return /^[1-9][0-9]*$/.test(input) && representsInteger(input)
+}
+
+function isValidDecimal(input: any) {
+  return representsInteger(input) || representsDecimal(input)
 }
 
 export function isValidEmail(input: any): boolean {
@@ -59,25 +66,25 @@ export default class SyntaxValidator {
         break
       case 'moneyField':
         {
-          const moneyError = validateMoney(value)
+          const moneyError = !isValidMoney(value)
           if (moneyError) {
-            validationErrors.push(moneyError)
+            validationErrors.push({ error: 'money' })
           }
         }
         break
       case 'integerField':
         {
-          const integerError = IntegerValidator.validateInteger(value)
+          const integerError = !isValidInteger(value)
           if (integerError) {
-            validationErrors.push(integerError)
+            validationErrors.push({ error: 'integer' })
           }
         }
         break
       case 'decimalField':
         {
-          const decimalError = DecimalValidator.validateDecimal(value)
+          const decimalError = !isValidDecimal(value)
           if (decimalError) {
-            validationErrors.push(decimalError)
+            validationErrors.push({ error: 'decimal' })
           }
         }
         break
@@ -91,17 +98,17 @@ export default class SyntaxValidator {
         break
       case 'iban':
         {
-          const ibanError = SyntaxValidator.validateIban(value)
+          const ibanError = !BankAccountValidator.isValidIban(value)
           if (ibanError) {
-            validationErrors.push(ibanError)
+            validationErrors.push({ error: 'iban' })
           }
         }
         break
       case 'bic':
         {
-          const bicError = SyntaxValidator.validateBic(value)
+          const bicError = !BankAccountValidator.isValidBic(value)
           if (bicError) {
-            validationErrors.push(bicError)
+            validationErrors.push({ error: 'bic' })
           }
         }
         break
@@ -149,13 +156,5 @@ export default class SyntaxValidator {
     const modulo = sum % 11
     const calculatedCheckDigit = modulo === 0 ? 0 : 11 - modulo
     return calculatedCheckDigit === checkDigit ? undefined : { error: 'finnishBusinessId' }
-  }
-
-  static validateIban(input: any) {
-    return BankAccountValidator.isValidIban(input) ? undefined : { error: 'iban' }
-  }
-
-  static validateBic(input: any) {
-    return BankAccountValidator.isValidBic(input) ? undefined : { error: 'bic' }
   }
 }

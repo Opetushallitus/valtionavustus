@@ -1,9 +1,5 @@
 import { isNumeric } from '../MathUtil'
 
-export function validateMoney(input: string) {
-  return isValidMoney(input) ? undefined : { error: 'money' }
-}
-
 export function isValidMoney(input: string): boolean {
   return isInteger(input) && hasMaxSevenDigits(parseInt(input, 10))
 }

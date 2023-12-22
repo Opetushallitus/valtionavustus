@@ -1,79 +1,41 @@
 import { test, expect } from '@playwright/test'
-import SyntaxValidator from '../../../soresu-form/web/form/SyntaxValidator'
+import SyntaxValidator, { isValidEmail } from '../../../soresu-form/web/form/SyntaxValidator'
 
 test.describe.parallel('Syntax validator', function () {
   test('validates email', function () {
-    expect(SyntaxValidator.validateEmail('user@example.com')).toEqual(undefined)
-    expect(SyntaxValidator.validateEmail('first.last@example.com')).toEqual(undefined)
-    expect(SyntaxValidator.validateEmail('First.LAST@example.com')).toEqual(undefined)
-    expect(SyntaxValidator.validateEmail('valid.email@my-example.DOT.com')).toEqual(undefined)
-    expect(SyntaxValidator.validateEmail('valid+param@example.com')).toEqual(undefined)
-    expect(SyntaxValidator.validateEmail('nosuch')).toEqual({ error: 'email' })
-    expect(SyntaxValidator.validateEmail('example.com')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('invalid@example')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('invalid@example,com')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('invalid@example.,com')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('first last@example.com')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('first. last@example.com')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('first .last@example.com')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('äö@example.com')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('\xa9@example.com')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('invalid.em%0Ail@example.com')).toEqual({ error: 'email' })
-    expect(SyntaxValidator.validateEmail('invalid.em%0ail@example.com')).toEqual({ error: 'email' })
-    expect(SyntaxValidator.validateEmail(' user@example.com')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail(';user@example.com')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('user@example.com ')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('user@example.com;')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('Matti Meikalainen <matti@example.com>')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('Matti Meikälainen <matti@example.com>')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('user1@example.com user2@example.com')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('user1@example.com, user2@example.com')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('user1@example.com; user2@example.com')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('%0a@example.com')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('%0A@example.com')).toEqual({
-      error: 'email',
-    })
-    expect(SyntaxValidator.validateEmail('')).toEqual({ error: 'email' })
-    expect(SyntaxValidator.validateEmail(42)).toEqual({ error: 'email' })
-    expect(SyntaxValidator.validateEmail(null)).toEqual({ error: 'email' })
+    expect(isValidEmail('user@example.com')).toBeTruthy()
+    expect(isValidEmail('first.last@example.com')).toBeTruthy()
+    expect(isValidEmail('First.LAST@example.com')).toBeTruthy()
+    expect(isValidEmail('valid.email@my-example.DOT.com')).toBeTruthy()
+    expect(isValidEmail('valid+param@example.com')).toBeTruthy()
+
+    expect(isValidEmail('nosuch')).toBeFalsy()
+    expect(isValidEmail('example.com')).toBeFalsy()
+    expect(isValidEmail('invalid@example')).toBeFalsy()
+    expect(isValidEmail('invalid@example,com')).toBeFalsy()
+    expect(isValidEmail('invalid@example.,com')).toBeFalsy()
+    expect(isValidEmail('first last@example.com')).toBeFalsy()
+    expect(isValidEmail('first. last@example.com')).toBeFalsy()
+    expect(isValidEmail('first .last@example.com')).toBeFalsy()
+    expect(isValidEmail('äö@example.com')).toBeFalsy()
+    expect(isValidEmail('\xa9@example.com')).toBeFalsy()
+
+    expect(isValidEmail('invalid.em%0Ail@example.com')).toBeFalsy()
+    expect(isValidEmail('invalid.em%0ail@example.com')).toBeFalsy()
+    expect(isValidEmail(' user@example.com')).toBeFalsy()
+    expect(isValidEmail(';user@example.com')).toBeFalsy()
+    expect(isValidEmail('user@example.com ')).toBeFalsy()
+    expect(isValidEmail('user@example.com;')).toBeFalsy()
+    expect(isValidEmail('Matti Meikalainen <matti@example.com>')).toBeFalsy()
+    expect(isValidEmail('Matti Meikälainen <matti@example.com>')).toBeFalsy()
+    expect(isValidEmail('user1@example.com user2@example.com')).toBeFalsy()
+    expect(isValidEmail('user1@example.com, user2@example.com')).toBeFalsy()
+    expect(isValidEmail('user1@example.com; user2@example.com')).toBeFalsy()
+    expect(isValidEmail('%0a@example.com')).toBeFalsy()
+    expect(isValidEmail('%0A@example.com')).toBeFalsy()
+    expect(isValidEmail('')).toBeFalsy()
+    expect(isValidEmail(42)).toBeFalsy()
+    expect(isValidEmail(null)).toBeFalsy()
   })
 
   test('validates URL', function () {
