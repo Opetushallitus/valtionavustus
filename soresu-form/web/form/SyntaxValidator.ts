@@ -24,6 +24,17 @@ function isFalsyButNotZero(value: any): boolean {
   return !value
 }
 
+export function isValidEmail(input: any): boolean {
+  const validEmailRegexp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
+  const invalidEmailRegexp = /[^\x00-\x7F]|%0[aA]/ // eslint-disable-line no-control-regex
+  const isEmailValid =
+    _.isString(input) &&
+    input.length <= 254 &&
+    validEmailRegexp.test(input) &&
+    !invalidEmailRegexp.test(input)
+  return isEmailValid
+}
+
 export default class SyntaxValidator {
   static validateSyntax(field: Field, value: any, customFieldSyntaxValidator?: typeof Validator) {
     let validationErrors: ValidationError[] = []
@@ -40,9 +51,9 @@ export default class SyntaxValidator {
       case 'emailField':
       case 'vaEmailNotification':
         {
-          const emailError = SyntaxValidator.validateEmail(value)
+          const emailError = !isValidEmail(value)
           if (emailError) {
-            validationErrors.push(emailError)
+            validationErrors.push({ error: 'email' })
           }
         }
         break
@@ -109,17 +120,6 @@ export default class SyntaxValidator {
     }
 
     return validationErrors
-  }
-
-  static validateEmail(input: any) {
-    const validEmailRegexp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
-    const invalidEmailRegexp = /[^\x00-\x7F]|%0[aA]/ // eslint-disable-line no-control-regex
-    const isEmailValid =
-      _.isString(input) &&
-      input.length <= 254 &&
-      validEmailRegexp.test(input) &&
-      !invalidEmailRegexp.test(input)
-    return isEmailValid ? undefined : { error: 'email' }
   }
 
   static validateUrl(input: any) {
