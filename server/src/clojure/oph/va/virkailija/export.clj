@@ -3,6 +3,7 @@
             [clojure.set :as clj-set]
             [clojure.string :as string]
             [clojure.tools.logging :as log]
+            [oph.soresu.common.db :refer [query]]
             [dk.ative.docjure.spreadsheet :as spreadsheet]
             [oph.soresu.form.formhandler :as formhandler]
             [oph.soresu.form.formutil :as formutil]
@@ -697,6 +698,7 @@
     (.write wb output)
     (.toByteArray output)))
 
+
 (def main-sheet-name-hallinnoiavustuksia "VA")
 (def hallinnoiavustuksia-column-labels
   [
@@ -732,14 +734,56 @@
      "piilotaVireillepanija"
    ])
 
-(defn hallinnoiavustuksia-main-sheet-columns []
-  [hallinnoiavustuksia-column-labels] )
+(def avustushaku->hallinoi-sheet-rows
+  (juxt
+    (constantly "") ;"valtionapuviranomainen"
+    (constantly "") ;"avustushakuAsianumero"
+    (constantly "") ;"avustushakuNimi"
+    (constantly "") ;"avustushakuAvustuslaji"
+    (constantly "") ;"avustushakuAlkaaPvm"
+    (constantly "") ;"avustushakuPaattyyPvm"
+    (constantly "") ;"avustushakuURL"
+    :asiatunnus     ;"avustusasiaAsianumero"
+    (constantly "") ;"avustusasiaVireilletuloPvm"
+    (constantly "") ;"avustusasiaKieli"
+    (constantly "") ;"avustusasiaVireillepanijaHenkiloTunnus"
+    (constantly "") ;"avustusasiaVireillepanijaHenkiloNimi"
+    (constantly "") ;"avustusasiaVireillepanijaYhteisoTunnus"
+    (constantly "") ;"avustusasiaVireillepanijaYhteisoNimi"
+    (constantly "") ;"avustushakemusHaettuKayttotarkoitus"
+    (constantly "") ;"avustushakemusHaettuAvustus"
+    (constantly "") ;"avustushakemusAlueKunnat"
+    (constantly "") ;"avustushakemusAlueMaakunnat"
+    (constantly "") ;"avustushakemusAlueHyvinvointialueet"
+    (constantly "") ;"avustushakemusAlueValtiot"
+    (constantly "") ;"avustuspaatosPvm"
+    (constantly "") ;"avustuspaatosPerustelu"
+    (constantly "") ;"avustuspaatosTyyppi"
+    (constantly "") ;"avustuspaatosMyonnettyAvustus"
+    (constantly "") ;"avustuspaatosHyvaksyttyKayttotarkoitus"
+    (constantly "") ;"avustuspaatosKayttoaikaAlkaaPvm"
+    (constantly "") ;"avustuspaatosKayttoaikaPaattyyPvm"
+    (constantly "") ;"avustuspaatosMaksettuAvustus"
+    (constantly "") ;"piilotaKayttotarkoitus"
+    (constantly "") ;"piilotaVireillepanija"
+    ))
 
-
-(defn export-avustushaku-for-hallinnoiavustuksia []
-  (let [output                (ByteArrayOutputStream.)
+(defn export-avustushaku-for-hallinnoiavustuksia [avustushaku-id]
+  (let [data (query "SELECT
+                        hakemukset.id,
+                        register_number AS asiatunnus
+                      FROM hakemukset
+                      LEFT JOIN arviot ON arviot.hakemus_id = hakemukset.id
+                      WHERE version_closed IS NULL AND
+                            hakemus_type = 'hakemus' AND
+                            arviot.status in ('accepted', 'rejected') AND
+                            avustushaku = ?
+                      ORDER BY hakemukset.id ASC" [avustushaku-id])
+        output                (ByteArrayOutputStream.)
         wb                    (spreadsheet/create-workbook main-sheet-name-hallinnoiavustuksia
-                                                           (hallinnoiavustuksia-main-sheet-columns))
+                                                           (apply conj
+                                                                  [hallinnoiavustuksia-column-labels]
+                                                                  (mapv avustushaku->hallinoi-sheet-rows data)))
         main-sheet            {:sheet              (spreadsheet/select-sheet main-sheet-name-hallinnoiavustuksia wb)
                                :header-row-indexes #{0}}
         safe-formula-style    (doto (.createCellStyle wb)

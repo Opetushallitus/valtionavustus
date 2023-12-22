@@ -3,6 +3,7 @@ import { expect } from '@playwright/test'
 
 import { selvitysTest as test } from '../../fixtures/selvitysTest'
 import { VIRKAILIJA_URL } from '../../utils/constants'
+import { getSheetRows } from '../../utils/sheet'
 
 const SHEET_NAMES = ['Loppuselvitysraportti', 'Asiatarkastamattomat', 'Hakemukset']
 
@@ -103,12 +104,6 @@ function expectHakemusSheetHeaders(sheet: xlsx.WorkSheet) {
   expect(sheet['B1'].v).toEqual('Avustushaun nimi')
   expect(sheet['C1'].v).toEqual('Hakijaorganisaatio')
   expect(sheet['D1'].v).toEqual('Myönnetty avustus')
-}
-
-function getSheetRows(sheet: xlsx.WorkSheet) {
-  const range = xlsx.utils.decode_range(sheet['!ref']!)
-  const numberOfRows = range.e.r - range.s.r + 1
-  return Array.from({ length: numberOfRows }, (_, i) => i + 1)
 }
 
 type AsiatarkastamatonRow = { A: number; B: number; C: string }

@@ -193,7 +193,7 @@
                      :path-params [avustushaku-id :- Long]
                      :summary "Export Excel XLSX document for hallinnoiavustuksia.fi / tutkiavustuksia.fi"
                      (if (hakija-api/get-avustushaku avustushaku-id)
-                       (let [document (-> (export/export-avustushaku-for-hallinnoiavustuksia)
+                       (let [document (-> (export/export-avustushaku-for-hallinnoiavustuksia avustushaku-id)
                                           (ByteArrayInputStream.))]
                          (-> (http/ok document)
                              (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
