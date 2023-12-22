@@ -188,13 +188,6 @@
     (log/info (str "Succesfully fetched emails for avustushaku with id: " avustushaku-id))
     emails))
 
-(defn get-emails-by-type [type]
-  (query "SELECT formatted, to_address, bcc, cc, subject FROM virkailija.email
-          JOIN email_event ON (email.id = email_event.email_id)
-          WHERE email_type = ?::virkailija.email_type
-          ORDER BY virkailija.email.id"
-          [type]))
-
 (defn get-emails-by-send-success [success?]
   (let [rows (query "SELECT * FROM (
                        SELECT DISTINCT ON (e.id) e.formatted, e.to_address, e.bcc, e.cc, e.subject, ee.success
