@@ -751,7 +751,7 @@
     :language ;"avustusasiaKieli"
     (constantly "") ;"avustusasiaVireillepanijaHenkiloTunnus"
     (constantly "") ;"avustusasiaVireillepanijaHenkiloNimi"
-    (constantly "") ;"avustusasiaVireillepanijaYhteisoTunnus"
+    :y-tunnus ;"avustusasiaVireillepanijaYhteisoTunnus"
     (constantly "") ;"avustusasiaVireillepanijaYhteisoNimi"
     (constantly "") ;"avustushakemusHaettuKayttotarkoitus"
     (constantly "") ;"avustushakemusHaettuAvustus"
@@ -789,13 +789,22 @@
                         avustushaku.hallinnoiavustuksia_register_number AS avustushaku_asianumero,
                         koodi.code as toimintayksikko,
                         hakemukset.language,
-                        to_char(hakemus_submitted.first_time_submitted, 'DD.MM.YYYY') AS vireille_tulo_pvm
+                        to_char(hakemus_submitted.first_time_submitted, 'DD.MM.YYYY') AS vireille_tulo_pvm,
+                        form_answers.y_tunnus
                       FROM hakemukset
                       LEFT JOIN arviot ON arviot.hakemus_id = hakemukset.id
                       LEFT JOIN avustushaut avustushaku ON avustushaku.id = hakemukset.avustushaku
                       LEFT JOIN va_code_values koodi ON koodi.id = avustushaku.operational_unit_id
                       LEFT JOIN hakemus_submitted ON hakemus_submitted.id = hakemukset.id
-                      WHERE version_closed IS NULL AND
+                      INNER JOIN LATERAL (
+                        SELECT  id,
+                                answer->>'value' as y_tunnus
+                        FROM form_submissions
+                        CROSS JOIN jsonb_array_elements(answers->'value') answer
+                        WHERE answer->'key' = '\"business-id\"' AND
+                              version_closed IS NULL
+                      ) form_answers ON form_answers.id = hakemukset.form_submission_id
+                      WHERE hakemukset.version_closed IS NULL AND
                             hakemus_type = 'hakemus' AND
                             arviot.status in ('accepted', 'rejected') AND
                             avustushaku = ?

@@ -70,6 +70,7 @@ test.describe('OPH', () => {
           H2: `1/${hakuProps.registerNumber}`,
           I2: vireilletuloPvm,
           J2: 'fi',
+          M2: '2050864-5',
         },
         {
           A3: 'OPH',
@@ -77,6 +78,7 @@ test.describe('OPH', () => {
           H3: `2/${hakuProps.registerNumber}`,
           I3: vireilletuloPvm,
           J3: 'fi',
+          M3: '2050864-5',
         },
       ]
       expectToFindRowWithValuesInSheet(sheet, expectedRows)
@@ -108,6 +110,7 @@ test.describe('JOTPA', () => {
           H2: `1/${hakuProps.registerNumber}`,
           I2: vireilletuloPvm,
           J2: 'sv',
+          M2: '2050864-5',
         },
       ]
       const sheet = workbook.Sheets[SheetName]
