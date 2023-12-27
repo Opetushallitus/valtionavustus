@@ -5,6 +5,7 @@ import { downloadHallinnoiAvustuksiaExcel } from '../../utils/downloadExcel'
 import { expectToFindRowWithValuesInSheet, SheetRow } from '../../utils/sheet'
 import { JotpaTest } from '../../fixtures/JotpaTest'
 import muutoshakemusEnabledHakuLomakeJson from '../../fixtures/prod.hakulomake.json'
+import moment from 'moment'
 
 const ophTest = twoAcceptedHakemusTest.extend({
   hakuProps: ({ hakuProps }, use) =>
@@ -29,7 +30,7 @@ test.describe('OPH', () => {
       const workbook = await downloadHallinnoiAvustuksiaExcel(page, avustushakuID)
       expect(workbook.SheetNames).toMatchObject([SheetName])
       const sheet = workbook.Sheets[SheetName]
-
+      const vireilletuloPvm = moment().format('DD.MM.YYYY')
       await twoAcceptedHakemusTest.step('produces correct column labels', async () => {
         const expectedRows: SheetRow[] = [
           {
@@ -68,9 +69,16 @@ test.describe('OPH', () => {
             A2: 'OPH',
             B2: 'va-oph-2023-6',
             H2: `1/${hakuProps.registerNumber}`,
+            I2: vireilletuloPvm,
             J2: 'fi',
           },
-          { A3: 'OPH', B3: 'va-oph-2023-6', H3: `2/${hakuProps.registerNumber}`, J3: 'fi' },
+          {
+            A3: 'OPH',
+            B3: 'va-oph-2023-6',
+            H3: `2/${hakuProps.registerNumber}`,
+            I3: vireilletuloPvm,
+            J3: 'fi',
+          },
         ]
         expectToFindRowWithValuesInSheet(sheet, expectedRows)
       })
@@ -94,11 +102,13 @@ test.describe('JOTPA', () => {
     async ({ page, acceptedHakemus, hakuProps, avustushakuID }) => {
       expectToBeDefined(acceptedHakemus)
       const workbook = await downloadHallinnoiAvustuksiaExcel(page, avustushakuID)
+      const vireilletuloPvm = moment().format('DD.MM.YYYY')
       const expectedRows: SheetRow[] = [
         {
           A2: `OPH`,
           B2: 'va-oph-2023-7',
           H2: `1/${hakuProps.registerNumber}`,
+          I2: vireilletuloPvm,
           J2: 'sv',
         },
       ]
