@@ -1,7 +1,6 @@
 import { expect } from '@playwright/test'
 import { defaultValues as test } from '../../fixtures/defaultValues'
 import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
-import { randomString } from '../../utils/random'
 import { expectToBeDefined } from '../../utils/util'
 import moment from 'moment'
 import { HaunTiedotPage } from '../../pages/virkailija/hakujen-hallinta/HaunTiedotPage'
@@ -22,7 +21,6 @@ test('raportointivelvoite', async ({ page, hakuProps, userCache }, testInfo) => 
       ...hakuProps,
       raportointivelvoitteet: [laji],
     })
-    await hakujenHallintaPage.selectRaportointilaji(1, 'Avustuspäätökset')
     await expect(hakujenHallintaPage.page.getByTestId(`asha-tunnus-0`)).toBeEnabled()
     await hakujenHallintaPage.page.getByTestId(`lisatiedot-0`).fill('lisää tietoa')
     await hakujenHallintaPage.waitForSave()
