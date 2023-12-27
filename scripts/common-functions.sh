@@ -46,24 +46,31 @@ function configure_aws {
   if ! running_on_gh_actions; then
     check_env
     export AWS_PROFILE="oph-va-$ENV"
-    export AWS_CONFIG_FILE="$VA_SECRETS_REPO/aws_config"
     info "Using AWS config from secrets repo, with profile $AWS_PROFILE"
   fi
 }
 
 function aws {
-  docker run --interactive --rm \
-    --env AWS_PROFILE \
-    --env AWS_REGION \
-    --env AWS_DEFAULT_REGION \
-    --env AWS_ACCESS_KEY_ID \
-    --env AWS_SECRET_ACCESS_KEY \
-    --env AWS_SESSION_TOKEN \
-    --env AWS_CONFIG_FILE=/aws_config \
-    --volume "$VA_SECRETS_REPO/aws_config:/aws_config" \
-    --volume "$HOME/.aws:/root/.aws" \
-    "public.ecr.aws/aws-cli/aws-cli:$AWS_CLI_VERSION" \
-    "$@"
+  if running_on_gh_actions; then
+    docker run --interactive --rm \
+      --env AWS_REGION \
+      --env AWS_DEFAULT_REGION \
+      --env AWS_ACCESS_KEY_ID \
+      --env AWS_SECRET_ACCESS_KEY \
+      --env AWS_SESSION_TOKEN \
+      "public.ecr.aws/aws-cli/aws-cli:$AWS_CLI_VERSION" \
+      "$@"
+  else
+    docker run --interactive --rm \
+      --env AWS_PROFILE \
+      --env AWS_REGION \
+      --env AWS_DEFAULT_REGION \
+      --env AWS_CONFIG_FILE="/aws_config" \
+      --mount "type=bind,source=$VA_SECRETS_REPO/aws_config,destination=/aws_config,readonly" \
+      --volume "$HOME/.aws:/root/.aws" \
+      "public.ecr.aws/aws-cli/aws-cli:$AWS_CLI_VERSION" \
+      "$@"
+  fi
 }
 
 function check_env {

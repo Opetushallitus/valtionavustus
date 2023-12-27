@@ -20,8 +20,8 @@ function print_env {
 
 function setup {
   require_command docker
-  require_built_image
   configure_aws
+  require_built_image
 
   cd "$repo/cdk"
   init_nodejs
