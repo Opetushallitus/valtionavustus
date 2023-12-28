@@ -737,6 +737,12 @@
 (defn get-valtionapuviranomainen [data]
   (if (= (:toimintayksikko data) "6600105300") "JOTPA" "OPH"))
 
+(defn get-maakunta [data]
+  (let [content (:content data)
+        koodisto-answer-value (:koodisto-answer-value data)
+        name (formhandler/find-koodisto-value-name koodisto-answer-value content)]
+    name))
+
 (def avustushaku->hallinoi-sheet-rows
   (juxt
     (constantly "OPH") ;(comp get-valtionapuviranomainen) ;"valtionapuviranomainen"
@@ -756,7 +762,7 @@
     (constantly "") ;"avustushakemusHaettuKayttotarkoitus"
     (constantly "") ;"avustushakemusHaettuAvustus"
     (constantly "") ;"avustushakemusAlueKunnat"
-    (constantly "") ;"avustushakemusAlueMaakunnat"
+    (comp get-maakunta) ;"avustushakemusAlueMaakunnat"
     (constantly "") ;"avustushakemusAlueHyvinvointialueet"
     (constantly "") ;"avustushakemusAlueValtiot"
     (constantly "") ;"avustuspaatosPvm"
@@ -790,7 +796,9 @@
                         koodi.code as toimintayksikko,
                         hakemukset.language,
                         to_char(hakemus_submitted.first_time_submitted, 'DD.MM.YYYY') AS vireille_tulo_pvm,
-                        form_answers.y_tunnus
+                        form_answers.y_tunnus,
+                        forms.content,
+                        koodisto_answer.value as koodisto_answer_value
                       FROM hakemukset
                       LEFT JOIN arviot ON arviot.hakemus_id = hakemukset.id
                       LEFT JOIN avustushaut avustushaku ON avustushaku.id = hakemukset.avustushaku
@@ -798,12 +806,23 @@
                       LEFT JOIN hakemus_submitted ON hakemus_submitted.id = hakemukset.id
                       INNER JOIN LATERAL (
                         SELECT  id,
+                                form,
                                 answer->>'value' as y_tunnus
                         FROM form_submissions
                         CROSS JOIN jsonb_array_elements(answers->'value') answer
                         WHERE answer->'key' = '\"business-id\"' AND
                               version_closed IS NULL
                       ) form_answers ON form_answers.id = hakemukset.form_submission_id
+                      INNER JOIN LATERAL (
+                        SELECT  id,
+                                form,
+                                answer->>'value' as value
+                        FROM form_submissions
+                        CROSS JOIN jsonb_array_elements(answers->'value') answer
+                        WHERE answer->'key' = '\"koodistoField-1\"' AND
+                              version_closed IS NULL
+                      ) koodisto_answer ON koodisto_answer.id = hakemukset.form_submission_id
+                      LEFT JOIN forms ON form_answers.form = forms.id
                       WHERE hakemukset.version_closed IS NULL AND
                             hakemus_type = 'hakemus' AND
                             arviot.status in ('accepted', 'rejected') AND

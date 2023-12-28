@@ -71,6 +71,7 @@ test.describe('OPH', () => {
           I2: vireilletuloPvm,
           J2: 'fi',
           M2: '2050864-5',
+          R2: 'Kainuu',
         },
         {
           A3: 'OPH',
@@ -79,6 +80,7 @@ test.describe('OPH', () => {
           I3: vireilletuloPvm,
           J3: 'fi',
           M3: '2050864-5',
+          R3: 'Kainuu',
         },
       ]
       expectToFindRowWithValuesInSheet(sheet, expectedRows)
@@ -111,6 +113,7 @@ test.describe('JOTPA', () => {
           I2: vireilletuloPvm,
           J2: 'sv',
           M2: '2050864-5',
+          R2: 'Ahvenanmaa',
         },
       ]
       const sheet = workbook.Sheets[SheetName]
