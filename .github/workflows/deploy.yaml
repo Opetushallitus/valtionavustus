@@ -23,6 +23,7 @@ jobs:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
     permissions:
       id-token: write
+      contents: write
     steps:
       - uses: actions/checkout@v4.1.1
 
