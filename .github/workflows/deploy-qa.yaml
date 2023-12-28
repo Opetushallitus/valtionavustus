@@ -1,0 +1,17 @@
+name: Deploy QA
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - va-green-dev
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/deploy.yaml
+    secrets: inherit
+    with:
+      env: qa
