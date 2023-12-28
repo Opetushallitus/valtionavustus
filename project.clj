@@ -137,7 +137,7 @@
                  [yesql "0.5.3"]
 
                  ;; emails
-                 [org.apache.commons/commons-email "1.5"]
+                 [org.apache.commons/commons-email "1.6.0"]
 
                  ;; täsmäytysraportti
                  [clj-pdf "2.6.8" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
