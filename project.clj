@@ -49,7 +49,7 @@
                          ;; [org.apache.tika/tika-core "2.9.1"] -> [commons-io "2.15.1"]
                          [commons-io "2.15.1"]
 
-                         ;; [clojurewerkz/quartzite "2.1.0"] ->
+                         ;; [clojurewerkz/quartzite "2.2.0"] ->
                          ;; fixes https://nvd.nist.gov/vuln/detail/cve-2019-13990,
                          ;; https://nvd.nist.gov/vuln/detail/CVE-2019-5427
                          [org.quartz-scheduler/quartz "2.3.2"]
@@ -155,7 +155,7 @@
                  [dk.ative/docjure "1.19.0"]
 
                  ;; job scheduling
-                 [clojurewerkz/quartzite "2.1.0"]
+                 [clojurewerkz/quartzite "2.2.0"]
 
                  ;; ????
                  [com.cemerick/url "0.1.1" :exclusions [com.cemerick/clojurescript.test]] ; this is basically useless, we only use one function that would be trivial to implement
