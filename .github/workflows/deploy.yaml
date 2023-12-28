@@ -32,4 +32,15 @@ jobs:
           role-to-assume: ${{ secrets.DEPLOY_ROLE_ARN }}
 
       - name: 04-deploy-cdk.sh
+        id: deploy
         run: ./deploy-scripts/04-deploy-cdk-${{ inputs.env }}.sh
+
+      - name: Update green tag
+        if: steps.deploy.outcome == 'success'
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git tag --force va-green-${{ inputs.env }}
+          git push --force origin va-green-${{ inputs.env }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
