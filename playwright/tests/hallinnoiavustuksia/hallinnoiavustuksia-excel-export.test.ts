@@ -72,6 +72,7 @@ test.describe('OPH', () => {
           J2: 'fi',
           M2: '2050864-5',
           R2: 'Kainuu',
+          W2: 'Myönteinen',
         },
         {
           A3: 'OPH',
@@ -81,6 +82,7 @@ test.describe('OPH', () => {
           J3: 'fi',
           M3: '2050864-5',
           R3: 'Kainuu',
+          W3: 'Myönteinen',
         },
       ]
       expectToFindRowWithValuesInSheet(sheet, expectedRows)
@@ -101,8 +103,8 @@ const Jotpa = JotpaTest.extend<{ hakulomake: string }>({
 test.describe('JOTPA', () => {
   Jotpa(
     'Hallinnoiavustuksia.fi Excel export',
-    async ({ page, acceptedHakemus, hakuProps, avustushakuID }) => {
-      expectToBeDefined(acceptedHakemus)
+    async ({ page, rejectedHakemus, hakuProps, avustushakuID }) => {
+      expectToBeDefined(rejectedHakemus)
       const workbook = await downloadHallinnoiAvustuksiaExcel(page, avustushakuID)
       const vireilletuloPvm = moment().format('DD.MM.YYYY')
       const expectedRows: SheetRow[] = [
@@ -114,6 +116,7 @@ test.describe('JOTPA', () => {
           J2: 'sv',
           M2: '2050864-5',
           R2: 'Ahvenanmaa',
+          W2: 'Kielteinen',
         },
       ]
       const sheet = workbook.Sheets[SheetName]

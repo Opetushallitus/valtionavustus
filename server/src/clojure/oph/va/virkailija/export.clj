@@ -743,6 +743,12 @@
         name (formhandler/find-koodisto-value-name koodisto-answer-value content)]
     name))
 
+(defn get-avustuspaatos-tyyppi [data]
+  (case (:paatos-status data)
+    "rejected" "Kielteinen"
+    "accepted" "Myönteinen"
+    ""))
+
 (def avustushaku->hallinoi-sheet-rows
   (juxt
     (constantly "OPH") ;(comp get-valtionapuviranomainen) ;"valtionapuviranomainen"
@@ -767,7 +773,7 @@
     (constantly "") ;"avustushakemusAlueValtiot"
     (constantly "") ;"avustuspaatosPvm"
     (constantly "") ;"avustuspaatosPerustelu"
-    (constantly "") ;"avustuspaatosTyyppi"
+    (comp get-avustuspaatos-tyyppi) ;"avustuspaatosTyyppi"
     (constantly "") ;"avustuspaatosMyonnettyAvustus"
     (constantly "") ;"avustuspaatosHyvaksyttyKayttotarkoitus"
     (constantly "") ;"avustuspaatosKayttoaikaAlkaaPvm"
@@ -798,7 +804,8 @@
                         to_char(hakemus_submitted.first_time_submitted, 'DD.MM.YYYY') AS vireille_tulo_pvm,
                         form_answers.y_tunnus,
                         forms.content,
-                        koodisto_answer.value as koodisto_answer_value
+                        koodisto_answer.value as koodisto_answer_value,
+                        arviot.status as paatos_status
                       FROM hakemukset
                       LEFT JOIN arviot ON arviot.hakemus_id = hakemukset.id
                       LEFT JOIN avustushaut avustushaku ON avustushaku.id = hakemukset.avustushaku

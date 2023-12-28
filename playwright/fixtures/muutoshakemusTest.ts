@@ -35,6 +35,10 @@ export interface MuutoshakemusFixtures {
     hakemusID: number
     userKey: string
   }
+  rejectedHakemus: {
+    hakemusID: number
+    userKey: string
+  }
   submitMultipleHakemuses: {}
   hakulomake: string
 }
@@ -200,6 +204,58 @@ export const muutoshakemusTest = submittedHakemusTest.extend<MuutoshakemusFixtur
 
     await test.step('Add valmistelija for hakemus', async () => {
       await hakemustenArviointiPage.navigate(avustushakuID)
+      await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
+    })
+
+    await test.step('Send päätökset', async () => {
+      const paatosPage = PaatosPage(page)
+      await paatosPage.navigateTo(avustushakuID)
+      await paatosPage.sendPaatos()
+    })
+
+    await use({ hakemusID, userKey })
+  },
+  rejectedHakemus: async (
+    {
+      closedAvustushaku,
+      page,
+      ukotettuValmistelija,
+      submittedHakemus: { userKey },
+      answers,
+      projektikoodi,
+      codes,
+    },
+    use,
+    testInfo
+  ) => {
+    const avustushakuID = closedAvustushaku.id
+    testInfo.setTimeout(testInfo.timeout + 25_000)
+
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+
+    let hakemusID: number = 0
+    await test.step('reject hakemus', async () => {
+      await hakemustenArviointiPage.navigate(avustushakuID)
+      await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+      hakemusID = await hakemustenArviointiPage.getHakemusID()
+
+      await hakemustenArviointiPage.selectProject(projektikoodi, codes)
+      await expect(hakemustenArviointiPage.arviointiTabLocators().taTili.value).toContainText(
+        'Ammatillinen koulutus'
+      )
+      await hakemustenArviointiPage.rejectHakemus()
+      await hakemustenArviointiPage.waitForSave()
+    })
+
+    const hakujenHallintaPage = new HakujenHallintaPage(page)
+    await test.step('Resolve avustushaku', async () => {
+      const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+      await haunTiedotPage.resolveAvustushaku()
+    })
+
+    await test.step('Add valmistelija for hakemus', async () => {
+      await hakemustenArviointiPage.navigate(avustushakuID)
+      await hakemustenArviointiPage.locators().poistaTilaRajaus.click()
       await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
     })
 

@@ -544,6 +544,7 @@ export class HakemustenArviointiPage {
   locators() {
     return {
       dropdown: this.page.getByTestId('avustushaku-dropdown'),
+      poistaTilaRajaus: this.page.locator('[aria-label="Poista hakemuksen tila rajaukset"]'),
     }
   }
 
