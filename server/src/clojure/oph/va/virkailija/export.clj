@@ -780,7 +780,7 @@
    (constantly "") ;"avustuspaatosPerustelu"
    (comp get-avustuspaatos-tyyppi) ;"avustuspaatosTyyppi"
    (comp get-myonnetty-summa) ;"avustuspaatosMyonnettyAvustus"
-   (constantly "") ;"avustuspaatosHyvaksyttyKayttotarkoitus"
+   :kayttotarkoitus ;"avustuspaatosHyvaksyttyKayttotarkoitus"
    (constantly "") ;"avustuspaatosKayttoaikaAlkaaPvm"
    (constantly "") ;"avustuspaatosKayttoaikaPaattyyPvm"
    (constantly "") ;"avustuspaatosMaksettuAvustus"
@@ -812,7 +812,8 @@
                         form_submissions.answers,
                         arviot.status as paatos_status,
                         arviot.budget_granted as myonnetty,
-                        avustushaku.decision->'date' AS paatos_ratkaisu_pvm
+                        avustushaku.decision->'date' AS paatos_ratkaisu_pvm,
+                        avustushaku.content->'name'->'fi' AS kayttotarkoitus
                       FROM hakemukset
                       LEFT JOIN arviot ON arviot.hakemus_id = hakemukset.id
                       LEFT JOIN avustushaut avustushaku ON avustushaku.id = hakemukset.avustushaku
