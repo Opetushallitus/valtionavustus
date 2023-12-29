@@ -11,7 +11,7 @@ const ophTest = twoAcceptedHakemusTest.extend({
   hakuProps: ({ hakuProps }, use) =>
     use({
       ...hakuProps,
-      hallinoiavustuskiaRegisterNumber: 'va-oph-2023-6',
+      hallinoiavustuksiaRegisterNumber: 'va-oph-2023-6',
     }),
 })
 
@@ -98,7 +98,7 @@ const Jotpa = JotpaTest.extend<{ hakulomake: string }>({
   hakuProps: ({ hakuProps }, use) =>
     use({
       ...hakuProps,
-      hallinoiavustuskiaRegisterNumber: 'va-oph-2023-7',
+      hallinoiavustuksiaRegisterNumber: 'va-oph-2023-7',
     }),
 })
 

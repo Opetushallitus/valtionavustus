@@ -29,7 +29,7 @@ export interface HakuProps {
   avustushakuName: string
   randomName: string
   registerNumber: string
-  hallinoiavustuskiaRegisterNumber?: string
+  hallinoiavustuksiaRegisterNumber?: string
   vaCodes: VaCodeValues
   hakuaikaStart: Date
   hakuaikaEnd: Date
@@ -190,7 +190,7 @@ export class HakujenHallintaPage {
   async fillAvustushakuWithoutWaitingForSave({
     avustushakuName,
     registerNumber,
-    hallinoiavustuskiaRegisterNumber,
+    hallinoiavustuksiaRegisterNumber,
     hakuaikaStart,
     hakuaikaEnd,
     hankkeenAlkamispaiva,
@@ -219,9 +219,9 @@ export class HakujenHallintaPage {
 
       await haunTiedotPage.locators.status.draft.click()
       await haunTiedotPage.locators.registerNumber.fill(registerNumber)
-      if (hallinoiavustuskiaRegisterNumber) {
-        await haunTiedotPage.locators.hallinoiavustuskiaRegisterNumber.fill(
-          hallinoiavustuskiaRegisterNumber
+      if (hallinoiavustuksiaRegisterNumber) {
+        await haunTiedotPage.locators.hallinoiavustuksiaRegisterNumber.fill(
+          hallinoiavustuksiaRegisterNumber
         )
       }
       await haunTiedotPage.locators.hakuName.fi.fill(avustushakuName)
