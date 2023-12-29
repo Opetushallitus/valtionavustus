@@ -1,9 +1,6 @@
 name: Deploy QA
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - va-green-dev
 
 defaults:
   run:

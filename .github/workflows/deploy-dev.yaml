@@ -15,3 +15,13 @@ jobs:
     secrets: inherit
     with:
       env: dev
+  trigger-qa-deploy:
+    name: Trigger QA deploy
+    runs-on: ubuntu-22.04
+    permissions:
+      actions: write
+    steps:
+      - name: Run QA deploy workflow
+        run: gh workflow run deploy-qa.yaml --ref va-green-dev
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
