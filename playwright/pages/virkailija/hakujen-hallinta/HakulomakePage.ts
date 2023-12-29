@@ -43,12 +43,12 @@ export function HakulomakePage(page: Page) {
   }
 
   async function saveForm() {
-    const savedSuccessfully = page
-      .getByTestId(saveStatusTestId)
-      .locator('text=Kaikki tiedot tallennettu')
-    await expect(savedSuccessfully).toBeHidden({ timeout: 10000 })
+    await expect(locators.saveFormButton).toBeEnabled()
     await locators.saveFormButton.click()
-    await expect(savedSuccessfully).toBeVisible()
+    await expect(locators.saveFormButton).toBeDisabled()
+    await expect(
+      page.getByTestId(saveStatusTestId).getByText('Kaikki tiedot tallennettu')
+    ).toBeVisible()
   }
 
   async function getFieldIds() {
