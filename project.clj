@@ -128,7 +128,7 @@
 
                  ;; json
                  [cheshire "5.12.0"]
-                 [org.clojure/data.json "2.4.0"]
+                 [org.clojure/data.json "2.5.0"]
 
                  ;; database
                  [hikari-cp "1.8.3"]
