@@ -753,10 +753,6 @@
     "accepted" "Myönteinen"
     ""))
 
-(defn get-myonnetty-summa [data]
-  (let [myonnetty (:myonnetty data)]
-    myonnetty))
-
 (def avustushaku->hallinoi-sheet-rows
   (juxt
    (constantly "OPH") ;(comp get-valtionapuviranomainen) ;"valtionapuviranomainen"
@@ -782,7 +778,7 @@
    :paatos-ratkaisu-pvm ;"avustukspaatosPvm"
    (constantly "") ;"avustuspaatosPerustelu"
    (comp get-avustuspaatos-tyyppi) ;"avustuspaatosTyyppi"
-   (comp get-myonnetty-summa) ;"avustuspaatosMyonnettyAvustus"
+   :myonnetty ;"avustuspaatosMyonnettyAvustus"
    :kayttotarkoitus ;"avustuspaatosHyvaksyttyKayttotarkoitus"
    (constantly "") ;"avustuspaatosKayttoaikaAlkaaPvm"
    (constantly "") ;"avustuspaatosKayttoaikaPaattyyPvm"
