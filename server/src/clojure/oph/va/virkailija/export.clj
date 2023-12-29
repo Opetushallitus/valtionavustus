@@ -269,13 +269,13 @@
                              :fi)
                         value))
     "dropdown" (let [value (get answer-set id)]
-                    (or (->> answer-type
-                             :options
-                             (filter (fn [val] (= (:value val) value)))
-                             first
-                             :label
-                             :fi)
-                        value))
+                 (or (->> answer-type
+                          :options
+                          (filter (fn [val] (= (:value val) value)))
+                          first
+                          :label
+                          :fi)
+                     value))
     "checkboxButton" (let [value (get answer-set id)
                            options (:options answer-type)]
                        (->> options
@@ -327,7 +327,7 @@
     (let [date (clj-time-format/parse (clj-time-format/formatter "dd.MM.YYYY") date-string)
           formatted (.print (clj-time-format/formatter "ddMMyyyy") date)]
       formatted)
-  (catch Exception e (if (nil? date-string) "" date-string))))
+    (catch Exception e (if (nil? date-string) "" date-string))))
 
 (defn- extract-table-field-specs [answer-keys answer-labels answer-types]
   (->> (map (fn [k l t] {:key k :label l :type t})
@@ -402,8 +402,8 @@
           row-header-indexes   (->> start-column-indexes
                                     (map (fn [field-spec column-idx]
                                            (if (growing-table? field-spec)
-                                              nil
-                                              column-idx))
+                                             nil
+                                             column-idx))
                                          field-specs)
                                     (filterv some?)
                                     set)
@@ -518,9 +518,9 @@
         lkp (get lkp-map (keyword lkp-answer))
         formatted-paatos-date (format-date paatos-date)]
     (assoc hakemus :paatos-date formatted-paatos-date
-                   :iban iban-formatted
-                   :lkp lkp
-                   :takp takp)))
+           :iban iban-formatted
+           :lkp lkp
+           :takp takp)))
 
 (defn- split-multiple-maksuera-if-needed [has-multiple-maksuera hakemus]
   (let [arvio (:arvio hakemus)
@@ -701,38 +701,36 @@
 
 (def main-sheet-name-hallinnoiavustuksia "VA")
 (def hallinnoiavustuksia-column-labels
-  [
-     "valtionapuviranomainen"
-     "avustushakuAsianumero"
-     "avustushakuNimi"
-     "avustushakuAvustuslaji"
-     "avustushakuAlkaaPvm"
-     "avustushakuPaattyyPvm"
-     "avustushakuURL"
-     "avustusasiaAsianumero"
-     "avustusasiaVireilletuloPvm"
-     "avustusasiaKieli"
-     "avustusasiaVireillepanijaHenkiloTunnus"
-     "avustusasiaVireillepanijaHenkiloNimi"
-     "avustusasiaVireillepanijaYhteisoTunnus"
-     "avustusasiaVireillepanijaYhteisoNimi"
-     "avustushakemusHaettuKayttotarkoitus"
-     "avustushakemusHaettuAvustus"
-     "avustushakemusAlueKunnat"
-     "avustushakemusAlueMaakunnat"
-     "avustushakemusAlueHyvinvointialueet"
-     "avustushakemusAlueValtiot"
-     "avustuspaatosPvm"
-     "avustuspaatosPerustelu"
-     "avustuspaatosTyyppi"
-     "avustuspaatosMyonnettyAvustus"
-     "avustuspaatosHyvaksyttyKayttotarkoitus"
-     "avustuspaatosKayttoaikaAlkaaPvm"
-     "avustuspaatosKayttoaikaPaattyyPvm"
-     "avustuspaatosMaksettuAvustus"
-     "piilotaKayttotarkoitus"
-     "piilotaVireillepanija"
-   ])
+  ["valtionapuviranomainen"
+   "avustushakuAsianumero"
+   "avustushakuNimi"
+   "avustushakuAvustuslaji"
+   "avustushakuAlkaaPvm"
+   "avustushakuPaattyyPvm"
+   "avustushakuURL"
+   "avustusasiaAsianumero"
+   "avustusasiaVireilletuloPvm"
+   "avustusasiaKieli"
+   "avustusasiaVireillepanijaHenkiloTunnus"
+   "avustusasiaVireillepanijaHenkiloNimi"
+   "avustusasiaVireillepanijaYhteisoTunnus"
+   "avustusasiaVireillepanijaYhteisoNimi"
+   "avustushakemusHaettuKayttotarkoitus"
+   "avustushakemusHaettuAvustus"
+   "avustushakemusAlueKunnat"
+   "avustushakemusAlueMaakunnat"
+   "avustushakemusAlueHyvinvointialueet"
+   "avustushakemusAlueValtiot"
+   "avustuspaatosPvm"
+   "avustuspaatosPerustelu"
+   "avustuspaatosTyyppi"
+   "avustuspaatosMyonnettyAvustus"
+   "avustuspaatosHyvaksyttyKayttotarkoitus"
+   "avustuspaatosKayttoaikaAlkaaPvm"
+   "avustuspaatosKayttoaikaPaattyyPvm"
+   "avustuspaatosMaksettuAvustus"
+   "piilotaKayttotarkoitus"
+   "piilotaVireillepanija"])
 
 (defn get-valtionapuviranomainen [data]
   (if (= (:toimintayksikko data) "6600105300") "JOTPA" "OPH"))
@@ -755,37 +753,37 @@
 
 (def avustushaku->hallinoi-sheet-rows
   (juxt
-    (constantly "OPH") ;(comp get-valtionapuviranomainen) ;"valtionapuviranomainen"
-    :avustushaku-asianumero ;"avustushakuAsianumero"
-    (constantly "") ;"avustushakuNimi"
-    (constantly "") ;"avustushakuAvustuslaji"
-    (constantly "") ;"avustushakuAlkaaPvm"
-    (constantly "") ;"avustushakuPaattyyPvm"
-    (constantly "") ;"avustushakuURL"
-    :asianumero     ;"avustusasiaAsianumero"
-    :vireille-tulo-pvm ;"avustusasiaVireilletuloPvm"
-    :language ;"avustusasiaKieli"
-    (constantly "") ;"avustusasiaVireillepanijaHenkiloTunnus"
-    (constantly "") ;"avustusasiaVireillepanijaHenkiloNimi"
-    :y-tunnus ;"avustusasiaVireillepanijaYhteisoTunnus"
-    (constantly "") ;"avustusasiaVireillepanijaYhteisoNimi"
-    (constantly "") ;"avustushakemusHaettuKayttotarkoitus"
-    (constantly "") ;"avustushakemusHaettuAvustus"
-    (comp get-maakunta) ;"avustushakemusAlueKunnat"
-    (constantly "") ;"avustushakemusAlueMaakunnat"
-    (constantly "") ;"avustushakemusAlueHyvinvointialueet"
-    (constantly "") ;"avustushakemusAlueValtiot"
+   (constantly "OPH") ;(comp get-valtionapuviranomainen) ;"valtionapuviranomainen"
+   :avustushaku-asianumero ;"avustushakuAsianumero"
+   (constantly "") ;"avustushakuNimi"
+   (constantly "") ;"avustushakuAvustuslaji"
+   (constantly "") ;"avustushakuAlkaaPvm"
+   (constantly "") ;"avustushakuPaattyyPvm"
+   (constantly "") ;"avustushakuURL"
+   :asianumero     ;"avustusasiaAsianumero"
+   :vireille-tulo-pvm ;"avustusasiaVireilletuloPvm"
+   :language ;"avustusasiaKieli"
+   (constantly "") ;"avustusasiaVireillepanijaHenkiloTunnus"
+   (constantly "") ;"avustusasiaVireillepanijaHenkiloNimi"
+   :y-tunnus ;"avustusasiaVireillepanijaYhteisoTunnus"
+   (constantly "") ;"avustusasiaVireillepanijaYhteisoNimi"
+   (constantly "") ;"avustushakemusHaettuKayttotarkoitus"
+   (constantly "") ;"avustushakemusHaettuAvustus"
+   (comp get-maakunta) ;"avustushakemusAlueKunnat"
+   (constantly "") ;"avustushakemusAlueMaakunnat"
+   (constantly "") ;"avustushakemusAlueHyvinvointialueet"
+   (constantly "") ;"avustushakemusAlueValtiot"
    :paatos-ratkaisu-pvm ;"avustukspaatosPvm"
-    (constantly "") ;"avustuspaatosPerustelu"
-    (comp get-avustuspaatos-tyyppi) ;"avustuspaatosTyyppi"
-    (comp get-myonnetty-summa) ;"avustuspaatosMyonnettyAvustus"
-    (constantly "") ;"avustuspaatosHyvaksyttyKayttotarkoitus"
-    (constantly "") ;"avustuspaatosKayttoaikaAlkaaPvm"
-    (constantly "") ;"avustuspaatosKayttoaikaPaattyyPvm"
-    (constantly "") ;"avustuspaatosMaksettuAvustus"
-    (constantly "") ;"piilotaKayttotarkoitus"
-    (constantly "") ;"piilotaVireillepanija"
-    ))
+   (constantly "") ;"avustuspaatosPerustelu"
+   (comp get-avustuspaatos-tyyppi) ;"avustuspaatosTyyppi"
+   (comp get-myonnetty-summa) ;"avustuspaatosMyonnettyAvustus"
+   (constantly "") ;"avustuspaatosHyvaksyttyKayttotarkoitus"
+   (constantly "") ;"avustuspaatosKayttoaikaAlkaaPvm"
+   (constantly "") ;"avustuspaatosKayttoaikaPaattyyPvm"
+   (constantly "") ;"avustuspaatosMaksettuAvustus"
+   (constantly "") ;"piilotaKayttotarkoitus"
+   (constantly "") ;"piilotaVireillepanija"
+   ))
 
 (defn export-avustushaku-for-hallinnoiavustuksia [avustushaku-id]
   (let [data (query "
