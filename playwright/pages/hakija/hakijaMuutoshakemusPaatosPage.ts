@@ -70,10 +70,7 @@ export class HakijaMuutoshakemusPaatosPage {
   }
 
   async clickLinkToMuutoshakemus() {
-    await Promise.all([
-      this.page.waitForNavigation(),
-      this.page.click('[data-test-id="link-to-muutoshakemus"]'),
-    ])
+    await this.page.click('[data-test-id="link-to-muutoshakemus"]')
   }
 
   async infoSection() {

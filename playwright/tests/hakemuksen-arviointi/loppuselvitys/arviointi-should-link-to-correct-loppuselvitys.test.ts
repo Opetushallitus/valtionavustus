@@ -27,7 +27,6 @@ test('Loppuselvitys tab in hakemuksen arviointi should have link to correct lopp
       waitForNewTab(page),
       loppuselvitysPage.locators.linkToForm.click(),
     ])
-    await loppuselvitysFormPage.waitForNavigation()
     await expect(loppuselvitysFormPage.locator('h1').locator('text="Loppuselvitys"')).toBeVisible()
     await expect(
       loppuselvitysFormPage.locator('button', {

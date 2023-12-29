@@ -24,7 +24,7 @@ muutoshakemusTest(
     await hakemustenArviointiPage.closeHakemusDetails()
     await hakemustenArviointiPage.openUkotusModal(hakemusId)
     await expect(page.getByTestId('ukotusModal')).toContainText('Pieni säätö')
-    await hakemustenArviointiPage.clickHakemusByHanke('Säätö jatkuu...')
+    await hakemustenArviointiPage.selectHakemusFromList('Säätö jatkuu...')
     await expect(page.getByTestId('ukotusModal')).toContainText('Säätö jatkuu...')
   }
 )

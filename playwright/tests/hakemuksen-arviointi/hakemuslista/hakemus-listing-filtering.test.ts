@@ -169,17 +169,11 @@ test('hakemus list filtering', async ({ hakemustenArviointiPage, hakuProps, avus
   })
 
   await test.step('clicking another avustushaku from dropdown switches to that', async () => {
-    await hakemustenArviointiPage.avustushakuDropdown
-      .locator('.rw-popup-container')
-      .waitFor({ state: 'hidden' })
+    await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
     await hakemustenArviointiPage.avustushakuDropdown.click()
-    await hakemustenArviointiPage.avustushakuDropdown.locator('.rw-popup-container').waitFor()
-    await Promise.all([
-      hakemustenArviointiPage.page.waitForNavigation(),
-      hakemustenArviointiPage.avustushakuDropdown
-        .locator('text=Ammatillisen peruskoulutuksen laadun kehittäminen')
-        .click(),
-    ])
+    await hakemustenArviointiPage.avustushakuDropdown
+      .locator('text=Ammatillisen peruskoulutuksen laadun kehittäminen')
+      .click()
     await expect(hakemustenArviointiPage.hakemusListing).toContainText('0/0 hakemusta')
     expect(hakemustenArviointiPage.page.url()).toMatch(`${VIRKAILIJA_URL}/avustushaku/1`)
   })

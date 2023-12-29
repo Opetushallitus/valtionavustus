@@ -58,7 +58,7 @@ budjettimuutoshakemusTest.extend<Pick<DefaultValueFixtures, 'ukotettuValmistelij
       const urlRegex = new RegExp(
         `${HAKIJA_URL}/muutoshakemus\\?user-key=.*&avustushaku-id=${avustushakuID}&lang=fi`
       )
-      expect(page.url()).toMatch(urlRegex)
+      await page.waitForURL(urlRegex)
     })
   }
 )

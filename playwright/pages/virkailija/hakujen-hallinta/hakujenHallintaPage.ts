@@ -78,10 +78,8 @@ export class HakujenHallintaPage {
   }
 
   async navigateFromHeader() {
-    await Promise.all([
-      this.page.waitForNavigation({ waitUntil: 'networkidle' }),
-      this.page.locator(`text="Hakujen hallinta"`).click(),
-    ])
+    await this.page.locator(`text="Hakujen hallinta"`).click()
+    await this.page.waitForURL(/\/admin\/haku-editor\//)
   }
 
   async navigateTo(path: string) {

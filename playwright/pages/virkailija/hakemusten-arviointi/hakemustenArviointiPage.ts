@@ -79,7 +79,7 @@ export class HakemustenArviointiPage {
       await this.showUnfinished.check()
     }
     await this.page.click('tbody tr:first-of-type')
-    await this.page.waitForSelector('#hakemus-details')
+    await this.page.waitForURL(`**/avustushaku/${avustushakuID}/hakemus/**`)
     return await this.page
       .evaluate(() => window.location.pathname.match(/\/hakemus\/(\d+)\//)?.[1])
       .then((possibleHakemusID) => {
@@ -128,17 +128,8 @@ export class HakemustenArviointiPage {
   }
 
   async clickHakemus(hakemusID: number) {
-    await Promise.all([
-      this.page.waitForNavigation(),
-      this.page.getByTestId(`hakemus-${hakemusID}`).click(),
-    ])
-  }
-
-  async clickHakemusByHanke(hanke: string) {
-    await Promise.all([
-      this.page.waitForNavigation(),
-      this.page.click(`span:text-matches("${hanke}")`),
-    ])
+    await this.page.getByTestId(`hakemus-${hakemusID}`).click()
+    await this.page.waitForURL(`${VIRKAILIJA_URL}/avustushaku/*/hakemus/${hakemusID}/arviointi`)
   }
 
   async closeHakemusDetails() {
@@ -234,11 +225,9 @@ export class HakemustenArviointiPage {
     return hakemusID
   }
 
-  async selectHakemusFromList(projectName: string) {
-    await this.page.click(`text=${projectName}`)
-    await expect(
-      this.saveStatus.getByText('Tallennetaan').and(this.saveStatusSuccess)
-    ).not.toBeVisible()
+  async selectHakemusFromList(rowText: string) {
+    await this.page.click(`text=${rowText}`)
+    await this.page.waitForURL(/\/avustushaku\/\d*\/hakemus\/\d*\/arviointi/)
     return this.arviointiTabLocators()
   }
 

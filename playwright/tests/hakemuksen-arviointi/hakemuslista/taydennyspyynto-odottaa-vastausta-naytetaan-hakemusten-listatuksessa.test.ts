@@ -17,8 +17,7 @@ test('Täydennyspyyntö odottaa vastausta näytetään hakemusten listauksessa',
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
 
   await hakemustenArviointiPage.navigate(avustushakuID)
-
-  await Promise.all([page.waitForNavigation(), page.click(`text=${answers.projectName}`)])
+  await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
   const hakemusID = await hakemustenArviointiPage.getHakemusID()
 
   await test.step('Varmista että ennen täydennyspyyntöä hakemukselta ei odoteta täydennystä', async () => {
@@ -36,7 +35,7 @@ test('Täydennyspyyntö odottaa vastausta näytetään hakemusten listauksessa',
   })
 
   await test.step('Tee täydennyspyyntö', async () => {
-    await Promise.all([page.waitForNavigation(), page.click(`text=${answers.projectName}`)])
+    await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
 
     const täydennyspyyntöText =
       'Lisää turklesia ja turpaanvetoja; vähemmän koulutusuudistusta. Cowabungaa veli!!'
@@ -51,7 +50,7 @@ test('Täydennyspyyntö odottaa vastausta näytetään hakemusten listauksessa',
   })
 
   await test.step('Peru täydennyspyyntö', async () => {
-    await Promise.all([page.waitForNavigation(), page.click(`text=${answers.projectName}`)])
+    await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
     await hakemustenArviointiPage.cancelChangeRequest()
   })
 

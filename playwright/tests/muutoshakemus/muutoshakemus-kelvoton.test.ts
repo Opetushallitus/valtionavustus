@@ -74,10 +74,7 @@ test('hakija does not get an email with link to muutoshakemus when avustushaku f
   let hakemusID: number | undefined
   await test.step('accept hakemus', async () => {
     await hakemustenArviointiPage.navigate(avustushakuID)
-    await Promise.all([
-      page.waitForNavigation(),
-      hakemustenArviointiPage.page.click(`text=${hakuProps.registerNumber}`),
-    ])
+    await hakemustenArviointiPage.selectHakemusFromList(hakuProps.registerNumber)
     hakemusID = await hakemustenArviointiPage.getHakemusID()
     expectToBeDefined(hakemusID)
     const { taTili } = hakemustenArviointiPage.arviointiTabLocators()
@@ -249,10 +246,7 @@ const akuTest = defaultValues.extend<{
     let hakemusID: number | undefined
     await test.step('accept hakemus', async () => {
       await hakemustenArviointiPage.navigate(avustushakuID)
-      await Promise.all([
-        page.waitForNavigation(),
-        hakemustenArviointiPage.page.click(`text=${hakuProps.registerNumber}`),
-      ])
+      await hakemustenArviointiPage.selectHakemusFromList(hakuProps.registerNumber)
       hakemusID = await hakemustenArviointiPage.getHakemusID()
       const { taTili } = hakemustenArviointiPage.arviointiTabLocators()
       await taTili.input.fill('Ammatillinen koulutus')
