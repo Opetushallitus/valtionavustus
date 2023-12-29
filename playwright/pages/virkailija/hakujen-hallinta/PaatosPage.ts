@@ -42,6 +42,7 @@ export function PaatosPage(page: Page) {
     paatosUpdatedAt: page.locator('#paatosUpdatedAt'),
     valiselvitysDate: valiselvitysPaiva.locator(datePicker),
     loppuselvitysDate: loppuselvitysPaiva.locator(datePicker),
+    decisionDate: page.locator('[id="decision.date"]'),
   }
 
   async function navigateTo(avustushakuID: number) {

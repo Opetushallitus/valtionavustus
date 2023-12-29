@@ -45,6 +45,7 @@ export interface HakuProps {
   talousarviotili: Omit<Talousarviotili, 'id' | 'migrated-from-not-normalized-ta-tili' | 'deleted'>
   valiselvitysDeadline?: string
   loppuselvitysDeadline?: string
+  decisionDate?: string
 }
 
 export enum Installment {
@@ -205,6 +206,7 @@ export class HakujenHallintaPage {
     vaCodes,
     valiselvitysDeadline,
     loppuselvitysDeadline,
+    decisionDate,
   }: HakuProps) {
     await test.step('Fill in avustushaku details', async () => {
       const haunTiedotPage = HaunTiedotPage(this.page)
@@ -271,6 +273,10 @@ export class HakujenHallintaPage {
       if (loppuselvitysDeadline) {
         await paatosTab.locators.loppuselvitysDate.fill(loppuselvitysDeadline)
       }
+      if (decisionDate) {
+        await paatosTab.locators.decisionDate.fill(decisionDate)
+      }
+
       await this.commonHakujenHallinta.switchToHaunTiedotTab()
     })
   }

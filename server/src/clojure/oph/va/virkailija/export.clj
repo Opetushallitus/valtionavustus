@@ -775,7 +775,7 @@
     (constantly "") ;"avustushakemusAlueMaakunnat"
     (constantly "") ;"avustushakemusAlueHyvinvointialueet"
     (constantly "") ;"avustushakemusAlueValtiot"
-    (constantly "") ;"avustuspaatosPvm"
+   :paatos-ratkaisu-pvm ;"avustukspaatosPvm"
     (constantly "") ;"avustuspaatosPerustelu"
     (comp get-avustuspaatos-tyyppi) ;"avustuspaatosTyyppi"
     (comp get-myonnetty-summa) ;"avustuspaatosMyonnettyAvustus"
@@ -810,7 +810,8 @@
                         forms.content,
                         koodisto_answer.value as koodisto_answer_value,
                         arviot.status as paatos_status,
-                        arviot.budget_granted as myonnetty
+                        arviot.budget_granted as myonnetty,
+                        avustushaku.decision->'date' AS paatos_ratkaisu_pvm
                       FROM hakemukset
                       LEFT JOIN arviot ON arviot.hakemus_id = hakemukset.id
                       LEFT JOIN avustushaut avustushaku ON avustushaku.id = hakemukset.avustushaku

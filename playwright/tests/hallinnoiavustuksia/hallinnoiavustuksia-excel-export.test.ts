@@ -12,6 +12,7 @@ const ophTest = twoAcceptedHakemusTest.extend({
     use({
       ...hakuProps,
       hallinoiavustuksiaRegisterNumber: 'va-oph-2023-6',
+      decisionDate: '11.12.2023',
     }),
 })
 
@@ -72,6 +73,7 @@ test.describe('OPH', () => {
           J2: 'fi',
           M2: '2050864-5',
           Q2: 'Kainuu',
+          U2: '11.12.2023',
           W2: 'Myönteinen',
           X2: 99999,
         },
@@ -83,6 +85,7 @@ test.describe('OPH', () => {
           J3: 'fi',
           M3: '2050864-5',
           Q3: 'Kainuu',
+          U3: '11.12.2023',
           W3: 'Myönteinen',
           X3: 99999,
         },
