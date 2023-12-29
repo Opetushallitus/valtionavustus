@@ -744,6 +744,9 @@
         koodisto-answer-value (formutil/find-answer-value (:answers data) koodisto-field-id)]
     (formhandler/find-koodisto-value-name koodisto-answer-value koodisto-params)))
 
+(defn get-y-tunnus [data]
+  (or (formutil/find-answer-value (:answers data) "business-id") ""))
+
 (defn get-avustuspaatos-tyyppi [data]
   (case (:paatos-status data)
     "rejected" "Kielteinen"
@@ -768,7 +771,7 @@
    :language ;"avustusasiaKieli"
    (constantly "") ;"avustusasiaVireillepanijaHenkiloTunnus"
    (constantly "") ;"avustusasiaVireillepanijaHenkiloNimi"
-   :y-tunnus ;"avustusasiaVireillepanijaYhteisoTunnus"
+   (comp get-y-tunnus) ;"avustusasiaVireillepanijaYhteisoTunnus"
    (constantly "") ;"avustusasiaVireillepanijaYhteisoNimi"
    (constantly "") ;"avustushakemusHaettuKayttotarkoitus"
    (constantly "") ;"avustushakemusHaettuAvustus"
@@ -807,7 +810,6 @@
                         koodi.code as toimintayksikko,
                         hakemukset.language,
                         to_char(hakemus_submitted.first_time_submitted, 'DD.MM.YYYY') AS vireille_tulo_pvm,
-                        form_answers.y_tunnus,
                         forms.content,
                         form_submissions.answers,
                         arviot.status as paatos_status,
@@ -821,16 +823,7 @@
                       LEFT JOIN hakemus_submitted ON hakemus_submitted.id = hakemukset.id
                       LEFT JOIN form_submissions ON form_submissions.id = hakemukset.form_submission_id AND
                                                     form_submissions.version_closed IS NULL
-                      INNER JOIN LATERAL (
-                        SELECT  id,
-                                form,
-                                answer->>'value' as y_tunnus
-                        FROM form_submissions
-                        CROSS JOIN jsonb_array_elements(answers->'value') answer
-                        WHERE answer->'key' = '\"business-id\"' AND
-                              version_closed IS NULL
-                      ) form_answers ON form_answers.id = hakemukset.form_submission_id
-                      LEFT JOIN forms ON form_answers.form = forms.id
+                      LEFT JOIN forms ON avustushaku.form = forms.id
                       WHERE hakemukset.version_closed IS NULL AND
                             hakemus_type = 'hakemus' AND
                             arviot.status in ('accepted', 'rejected') AND
