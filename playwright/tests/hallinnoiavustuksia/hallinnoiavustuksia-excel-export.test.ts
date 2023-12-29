@@ -73,6 +73,7 @@ test.describe('OPH', () => {
           M2: '2050864-5',
           R2: 'Kainuu',
           W2: 'Myönteinen',
+          X2: 99999,
         },
         {
           A3: 'OPH',
@@ -83,6 +84,7 @@ test.describe('OPH', () => {
           M3: '2050864-5',
           R3: 'Kainuu',
           W3: 'Myönteinen',
+          X3: 99999,
         },
       ]
       expectToFindRowWithValuesInSheet(sheet, expectedRows)
@@ -117,6 +119,7 @@ test.describe('JOTPA', () => {
           M2: '2050864-5',
           R2: 'Ahvenanmaa',
           W2: 'Kielteinen',
+          X2: 0,
         },
       ]
       const sheet = workbook.Sheets[SheetName]

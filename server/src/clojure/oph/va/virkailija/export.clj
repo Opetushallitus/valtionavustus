@@ -749,6 +749,10 @@
     "accepted" "Myönteinen"
     ""))
 
+(defn get-myonnetty-summa [data]
+  (let [myonnetty (:myonnetty data)]
+    myonnetty))
+
 (def avustushaku->hallinoi-sheet-rows
   (juxt
     (constantly "OPH") ;(comp get-valtionapuviranomainen) ;"valtionapuviranomainen"
@@ -774,7 +778,7 @@
     (constantly "") ;"avustuspaatosPvm"
     (constantly "") ;"avustuspaatosPerustelu"
     (comp get-avustuspaatos-tyyppi) ;"avustuspaatosTyyppi"
-    (constantly "") ;"avustuspaatosMyonnettyAvustus"
+    (comp get-myonnetty-summa) ;"avustuspaatosMyonnettyAvustus"
     (constantly "") ;"avustuspaatosHyvaksyttyKayttotarkoitus"
     (constantly "") ;"avustuspaatosKayttoaikaAlkaaPvm"
     (constantly "") ;"avustuspaatosKayttoaikaPaattyyPvm"
@@ -805,7 +809,8 @@
                         form_answers.y_tunnus,
                         forms.content,
                         koodisto_answer.value as koodisto_answer_value,
-                        arviot.status as paatos_status
+                        arviot.status as paatos_status,
+                        arviot.budget_granted as myonnetty
                       FROM hakemukset
                       LEFT JOIN arviot ON arviot.hakemus_id = hakemukset.id
                       LEFT JOIN avustushaut avustushaku ON avustushaku.id = hakemukset.avustushaku
