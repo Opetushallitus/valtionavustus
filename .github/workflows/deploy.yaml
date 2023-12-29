@@ -36,6 +36,10 @@ jobs:
         id: deploy
         run: ./deploy-scripts/04-deploy-cdk-${{ inputs.env }}.sh
 
+      - name: set now timestamp
+        id: now
+        run: echo "timestamp=$(date -Iseconds)" >> $GITHUB_OUTPUT
+
       - name: Update green tag
         if: steps.deploy.outcome == 'success'
         run: |
@@ -43,5 +47,7 @@ jobs:
           git config user.email github-actions@github.com
           git tag --force va-green-${{ inputs.env }}
           git push --force origin va-green-${{ inputs.env }}
+          git tag va-green-${{ inputs.env }}/${{ steps.now.outputs.timestamp }}
+          git push origin va-green-${{ inputs.env }}/${{ steps.now.outputs.timestamp }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
