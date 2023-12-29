@@ -18,6 +18,7 @@ jobs:
   trigger-qa-deploy:
     name: Trigger QA deploy
     runs-on: ubuntu-22.04
+    needs: deploy
     permissions:
       actions: write
     steps:
