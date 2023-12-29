@@ -38,7 +38,7 @@ jobs:
 
       - name: set now timestamp
         id: now
-        run: echo "timestamp=$(date -Iseconds)" >> $GITHUB_OUTPUT
+        run: echo "timestamp=$(date -Iseconds | sed s/:/_/g )" >> $GITHUB_OUTPUT
 
       - name: Update green tag
         if: steps.deploy.outcome == 'success'
@@ -47,7 +47,7 @@ jobs:
           git config user.email github-actions@github.com
           git tag --force va-green-${{ inputs.env }}
           git push --force origin va-green-${{ inputs.env }}
-          git tag va-green-${{ inputs.env }}/${{ steps.now.outputs.timestamp }}
+          git tag va-green-${{ inputs.env }}-${{ steps.now.outputs.timestamp }}
           git push origin va-green-${{ inputs.env }}/${{ steps.now.outputs.timestamp }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
