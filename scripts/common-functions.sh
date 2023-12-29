@@ -23,16 +23,12 @@ readonly DOCKER_COMPOSE_FILE="$repo"/docker-compose-test.yml
 readonly AWS_CLI_VERSION="2.15.1"
 
 function require_federation_session {
-  session_expiration="$(aws configure get expiration --profile oph-federation)"
-  now_timestamp="$(date +"%Y-%m-%dT%H:%M:%S")"
+  info "Verifying that oph-federation session has not expired"
 
-  if [ "$session_expiration" = "None" ]; then
-    fatal "No session for oph-federation"
-  elif [[ "$session_expiration" < "$now_timestamp" ]]; then
-    fatal "oph-federation session expired ($session_expiration)"
-  else
-    info "oph-federation session ok (expires $session_expiration)"
-  fi
+  # The following command will either
+  # a) succeed silently or
+  # b) print error message and exit with code 254 if session has expired
+  aws sts get-caller-identity --profile=oph-federation 1>/dev/null
 }
 
 function require_cdk_context {
