@@ -246,6 +246,30 @@
               },
               "required": true,
               "fieldType": "koodistoField"
+            },
+            {
+              "label": {
+                "fi": "Hakijan ensisijainen kotikunta",
+                "sv": "Den sökandes huvudsakliga hemkommun\n"
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "",
+                "sv": ""
+              },
+              "id": "koodistoField-0",
+              "params": {
+                "size": "medium",
+                "koodisto": {
+                  "uri": "kotikunnat",
+                  "name": "Kotikunnat",
+                  "version": 1
+                },
+                "inputType": "dropdown",
+                "maxlength": 100
+              },
+              "required": true,
+              "fieldType": "koodistoField"
             }
           ]
         },

@@ -735,11 +735,14 @@
 (defn get-valtionapuviranomainen [data]
   (if (= (:toimintayksikko data) "6600105300") "JOTPA" "OPH"))
 
-(defn get-maakunta [data]
+(defn get-kotikunta [data]
   (let [content (:content data)
-        koodisto-answer-value (:koodisto-answer-value data)
-        name (formhandler/find-koodisto-value-name koodisto-answer-value content)]
-    name))
+        koodisto-fields (formutil/find-fields* (partial formutil/has-field-type? "koodistoField") content)
+        kotikunta-koodisto-field (first (filter #(= (get-in % [:params :koodisto :uri]) "kotikunnat") koodisto-fields))
+        koodisto-field-id (:id kotikunta-koodisto-field)
+        koodisto-params (get-in kotikunta-koodisto-field [:params :koodisto])
+        koodisto-answer-value (formutil/find-answer-value (:answers data) koodisto-field-id)]
+    (formhandler/find-koodisto-value-name koodisto-answer-value koodisto-params)))
 
 (defn get-avustuspaatos-tyyppi [data]
   (case (:paatos-status data)
@@ -769,7 +772,7 @@
    (constantly "") ;"avustusasiaVireillepanijaYhteisoNimi"
    (constantly "") ;"avustushakemusHaettuKayttotarkoitus"
    (constantly "") ;"avustushakemusHaettuAvustus"
-   (comp get-maakunta) ;"avustushakemusAlueKunnat"
+   (comp get-kotikunta) ;"avustushakemusAlueKunnat"
    (constantly "") ;"avustushakemusAlueMaakunnat"
    (constantly "") ;"avustushakemusAlueHyvinvointialueet"
    (constantly "") ;"avustushakemusAlueValtiot"
@@ -806,7 +809,7 @@
                         to_char(hakemus_submitted.first_time_submitted, 'DD.MM.YYYY') AS vireille_tulo_pvm,
                         form_answers.y_tunnus,
                         forms.content,
-                        koodisto_answer.value as koodisto_answer_value,
+                        form_submissions.answers,
                         arviot.status as paatos_status,
                         arviot.budget_granted as myonnetty,
                         avustushaku.decision->'date' AS paatos_ratkaisu_pvm
@@ -815,6 +818,8 @@
                       LEFT JOIN avustushaut avustushaku ON avustushaku.id = hakemukset.avustushaku
                       LEFT JOIN va_code_values koodi ON koodi.id = avustushaku.operational_unit_id
                       LEFT JOIN hakemus_submitted ON hakemus_submitted.id = hakemukset.id
+                      LEFT JOIN form_submissions ON form_submissions.id = hakemukset.form_submission_id AND
+                                                    form_submissions.version_closed IS NULL
                       INNER JOIN LATERAL (
                         SELECT  id,
                                 form,
@@ -824,15 +829,6 @@
                         WHERE answer->'key' = '\"business-id\"' AND
                               version_closed IS NULL
                       ) form_answers ON form_answers.id = hakemukset.form_submission_id
-                      INNER JOIN LATERAL (
-                        SELECT  id,
-                                form,
-                                answer->>'value' as value
-                        FROM form_submissions
-                        CROSS JOIN jsonb_array_elements(answers->'value') answer
-                        WHERE answer->'key' = '\"koodistoField-1\"' AND
-                              version_closed IS NULL
-                      ) koodisto_answer ON koodisto_answer.id = hakemukset.form_submission_id
                       LEFT JOIN forms ON form_answers.form = forms.id
                       WHERE hakemukset.version_closed IS NULL AND
                             hakemus_type = 'hakemus' AND

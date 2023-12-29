@@ -46,6 +46,7 @@ test.describe('Form editor muutoshakukelpoisuus message', () => {
       'textField-0',
       'radioButton-0',
       'koodistoField-1',
+      'koodistoField-0',
       'signatories-fieldset',
       'signatories-fieldset-1',
       'signatories-fieldset-1.name',

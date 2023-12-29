@@ -36,13 +36,14 @@
        (transform-koodisto-fields (partial add-koodisto-options))
        (transform-koodisto-fields set-field-type-from-params)))
 
-(defn find-koodisto-value-name [value form]
-  (let [koodisto-fields (formutil/find-fields* (partial formutil/has-field-type? "koodistoField") form)
-        koodisto-field (first koodisto-fields)
-        koodisto-params (get-in koodisto-field [:params :koodisto])
-        koodisto-uri (:uri koodisto-params)
-        version (:version koodisto-params)
-        koodisto-options (koodisto/get-cached-koodi-options koodisto-uri version)
-        koodisto (first (filter #(= (:value %) value)  (:content koodisto-options)))
-        koodisto-name (get-in koodisto [:label :fi])]
-    (or koodisto-name "")))
+(defn- fetch-koodisto-value-name [uri version value]
+  (let [koodisto-options (koodisto/get-cached-koodi-options uri version)
+        koodisto (first (filter #(= (:value %) value)  (:content koodisto-options)))]
+    (get-in koodisto [:label :fi])))
+
+(defn find-koodisto-value-name [koodisto-value koodisto-params]
+  (let [koodisto-uri (:uri koodisto-params)
+        version (:version koodisto-params)]
+    (if (and (not (nil? koodisto-value)) (not (nil? koodisto-uri)) (not (nil? version)))
+      (or (fetch-koodisto-value-name koodisto-uri version koodisto-value) "")
+      "")))

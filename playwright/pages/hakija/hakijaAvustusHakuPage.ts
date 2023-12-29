@@ -65,11 +65,18 @@ export function HakijaAvustusHakuPage(page: Page) {
     )
   }
 
-  async function selectMaakuntaFromDropdown(text: string) {
-    const maakuntaInputSelector = '#koodistoField-1_input .rw-dropdown-list-input input'
-    await page.fill(maakuntaInputSelector, text)
+  async function selectFromDropdown(index: number, text: string) {
+    await page.locator(`#koodistoField-${index}_input`).getByRole('textbox').fill(text)
     await page.press('body', 'ArrowDown')
     await page.press('body', 'Enter')
+  }
+
+  async function selectMaakuntaFromDropdown(text: string) {
+    await selectFromDropdown(1, text)
+  }
+
+  async function selectKotikuntaFromDropdown(text: string) {
+    await selectFromDropdown(0, text)
   }
 
   async function waitForEditSaved() {
@@ -154,6 +161,7 @@ export function HakijaAvustusHakuPage(page: Page) {
 
     await page.click("[id='koodistoField-1_input']")
     await selectMaakuntaFromDropdown(lang === 'fi' ? 'Kainuu' : 'Åland')
+    await selectKotikuntaFromDropdown(lang === 'fi' ? 'Sotkamo' : 'Mariehamn')
     await locators.form.bank.iban.fill('FI95 6682 9530 0087 65')
     await locators.form.bank.bic.fill('OKOYFIHH')
     await page.fill('#textField-2', '2')
