@@ -59,7 +59,7 @@ export default class BudgetEditFormController {
   }
 
   componentOnChangeListener(field, newValue) {
-    if (field.fieldType !== 'moneyField') {
+    if (field.fieldType !== 'moneyField' && field.fieldType !== 'fixedMultiplierMoneyField') {
       this.overrideAnswerValue(field, newValue)
     } else {
       const valueOrZero = Boolean(newValue) ? newValue : 0
