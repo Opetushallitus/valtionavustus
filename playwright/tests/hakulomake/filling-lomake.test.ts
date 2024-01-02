@@ -66,6 +66,9 @@ test('can add and validate different fields', async ({
     await page.locator('#koodistoField-0_input').click()
     await page.keyboard.press('ArrowDown')
     await page.keyboard.press('Enter')
+    await page.locator('#koodistoField-2_input').click()
+    await page.keyboard.press('ArrowDown')
+    await page.keyboard.press('Enter')
     await typeValueInFieldAndExpectValidationError({
       page,
       fieldId: decimalField.fieldId,
