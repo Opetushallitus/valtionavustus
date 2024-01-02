@@ -58,7 +58,7 @@ jobs:
           PLAYWRIGHT_SHARDS_AMOUNT: ${{ matrix.total_shards }}
       - name: Upload Playwright results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: playwright-results-${{ matrix.shard }}
           path: playwright-results/
