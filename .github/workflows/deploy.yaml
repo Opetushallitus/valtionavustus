@@ -48,6 +48,6 @@ jobs:
           git tag --force va-green-${{ inputs.env }}
           git push --force origin va-green-${{ inputs.env }}
           git tag va-green-${{ inputs.env }}-${{ steps.now.outputs.timestamp }}
-          git push origin va-green-${{ inputs.env }}/${{ steps.now.outputs.timestamp }}
+          git push origin va-green-${{ inputs.env }}-${{ steps.now.outputs.timestamp }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
