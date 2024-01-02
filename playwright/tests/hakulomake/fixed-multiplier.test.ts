@@ -334,6 +334,43 @@ test('fixed multiplier field works', async ({
     await expect(locators.nth(2)).toContainText('3 000 €')
     await paatosPage.close()
   })
+
+  await test.step('menokohtainen budget ignores invalid inputs', async () => {
+    await hakemustenArviointiPage.page.click('label[for="useDetailedCosts-true"]')
+    const { personnel, material, equipment } = getBudgetSelectorsForType(
+      page,
+      'virkailija',
+      'amount'
+    )
+
+    await test.step('when we have invalid input before or after the number', async () => {
+      await personnel.fill('yolo-$1280€')
+      await expect(personnel).toHaveValue('1280')
+    })
+
+    await test.step('when we have invalid input within the number', async () => {
+      await material.fill('1.0.7.5')
+      await expect(material).toHaveValue('1075')
+    })
+
+    await test.step('when all input characters are invalid', async () => {
+      const preModificationEquipmentValue = await equipment.inputValue()
+
+      await equipment.fill('zero')
+      await expect(equipment).toHaveValue(preModificationEquipmentValue)
+
+      await equipment.fill(' ')
+      await expect(equipment).toHaveValue(preModificationEquipmentValue)
+
+      await equipment.fill('tekstiä_joka_ei_sisällä_numeroita_ollenkaan')
+      await expect(equipment).toHaveValue(preModificationEquipmentValue)
+    })
+
+    await test.step('and sets budget to 0 for empty input', async () => {
+      await equipment.fill('')
+      await expect(equipment).toHaveValue('0')
+    })
+  })
 })
 
 const getBudgetTableFooterTh = async (context: BrowserContext, page: Page) => {
