@@ -1,4 +1,4 @@
-import { autoBatchEnhancer, configureStore, createListenerMiddleware } from '@reduxjs/toolkit'
+import { configureStore, createListenerMiddleware } from '@reduxjs/toolkit'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 
 import arviointiReducer, {
@@ -27,7 +27,6 @@ const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(apiSlice.middleware).prepend(arvioAutoSave.middleware),
-  enhancers: (existingEnhancers) => existingEnhancers.concat(autoBatchEnhancer()),
 })
 
 export default store
