@@ -344,18 +344,20 @@ test('fixed multiplier field works', async ({
     )
 
     await test.step('when we have invalid input before or after the number', async () => {
+      await expect(personnel).toHaveValue('1280')
       await personnel.fill('yolo-$1280€')
       await expect(personnel).toHaveValue('1280')
     })
 
     await test.step('when we have invalid input within the number', async () => {
+      await expect(material).toHaveValue('1075')
       await material.fill('1.0.7.5')
       await expect(material).toHaveValue('1075')
     })
 
     await test.step('when all input characters are invalid', async () => {
+      await expect(equipment).toHaveValue('645')
       const preModificationEquipmentValue = await equipment.inputValue()
-
       await equipment.fill('zero')
       await expect(equipment).toHaveValue(preModificationEquipmentValue)
 
