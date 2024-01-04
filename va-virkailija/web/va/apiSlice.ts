@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react'
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 import { Raportointivelvoite } from 'soresu-form/web/va/types'
 import { Message } from './hakemusten-arviointi-page/hakemus-details/ViestiLista'
