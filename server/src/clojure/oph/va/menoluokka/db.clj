@@ -1,9 +1,8 @@
 (ns oph.va.menoluokka.db
   (:use [oph.soresu.common.db]
-        [clojure.data :as data]
         [clojure.tools.trace :only [trace]])
-  (:require [oph.soresu.form.formutil :as formutil])
-  (:import [java.util Date]))
+  (:require [clojure.tools.logging :as log]
+            [oph.soresu.form.formutil :as formutil]))
 
 (defn- remove-whitespace [input]
   (clojure.string/replace input #"\s" ""))
@@ -11,7 +10,10 @@
 (defn- answer->menoluokka-row [answers hakemus-id menoluokka]
   {:menoluokka_id (:id menoluokka)
    :hakemus_id hakemus-id
-   :amount (Integer/parseInt (remove-whitespace (formutil/find-answer-value answers (str (:type menoluokka) ".amount"))))})
+   :amount (try (Integer/parseInt (remove-whitespace (formutil/find-answer-value answers (str (:type menoluokka) ".amount"))))
+                (catch Exception e
+                  (log/info "Failed to parse menoluokka row" (:id menoluokka) hakemus-id e)
+                  0))})
 
 (defn store-menoluokka-hakemus-rows [avustushaku-id hakemus-id answers]
   (with-tx (fn [tx]
