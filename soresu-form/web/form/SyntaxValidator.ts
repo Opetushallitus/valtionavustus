@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
 import BankAccountValidator from './BankAccountValidator'
-import { isValidMoney } from './MoneyValidator'
+import { isMoneyField, isValidMoney } from './MoneyValidator'
 import TableValidator from './TableValidator'
 import { Field } from '../va/types'
 import { representsInteger, representsDecimal } from '../MathUtil'
@@ -12,7 +12,9 @@ export abstract class Validator {
 }
 
 function isFalsyOrEmptyStringButNotZeroMoney(value: any, field: Field): boolean {
-  if (field.fieldType === 'moneyField') return isFalsyButNotZero(value)
+  if (isMoneyField(field)) {
+    return isFalsyButNotZero(value)
+  }
 
   return !value || _.trim(value).length < 1
 }

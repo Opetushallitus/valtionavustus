@@ -467,6 +467,7 @@ export const fieldTypes: { [f in AddableFieldType]: FieldClass } = {
   dropdown: 'formField',
   namedAttachment: 'formField',
   koodistoField: 'formField',
+  fixedMultiplierMoneyField: 'formField',
   p: 'infoElement',
   h1: 'infoElement',
   h3: 'infoElement',
@@ -493,6 +494,7 @@ export const addableFields = [
   'growingFieldset',
   'growingFieldsetChild',
   'h1',
+  'fixedMultiplierMoneyField',
 ] as const
 export type AddableFieldType = (typeof addableFields)[number]
 export type NonAddableFieldType =

@@ -4,7 +4,7 @@ import FormUtil from 'soresu-form/web/form/FormUtil'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 
 import BudgetBusinessRules from './BudgetBusinessRules'
-import { isValidMoney } from 'soresu-form/web/form/MoneyValidator'
+import { isMoneyField, isValidMoney } from 'soresu-form/web/form/MoneyValidator'
 
 export default class BudgetEditFormController {
   constructor(
@@ -59,11 +59,10 @@ export default class BudgetEditFormController {
   }
 
   componentOnChangeListener(field, newValue) {
-    if (field.fieldType !== 'moneyField' && field.fieldType !== 'fixedMultiplierMoneyField') {
+    if (!isMoneyField(field)) {
       this.overrideAnswerValue(field, newValue)
     } else {
       const valueOrZero = Boolean(newValue) ? newValue : 0
-
       if (isValidMoney(valueOrZero)) {
         this.overrideAnswerValue(field, parseInt(valueOrZero, 10))
       }
