@@ -135,7 +135,7 @@ Avustuksen päätökset tulee julkaista oph.fi-verkkopalvelussa ohjeistuksen muk
 
 Avustusten maksatukset toteutetaan päätöksessä kuvatun aikataulun mukaan. Ohjeet maksatusten tekemiseksi löytyvät: https://intra.oph.fi/display/VALA/Avustusten+maksaminen
 
-Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
+Ongelmatilanteissa saat apua osoitteesta: va-tuki@oph.fi
 `)
     await test.step('navigates to päätöslista', async () => {
       await yhteenvetoPage.navigate(searchUrl)

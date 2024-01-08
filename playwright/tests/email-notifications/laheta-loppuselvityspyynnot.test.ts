@@ -138,7 +138,7 @@ Ohjeet loppuselvityslomakkeen laatimiseksi ja selvityspyyntöjen lähettämiseks
 
 Huomatkaa, että valtionavustusjärjestelmä lähettää automaattisesti muistutusviestin loppuselvityksen palauttamisesta kaikille niille avustuksen saajille, jotka eivät ole lähettäneet loppuselvitystä käsiteltäväksi viimeistään kaksi viikkoa ennen palautuksen määräpäivää.
 
-Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
+Ongelmatilanteissa saat apua osoitteesta: va-tuki@oph.fi
 `)
         })
         await test.step('notification is not sent again if loppupäätös is sent', async () => {

@@ -31,7 +31,8 @@ olette saaneet hakuun ${hakuProps.avustushakuName} yhteensä 1 hakemusta, joiden
 
 Voitte aloittaa hakemusten arvioinnin. Ohjeet hakemusten arviointiin (https://intra.oph.fi/display/VALA/Hakemusten+arviointi) ja päätösten laatimiseen (https://intra.oph.fi/pages/viewpage.action?pageId=99516838) löytyvät OSSIsta.
 
-Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi`)
+Ongelmatilanteissa saat apua osoitteesta: va-tuki@oph.fi
+`)
   }
 )
 muutoshakemusTest.extend<Pick<MuutoshakemusFixtures, 'finalAvustushakuEndDate'>>({

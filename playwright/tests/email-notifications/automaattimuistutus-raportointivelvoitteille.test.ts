@@ -185,5 +185,5 @@ Raportoinnissa tulee noudattaa määrärahan asettajan ohjauskirjeessä asettami
 
 Yleiset ohjeet raportin laadintaan, tallentamiseen ja lähettämiseen löydät täältä: https://intra.oph.fi/display/VALA/Raportointi+ja+vaikutusten+arviointi
 
-Ongelmatilanteissa saat apua osoitteesta: valtionavustukset@oph.fi
+Ongelmatilanteissa saat apua osoitteesta: va-tuki@oph.fi
 `
