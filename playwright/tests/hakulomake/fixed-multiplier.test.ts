@@ -343,12 +343,17 @@ test('fixed multiplier field works', async ({
       'amount'
     )
 
-    await test.step('when we have invalid input before or after the number', async () => {
+    await test.step('when we have invalid input before or after the number and the user copy-pastes the value', async () => {
       await expect(personnel).toHaveValue('1280')
       await personnel.fill('yolo-$1269€')
       await expect(personnel).toHaveValue('1280')
     })
-
+    await test.step('when we have invalid input before or after the number and the user writes the value', async () => {
+      await expect(personnel).toHaveValue('1280')
+      await personnel.clear()
+      await personnel.pressSequentially('yolo-$1269€')
+      await expect(personnel).toHaveValue('1269')
+    })
     await test.step('when we have invalid input within the number', async () => {
       await expect(material).toHaveValue('1075')
       await material.fill('1.0.7.6')
