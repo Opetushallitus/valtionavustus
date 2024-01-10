@@ -10,6 +10,7 @@
             [oph.common.email :as email]
             [oph.common.email-utils :as email-utils]
             [oph.soresu.common.config :refer [config]]
+            [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
             [oph.soresu.common.db :refer [query]]
             [oph.va.decision-liitteet :refer [Liitteet]]
             [oph.va.virkailija.tapahtumaloki :as tapahtumaloki]))
@@ -434,6 +435,7 @@
              :register-number (:register_number hakemus)
              :project-name (:project_name hakemus)
              :budjettimuutoshakemus-enabled budjettimuutoshakemus-enabled?
+             :is-jotpa-hakemus (is-jotpa-avustushaku avustushaku)
              :include-muutoshaku-link include-muutoshaku-link?}
         format-plaintext-message (partial render (get-in mail-templates [:paatos-refuse lang]))
         ]

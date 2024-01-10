@@ -14,6 +14,7 @@
       [clojure.string :as str]
       [oph.va.virkailija.decision :as decision]
       [oph.soresu.common.config :refer [config]]
+      [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
       [oph.va.virkailija.application-data :refer [get-application-token create-application-token]]
       [oph.va.virkailija.payments-data :as payments-data]
       [oph.va.virkailija.tapahtumaloki :as tapahtumaloki]
@@ -266,6 +267,7 @@
                                                  :project-name     (:project_name first-hakemus)
                                                  :budjettimuutoshakemus-enabled budjettimuutoshakemus-enabled
                                                  :include-muutoshaku-link include-muutoshaku-link?
+                                                 :is-jotpa-hakemus (is-jotpa-avustushaku avustushaku)
                                                  :modify-url       (when include-muutoshaku-link? "MODIFY_URL_PLACEHOLDER")})
                                  :example-url (email/paatos-url avustushaku-id first-hakemus-user-key :fi)
                                  :example-modify-url (email-utils/modify-url avustushaku-id first-hakemus-user-key :fi first-hakemus-token true)

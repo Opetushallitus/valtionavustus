@@ -8,7 +8,7 @@ Avustuksen saajan tulee noudattaa avustuspäätöksessä sekä sen liitteissä k
 
 Mikäli otatte päätöksen mukaisen avustuksen vastaan, voitte käynnistää hankkeen. Avustussumma maksetaan päätöksessä ilmoitettuun päivämäärään mennessä.
 
-Mikäli ette ota päätöksen mukaista avustusta vastaan, tulee siitä ilmoittaa Opetushallitukselle päätöksessä mainittuun päivämäärään mennessä. Ilmoitus asiasta tehdään valtionavustusjärjestelmään tästä linkistä: {{& refuse-url }}
+Mikäli ette ota päätöksen mukaista avustusta vastaan, tulee siitä ilmoittaa {{^is-jotpa-hakemus}}Opetushallitukselle{{/is-jotpa-hakemus}}{{#is-jotpa-hakemus}}Jatkuvan oppimisen ja työllisyyden palvelukeskukselle{{/is-jotpa-hakemus}} päätöksessä mainittuun päivämäärään mennessä. Ilmoitus asiasta tehdään valtionavustusjärjestelmään tästä linkistä: {{& refuse-url }}
 
 {{^include-muutoshaku-link}}Avustuksen saaja vastaa siitä, että valtionavustusjärjestelmään kirjatut yhteyshenkilön yhteystiedot ovat aina ajan tasalla. Yhteyshenkilö vaihdetaan oheisen linkin kautta, joka on käytettävissä läpi avustuksen käyttöajan:{{/include-muutoshaku-link}}
 {{#include-muutoshaku-link}}Valtionavustuksen käyttöön vaikuttavista muutoksista tulee aina tehdä muutoshakemus viipymättä ja kirjallisesti. Haettaville muutoksille tulee esittää riittävät perustelut. Epäselvissä tilanteissa avustuksen saajan tulee olla yhteydessä avustuspäätöksessä mainittuun lisätietojen antajaan ennen muutoshakemuksen laatimista.
