@@ -12,7 +12,7 @@ export interface PaatosValues {
 }
 
 export type Field = { type: string; fieldId: string }
-type FieldAnswer = { fieldId: string; answer: string }
+type FieldAnswer = { fieldId: string; answer: string; isFileAttachment?: boolean }
 
 export interface Answers {
   organization?: string

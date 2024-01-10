@@ -197,8 +197,12 @@ export function HakijaAvustusHakuPage(page: Page) {
 
     if (answers.hakemusFields?.length) {
       await Promise.all(
-        answers.hakemusFields.map(async ({ fieldId, answer }) => {
-          await page.fill(`#${fieldId}`, answer)
+        answers.hakemusFields.map(async ({ fieldId, answer, isFileAttachment }) => {
+          if (isFileAttachment) {
+            await page.setInputFiles(`#${fieldId} [type="file"]`, answer)
+          } else {
+            await page.fill(`#${fieldId}`, answer)
+          }
         })
       )
     }
