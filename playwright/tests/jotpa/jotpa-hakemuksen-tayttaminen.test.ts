@@ -4,6 +4,7 @@ import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
 import { dummyPdfPath, TEST_Y_TUNNUS } from '../../utils/constants'
 import {
   getHakemusSubmitted,
+  getMuutoshakemusEmails,
   pollUntilNewHakemusEmailArrives,
   waitUntilMinEmails,
 } from '../../utils/emails'
@@ -229,6 +230,27 @@ Hagnäskajen 6`
           `Servicecentret för kontinuerligt lärande och sysselsättning`
         )
       })
+    })
+  }
+)
+
+JotpaTest(
+  'Hyväksytyllä suomenkielisellä Jotpa-hakemuksella',
+  async ({ page, avustushakuID, acceptedHakemus }) => {
+    const { userKey } = acceptedHakemus
+
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
+    const hakemusID = await hakijaAvustusHakuPage.getHakemusID(avustushakuID, userKey)
+    const emails = await waitUntilMinEmails(getMuutoshakemusEmails, 1, hakemusID)
+    const email = emails[0]
+
+    await JotpaTest.step('on oikea vastuutaho sähköpostiviestissä', async () => {
+      expect(email.formatted).toContain(
+        'Mikäli ette ota päätöksen mukaista avustusta vastaan, tulee siitä ilmoittaa Jatkuvan oppimisen ja työllisyyden palvelukeskukselle'
+      )
+      expect(email.formatted).not.toContain(
+        'Mikäli ette ota päätöksen mukaista avustusta vastaan, tulee siitä ilmoittaa Opetushallitukselle'
+      )
     })
   }
 )
