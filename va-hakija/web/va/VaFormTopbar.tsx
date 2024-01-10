@@ -71,7 +71,6 @@ const VaFormTopbar = <T extends BaseStateLoopState<T>>(props: Props<T>) => {
     )
   }
   const submitTextKey = isSubmitted() ? `submitted-${hakemusType}` : 'submit'
-  const helpText = formTranslator.translate(`savehelp-${hakemusType}`, lang)
   const hasEnded = avustushaku.phase === 'ended'
   const topicKey = `heading-${hakemusType}`
   const isHakemus = hakemusType === 'hakemus'
@@ -85,6 +84,10 @@ const VaFormTopbar = <T extends BaseStateLoopState<T>>(props: Props<T>) => {
     isHakemus &&
     isJotpaAvustushaku(avustushaku) &&
     isJotpaHakemusLomakeCustomizationEnabled(configuration)
+  const helpText = formTranslator.translate(
+    `savehelp-${hakemusType}${showJotpaLogo ? '-jotpa' : ''}`,
+    lang
+  )
 
   return (
     <section id="topbar">

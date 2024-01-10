@@ -85,6 +85,23 @@ JotpaTest(
       })
 
       await JotpaTest.step(
+        'Lähetä käsiteltäväksi -nappula sisältää maininnan jotpasta opetushallituksen sijaan',
+        async () => {
+          await expect(
+            page.getByText(
+              'Kun hakemus on valmis, se lähetetään Jatkuvan oppimisen ja työllisyyden palvelukeskuksen käsiteltäväksi'
+            )
+          ).not.toBeVisible()
+          page.getByText('Lähetä käsiteltäväksi').hover()
+          await expect(
+            page.getByText(
+              'Kun hakemus on valmis, se lähetetään Jatkuvan oppimisen ja työllisyyden palvelukeskuksen käsiteltäväksi'
+            )
+          ).toBeVisible()
+        }
+      )
+
+      await JotpaTest.step(
         'Näyttää aktiivisen "Lähetä käsiteltäväksi" nappulan Jotpan väreissä',
         async () => {
           await fillJotpaHakemus(hakijaAvustusHakuPage, answers)
