@@ -3,7 +3,7 @@ import { randomString } from '../utils/random'
 import { muutoshakemusTest } from './muutoshakemusTest'
 import muutoshakemusEnabledHakuLomakeJson from './prod.hakulomake.json'
 import { Answers } from '../utils/types'
-import { swedishAnswers } from '../utils/constants'
+import { answers, dummyPdfPath, swedishAnswers } from '../utils/constants'
 
 const jotpaToimintayksikkö = {
   name: 'Jatkuvan oppimisen ja työllisyyden palvelukeskus',
@@ -52,8 +52,24 @@ const hakulomakeWithOneRequiredAttachment = {
   content: [...muutoshakemusEnabledHakuLomakeJson.content, requiredAttachmentField],
 }
 
+const edellisenTilikaudenTuloslaskelmaTaseAttachment = {
+  fieldId: 'previous-income-statement-and-balance-sheet',
+  answer: dummyPdfPath,
+  isFileAttachment: true,
+}
+
+const finnishAnswersWithRequiredAttachment = {
+  ...answers,
+  hakemusFields: [edellisenTilikaudenTuloslaskelmaTaseAttachment],
+}
+const swedishAnswersWithRequiredAttachment = {
+  ...swedishAnswers,
+  hakemusFields: [edellisenTilikaudenTuloslaskelmaTaseAttachment],
+}
+
 export const JotpaTest = muutoshakemusTest.extend<JotpaFixtures>({
   hakulomake: JSON.stringify(hakulomakeWithOneRequiredAttachment),
+  answers: finnishAnswersWithRequiredAttachment,
   codes: async ({ page }, use) => {
     const koodienhallintaPage = KoodienhallintaPage(page)
     await koodienhallintaPage.navigate()
@@ -68,4 +84,6 @@ export const JotpaTest = muutoshakemusTest.extend<JotpaFixtures>({
   },
 })
 
-export const SwedishJotpaTest = JotpaTest.extend<{ answers: Answers }>({ answers: swedishAnswers })
+export const SwedishJotpaTest = JotpaTest.extend<{ answers: Answers }>({
+  answers: swedishAnswersWithRequiredAttachment,
+})
