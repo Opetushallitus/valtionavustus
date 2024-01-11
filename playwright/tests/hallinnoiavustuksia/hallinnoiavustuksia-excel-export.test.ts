@@ -6,6 +6,7 @@ import { expectToFindRowWithValuesInSheet, SheetRow } from '../../utils/sheet'
 import { JotpaTest } from '../../fixtures/JotpaTest'
 import muutoshakemusEnabledHakuLomakeJson from '../../fixtures/prod.hakulomake.json'
 import moment from 'moment'
+import { swedishAnswers } from '../../utils/constants'
 
 const ophTest = twoAcceptedHakemusTest.extend({
   hakuProps: ({ hakuProps }, use) =>
@@ -99,7 +100,7 @@ test.describe('OPH', () => {
 
 const Jotpa = JotpaTest.extend<{ hakulomake: string }>({
   hakulomake: JSON.stringify(muutoshakemusEnabledHakuLomakeJson),
-  answers: ({ answers }, use) => use({ ...answers, lang: 'sv' }),
+  answers: swedishAnswers,
   hakuProps: ({ hakuProps }, use) =>
     use({
       ...hakuProps,
