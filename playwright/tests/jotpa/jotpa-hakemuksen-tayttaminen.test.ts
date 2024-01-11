@@ -1,14 +1,13 @@
 import { expect } from '@playwright/test'
 import { JotpaTest, SwedishJotpaTest } from '../../fixtures/JotpaTest'
 import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
-import { dummyPdfPath, TEST_Y_TUNNUS } from '../../utils/constants'
+import { TEST_Y_TUNNUS } from '../../utils/constants'
 import {
   getHakemusSubmitted,
   getMuutoshakemusEmails,
   pollUntilNewHakemusEmailArrives,
   waitUntilMinEmails,
 } from '../../utils/emails'
-import { Answers } from '../../utils/types'
 
 const jotpaFont = 'Montserrat, sans-serif'
 const jotpaColour = 'rgb(0, 155, 98)'
@@ -104,7 +103,7 @@ JotpaTest(
       await JotpaTest.step(
         'Näyttää aktiivisen "Lähetä käsiteltäväksi" nappulan Jotpan väreissä',
         async () => {
-          await fillJotpaHakemus(hakijaAvustusHakuPage, answers)
+          await hakijaAvustusHakuPage.fillMuutoshakemusEnabledHakemus(answers)
           await expect(page.locator('#topbar #submit')).toHaveCSS('background-color', jotpaColour)
         }
       )
@@ -231,7 +230,7 @@ Hagnäskajen 6`
     })
 
     await SwedishJotpaTest.step('"Hakemus vastaanotettu"-Sähköpostissa', async () => {
-      await fillJotpaHakemus(hakijaAvustusHakuPage, answers)
+      await hakijaAvustusHakuPage.fillMuutoshakemusEnabledHakemus(answers)
       const { userKey } = await hakijaAvustusHakuPage.submitApplication()
       const hakemusID = await hakijaAvustusHakuPage.getHakemusID(avustushakuID, userKey)
       const email = (await waitUntilMinEmails(getHakemusSubmitted, 1, hakemusID))[0]
@@ -296,11 +295,3 @@ SwedishJotpaTest(
     })
   }
 )
-
-async function fillJotpaHakemus(page: ReturnType<typeof HakijaAvustusHakuPage>, answers: Answers) {
-  await page.fillMuutoshakemusEnabledHakemus(answers, async () => {
-    await page.page
-      .locator('#previous-income-statement-and-balance-sheet [type="file"]')
-      .setInputFiles(dummyPdfPath)
-  })
-}
