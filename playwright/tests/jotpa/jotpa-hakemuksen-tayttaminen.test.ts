@@ -269,6 +269,10 @@ JotpaTest(
         'Mikäli ette ota päätöksen mukaista avustusta vastaan, tulee siitä ilmoittaa Opetushallitukselle'
       )
     })
+
+    await JotpaTest.step('sähköpostiviesti tulee osoitteesta no-reply@jotpa.fi', async () => {
+      expect(email['from-address']).toBe('no-reply@jotpa.fi')
+    })
   }
 )
 

@@ -420,10 +420,12 @@
         paatos-modify-url (email-utils/modify-url (:id avustushaku) (:user_key hakemus) lang token include-muutoshaku-link?)
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
         mail-subject (get-in mail-titles [:paatos lang])
+        is-jotpa-hakemus? (is-jotpa-avustushaku avustushaku)
+        from (if is-jotpa-hakemus? "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
         msg {
              :email-type :paatos-refuse
              :lang lang
-             :from (-> email/smtp-config :from lang)
+             :from from
              :sender (-> email/smtp-config :sender)
              :subject mail-subject
              :avustushaku-name avustushaku-name
@@ -435,7 +437,7 @@
              :register-number (:register_number hakemus)
              :project-name (:project_name hakemus)
              :budjettimuutoshakemus-enabled budjettimuutoshakemus-enabled?
-             :is-jotpa-hakemus (is-jotpa-avustushaku avustushaku)
+             :is-jotpa-hakemus is-jotpa-hakemus?
              :include-muutoshaku-link include-muutoshaku-link?}
         format-plaintext-message (partial render (get-in mail-templates [:paatos-refuse lang]))
         ]
