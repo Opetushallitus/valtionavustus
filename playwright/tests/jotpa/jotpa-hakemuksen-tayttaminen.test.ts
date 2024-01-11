@@ -264,6 +264,8 @@ JotpaTest(
       expect(email.formatted).toContain(
         'Mikäli ette ota päätöksen mukaista avustusta vastaan, tulee siitä ilmoittaa Jatkuvan oppimisen ja työllisyyden palvelukeskukselle'
       )
+      expect(email.formatted).toContain('viestit saapuvat osoitteesta no-reply@jotpa.fi')
+
       expect(email.formatted).not.toContain(
         'Mikäli ette ota päätöksen mukaista avustusta vastaan, tulee siitä ilmoittaa Opetushallitukselle'
       )
@@ -289,6 +291,8 @@ SwedishJotpaTest(
       expect(email.formatted).toContain(
         'Om ni inte tar emot understödet i enlighet med beslutet, ska ni meddela om detta till Servicecentret för kontinuerligt lärande och sysselsättning inom den tidsfrist som anges i beslutet.'
       )
+      expect(email.formatted).toContain('skickas från adressen no-reply@jotpa.fi')
+
       expect(email.formatted).not.toContain(
         'Om ni inte tar emot understödet i enlighet med beslutet, ska ni meddela om detta till Utbildningsstyrelsen inom den tidsfrist som anges i beslutet.'
       )

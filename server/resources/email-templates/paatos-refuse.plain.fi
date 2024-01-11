@@ -16,7 +16,7 @@ Mikäli ette ota päätöksen mukaista avustusta vastaan, tulee siitä ilmoittaa
 Avustuksen saaja vastaa siitä, että valtionavustusjärjestelmään kirjatut yhteyshenkilön yhteystiedot ovat aina ajan tasalla. Pääsette tekemään muutoshakemuksen sekä muuttamaan yhteyshenkilöä ja hänen yhteystietojaan koko hankekauden ajan tästä linkistä:{{/include-muutoshaku-link}}
 {{& modify-url }}
 
-Selvityspyynnöt sekä muut valtionavustusjärjestelmästä hankkeille osoitetut viestit saapuvat osoitteesta no-reply@valtionavustukset.oph.fi, ja ne lähetetään sekä hankkeen yhteyshenkilölle että hakijan ilmoittamaan viralliseen sähköpostiosoitteeseen.
+Selvityspyynnöt sekä muut valtionavustusjärjestelmästä hankkeille osoitetut viestit saapuvat osoitteesta {{^is-jotpa-hakemus}}no-reply@valtionavustukset.oph.fi{{/is-jotpa-hakemus}}{{#is-jotpa-hakemus}}no-reply@jotpa.fi{{/is-jotpa-hakemus}}, ja ne lähetetään sekä hankkeen yhteyshenkilölle että hakijan ilmoittamaan viralliseen sähköpostiosoitteeseen.
 
 Avustuksen saajan tulee säilyttää tämä viesti sekä viestin sisältämät linkit.
 

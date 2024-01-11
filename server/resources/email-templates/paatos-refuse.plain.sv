@@ -16,7 +16,7 @@ Om ni inte tar emot understödet i enlighet med beslutet, ska ni meddela om dett
 Understödsmottagaren ansvarar för att kontaktuppgifterna till den person som angetts som kontaktperson i statsunderstödssystemet alltid är uppdaterade. Ni kan göra en ändringsansökan samt byta ut kontaktpersonen och göra ändringar i hens kontaktuppgifter under hela projektperiodens gång via följande länk:{{/include-muutoshaku-link}}
 {{& modify-url }}
 
-Begäranden om redovisningar och andra meddelanden som riktas till projektet skickas från adressen no-reply@valtionavustukset.oph.fi. De skickas både till projektets kontaktperson och till den officiella e-postadress som den sökande har angett.
+Begäranden om redovisningar och andra meddelanden som riktas till projektet skickas från adressen {{^is-jotpa-hakemus}}no-reply@valtionavustukset.oph.fi{{/is-jotpa-hakemus}}{{#is-jotpa-hakemus}}no-reply@jotpa.fi{{/is-jotpa-hakemus}}. De skickas både till projektets kontaktperson och till den officiella e-postadress som den sökande har angett.
 
 Mottagaren av understöd ska spara detta meddelande och länkarna som ingår i meddelandet.
 
