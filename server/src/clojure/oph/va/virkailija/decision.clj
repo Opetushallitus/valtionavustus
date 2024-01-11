@@ -11,6 +11,7 @@
             [oph.va.virkailija.kayttosuunnitelma :as ks]
             [oph.va.virkailija.koulutusosio :as koulutusosio]
             [hiccup.core :refer [html]]
+            [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
             [oph.va.virkailija.payments-data :as payments-data])
   (:import (java.time.format DateTimeFormatter)))
 
@@ -221,6 +222,7 @@
                                 :decision          decision
                                 :translate         translate
                                 :language          language})
+        is-jotpa-paatos (is-jotpa-avustushaku avustushaku)
 
 
         params {:avustushaku                   avustushaku
@@ -256,6 +258,12 @@
                 :has-koulutusosio              has-koulutusosio
                 :oppilaitokset                 oppilaitokset
                 :avustuslaji                   (translate avustushaku-type)
+                :logo-path                     (if is-jotpa-paatos
+                                                 "/img/jotpa/jotpa-logo-fi.png"
+                                                 "/img/logo.png")
+                :logo-alt                   (if is-jotpa-paatos
+                                                 "Jatkuvan oppimisen ja työllisyyden palvelukeskus / Servicecentret för kontinuerligt lärande och sysselsättning"
+                                                 "Opetushallitus / Utbildningsstyrelsen")
                 }]
     (render template params)))
 

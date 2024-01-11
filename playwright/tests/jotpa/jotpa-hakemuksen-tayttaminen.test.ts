@@ -8,6 +8,7 @@ import {
   pollUntilNewHakemusEmailArrives,
   waitUntilMinEmails,
 } from '../../utils/emails'
+import { HakijaPaatosPage } from '../../pages/hakija/HakijaPaatosPage'
 
 const jotpaFont = 'Montserrat, sans-serif'
 const jotpaColour = 'rgb(0, 155, 98)'
@@ -259,6 +260,39 @@ JotpaTest(
     const hakemusID = await hakijaAvustusHakuPage.getHakemusID(avustushakuID, userKey)
     const emails = await waitUntilMinEmails(getMuutoshakemusEmails, 1, hakemusID)
     const email = emails[0]
+
+    await JotpaTest.step('on päätöksellä', async () => {
+      const hakijaPaatosPage = HakijaPaatosPage(page)
+      await hakijaPaatosPage.navigate(acceptedHakemus.hakemusID)
+
+      await JotpaTest.step('jotpan suomenkielinen logo', async () => {
+        expect(await page.locator('#logo').screenshot()).toMatchSnapshot('paatos-jotpa-logo-fi.png')
+      })
+
+      // await JotpaTest.step('jotpan fontti headerissa ja leipätekstissä', async () => {
+      //   await expect(page.locator('#topbar h1')).toHaveCSS('font-family', jotpaFont)
+      //   await expect(page.locator('.soresu-form h1')).toHaveCSS('font-family', jotpaFont)
+      //   await expect(page.locator('#project-info')).toHaveCSS('font-family', jotpaFont)
+      // })
+
+      // await JotpaTest.step('jotpan faviconi', async () => {
+      //   await expect(page.locator('#favicon')).toHaveAttribute(
+      //     'href',
+      //     '/img/jotpa/jotpa-favicon.ico'
+      //   )
+      // })
+
+      // await JotpaTest.step('maininta jotpasta opetushallituksen sijaan', async () => {
+      //   await expect(page.getByText('Opetushallitus')).not.toBeVisible()
+      //   await expect(page.getByText('Jatkuvan oppimisen ja työllisyyden palvelukeskus')).toBeVisible()
+
+      //   await expect(page.getByText('Opetushallituksella')).not.toBeVisible()
+      //   await expect(page.getByText('Jatkuvan oppimisen ja työllisyyden palvelukeskuksella ja muilla tässä päätöksessä listatuilla viranomaistahoilla')).toBeVisible()
+
+      //   await expect(page.getByText('OPETUSHALLITUKSELTA')).not.toBeVisible()
+      //   await expect(page.getByText('JATKUVAN OPPIMISEN JA TYÖLLISYYDEN PALVELUKESKUKSELTA')).toBeVisible()
+      // })
+    })
 
     await JotpaTest.step('on oikea vastuutaho sähköpostiviestissä', async () => {
       expect(email.formatted).toContain(
