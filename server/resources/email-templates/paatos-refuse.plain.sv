@@ -8,7 +8,7 @@ Understödsmottagaren ska följa de villkor och begränsningar som beskrivs i un
 
 Om ni tar emot understödet i enlighet med beslutet, kan ni påbörja projektet. Understödsbeloppet betalas senast den dag som anges i beslutet.
 
-Om ni inte tar emot understödet i enlighet med beslutet, ska ni meddela om detta till Utbildningsstyrelsen inom den tidsfrist som anges i beslutet. Anmälan ska göras i statsunderstödssystemet via denna länk: {{& refuse-url }}
+Om ni inte tar emot understödet i enlighet med beslutet, ska ni meddela om detta till {{^is-jotpa-hakemus}}Utbildningsstyrelsen{{/is-jotpa-hakemus}}{{#is-jotpa-hakemus}}Servicecentret för kontinuerligt lärande och sysselsättning{{/is-jotpa-hakemus}} inom den tidsfrist som anges i beslutet. Anmälan ska göras i statsunderstödssystemet via denna länk: {{& refuse-url }}
 
 {{^include-muutoshaku-link}}Understödsmottagaren ansvarar för att kontaktuppgifterna till den som angetts som kontaktperson i statsunderstödssystemet är uppdaterade. Kontaktpersonen kan bytas ut via länken intill under hela understödets användningstid:{{/include-muutoshaku-link}}
 {{#include-muutoshaku-link}}Om det uppstår förändringar som inverkar på användningen av statsunderstödet ska man genast göra en skriftlig ändringsansökan. Man ska framföra tillräckliga motiveringar för ändringarna som ingår i ändringsansökan. I oklara situationer kan understödsmottagaren vara i kontakt med kontaktpersonen som anges i understödsbeslutet innan en ändringsansökan görs.

@@ -276,6 +276,27 @@ JotpaTest(
   }
 )
 
+SwedishJotpaTest(
+  'Hyväksytyllä ruotsinkielisellä Jotpa-hakemuksella',
+  async ({ page, avustushakuID, acceptedHakemus }) => {
+    const { userKey } = acceptedHakemus
+
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
+    const hakemusID = await hakijaAvustusHakuPage.getHakemusID(avustushakuID, userKey)
+    const emails = await waitUntilMinEmails(getMuutoshakemusEmails, 1, hakemusID)
+    const email = emails[0]
+
+    await JotpaTest.step('on oikea vastuutaho sähköpostiviestissä', async () => {
+      expect(email.formatted).toContain(
+        'Om ni inte tar emot understödet i enlighet med beslutet, ska ni meddela om detta till Servicecentret för kontinuerligt lärande och sysselsättning inom den tidsfrist som anges i beslutet.'
+      )
+      expect(email.formatted).not.toContain(
+        'Om ni inte tar emot understödet i enlighet med beslutet, ska ni meddela om detta till Utbildningsstyrelsen inom den tidsfrist som anges i beslutet.'
+      )
+    })
+  }
+)
+
 async function fillJotpaHakemus(page: ReturnType<typeof HakijaAvustusHakuPage>, answers: Answers) {
   await page.fillMuutoshakemusEnabledHakemus(answers, async () => {
     await page.page
