@@ -271,6 +271,16 @@ JotpaTest(
       )
     })
 
+    await JotpaTest.step('on oikea signature block sähköpostiviestissä', async () => {
+      expect(email.formatted).toContain(
+        'Jatkuvan oppimisen ja työllisyyden palvelukeskus\n' +
+          'Hakaniemenranta 6\n' +
+          'PL 380, 00531 Helsinki\n' +
+          'puhelin 029 533 1000\n' +
+          'etunimi.sukunimi@@jotpa.fi'
+      )
+    })
+
     await JotpaTest.step('sähköpostiviesti tulee osoitteesta no-reply@jotpa.fi', async () => {
       expect(email['from-address']).toBe('no-reply@jotpa.fi')
     })
@@ -295,6 +305,16 @@ SwedishJotpaTest(
 
       expect(email.formatted).not.toContain(
         'Om ni inte tar emot understödet i enlighet med beslutet, ska ni meddela om detta till Utbildningsstyrelsen inom den tidsfrist som anges i beslutet.'
+      )
+    })
+
+    await JotpaTest.step('on oikea signature block sähköpostiviestissä', async () => {
+      expect(email.formatted).toContain(
+        'Servicecentret för kontinuerligt lärande och sysselsättning\n' +
+          'Hagnäskajen 6\n' +
+          'PB 380, 00531 Helsingfors\n' +
+          'telefon 029 533 1000\n' +
+          'fornamn.efternamn@@jotpa.fi'
       )
     })
   }
