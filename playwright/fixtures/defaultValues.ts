@@ -105,7 +105,7 @@ export const defaultValues = workerScopedDefaultValues.extend<DefaultValueFixtur
   avustushakuName: async ({ randomName }, use, testInfo) => {
     await use(
       `Testiavustushaku (${testInfo.title} ${randomName} - ${moment(new Date()).format(
-        'YYYY-MM-DD hh:mm:ss:SSSS'
+        'YYYY-MM-DD HH:mm:ss.SSSS'
       )}`
     )
   },
