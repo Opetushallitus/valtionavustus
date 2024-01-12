@@ -377,6 +377,7 @@
                           :avustushaku-name avustushaku-name
                           :to to
                           :url url
+                          :hakemus-id (:id hakemus)
                           :register-number (:register_number hakemus)
                           :project-name (:project_name hakemus)}
 
