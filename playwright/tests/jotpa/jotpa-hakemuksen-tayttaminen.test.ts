@@ -5,6 +5,7 @@ import { TEST_Y_TUNNUS } from '../../utils/constants'
 import {
   getHakemusSubmitted,
   getMuutoshakemusEmails,
+  getRejectedPäätösEmails,
   pollUntilNewHakemusEmailArrives,
   waitUntilMinEmails,
 } from '../../utils/emails'
@@ -317,6 +318,29 @@ JotpaTest(
 
     await JotpaTest.step('sähköpostiviesti tulee osoitteesta no-reply@jotpa.fi', async () => {
       expect(email['from-address']).toBe('no-reply@jotpa.fi')
+    })
+  }
+)
+
+JotpaTest(
+  'Hylätyllä suomenkielisellä Jotpa-hakemuksella',
+  async ({ page, rejectedHakemus, avustushakuID }) => {
+    JotpaTest.fail() // Feature is not implemented yet
+
+    const { userKey } = rejectedHakemus
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
+    const hakemusID = await hakijaAvustusHakuPage.getHakemusID(avustushakuID, userKey)
+    const emails = await waitUntilMinEmails(getRejectedPäätösEmails, 1, hakemusID)
+    const email = emails[0]
+
+    await JotpaTest.step('on oikea signature block sähköpostiviestissä', async () => {
+      expect(email.formatted).toContain(
+        'Jatkuvan oppimisen ja työllisyyden palvelukeskus\n' +
+          'Hakaniemenranta 6\n' +
+          'PL 380, 00531 Helsinki\n' +
+          'puhelin 029 533 1000\n' +
+          'etunimi.sukunimi@@jotpa.fi'
+      )
     })
   }
 )
