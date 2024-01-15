@@ -5,7 +5,6 @@ import { TEST_Y_TUNNUS } from '../../utils/constants'
 import {
   getHakemusSubmitted,
   getMuutoshakemusEmails,
-  getRejectedPäätösEmails,
   pollUntilNewHakemusEmailArrives,
   waitUntilMinEmails,
 } from '../../utils/emails'
@@ -336,22 +335,38 @@ JotpaTest(
   }
 )
 
-JotpaTest(
-  'Hylätyllä suomenkielisellä Jotpa-hakemuksella',
-  async ({ page, rejectedHakemus, avustushakuID }) => {
-    const { userKey } = rejectedHakemus
-    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
-    const hakemusID = await hakijaAvustusHakuPage.getHakemusID(avustushakuID, userKey)
-    const emails = await waitUntilMinEmails(getRejectedPäätösEmails, 1, hakemusID)
-    const email = emails[0]
+JotpaTest('Hylätyllä suomenkielisellä Jotpa-hakemuksella', async ({ rejectedHakemusEmails }) => {
+  const { emails } = rejectedHakemusEmails
+  const email = (await emails)[0]
+
+  await JotpaTest.step('on oikea signature block sähköpostiviestissä', async () => {
+    expect(email.formatted).toContain(
+      'Jatkuvan oppimisen ja työllisyyden palvelukeskus\n' +
+        'Hakaniemenranta 6\n' +
+        'PL 380, 00531 Helsinki\n' +
+        'puhelin 029 533 1000\n' +
+        'etunimi.sukunimi@@jotpa.fi'
+    )
+  })
+
+  await JotpaTest.step('sähköpostiviesti tulee osoitteesta no-reply@jotpa.fi', async () => {
+    expect(email['from-address']).toBe('no-reply@jotpa.fi')
+  })
+})
+
+SwedishJotpaTest(
+  'Hylätyllä ruotsinkielisellä Jotpa-hakemuksella',
+  async ({ rejectedHakemusEmails }) => {
+    const { emails } = rejectedHakemusEmails
+    const email = (await emails)[0]
 
     await JotpaTest.step('on oikea signature block sähköpostiviestissä', async () => {
       expect(email.formatted).toContain(
-        'Jatkuvan oppimisen ja työllisyyden palvelukeskus\n' +
-          'Hakaniemenranta 6\n' +
-          'PL 380, 00531 Helsinki\n' +
-          'puhelin 029 533 1000\n' +
-          'etunimi.sukunimi@@jotpa.fi'
+        'Servicecentret för kontinuerligt lärande och sysselsättning\n' +
+          'Hagnäskajen 6\n' +
+          'PB 380, 00531 Helsingfors\n' +
+          'telefon 029 533 1000\n' +
+          'fornamn.efternamn@@jotpa.fi'
       )
     })
 

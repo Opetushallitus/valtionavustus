@@ -12,6 +12,7 @@ import { PaatosPage } from '../pages/virkailija/hakujen-hallinta/PaatosPage'
 import { TEST_Y_TUNNUS, VIRKAILIJA_URL } from '../utils/constants'
 import { Answers } from '../utils/types'
 import muutoshakemusEnabledHakuLomakeJson from './prod.hakulomake.json'
+import { Email, getRejectedPäätösEmails, waitUntilMinEmails } from '../utils/emails'
 
 export interface MuutoshakemusFixtures {
   finalAvustushakuEndDate: moment.Moment
@@ -38,6 +39,9 @@ export interface MuutoshakemusFixtures {
   rejectedHakemus: {
     hakemusID: number
     userKey: string
+  }
+  rejectedHakemusEmails: {
+    emails: Promise<Email[]>
   }
   submitMultipleHakemuses: {}
   hakulomake: string
@@ -266,6 +270,11 @@ export const muutoshakemusTest = submittedHakemusTest.extend<MuutoshakemusFixtur
     })
 
     await use({ hakemusID, userKey })
+  },
+  rejectedHakemusEmails: async ({ rejectedHakemus }, use) => {
+    const { hakemusID } = rejectedHakemus
+    const hakemusRejectionEmails = waitUntilMinEmails(getRejectedPäätösEmails, 1, hakemusID)
+    await use({ emails: hakemusRejectionEmails })
   },
 })
 
