@@ -366,18 +366,21 @@
         lang (keyword lang-str)
         url (paatos-url (:id avustushaku) (:user_key hakemus) (keyword lang-str))
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
+        is-jotpa-hakemus? (is-jotpa-avustushaku avustushaku)
+        from (if is-jotpa-hakemus? "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
         mail-subject (get-in mail-titles [:paatos lang])]
     (log/info "Url would be: " url)
     (email/try-send-msg-once {
                           :email-type :paatos
                           :lang lang
-                          :from (-> email/smtp-config :from lang)
+                          :from from
                           :sender (-> email/smtp-config :sender)
                           :subject mail-subject
                           :avustushaku-name avustushaku-name
                           :to to
                           :url url
                           :hakemus-id (:id hakemus)
+                          :is-jotpa-hakemus is-jotpa-hakemus?
                           :register-number (:register_number hakemus)
                           :project-name (:project_name hakemus)}
 

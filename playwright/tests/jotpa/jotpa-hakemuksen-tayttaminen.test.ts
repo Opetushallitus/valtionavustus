@@ -339,8 +339,6 @@ JotpaTest(
 JotpaTest(
   'Hylätyllä suomenkielisellä Jotpa-hakemuksella',
   async ({ page, rejectedHakemus, avustushakuID }) => {
-    JotpaTest.fail() // Feature is not implemented yet
-
     const { userKey } = rejectedHakemus
     const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     const hakemusID = await hakijaAvustusHakuPage.getHakemusID(avustushakuID, userKey)
@@ -355,6 +353,10 @@ JotpaTest(
           'puhelin 029 533 1000\n' +
           'etunimi.sukunimi@@jotpa.fi'
       )
+    })
+
+    await JotpaTest.step('sähköpostiviesti tulee osoitteesta no-reply@jotpa.fi', async () => {
+      expect(email['from-address']).toBe('no-reply@jotpa.fi')
     })
   }
 )
