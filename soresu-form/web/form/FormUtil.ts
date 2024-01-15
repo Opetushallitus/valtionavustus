@@ -6,11 +6,8 @@ import { Field, FieldType } from '../va/types'
 
 type FieldOrArray = Field | Field[] | ImmutableArray<Field>
 
-type ReturnType<T> = T extends ImmutableArray<infer R>
-  ? Immutable<R>
-  : T extends Array<infer R>
-    ? R
-    : T
+type ReturnType<T> =
+  T extends ImmutableArray<infer R> ? Immutable<R> : T extends Array<infer R> ? R : T
 
 export default class FormUtil {
   static scrollTo(element: Element, duration: number, afterScroll?: () => any) {
