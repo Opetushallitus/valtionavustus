@@ -65,7 +65,7 @@
       (/ (- hakemus-total hakemus-oph-share) hakemus-total)
       0)))
 
-(defn kayttosuunnitelma [avustushaku hakemus form-content answers translate language]
+(defn kayttosuunnitelma [avustushaku hakemus form-content answers translate language is-jotpa]
   (let [template (email/load-template "templates/kayttosuunnitelma.html")
 
         overridden-answers (-> hakemus :arvio :overridden-answers)
@@ -141,7 +141,11 @@
                 :table-tulot-label           table-tulot-label
                 :tbody-muu                   tbody-muu
                 :table-muu-label             table-muu-label
-                :show-table-muu              show-table-muu}
+                :show-table-muu              show-table-muu
+                :myonnetty-avustus           (if is-jotpa
+                                                 (translate "myonnetty-avustus-jotpa")
+                                                 (translate "myonnetty-avustus"))
+                }
 
         body (render template params)]
     {:body                      body

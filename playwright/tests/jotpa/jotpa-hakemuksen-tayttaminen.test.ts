@@ -270,29 +270,43 @@ JotpaTest(
         expect(await page.locator('#logo').screenshot()).toMatchSnapshot('paatos-jotpa-logo-fi.png')
       })
 
-      // await JotpaTest.step('jotpan fontti headerissa ja leipätekstissä', async () => {
-      //   await expect(page.locator('#topbar h1')).toHaveCSS('font-family', jotpaFont)
-      //   await expect(page.locator('.soresu-form h1')).toHaveCSS('font-family', jotpaFont)
-      //   await expect(page.locator('#project-info')).toHaveCSS('font-family', jotpaFont)
-      // })
+      await JotpaTest.step('jotpan fontti headerissa ja leipätekstissä', async () => {
+        await expect(page.getByTestId('paatos-header-title')).toHaveCSS('font-family', jotpaFont)
+        await expect(page.getByTestId('paatos-accepted-title')).toHaveCSS('font-family', jotpaFont)
+      })
 
-      // await JotpaTest.step('jotpan faviconi', async () => {
-      //   await expect(page.locator('#favicon')).toHaveAttribute(
-      //     'href',
-      //     '/img/jotpa/jotpa-favicon.ico'
-      //   )
-      // })
+      await JotpaTest.step('jotpan faviconi', async () => {
+        await expect(page.locator('#favicon')).toHaveAttribute(
+          'href',
+          '/img/jotpa/jotpa-favicon.ico'
+        )
+      })
 
-      // await JotpaTest.step('maininta jotpasta opetushallituksen sijaan', async () => {
-      //   await expect(page.getByText('Opetushallitus')).not.toBeVisible()
-      //   await expect(page.getByText('Jatkuvan oppimisen ja työllisyyden palvelukeskus')).toBeVisible()
+      await JotpaTest.step('maininta jotpasta opetushallituksen sijaan', async () => {
+        await expect(page.getByText('Opetushallitus')).not.toBeVisible()
+        await expect(
+          page.getByText(
+            'Jatkuvan oppimisen ja työllisyyden palvelukeskus on päättänyt myöntää valtionavustusta hankkeelle'
+          )
+        ).toBeVisible()
+        await expect(
+          page.getByText(
+            'Jatkuvan oppimisen ja työllisyyden palvelukeskus myöntää avustusta hankkeelle'
+          )
+        ).toBeVisible()
 
-      //   await expect(page.getByText('Opetushallituksella')).not.toBeVisible()
-      //   await expect(page.getByText('Jatkuvan oppimisen ja työllisyyden palvelukeskuksella ja muilla tässä päätöksessä listatuilla viranomaistahoilla')).toBeVisible()
+        await expect(page.getByText('Opetushallituksella')).not.toBeVisible()
+        await expect(
+          page.getByText(
+            'Jatkuvan oppimisen ja työllisyyden palvelukeskuksella ja muilla tässä päätöksessä listatuilla viranomaistahoilla'
+          )
+        ).toBeVisible()
 
-      //   await expect(page.getByText('OPETUSHALLITUKSELTA')).not.toBeVisible()
-      //   await expect(page.getByText('JATKUVAN OPPIMISEN JA TYÖLLISYYDEN PALVELUKESKUKSELTA')).toBeVisible()
-      // })
+        await expect(page.getByText('OPETUSHALLITUKSELTA')).not.toBeVisible()
+        await expect(
+          page.getByText('JATKUVAN OPPIMISEN JA TYÖLLISYYDEN PALVELUKESKUKSELTA')
+        ).toBeVisible()
+      })
     })
 
     await JotpaTest.step('on oikea vastuutaho sähköpostiviestissä', async () => {

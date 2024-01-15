@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Valtionavustus - Statsunderstöd</title>
-  <link id="favicon" href="/favicon.ico" rel="icon" sizes="32x32 64x64" type="image/vnd.microsoft.icon">
+  <link id="favicon" href="{{favicon-path}}" rel="icon" sizes="32x32 64x64" type="image/vnd.microsoft.icon">
   <link href='//fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
   <link href='//fonts.googleapis.com/css?family=Montserrat:300,400,600' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
@@ -48,10 +48,14 @@
       h2 {font-size: 12px;}
       .sendEmails { display:none;}
     }
+
+  .jotpa-customizations {
+    font-family: 'Montserrat', sans-serif;
+  }
   </style>
 </head>
 <body>
-<div id="app">
+  <div id="app" class="{{jotpa-customization-class}}">
   <section>
     <header>
       <img id="logo" src="{{logo-path}}" height="50" alt="{{logo-alt}}" />
@@ -70,12 +74,12 @@
       <h2 data-test-id="paatos-title">{{#t}}paatos{{/t}}</h2>
       <div class="content">
         {{#is-erityisavustus}}
-          <p data-test-id="paatos-accepted-title">{{#t}}erityisavustus-myonnetty-title{{/t}}</p>
+        <p data-test-id="paatos-accepted-title">{{erityisavustus-myonnetty-title}}</p>
           <p>{{hakemus.register-number}} {{hakemus.project-name}}</p>
           <div>
             {{#has-kayttosuunnitelma}}
               <p>
-                {{#t}}paatos-erityisavustus-myonnetty-1{{/t}} {{total-granted}}.&nbsp;{{#t}}paatos-erityisavustus-myonnetty-2{{/t}} {{total-nettomenot}}.
+              {{paatos-erityisavustus-myonnetty-1}} {{total-granted}}.&nbsp;{{#t}}paatos-erityisavustus-myonnetty-2{{/t}} {{total-nettomenot}}.
               </p>
               <p>
                 {{#t}}paatos-erityisavustus-myonnetty-3{{/t}}
@@ -89,7 +93,7 @@
           </div>
         {{/#is-erityisavustus}}
         {{#is-yleisavustus}}
-          <p>{{#t}}yleisavustus-myonnetty-title{{/t}}:</p>
+        <p>{{yleisavustus-myonnetty-title}}:</p>
           <p>{{#t}}paatos-yleisavustus-saaja{{/t}}: {{hakemus.organization-name}}</p>
           {{#oppilaitokset}}
           <p>{{#t}}oppilaitos{{/t}}: {{.}}</p>
@@ -121,11 +125,11 @@
       <h2 data-test-id="paatos-title">{{#t}}paatos{{/t}}</h2>
       <div class='content'>
         {{#is-erityisavustus}}
-          <p data-test-id="paatos-rejected-title">{{#t}}erityisavustus-hylatty-title{{/t}}</p>
+        <p data-test-id="paatos-rejected-title">{{erityisavustus-hylatty-title}}</p>
           <p>{{hakemus.register-number}} {{hakemus.project-name}}</p>
         {{/#is-erityisavustus}}
         {{#is-yleisavustus}}
-          <p data-test-id="paatos-rejected-title">{{#t}}yleisavustus-hylatty-title{{/t}}</p>
+        <p data-test-id="paatos-rejected-title">{{yleisavustus-hylatty-title}}</p>
           <p>{{#t}}hakija{{/t}}: {{hakemus.organization-name}}</p>
         {{/#is-yleisavustus}}
       </div>

@@ -206,7 +206,8 @@
         avustuksen-maksu (avustuksen-maksu avustushaku hakemus translate)
         myonteinen-lisateksti (myonteinen-lisateksti avustushaku hakemus language)
         form-content (-> haku-data :form :content)
-        kayttosuunnitelma (ks/kayttosuunnitelma avustushaku hakemus form-content answers translate language)
+        is-jotpa-paatos (is-jotpa-avustushaku avustushaku)
+        kayttosuunnitelma (ks/kayttosuunnitelma avustushaku hakemus form-content answers translate language is-jotpa-paatos)
         has-kayttosuunnitelma (and (:has-kayttosuunnitelma kayttosuunnitelma) is-erityisavustus)
         show-oph-financing-percentage (pos? (:self-financing-percentage kayttosuunnitelma))
         oph-financing-percentage (:oph-financing-percentage kayttosuunnitelma)
@@ -222,7 +223,6 @@
                                 :decision          decision
                                 :translate         translate
                                 :language          language})
-        is-jotpa-paatos (is-jotpa-avustushaku avustushaku)
 
 
         params {:avustushaku                   avustushaku
@@ -238,7 +238,13 @@
                 :section-kayttooikeudet        (optional-section decision :kayttooikeudet :kayttooikeudet translate language)
                 :section-hyvaksyminen          (optional-section decision :hyvaksyminen :hyvaksyminen translate language)
                 :section-perustelut            (optional-section-content :paatoksen-perustelut (:perustelut arvio) translate)
-                :section-tarkastusoikeus       (section-translated :tarkastusoikeus-title :tarkastusoikeus-text translate false)
+                :section-tarkastusoikeus       (section-translated
+                                                   :tarkastusoikeus-title
+                                                   (if is-jotpa-paatos
+                                                     (keyword "tarkastusoikeus-text-jotpa")
+                                                     (keyword "tarkastusoikeus-text"))
+                                                   translate
+                                                   false)
                 :section-avustuksen-maksu      avustuksen-maksu
                 :total-granted                 (ks/format-number total-granted)
                 :total-nettomenot              (ks/format-number (:nettomenot-yhteensa kayttosuunnitelma))
@@ -264,6 +270,27 @@
                 :logo-alt                   (if is-jotpa-paatos
                                                  "Jatkuvan oppimisen ja työllisyyden palvelukeskus / Servicecentret för kontinuerligt lärande och sysselsättning"
                                                  "Opetushallitus / Utbildningsstyrelsen")
+                :jotpa-customization-class  (if is-jotpa-paatos
+                                                 "jotpa-customizations"
+                                                 "")
+                :favicon-path  (if is-jotpa-paatos
+                                                 "/img/jotpa/jotpa-favicon.ico"
+                                                 "/favicon.ico")
+                :erityisavustus-hylatty-title (if is-jotpa-paatos
+                                                 (translate "erityisavustus-hylatty-title-jotpa")
+                                                 (translate "erityisavustus-hylatty-title"))
+                :yleisavustus-hylatty-title (if is-jotpa-paatos
+                                                 (translate "yleisavustus-hylatty-title-jotpa")
+                                                 (translate "yleisavustus-hylatty-title"))
+                :erityisavustus-myonnetty-title (if is-jotpa-paatos
+                                                 (translate "erityisavustus-myonnetty-title-jotpa")
+                                                 (translate "erityisavustus-myonnetty-title"))
+                :yleisavustus-myonnetty-title (if is-jotpa-paatos
+                                                 (translate "yleisavustus-myonnetty-title-jotpa")
+                                                 (translate "yleisavustus-myonnetty-title"))
+                :paatos-erityisavustus-myonnetty-1 (if is-jotpa-paatos
+                                                 (translate "paatos-erityisavustus-myonnetty-1-jotpa")
+                                                 (translate "paatos-erityisavustus-myonnetty-1"))
                 }]
     (render template params)))
 
