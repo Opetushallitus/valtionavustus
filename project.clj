@@ -92,7 +92,7 @@
 
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [nrepl "1.1.0"]
-                 [cider/cider-nrepl "0.44.0"]
+                 [cider/cider-nrepl "0.45.0"]
                  [environ "1.2.0"]
 
                  ;; clojure libs
