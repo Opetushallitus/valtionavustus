@@ -137,16 +137,28 @@ async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
+type EmailFetchFunction = (hakemusId: number) => Promise<Email[]>
+
 export async function waitUntilMinEmails(
-  f: (hakemusId: number) => Promise<Email[]>,
+  f: EmailFetchFunction | EmailFetchFunction[],
   minEmails: number,
   hakemusId: number
 ) {
-  let emails: Email[] = await f(hakemusId)
+  let emails: Email[] = []
+
+  async function fetchAllMails() {
+    if (Array.isArray(f)) {
+      emails = (await Promise.all(f.map((fetchEmail) => fetchEmail(hakemusId)))).flat()
+    } else {
+      emails = await f(hakemusId)
+    }
+  }
+
+  await fetchAllMails()
 
   while (emails.length < minEmails) {
     await sleep(1000)
-    emails = await f(hakemusId)
+    await fetchAllMails()
   }
   return emails
 }
@@ -253,7 +265,11 @@ export async function parseMuutoshakemusPaatosFromEmails(
 }
 
 export async function getLinkToPaatosFromEmails(hakemusID: number) {
-  const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
+  const emails = await waitUntilMinEmails(
+    [getAcceptedPäätösEmails, getRejectedPäätösEmails],
+    1,
+    hakemusID
+  )
   const linkToPaatos = emails[0]?.formatted.match(/https?:\/\/.*\/paatos\/.*/)?.[0]
   if (!linkToPaatos) {
     throw new Error('did not find link to päätös')
