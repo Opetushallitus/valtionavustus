@@ -335,28 +335,62 @@ JotpaTest(
   }
 )
 
-JotpaTest('Hylätyllä suomenkielisellä Jotpa-hakemuksella', async ({ rejectedHakemusEmails }) => {
-  const { emails } = rejectedHakemusEmails
-  const email = (await emails)[0]
+JotpaTest(
+  'Hylätyllä suomenkielisellä Jotpa-hakemuksella',
+  async ({ page, rejectedHakemusEmails, rejectedHakemus }) => {
+    const { emails } = rejectedHakemusEmails
+    const email = (await emails)[0]
 
-  await JotpaTest.step('on oikea signature block sähköpostiviestissä', async () => {
-    expect(email.formatted).toContain(
-      'Jatkuvan oppimisen ja työllisyyden palvelukeskus\n' +
-        'Hakaniemenranta 6\n' +
-        'PL 380, 00531 Helsinki\n' +
-        'puhelin 029 533 1000\n' +
-        'etunimi.sukunimi@@jotpa.fi'
-    )
-  })
+    await JotpaTest.step('on oikea signature block sähköpostiviestissä', async () => {
+      expect(email.formatted).toContain(
+        'Jatkuvan oppimisen ja työllisyyden palvelukeskus\n' +
+          'Hakaniemenranta 6\n' +
+          'PL 380, 00531 Helsinki\n' +
+          'puhelin 029 533 1000\n' +
+          'etunimi.sukunimi@@jotpa.fi'
+      )
+    })
 
-  await JotpaTest.step('sähköpostiviesti tulee osoitteesta no-reply@jotpa.fi', async () => {
-    expect(email['from-address']).toBe('no-reply@jotpa.fi')
-  })
-})
+    await JotpaTest.step('sähköpostiviesti tulee osoitteesta no-reply@jotpa.fi', async () => {
+      expect(email['from-address']).toBe('no-reply@jotpa.fi')
+    })
+
+    await JotpaTest.step('on päätöksellä', async () => {
+      const { hakemusID } = rejectedHakemus
+      const hakijaPaatosPage = HakijaPaatosPage(page)
+      await hakijaPaatosPage.navigate(hakemusID)
+
+      await JotpaTest.step('jotpan suomenkielinen logo', async () => {
+        expect(await page.locator('#logo').screenshot()).toMatchSnapshot('paatos-jotpa-logo-fi.png')
+      })
+
+      await JotpaTest.step('jotpan fontti headerissa ja leipätekstissä', async () => {
+        await expect(page.getByTestId('paatos-header-title')).toHaveCSS('font-family', jotpaFont)
+        await expect(page.getByTestId('paatos-title')).toHaveCSS('font-family', jotpaFont)
+      })
+
+      await JotpaTest.step('jotpan faviconi', async () => {
+        await expect(page.locator('#favicon')).toHaveAttribute(
+          'href',
+          '/img/jotpa/jotpa-favicon.ico'
+        )
+      })
+
+      await JotpaTest.step('maininta jotpasta opetushallituksen sijaan', async () => {
+        await expect(page.getByText('Opetushallitus')).not.toBeVisible()
+        await expect(
+          page.getByText(
+            'Jatkuvan oppimisen ja työllisyyden palvelukeskus on päättänyt olla myöntämättä valtionavustusta hankkeelle'
+          )
+        ).toBeVisible()
+      })
+    })
+  }
+)
 
 SwedishJotpaTest(
   'Hylätyllä ruotsinkielisellä Jotpa-hakemuksella',
-  async ({ rejectedHakemusEmails }) => {
+  async ({ page, rejectedHakemus, rejectedHakemusEmails }) => {
     const { emails } = rejectedHakemusEmails
     const email = (await emails)[0]
 
@@ -372,6 +406,37 @@ SwedishJotpaTest(
 
     await JotpaTest.step('sähköpostiviesti tulee osoitteesta no-reply@jotpa.fi', async () => {
       expect(email['from-address']).toBe('no-reply@jotpa.fi')
+    })
+
+    await JotpaTest.step('on päätöksellä', async () => {
+      const { hakemusID } = rejectedHakemus
+      const hakijaPaatosPage = HakijaPaatosPage(page)
+      await hakijaPaatosPage.navigate(hakemusID)
+
+      await JotpaTest.step('jotpan ruotsinkielinen logo', async () => {
+        expect(await page.locator('#logo').screenshot()).toMatchSnapshot('paatos-jotpa-logo-sv.png')
+      })
+
+      await JotpaTest.step('jotpan fontti headerissa ja leipätekstissä', async () => {
+        await expect(page.getByTestId('paatos-header-title')).toHaveCSS('font-family', jotpaFont)
+        await expect(page.getByTestId('paatos-title')).toHaveCSS('font-family', jotpaFont)
+      })
+
+      await JotpaTest.step('jotpan faviconi', async () => {
+        await expect(page.locator('#favicon')).toHaveAttribute(
+          'href',
+          '/img/jotpa/jotpa-favicon.ico'
+        )
+      })
+
+      await JotpaTest.step('maininta jotpasta opetushallituksen sijaan', async () => {
+        await expect(page.getByText('Opetushallitus')).not.toBeVisible()
+        await expect(
+          page.getByText(
+            'Servicecentret för kontinuerligt lärande och sysselsättning har beslutat att inte bevilja statsunderstöd till projektet'
+          )
+        ).toBeVisible()
+      })
     })
   }
 )
