@@ -19,6 +19,8 @@ jobs:
 
       - name: Run lein dependency check
         run: scripts/run_lein_dependency_check.sh
+        env:
+          NVD_API_TOKEN: ${{ secrets.NVD_API_TOKEN }}
 
       - name: Upload lein dependency check report
         uses: actions/upload-artifact@v4
