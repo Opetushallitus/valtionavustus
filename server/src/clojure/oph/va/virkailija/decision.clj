@@ -223,6 +223,10 @@
                                 :decision          decision
                                 :translate         translate
                                 :language          language})
+        logo-oph {:fi "/img/logo.png"
+                  :sv "/img/logo.png" }
+        logo-jotpa {:fi "/img/jotpa/jotpa-logo-fi.png"
+                    :sv "/img/jotpa/jotpa-logo-sv.png" }
 
 
         params {:avustushaku                   avustushaku
@@ -265,8 +269,8 @@
                 :oppilaitokset                 oppilaitokset
                 :avustuslaji                   (translate avustushaku-type)
                 :logo-path                     (if is-jotpa-paatos
-                                                 "/img/jotpa/jotpa-logo-fi.png"
-                                                 "/img/logo.png")
+                                                 (get logo-jotpa language)
+                                                 (get logo-oph language))
                 :logo-alt                   (if is-jotpa-paatos
                                                  "Jatkuvan oppimisen ja työllisyyden palvelukeskus / Servicecentret för kontinuerligt lärande och sysselsättning"
                                                  "Opetushallitus / Utbildningsstyrelsen")
