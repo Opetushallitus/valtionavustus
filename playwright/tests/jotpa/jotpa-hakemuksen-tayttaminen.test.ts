@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import { JotpaTest, SwedishJotpaTest } from '../../fixtures/JotpaTest'
 import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
 import { TEST_Y_TUNNUS } from '../../utils/constants'
@@ -21,100 +21,93 @@ JotpaTest(
     let hakemusUrl: string
     await hakijaAvustusHakuPage.navigate(avustushakuID, 'fi')
 
-    await JotpaTest.step('Etusivulla', async () => {
-      await JotpaTest.step('Näyttää jotpan suomenkielisen logon', async () => {
+    await test.step('Etusivulla', async () => {
+      await test.step('Näyttää jotpan suomenkielisen logon', async () => {
         expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-fi.png')
       })
-      await JotpaTest.step('Näyttää Jotpan faviconin', async () => {
+      await test.step('Näyttää Jotpan faviconin', async () => {
         await expect(page.locator('#favicon')).toHaveAttribute(
           'href',
           '/img/jotpa/jotpa-favicon.ico'
         )
       })
 
-      await JotpaTest.step('Luo uusi hakemus nappula on jotpan väreissä', async () => {
+      await test.step('Luo uusi hakemus nappula on jotpan väreissä', async () => {
         await hakijaAvustusHakuPage.form.muutoshakuEnabledFields.primaryEmail.fill(buffyEmail)
         await expect(page.locator('.soresu-text-button')).not.toBeDisabled()
         await expect(page.locator('.soresu-text-button')).toHaveCSS('background-color', jotpaColour)
       })
     })
 
-    await JotpaTest.step('Hakemussivulla', async () => {
+    await test.step('Hakemussivulla', async () => {
       hakemusUrl = await hakijaAvustusHakuPage.startApplication(avustushakuID, buffyEmail)
       await page.goto(hakemusUrl)
       await hakijaAvustusHakuPage.fillApplication(answers, TEST_Y_TUNNUS)
 
-      await JotpaTest.step('Näyttää jotpan suomenkielisen logon', async () => {
+      await test.step('Näyttää jotpan suomenkielisen logon', async () => {
         expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-fi.png')
       })
 
-      await JotpaTest.step('Näyttää Jotpan fontin', async () => {
+      await test.step('Näyttää Jotpan fontin', async () => {
         await expect(page.locator('#topbar h1')).toHaveCSS('font-family', jotpaFont)
         await expect(page.locator('.soresu-form h1')).toHaveCSS('font-family', jotpaFont)
         await expect(page.locator('#project-info')).toHaveCSS('font-family', jotpaFont)
       })
 
-      await JotpaTest.step('Näyttää Jotpan faviconin', async () => {
+      await test.step('Näyttää Jotpan faviconin', async () => {
         await expect(page.locator('#favicon')).toHaveAttribute(
           'href',
           '/img/jotpa/jotpa-favicon.ico'
         )
       })
 
-      await JotpaTest.step('Näyttää aktiivisen nappulan jotpan väreissä', async () => {
+      await test.step('Näyttää aktiivisen nappulan jotpan väreissä', async () => {
         const yliopistoButton = page.getByText('Yliopisto')
         await yliopistoButton.click()
         await expect(yliopistoButton).toHaveCSS('border-color', jotpaColour)
       })
 
-      await JotpaTest.step('Näyttää liitetiedoston lisäysnappulan Jotpan väreissä', async () => {
+      await test.step('Näyttää liitetiedoston lisäysnappulan Jotpan väreissä', async () => {
         await expect(page.locator('.soresu-file-upload .soresu-upload-button').first()).toHaveCSS(
           'background-color',
           jotpaColour
         )
       })
 
-      await JotpaTest.step('Näyttää jotpan myöntämä avustus tekstin', async () => {
+      await test.step('Näyttää jotpan myöntämä avustus tekstin', async () => {
         await expect(page.getByText('Jotpan myöntämä avustus')).toBeVisible()
         await expect(page.getByText('OPH:n myöntämä avustus')).not.toBeVisible()
       })
 
-      await JotpaTest.step('Näyttää jotpan rahoitus tekstin', async () => {
+      await test.step('Näyttää jotpan rahoitus tekstin', async () => {
         await expect(page.getByText('Jotpan rahoitus-%')).toBeVisible()
         await expect(page.getByText('OPH:n rahoitus-%')).not.toBeVisible()
       })
 
-      await JotpaTest.step(
-        'Lähetä käsiteltäväksi -nappula sisältää maininnan jotpasta opetushallituksen sijaan',
-        async () => {
-          await expect(
-            page.getByText(
-              'Kun hakemus on valmis, se lähetetään Jatkuvan oppimisen ja työllisyyden palvelukeskuksen käsiteltäväksi'
-            )
-          ).not.toBeVisible()
-          page.getByText('Lähetä käsiteltäväksi').hover()
-          await expect(
-            page.getByText(
-              'Kun hakemus on valmis, se lähetetään Jatkuvan oppimisen ja työllisyyden palvelukeskuksen käsiteltäväksi'
-            )
-          ).toBeVisible()
-        }
-      )
+      await test.step('Lähetä käsiteltäväksi -nappula sisältää maininnan jotpasta opetushallituksen sijaan', async () => {
+        await expect(
+          page.getByText(
+            'Kun hakemus on valmis, se lähetetään Jatkuvan oppimisen ja työllisyyden palvelukeskuksen käsiteltäväksi'
+          )
+        ).not.toBeVisible()
+        page.getByText('Lähetä käsiteltäväksi').hover()
+        await expect(
+          page.getByText(
+            'Kun hakemus on valmis, se lähetetään Jatkuvan oppimisen ja työllisyyden palvelukeskuksen käsiteltäväksi'
+          )
+        ).toBeVisible()
+      })
 
-      await JotpaTest.step(
-        'Näyttää aktiivisen "Lähetä käsiteltäväksi" nappulan Jotpan väreissä',
-        async () => {
-          await hakijaAvustusHakuPage.fillMuutoshakemusEnabledHakemus(answers)
-          await expect(page.locator('#topbar #submit')).toHaveCSS('background-color', jotpaColour)
-        }
-      )
+      await test.step('Näyttää aktiivisen "Lähetä käsiteltäväksi" nappulan Jotpan väreissä', async () => {
+        await hakijaAvustusHakuPage.fillMuutoshakemusEnabledHakemus(answers)
+        await expect(page.locator('#topbar #submit')).toHaveCSS('background-color', jotpaColour)
+      })
     })
 
-    await JotpaTest.step('"Linkki avustushakemukseen"-Sähköpostissa', async () => {
+    await test.step('"Linkki avustushakemukseen"-Sähköpostissa', async () => {
       const newHakemusEmail = (await pollUntilNewHakemusEmailArrives(avustushakuID, buffyEmail))[0]
 
-      console.log(newHakemusEmail)
-      await JotpaTest.step('oph on korvattu jotpalla niiltä osin kuin on sovittu', async () => {
+      await test.step('oph on korvattu jotpalla niiltä osin kuin on sovittu', async () => {
         expect(newHakemusEmail['from-address']).toEqual('no-reply@jotpa.fi')
 
         expect(newHakemusEmail.formatted).not.toContain(
@@ -138,7 +131,7 @@ Hakaniemenranta 6`
       })
     })
 
-    await JotpaTest.step('"Hakemus vastaanotettu"-Sähköpostissa', async () => {
+    await test.step('"Hakemus vastaanotettu"-Sähköpostissa', async () => {
       await hakijaAvustusHakuPage.submitApplication()
 
       const userKey = await hakijaAvustusHakuPage.getUserKey()
@@ -146,30 +139,30 @@ Hakaniemenranta 6`
       const email = (await waitUntilMinEmails(getHakemusSubmitted, 1, hakemusID))[0]
       console.log(email)
 
-      await JotpaTest.step('on oikean lähettäjän osoite', async () => {
+      await test.step('on oikean lähettäjän osoite', async () => {
         expect(email['from-address']).toEqual('no-reply@jotpa.fi')
       })
 
-      await JotpaTest.step('on oikean lähettäjän nimi', async () => {
+      await test.step('on oikean lähettäjän nimi', async () => {
         expect(email.formatted).not.toContain(`Opetushallitus`)
         expect(email.formatted).toContain(`Jatkuvan oppimisen ja työllisyyden palvelukeskus`)
       })
     })
 
-    await JotpaTest.step('Hakemuksen esikatselu sivulla', async () => {
+    await test.step('Hakemuksen esikatselu sivulla', async () => {
       await page.goto(hakemusUrl + '&preview=true')
 
-      await JotpaTest.step('Näyttää jotpan suomenkielisen logon', async () => {
+      await test.step('Näyttää jotpan suomenkielisen logon', async () => {
         expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-fi.png')
       })
 
-      await JotpaTest.step('Näyttää Jotpan fontin', async () => {
+      await test.step('Näyttää Jotpan fontin', async () => {
         await expect(page.locator('#topbar h1')).toHaveCSS('font-family', jotpaFont)
         await expect(page.locator('.soresu-preview h1')).toHaveCSS('font-family', jotpaFont)
         await expect(page.locator('#project-info')).toHaveCSS('font-family', jotpaFont)
       })
 
-      await JotpaTest.step('Näyttää Jotpan faviconin', async () => {
+      await test.step('Näyttää Jotpan faviconin', async () => {
         await expect(page.locator('#favicon')).toHaveAttribute(
           'href',
           '/img/jotpa/jotpa-favicon.ico'
@@ -187,61 +180,58 @@ SwedishJotpaTest(
     await hakijaAvustusHakuPage.navigate(avustushakuID, 'sv')
     const hakemusUrl = await hakijaAvustusHakuPage.startApplication(avustushakuID, faithEmail)
 
-    await SwedishJotpaTest.step('Etusivulla', async () => {
-      await SwedishJotpaTest.step('Näyttää etusivulla Jotpan ruotsinkielisen logon', async () => {
+    await test.step('Etusivulla', async () => {
+      await test.step('Näyttää etusivulla Jotpan ruotsinkielisen logon', async () => {
         expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-sv.png')
       })
     })
 
-    await SwedishJotpaTest.step('Hakemussivulla', async () => {
+    await test.step('Hakemussivulla', async () => {
       await page.goto(hakemusUrl)
       await hakijaAvustusHakuPage.fillApplication(answers, TEST_Y_TUNNUS)
 
-      await SwedishJotpaTest.step('Näyttää jotpan ruotsinkielisen logon', async () => {
+      await test.step('Näyttää jotpan ruotsinkielisen logon', async () => {
         expect(await page.locator('#logo').screenshot()).toMatchSnapshot('jotpa-logo-sv.png')
       })
     })
 
-    await SwedishJotpaTest.step('"Linkki avustushakemukseen"-Sähköpostissa', async () => {
+    await test.step('"Linkki avustushakemukseen"-Sähköpostissa', async () => {
       const newHakemusEmail = (await pollUntilNewHakemusEmailArrives(avustushakuID, faithEmail))[0]
 
-      await SwedishJotpaTest.step(
-        'oph on korvattu jotpalla niiltä osin kuin on sovittu',
-        async () => {
-          expect(newHakemusEmail['from-address']).toEqual('no-reply@jotpa.fi')
+      await test.step('oph on korvattu jotpalla niiltä osin kuin on sovittu', async () => {
+        expect(newHakemusEmail['from-address']).toEqual('no-reply@jotpa.fi')
 
-          expect(newHakemusEmail.formatted).not.toContain(
-            'per e-post på adressen statsunderstod@oph.fi'
-          )
-          expect(newHakemusEmail.formatted).toContain('per e-post på adressen rahoitus@jotpa.fi')
+        expect(newHakemusEmail.formatted).not.toContain(
+          'per e-post på adressen statsunderstod@oph.fi'
+        )
+        expect(newHakemusEmail.formatted).toContain('per e-post på adressen rahoitus@jotpa.fi')
 
-          expect(newHakemusEmail.formatted).not.toContain(
-            `Utbildningsstyrelsen
+        expect(newHakemusEmail.formatted).not.toContain(
+          `Utbildningsstyrelsen
 Hagnäskajen 6`
-          )
-          expect(newHakemusEmail.formatted).toContain(
-            `Servicecentret för kontinuerligt lärande och sysselsättning
+        )
+        expect(newHakemusEmail.formatted).toContain(
+          `Servicecentret för kontinuerligt lärande och sysselsättning
 Hagnäskajen 6`
-          )
+        )
 
-          expect(newHakemusEmail.formatted).not.toContain('fornamn.efternamn@oph.fi')
-          expect(newHakemusEmail.formatted).toContain('fornamn.efternamn@jotpa.fi')
-        }
-      )
+        expect(newHakemusEmail.formatted).not.toContain('fornamn.efternamn@oph.fi')
+        expect(newHakemusEmail.formatted).toContain('fornamn.efternamn@jotpa.fi')
+      })
     })
 
-    await SwedishJotpaTest.step('"Hakemus vastaanotettu"-Sähköpostissa', async () => {
+    await test.step('"Hakemus vastaanotettu"-Sähköpostissa', async () => {
       await hakijaAvustusHakuPage.fillMuutoshakemusEnabledHakemus(answers)
       const { userKey } = await hakijaAvustusHakuPage.submitApplication()
       const hakemusID = await hakijaAvustusHakuPage.getHakemusID(avustushakuID, userKey)
       const email = (await waitUntilMinEmails(getHakemusSubmitted, 1, hakemusID))[0]
       console.log(email)
 
-      await SwedishJotpaTest.step('on oikean lähettäjän osoite', async () => {
+      await test.step('on oikean lähettäjän osoite', async () => {
         expect(email['from-address']).toEqual('no-reply@jotpa.fi')
       })
 
-      await SwedishJotpaTest.step('on oikean lähettäjän nimi', async () => {
+      await test.step('on oikean lähettäjän nimi', async () => {
         expect(email.formatted).not.toContain(`Utbildningsstyrelsen`)
         expect(email.formatted).toContain(
           `Servicecentret för kontinuerligt lärande och sysselsättning`
@@ -261,27 +251,27 @@ JotpaTest(
     const emails = await waitUntilMinEmails(getMuutoshakemusEmails, 1, hakemusID)
     const email = emails[0]
 
-    await JotpaTest.step('on päätöksellä', async () => {
+    await test.step('on päätöksellä', async () => {
       const hakijaPaatosPage = HakijaPaatosPage(page)
       await hakijaPaatosPage.navigate(acceptedHakemus.hakemusID)
 
-      await JotpaTest.step('jotpan suomenkielinen logo', async () => {
+      await test.step('jotpan suomenkielinen logo', async () => {
         expect(await page.locator('#logo').screenshot()).toMatchSnapshot('paatos-jotpa-logo-fi.png')
       })
 
-      await JotpaTest.step('jotpan fontti headerissa ja leipätekstissä', async () => {
+      await test.step('jotpan fontti headerissa ja leipätekstissä', async () => {
         await expect(page.getByTestId('paatos-header-title')).toHaveCSS('font-family', jotpaFont)
         await expect(page.getByTestId('paatos-accepted-title')).toHaveCSS('font-family', jotpaFont)
       })
 
-      await JotpaTest.step('jotpan faviconi', async () => {
+      await test.step('jotpan faviconi', async () => {
         await expect(page.locator('#favicon')).toHaveAttribute(
           'href',
           '/img/jotpa/jotpa-favicon.ico'
         )
       })
 
-      await JotpaTest.step('maininta jotpasta opetushallituksen sijaan', async () => {
+      await test.step('maininta jotpasta opetushallituksen sijaan', async () => {
         await expect(page.getByText('Opetushallitus')).not.toBeVisible()
         await expect(
           page.getByText(
@@ -308,7 +298,7 @@ JotpaTest(
       })
     })
 
-    await JotpaTest.step('on oikea vastuutaho sähköpostiviestissä', async () => {
+    await test.step('on oikea vastuutaho sähköpostiviestissä', async () => {
       expect(email.formatted).toContain(
         'Mikäli ette ota päätöksen mukaista avustusta vastaan, tulee siitä ilmoittaa Jatkuvan oppimisen ja työllisyyden palvelukeskukselle'
       )
@@ -319,7 +309,7 @@ JotpaTest(
       )
     })
 
-    await JotpaTest.step('on oikea signature block sähköpostiviestissä', async () => {
+    await test.step('on oikea signature block sähköpostiviestissä', async () => {
       expect(email.formatted).toContain(
         'Jatkuvan oppimisen ja työllisyyden palvelukeskus\n' +
           'Hakaniemenranta 6\n' +
@@ -329,7 +319,7 @@ JotpaTest(
       )
     })
 
-    await JotpaTest.step('sähköpostiviesti tulee osoitteesta no-reply@jotpa.fi', async () => {
+    await test.step('sähköpostiviesti tulee osoitteesta no-reply@jotpa.fi', async () => {
       expect(email['from-address']).toBe('no-reply@jotpa.fi')
     })
   }
@@ -341,7 +331,7 @@ JotpaTest(
     const { emails } = rejectedHakemusEmails
     const email = (await emails)[0]
 
-    await JotpaTest.step('on oikea signature block sähköpostiviestissä', async () => {
+    await test.step('on oikea signature block sähköpostiviestissä', async () => {
       expect(email.formatted).toContain(
         'Jatkuvan oppimisen ja työllisyyden palvelukeskus\n' +
           'Hakaniemenranta 6\n' +
@@ -351,32 +341,32 @@ JotpaTest(
       )
     })
 
-    await JotpaTest.step('sähköpostiviesti tulee osoitteesta no-reply@jotpa.fi', async () => {
+    await test.step('sähköpostiviesti tulee osoitteesta no-reply@jotpa.fi', async () => {
       expect(email['from-address']).toBe('no-reply@jotpa.fi')
     })
 
-    await JotpaTest.step('on päätöksellä', async () => {
+    await test.step('on päätöksellä', async () => {
       const { hakemusID } = rejectedHakemus
       const hakijaPaatosPage = HakijaPaatosPage(page)
       await hakijaPaatosPage.navigate(hakemusID)
 
-      await JotpaTest.step('jotpan suomenkielinen logo', async () => {
+      await test.step('jotpan suomenkielinen logo', async () => {
         expect(await page.locator('#logo').screenshot()).toMatchSnapshot('paatos-jotpa-logo-fi.png')
       })
 
-      await JotpaTest.step('jotpan fontti headerissa ja leipätekstissä', async () => {
+      await test.step('jotpan fontti headerissa ja leipätekstissä', async () => {
         await expect(page.getByTestId('paatos-header-title')).toHaveCSS('font-family', jotpaFont)
         await expect(page.getByTestId('paatos-title')).toHaveCSS('font-family', jotpaFont)
       })
 
-      await JotpaTest.step('jotpan faviconi', async () => {
+      await test.step('jotpan faviconi', async () => {
         await expect(page.locator('#favicon')).toHaveAttribute(
           'href',
           '/img/jotpa/jotpa-favicon.ico'
         )
       })
 
-      await JotpaTest.step('maininta jotpasta opetushallituksen sijaan', async () => {
+      await test.step('maininta jotpasta opetushallituksen sijaan', async () => {
         await expect(page.getByText('Opetushallitus')).not.toBeVisible()
         await expect(
           page.getByText(
@@ -394,7 +384,7 @@ SwedishJotpaTest(
     const { emails } = rejectedHakemusEmails
     const email = (await emails)[0]
 
-    await JotpaTest.step('on oikea signature block sähköpostiviestissä', async () => {
+    await test.step('on oikea signature block sähköpostiviestissä', async () => {
       expect(email.formatted).toContain(
         'Servicecentret för kontinuerligt lärande och sysselsättning\n' +
           'Hagnäskajen 6\n' +
@@ -404,32 +394,32 @@ SwedishJotpaTest(
       )
     })
 
-    await JotpaTest.step('sähköpostiviesti tulee osoitteesta no-reply@jotpa.fi', async () => {
+    await test.step('sähköpostiviesti tulee osoitteesta no-reply@jotpa.fi', async () => {
       expect(email['from-address']).toBe('no-reply@jotpa.fi')
     })
 
-    await JotpaTest.step('on päätöksellä', async () => {
+    await test.step('on päätöksellä', async () => {
       const { hakemusID } = rejectedHakemus
       const hakijaPaatosPage = HakijaPaatosPage(page)
       await hakijaPaatosPage.navigate(hakemusID)
 
-      await JotpaTest.step('jotpan ruotsinkielinen logo', async () => {
+      await test.step('jotpan ruotsinkielinen logo', async () => {
         expect(await page.locator('#logo').screenshot()).toMatchSnapshot('paatos-jotpa-logo-sv.png')
       })
 
-      await JotpaTest.step('jotpan fontti headerissa ja leipätekstissä', async () => {
+      await test.step('jotpan fontti headerissa ja leipätekstissä', async () => {
         await expect(page.getByTestId('paatos-header-title')).toHaveCSS('font-family', jotpaFont)
         await expect(page.getByTestId('paatos-title')).toHaveCSS('font-family', jotpaFont)
       })
 
-      await JotpaTest.step('jotpan faviconi', async () => {
+      await test.step('jotpan faviconi', async () => {
         await expect(page.locator('#favicon')).toHaveAttribute(
           'href',
           '/img/jotpa/jotpa-favicon.ico'
         )
       })
 
-      await JotpaTest.step('maininta jotpasta opetushallituksen sijaan', async () => {
+      await test.step('maininta jotpasta opetushallituksen sijaan', async () => {
         await expect(page.getByText('Opetushallitus')).not.toBeVisible()
         await expect(
           page.getByText(
@@ -451,7 +441,7 @@ SwedishJotpaTest(
     const emails = await waitUntilMinEmails(getMuutoshakemusEmails, 1, hakemusID)
     const email = emails[0]
 
-    await JotpaTest.step('on oikea vastuutaho sähköpostiviestissä', async () => {
+    await test.step('on oikea vastuutaho sähköpostiviestissä', async () => {
       expect(email.formatted).toContain(
         'Om ni inte tar emot understödet i enlighet med beslutet, ska ni meddela om detta till Servicecentret för kontinuerligt lärande och sysselsättning inom den tidsfrist som anges i beslutet.'
       )
@@ -462,7 +452,7 @@ SwedishJotpaTest(
       )
     })
 
-    await JotpaTest.step('on oikea signature block sähköpostiviestissä', async () => {
+    await test.step('on oikea signature block sähköpostiviestissä', async () => {
       expect(email.formatted).toContain(
         'Servicecentret för kontinuerligt lärande och sysselsättning\n' +
           'Hagnäskajen 6\n' +
