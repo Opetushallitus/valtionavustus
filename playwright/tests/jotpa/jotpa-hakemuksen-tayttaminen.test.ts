@@ -13,6 +13,8 @@ import { HakijaPaatosPage } from '../../pages/hakija/HakijaPaatosPage'
 const jotpaFont = 'Montserrat, sans-serif'
 const jotpaColour = 'rgb(0, 155, 98)'
 
+test.describe.configure({ mode: 'parallel' })
+
 JotpaTest(
   'Suomenkielisen Jotpa-hakemuksen täyttäminen',
   async ({ page, avustushakuID, answers }) => {
