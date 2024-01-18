@@ -71,11 +71,13 @@ export class SummingBudgetElement extends React.Component {
   render() {
     const { field, children, htmlId } = this.props
     const sum = field.sum
+    const helpTextContent = field.helpText
     const classNames = ClassNames({ required: field.required })
     return (
       <table id={htmlId} className="summing-table">
         <caption className={!_.isEmpty(classNames) ? classNames : undefined}>
           <LocalizedString translations={field} translationKey="label" lang={this.props.lang} />
+          {helpTextContent && <HelpTooltip content={helpTextContent} lang={this.props.lang} />}
         </caption>
         <colgroup>
           <col className="label-column" />
