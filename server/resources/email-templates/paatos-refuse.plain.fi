@@ -28,4 +28,4 @@ Tarvittaessa tarkempia lisätietoja antaa avustuspäätöksessä nimetty lisäti
 Hakaniemenranta 6
 PL 380, 00531 Helsinki
 puhelin 029 533 1000
-etunimi.sukunimi@{{^is-jotpa-hakemus}}oph.fi{{/is-jotpa-hakemus}}{{#is-jotpa-hakemus}}@jotpa.fi{{/is-jotpa-hakemus}}
+etunimi.sukunimi@{{^is-jotpa-hakemus}}oph.fi{{/is-jotpa-hakemus}}{{#is-jotpa-hakemus}}jotpa.fi{{/is-jotpa-hakemus}}

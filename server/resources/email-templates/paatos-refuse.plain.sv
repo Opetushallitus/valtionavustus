@@ -26,4 +26,4 @@ Vid behov ges närmare information av den person som angetts som kontaktperson i
 Hagnäskajen 6
 PB 380, 00531 Helsingfors
 telefon 029 533 1000
-fornamn.efternamn@{{^is-jotpa-hakemus}}oph.fi{{/is-jotpa-hakemus}}{{#is-jotpa-hakemus}}@jotpa.fi{{/is-jotpa-hakemus}}
+fornamn.efternamn@{{^is-jotpa-hakemus}}oph.fi{{/is-jotpa-hakemus}}{{#is-jotpa-hakemus}}jotpa.fi{{/is-jotpa-hakemus}}

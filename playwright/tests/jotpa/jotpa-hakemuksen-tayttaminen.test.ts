@@ -317,7 +317,7 @@ JotpaTest(
           'Hakaniemenranta 6\n' +
           'PL 380, 00531 Helsinki\n' +
           'puhelin 029 533 1000\n' +
-          'etunimi.sukunimi@@jotpa.fi'
+          'etunimi.sukunimi@jotpa.fi'
       )
     })
 
@@ -339,7 +339,7 @@ JotpaTest(
           'Hakaniemenranta 6\n' +
           'PL 380, 00531 Helsinki\n' +
           'puhelin 029 533 1000\n' +
-          'etunimi.sukunimi@@jotpa.fi'
+          'etunimi.sukunimi@jotpa.fi'
       )
     })
 
@@ -392,7 +392,7 @@ SwedishJotpaTest(
           'Hagnäskajen 6\n' +
           'PB 380, 00531 Helsingfors\n' +
           'telefon 029 533 1000\n' +
-          'fornamn.efternamn@@jotpa.fi'
+          'fornamn.efternamn@jotpa.fi'
       )
     })
 
@@ -460,7 +460,7 @@ SwedishJotpaTest(
           'Hagnäskajen 6\n' +
           'PB 380, 00531 Helsingfors\n' +
           'telefon 029 533 1000\n' +
-          'fornamn.efternamn@@jotpa.fi'
+          'fornamn.efternamn@jotpa.fi'
       )
     })
   }
