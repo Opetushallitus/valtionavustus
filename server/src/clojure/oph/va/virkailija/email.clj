@@ -443,12 +443,16 @@
              :budjettimuutoshakemus-enabled budjettimuutoshakemus-enabled?
              :is-jotpa-hakemus is-jotpa-hakemus?
              :include-muutoshaku-link include-muutoshaku-link?}
-        format-plaintext-message (partial render (get-in mail-templates [:paatos-refuse lang]))
+        body (render (get-in mail-templates [:paatos-refuse lang]) msg)
         ]
     (log/info "Sending decision email with refuse link")
     (log/info "Urls would be: " url "\n" paatos-refuse-url)
-    (email/try-send-msg-once msg format-plaintext-message)
-    ))
+    (email/try-send-email!
+      (email/message lang :paatos-refuse to mail-subject body)
+      {:hakemus-id     (:id hakemus)
+       :avustushaku-id (:id avustushaku)
+       :from           from})
+))
 
 (defn send-selvitys! [to hakemus mail-subject mail-message]
   (let [lang (keyword (:language hakemus))
