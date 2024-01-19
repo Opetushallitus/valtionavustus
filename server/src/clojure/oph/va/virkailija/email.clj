@@ -73,7 +73,10 @@
    :valiselvitys-palauttamatta {:fi (email/load-template "email-templates/valiselvitys-palauttamatta.fi")
                                 :sv (email/load-template "email-templates/valiselvitys-palauttamatta.sv")}
    :loppuselvitys-palauttamatta {:fi (email/load-template "email-templates/loppuselvitys-palauttamatta.fi")
-                                 :sv (email/load-template "email-templates/loppuselvitys-palauttamatta.sv")}})
+                                 :sv (email/load-template "email-templates/loppuselvitys-palauttamatta.sv")}
+   :email-signature {:fi (email/load-template "email-templates/email-signature.plain.fi")
+                                 :sv (email/load-template "email-templates/email-signature.plain.sv")}
+   })
 
 (defn mail-example [msg-type & [data]]
   {:content (render (:fi (msg-type mail-templates)) (if data data {}))
@@ -414,6 +417,10 @@
     (:muutoshakukelpoinen avustushaku)
     (has-normalized-hakemus hakemus-id)))
 
+(defn- email-signature-block [lang]
+  (let [sig-template (get-in mail-templates [:email-signature lang])]
+    {:signature sig-template}))
+
 (defn send-paatos-refuse! [to avustushaku hakemus token]
   (let [lang-str (:language hakemus)
         lang (keyword lang-str)
@@ -426,6 +433,7 @@
         mail-subject (get-in mail-titles [:paatos lang])
         is-jotpa-hakemus? (is-jotpa-avustushaku avustushaku)
         from (if is-jotpa-hakemus? "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+        email-signature (email-signature-block lang)
         msg {
              :email-type :paatos-refuse
              :lang lang
@@ -443,8 +451,7 @@
              :budjettimuutoshakemus-enabled budjettimuutoshakemus-enabled?
              :is-jotpa-hakemus is-jotpa-hakemus?
              :include-muutoshaku-link include-muutoshaku-link?}
-        body (render (get-in mail-templates [:paatos-refuse lang]) msg)
-        ]
+        body (render (get-in mail-templates [:paatos-refuse lang]) msg email-signature)]
     (log/info "Sending decision email with refuse link")
     (log/info "Urls would be: " url "\n" paatos-refuse-url)
     (email/try-send-email!

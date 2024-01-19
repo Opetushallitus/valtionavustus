@@ -1,0 +1,14 @@
+{{^is-jotpa-hakemus}}
+Opetushallitus
+Hakaniemenranta 6
+PL 380, 00531 Helsinki
+puhelin 029 533 1000
+etunimi.sukunimi@oph.fi
+{{/is-jotpa-hakemus}}
+{{#is-jotpa-hakemus}}
+Jatkuvan oppimisen ja työllisyyden palvelukeskus
+Hakaniemenranta 6
+PL 380, 00531 Helsinki
+puhelin 029 533 1000
+etunimi.sukunimi@jotpa.fi
+{{/is-jotpa-hakemus}}
