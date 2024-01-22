@@ -1,11 +1,5 @@
 Ansökan om understöd: {{ grant-name }}
 
-Er anmälan om att ni inte tar emot understödet har lämnats in till Utbildningsstyrelsen.
+Er anmälan om att ni inte tar emot understödet har lämnats in till {{^is-jotpa-hakemus}}Utbildningsstyrelsen{{/is-jotpa-hakemus}}{{#is-jotpa-hakemus}}Servicecentret för kontinuerligt lärande och sysselsättning{{/is-jotpa-hakemus}}.
 
-Utbildningsstyrelsen
-Hagnäskajen 6
-PB 380
-00531 Helsingfors
-
-telefon 029 533 1000
-fax 029 533 1035
+{{>signature}}

@@ -3,6 +3,7 @@
             [oph.soresu.common.config :refer [config]]
             [oph.common.email :as email]
             [oph.common.email-utils :as email-utils]
+            [oph.va.virkailija.email :refer [email-signature-block]]
             [clojure.tools.logging :as log]
             [clostache.parser :refer [render]]))
 
@@ -59,10 +60,15 @@
                                          :sv (email/load-template
                                               "email-templates/hakemus-edited-after-applicant-edit.plain.sv")}})
 
-(defn- render-body [msg]
-  (let [{:keys [email-type lang]} msg
+(defn- render-body
+  ([msg]
+    (let [{:keys [email-type lang]} msg
         template (get-in mail-templates [email-type lang])]
     (render template msg)))
+  ([msg partials]
+     (let [{:keys [email-type lang]} msg
+           template (get-in mail-templates [email-type lang])]
+       (render template msg partials))))
 
 (defn generate-virkailija-url [avustushaku-id hakemus-db-id]
   (str (-> config :server :virkailija-url)
@@ -145,7 +151,7 @@
     (log/info "Url would be: " url)
     (email/enqueue-message-to-be-send msg body)))
 
-(defn generate-refused-email [lang recipients grant-name hakemus-id]
+(defn generate-refused-email [lang recipients grant-name hakemus-id is-jotpa-hakemus]
   {:operation :send
    :email-type :application-refused
    :hakemus-id hakemus-id
@@ -154,11 +160,13 @@
    :sender (:sender email/smtp-config)
    :subject (get-in mail-titles [:application-refused lang])
    :to recipients
+   :is-jotpa-hakemus is-jotpa-hakemus
    :grant-name grant-name})
 
-(defn send-refused-message! [lang recipients grant-name hakemus-id]
-  (let [msg (generate-refused-email lang recipients grant-name hakemus-id)
-        body (render-body msg)]
+(defn send-refused-message! [lang recipients grant-name hakemus-id is-jotpa-hakemus]
+  (let [msg (generate-refused-email lang recipients grant-name hakemus-id is-jotpa-hakemus)
+        signature (email-signature-block lang)
+        body (render-body msg signature)]
   (email/enqueue-message-to-be-send msg body)))
 
 (defn generate-presenter-refused-email [recipients grant application-id]

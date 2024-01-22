@@ -417,7 +417,7 @@
     (:muutoshakukelpoinen avustushaku)
     (has-normalized-hakemus hakemus-id)))
 
-(defn- email-signature-block [lang]
+(defn email-signature-block [lang]
   (let [sig-template (get-in mail-templates [:email-signature lang])]
     {:signature sig-template}))
 

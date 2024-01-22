@@ -233,6 +233,7 @@
 (defn on-refuse-application [avustushaku-id hakemus-id base-version comment token]
   (let [hakemus (va-db/get-hakemus hakemus-id)
         avustushaku (va-db/get-avustushaku (:avustushaku hakemus))
+        is-jotpa-hakemus (is-jotpa-avustushaku avustushaku)
         submission (:body (get-form-submission
                            (:form avustushaku)
                            (:form_submission_id hakemus)))
@@ -259,7 +260,7 @@
              avustushaku
              (:id hakemus)))
           (when (< 0 (count to))
-            (va-email/send-refused-message! lang to (get-in avustushaku [:content :name lang]) (:id hakemus))))
+            (va-email/send-refused-message! lang to (get-in avustushaku [:content :name lang]) (:id hakemus) is-jotpa-hakemus)))
         (hakemus-ok-response (va-db/get-hakemus hakemus-id) submission {} nil))
       :else (hakemus-conflict-response hakemus))))
 
