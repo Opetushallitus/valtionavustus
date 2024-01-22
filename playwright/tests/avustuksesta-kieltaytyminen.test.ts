@@ -1,7 +1,12 @@
 import { expect } from '@playwright/test'
 import { HakemustenArviointiPage } from '../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { RefusePage } from '../pages/hakija/refuse-page'
-import { getLoppuselvitysEmailsForAvustus, getValiselvitysEmailsForAvustus } from '../utils/emails'
+import {
+  getAvustushakuRefusedEmails,
+  getLoppuselvitysEmailsForAvustus,
+  getValiselvitysEmailsForAvustus,
+  waitUntilMinEmails,
+} from '../utils/emails'
 import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { twoAcceptedHakemusTest as test } from '../fixtures/twoHakemusTest'
 
@@ -23,6 +28,18 @@ test('Avustuksesta kieltäytyminen', async ({
     const refusePage = RefusePage(page)
     await refusePage.navigate(hakemusID)
     await refusePage.refuseGrant()
+  })
+
+  await test.step('Email contains correct signature block', async () => {
+    const emails = await waitUntilMinEmails(getAvustushakuRefusedEmails, 1, hakemusID)
+    expect(emails[0].formatted).toContain(
+      'Ilmoitus avustuksenne vastaanottamatta jättämisestä on lähetetty Jatkuvan oppimisen ja työllisyyden palvelukeskukselle.\n\n\n' +
+        'Opetushallitus\n' +
+        'Hakaniemenranta 6\n' +
+        'PL 380, 00531 Helsinki\n' +
+        'puhelin 029 533 1000\n' +
+        'etunimi.sukunimi@oph.fi'
+    )
   })
 
   await test.step('Hakemus list shows both refused and accepted application', async () => {
