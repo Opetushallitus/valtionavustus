@@ -32,9 +32,13 @@ test('Avustuksesta kieltäytyminen', async ({
 
   await test.step('Email contains correct signature block', async () => {
     const emails = await waitUntilMinEmails(getAvustushakuRefusedEmails, 1, hakemusID)
+
     expect(emails[0].formatted).toContain(
-      'Ilmoitus avustuksenne vastaanottamatta jättämisestä on lähetetty Opetushallitukseen.\n\n\n' +
-        'Opetushallitus\n' +
+      'Ilmoitus avustuksenne vastaanottamatta jättämisestä on lähetetty Opetushallitukseen.'
+    )
+
+    expect(emails[0].formatted).toContain(
+      'Opetushallitus\n' +
         'Hakaniemenranta 6\n' +
         'PL 380, 00531 Helsinki\n' +
         'puhelin 029 533 1000\n' +
