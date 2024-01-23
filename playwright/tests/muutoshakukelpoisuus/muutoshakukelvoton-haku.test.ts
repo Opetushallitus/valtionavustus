@@ -106,12 +106,34 @@ test.describe.parallel('Avustushaku that was marked as muutoshakukelvoton', () =
   }) => {
     const { token } = await getHakemusTokenAndRegisterNumber(hakemusID)
     const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
-    await hakijaAvustusHakuPage.navigateToYhteyshenkilöChangePage(avustushakuID, userKey, token)
+    const hakemusEditPage = await hakijaAvustusHakuPage.navigateToYhteyshenkilöChangePage(
+      avustushakuID,
+      userKey,
+      token
+    )
+    await hakemusEditPage.changeHakijaNameToEtunimiTakanimi()
 
-    await page.getByRole('button', { name: 'Aloita yhteystietojen muokkaus' }).click()
-    await page.fill('#applicant-name', 'Etunimi Takanimi')
-    await page.getByRole('button', { name: 'Tallenna muutos ja lopeta muokkaus' }).click()
     const emails = await waitUntilMinEmails(getYhteystiedotMuutettuEmails, 1, hakemusID)
+
     expect(emails).toHaveLength(1)
+    const email = emails[0]
+
+    await test.step('the email has correct sender', async () => {
+      expect(email['from-address']).toBe('no-reply@valtionavustukset.oph.fi')
+    })
+
+    await test.step('the email has correct body', async () => {
+      expect(email.formatted).toContain(
+        'Ilmoitus yhteystietojen muutoksesta on lähetetty Opetushallitukseen.'
+      )
+
+      expect(email.formatted).toContain(
+        'Opetushallitus\n' +
+          'Hakaniemenranta 6\n' +
+          'PL 380, 00531 Helsinki\n' +
+          'puhelin 029 533 1000\n' +
+          'etunimi.sukunimi@oph.fi'
+      )
+    })
   })
 })

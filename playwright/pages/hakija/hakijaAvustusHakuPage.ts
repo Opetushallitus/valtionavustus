@@ -7,6 +7,7 @@ import { getHakemusUrlFromEmail, pollUntilNewHakemusEmailArrives } from '../../u
 import { Budget, fillBudget } from '../../utils/budget'
 import { Answers, Signatory } from '../../utils/types'
 import { getNormalizedHakemus } from '../../utils/hakemus'
+import { HakijaHakemusMuokkausPage } from './hakijaHakemusMuokkausPage'
 
 export function HakijaAvustusHakuPage(page: Page) {
   const locators = {
@@ -57,12 +58,14 @@ export function HakijaAvustusHakuPage(page: Page) {
   async function navigateToYhteyshenkilöChangePage(
     avustushakuId: number,
     userKey: string,
-    token: string
+    token: string,
+    lang: 'fi' | 'sv' = 'fi'
   ) {
     await navigateHakija(
       page,
-      `/avustushaku/${avustushakuId}/nayta?avustushaku=${avustushakuId}&hakemus=${userKey}&lang=fi&preview=false&token=${token}&refuse-grant=false&modify-application=true`
+      `/avustushaku/${avustushakuId}/nayta?avustushaku=${avustushakuId}&hakemus=${userKey}&lang=${lang}&preview=false&token=${token}&refuse-grant=false&modify-application=true`
     )
+    return HakijaHakemusMuokkausPage(page, lang)
   }
 
   async function selectFromDropdown(index: number, text: string) {

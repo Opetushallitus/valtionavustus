@@ -2,11 +2,6 @@ Avustushakemus: {{ grant-name }}
 Hanke: {{ register-number }} "{{ project-name }}"
 Hakija: {{ organization-name }}
 
-Ilmoitus yhteystietojen muutoksesta on lähetetty Opetushallitukseen.
+Ilmoitus yhteystietojen muutoksesta on lähetetty {{^is-jotpa-hakemus}}Opetushallitukseen{{/is-jotpa-hakemus}}{{#is-jotpa-hakemus}}Jatkuvan oppimisen ja työllisyyden palvelukeskukselle{{/is-jotpa-hakemus}}.
 
-Opetushallitus
-Hakaniemenranta 6
-PL 380, 00531 Helsinki
-
-puhelin 029 533 1000
-faksi 029 533 1035
+{{>signature}}

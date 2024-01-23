@@ -187,11 +187,11 @@
         body (render-body msg)]
     (email/enqueue-message-to-be-send msg body)))
 
-(defn generate-applicant-edit-email [lang recipients grant-name hakemus]
+(defn generate-applicant-edit-email [lang recipients grant-name hakemus is-jotpa-hakemus]
   {:operation :send
    :email-type :hakemus-edited-after-applicant-edit
    :lang lang
-   :from (get-in email/smtp-config [:from lang])
+   :from (if is-jotpa-hakemus "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
    :sender (:sender email/smtp-config)
    :subject (get-in mail-titles [:hakemus-edited-after-applicant-edit lang])
    :to recipients
@@ -200,11 +200,13 @@
    :project-name (:project_name hakemus)
    :organization-name (:organization_name hakemus)
    :hakemus-id (:id hakemus)
+   :is-jotpa-hakemus is-jotpa-hakemus
    :avustushaku-id (:avustushaku hakemus)})
 
-(defn send-applicant-edit-message! [lang recipients grant-name hakemus]
-  (let [msg (generate-applicant-edit-email lang recipients grant-name hakemus)
-        body (render-body msg)]
+(defn send-applicant-edit-message! [lang recipients grant-name hakemus is-jotpa-hakemus]
+  (let [msg (generate-applicant-edit-email lang recipients grant-name hakemus is-jotpa-hakemus)
+        signature (email-signature-block lang)
+        body (render-body msg signature)]
   (email/enqueue-message-to-be-send msg body)))
 
 (defn notify-valmistelija-of-new-muutoshakemus [to avustushaku-id register-number hanke hakemus-id]

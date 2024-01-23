@@ -333,7 +333,8 @@
         lang (keyword (get-in hakemus [:hakemus :language] "fi"))]
     (if (every? empty? (vals validation))
       (if (= base-version (:version hakemus))
-        (let [submission-id (:form_submission_id hakemus)
+        (let [is-jotpa-hakemus (is-jotpa-avustushaku avustushaku)
+              submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
               submission-version (:version saved-submission)
               submitted-hakemus (va-db/submit-hakemus haku-id
@@ -351,7 +352,7 @@
             (when-let [email (find-answer-value
                               (:answers submission) "primary-email")]
               (va-email/send-applicant-edit-message!
-               lang [email] (get-in avustushaku [:content :name lang]) hakemus)))
+               lang [email] (get-in avustushaku [:content :name lang]) hakemus is-jotpa-hakemus)))
 
           (method-not-allowed! {edit-type "saved"}))
         (hakemus-conflict-response hakemus))
