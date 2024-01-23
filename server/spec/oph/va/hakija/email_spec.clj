@@ -34,7 +34,7 @@
          :grant-name "Test grant"
          :hakemus-id 1}
         (va-email/generate-refused-email
-          :fi ["applicant@local"] "Test grant" 1)))
+          :fi ["applicant@local"] "Test grant" 1 false)))
 
   (it "generates refused email for presenter"
       (let [grant (first (va-db/list-avustushaut))

@@ -156,7 +156,7 @@
    :email-type :application-refused
    :hakemus-id hakemus-id
    :lang lang
-   :from (get-in email/smtp-config [:from lang])
+   :from (if is-jotpa-hakemus "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
    :sender (:sender email/smtp-config)
    :subject (get-in mail-titles [:application-refused lang])
    :to recipients

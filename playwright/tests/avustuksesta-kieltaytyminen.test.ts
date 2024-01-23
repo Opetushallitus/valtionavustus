@@ -30,20 +30,26 @@ test('Avustuksesta kieltäytyminen', async ({
     await refusePage.refuseGrant()
   })
 
-  await test.step('Email contains correct signature block', async () => {
+  await test.step('Hakija receives email', async () => {
     const emails = await waitUntilMinEmails(getAvustushakuRefusedEmails, 1, hakemusID)
+    const email = emails[0]
 
-    expect(emails[0].formatted).toContain(
-      'Ilmoitus avustuksenne vastaanottamatta jättämisestä on lähetetty Opetushallitukseen.'
-    )
+    await test.step('with correct body', async () => {
+      expect(email.formatted).toContain(
+        'Ilmoitus avustuksenne vastaanottamatta jättämisestä on lähetetty Opetushallitukseen.'
+      )
 
-    expect(emails[0].formatted).toContain(
-      'Opetushallitus\n' +
-        'Hakaniemenranta 6\n' +
-        'PL 380, 00531 Helsinki\n' +
-        'puhelin 029 533 1000\n' +
-        'etunimi.sukunimi@oph.fi'
-    )
+      expect(email.formatted).toContain(
+        'Opetushallitus\n' +
+          'Hakaniemenranta 6\n' +
+          'PL 380, 00531 Helsinki\n' +
+          'puhelin 029 533 1000\n' +
+          'etunimi.sukunimi@oph.fi'
+      )
+    })
+    await test.step('with correct from-address', async () => {
+      expect(email['from-address']).toBe('no-reply@valtionavustukset.oph.fi')
+    })
   })
 
   await test.step('Hakemus list shows both refused and accepted application', async () => {
