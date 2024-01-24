@@ -330,7 +330,7 @@
         budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
         validation (merge (validation/validate-form form answers attachments)
                           (va-budget/validate-budget-hakija answers budget-totals form))
-        lang (keyword (get-in hakemus [:hakemus :language] "fi"))]
+        lang (keyword (get hakemus :language "fi"))]
     (if (every? empty? (vals validation))
       (if (= base-version (:version hakemus))
         (let [is-jotpa-hakemus (is-jotpa-avustushaku avustushaku)
