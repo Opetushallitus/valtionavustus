@@ -19,7 +19,7 @@
    :hakemus-change-request-responded {:fi "Automaattinen viesti: avustushakemusta on täydennetty"}
    :loppuselvitys-change-request-responded {:fi "Automaattinen viesti: avustushakemuksen loppuselvitystä on täydennetty"}
    :loppuselvitys-change-request-response-received {:fi "Organisaationne loppuselvitystä on täydennetty:"
-                                           :sv "Slutredovisningen för er organisation är kompletterad:"}
+                                                    :sv "Slutredovisningen för er organisation är kompletterad:"}
    :valiselvitys-submitted-notification {:fi "Väliselvityksenne on vastaanotettu"
                                          :sv "Er mellanredovisning har emottagits"}
    :loppuselvitys-submitted-notification {:fi "Loppuselvityksenne on vastaanotettu"
@@ -42,7 +42,7 @@
    :hakemus-change-request-responded {:fi (email/load-template "email-templates/hakemus-change-request-responded.plain.fi")}
    :loppuselvitys-change-request-responded {:fi (email/load-template "email-templates/loppuselvitys-change-request-responded.plain.fi")}
    :loppuselvitys-change-request-response-received {:fi (email/load-template "email-templates/loppuselvitys-change-request-received.plain.fi")
-                                           :sv (email/load-template "email-templates/loppuselvitys-change-request-received.plain.sv")}
+                                                    :sv (email/load-template "email-templates/loppuselvitys-change-request-received.plain.sv")}
    :valiselvitys-submitted-notification {:fi (email/load-template "email-templates/valiselvitys-submitted-notification.plain.fi")
                                          :sv (email/load-template "email-templates/valiselvitys-submitted-notification.plain.sv")}
    :loppuselvitys-submitted-notification {:fi (email/load-template "email-templates/loppuselvitys-submitted-notification.plain.fi")
@@ -62,13 +62,13 @@
 
 (defn- render-body
   ([msg]
-    (let [{:keys [email-type lang]} msg
-        template (get-in mail-templates [email-type lang])]
-    (render template msg)))
+   (let [{:keys [email-type lang]} msg
+         template (get-in mail-templates [email-type lang])]
+     (render template msg)))
   ([msg partials]
-     (let [{:keys [email-type lang]} msg
-           template (get-in mail-templates [email-type lang])]
-       (render template msg partials))))
+   (let [{:keys [email-type lang]} msg
+         template (get-in mail-templates [email-type lang])]
+     (render template msg partials))))
 
 (defn generate-virkailija-url [avustushaku-id hakemus-db-id]
   (str (-> config :server :virkailija-url)
@@ -86,22 +86,21 @@
 (defn send-selvitys-submitted-message! [avustushaku-id selvitys-user-key selvitys-type lang hakemus-id hakemus-name register-number to]
   (log/info "Sending notification for a submitted selvitys of type " selvitys-type)
   (let [type (if (= selvitys-type "loppuselvitys")
-                :loppuselvitys-submitted-notification
-                :valiselvitys-submitted-notification)
+               :loppuselvitys-submitted-notification
+               :valiselvitys-submitted-notification)
         subject (get-in mail-titles [type lang])
         template (get-in mail-templates [type lang])
-        preview-url (selvitys-preview-url avustushaku-id selvitys-user-key lang selvitys-type)]
-    (email/try-send-msg-once {:email-type type
-                              :lang lang
-                              :from (-> email/smtp-config :from lang)
-                              :sender (-> email/smtp-config :sender)
-                              :to to
-                              :subject subject
-                              :hakemus-id hakemus-id
-                              :hakemus-name hakemus-name
-                              :register-number register-number
-                              :preview-url preview-url}
-                             (partial render template))))
+        preview-url (selvitys-preview-url avustushaku-id selvitys-user-key lang selvitys-type)
+        msg {:hakemus-name hakemus-name
+             :preview-url preview-url
+             :register-number register-number}
+
+        body (render template msg)]
+    (email/try-send-email!
+     (email/message lang type to subject body)
+     {:hakemus-id     hakemus-id
+      :avustushaku-id avustushaku-id
+      :from           (-> email/smtp-config :from lang)})))
 
 (defn send-new-jotpa-hakemus-message! [lang to avustushaku-id avustushaku user-key start-date end-date]
   (let [start-date-string (datetime/date-string start-date)
@@ -167,7 +166,7 @@
   (let [msg (generate-refused-email lang recipients grant-name hakemus-id is-jotpa-hakemus)
         signature (email-signature-block lang)
         body (render-body msg signature)]
-  (email/enqueue-message-to-be-send msg body)))
+    (email/enqueue-message-to-be-send msg body)))
 
 (defn generate-presenter-refused-email [recipients grant application-id]
   (let [url (generate-virkailija-url (:id grant) application-id)
@@ -262,8 +261,7 @@
 
 (defn send-loppuselvitys-change-request-received-message-to-hakija! [to avustushaku-id parent-hakemus-id lang register-number project-name email-of-virkailija virkailija-first-name virkailija-last-name]
   (let [subject (format "%s %s %s" (get-in mail-titles [:loppuselvitys-change-request-response-received lang]) register-number project-name)
-          msg {
-             :operation :send
+        msg {:operation :send
              :email-type :loppuselvitys-change-request-response-received
              :lang lang
              :hakemus-id parent-hakemus-id
@@ -275,8 +273,8 @@
              :register-number register-number
              :email-of-virkailija email-of-virkailija
              :virkailija-first-name virkailija-first-name
-             :virkailija-last-name virkailija-last-name
-             }
+             :virkailija-last-name virkailija-last-name}
+
         body (render-body msg)]
     (email/enqueue-message-to-be-send msg body)))
 
