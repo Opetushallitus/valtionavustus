@@ -8,3 +8,5 @@ hakemus lähetettävä käsiteltäväksi ennen hakuajan päättymistä. Määrä
 Pääsette viimeistelemään hakemuksenne tästä: {{& url }}
 
 Mikäli olette päättäneet jättää hakemuksen lähettämättä, on tämä viesti aiheeton.
+
+{{>signature}}

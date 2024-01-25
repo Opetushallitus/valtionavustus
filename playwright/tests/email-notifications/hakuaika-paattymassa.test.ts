@@ -1,7 +1,7 @@
 import { expect, Page, test } from '@playwright/test'
 import moment from 'moment'
 
-import { getHakuaikaPaattymassaEmails, getLastEmail } from '../../utils/emails'
+import { getHakuaikaPaattymassaEmails, waitUntilMinEmails } from '../../utils/emails'
 import { VIRKAILIJA_URL } from '../../utils/constants'
 import { randomString } from '../../utils/random'
 import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
@@ -50,9 +50,8 @@ for (const tz of timezones) {
         'sends an email to those whose hakemus is expiring tomorrow',
         async ({ page, avustushakuID, filledHakemus, randomEmail, hakuProps }) => {
           await sendHakuaikaPaattymassaNotifications(page)
-          await page.waitForTimeout(5000)
-
-          const email = await getLastEmail('hakuaika-paattymassa', avustushakuID)
+          const emails = await waitUntilMinEmails(getHakuaikaPaattymassaEmails, 1, avustushakuID)
+          const email = emails[0]
 
           expect(email['to-address']).toHaveLength(1)
           expect(email['to-address']).toContain(randomEmail)
@@ -60,7 +59,7 @@ for (const tz of timezones) {
 
           const endDate = moment(hakuProps.hakuaikaEnd).format('DD.MM.YYYY')
           expect(filledHakemus.hakemusUrl).toContain('lang=fi')
-          expect(email.formatted).toEqual(`Hyvä vastaanottaja,
+          expect(email.formatted).toContain(`Hyvä vastaanottaja,
 
 teillä on keskeneräinen hakemus valtionavustuksessa ${hakuProps.avustushakuName}. Huomaa, että avustuksen hakuaika päättyy ${endDate} klo 12.00.
 
@@ -70,6 +69,14 @@ hakemus lähetettävä käsiteltäväksi ennen hakuajan päättymistä. Määrä
 Pääsette viimeistelemään hakemuksenne tästä: ${filledHakemus.hakemusUrl}
 
 Mikäli olette päättäneet jättää hakemuksen lähettämättä, on tämä viesti aiheeton.`)
+
+          expect(email.formatted).toContain(
+            'Opetushallitus\n' +
+              'Hakaniemenranta 6\n' +
+              'PL 380, 00531 Helsinki\n' +
+              'puhelin 029 533 1000\n' +
+              'etunimi.sukunimi@oph.fi'
+          )
         }
       )
 
@@ -87,9 +94,8 @@ Mikäli olette päättäneet jättää hakemuksen lähettämättä, on tämä vi
           'sends an email in Swedish',
           async ({ page, avustushakuID, filledHakemus, randomEmail, hakuProps }) => {
             await sendHakuaikaPaattymassaNotifications(page)
-            await page.waitForTimeout(5000)
-
-            const email = await getLastEmail('hakuaika-paattymassa', avustushakuID)
+            const emails = await waitUntilMinEmails(getHakuaikaPaattymassaEmails, 1, avustushakuID)
+            const email = emails[0]
 
             expect(email['to-address']).toHaveLength(1)
             expect(email['to-address']).toContain(randomEmail)
@@ -97,7 +103,7 @@ Mikäli olette päättäneet jättää hakemuksen lähettämättä, on tämä vi
 
             const endDate = moment(hakuProps.hakuaikaEnd).format('DD.MM.YYYY')
             expect(filledHakemus.hakemusUrl).toContain('lang=sv')
-            expect(email.formatted).toEqual(`Bästa mottagare,
+            expect(email.formatted).toContain(`Bästa mottagare,
 
 ni har en halvfärdig ansökan om statsunderstöd ${
               hakuProps.avustushakuName + ' på svenska'
@@ -108,6 +114,14 @@ Ansökan och ändringar som görs i ansökan sparas automatiskt i Utbildningssty
 Ni kommer åt att färdigställa er ansökan via denna länk: ${filledHakemus.hakemusUrl}
 
 Om ni har beslutat att inte lämna in ansökan föranleder detta meddelande inga åtgärder.`)
+
+            expect(email.formatted).toContain(
+              'Utbildningsstyrelsen\n' +
+                'Hagnäskajen 6\n' +
+                'PB 380, 00531 Helsingfors\n' +
+                'telefon 029 533 1000\n' +
+                'fornamn.efternamn@oph.fi'
+            )
           }
         )
       })

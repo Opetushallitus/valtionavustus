@@ -7,3 +7,5 @@ Ansökan och ändringar som görs i ansökan sparas automatiskt i Utbildningssty
 Ni kommer åt att färdigställa er ansökan via denna länk: {{& url }}
 
 Om ni har beslutat att inte lämna in ansökan föranleder detta meddelande inga åtgärder.
+
+{{>signature}}

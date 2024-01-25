@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.virkailija-notifications
   (:require [clojure.tools.logging :as log]
             [oph.va.virkailija.email :as email]
+            [oph.va.hakija.api :as hakija-api]
             [oph.soresu.common.db :refer [query]]))
 
 (defn- get-loppuselvitys-asiatarkastamatta []
@@ -14,7 +15,7 @@
          []))
 
 (defn- get-hakuaika-paattymassa-haut []
-  (query "SELECT h.avustushaku as avustushaku_id, h.user_key, hakemus.contact_email AS contact_email,
+  (query "SELECT h.id, h.avustushaku as avustushaku_id, h.user_key, hakemus.contact_email AS contact_email,
             h.language,
             jsonb_extract_path_text(avustushaku.content, 'name', h.language) as avustushaku_name,
             avustushaku.content->'duration'->>'end' AS paattymispaiva
@@ -53,7 +54,7 @@
     (when (>= hakemukset-paattymassa-count 1)
       (log/info "sending email to" hakemukset-paattymassa-count" contacts")
       (doseq [hakemus hakemukset-list]
-        (email/send-hakuaika-paattymassa hakemus)))))
+        (email/send-hakuaika-paattymassa hakemus (hakija-api/get-avustushaku (:avustushaku-id hakemus)))))))
 
 (defn get-avustushaut-ended-yesterday []
   (query "WITH notification_recipients AS (
@@ -266,7 +267,7 @@
                       )
                 )
             AND " date-field " IS NOT NULL
-            AND current_timestamp::date BETWEEN (" date-field "::date - ?::interval) AND " date-field "::date 
+            AND current_timestamp::date BETWEEN (" date-field "::date - ?::interval) AND " date-field "::date
             AND (r.role = 'presenting_officer' OR r.role = 'vastuuvalmistelija')
             AND r.email IS NOT NULL
           GROUP BY avustushaku_name, " date-field ", avustushaku_id")

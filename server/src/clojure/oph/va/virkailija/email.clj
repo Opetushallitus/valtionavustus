@@ -78,6 +78,10 @@
                                  :sv (email/load-template "email-templates/email-signature.plain.sv")}
    })
 
+(defn email-signature-block [lang]
+  (let [sig-template (get-in mail-templates [:email-signature lang])]
+    {:signature sig-template}))
+
 (defn mail-example [msg-type & [data]]
   {:content (render (:fi (msg-type mail-templates)) (if data data {}))
    :subject (:fi (msg-type mail-titles))
@@ -212,27 +216,30 @@
                               :list list}
                              (partial render template))))
 
-(defn send-hakuaika-paattymassa [hakemus]
+(defn send-hakuaika-paattymassa [hakemus avustushaku]
   (let [lang           (keyword (:language hakemus))
         mail-subject   (get-in mail-titles [:hakuaika-paattymassa lang])
         template       (get-in mail-templates [:hakuaika-paattymassa lang])
         to             (:contact-email hakemus)
         paattymispaiva (datetime/date-string (datetime/parse (:paattymispaiva hakemus)))
         paattymisaika  (datetime/time-string (datetime/parse (:paattymispaiva hakemus)))
-        url            (email-utils/generate-url (:avustushaku-id hakemus) lang (:user-key hakemus) false)]
+        email-signature (email-signature-block lang)
+        url             (email-utils/generate-url (:avustushaku-id hakemus) lang (:user-key hakemus) false)
+        is-jotpa-hakemus? (is-jotpa-avustushaku avustushaku)
+        from            (if is-jotpa-hakemus? "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+        msg             {:avustushaku-name (:avustushaku-name hakemus)
+                         :paattymispaiva paattymispaiva
+                         :paattymisaika paattymisaika
+                         :url url
+                         :is-jotpa-hakemus is-jotpa-hakemus?}
+        body (render template msg email-signature)]
+
     (log/info "sending to" to)
-    (email/try-send-msg-once {:email-type :hakuaika-paattymassa
-                              :lang lang
-                              :from (-> email/smtp-config :from lang)
-                              :sender (-> email/smtp-config :sender)
-                              :to [to]
-                              :subject mail-subject
-                              :paattymispaiva paattymispaiva
-                              :paattymisaika paattymisaika
-                              :avustushaku-name (:avustushaku-name hakemus)
-                              :avustushaku-id (:avustushaku-id hakemus)
-                              :url url}
-                             (partial render template))))
+    (email/try-send-email!
+      (email/message lang :hakuaika-paattymassa [to] mail-subject body)
+      {:hakemus-id     (:id hakemus)
+       :avustushaku-id (:id avustushaku)
+       :from           from})))
 
 (defn send-hakuaika-paattynyt [notification]
   (let [lang         :fi
@@ -416,10 +423,6 @@
   (and
     (:muutoshakukelpoinen avustushaku)
     (has-normalized-hakemus hakemus-id)))
-
-(defn email-signature-block [lang]
-  (let [sig-template (get-in mail-templates [:email-signature lang])]
-    {:signature sig-template}))
 
 (defn send-paatos-refuse! [to avustushaku hakemus token]
   (let [lang-str (:language hakemus)
