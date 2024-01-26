@@ -11,10 +11,11 @@ import {
   getLinkToMuutoshakemusFromSentEmails,
   getLoppuselvitysEmails,
   getAvustushakuRefusedEmails,
-  getSelvitysEmails,
   getValiselvitysEmails,
   lastOrFail,
   Email,
+  getSelvitysEmailsWithValiselvitysSubject,
+  getSelvitysEmailsWithLoppuselvitysSubject,
 } from '../utils/emails'
 import { HakijaMuutoshakemusPage } from '../pages/hakija/hakijaMuutoshakemusPage'
 import { navigate } from '../utils/navigate'
@@ -151,8 +152,8 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
       await hakemustenArviointiPage.navigate(avustushakuID)
       hakemusID = await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
       const emails = await getHakemusSubmitted(hakemusID)
-      await expect(emails).toHaveLength(1)
-      await expect(emails[0]['to-address']).toContain(answers.trustedContact.email)
+      expect(emails).toHaveLength(1)
+      expect(emails[0]['to-address']).toContain(answers.trustedContact.email)
     })
     await test.step('varayhteyshenkilö is shown in arviointi after submission', async () => {
       const sidebarLocators = hakemustenArviointiPage.sidebarLocators()
@@ -268,7 +269,7 @@ test('varayhteyshenkilo flow', async ({
     await expect(hakijaSelvitysPage.submitButton).toHaveText('Väliselvitys lähetetty')
     await virkailijaValiselvitysPage.navigateToValiselvitysTab(avustushakuID, acceptedHakemusId)
     await virkailijaValiselvitysPage.acceptSelvitys()
-    const emailsAfterAcceptance = await getSelvitysEmails(avustushakuID)
+    const emailsAfterAcceptance = await getSelvitysEmailsWithValiselvitysSubject(avustushakuID)
     const latestMail = lastOrFail(emailsAfterAcceptance)
     expect(latestMail['subject']).toContain('Väliselvitys')
     expect(latestMail['to-address']).not.toContain(answers.trustedContact.email)
@@ -303,7 +304,7 @@ test('varayhteyshenkilo flow', async ({
     let latestMail: Email | undefined
     await expect
       .poll(async () => {
-        const emailsAfterAcceptance = await getSelvitysEmails(avustushakuID)
+        const emailsAfterAcceptance = await getSelvitysEmailsWithLoppuselvitysSubject(avustushakuID)
         latestMail = lastOrFail(emailsAfterAcceptance)
         return latestMail['subject']
       })

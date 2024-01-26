@@ -7,9 +7,9 @@ import {
   getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails,
   getLoppuselvitysTaydennysReceivedHakijaNotificationEmails,
   getLoppuselvitysTaydennysReceivedEmails,
-  getSelvitysEmails,
   waitUntilMinEmails,
   getHakemusTokenAndRegisterNumber,
+  getSelvitysEmailsWithLoppuselvitysSubject,
 } from '../../../utils/emails'
 import { HakijaSelvitysPage } from '../../../pages/hakija/hakijaSelvitysPage'
 import { navigate } from '../../../utils/navigate'
@@ -292,14 +292,14 @@ santeri.horttanainen@reaktor.com`)
     await expect(taydennykseenVastattu).toBeVisible()
   })
   await test.step('taloustarkastus disables all buttons and email is sent', async () => {
-    const beforeSelvitysEmails = await getSelvitysEmails(avustushakuID)
+    const beforeSelvitysEmails = await getSelvitysEmailsWithLoppuselvitysSubject(avustushakuID)
     expect(beforeSelvitysEmails).toHaveLength(0)
     await loppuselvitysPage.taloustarkastaLoppuselvitys()
     await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeHidden()
     await expect(loppuselvitysPage.locators.asiatarkastus.taydennyspyynto).toBeDisabled()
     await expect(loppuselvitysPage.locators.taloustarkastus.accept).toBeDisabled()
     await expect(loppuselvitysPage.locators.taloustarkastus.taydennyspyynto).toBeDisabled()
-    const afterSelvitysEmails = await getSelvitysEmails(avustushakuID)
+    const afterSelvitysEmails = await getSelvitysEmailsWithLoppuselvitysSubject(avustushakuID)
     expect(afterSelvitysEmails).toHaveLength(1)
     expect(afterSelvitysEmails[0].subject).toBe(
       `Loppuselvitys 1/${hakuProps.registerNumber} käsitelty`

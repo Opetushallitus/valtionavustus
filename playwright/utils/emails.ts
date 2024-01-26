@@ -34,9 +34,6 @@ export const emailSchema = yup
   )
   .defined()
 
-export const getLastEmail = (emailType: string, avustushakuID: number): Promise<Email> =>
-  getEmailsWithAvustushaku(emailType)(avustushakuID).then(lastOrFail)
-
 const getEmails =
   (emailType: string) =>
   (hakemusID: number): Promise<Email[]> =>
@@ -92,7 +89,28 @@ export const getRejectedPäätösEmails = getEmails('paatos')
 export const getValiselvitysEmails = getEmails('valiselvitys-notification')
 export const getValiselvitysEmailsForAvustus = getEmailsWithAvustushaku('valiselvitys-notification')
 
-export const getSelvitysEmails = getEmailsWithAvustushaku('selvitys')
+const getSelvitysEmails = getEmailsWithAvustushaku('selvitys')
+
+export async function getSelvitysEmailsWithValiselvitysSubject(avustushakuID: number) {
+  const finnishTitle = /Väliselvitys.*käsitelty/
+  const swedishTitle = /Mellanredovisning.*behandlat/
+
+  const emails = await getSelvitysEmails(avustushakuID)
+  return emails.filter(
+    (email) => finnishTitle.test(email?.subject || '') || swedishTitle.test(email?.subject || '')
+  )
+}
+
+export async function getSelvitysEmailsWithLoppuselvitysSubject(avustushakuID: number) {
+  const finnishTitle = /Loppuselvitys.*käsitelty/
+  const swedishTitle = /Slutredovisningen.*behandlad/
+
+  const emails = await getSelvitysEmails(avustushakuID)
+  return emails.filter(
+    (email) => finnishTitle.test(email?.subject || '') || swedishTitle.test(email?.subject || '')
+  )
+}
+
 export const getLoppuselvitysTaydennysReceivedEmails = getEmails(
   'loppuselvitys-change-request-responded'
 )
