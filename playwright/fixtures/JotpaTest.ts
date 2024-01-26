@@ -5,7 +5,7 @@ import muutoshakemusEnabledHakuLomakeJson from './prod.hakulomake.json'
 import { Answers } from '../utils/types'
 import { answers, dummyPdfPath, swedishAnswers } from '../utils/constants'
 
-const jotpaToimintayksikkö = {
+export const jotpaToimintayksikkö = {
   name: 'Jatkuvan oppimisen ja työllisyyden palvelukeskus',
   code: '6600105300',
 }

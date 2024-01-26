@@ -7,7 +7,6 @@ import { expect, test } from '@playwright/test'
 import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { LoppuselvitysPage } from '../pages/virkailija/hakujen-hallinta/LoppuselvitysPage'
 import { ValiselvitysPage } from '../pages/virkailija/hakujen-hallinta/ValiselvitysPage'
-import translations from '../../server/resources/public/translations.json'
 
 interface SelvitysFixtures {
   väliselvityspyyntöSent: {}
