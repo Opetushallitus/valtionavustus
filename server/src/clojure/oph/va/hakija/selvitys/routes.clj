@@ -1,18 +1,17 @@
 (ns oph.va.hakija.selvitys.routes
-  (:require [oph.soresu.common.db :refer [query]]
-            [oph.soresu.common.config :refer [feature-enabled?]]
-            [oph.soresu.form.validation :as validation]
-            [oph.soresu.form.schema :as soresu-schema]
+  (:require [compojure.api.sweet :as compojure-api]
+            [oph.soresu.common.db :refer [query]]
             [oph.soresu.form.db :as form-db]
             [oph.soresu.form.routes
              :refer [update-form-submission]]
+            [oph.soresu.form.schema :as soresu-schema]
+            [oph.soresu.form.validation :as validation]
             [oph.va.budget :as va-budget]
-            [oph.va.hakija.api :as hakija-api]
             [oph.va.hakija.db :as va-db]
             [oph.va.hakija.email :as va-email]
             [oph.va.hakija.handlers :as handlers]
+            [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
             [oph.va.hakija.schema :as hakija-schema]
-            [compojure.api.sweet :as compojure-api]
             [ring.util.http-response :as http]
             [schema.core :as s]))
 
@@ -241,11 +240,13 @@
               contact-email (get-hakemus-contact-email parent_id)
               parent-hakemus (va-db/get-hakemus-by-id parent_id)
               hakemus-name (:project-name parent-hakemus)
-              register-number (:register-number parent-hakemus)]
+              register-number (:register-number parent-hakemus)
+              is-jotpa (is-jotpa-avustushaku avustushaku)
+              ]
           (if (= selvitys-type "loppuselvitys")
             (va-db/update-loppuselvitys-status parent_id "submitted")
             (va-db/update-valiselvitys-status parent_id "submitted"))
-          (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id hakemus-name register-number [contact-email])
+          (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id hakemus-name register-number [contact-email] is-jotpa)
           (handlers/hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (handlers/hakemus-conflict-response hakemus))
       (http/bad-request! validation))))

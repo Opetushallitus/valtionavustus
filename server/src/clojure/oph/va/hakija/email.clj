@@ -1,11 +1,11 @@
 (ns oph.va.hakija.email
-  (:require [oph.common.datetime :as datetime]
-            [oph.soresu.common.config :refer [config]]
+  (:require [clojure.tools.logging :as log]
+            [clostache.parser :refer [render]]
+            [oph.common.datetime :as datetime]
             [oph.common.email :as email]
             [oph.common.email-utils :as email-utils]
-            [oph.va.virkailija.email :refer [email-signature-block]]
-            [clojure.tools.logging :as log]
-            [clostache.parser :refer [render]]))
+            [oph.soresu.common.config :refer [config]]
+            [oph.va.virkailija.email :refer [email-signature-block]]))
 
 (def mail-titles
   {:new-hakemus {:fi "Linkki organisaationne avustushakemukseen"
@@ -83,7 +83,7 @@
         lang-str (or (clojure.core/name lang) "fi")]
     (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?" selvitys-type "=" selvitys-user-key "&lang=" lang-str "&preview=true")))
 
-(defn send-selvitys-submitted-message! [avustushaku-id selvitys-user-key selvitys-type lang hakemus-id hakemus-name register-number to]
+(defn send-selvitys-submitted-message! [avustushaku-id selvitys-user-key selvitys-type lang hakemus-id hakemus-name register-number to is-jotpa]
   (log/info "Sending notification for a submitted selvitys of type " selvitys-type)
   (let [type (if (= selvitys-type "loppuselvitys")
                :loppuselvitys-submitted-notification
@@ -93,14 +93,16 @@
         preview-url (selvitys-preview-url avustushaku-id selvitys-user-key lang selvitys-type)
         msg {:hakemus-name hakemus-name
              :preview-url preview-url
-             :register-number register-number}
-
-        body (render template msg)]
+             :register-number register-number
+             :is-jotpa-hakemus is-jotpa}
+        email-signature ( email-signature-block lang)
+        body (render template msg email-signature)
+        ]
     (email/try-send-email!
      (email/message lang type to subject body)
      {:hakemus-id     hakemus-id
       :avustushaku-id avustushaku-id
-      :from           (-> email/smtp-config :from lang)})))
+      :from           (if is-jotpa "no-reply@jotpa.fi" (-> email/smtp-config :from lang))})))
 
 (defn send-new-jotpa-hakemus-message! [lang to avustushaku-id avustushaku user-key start-date end-date]
   (let [start-date-string (datetime/date-string start-date)
