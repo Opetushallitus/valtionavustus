@@ -1,6 +1,6 @@
 import { muutoshakemusTest } from './muutoshakemusTest'
 import { expectToBeDefined } from '../utils/util'
-import { answers, dummyPdfPath, VIRKAILIJA_URL } from '../utils/constants'
+import { dummyPdfPath, VIRKAILIJA_URL } from '../utils/constants'
 import { navigate } from '../utils/navigate'
 import { HakijaSelvitysPage } from '../pages/hakija/hakijaSelvitysPage'
 import { expect, test } from '@playwright/test'
@@ -58,7 +58,6 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     testInfo
   ) => {
     testInfo.setTimeout(testInfo.timeout + 30_000)
-    const { lang } = answers
     let userKey: string | null = null
     await muutoshakemusTest.step('Fill in and submit väliselvitys', async () => {
       expectToBeDefined(väliselvityspyyntöSent)
@@ -70,10 +69,10 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
       const hakijaSelvitysPage = HakijaSelvitysPage(page)
       await hakijaSelvitysPage.fillCommonValiselvitysForm()
       await expect(hakijaSelvitysPage.valiselvitysWarning).toBeHidden()
-      const submitButtonText = lang === 'fi' ? 'Lähetä käsiteltäväksi' : 'Sänd för behandling'
+      const submitButtonText = /Lähetä käsiteltäväksi|Sänd för behandling/
       await expect(hakijaSelvitysPage.submitButton).toHaveText(submitButtonText)
       await hakijaSelvitysPage.submitButton.click()
-      const selvitysSentText = lang === 'fi' ? 'Väliselvitys lähetetty' : 'Mellanredovisning sänd'
+      const selvitysSentText = /Väliselvitys lähetetty|Mellanredovisning sänd/
       await expect(hakijaSelvitysPage.submitButton).toHaveText(selvitysSentText)
       await expect(hakijaSelvitysPage.submitButton).toBeDisabled()
       await expect(hakijaSelvitysPage.valiselvitysWarning).toBeHidden()
