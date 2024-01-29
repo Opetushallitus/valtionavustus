@@ -7,6 +7,9 @@ import { selvitysTest } from '../../fixtures/selvitysTest'
 import { jotpaToimintayksikkö } from '../../fixtures/JotpaTest'
 import { KoodienhallintaPage } from '../../pages/virkailija/koodienHallintaPage'
 import { randomString } from '../../utils/random'
+import { Answers } from '../../utils/types'
+import { swedishAnswers } from '../../utils/constants'
+import { expectToBeDefined } from '../../utils/util'
 const jotpaSelvitysTest = selvitysTest.extend({
   codes: async ({ page }, use) => {
     const koodienhallintaPage = KoodienhallintaPage(page)
@@ -20,6 +23,9 @@ const jotpaSelvitysTest = selvitysTest.extend({
     })
     await use(codes)
   },
+})
+const swedishJotpaSelvitysTest = jotpaSelvitysTest.extend<{ answers: Answers }>({
+  answers: swedishAnswers,
 })
 
 jotpaSelvitysTest(
@@ -47,6 +53,24 @@ jotpaSelvitysTest(
           'puhelin 029 533 1000\n' +
           'etunimi.sukunimi@jotpa.fi'
       )
+    })
+  }
+)
+
+swedishJotpaSelvitysTest(
+  'Swedish Jotpa hakemus happy path all the way to the loppuselvitys ok',
+  async ({ acceptedHakemus: { hakemusID }, valiAndLoppuselvitysSubmitted }) => {
+    expectToBeDefined(valiAndLoppuselvitysSubmitted)
+
+    await test.step('väliselvitys email', async () => {
+      const emails = await waitUntilMinEmails(
+        getValiselvitysSubmittedNotificationEmails,
+        1,
+        hakemusID
+      )
+
+      const email = emails[0]
+      expect(email['from-address']).toEqual('no-reply@jotpa.fi')
     })
   }
 )
