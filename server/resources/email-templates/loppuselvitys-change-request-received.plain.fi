@@ -7,3 +7,5 @@ Olemme vastaanottaneet loppuselvitystänne koskevat täydennykset ja selvityksen
 Ystävällisin terveisin,
 {{ virkailija-first-name }} {{ virkailija-last-name }}
 {{ email-of-virkailija }}
+
+{{>signature}}

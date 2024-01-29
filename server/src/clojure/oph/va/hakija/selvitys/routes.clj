@@ -148,6 +148,7 @@
   (let [selvitys-type "loppuselvitys"
         selvitys-field-keyword (selvitys-form-keyword selvitys-type)
         avustushaku (va-db/get-avustushaku avustushaku-id)
+        is-jotpa-avustushaku (is-jotpa-avustushaku avustushaku)
         form-id (selvitys-field-keyword avustushaku)
         form (form-db/get-form form-id)
         hakemus (va-db/get-hakemus selvitys-user-key)
@@ -194,7 +195,7 @@
                                                                                   email-of-virkailija
                                                                                   virkailija-first-name
                                                                                   virkailija-last-name
-                                                                                  )
+                                                                                  is-jotpa-avustushaku)
           (handlers/hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (handlers/hakemus-conflict-response hakemus))
       (http/bad-request! validation))))

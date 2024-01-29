@@ -261,13 +261,16 @@
     (log/info "Url would be: " url)
     (email/enqueue-message-to-be-send msg body)))
 
-(defn send-loppuselvitys-change-request-received-message-to-hakija! [to avustushaku-id parent-hakemus-id lang register-number project-name email-of-virkailija virkailija-first-name virkailija-last-name]
+(defn send-loppuselvitys-change-request-received-message-to-hakija! [to avustushaku-id parent-hakemus-id lang register-number project-name email-of-virkailija virkailija-first-name virkailija-last-name is-jotpa-hakemus?]
   (let [subject (format "%s %s %s" (get-in mail-titles [:loppuselvitys-change-request-response-received lang]) register-number project-name)
+        signature (email-signature-block lang)
+        from            (if is-jotpa-hakemus? "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
         msg {:operation :send
              :email-type :loppuselvitys-change-request-response-received
              :lang lang
              :hakemus-id parent-hakemus-id
-             :from (-> email/smtp-config :from lang)
+             :is-jotpa-hakemus is-jotpa-hakemus?
+             :from from
              :sender (-> email/smtp-config :sender)
              :subject subject
              :to to
@@ -277,7 +280,7 @@
              :virkailija-first-name virkailija-first-name
              :virkailija-last-name virkailija-last-name}
 
-        body (render-body msg)]
+        body (render-body msg signature)]
     (email/enqueue-message-to-be-send msg body)))
 
 (defn send-hakemus-submitted-message! [is-change-request-response? is-jotpa-avustushaku? lang to avustushaku-id avustushaku user-key start-date end-date hakemus-id]

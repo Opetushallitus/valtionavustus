@@ -7,3 +7,5 @@ Vi har tagit emot kompletteringarna till er slutredovisning och den går nu vida
 Med vänlig hälsning
 {{ virkailija-first-name }} {{ virkailija-last-name }}
 {{ email-of-virkailija }}
+
+{{>signature}}

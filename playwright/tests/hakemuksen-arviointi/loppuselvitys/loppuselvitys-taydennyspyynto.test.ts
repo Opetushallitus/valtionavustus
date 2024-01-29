@@ -74,21 +74,29 @@ test.extend<{ answers: Answers }>({
         1,
         hakemusID
       )
+      const email = emails[0]
       const { 'register-number': registerNumber } =
         await getHakemusTokenAndRegisterNumber(hakemusID)
 
-      expect(emails[0].subject).toBe(
+      expect(email.subject).toBe(
         `Slutredovisningen för er organisation är kompletterad: ${registerNumber} Vi Simmar i Pengar Ab`
       )
-      expect(emails[0].formatted).toBe(`Bästa mottagare
+      expect(email.formatted).toContain(
+        `Bästa mottagare\n\n` +
+          `det här meddelandet gäller statsunderstödet: ${registerNumber} Vi Simmar i Pengar Ab\n\n` +
+          `Vi har tagit emot kompletteringarna till er slutredovisning och den går nu vidare till nästa skede av granskningen. När slutredovisningen är slutbehandlad sänder vi  ett e-postmeddelande till organisationens officiella e-postadress och kontaktpersonen för mottagaren av statsunderstödet.\n\n` +
+          `Med vänlig hälsning\n` +
+          `_ valtionavustus\n` +
+          `santeri.horttanainen@reaktor.com`
+      )
 
-det här meddelandet gäller statsunderstödet: ${registerNumber} Vi Simmar i Pengar Ab
-
-Vi har tagit emot kompletteringarna till er slutredovisning och den går nu vidare till nästa skede av granskningen. När slutredovisningen är slutbehandlad sänder vi  ett e-postmeddelande till organisationens officiella e-postadress och kontaktpersonen för mottagaren av statsunderstödet.
-
-Med vänlig hälsning
-_ valtionavustus
-santeri.horttanainen@reaktor.com`)
+      expect(email.formatted).toContain(
+        'Utbildningsstyrelsen\n' +
+          'Hagnäskajen 6\n' +
+          'PB 380, 00531 Helsingfors\n' +
+          'telefon 029 533 1000\n' +
+          'fornamn.efternamn@oph.fi'
+      )
     })
   }
 )
@@ -190,21 +198,28 @@ Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avu
   await test.step('hakija receives täydennys received email after creating submission', async () => {
     const { 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
     const emails = await getLoppuselvitysTaydennysReceivedHakijaNotificationEmails(hakemusID)
+    const email = emails[0]
     expect(emails).toHaveLength(1)
-    expect(emails[0].subject).toBe(
+    expect(email.subject).toBe(
       `Organisaationne loppuselvitystä on täydennetty: ${registerNumber} Rahassa kylpijät Ky Ay Oy`
     )
-    expect(emails[0]['to-address']).toStrictEqual(['erkki.esimerkki@example.com'])
+    expect(email['to-address']).toStrictEqual(['erkki.esimerkki@example.com'])
 
-    expect(emails[0].formatted).toBe(`Hyvä vastaanottaja,
-
-tämä viesti koskee avustusta: ${registerNumber} Rahassa kylpijät Ky Ay Oy
-
-Olemme vastaanottaneet loppuselvitystänne koskevat täydennykset ja selvityksenne tarkastus siirtyy seuraavaan vaiheeseen. Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan viralliseen sähköpostiosoitteeseen sekä yhteyshenkilöille.
-
-Ystävällisin terveisin,
-_ valtionavustus
-santeri.horttanainen@reaktor.com`)
+    expect(email.formatted).toContain(
+      `Hyvä vastaanottaja,\n\n` +
+        `tämä viesti koskee avustusta: ${registerNumber} Rahassa kylpijät Ky Ay Oy\n\n` +
+        `Olemme vastaanottaneet loppuselvitystänne koskevat täydennykset ja selvityksenne tarkastus siirtyy seuraavaan vaiheeseen. Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan viralliseen sähköpostiosoitteeseen sekä yhteyshenkilöille.\n\n` +
+        `Ystävällisin terveisin,\n` +
+        `_ valtionavustus\n` +
+        `santeri.horttanainen@reaktor.com`
+    )
+    expect(email.formatted).toContain(
+      'Opetushallitus\n' +
+        'Hakaniemenranta 6\n' +
+        'PL 380, 00531 Helsinki\n' +
+        'puhelin 029 533 1000\n' +
+        'etunimi.sukunimi@oph.fi'
+    )
   })
   await test.step('hakija täydennys is shown as diff', async () => {
     await hakemustenArviointiPage.navigateToHakemusArviointiLoppuselvitys(avustushakuID, hakemusID)
