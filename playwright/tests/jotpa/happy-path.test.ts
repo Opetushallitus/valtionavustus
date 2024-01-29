@@ -1,12 +1,7 @@
 import { expect, test } from '@playwright/test'
-
 import { getValiselvitysSubmittedNotificationEmails, waitUntilMinEmails } from '../../utils/emails'
-
 import { selvitysTest } from '../../fixtures/selvitysTest'
-
-import { jotpaToimintayksikkö } from '../../fixtures/JotpaTest'
-import { KoodienhallintaPage } from '../../pages/virkailija/koodienHallintaPage'
-import { randomString } from '../../utils/random'
+import { createJotpaCodes } from '../../fixtures/JotpaTest'
 import { Answers } from '../../utils/types'
 import { swedishAnswers } from '../../utils/constants'
 import { expectToBeDefined } from '../../utils/util'
@@ -27,15 +22,7 @@ const finnishSignature =
 
 const jotpaSelvitysTest = selvitysTest.extend({
   codes: async ({ page }, use) => {
-    const koodienhallintaPage = KoodienhallintaPage(page)
-    await koodienhallintaPage.navigate()
-    const uniqueCode = () => randomString().substring(0, 13)
-    const codes = await koodienhallintaPage.createCodeValues({
-      operationalUnit: jotpaToimintayksikkö.code,
-      operationalUnitName: jotpaToimintayksikkö.name,
-      project: [uniqueCode()],
-      operation: uniqueCode(),
-    })
+    const codes = await createJotpaCodes(page)
     await use(codes)
   },
 })
@@ -67,7 +54,7 @@ swedishJotpaSelvitysTest(
   async ({ acceptedHakemus: { hakemusID }, valiAndLoppuselvitysSubmitted }) => {
     expectToBeDefined(valiAndLoppuselvitysSubmitted)
 
-    test.step('väliselvitys email', async () => {
+    await test.step('väliselvitys email', async () => {
       const emails = await waitUntilMinEmails(
         getValiselvitysSubmittedNotificationEmails,
         1,
