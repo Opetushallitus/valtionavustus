@@ -87,10 +87,16 @@
    :subject (:fi (msg-type mail-titles))
    :sender (-> email/smtp-config :sender)})
 
-(defn- render-body [msg]
+(defn- render-body
+  ([msg]
   (let [{:keys [email-type lang]} msg
         template (get-in mail-templates [email-type lang])]
     (render template msg)))
+  ([msg partials]
+   (let [{:keys [email-type lang]} msg
+         template (get-in mail-templates [email-type lang])]
+     (render template msg partials))))
+
 
 (defn send-taydennyspyynto-message! [lang to cc avustushaku-id hakemus-id avustushaku-name user-key taydennyspyynto presenting-officer-email]
   (let [url (email-utils/generate-url avustushaku-id lang user-key false)
@@ -507,18 +513,22 @@
         presenter-role-id (:presenter_role_id arvio)
         url (selvitys-url (:id avustushaku) (:user_key hakemus) lang selvitys-type)
         avustushaku-name (get-in avustushaku [:content :name lang])
+        is-jotpa-avustushaku (is-jotpa-avustushaku avustushaku)
+        from (if is-jotpa-avustushaku "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
         mail-subject (str (get-in mail-titles [(keyword type) lang]) " " avustushaku-name)
         selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
         presenter (if (nil? selected-presenter) (first roles) selected-presenter)
         disable-selvitysmail-to-virkailija (-> config :dont-send-loppuselvityspyynto-to-virkailija :enabled?)
         selvitysdate-unformatted ((keyword (str selvitys-type "date")) avustushaku)
         selvitysdate (if (nil? selvitysdate-unformatted) "" (datetime/java8-date-string selvitysdate-unformatted))
+        signature (email-signature-block lang)
         msg {:operation :send
              :hakemus-id (:id hakemus)
              :avustushaku-id (:id avustushaku)
+             :is-jotpa-hakemus is-jotpa-avustushaku
              :email-type (keyword type)
              :lang lang
-             :from (-> email/smtp-config :from lang)
+             :from from
              :sender (-> email/smtp-config :sender)
              :subject mail-subject
              :selvitysdate selvitysdate
@@ -529,7 +539,7 @@
              :url url
              :register-number (:register_number hakemus)
              :project-name (:project_name hakemus)}
-        body (render-body msg)]
+        body (render-body msg signature)]
     (log/info "Url would be: " url)
     (tapahtumaloki/create-log-entry type (:id avustushaku) (:id hakemus) identity uuid to nil true)
     (email/enqueue-message-to-be-send msg body)))

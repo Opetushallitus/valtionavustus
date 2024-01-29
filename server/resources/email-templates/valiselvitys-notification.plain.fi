@@ -7,6 +7,5 @@ Väliselvityslomake löytyy osoitteesta {{& url }} ja se tulee palauttaa {{ selv
 Ystävällisin terveisin
 
 {{ presenter-name }}
-Opetushallitus
 
-puhelin 029 533 1000
+{{>signature}}

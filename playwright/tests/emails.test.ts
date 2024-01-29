@@ -7,6 +7,7 @@ import {
   getLinkToMuutoshakemusFromSentEmails,
   lastOrFail,
   waitUntilMinEmails,
+  Email,
 } from '../utils/emails'
 import { HAKIJA_URL } from '../utils/constants'
 import { selectors, expect } from '@playwright/test'
@@ -180,6 +181,7 @@ test('sends emails to correct contact and hakemus emails', async ({
     expect(email['to-address']).toEqual([newContactPersonEmail, 'akaan.kaupunki@akaa.fi'])
     expect(email.bcc).toBeNull()
     expect(email.cc).toStrictEqual([])
+    await expectIsOphEmail(email)
   })
   await test.step('sends loppuselvitys email', async () => {
     const loppuselvitysTab = await hakujenHallintaPage.switchToLoppuselvitysTab()
@@ -190,5 +192,22 @@ test('sends emails to correct contact and hakemus emails', async ({
     expect(email['to-address']).toEqual([newContactPersonEmail, 'akaan.kaupunki@akaa.fi'])
     expect(email.bcc).toBeNull()
     expect(email.cc).toStrictEqual([])
+    await expectIsOphEmail(email)
   })
 })
+
+export async function expectIsOphEmail(email: Email) {
+  await test.step('email is from no-reply@valtionavustukset.oph.fi', async () => {
+    expect(email['from-address']).toEqual('no-reply@valtionavustukset.oph.fi')
+  })
+
+  await test.step('email contains OPH signature', async () => {
+    expect(email.formatted).toContain(
+      'Opetushallitus\n' +
+        'Hakaniemenranta 6\n' +
+        'PL 380, 00531 Helsinki\n' +
+        'puhelin 029 533 1000\n' +
+        'etunimi.sukunimi@oph.fi'
+    )
+  })
+}

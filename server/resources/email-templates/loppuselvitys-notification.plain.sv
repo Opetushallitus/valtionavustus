@@ -9,6 +9,5 @@ Förutnämnda slutdatum gäller projekt som inte har beviljats förlängning av 
 Med vänlig hälsning
 
 {{ presenter-name }}
-Utbildningsstyrelsen
 
-telefon 029 533 1000 (växel)
+{{>signature}}

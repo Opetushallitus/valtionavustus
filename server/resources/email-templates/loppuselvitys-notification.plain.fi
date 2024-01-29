@@ -9,6 +9,5 @@ Edellä kuvattu määräaika koskee hankkeita, joille ei ole myönnetty käyttö
 Ystävällisin terveisin
 
 {{ presenter-name }}
-Opetushallitus
 
-puhelin 029 533 1000
+{{>signature}}
