@@ -1,6 +1,4 @@
 (ns oph.va.hakija.notification-formatter
-  (:use [clojure.tools.trace :only [trace]]
-        [clojure.pprint :only [pprint]])
    (:require [oph.common.datetime :as datetime]
              [oph.common.email :refer [legacy-email-field-ids]]
              [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
