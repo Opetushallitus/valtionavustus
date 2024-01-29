@@ -4,6 +4,7 @@ import { muutoshakemusTest } from './muutoshakemusTest'
 import muutoshakemusEnabledHakuLomakeJson from './prod.hakulomake.json'
 import { Answers } from '../utils/types'
 import { answers, dummyPdfPath, swedishAnswers } from '../utils/constants'
+import type { Page } from '@playwright/test'
 
 export const jotpaToimintayksikkö = {
   name: 'Jatkuvan oppimisen ja työllisyyden palvelukeskus',
@@ -71,15 +72,7 @@ export const JotpaTest = muutoshakemusTest.extend<JotpaFixtures>({
   hakulomake: JSON.stringify(hakulomakeWithOneRequiredAttachment),
   answers: finnishAnswersWithRequiredAttachment,
   codes: async ({ page }, use) => {
-    const koodienhallintaPage = KoodienhallintaPage(page)
-    await koodienhallintaPage.navigate()
-    const uniqueCode = () => randomString().substring(0, 13)
-    const codes = await koodienhallintaPage.createCodeValues({
-      operationalUnit: jotpaToimintayksikkö.code,
-      operationalUnitName: jotpaToimintayksikkö.name,
-      project: [uniqueCode()],
-      operation: uniqueCode(),
-    })
+    const codes = await createJotpaCodes(page)
     await use(codes)
   },
 })
@@ -87,3 +80,17 @@ export const JotpaTest = muutoshakemusTest.extend<JotpaFixtures>({
 export const SwedishJotpaTest = JotpaTest.extend<{ answers: Answers }>({
   answers: swedishAnswersWithRequiredAttachment,
 })
+
+export async function createJotpaCodes(page: Page) {
+  const koodienhallintaPage = KoodienhallintaPage(page)
+  await koodienhallintaPage.navigate()
+  const uniqueCode = () => randomString().substring(0, 13)
+  const codes = await koodienhallintaPage.createCodeValues({
+    operationalUnit: jotpaToimintayksikkö.code,
+    operationalUnitName: jotpaToimintayksikkö.name,
+    project: [uniqueCode()],
+    operation: uniqueCode(),
+  })
+
+  return codes
+}
