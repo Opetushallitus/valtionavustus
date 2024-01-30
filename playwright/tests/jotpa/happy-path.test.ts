@@ -10,7 +10,7 @@ import { createJotpaCodes } from '../../fixtures/JotpaTest'
 import { Answers } from '../../utils/types'
 import { swedishAnswers } from '../../utils/constants'
 import { expectToBeDefined } from '../../utils/util'
-import { expectIsFinnishJotpaEmail, expectIsSwedishJotpaEmail } from '../emails.test'
+import { expectIsFinnishJotpaEmail, expectIsSwedishJotpaEmail } from '../../utils/email-signature'
 
 const jotpaSelvitysTest = selvitysTest.extend({
   codes: async ({ page }, use) => {
