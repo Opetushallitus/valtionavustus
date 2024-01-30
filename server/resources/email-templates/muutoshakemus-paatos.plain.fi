@@ -15,9 +15,4 @@ Tarvittaessa lisätietoja antaa päätöksessä nimetty lisätietojen antaja.
 Terveisin,
 {{ presenter-name }}
 
-Opetushallitus
-Hakaniemenranta 6
-PL 380, 00531 Helsinki
-
-puhelin 029 533 1000
-etunimi.sukunimi@oph.fi
+{{>signature}}

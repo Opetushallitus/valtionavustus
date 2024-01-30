@@ -15,10 +15,4 @@ Mera information ges vid behov av kontaktpersonen som anges i beslutet.
 Hälsningar,
 {{ presenter-name }}
 
-Utbildningsstyrelsen
-Hagnäskajen 6
-PB 380, 00531 Helsingfors
-
-telefon 029 533 1000
-fornamn.efternamn@oph.fi
-
+{{>signature}}

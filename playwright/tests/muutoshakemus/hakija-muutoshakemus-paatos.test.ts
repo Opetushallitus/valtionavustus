@@ -8,9 +8,14 @@ import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusP
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import moment from 'moment'
 import { Budget, BudgetAmount, sortedFormTable } from '../../utils/budget'
-import { parseMuutoshakemusPaatosFromEmails } from '../../utils/emails'
+import {
+  getMuutoshakemusPaatosEmails,
+  parseMuutoshakemusPaatosFromEmails,
+  waitUntilMinEmails,
+} from '../../utils/emails'
 import { HakijaMuutoshakemusPaatosPage } from '../../pages/hakija/hakijaMuutoshakemusPaatosPage'
 import { svBudjettimuutoshakemusTest } from '../../fixtures/swedishHakemusTest'
+import { expectIsFinnishOphEmail, expectIsSwedishOphEmail } from '../../utils/email-signature'
 
 const budget: Budget = {
   amount: {
@@ -128,6 +133,8 @@ const test = budjettimuutoshakemusTest.extend<
     await test.step('email has link to muutoshakemus', async () => {
       expect(links.linkToMuutoshakemus).toMatch(/https?:\/\/[^\/]+\/muutoshakemus\?.*/)
     })
+    await expectIsFinnishOphEmail(links)
+
     const hakijaMuutoshakemusPaatosPage = new HakijaMuutoshakemusPaatosPage(page)
     await hakijaMuutoshakemusPaatosPage.navigate(links.linkToMuutoshakemusPaatos)
     await use(hakijaMuutoshakemusPaatosPage)
@@ -302,61 +309,70 @@ const svTest = svBudjettimuutoshakemusTest.extend<{
   },
 })
 
-svTest('Hakija views swedish muutoshakemus paatos', async ({ hakijaMuutoshakemusPaatosPage }) => {
-  await svTest.step('Decision title is shown in swedish', async () => {
-    const title = await hakijaMuutoshakemusPaatosPage.title()
-    expect(title).toEqual('Beslut')
-  })
+svTest(
+  'Hakija views swedish muutoshakemus paatos',
+  async ({ hakijaMuutoshakemusPaatosPage, acceptedHakemus }) => {
+    await svTest.step('päätös email', async () => {
+      const { hakemusID } = acceptedHakemus
+      const emails = await waitUntilMinEmails(getMuutoshakemusPaatosEmails, 1, hakemusID)
+      await expectIsSwedishOphEmail(emails[0])
+    })
 
-  await svTest.step('jatkoaika decision is shown in swedish', async () => {
-    const title = await hakijaMuutoshakemusPaatosPage.jatkoaikaPaatos()
-    expect(title).toEqual(
-      'De ändringar som ni ansökt om gällande understödets användningstid godkänns med vissa ändringar'
-    )
-  })
+    await svTest.step('Decision title is shown in swedish', async () => {
+      const title = await hakijaMuutoshakemusPaatosPage.title()
+      expect(title).toEqual('Beslut')
+    })
 
-  await svTest.step('budget decision is shown in swedish', async () => {
-    const title = await hakijaMuutoshakemusPaatosPage.talousarvioPaatos()
-    expect(title).toEqual('De ändringar som ni ansökt om i budgeten godkänns med vissa ändringar')
-  })
+    await svTest.step('jatkoaika decision is shown in swedish', async () => {
+      const title = await hakijaMuutoshakemusPaatosPage.jatkoaikaPaatos()
+      expect(title).toEqual(
+        'De ändringar som ni ansökt om gällande understödets användningstid godkänns med vissa ändringar'
+      )
+    })
 
-  await svTest.step('current budget title is shown in swedish', async () => {
-    const currentBudgetHeader = await hakijaMuutoshakemusPaatosPage.currentBudgetTitle()
-    expect(currentBudgetHeader).toEqual('Den tidigare budgeten')
-  })
+    await svTest.step('budget decision is shown in swedish', async () => {
+      const title = await hakijaMuutoshakemusPaatosPage.talousarvioPaatos()
+      expect(title).toEqual('De ändringar som ni ansökt om i budgeten godkänns med vissa ändringar')
+    })
 
-  await svTest.step('päätöksen perustelut is shown in swedish', async () => {
-    const currentBudgetHeader = await hakijaMuutoshakemusPaatosPage.paatoksetPerustelutTitle()
-    expect(currentBudgetHeader).toEqual('Motiveringar för beslutet')
-  })
+    await svTest.step('current budget title is shown in swedish', async () => {
+      const currentBudgetHeader = await hakijaMuutoshakemusPaatosPage.currentBudgetTitle()
+      expect(currentBudgetHeader).toEqual('Den tidigare budgeten')
+    })
 
-  await svTest.step('päätöksen tekijä is shown in swedish', async () => {
-    const currentBudgetHeader = await hakijaMuutoshakemusPaatosPage.paatoksetTekija()
-    expect(currentBudgetHeader).toEqual('Har godkänts av')
-  })
+    await svTest.step('päätöksen perustelut is shown in swedish', async () => {
+      const currentBudgetHeader = await hakijaMuutoshakemusPaatosPage.paatoksetPerustelutTitle()
+      expect(currentBudgetHeader).toEqual('Motiveringar för beslutet')
+    })
 
-  await svTest.step('lisätietoja title is shown in swedish', async () => {
-    const currentBudgetHeader = await hakijaMuutoshakemusPaatosPage.lisatietojaTitle()
-    expect(currentBudgetHeader).toEqual('Mer information')
-  })
+    await svTest.step('päätöksen tekijä is shown in swedish', async () => {
+      const currentBudgetHeader = await hakijaMuutoshakemusPaatosPage.paatoksetTekija()
+      expect(currentBudgetHeader).toEqual('Har godkänts av')
+    })
 
-  await svTest.step('budget change is mentioned in the info section', async () => {
-    const budgetChangeText = await hakijaMuutoshakemusPaatosPage.infoSection()
-    expect(budgetChangeText).toEqual('Ändringsansökan som gäller projektets budget')
-  })
+    await svTest.step('lisätietoja title is shown in swedish', async () => {
+      const currentBudgetHeader = await hakijaMuutoshakemusPaatosPage.lisatietojaTitle()
+      expect(currentBudgetHeader).toEqual('Mer information')
+    })
 
-  await svTest.step('Budget rows are in Swedish', async () => {
-    const budgetRows = await hakijaMuutoshakemusPaatosPage.existingBudgetTableCells()
-    const swedishBudgetRowDescriptions = budgetRows.map((s) => s.description)
-    const swedishBudgetRowNames = [
-      'Personalkostnader',
-      'Material, utrustning och varor',
-      'Anskaffning av utrustning',
-      'Tjänster',
-      'Hyror',
-      'Resekostnader',
-      'Övriga kostnader',
-    ]
-    expect(swedishBudgetRowDescriptions.sort()).toEqual(swedishBudgetRowNames.sort())
-  })
-})
+    await svTest.step('budget change is mentioned in the info section', async () => {
+      const budgetChangeText = await hakijaMuutoshakemusPaatosPage.infoSection()
+      expect(budgetChangeText).toEqual('Ändringsansökan som gäller projektets budget')
+    })
+
+    await svTest.step('Budget rows are in Swedish', async () => {
+      const budgetRows = await hakijaMuutoshakemusPaatosPage.existingBudgetTableCells()
+      const swedishBudgetRowDescriptions = budgetRows.map((s) => s.description)
+      const swedishBudgetRowNames = [
+        'Personalkostnader',
+        'Material, utrustning och varor',
+        'Anskaffning av utrustning',
+        'Tjänster',
+        'Hyror',
+        'Resekostnader',
+        'Övriga kostnader',
+      ]
+      expect(swedishBudgetRowDescriptions.sort()).toEqual(swedishBudgetRowNames.sort())
+    })
+  }
+)

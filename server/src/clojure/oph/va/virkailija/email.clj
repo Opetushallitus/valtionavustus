@@ -159,36 +159,38 @@
 (defn send-muutoshakemus-paatos [to avustushaku hakemus arvio roles token muutoshakemus-id paatos]
   (let [lang-str (:language hakemus)
         hakemus-id (:id hakemus)
+        is-jotpa-avustushaku (is-jotpa-avustushaku avustushaku)
         lang (keyword lang-str)
         muutoshakemus-paatos-url (muutoshakemus-paatos-url (:user-key paatos) lang)
         muutoshakemus-url (email-utils/modify-url (:id avustushaku) (:user_key hakemus) lang token true)
+        from (if is-jotpa-avustushaku "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
         mail-subject (get-in mail-titles [:muutoshakemus-paatos lang])
+        mail-template (get-in mail-templates [:muutoshakemus-paatos lang])
+        signature (email-signature-block lang)
         presenter-role-id (:presenter_role_id arvio)
         oikaisuvaatimusosoitus (find-3a-oikaisuvaatimusosoitus-attachment)
         attachment-title (get (:langs oikaisuvaatimusosoitus) lang)
         attachment-contents (read-oikaisuvaatimusosoitus-into-byte-array (:id oikaisuvaatimusosoitus) lang)
         selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
-        presenter (if (nil? selected-presenter) (first roles) selected-presenter)]
-    (email/try-send-msg-once {
-                          :email-type :muutoshakemus-paatos
-                          :lang lang
-                          :muutoshakemus-id muutoshakemus-id
-                          :from (-> email/smtp-config :from lang)
-                          :sender (-> email/smtp-config :sender)
-                          :subject mail-subject
-                          :presenter-name (:name presenter)
-                          :to to
-                          :hakemus-id hakemus-id
-                          :paatos-url muutoshakemus-paatos-url
-                          :muutoshakemus-url muutoshakemus-url
-                          :register-number (:register_number hakemus)
-                          :project-name (:project_name hakemus)
-                          :attachment-title attachment-title
-                          :attachment {:title attachment-title
-                                       :description attachment-title
-                                       :contents attachment-contents}}
+        presenter (if (nil? selected-presenter) (first roles) selected-presenter)
+        attachment {:title attachment-title
+                    :description attachment-title
+                    :contents attachment-contents }
+        msg {:register-number (:register_number hakemus)
+             :project-name (:project_name hakemus)
+             :paatos-url muutoshakemus-paatos-url
+             :muutoshakemus-url muutoshakemus-url
+             :attachment-title attachment-title
+             :presenter-name (:name presenter)
+             :is-jotpa-hakemus is-jotpa-avustushaku}
+        body (render mail-template msg signature)]
 
-                           (partial render (get-in mail-templates [:muutoshakemus-paatos lang])))))
+    (email/try-send-email!
+      (email/message lang :muutoshakemus-paatos to mail-subject body { :attachment attachment })
+      {:hakemus-id hakemus-id
+       :muutoshakemus-id muutoshakemus-id
+       :avustushaku-id (:id avustushaku)
+       :from           from})))
 
 (defn- generate-avustushaku-url [avustushaku-id]
   (str (-> config :server :virkailija-url)
