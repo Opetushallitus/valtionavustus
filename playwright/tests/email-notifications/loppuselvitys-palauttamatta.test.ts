@@ -1,6 +1,6 @@
 import { test, expect, Page } from '@playwright/test'
 import { HAKIJA_URL, swedishAnswers, VIRKAILIJA_URL } from '../../utils/constants'
-import { getLoppuselvitysPalauttamattaEmails, lastOrFail } from '../../utils/emails'
+import { getLoppuselvitysPalauttamattaEmails, waitUntilMinEmails } from '../../utils/emails'
 import moment from 'moment'
 import { Answers, MuutoshakemusValues } from '../../utils/types'
 import { expectToBeDefined } from '../../utils/util'
@@ -61,7 +61,7 @@ test.describe('loppuselvitys-palauttamatta', () => {
       await sendLoppuselvitysPalauttamattaNotifications(page)
 
       await test.step('reminder is sent', async () => {
-        const emails = await getLoppuselvitysPalauttamattaEmails(hakemusID)
+        const emails = await waitUntilMinEmails(getLoppuselvitysPalauttamattaEmails, 1, hakemusID)
         expect(emails).toHaveLength(1)
         const email = emails[0]
         expect(email['to-address']).toHaveLength(1)
@@ -122,7 +122,8 @@ Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen
       await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
 
       await sendLoppuselvitysPalauttamattaNotifications(page)
-      const email = lastOrFail(await getLoppuselvitysPalauttamattaEmails(hakemusID))
+      const emails = await waitUntilMinEmails(getLoppuselvitysPalauttamattaEmails, 1, hakemusID)
+      const email = emails[0]
       expect(email['to-address']).toHaveLength(1)
       expect(email['to-address']).toContain('lars.andersson@example.com')
       await expectIsSwedishOphEmail(email)
@@ -231,7 +232,7 @@ test.describe('Jotpan loppuselvitys palauttamatta', () => {
       await sendLoppuselvitysPalauttamattaNotifications(page)
 
       await test.step('reminder is sent', async () => {
-        const emails = await getLoppuselvitysPalauttamattaEmails(hakemusID)
+        const emails = await waitUntilMinEmails(getLoppuselvitysPalauttamattaEmails, 1, hakemusID)
         expect(emails).toHaveLength(1)
         const email = emails[0]
         expect(email['to-address']).toHaveLength(1)
@@ -275,7 +276,8 @@ Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen
       await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
 
       await sendLoppuselvitysPalauttamattaNotifications(page)
-      const email = lastOrFail(await getLoppuselvitysPalauttamattaEmails(hakemusID))
+      const emails = await waitUntilMinEmails(getLoppuselvitysPalauttamattaEmails, 1, hakemusID)
+      const email = emails[0]
       expect(email['to-address']).toHaveLength(1)
       expect(email['to-address']).toContain('lars.andersson@example.com')
       await expectIsSwedishJotpaEmail(email)
