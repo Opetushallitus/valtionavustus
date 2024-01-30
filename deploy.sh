@@ -43,7 +43,7 @@ function do_deploy_jar {
   scp -p -i ${SSH_KEY} ${jar_source_path} ${SSH_USER}@"${target_server_name}":${TARGET_JAR_PATH}
   scp -pr -i ${SSH_KEY} ${module_name}-hakija/config ${SSH_USER}@"${target_server_name}":${TARGET_DIR}
   $SSH ln -sfT ${TARGET_DIR} ${CURRENT_DIR}
-  restart_application ${module_name}
+  restart_application
   run_smoke_test
   cat_latest_application_log
   echo "Success in starting $module_name"
@@ -74,13 +74,10 @@ function run_smoke_test {
 }
 
 function restart_application {
-  $SSH "supervisorctl stop va-hakija"
-  $SSH "supervisorctl stop va-virkailija"
-  local module_name=$1
   echo "Stopping application..."
-  $SSH "supervisorctl stop $module_name"
+  $SSH "supervisorctl stop va"
   echo "Starting application..."
-  $SSH "supervisorctl start $module_name"
+  $SSH "supervisorctl start va"
 }
 
 function set_env_vars {
