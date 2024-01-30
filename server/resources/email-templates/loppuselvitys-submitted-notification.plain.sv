@@ -12,3 +12,5 @@ Det är möjligt att redigera en redovisning som lämnats in för behandling  vi
 Mera information får ni vid behov av kontaktpersonen som anges i ert beslut om understöd. Vid tekniska problem ta kontakt på adressen: valtionavustukset@oph.fi.
 
 Ett e-postmeddelande om att redovisningen har behandlats skickas till understödsmottagarens officiella e-postadress och projektets kontaktperson.
+
+{{>signature}}

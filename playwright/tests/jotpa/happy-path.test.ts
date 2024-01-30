@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test'
 import {
   getLoppuselvitysEmails,
+  getLoppuselvitysSubmittedNotificationEmails,
   getValiselvitysEmails,
   getValiselvitysSubmittedNotificationEmails,
   waitUntilMinEmails,
@@ -27,13 +28,24 @@ jotpaSelvitysTest(
   async ({ acceptedHakemus: { hakemusID }, valiAndLoppuselvitysSubmitted }) => {
     expectToBeDefined(valiAndLoppuselvitysSubmitted)
 
-    await test.step('väliselvitys email', async () => {
+    await test.step('väliselvitys submitted email', async () => {
       const emails = await waitUntilMinEmails(
         getValiselvitysSubmittedNotificationEmails,
         1,
         hakemusID
       )
 
+      await expectIsFinnishJotpaEmail(emails[0])
+    })
+
+    await test.step('loppuselvitys submitted email', async () => {
+      const emails = await waitUntilMinEmails(
+        getLoppuselvitysSubmittedNotificationEmails,
+        1,
+        hakemusID
+      )
+
+      expect(emails[0].formatted).toContain('olemme vastaanottaneet loppuselvityksenne')
       await expectIsFinnishJotpaEmail(emails[0])
     })
 
@@ -60,13 +72,24 @@ swedishJotpaSelvitysTest(
   async ({ acceptedHakemus: { hakemusID }, valiAndLoppuselvitysSubmitted }) => {
     expectToBeDefined(valiAndLoppuselvitysSubmitted)
 
-    await test.step('väliselvitys email', async () => {
+    await test.step('väliselvitys submitted email', async () => {
       const emails = await waitUntilMinEmails(
         getValiselvitysSubmittedNotificationEmails,
         1,
         hakemusID
       )
 
+      await expectIsSwedishJotpaEmail(emails[0])
+    })
+
+    await test.step('loppuselvitys submitted email', async () => {
+      const emails = await waitUntilMinEmails(
+        getLoppuselvitysSubmittedNotificationEmails,
+        1,
+        hakemusID
+      )
+
+      expect(emails[0].formatted).toContain('vi har tagit emot er slutredovisning')
       await expectIsSwedishJotpaEmail(emails[0])
     })
 
