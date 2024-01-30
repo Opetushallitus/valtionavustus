@@ -361,21 +361,23 @@
                               :loppuselvitys-deadline (datetime/java8-date-string (:deadline notification))}
                              (partial render template))))
 
-(defn send-loppuselvitys-palauttamatta [notification]
+(defn send-loppuselvitys-palauttamatta [notification is-jotpa-avustushaku]
   (let [lang           (keyword (:language notification))
         mail-subject   (get-in mail-titles [:loppuselvitys-palauttamatta lang])
-        template       (get-in mail-templates [:loppuselvitys-palauttamatta lang])]
-    (email/try-send-msg-once {:email-type :loppuselvitys-palauttamatta
-                              :hakemus-id (:hakemus-id notification)
-                              :lang lang
-                              :from (-> email/smtp-config :from lang)
-                              :sender (-> email/smtp-config :sender)
-                              :to [(:contact-email notification)]
-                              :subject mail-subject
-                              :avustushaku-name (:avustushaku-name notification)
-                              :loppuselvitys-deadline (datetime/java8-date-string (:loppuselvitys-deadline notification))
-                              :url (loppuselvitys-url (:avustushaku-id notification) (:user-key notification) lang)}
-                             (partial render template))))
+        signature      (email-signature-block lang)
+        template       (get-in mail-templates [:loppuselvitys-palauttamatta lang])
+        from           (if is-jotpa-avustushaku "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+        msg            { :avustushaku-name (:avustushaku-name notification)
+                         :loppuselvitys-deadline (datetime/java8-date-string (:loppuselvitys-deadline notification))
+                         :url (loppuselvitys-url (:avustushaku-id notification) (:user-key notification) lang)
+                         :is-jotpa-hakemus is-jotpa-avustushaku}
+        body            (render template msg signature)]
+
+    (email/try-send-email!
+      (email/message lang :loppuselvitys-palauttamatta [(:contact-email notification)] mail-subject body)
+      {:hakemus-id     (:hakemus-id notification)
+       :avustushaku-id (:avustushaku-id notification)
+       :from           from})))
 
 (defn send-paatos! [to avustushaku hakemus]
   (let [lang-str (:language hakemus)

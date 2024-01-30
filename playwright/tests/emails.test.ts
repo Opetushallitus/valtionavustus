@@ -14,7 +14,7 @@ import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakuje
 import { HakijaMuutoshakemusPage } from '../pages/hakija/hakijaMuutoshakemusPage'
 import { HakemustenArviointiPage } from '../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { PaatosPage } from '../pages/virkailija/hakujen-hallinta/PaatosPage'
-import { expectIsOphEmail } from '../utils/email-signature'
+import { expectIsFinnishOphEmail } from '../utils/email-signature'
 
 selectors.setTestIdAttribute('data-test-id')
 
@@ -181,7 +181,7 @@ test('sends emails to correct contact and hakemus emails', async ({
     expect(email['to-address']).toEqual([newContactPersonEmail, 'akaan.kaupunki@akaa.fi'])
     expect(email.bcc).toBeNull()
     expect(email.cc).toStrictEqual([])
-    await expectIsOphEmail(email)
+    await expectIsFinnishOphEmail(email)
   })
   await test.step('sends loppuselvitys email', async () => {
     const loppuselvitysTab = await hakujenHallintaPage.switchToLoppuselvitysTab()
@@ -192,6 +192,6 @@ test('sends emails to correct contact and hakemus emails', async ({
     expect(email['to-address']).toEqual([newContactPersonEmail, 'akaan.kaupunki@akaa.fi'])
     expect(email.bcc).toBeNull()
     expect(email.cc).toStrictEqual([])
-    await expectIsOphEmail(email)
+    await expectIsFinnishOphEmail(email)
   })
 })

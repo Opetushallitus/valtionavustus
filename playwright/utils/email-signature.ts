@@ -1,7 +1,7 @@
 import { Email } from './emails'
 import { expect, test } from '@playwright/test'
 
-export async function expectIsOphEmail(email: Email) {
+export async function expectIsFinnishOphEmail(email: Email) {
   await test.step('email is from no-reply@valtionavustukset.oph.fi', async () => {
     expect(email['from-address']).toEqual('no-reply@valtionavustukset.oph.fi')
   })
@@ -13,6 +13,22 @@ export async function expectIsOphEmail(email: Email) {
         'PL 380, 00531 Helsinki\n' +
         'puhelin 029 533 1000\n' +
         'etunimi.sukunimi@oph.fi'
+    )
+  })
+}
+
+export async function expectIsSwedishOphEmail(email: Email) {
+  await test.step('email is from no-reply@statsunderstod.oph.fi', async () => {
+    expect(email['from-address']).toEqual('no-reply@statsunderstod.oph.fi')
+  })
+
+  await test.step('email contains OPH signature', async () => {
+    expect(email.formatted).toContain(
+      'Utbildningsstyrelsen\n' +
+        'Hagnäskajen 6\n' +
+        'PB 380, 00531 Helsingfors\n' +
+        'telefon 029 533 1000\n' +
+        'fornamn.efternamn@oph.fi'
     )
   })
 }

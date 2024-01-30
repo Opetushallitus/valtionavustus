@@ -8,6 +8,13 @@ import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusP
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { selvitysTest } from '../../fixtures/selvitysTest'
 import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
+import {
+  expectIsFinnishJotpaEmail,
+  expectIsFinnishOphEmail,
+  expectIsSwedishJotpaEmail,
+  expectIsSwedishOphEmail,
+} from '../../utils/email-signature'
+import { createJotpaCodes } from '../../fixtures/JotpaTest'
 
 test.describe('loppuselvitys-palauttamatta', () => {
   selvitysTest(
@@ -59,6 +66,7 @@ test.describe('loppuselvitys-palauttamatta', () => {
         const email = emails[0]
         expect(email['to-address']).toHaveLength(1)
         expect(email['to-address']).toContain(answers.contactPersonEmail)
+        await expectIsFinnishOphEmail(email)
         expect(email.subject).toContain('Muistutus loppuselvityksen palauttamisesta')
         expect(email['formatted']).toContain(`Hyvä vastaanottaja,
 
@@ -117,6 +125,7 @@ Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen
       const email = lastOrFail(await getLoppuselvitysPalauttamattaEmails(hakemusID))
       expect(email['to-address']).toHaveLength(1)
       expect(email['to-address']).toContain('lars.andersson@example.com')
+      await expectIsSwedishOphEmail(email)
       expect(email.subject).toContain('Påminnelse om att lämna in slutredovisningen')
       expect(email['formatted']).toContain(`Bästa mottagare,
 
@@ -196,6 +205,96 @@ Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid 
         await muutoshakemusTab.selectVakioperusteluInFinnish()
         await muutoshakemusTab.saveMuutoshakemus()
       }
+    }
+  )
+})
+
+test.describe('Jotpan loppuselvitys palauttamatta', () => {
+  selvitysTest.extend({
+    codes: async ({ page }, use) => {
+      const codes = await createJotpaCodes(page)
+      await use(codes)
+    },
+  })(
+    'Jotpa reminder email is sent once for hakemus with loppuselvitys deadline in next 14 days',
+    async ({
+      page,
+      answers,
+      hakuProps,
+      avustushakuID,
+      acceptedHakemus: { hakemusID, userKey },
+      loppuselvityspyyntöSent,
+    }) => {
+      expectToBeDefined(loppuselvityspyyntöSent)
+      const loppuselvitysdate = moment().add(14, 'days').format('DD.MM.YYYY')
+      await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
+      await sendLoppuselvitysPalauttamattaNotifications(page)
+
+      await test.step('reminder is sent', async () => {
+        const emails = await getLoppuselvitysPalauttamattaEmails(hakemusID)
+        expect(emails).toHaveLength(1)
+        const email = emails[0]
+        expect(email['to-address']).toHaveLength(1)
+        expect(email['to-address']).toContain(answers.contactPersonEmail)
+        await expectIsFinnishJotpaEmail(email)
+        expect(email.subject).toContain('Muistutus loppuselvityksen palauttamisesta')
+        expect(email['formatted']).toContain(`Hyvä vastaanottaja,
+
+loppuselvityksenne avustuksessa ${hakuProps.avustushakuName} on palauttamatta.
+
+Muistattehan lähettää loppuselvityksen käsiteltäväksi määräaikaan ${loppuselvitysdate} mennessä.
+
+Käyttöajan pidennystä saaneiden hankkeiden määräaika voi poiketa edellä kuvatusta. Käyttöajan pidennystä saaneiden hankkeiden selvitysaikataulu kuvataan päätöksessä, joka on annettu muutoshakemukseennne.
+
+Mikäli käyttöajan pidennystä saaneelle hankkeelle ei ole erikseen annettu uutta määräaikaa, tulee loppuselvitys palauttaa kahden kuukauden kuluessa käyttöajan pidennyksen päättymisestä.
+
+Linkki selvityslomakkeellenne: ${HAKIJA_URL}/avustushaku/${avustushakuID}/loppuselvitys?hakemus=${userKey}&lang=fi
+
+Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi`)
+      })
+    }
+  )
+
+  selvitysTest.extend<{ answers: Answers }>({
+    answers: swedishAnswers,
+    codes: async ({ page }, use) => {
+      const codes = await createJotpaCodes(page)
+      await use(codes)
+    },
+  })(
+    'Jotpa reminder mail is sent in swedish for swedish hakemus',
+    async ({
+      page,
+      hakuProps,
+      avustushakuID,
+      acceptedHakemus: { hakemusID, userKey },
+      loppuselvityspyyntöSent,
+    }) => {
+      expectToBeDefined(loppuselvityspyyntöSent)
+      const loppuselvitysdate = moment().add(14, 'days').format('DD.MM.YYYY')
+      await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
+
+      await sendLoppuselvitysPalauttamattaNotifications(page)
+      const email = lastOrFail(await getLoppuselvitysPalauttamattaEmails(hakemusID))
+      expect(email['to-address']).toHaveLength(1)
+      expect(email['to-address']).toContain('lars.andersson@example.com')
+      await expectIsSwedishJotpaEmail(email)
+      expect(email.subject).toContain('Påminnelse om att lämna in slutredovisningen')
+      expect(email['formatted']).toContain(`Bästa mottagare,
+
+er slutredovisning för användningen av statsunderstödet ${
+        hakuProps.avustushakuName + ' på svenska'
+      } har ännu inte lämnats in.
+
+Kom ihåg att skicka slutredovisningen för behandling inom utsatt tid, senast ${loppuselvitysdate}.
+
+Projekt som har beviljats förlängd användningstid för understödet kan ha en sista inlämningsdag för slutredovisningen som avviker från vad som nämns ovan. Den sista inlämningsdagen för redovisningar inom projekt som beviljats förlängd användningstid anges i beslutet som fattats utifrån en ändringsansökan.
+
+Om ett projekt som beviljats förlängd användningstid inte har fått en ny tidsfrist för redovisningen, ska slutredovisningen lämnas in inom två månader efter att den förlängda användningstiden har gått ut.
+
+Länk till er redovisningsblankett: ${HAKIJA_URL}/avustushaku/${avustushakuID}/loppuselvitys?hakemus=${userKey}&lang=sv
+
+Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid tekniska problem, ta kontakt på adressen valtionavustukset@oph.fi`)
     }
   )
 })

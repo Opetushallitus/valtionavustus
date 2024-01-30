@@ -11,3 +11,5 @@ Om ett projekt som beviljats förlängd användningstid inte har fått en ny tid
 Länk till er redovisningsblankett: {{& url }}
 
 Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid tekniska problem, ta kontakt på adressen valtionavustukset@oph.fi
+
+{{>signature}}

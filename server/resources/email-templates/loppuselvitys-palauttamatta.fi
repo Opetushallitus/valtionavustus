@@ -11,3 +11,5 @@ Mikäli käyttöajan pidennystä saaneelle hankkeelle ei ole erikseen annettu uu
 Linkki selvityslomakkeellenne: {{& url }}
 
 Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi
+
+{{>signature}}

@@ -2,6 +2,7 @@
   (:require [clojure.tools.logging :as log]
             [oph.va.virkailija.email :as email]
             [oph.va.hakija.api :as hakija-api]
+            [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
             [oph.soresu.common.db :refer [query]]))
 
 (defn- get-loppuselvitys-asiatarkastamatta []
@@ -204,7 +205,8 @@
     (when (>= (count notifications) 1)
       (log/info "sending email to" (count notifications) " contacts")
       (doseq [notification notifications]
-        (email/send-loppuselvitys-palauttamatta notification)))))
+        (email/send-loppuselvitys-palauttamatta notification
+                                                (is-jotpa-avustushaku (hakija-api/get-avustushaku (:avustushaku-id notification))))))))
 
 (defn- get-valiselvitys-palauttamatta []
   (query "SELECT
