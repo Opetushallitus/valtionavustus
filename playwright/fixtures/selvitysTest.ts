@@ -53,7 +53,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     await use({})
   },
   väliselvitysSubmitted: async (
-    { page, avustushakuID, acceptedHakemus, väliselvityspyyntöSent, answers },
+    { page, avustushakuID, acceptedHakemus, väliselvityspyyntöSent },
     use,
     testInfo
   ) => {

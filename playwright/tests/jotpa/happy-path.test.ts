@@ -1,24 +1,16 @@
 import { expect, test } from '@playwright/test'
-import { getValiselvitysSubmittedNotificationEmails, waitUntilMinEmails } from '../../utils/emails'
+import {
+  getLoppuselvitysEmails,
+  getValiselvitysEmails,
+  getValiselvitysSubmittedNotificationEmails,
+  waitUntilMinEmails,
+} from '../../utils/emails'
 import { selvitysTest } from '../../fixtures/selvitysTest'
 import { createJotpaCodes } from '../../fixtures/JotpaTest'
 import { Answers } from '../../utils/types'
 import { swedishAnswers } from '../../utils/constants'
 import { expectToBeDefined } from '../../utils/util'
-
-const swedishSignature =
-  'Servicecentret för kontinuerligt lärande och sysselsättning\n' +
-  'Hagnäskajen 6\n' +
-  'PB 380, 00531 Helsingfors\n' +
-  'telefon 029 533 1000\n' +
-  'fornamn.efternamn@jotpa.fi'
-
-const finnishSignature =
-  'Jatkuvan oppimisen ja työllisyyden palvelukeskus\n' +
-  'Hakaniemenranta 6\n' +
-  'PL 380, 00531 Helsinki\n' +
-  'puhelin 029 533 1000\n' +
-  'etunimi.sukunimi@jotpa.fi'
+import { expectIsFinnishJotpaEmail, expectIsSwedishJotpaEmail } from '../emails.test'
 
 const jotpaSelvitysTest = selvitysTest.extend({
   codes: async ({ page }, use) => {
@@ -42,9 +34,23 @@ jotpaSelvitysTest(
         hakemusID
       )
 
-      const email = emails[0]
-      expect(email['from-address']).toEqual('no-reply@jotpa.fi')
-      expect(email.formatted).toContain(finnishSignature)
+      await expectIsFinnishJotpaEmail(emails[0])
+    })
+
+    await test.step('Väliselvitys notification', async () => {
+      const emails = await waitUntilMinEmails(getValiselvitysEmails, 1, hakemusID)
+      await expectIsFinnishJotpaEmail(emails[0])
+      expect(emails[0].formatted).toMatch(
+        /.*hankkeen.*väliselvityslomake on nyt täytettävissä.*Väliselvityslomake löytyy osoitteesta.*/s
+      )
+    })
+
+    await test.step('Loppuselvitys notification', async () => {
+      const emails = await waitUntilMinEmails(getLoppuselvitysEmails, 1, hakemusID)
+      await expectIsFinnishJotpaEmail(emails[0])
+      expect(emails[0].formatted).toMatch(
+        /.*hankkeen.*loppuselvityslomake on nyt täytettävissä.*Loppuselvityslomake löytyy osoitteesta.*/s
+      )
     })
   }
 )
@@ -61,9 +67,23 @@ swedishJotpaSelvitysTest(
         hakemusID
       )
 
-      const email = emails[0]
-      expect(email['from-address']).toEqual('no-reply@jotpa.fi')
-      expect(email.formatted).toContain(swedishSignature)
+      await expectIsSwedishJotpaEmail(emails[0])
+    })
+
+    await test.step('Väliselvitys notification', async () => {
+      const emails = await waitUntilMinEmails(getValiselvitysEmails, 1, hakemusID)
+      await expectIsSwedishJotpaEmail(emails[0])
+      expect(emails[0].formatted).toMatch(
+        /.*Ni kan nu fylla i blanketten för mellanredovisning för projektet.*Blanketten för mellanredovisning finns på adressen.*/s
+      )
+    })
+
+    await test.step('Loppuselvitys notification', async () => {
+      const emails = await waitUntilMinEmails(getLoppuselvitysEmails, 1, hakemusID)
+      await expectIsSwedishJotpaEmail(emails[0])
+      expect(emails[0].formatted).toMatch(
+        /.*Ni kan nu fylla i blanketten för slutredovisning för projektet.*Blanketten för slutredovisning finns på adressen.*/s
+      )
     })
   }
 )
