@@ -3,12 +3,6 @@ import { svBudjettimuutoshakemusTest } from '../../fixtures/swedishHakemusTest'
 import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusPage'
 import moment from 'moment/moment'
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
-import {
-  getHakemusTokenAndRegisterNumber,
-  parseMuutoshakemusPaatosFromEmails,
-} from '../../utils/emails'
-import { HAKIJA_URL } from '../../utils/constants'
-import { BudgetAmount } from '../../utils/budget'
 
 const test = svBudjettimuutoshakemusTest.extend({
   hakuProps: ({ hakuProps }, use) =>
@@ -23,8 +17,6 @@ test('swedish muutoshakemus translations', async ({
   acceptedHakemus: { hakemusID },
   avustushakuID,
   budget,
-  answers,
-  submittedHakemus: { userKey },
 }) => {
   const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
   await hakijaMuutoshakemusPage.navigate(hakemusID)
@@ -105,64 +97,5 @@ test('swedish muutoshakemus translations', async ({
 
     const { hakijaPerustelut } = muutoshakemusTab.locators
     await expect(hakijaPerustelut).toHaveText('Hakijan perustelut')
-  })
-  await test.step('accept muutoshakemus #1 with changes', async () => {
-    const acceptedBudget: BudgetAmount = {
-      personnel: '1301',
-      material: '1421',
-      equipment: '2338',
-      'service-purchase': '5312007',
-      rent: '1068',
-      steamship: '1000',
-      other: '9999',
-    }
-    await hakemustenArviointiPage.setMuutoshakemusJatkoaikaDecision(
-      'accepted_with_changes',
-      '01.01.2099'
-    )
-    await hakemustenArviointiPage.setMuutoshakemusBudgetDecision(
-      'accepted_with_changes',
-      acceptedBudget
-    )
-    await hakemustenArviointiPage.selectVakioperusteluInFinnish()
-    await hakemustenArviointiPage.saveMuutoshakemus()
-  })
-  await test.step('hakija gets email', async () => {
-    const email = await parseMuutoshakemusPaatosFromEmails(hakemusID)
-    expect(email.subject).toBe(
-      'Automatiskt meddelande: Er ändringsansökan har behandlats - Länk till beslutet'
-    )
-    expect(email['to-address']).toContain(answers.contactPersonEmail)
-    const { 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
-    expect(email.formatted).toBe(`Bästa mottagare,
-
-er ändringsansökan har behandlats.
-
-Projekt: ${registerNumber} - ${answers.projectName}
-
-Beslut om ändringsansökan: ${email.linkToMuutoshakemusPaatos}
-
-Se tidigare ändringsansökningar och gör vid behov en ny ändringsansökan: ${HAKIJA_URL}/muutoshakemus?lang=sv&user-key=${userKey}&avustushaku-id=${avustushakuID}
-
-Bilaga: Rättelseyrkande
-
-Mera information ges vid behov av kontaktpersonen som anges i beslutet.
-
-Hälsningar,
-_ valtionavustus
-
-Utbildningsstyrelsen
-Hagnäskajen 6
-PB 380, 00531 Helsingfors
-
-telefon 029 533 1000
-fornamn.efternamn@oph.fi
-
-`)
-  })
-  await test.step('hakija goes to muutoshakemus page', async () => {
-    await hakijaMuutoshakemusPage.navigate(hakemusID)
-    await expect(locators.budget.oldTitle).toHaveText('Den tidigare budgeten')
-    await expect(locators.budget.changeTitle).toHaveText('Godkänd ny budget')
   })
 })

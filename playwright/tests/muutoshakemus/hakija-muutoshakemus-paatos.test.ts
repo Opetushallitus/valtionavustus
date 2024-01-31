@@ -9,13 +9,13 @@ import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arvio
 import moment from 'moment'
 import { Budget, BudgetAmount, sortedFormTable } from '../../utils/budget'
 import {
-  getMuutoshakemusPaatosEmails,
+  getHakemusTokenAndRegisterNumber,
   parseMuutoshakemusPaatosFromEmails,
-  waitUntilMinEmails,
 } from '../../utils/emails'
 import { HakijaMuutoshakemusPaatosPage } from '../../pages/hakija/hakijaMuutoshakemusPaatosPage'
 import { svBudjettimuutoshakemusTest } from '../../fixtures/swedishHakemusTest'
 import { expectIsFinnishOphEmail, expectIsSwedishOphEmail } from '../../utils/email-signature'
+import { HAKIJA_URL } from '../../utils/constants'
 
 const budget: Budget = {
   amount: {
@@ -311,12 +311,8 @@ const svTest = svBudjettimuutoshakemusTest.extend<{
 
 svTest(
   'Hakija views swedish muutoshakemus paatos',
-  async ({ hakijaMuutoshakemusPaatosPage, acceptedHakemus }) => {
-    await svTest.step('päätös email', async () => {
-      const { hakemusID } = acceptedHakemus
-      const emails = await waitUntilMinEmails(getMuutoshakemusPaatosEmails, 1, hakemusID)
-      await expectIsSwedishOphEmail(emails[0])
-    })
+  async ({ page, avustushakuID, hakijaMuutoshakemusPaatosPage, acceptedHakemus, answers }) => {
+    const { hakemusID, userKey } = acceptedHakemus
 
     await svTest.step('Decision title is shown in swedish', async () => {
       const title = await hakijaMuutoshakemusPaatosPage.title()
@@ -373,6 +369,38 @@ svTest(
         'Övriga kostnader',
       ]
       expect(swedishBudgetRowDescriptions.sort()).toEqual(swedishBudgetRowNames.sort())
+    })
+
+    await svTest.step('päätös email', async () => {
+      const email = await parseMuutoshakemusPaatosFromEmails(hakemusID)
+      const { 'register-number': registerNumber } =
+        await getHakemusTokenAndRegisterNumber(hakemusID)
+
+      await expectIsSwedishOphEmail(email)
+
+      expect(email.subject).toBe(
+        'Automatiskt meddelande: Er ändringsansökan har behandlats - Länk till beslutet'
+      )
+      expect(email['to-address']).toContain(answers.contactPersonEmail)
+      expect(email.formatted).toContain(
+        `Bästa mottagare,\n\n` +
+          `er ändringsansökan har behandlats.\n\n` +
+          `Projekt: ${registerNumber} - ${answers.projectName}\n\n` +
+          `Beslut om ändringsansökan: ${email.linkToMuutoshakemusPaatos}\n\n` +
+          `Se tidigare ändringsansökningar och gör vid behov en ny ändringsansökan: ${HAKIJA_URL}/muutoshakemus?lang=sv&user-key=${userKey}&avustushaku-id=${avustushakuID}\n\n` +
+          `Bilaga: Rättelseyrkande\n\n` +
+          `Mera information ges vid behov av kontaktpersonen som anges i beslutet.\n\n` +
+          `Hälsningar,\n` +
+          `_ valtionavustus`
+      )
+    })
+
+    await test.step('hakija goes to muutoshakemus page', async () => {
+      const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
+      const locators = hakijaMuutoshakemusPage.locators()
+      await hakijaMuutoshakemusPage.navigate(hakemusID)
+      await expect(locators.budget.oldTitle).toHaveText('Den tidigare budgeten')
+      await expect(locators.budget.changeTitle).toHaveText('Godkänd ny budget')
     })
   }
 )
