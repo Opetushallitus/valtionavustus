@@ -317,21 +317,22 @@
                               :list list}
                              (partial render template))))
 
-(defn send-valiselvitys-palauttamatta [notification]
-  (let [lang         (keyword (:language notification))
-        mail-subject (get-in mail-titles [:valiselvitys-palauttamatta lang])
-        template     (get-in mail-templates [:valiselvitys-palauttamatta lang])]
-    (email/try-send-msg-once {:email-type :valiselvitys-palauttamatta
-                              :hakemus-id (:hakemus-id notification)
-                              :lang lang
-                              :from (-> email/smtp-config :from lang)
-                              :sender (-> email/smtp-config :sender)
-                              :to [(:contact-email notification)]
-                              :subject mail-subject
-                              :avustushaku-name (:avustushaku-name notification)
-                              :valiselvitys-deadline (datetime/java8-date-string (:valiselvitys-deadline notification))
-                              :url (valiselvitys-url (:avustushaku-id notification) (:user-key notification) lang)}
-                             (partial render template))))
+(defn send-valiselvitys-palauttamatta [notification is-jotpa-avustushaku]
+ (let [lang           (keyword (:language notification))
+        mail-subject   (get-in mail-titles [:valiselvitys-palauttamatta lang])
+        signature      (email-signature-block lang)
+        template       (get-in mail-templates [:valiselvitys-palauttamatta lang])
+        from           (if is-jotpa-avustushaku "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+        msg            {:avustushaku-name (:avustushaku-name notification)
+                        :valiselvitys-deadline (datetime/java8-date-string (:valiselvitys-deadline notification))
+                        :url (valiselvitys-url (:avustushaku-id notification) (:user-key notification) lang)
+                        :is-jotpa-hakemus is-jotpa-avustushaku}
+        body            (render template msg signature)]
+    (email/try-send-email!
+     (email/message lang :valiselvitys-palauttamatta [(:contact-email notification)] mail-subject body)
+     {:hakemus-id     (:hakemus-id notification)
+      :avustushaku-id (:avustushaku-id notification)
+      :from           from})))
 
 (defn send-laheta-valiselvityspyynnot [notification]
   (let [lang         :fi

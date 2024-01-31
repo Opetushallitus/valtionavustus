@@ -2,11 +2,18 @@ import { test, expect, Page } from '@playwright/test'
 import moment from 'moment'
 
 import { HAKIJA_URL, swedishAnswers, VIRKAILIJA_URL } from '../../utils/constants'
-import { getValiselvitysPalauttamattaEmails, lastOrFail } from '../../utils/emails'
+import { getValiselvitysPalauttamattaEmails, waitUntilMinEmails } from '../../utils/emails'
 import { Answers } from '../../utils/types'
 import { expectToBeDefined } from '../../utils/util'
 import { selvitysTest } from '../../fixtures/selvitysTest'
 import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
+import {
+  expectIsFinnishJotpaEmail,
+  expectIsFinnishOphEmail,
+  expectIsSwedishJotpaEmail,
+  expectIsSwedishOphEmail,
+} from '../../utils/email-signature'
+import { createJotpaCodes } from '../../fixtures/JotpaTest'
 
 test.describe('valiselvitys-palauttamatta', () => {
   selvitysTest(
@@ -45,7 +52,10 @@ test.describe('valiselvitys-palauttamatta', () => {
         await setValiselvitysDate(page, avustushakuID, valiselvitysdate)
 
         await sendValiselvitysPalauttamattaNotifications(page)
-        const email = lastOrFail(await getValiselvitysPalauttamattaEmails(hakemusID))
+
+        const emails = await waitUntilMinEmails(getValiselvitysPalauttamattaEmails, 1, hakemusID)
+        const email = emails[0]
+        await expectIsFinnishOphEmail(email)
         expect(email['to-address']).toHaveLength(1)
         expect(email['to-address']).toContain('erkki.esimerkki@example.com')
         expect(email.subject).toContain('Muistutus väliselvityksen palauttamisesta')
@@ -98,7 +108,9 @@ Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen
       await setValiselvitysDate(page, avustushakuID, valiselvitysdate)
 
       await sendValiselvitysPalauttamattaNotifications(page)
-      const email = lastOrFail(await getValiselvitysPalauttamattaEmails(hakemusID))
+      const emails = await waitUntilMinEmails(getValiselvitysPalauttamattaEmails, 1, hakemusID)
+      const email = emails[0]
+      await expectIsSwedishOphEmail(email)
       expect(email['to-address']).toHaveLength(1)
       expect(email['to-address']).toContain('lars.andersson@example.com')
       expect(email.subject).toContain('Påminnelse om att lämna in mellanredovisningen')
@@ -125,6 +137,85 @@ Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid 
       await sendValiselvitysPalauttamattaNotifications(page)
       const emailsAfter = await getValiselvitysPalauttamattaEmails(hakemusID)
       expect(emailsAfter).toEqual(emailsBefore)
+    }
+  )
+})
+
+test.describe('Jotpan valiselvitys palauttamatta', () => {
+  selvitysTest.extend({
+    codes: async ({ page }, use) => {
+      const codes = await createJotpaCodes(page)
+      await use(codes)
+    },
+  })(
+    'Jotpa reminder email is sent once for hakemus with valiselvitys deadline in next 14 days',
+    async ({
+      page,
+      answers,
+      hakuProps,
+      avustushakuID,
+      acceptedHakemus: { hakemusID, userKey },
+      väliselvityspyyntöSent,
+    }) => {
+      expectToBeDefined(väliselvityspyyntöSent)
+      const valiselvitysDate = moment().add(14, 'days').format('DD.MM.YYYY')
+      await setValiselvitysDate(page, avustushakuID, valiselvitysDate)
+      await sendValiselvitysPalauttamattaNotifications(page)
+
+      await test.step('reminder is sent', async () => {
+        const emails = await waitUntilMinEmails(getValiselvitysPalauttamattaEmails, 1, hakemusID)
+        expect(emails).toHaveLength(1)
+        const email = emails[0]
+        expect(email['to-address']).toHaveLength(1)
+        expect(email['to-address']).toContain(answers.contactPersonEmail)
+        await expectIsFinnishJotpaEmail(email)
+        expect(email.subject).toContain('Muistutus väliselvityksen palauttamisesta')
+        expect(email['formatted']).toContain(`Hyvä vastaanottaja,
+
+Väliselvityksenne avustuksessa ${hakuProps.avustushakuName} on palauttamatta.
+
+Muistattehan lähettää väliselvityksen käsiteltäväksi määräaikaan ${valiselvitysDate} mennessä. Linkki selvityslomakkeellenne: ${HAKIJA_URL}/avustushaku/${avustushakuID}/valiselvitys?hakemus=${userKey}&lang=fi
+
+Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi`)
+      })
+    }
+  )
+
+  selvitysTest.extend<{ answers: Answers }>({
+    answers: swedishAnswers,
+    codes: async ({ page }, use) => {
+      const codes = await createJotpaCodes(page)
+      await use(codes)
+    },
+  })(
+    'Jotpa reminder mail is sent in swedish for swedish hakemus',
+    async ({
+      page,
+      hakuProps,
+      avustushakuID,
+      acceptedHakemus: { hakemusID, userKey },
+      väliselvityspyyntöSent,
+    }) => {
+      expectToBeDefined(väliselvityspyyntöSent)
+      const valiselvitysDate = moment().add(14, 'days').format('DD.MM.YYYY')
+      await setValiselvitysDate(page, avustushakuID, valiselvitysDate)
+
+      await sendValiselvitysPalauttamattaNotifications(page)
+      const emails = await waitUntilMinEmails(getValiselvitysPalauttamattaEmails, 1, hakemusID)
+      const email = emails[0]
+      expect(email['to-address']).toHaveLength(1)
+      expect(email['to-address']).toContain('lars.andersson@example.com')
+      await expectIsSwedishJotpaEmail(email)
+      expect(email.subject).toContain('Påminnelse om att lämna in mellanredovisningen')
+      expect(email['formatted']).toContain(`Bästa mottagare,
+
+er mellanredovisning för användningen av statsunderstödet ${
+        hakuProps.avustushakuName + ' på svenska'
+      } har ännu inte lämnats in.
+
+Kom ihåg att skicka mellanredovisningen för behandling inom utsatt tid, senast ${valiselvitysDate}. Länk till er mellanredovisningsblankett: ${HAKIJA_URL}/avustushaku/${avustushakuID}/valiselvitys?hakemus=${userKey}&lang=sv
+
+Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid tekniska problem, ta kontakt på adressen valtionavustukset@oph.fi`)
     }
   )
 })

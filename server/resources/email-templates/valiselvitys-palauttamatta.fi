@@ -5,3 +5,5 @@ Väliselvityksenne avustuksessa {{ avustushaku-name }} on palauttamatta.
 Muistattehan lähettää väliselvityksen käsiteltäväksi määräaikaan {{ valiselvitys-deadline }} mennessä. Linkki selvityslomakkeellenne: {{& url }}
 
 Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi
+
+{{>signature}}

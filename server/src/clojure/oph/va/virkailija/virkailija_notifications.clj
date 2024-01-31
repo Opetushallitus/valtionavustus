@@ -1,9 +1,9 @@
 (ns oph.va.virkailija.virkailija-notifications
   (:require [clojure.tools.logging :as log]
-            [oph.va.virkailija.email :as email]
+            [oph.soresu.common.db :refer [query]]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
-            [oph.soresu.common.db :refer [query]]))
+            [oph.va.virkailija.email :as email]))
 
 (defn- get-loppuselvitys-asiatarkastamatta []
   (query "SELECT h.avustushaku as avustushaku_id, count(h.id) as hakemus_count, r.email
@@ -242,7 +242,7 @@
 (defn send-valiselvitys-palauttamatta-notifications []
   (let [notifications (get-valiselvitys-palauttamatta)]
     (doseq [notification notifications]
-      (email/send-valiselvitys-palauttamatta notification))))
+      (email/send-valiselvitys-palauttamatta notification (is-jotpa-avustushaku (hakija-api/get-avustushaku (:avustushaku-id notification)))))))
 
 (defn- get-laheta-selvityspyynnot [{:keys [date-field status-field notify-before-deadline tapahtumaloki-tyyppi]}]
   (query (str "SELECT
