@@ -30,17 +30,30 @@ export const KoodienhallintaPage = (page: Page) => {
     await tab.click()
     await expect(tab).toHaveClass(/oph-tab-item-is-active/)
   }
-  const codeRowLocator = (year: string, name: string, code: string) =>
-    page.getByTestId(`code-cell-${year}-${code}-${name}`)
-  const firstCell = (year: string, name: string, code: string) =>
-    codeRowLocator(year, name, code).locator('td').first()
+
+  function codeRowLocator(year: string, code: string) {
+    const pageReadyLocator = page.locator(`div.koodienhallinta-container table[aria-busy="false"]`)
+    const codeYearLocatorRegExp = new RegExp(`code-cell-${year}-${code}.*`)
+    return pageReadyLocator.getByTestId(codeYearLocatorRegExp)
+  }
+  function firstCell(year: string, code: string) {
+    return codeRowLocator(year, code).locator('td').first()
+  }
+
   const createCode = async (name: string = 'Test code', code: string): Promise<string> => {
     const year = '2020'
+
+    const existingCodes = await codeRowLocator(year, code).all()
+    if (existingCodes.length > 0) {
+      console.log(`Code ${code} already created for year ${year}, cannot create a duplicate code`)
+      return code
+    }
+
     await locators.yearInput.fill(year)
     await locators.codeInput.fill(code)
     await locators.nameInput.fill(`${name} ${code}`)
     await submit()
-    await expect(codeRowLocator(year, `${name} ${code}`, code)).toBeVisible()
+    await expect(codeRowLocator(year, code)).toBeVisible()
     return code
   }
   const createCodeValues = async (codeValues: VaCodeValues): Promise<VaCodeValues> => {
@@ -84,22 +97,17 @@ export const KoodienhallintaPage = (page: Page) => {
       await tiliTab.click()
       await expect(tiliTab).toHaveClass(/oph-tab-item-is-active/)
     },
-    clickCodeVisibilityButton: async (
-      year: string,
-      name: string,
-      code: string,
-      visibility: boolean
-    ) => {
+    clickCodeVisibilityButton: async (year: string, code: string, visibility: boolean) => {
       const buttonId = visibility ? 'show-code' : 'hide-code'
-      await codeRowLocator(year, name, code).getByTestId(buttonId).click()
+      await codeRowLocator(year, code).getByTestId(buttonId).click()
       await page.waitForLoadState('networkidle')
     },
     createCode,
-    assertCodeIsVisible: async (year: string, name: string, code: string) => {
-      await expect(firstCell(year, name, code)).not.toHaveClass('code-cell__hidden')
+    assertCodeIsVisible: async (year: string, code: string) => {
+      await expect(firstCell(year, code)).not.toHaveClass('code-cell__hidden')
     },
-    assertCodeIsHidden: async (year: string, name: string, code: string) => {
-      await expect(firstCell(year, name, code)).toHaveClass('code-cell__hidden')
+    assertCodeIsHidden: async (year: string, code: string) => {
+      await expect(firstCell(year, code)).toHaveClass('code-cell__hidden')
     },
     createCodeValues,
     createRandomCodeValues: async (): Promise<VaCodeValues> => {

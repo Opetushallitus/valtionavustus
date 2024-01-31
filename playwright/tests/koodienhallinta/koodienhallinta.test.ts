@@ -47,7 +47,7 @@ test.describe('Koodienhallinta', () => {
     await koodienhallintaPage.nameInput.fill('testName')
     await koodienhallintaPage.codeInput.fill('testCode')
     await koodienhallintaPage.submit()
-    await koodienhallintaPage.codeList.locator('text=testCode')
+    await koodienhallintaPage.codeList.locator('text=testCode').waitFor()
     page.on('dialog', (dialog) => dialog.accept('Oletko aivan varma, että haluat poistaa koodin?'))
     await koodienhallintaPage.page
       .locator('[data-test-id=code-cell-2022-testCode-testName]')
@@ -72,7 +72,7 @@ test.describe('Koodienhallinta', () => {
     await koodienhallintaPage.submitButton.isEnabled()
     await koodienhallintaPage.noCodeInputFormErrors()
     await koodienhallintaPage.submit()
-    await koodienhallintaPage.codeRowLocator('2022', 'testName', 'testCode').waitFor()
+    await koodienhallintaPage.codeRowLocator('2022', 'testCode').waitFor()
   })
   test('validates code input', async ({ koodienhallintaPage }) => {
     await koodienhallintaPage.submitButton.isDisabled()
@@ -85,7 +85,7 @@ test.describe('Koodienhallinta', () => {
     await koodienhallintaPage.submitButton.isEnabled()
     await koodienhallintaPage.noCodeInputFormErrors()
     await koodienhallintaPage.submit()
-    await koodienhallintaPage.codeRowLocator('2022', 'testName', 'long test code is long').waitFor()
+    await koodienhallintaPage.codeRowLocator('2022', 'long test code is long').waitFor()
   })
   test('validates name input', async ({ koodienhallintaPage }) => {
     await koodienhallintaPage.submitButton.isDisabled()
@@ -98,7 +98,7 @@ test.describe('Koodienhallinta', () => {
     await koodienhallintaPage.submitButton.isEnabled()
     await koodienhallintaPage.noCodeInputFormErrors()
     await koodienhallintaPage.submit()
-    await koodienhallintaPage.codeRowLocator('2022', 'testName', 'testCode').waitFor()
+    await koodienhallintaPage.codeRowLocator('2022', 'testCode').waitFor()
   })
   test('navigating between tabs clears values in form', async ({ koodienhallintaPage }) => {
     await koodienhallintaPage.yearInput.fill('2022')
@@ -114,18 +114,13 @@ test.describe('Koodienhallinta', () => {
 
   test('When a code is created', async ({ koodienhallintaPage }) => {
     const codeValues = await koodienhallintaPage.createRandomCodeValues()
-    const codeName = `Toimintayksikkö ${codeValues.operationalUnit}`
     const codeYear = '2020'
-    const rowLocator = koodienhallintaPage.codeRowLocator(
-      codeYear,
-      codeName,
-      codeValues.operationalUnit
-    )
+    const rowLocator = koodienhallintaPage.codeRowLocator(codeYear, codeValues.operationalUnit)
 
     await test.step('the code is visible in the page', async () => {
       await koodienhallintaPage.navigate()
       await expect(rowLocator).toBeVisible()
-      await koodienhallintaPage.assertCodeIsVisible(codeYear, codeName, codeValues.operationalUnit)
+      await koodienhallintaPage.assertCodeIsVisible(codeYear, codeValues.operationalUnit)
     })
 
     await test.step('the code is visible in haku editor dropdown', async () => {
@@ -138,14 +133,13 @@ test.describe('Koodienhallinta', () => {
       await koodienhallintaPage.navigate()
       await koodienhallintaPage.clickCodeVisibilityButton(
         codeYear,
-        codeName,
         codeValues.operationalUnit,
         false
       )
 
       await test.step('the code is not visible', async () => {
         await expect(rowLocator).toBeVisible()
-        await koodienhallintaPage.assertCodeIsHidden(codeYear, codeName, codeValues.operationalUnit)
+        await koodienhallintaPage.assertCodeIsHidden(codeYear, codeValues.operationalUnit)
       })
 
       await test.step('the code is displayed as gray', async () => {
@@ -167,24 +161,19 @@ test.describe('Koodienhallinta', () => {
 
       await test.step('the code is not visible after navigation', async () => {
         await koodienhallintaPage.navigate()
-        await koodienhallintaPage.assertCodeIsHidden(codeYear, codeName, codeValues.operationalUnit)
+        await koodienhallintaPage.assertCodeIsHidden(codeYear, codeValues.operationalUnit)
       })
 
       await test.step('When virkailija makes the code visible again', async () => {
         await koodienhallintaPage.navigate()
         await koodienhallintaPage.clickCodeVisibilityButton(
           '2020',
-          codeName,
           codeValues.operationalUnit,
           true
         )
 
         await test.step('the code is visible on koodien hallinta page', async () => {
-          await koodienhallintaPage.assertCodeIsVisible(
-            codeYear,
-            codeName,
-            codeValues.operationalUnit
-          )
+          await koodienhallintaPage.assertCodeIsVisible(codeYear, codeValues.operationalUnit)
         })
 
         await test.step('the code is not displayed as gray', async () => {
