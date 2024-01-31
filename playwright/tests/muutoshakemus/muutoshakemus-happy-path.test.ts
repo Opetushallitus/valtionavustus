@@ -213,18 +213,22 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
   await test.step('accept muutoshakemus', async () => {
     const isCurrentAvustushakuEmail = (e: Email) =>
       e.formatted.includes(`/avustushaku/${avustushakuID}/`)
-    await hakemustenArviointiPage.setMuutoshakemusJatkoaikaDecision('accepted')
-    await hakemustenArviointiPage.selectVakioperusteluInFinnish()
+
+    const muutoshakemusTab = await hakemustenArviointiPage.clickMuutoshakemusTab()
+    await muutoshakemusTab.setMuutoshakemusJatkoaikaDecision('accepted')
+    await muutoshakemusTab.selectVakioperusteluInFinnish()
+
     const emailsBefore = await getMuutoshakemuksetKasittelemattaEmails(
       ukotettuValmistelijaEmail,
       avustushakuID
     )
     const emailsBeforeWithCurrentAvustushaku = emailsBefore.filter(isCurrentAvustushakuEmail)
-    await hakemustenArviointiPage.saveMuutoshakemus()
+    await muutoshakemusTab.saveMuutoshakemus()
 
-    await test.step('email is immediately shown as sent', async () => {
-      expect(await page.innerText('data-test-id=päätös-email-status')).toMatch(
-        /^Päätös lähetetty hakijalle /
+    await test.step('email is shown as sent after page reload', async () => {
+      await page.reload()
+      await expect(page.locator('data-test-id=päätös-email-status')).toHaveText(
+        /Päätös lähetetty hakijalle/
       )
     })
 
