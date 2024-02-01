@@ -10,6 +10,7 @@
             [oph.va.menoluokka.db :refer [upsert-menoluokka-rows]]
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.hakemus.db :as hakemus-copy]
+            [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
             [oph.va.hakija.domain :as hakija-domain]
             [oph.va.environment :as environment]
             [oph.va.routes :refer :all]
@@ -319,9 +320,6 @@
                        (into {}))
      }))
 
-(defn send-selvitys [hakemus selvitys-email]
-  (email/send-selvitys! (:to selvitys-email) hakemus (:subject selvitys-email) (:message selvitys-email)))
-
 (defn update-selvitys-message [selvitys-email]
   (let [
         hakemus-id (:selvitys-hakemus-id selvitys-email)
@@ -349,6 +347,8 @@
   (let [validated-email         (assoc selvitys-email :to (distinct (:to selvitys-email)))
         selvitys-hakemus-id     (:selvitys-hakemus-id selvitys-email)
         hakemus                 (get-hakemus selvitys-hakemus-id)
+        avustushaku             (get-avustushaku (:avustushaku hakemus))
+        is-jotpa-hakemus        (is-jotpa-avustushaku avustushaku)
         parent-id               (:parent_id hakemus)
         parent-hakemus          (get-hakemus parent-id)
         is-loppuselvitys        (= selvitys-type "loppuselvitys")
@@ -358,7 +358,7 @@
         can-set-selvitys        (or (not is-loppuselvitys) is-verified)]
     (if can-set-selvitys
       (do
-        (send-selvitys hakemus validated-email)
+        (email/send-selvitys! (:to validated-email) hakemus (:subject validated-email) (:message validated-email) is-jotpa-hakemus )
         (update-selvitys-message validated-email)
         (if is-loppuselvitys
           (do

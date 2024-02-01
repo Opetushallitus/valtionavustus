@@ -4,15 +4,18 @@ import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arvio
 
 import {
   getHakemusTokenAndRegisterNumber,
-  getValiselvitysEmails,
+  getSelvitysEmailsWithValiselvitysSubject,
+  getValiselvitysEmailsForAvustus,
   getValiselvitysSubmittedNotificationEmails,
   lastOrFail,
+  waitUntilMinEmails,
 } from '../../utils/emails'
 import { HAKIJA_URL } from '../../utils/constants'
 import { HakijaSelvitysPage } from '../../pages/hakija/hakijaSelvitysPage'
 import { selvitysTest } from '../../fixtures/selvitysTest'
 import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { ValiselvitysPage } from '../../pages/virkailija/hakujen-hallinta/ValiselvitysPage'
+import { expectIsFinnishOphEmail } from '../../utils/email-signature'
 
 test.describe('Väliselvitys', () => {
   selvitysTest(
@@ -80,6 +83,17 @@ etunimi.sukunimi@oph.fi`)
     }) => {
       const arviointi = new HakemustenArviointiPage(page)
 
+      await test.step('Väliselvitys on täytettävissä sähköposti on lähetetty vastaanottajille', async () => {
+        const emails = await waitUntilMinEmails(getValiselvitysEmailsForAvustus, 1, avustushakuID)
+        const email = emails[0]
+        expect(email['to-address']).toEqual(
+          expect.arrayContaining(['erkki.esimerkki@example.com', 'akaan.kaupunki@akaa.fi'])
+        )
+        expect(email.subject).toMatch(/.*Väliselvitys täytettävissä haulle*/)
+        expect(email.formatted).toMatch(/.*Väliselvityslomake löytyy osoitteesta.*/)
+        await expectIsFinnishOphEmail(email)
+      })
+
       await test.step('väliselvitys is tarkastamatta', async () => {
         await arviointi.navigate(avustushakuID)
         await expect(arviointi.getVäliselvitysStatus(acceptedHakemus.hakemusID)).toHaveText(
@@ -106,10 +120,19 @@ etunimi.sukunimi@oph.fi`)
         await valiselvitysPage.acceptSelvitys()
       })
 
-      await test.step('väliselvitys accepted email is sent to primary and organization emails', async () => {
-        const emails = await getValiselvitysEmails(acceptedHakemus.hakemusID)
-        const expected = ['erkki.esimerkki@example.com', 'akaan.kaupunki@akaa.fi']
-        expect(emails[0]['to-address'].every((addr) => expected.includes(addr))).toBeTruthy()
+      await test.step('Väliselvitys on käsitelty sähköposti saapuu vastaanottajalle', async () => {
+        const emails = await waitUntilMinEmails(
+          getSelvitysEmailsWithValiselvitysSubject,
+          1,
+          avustushakuID
+        )
+        const email = emails[0]
+        expect(email['to-address']).toEqual(
+          expect.arrayContaining(['erkki.esimerkki@example.com', 'akaan.kaupunki@akaa.fi'])
+        )
+        expect(email.subject).toMatch(/.*Väliselvitys.*käsitelty*/)
+        expect(email.formatted).toMatch(/.*Hankkeen.*väliselvitys on käsitelty.*/)
+        await expectIsFinnishOphEmail(email)
       })
 
       await test.step('väliselvitys no longer editable', async () => {

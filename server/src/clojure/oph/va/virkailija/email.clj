@@ -475,20 +475,21 @@
        :from           from})
 ))
 
-(defn send-selvitys! [to hakemus mail-subject mail-message]
+(defn send-selvitys! [to hakemus mail-subject mail-message is-jotpa-hakemus]
   (let [lang (keyword (:language hakemus))
-        msg {:operation :send
-             :email-type :selvitys
-             :hakemus-id (:id hakemus)
-             :avustushaku-id (:avustushaku hakemus)
-             :lang lang
-             :from (-> email/smtp-config :from lang)
-             :sender (-> email/smtp-config :sender)
-             :subject mail-subject
-             :to to
-             :body mail-message}
-        body (render-body msg)]
-    (email/enqueue-message-to-be-send msg body)))
+        mail-template (get-in mail-templates [:selvitys lang])
+        from (if is-jotpa-hakemus "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+        msg {:body mail-message :is-jotpa-hakemus is-jotpa-hakemus}
+        signature (email-signature-block lang)
+        body (render mail-template msg signature)]
+
+(email/try-send-email!
+  (email/message lang :selvitys to mail-subject body)
+  {:hakemus-id (:id hakemus)
+   :avustushaku-id (:avustushaku hakemus)
+   :from           from})))
+
+
 
 (defn send-raportointivelvoite-muistutus [to avustushaku-id avustushaku-name-fi maaraaika type]
   (let [lang (keyword "fi")
