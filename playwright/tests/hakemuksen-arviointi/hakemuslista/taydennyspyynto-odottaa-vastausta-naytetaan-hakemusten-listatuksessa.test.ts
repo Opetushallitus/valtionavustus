@@ -2,6 +2,8 @@ import { expect } from '@playwright/test'
 import { muutoshakemusTest as test } from '../../../fixtures/muutoshakemusTest'
 
 import { HakemustenArviointiPage } from '../../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
+import { getTäydennyspyyntöEmails, waitUntilMinEmails } from '../../../utils/emails'
+import { expectIsFinnishOphEmail } from '../../../utils/email-signature'
 
 test('Täydennyspyyntö odottaa vastausta näytetään hakemusten listauksessa', async ({
   closedAvustushaku,
@@ -59,5 +61,14 @@ test('Täydennyspyyntö odottaa vastausta näytetään hakemusten listauksessa',
     await expect(
       hakemustenArviointiPage.page.getByTestId(`taydennyspyyntoon-vastattu-${hakemusID}`)
     ).toHaveCount(1)
+  })
+
+  await test.step('Hakijalle lähetetään täydennyspyynnön sähköposti', async () => {
+    const emails = await waitUntilMinEmails(getTäydennyspyyntöEmails, 1, hakemusID)
+    const email = emails[0]
+    await expectIsFinnishOphEmail(email)
+    expect(email.subject).toMatch(/Täydennyspyyntö avustushakemukseesi/)
+    expect(email.formatted).toMatch(/.*Pääset täydentämään avustushakemusta tästä linkistä.*/)
+    expect(email['to-address']).toEqual(expect.arrayContaining(['erkki.esimerkki@example.com']))
   })
 })

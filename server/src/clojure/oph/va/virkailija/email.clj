@@ -98,25 +98,28 @@
      (render template msg partials))))
 
 
-(defn send-taydennyspyynto-message! [lang to cc avustushaku-id hakemus-id avustushaku-name user-key taydennyspyynto presenting-officer-email]
-  (let [url (email-utils/generate-url avustushaku-id lang user-key false)
-        msg {:operation :send
-             :email-type :taydennyspyynto
-             :lang lang
-             :hakemus-id hakemus-id
-             :from (-> email/smtp-config :from lang)
-             :bcc presenting-officer-email
-             :cc cc
-             :sender (-> email/smtp-config :sender)
-             :subject (get-in mail-titles [:taydennyspyynto lang])
-             :to [to]
+(defn send-taydennyspyynto-message! [lang to cc avustushaku hakemus-id avustushaku-name user-key taydennyspyynto presenting-officer-email]
+  (let [avustushaku-id (:id avustushaku)
+        is-jotpa-avustushaku (is-jotpa-avustushaku avustushaku)
+        url (email-utils/generate-url avustushaku-id lang user-key false)
+        from (if is-jotpa-avustushaku "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+        mail-template (get-in mail-templates [:taydennyspyynto lang])
+        mail-subject (get-in mail-titles [:taydennyspyynto lang])
+        signature (email-signature-block lang)
+        msg {
              :avustushaku avustushaku-name
+             :taydennyspyynto taydennyspyynto
              :url url
              :yhteyshenkilo presenting-officer-email
-             :taydennyspyynto taydennyspyynto}
-        body (render-body msg)]
+             :is-jotpa-hakemus is-jotpa-avustushaku }
+        body (render mail-template msg signature)]
     (log/info "Url would be: " url)
-    (email/enqueue-message-to-be-send msg body)))
+
+    (email/try-send-email!
+      (email/message lang :taydennyspyynto [to] mail-subject body {:cc cc :bcc presenting-officer-email })
+      {:hakemus-id hakemus-id
+       :avustushaku-id avustushaku-id
+       :from           from })))
 
 (defn paatos-url [avustushaku-id user-key lang]
   (let [va-url (-> config :server :url lang)]

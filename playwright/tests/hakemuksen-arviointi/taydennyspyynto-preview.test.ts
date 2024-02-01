@@ -42,11 +42,5 @@ Pääset täydentämään avustushakemusta tästä linkistä: [linkki hakemuksee
 Muokkaa vain pyydettyjä kohtia.
 
 Lisätietoja voit kysyä sähköpostitse yhteyshenkilöltä santeri.horttanainen@reaktor.com
-
-Opetushallitus
-Hakaniemenranta 6
-PL 380, 00531 Helsinki
-puhelin 029 533 1000
-etunimi.sukunimi@oph.fi
 `)
 })

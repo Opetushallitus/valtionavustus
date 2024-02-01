@@ -314,7 +314,7 @@
                                   presenting-officer-email (:email identity)
                                   allekirjoitusomaavat (map #(map-email-field-value %) (map :value allekirjoitusoikeudelliset))
                                   cc (vec (conj (flatten allekirjoitusomaavat) organisaatio-email))]
-                                 (email/send-taydennyspyynto-message! language email cc avustushaku-id hakemus-id avustushaku-name user-key status-comment presenting-officer-email)))
+                                 (email/send-taydennyspyynto-message! language email cc avustushaku hakemus-id avustushaku-name user-key status-comment presenting-officer-email)))
                           (if (= new-status "submitted")
                             (virkailija-db/update-submitted-hakemus-version (:id hakemus)))
                           (http/ok {:hakemus-id hakemus-id

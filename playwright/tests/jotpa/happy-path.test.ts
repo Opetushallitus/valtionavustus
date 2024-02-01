@@ -1,28 +1,49 @@
 import { expect, test } from '@playwright/test'
 import {
+  Email,
   getLoppuselvitysEmails,
   getLoppuselvitysSubmittedNotificationEmails,
   getSelvitysEmailsWithValiselvitysSubject,
+  getTäydennyspyyntöEmails,
   getValiselvitysEmails,
   getValiselvitysSubmittedNotificationEmails,
   waitUntilMinEmails,
 } from '../../utils/emails'
 import { selvitysTest } from '../../fixtures/selvitysTest'
 import { createJotpaCodes } from '../../fixtures/JotpaTest'
-import { Answers } from '../../utils/types'
 import { swedishAnswers } from '../../utils/constants'
 import { expectToBeDefined } from '../../utils/util'
 import { expectIsFinnishJotpaEmail, expectIsSwedishJotpaEmail } from '../../utils/email-signature'
 import { ValiselvitysPage } from '../../pages/virkailija/hakujen-hallinta/ValiselvitysPage'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
+import { Answers } from '../../utils/types'
 
-const jotpaSelvitysTest = selvitysTest.extend({
+type TaydennyspyyntoFixtures = {
+  taydennyspyynto: {
+    emails: Email[]
+  }
+}
+const taydennyspyyntoRequestText = 'Tekisikö mieli täydentää masukkia laskiaispullilla?'
+
+const jotpaSelvitysTest = selvitysTest.extend<TaydennyspyyntoFixtures>({
   codes: async ({ page }, use) => {
     const codes = await createJotpaCodes(page)
     await use(codes)
   },
-})
-const swedishJotpaSelvitysTest = jotpaSelvitysTest.extend<{ answers: Answers }>({
-  answers: swedishAnswers,
+  taydennyspyynto: async ({ page, avustushakuID, submittedHakemus: { userKey } }, use) => {
+    expectToBeDefined(userKey)
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
+    const hakemusID = await hakemustenArviointiPage.getHakemusID()
+    await hakemustenArviointiPage.createChangeRequest(taydennyspyyntoRequestText)
+    const emails = await waitUntilMinEmails(getTäydennyspyyntöEmails, 1, hakemusID)
+    await hakemustenArviointiPage.cancelChangeRequest() // we only care about the sent emails
+    await use({ emails })
+  },
+  closedAvustushaku: async ({ closedAvustushaku, taydennyspyynto }, use) => {
+    expectToBeDefined(taydennyspyynto)
+    return use(closedAvustushaku)
+  },
 })
 
 jotpaSelvitysTest(
@@ -31,9 +52,17 @@ jotpaSelvitysTest(
     page,
     avustushakuID,
     acceptedHakemus: { hakemusID },
+    taydennyspyynto,
     valiAndLoppuselvitysSubmitted,
   }) => {
     expectToBeDefined(valiAndLoppuselvitysSubmitted)
+
+    await test.step('Hakija saa Jotpan täydennyspyyntösähköpostin', async () => {
+      const email = taydennyspyynto.emails[0]
+      expect(email.subject).toBe('Täydennyspyyntö avustushakemukseesi')
+      expect(email.formatted).toMatch(new RegExp(`.*${taydennyspyyntoRequestText}.*`))
+      await expectIsFinnishJotpaEmail(email)
+    })
 
     await test.step('Väliselvityksen tarkastus lähettää sähköpostin hakijalle', async () => {
       const valiselvitysPage = ValiselvitysPage(page)
@@ -95,15 +124,27 @@ jotpaSelvitysTest(
   }
 )
 
+const swedishJotpaSelvitysTest = jotpaSelvitysTest.extend<{ answers: Answers }>({
+  answers: swedishAnswers,
+})
+
 swedishJotpaSelvitysTest(
   'Swedish Jotpa hakemus happy path all the way to the loppuselvitys ok',
   async ({
     page,
     avustushakuID,
     acceptedHakemus: { hakemusID },
+    taydennyspyynto,
     valiAndLoppuselvitysSubmitted,
   }) => {
     expectToBeDefined(valiAndLoppuselvitysSubmitted)
+
+    await test.step('Hakija saa Jotpan täydennyspyyntösähköpostin', async () => {
+      const email = taydennyspyynto.emails[0]
+      expect(email.subject).toBe('Begäran om komplettering av ansökan')
+      expect(email.formatted).toMatch(new RegExp(`.*${taydennyspyyntoRequestText}.*`))
+      await expectIsSwedishJotpaEmail(email)
+    })
 
     await test.step('Väliselvityksen tarkastus lähettää sähköpostin hakijalle', async () => {
       const valiselvitysPage = ValiselvitysPage(page)
