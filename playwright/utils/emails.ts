@@ -92,8 +92,8 @@ export const getValiselvitysEmailsForAvustus = getEmailsWithAvustushaku('valisel
 const getSelvitysEmails = getEmailsWithAvustushaku('selvitys')
 
 export async function getSelvitysEmailsWithValiselvitysSubject(avustushakuID: number) {
-  const finnishTitle = /Väliselvitys.*käsitelty/
-  const swedishTitle = /Mellanredovisning.*behandlat/
+  const finnishTitle = /Väliselvitys.*käsitelty/g
+  const swedishTitle = /Mellanredovisning.*behandlad/g
 
   const emails = await getSelvitysEmails(avustushakuID)
   return emails.filter(
@@ -102,8 +102,8 @@ export async function getSelvitysEmailsWithValiselvitysSubject(avustushakuID: nu
 }
 
 export async function getSelvitysEmailsWithLoppuselvitysSubject(avustushakuID: number) {
-  const finnishTitle = /Loppuselvitys.*käsitelty/
-  const swedishTitle = /Slutredovisningen.*behandlad/
+  const finnishTitle = /Loppuselvitys.*käsitelty/g
+  const swedishTitle = /Slutredovisningen.*behandlad/g
 
   const emails = await getSelvitysEmails(avustushakuID)
   return emails.filter(

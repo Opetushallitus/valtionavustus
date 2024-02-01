@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test'
 import {
   getLoppuselvitysEmails,
   getLoppuselvitysSubmittedNotificationEmails,
+  getSelvitysEmailsWithValiselvitysSubject,
   getValiselvitysEmails,
   getValiselvitysSubmittedNotificationEmails,
   waitUntilMinEmails,
@@ -12,6 +13,7 @@ import { Answers } from '../../utils/types'
 import { swedishAnswers } from '../../utils/constants'
 import { expectToBeDefined } from '../../utils/util'
 import { expectIsFinnishJotpaEmail, expectIsSwedishJotpaEmail } from '../../utils/email-signature'
+import { ValiselvitysPage } from '../../pages/virkailija/hakujen-hallinta/ValiselvitysPage'
 
 const jotpaSelvitysTest = selvitysTest.extend({
   codes: async ({ page }, use) => {
@@ -25,8 +27,34 @@ const swedishJotpaSelvitysTest = jotpaSelvitysTest.extend<{ answers: Answers }>(
 
 jotpaSelvitysTest(
   'Jotpa hakemus happy path all the way to the loppuselvitys ok',
-  async ({ acceptedHakemus: { hakemusID }, valiAndLoppuselvitysSubmitted }) => {
+  async ({
+    page,
+    avustushakuID,
+    acceptedHakemus: { hakemusID },
+    valiAndLoppuselvitysSubmitted,
+  }) => {
     expectToBeDefined(valiAndLoppuselvitysSubmitted)
+
+    await test.step('Väliselvityksen tarkastus lähettää sähköpostin hakijalle', async () => {
+      const valiselvitysPage = ValiselvitysPage(page)
+      await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, hakemusID)
+      await expect(page.getByTestId('selvitys-email')).toBeVisible()
+      await valiselvitysPage.acceptSelvitys()
+
+      const emails = await waitUntilMinEmails(
+        getSelvitysEmailsWithValiselvitysSubject,
+        1,
+        avustushakuID
+      )
+      const email = emails[0]
+
+      expect(email['to-address']).toEqual(
+        expect.arrayContaining(['erkki.esimerkki@example.com', 'akaan.kaupunki@akaa.fi'])
+      )
+      expect(email.subject).toMatch(/.*Väliselvitys.*käsitelty*/)
+      expect(email.formatted).toMatch(/.*Hankkeen.*väliselvitys on käsitelty.*/)
+      await expectIsFinnishJotpaEmail(email)
+    })
 
     await test.step('väliselvitys submitted email', async () => {
       const emails = await waitUntilMinEmails(
@@ -69,8 +97,34 @@ jotpaSelvitysTest(
 
 swedishJotpaSelvitysTest(
   'Swedish Jotpa hakemus happy path all the way to the loppuselvitys ok',
-  async ({ acceptedHakemus: { hakemusID }, valiAndLoppuselvitysSubmitted }) => {
+  async ({
+    page,
+    avustushakuID,
+    acceptedHakemus: { hakemusID },
+    valiAndLoppuselvitysSubmitted,
+  }) => {
     expectToBeDefined(valiAndLoppuselvitysSubmitted)
+
+    await test.step('Väliselvityksen tarkastus lähettää sähköpostin hakijalle', async () => {
+      const valiselvitysPage = ValiselvitysPage(page)
+      await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, hakemusID)
+      await expect(page.getByTestId('selvitys-email')).toBeVisible()
+      await valiselvitysPage.acceptSelvitys()
+
+      const emails = await waitUntilMinEmails(
+        getSelvitysEmailsWithValiselvitysSubject,
+        1,
+        avustushakuID
+      )
+      const email = emails[0]
+
+      expect(email['to-address']).toEqual(
+        expect.arrayContaining(['lars.andersson@example.com', 'akaan.kaupunki@akaa.fi'])
+      )
+      expect(email.subject).toMatch(/.*Mellanredovisningen .* är behandlad*/)
+      expect(email.formatted).toMatch(/.*Mellanredovisningen för projektet .* är behandlad.*/)
+      await expectIsSwedishJotpaEmail(email)
+    })
 
     await test.step('väliselvitys submitted email', async () => {
       const emails = await waitUntilMinEmails(
