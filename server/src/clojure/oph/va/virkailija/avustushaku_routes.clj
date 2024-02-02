@@ -5,6 +5,7 @@
             [oph.soresu.common.db :refer [with-tx]]
             [oph.soresu.form.schema :as form-schema]
             [oph.va.hakija.api :as hakija-api]
+            [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
             [oph.va.schema :as va-schema]
             [oph.va.virkailija.authentication :as authentication]
             [oph.va.virkailija.authorization :as authorization]
@@ -171,8 +172,9 @@
                             change-request (:text change-request)
                             identity (authentication/get-request-identity request)
                             presenting-officer-email (:email identity)]
-                           (http/ok {:mail (email/mail-example
+                           (http/ok {:mail (email/mail-example-with-signature
                                      :taydennyspyynto {:avustushaku avustushaku-name
+                                                       :is-jotpa-hakemus (is-jotpa-avustushaku avustushaku)
                                                        :taydennyspyynto change-request
                                                        :yhteyshenkilo presenting-officer-email
                                                        :url "[linkki hakemukseen]"})}))))

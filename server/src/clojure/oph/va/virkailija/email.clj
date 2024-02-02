@@ -87,6 +87,11 @@
    :subject (:fi (msg-type mail-titles))
    :sender (-> email/smtp-config :sender)})
 
+(defn mail-example-with-signature [msg-type data]
+  {:content (render (:fi (msg-type mail-templates)) data (email-signature-block :fi))
+   :subject (:fi (msg-type mail-titles))
+   :sender (-> email/smtp-config :sender)})
+
 (defn- render-body
   ([msg]
   (let [{:keys [email-type lang]} msg
