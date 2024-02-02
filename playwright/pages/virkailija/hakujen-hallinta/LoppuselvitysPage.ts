@@ -5,12 +5,26 @@ import moment from 'moment/moment'
 export const LoppuselvitysPage = (page: Page) => {
   const asiatarkastus = page.getByTestId('loppuselvitys-asiatarkastus')
   const taloustarkastus = page.getByTestId('loppuselvitys-taloustarkastus')
+  const asiatarkastuksenTaydennyspyynto = page.getByTestId(
+    'loppuselvitys-taydennyspyynto-asiatarkastus-email'
+  )
   const locators = {
     linkToForm: page.locator('a', { hasText: 'Linkki lomakkeelle' }),
     previewFi: page.getByTestId('form-preview-fi'),
     warning: page.locator('#selvitys-not-sent-warning'),
     asiatarkastettu: page.getByTestId('loppuselvitys-tarkastus').first(),
     taloustarkastettu: page.getByTestId('loppuselvitys-tarkastus').nth(1),
+    asiatarkastuksenTaydennyspyynto: {
+      emailSubjectInputField: asiatarkastuksenTaydennyspyynto.getByTestId(
+        'loppuselvitys-taydennyspyynto-asiatarkastus-email-subject'
+      ),
+      emailBodyInputField: asiatarkastuksenTaydennyspyynto.getByTestId(
+        'loppuselvitys-taydennyspyynto-asiatarkastus-email-content'
+      ),
+      emailSendButton: asiatarkastuksenTaydennyspyynto.getByTestId(
+        'loppuselvitys-taydennyspyynto-asiatarkastus-submit'
+      ),
+    },
     asiatarkastus: {
       taydennyspyynto: asiatarkastus.getByRole('button', { name: 'Täydennyspyyntö' }),
       cancelTaydennyspyynto: asiatarkastus.getByRole('button', { name: 'Peru täydennyspyyntö' }),
@@ -71,6 +85,19 @@ export const LoppuselvitysPage = (page: Page) => {
     await page.waitForSelector(`text="Lähetetty ${expectedAmount} viestiä"`)
   }
 
+  async function teeLoppuselvityksenTäydennyspyyntö({
+    subject,
+    body,
+  }: {
+    subject: string
+    body: string
+  }) {
+    await locators.asiatarkastus.taydennyspyynto.click()
+    await locators.asiatarkastuksenTaydennyspyynto.emailSubjectInputField.fill(subject)
+    await locators.asiatarkastuksenTaydennyspyynto.emailBodyInputField.fill(body)
+    await locators.asiatarkastuksenTaydennyspyynto.emailSendButton.click()
+  }
+
   async function asiatarkastaLoppuselvitys(message: string) {
     await expect(locators.asiatarkastettu).toBeHidden()
     await expect(locators.asiatarkastus.confirmAcceptance).toBeDisabled()
@@ -112,6 +139,7 @@ export const LoppuselvitysPage = (page: Page) => {
     getSelvitysFormUrl,
     goToPreview,
     sendLoppuselvitys,
+    teeLoppuselvityksenTäydennyspyyntö,
     asiatarkastaLoppuselvitys,
     taloustarkastaLoppuselvitys,
     ensureMuistutusViestiEmailRecipientsContain,

@@ -3,6 +3,8 @@ import {
   Email,
   getLoppuselvitysEmails,
   getLoppuselvitysSubmittedNotificationEmails,
+  getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails,
+  getLoppuselvitysTaydennysReceivedHakijaNotificationEmails,
   getSelvitysEmailsWithValiselvitysSubject,
   getTäydennyspyyntöEmails,
   getValiselvitysEmails,
@@ -17,9 +19,17 @@ import { expectIsFinnishJotpaEmail, expectIsSwedishJotpaEmail } from '../../util
 import { ValiselvitysPage } from '../../pages/virkailija/hakujen-hallinta/ValiselvitysPage'
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { Answers } from '../../utils/types'
+import { navigate } from '../../utils/navigate'
+import { HakijaSelvitysPage } from '../../pages/hakija/hakijaSelvitysPage'
 
 type TaydennyspyyntoFixtures = {
   taydennyspyynto: {
+    emails: Email[]
+  }
+  loppuselvitysTaydennyspyynto: {
+    emails: Email[]
+  }
+  loppuselvitysTaydennyspyyntoVastaus: {
     emails: Email[]
   }
 }
@@ -44,6 +54,41 @@ const jotpaSelvitysTest = selvitysTest.extend<TaydennyspyyntoFixtures>({
     expectToBeDefined(taydennyspyynto)
     return use(closedAvustushaku)
   },
+  loppuselvitysTaydennyspyynto: async ({ page, avustushakuID, acceptedHakemus }, use) => {
+    const { hakemusID } = acceptedHakemus
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    const loppuselvitysPage = await hakemustenArviointiPage.navigateToHakemusArviointiLoppuselvitys(
+      avustushakuID,
+      hakemusID
+    )
+    await loppuselvitysPage.teeLoppuselvityksenTäydennyspyyntö({
+      subject: 'Haluutko jotain Mäkistä?',
+      body: 'Aattelin käydä siellä töiden jälkeen ja voin tuoda sulle samalla jotain',
+    })
+    const emails = await waitUntilMinEmails(
+      getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails,
+      1,
+      hakemusID
+    )
+    await use({ emails })
+  },
+  loppuselvitysTaydennyspyyntoVastaus: async (
+    { page, answers, acceptedHakemus, loppuselvitysSubmitted, loppuselvitysTaydennyspyynto },
+    use
+  ) => {
+    const { hakemusID } = acceptedHakemus
+    const { loppuselvitysFormUrl } = loppuselvitysSubmitted
+    expectToBeDefined(loppuselvitysTaydennyspyynto)
+    await navigate(page, loppuselvitysFormUrl)
+    const hakijaSelvitysPage = HakijaSelvitysPage(page, answers.lang)
+    await hakijaSelvitysPage.taydennysButton.click()
+    const emails = await waitUntilMinEmails(
+      getLoppuselvitysTaydennysReceivedHakijaNotificationEmails,
+      1,
+      hakemusID
+    )
+    await use({ emails })
+  },
 })
 
 jotpaSelvitysTest(
@@ -54,13 +99,24 @@ jotpaSelvitysTest(
     acceptedHakemus: { hakemusID },
     taydennyspyynto,
     valiAndLoppuselvitysSubmitted,
+    loppuselvitysTaydennyspyyntoVastaus,
   }) => {
     expectToBeDefined(valiAndLoppuselvitysSubmitted)
+    expectToBeDefined(loppuselvitysTaydennyspyyntoVastaus)
 
     await test.step('Hakija saa Jotpan täydennyspyyntösähköpostin', async () => {
       const email = taydennyspyynto.emails[0]
       expect(email.subject).toBe('Täydennyspyyntö avustushakemukseesi')
       expect(email.formatted).toMatch(new RegExp(`.*${taydennyspyyntoRequestText}.*`))
+      await expectIsFinnishJotpaEmail(email)
+    })
+
+    await test.step('Hakija saa kuittauksen loppuselvityksen täydennyspyynnön vastauksen saapumisesta', async () => {
+      const email = loppuselvitysTaydennyspyyntoVastaus.emails[0]
+      expect(email.subject).toMatch(/Organisaationne loppuselvitystä on täydennetty:.*/)
+      expect(email.formatted).toMatch(
+        /.*Olemme vastaanottaneet loppuselvitystänne koskevat täydennykset ja selvityksenne tarkastus siirtyy seuraavaan vaiheeseen.*/
+      )
       await expectIsFinnishJotpaEmail(email)
     })
 
@@ -136,6 +192,7 @@ swedishJotpaSelvitysTest(
     acceptedHakemus: { hakemusID },
     taydennyspyynto,
     valiAndLoppuselvitysSubmitted,
+    loppuselvitysTaydennyspyyntoVastaus,
   }) => {
     expectToBeDefined(valiAndLoppuselvitysSubmitted)
 
@@ -143,6 +200,15 @@ swedishJotpaSelvitysTest(
       const email = taydennyspyynto.emails[0]
       expect(email.subject).toBe('Begäran om komplettering av ansökan')
       expect(email.formatted).toMatch(new RegExp(`.*${taydennyspyyntoRequestText}.*`))
+      await expectIsSwedishJotpaEmail(email)
+    })
+
+    await test.step('Hakija saa kuittauksen loppuselvityksen täydennyspyynnön vastauksen saapumisesta', async () => {
+      const email = loppuselvitysTaydennyspyyntoVastaus.emails[0]
+      expect(email.subject).toMatch(/Slutredovisningen för er organisation är kompletterad:.*/)
+      expect(email.formatted).toMatch(
+        /.*Vi har tagit emot kompletteringarna till er slutredovisning och den går nu vidare till nästa skede av granskningen.*/
+      )
       await expectIsSwedishJotpaEmail(email)
     })
 
