@@ -39,6 +39,7 @@ test.describe('Väliselvitys', () => {
       expect(email['to-address']).toEqual(['erkki.esimerkki@example.com'])
       expect(email['from-address']).toEqual('no-reply@valtionavustukset.oph.fi')
       expect(email.subject).toEqual('Väliselvityksenne on vastaanotettu')
+      await expectIsFinnishOphEmail(email)
       const { 'register-number': registerNumber } =
         await getHakemusTokenAndRegisterNumber(hakemusID)
       expect(email.formatted).toContain(`Hyvä vastaanottaja,
@@ -54,11 +55,7 @@ Voitte muokata jo lähetettyä selvitystä alkuperäisessä selvityspyynnössä 
 Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen antajalta. Teknisissä ongelmissa auttaa: valtionavustukset@oph.fi
 
 Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan viralliseen sähköpostiosoitteeseen sekä yhteyshenkilölle.`)
-      expect(email.formatted).toContain(`Opetushallitus
-Hakaniemenranta 6
-PL 380, 00531 Helsinki
-puhelin 029 533 1000
-etunimi.sukunimi@oph.fi`)
+
       const previewUrl = email.formatted.match(/(https?:\/\/\S+)/gi)?.[0]
       if (!previewUrl) {
         throw new Error('No preview url found')

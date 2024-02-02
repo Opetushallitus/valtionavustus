@@ -9,6 +9,11 @@ import {
   waitUntilMinEmails,
 } from '../../utils/emails'
 import { HakijaPaatosPage } from '../../pages/hakija/HakijaPaatosPage'
+import {
+  expectIsFinnishJotpaEmail,
+  expectIsFinnishOphEmail,
+  expectIsSwedishJotpaEmail,
+} from '../../utils/email-signature'
 
 const jotpaFont = 'Montserrat, sans-serif'
 const jotpaColour = 'rgb(0, 155, 98)'
@@ -123,13 +128,9 @@ JotpaTest(
           `Opetushallitus
 Hakaniemenranta 6`
         )
-        expect(newHakemusEmail.formatted).toContain(
-          `Jatkuvan oppimisen ja työllisyyden palvelukeskus
-Hakaniemenranta 6`
-        )
 
+        await expectIsFinnishJotpaEmail(newHakemusEmail)
         expect(newHakemusEmail.formatted).not.toContain('etunimi.sukunimi@oph.fi')
-        expect(newHakemusEmail.formatted).toContain('etunimi.sukunimi@jotpa.fi')
       })
     })
 
@@ -139,11 +140,7 @@ Hakaniemenranta 6`
       const userKey = await hakijaAvustusHakuPage.getUserKey()
       const hakemusID = await hakijaAvustusHakuPage.getHakemusID(avustushakuID, userKey)
       const email = (await waitUntilMinEmails(getHakemusSubmitted, 1, hakemusID))[0]
-      console.log(email)
-
-      await test.step('on oikean lähettäjän osoite', async () => {
-        expect(email['from-address']).toEqual('no-reply@jotpa.fi')
-      })
+      await expectIsFinnishJotpaEmail(email)
 
       await test.step('on oikean lähettäjän nimi', async () => {
         expect(email.formatted).not.toContain(`Opetushallitus`)
@@ -201,7 +198,7 @@ SwedishJotpaTest(
       const newHakemusEmail = (await pollUntilNewHakemusEmailArrives(avustushakuID, faithEmail))[0]
 
       await test.step('oph on korvattu jotpalla niiltä osin kuin on sovittu', async () => {
-        expect(newHakemusEmail['from-address']).toEqual('no-reply@jotpa.fi')
+        await expectIsSwedishJotpaEmail(newHakemusEmail)
 
         expect(newHakemusEmail.formatted).not.toContain(
           'per e-post på adressen statsunderstod@oph.fi'
@@ -218,7 +215,6 @@ Hagnäskajen 6`
         )
 
         expect(newHakemusEmail.formatted).not.toContain('fornamn.efternamn@oph.fi')
-        expect(newHakemusEmail.formatted).toContain('fornamn.efternamn@jotpa.fi')
       })
     })
 
@@ -252,6 +248,7 @@ JotpaTest(
     const hakemusID = await hakijaAvustusHakuPage.getHakemusID(avustushakuID, userKey)
     const emails = await waitUntilMinEmails(getMuutoshakemusEmails, 1, hakemusID)
     const email = emails[0]
+    await expectIsFinnishJotpaEmail(email)
 
     await test.step('on päätöksellä', async () => {
       const hakijaPaatosPage = HakijaPaatosPage(page)
@@ -310,20 +307,6 @@ JotpaTest(
         'Mikäli ette ota päätöksen mukaista avustusta vastaan, tulee siitä ilmoittaa Opetushallitukselle'
       )
     })
-
-    await test.step('on oikea signature block sähköpostiviestissä', async () => {
-      expect(email.formatted).toContain(
-        'Jatkuvan oppimisen ja työllisyyden palvelukeskus\n' +
-          'Hakaniemenranta 6\n' +
-          'PL 380, 00531 Helsinki\n' +
-          'puhelin 029 533 1000\n' +
-          'etunimi.sukunimi@jotpa.fi'
-      )
-    })
-
-    await test.step('sähköpostiviesti tulee osoitteesta no-reply@jotpa.fi', async () => {
-      expect(email['from-address']).toBe('no-reply@jotpa.fi')
-    })
   }
 )
 
@@ -332,20 +315,7 @@ JotpaTest(
   async ({ page, rejectedHakemusEmails, rejectedHakemus }) => {
     const { emails } = rejectedHakemusEmails
     const email = (await emails)[0]
-
-    await test.step('on oikea signature block sähköpostiviestissä', async () => {
-      expect(email.formatted).toContain(
-        'Jatkuvan oppimisen ja työllisyyden palvelukeskus\n' +
-          'Hakaniemenranta 6\n' +
-          'PL 380, 00531 Helsinki\n' +
-          'puhelin 029 533 1000\n' +
-          'etunimi.sukunimi@jotpa.fi'
-      )
-    })
-
-    await test.step('sähköpostiviesti tulee osoitteesta no-reply@jotpa.fi', async () => {
-      expect(email['from-address']).toBe('no-reply@jotpa.fi')
-    })
+    await expectIsFinnishJotpaEmail(email)
 
     await test.step('on päätöksellä', async () => {
       const { hakemusID } = rejectedHakemus
@@ -385,20 +355,7 @@ SwedishJotpaTest(
   async ({ page, rejectedHakemus, rejectedHakemusEmails }) => {
     const { emails } = rejectedHakemusEmails
     const email = (await emails)[0]
-
-    await test.step('on oikea signature block sähköpostiviestissä', async () => {
-      expect(email.formatted).toContain(
-        'Servicecentret för kontinuerligt lärande och sysselsättning\n' +
-          'Hagnäskajen 6\n' +
-          'PB 380, 00531 Helsingfors\n' +
-          'telefon 029 533 1000\n' +
-          'fornamn.efternamn@jotpa.fi'
-      )
-    })
-
-    await test.step('sähköpostiviesti tulee osoitteesta no-reply@jotpa.fi', async () => {
-      expect(email['from-address']).toBe('no-reply@jotpa.fi')
-    })
+    await expectIsSwedishJotpaEmail(email)
 
     await test.step('on päätöksellä', async () => {
       const { hakemusID } = rejectedHakemus
@@ -442,6 +399,7 @@ SwedishJotpaTest(
     const hakemusID = await hakijaAvustusHakuPage.getHakemusID(avustushakuID, userKey)
     const emails = await waitUntilMinEmails(getMuutoshakemusEmails, 1, hakemusID)
     const email = emails[0]
+    await expectIsSwedishJotpaEmail(email)
 
     await test.step('on oikea vastuutaho sähköpostiviestissä', async () => {
       expect(email.formatted).toContain(
@@ -451,16 +409,6 @@ SwedishJotpaTest(
 
       expect(email.formatted).not.toContain(
         'Om ni inte tar emot understödet i enlighet med beslutet, ska ni meddela om detta till Utbildningsstyrelsen inom den tidsfrist som anges i beslutet.'
-      )
-    })
-
-    await test.step('on oikea signature block sähköpostiviestissä', async () => {
-      expect(email.formatted).toContain(
-        'Servicecentret för kontinuerligt lärande och sysselsättning\n' +
-          'Hagnäskajen 6\n' +
-          'PB 380, 00531 Helsingfors\n' +
-          'telefon 029 533 1000\n' +
-          'fornamn.efternamn@jotpa.fi'
       )
     })
   }

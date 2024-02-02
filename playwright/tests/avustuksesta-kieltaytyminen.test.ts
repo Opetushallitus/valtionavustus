@@ -9,6 +9,7 @@ import {
 } from '../utils/emails'
 import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { twoAcceptedHakemusTest as test } from '../fixtures/twoHakemusTest'
+import { expectIsFinnishOphEmail } from '../utils/email-signature'
 
 test('Avustuksesta kieltäytyminen', async ({
   page,
@@ -38,14 +39,7 @@ test('Avustuksesta kieltäytyminen', async ({
       expect(email.formatted).toContain(
         'Ilmoitus avustuksenne vastaanottamatta jättämisestä on lähetetty Opetushallitukseen.'
       )
-
-      expect(email.formatted).toContain(
-        'Opetushallitus\n' +
-          'Hakaniemenranta 6\n' +
-          'PL 380, 00531 Helsinki\n' +
-          'puhelin 029 533 1000\n' +
-          'etunimi.sukunimi@oph.fi'
-      )
+      await expectIsFinnishOphEmail(email)
     })
     await test.step('with correct from-address', async () => {
       expect(email['from-address']).toBe('no-reply@valtionavustukset.oph.fi')

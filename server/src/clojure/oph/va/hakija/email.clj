@@ -110,6 +110,7 @@
         end-date-string (datetime/date-string end-date)
         end-time-string (datetime/time-string end-date)
         url (email-utils/generate-url avustushaku-id lang user-key false)
+        signature (email-signature-block lang)
         msg {:operation :send
              :email-type :new-hakemus
              :lang lang
@@ -119,12 +120,13 @@
              :to to
              :avustushaku avustushaku
              :avustushaku-id avustushaku-id
+             :is-jotpa-hakemus true
              :start-date start-date-string
              :start-time start-time-string
              :end-date end-date-string
              :end-time end-time-string
              :url url}
-        body (render-body (assoc msg :email-type :new-jotpa-hakemus))]
+        body (render-body (assoc msg :email-type :new-jotpa-hakemus) signature)]
     (log/info "Url would be: " url)
     (email/enqueue-message-to-be-send msg body)))
 
@@ -134,6 +136,7 @@
         end-date-string (datetime/date-string end-date)
         end-time-string (datetime/time-string end-date)
         url (email-utils/generate-url avustushaku-id lang user-key false)
+        signature (email-signature-block lang)
         msg {:operation :send
              :email-type :new-hakemus
              :lang lang
@@ -142,13 +145,14 @@
              :subject (get-in mail-titles [:new-hakemus lang])
              :to to
              :avustushaku avustushaku
+             :is-jotpa-hakemus false
              :avustushaku-id avustushaku-id
              :start-date start-date-string
              :start-time start-time-string
              :end-date end-date-string
              :end-time end-time-string
              :url url}
-        body (render-body msg)]
+        body (render-body msg signature)]
     (log/info "Url would be: " url)
     (email/enqueue-message-to-be-send msg body)))
 
@@ -290,6 +294,7 @@
         end-time-string (datetime/time-string end-date)
         url (email-utils/generate-url avustushaku-id lang user-key true)
         from (if is-jotpa-avustushaku? "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+        signature (email-signature-block lang)
         user-message {:operation :send
                       :email-type  :hakemus-submitted
                       :lang lang
@@ -306,6 +311,6 @@
                       :avustushaku-id avustushaku-id
                       :is-jotpa-hakemus is-jotpa-avustushaku?
                       :hakemus-id hakemus-id}
-        body (render-body user-message)]
+        body (render-body user-message signature)]
     (log/info "Urls would be: " url)
     (email/enqueue-message-to-be-send user-message body)))

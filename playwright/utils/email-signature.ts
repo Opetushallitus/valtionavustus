@@ -50,7 +50,7 @@ export async function expectIsFinnishJotpaEmail(email: Email) {
 }
 
 export async function expectIsSwedishJotpaEmail(email: Email) {
-  await test.step('email is from no-reply@valtionavustukset.oph.fi', async () => {
+  await test.step('email is from no-reply@jotpa.fi', async () => {
     expect(email['from-address']).toEqual('no-reply@jotpa.fi')
   })
 

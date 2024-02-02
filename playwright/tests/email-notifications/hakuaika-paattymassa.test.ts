@@ -7,6 +7,11 @@ import { randomString } from '../../utils/random'
 import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
 import { createJotpaCodes } from '../../fixtures/JotpaTest'
 import { expectToBeDefined } from '../../utils/util'
+import {
+  expectIsFinnishJotpaEmail,
+  expectIsFinnishOphEmail,
+  expectIsSwedishJotpaEmail,
+} from '../../utils/email-signature'
 
 const sendHakuaikaPaattymassaNotifications = (page: Page) =>
   page.request.post(`${VIRKAILIJA_URL}/api/test/send-hakuaika-paattymassa-notifications`)
@@ -65,6 +70,7 @@ for (const tz of timezones) {
           expect(email['to-address']).toHaveLength(1)
           expect(email['to-address']).toContain(randomEmail)
           expect(email.subject).toEqual('Hakuaika on päättymässä')
+          await expectIsFinnishOphEmail(email)
 
           const endDate = moment(hakuProps.hakuaikaEnd).format('DD.MM.YYYY')
           expect(filledHakemus.hakemusUrl).toContain('lang=fi')
@@ -78,14 +84,6 @@ hakemus lähetettävä käsiteltäväksi ennen hakuajan päättymistä. Määrä
 Pääsette viimeistelemään hakemuksenne tästä: ${filledHakemus.hakemusUrl}
 
 Mikäli olette päättäneet jättää hakemuksen lähettämättä, on tämä viesti aiheeton.`)
-
-          expect(email.formatted).toContain(
-            'Opetushallitus\n' +
-              'Hakaniemenranta 6\n' +
-              'PL 380, 00531 Helsinki\n' +
-              'puhelin 029 533 1000\n' +
-              'etunimi.sukunimi@oph.fi'
-          )
         }
       )
 
@@ -96,16 +94,7 @@ Mikäli olette päättäneet jättää hakemuksen lähettämättä, on tämä vi
           await sendHakuaikaPaattymassaNotifications(page)
           const emails = await waitUntilMinEmails(getHakuaikaPaattymassaEmails, 1, avustushakuID)
           const email = emails[0]
-
-          expect(email['from-address']).toBe('no-reply@jotpa.fi')
-
-          expect(email.formatted).toContain(
-            'Jatkuvan oppimisen ja työllisyyden palvelukeskus\n' +
-              'Hakaniemenranta 6\n' +
-              'PL 380, 00531 Helsinki\n' +
-              'puhelin 029 533 1000\n' +
-              'etunimi.sukunimi@jotpa.fi'
-          )
+          await expectIsFinnishJotpaEmail(email)
         }
       )
 
@@ -170,16 +159,7 @@ Om ni har beslutat att inte lämna in ansökan föranleder detta meddelande inga
             await sendHakuaikaPaattymassaNotifications(page)
             const emails = await waitUntilMinEmails(getHakuaikaPaattymassaEmails, 1, avustushakuID)
             const email = emails[0]
-
-            expect(email['from-address']).toBe('no-reply@jotpa.fi')
-
-            expect(email.formatted).toContain(
-              'Servicecentret för kontinuerligt lärande och sysselsättning\n' +
-                'Hagnäskajen 6\n' +
-                'PB 380, 00531 Helsingfors\n' +
-                'telefon 029 533 1000\n' +
-                'fornamn.efternamn@jotpa.fi'
-            )
+            await expectIsSwedishJotpaEmail(email)
           }
         )
       })

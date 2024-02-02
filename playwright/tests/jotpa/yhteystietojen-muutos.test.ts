@@ -6,6 +6,7 @@ import {
   waitUntilMinEmails,
 } from '../../utils/emails'
 import { JotpaTest, SwedishJotpaTest } from '../../fixtures/JotpaTest'
+import { expectIsFinnishJotpaEmail } from '../../utils/email-signature'
 
 JotpaTest(
   'when user changes yhteystiedot',
@@ -32,13 +33,7 @@ JotpaTest(
         'Ilmoitus yhteystietojen muutoksesta on lähetetty Jatkuvan oppimisen ja työllisyyden palvelukeskukselle.'
       )
 
-      expect(email.formatted).toContain(
-        'Jatkuvan oppimisen ja työllisyyden palvelukeskus\n' +
-          'Hakaniemenranta 6\n' +
-          'PL 380, 00531 Helsinki\n' +
-          'puhelin 029 533 1000\n' +
-          'etunimi.sukunimi@jotpa.fi'
-      )
+      await expectIsFinnishJotpaEmail(email)
     })
   }
 )

@@ -14,6 +14,7 @@ import {
   waitUntilMinEmails,
 } from '../../utils/emails'
 import { waitForNewTab } from '../../utils/util'
+import { expectIsFinnishOphEmail } from '../../utils/email-signature'
 
 test.describe.parallel('Avustushaku that was marked as muutoshakukelvoton', () => {
   test('turns into muutoshakukelpoinen when copied', async ({ avustushakuID, page }) => {
@@ -127,13 +128,7 @@ test.describe.parallel('Avustushaku that was marked as muutoshakukelvoton', () =
         'Ilmoitus yhteystietojen muutoksesta on lähetetty Opetushallitukseen.'
       )
 
-      expect(email.formatted).toContain(
-        'Opetushallitus\n' +
-          'Hakaniemenranta 6\n' +
-          'PL 380, 00531 Helsinki\n' +
-          'puhelin 029 533 1000\n' +
-          'etunimi.sukunimi@oph.fi'
-      )
+      await expectIsFinnishOphEmail(email)
     })
   })
 })

@@ -8,10 +8,4 @@ Den sökande kan via länken uppdatera sin ansökan så länge ansökningstiden 
 
 Den föredragande som ansvarar för ansökningen har nämnts i ansökningsmeddelandet.
 
-{{^is-jotpa-hakemus}}Utbildningsstyrelsen{{/is-jotpa-hakemus}}{{#is-jotpa-hakemus}}Servicecentret för kontinuerligt lärande och sysselsättning{{/is-jotpa-hakemus}}
-Hagnäskajen 6
-PB 380
-00531 Helsingfors
-
-telefon 029 533 1000
-fax 029 533 1035
+{{>signature}}

@@ -15,6 +15,7 @@ import { HakijaSelvitysPage } from '../../../pages/hakija/hakijaSelvitysPage'
 import { navigate } from '../../../utils/navigate'
 import { VIRKAILIJA_URL, swedishAnswers } from '../../../utils/constants'
 import { Answers } from '../../../utils/types'
+import { expectIsFinnishOphEmail } from '../../../utils/email-signature'
 
 test.extend<{ answers: Answers }>({
   answers: swedishAnswers,
@@ -213,13 +214,7 @@ Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avu
         `_ valtionavustus\n` +
         `santeri.horttanainen@reaktor.com`
     )
-    expect(email.formatted).toContain(
-      'Opetushallitus\n' +
-        'Hakaniemenranta 6\n' +
-        'PL 380, 00531 Helsinki\n' +
-        'puhelin 029 533 1000\n' +
-        'etunimi.sukunimi@oph.fi'
-    )
+    await expectIsFinnishOphEmail(email)
   })
   await test.step('hakija täydennys is shown as diff', async () => {
     await hakemustenArviointiPage.navigateToHakemusArviointiLoppuselvitys(avustushakuID, hakemusID)

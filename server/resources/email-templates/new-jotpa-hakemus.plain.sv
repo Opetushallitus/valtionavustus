@@ -15,10 +15,4 @@ Mer information om ansökan kan ni få av den ansvariga föredragande (nämns i 
 
 Vid tekniska frågor om blanketten kan ni ta kontakt per e-post på adressen rahoitus@jotpa.fi.
 
-Servicecentret för kontinuerligt lärande och sysselsättning
-Hagnäskajen 6
-PB 380, 00531 Helsingfors
-
-telefon 029 533 1000
-fax 029 533 1035
-fornamn.efternamn@jotpa.fi
+{{>signature}}
