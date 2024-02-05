@@ -106,7 +106,7 @@
                  [org.apache.logging.log4j/log4j-slf4j2-impl ~log4j-version]
 
                  ;; http
-                 [compojure "1.7.0"]
+                 [compojure "1.7.1"]
                  [http-kit "2.7.0"]
                  [metosin/compojure-api "1.1.13"]
                  [ring.middleware.conditional "0.2.0" :exclusions [ring]]
