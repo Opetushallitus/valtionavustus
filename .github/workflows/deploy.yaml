@@ -33,14 +33,9 @@ jobs:
           aws-region: eu-west-1
           role-to-assume: ${{ secrets.DEPLOY_ROLE_ARN }}
 
-      - name: Start deployment concurrency check
-        id: before-deploy
-        if: ${{ !cancelled() }}
-        run: echo "I am here as a concurrency checkpoint, if I ran, the deploy step runs, even when the workflow is cancelled"
-
       - name: 04-deploy-cdk.sh
         id: deploy
-        if: ${{ steps.before-deploy.outcome == 'success' }}
+        if: ${{ always() }}
         run: |
           sleep 60
           ./deploy-scripts/04-deploy-cdk-${{ inputs.env }}.sh
