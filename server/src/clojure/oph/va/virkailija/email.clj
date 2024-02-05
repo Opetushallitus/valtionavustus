@@ -397,23 +397,21 @@
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
         is-jotpa-hakemus? (is-jotpa-avustushaku avustushaku)
         from (if is-jotpa-hakemus? "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
-        mail-subject (get-in mail-titles [:paatos lang])]
+        signature (email-signature-block lang)
+        mail-subject (get-in mail-titles [:paatos lang])
+        template (get-in mail-templates [:paatos lang])
+        msg {:register-number (:register_number hakemus)
+             :project-name (:project_name hakemus)
+             :avustushaku-name avustushaku-name
+             :url url
+             :is-jotpa-hakemus is-jotpa-hakemus? }
+        body            (render template msg signature)]
     (log/info "Url would be: " url)
-    (email/try-send-msg-once {
-                          :email-type :paatos
-                          :lang lang
-                          :from from
-                          :sender (-> email/smtp-config :sender)
-                          :subject mail-subject
-                          :avustushaku-name avustushaku-name
-                          :to to
-                          :url url
-                          :hakemus-id (:id hakemus)
-                          :is-jotpa-hakemus is-jotpa-hakemus?
-                          :register-number (:register_number hakemus)
-                          :project-name (:project_name hakemus)}
-
-                           (partial render (get-in mail-templates [:paatos lang])))))
+    (email/try-send-email!
+      (email/message lang :paatos to mail-subject body)
+      {:hakemus-id     (:id hakemus)
+       :avustushaku-id (:id avustushaku)
+       :from           from})))
 
 (defn send-paatokset-lahetetty [yhteenveto-url avustushaku-id avustushaku-name to]
   (let [lang (keyword "fi")]
