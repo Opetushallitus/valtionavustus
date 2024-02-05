@@ -10,12 +10,12 @@ defaults:
   run:
     shell: bash
 
-concurrency: deploy-${{ inputs.env }}
-
 jobs:
   deploy:
     name: Deploy to ${{ inputs.env }}
-    runs-on: ubuntu-22.04
+    concurrency:
+      group: deploy-${{ inputs.env }}
+      cancel-in-progress: true
     environment: ${{ inputs.env }}
     env:
       AWS_ACCOUNT_ID_DEV: ${{ secrets.AWS_ACCOUNT_ID_DEV }}
@@ -24,6 +24,7 @@ jobs:
     permissions:
       id-token: write
       contents: write
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4.1.1
 
@@ -32,13 +33,17 @@ jobs:
           aws-region: eu-west-1
           role-to-assume: ${{ secrets.DEPLOY_ROLE_ARN }}
 
+      - name: Start deployment concurrency check
+        id: before-deploy
+        if: ${{ !cancelled() }}
+        run: echo "I am here as a concurrency checkpoint, if I ran, the deploy step runs, even when the workflow is cancelled"
+
       - name: 04-deploy-cdk.sh
         id: deploy
-        run: ./deploy-scripts/04-deploy-cdk-${{ inputs.env }}.sh
-
-      - name: set now timestamp
-        id: now
-        run: echo "timestamp=$(date -Iseconds | sed s/:/_/g )" >> $GITHUB_OUTPUT
+        if: steps.before-deploy.outcome == 'success'
+        run: |
+          ./deploy-scripts/04-deploy-cdk-${{ inputs.env }}.sh
+          echo "timestamp=$(date -Iseconds | sed s/:/_/g )" >> $GITHUB_OUTPUT
 
       - name: Update green tag
         if: steps.deploy.outcome == 'success'
@@ -47,7 +52,7 @@ jobs:
           git config user.email github-actions@github.com
           git tag --force va-green-${{ inputs.env }}
           git push --force origin va-green-${{ inputs.env }}
-          git tag va-green-${{ inputs.env }}-${{ steps.now.outputs.timestamp }}
-          git push origin va-green-${{ inputs.env }}-${{ steps.now.outputs.timestamp }}
+          git tag va-green-${{ inputs.env }}-${{ steps.deploy.outputs.timestamp }}
+          git push origin va-green-${{ inputs.env }}-${{ steps.deploy.outputs.timestamp }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
