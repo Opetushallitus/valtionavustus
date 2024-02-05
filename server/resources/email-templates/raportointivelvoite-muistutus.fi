@@ -2,7 +2,7 @@ Hyvä vastaanottaja,
 
 valtionavustukselle {{avustushaku-name-fi}} kirjatun raportointivelvoitteen määräaika on {{maaraaika}}.
 
-Linkki hakuun: {{{linkki}}}
+Linkki hakuun: {{ linkki }}
 
 Laatikaa vaadittu raportti vastuuvalmistelijan johdolla ja tallentakaa se Opetushallituksen asianhallintajärjestelmään. Lähettäkää raportti raportointivelvoitteen asettajalle annettuun määräaikaan mennessä. Lähettäminen tulee tehdä asianhallintajärjestelmästä, mikäli määrärahan asettaja ei ole toisin ohjeistanut.
 
