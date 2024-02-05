@@ -6,12 +6,25 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../scripts/common-f
 
 readonly gh_org="opetushallitus"
 readonly gh_repo="valtionavustus"
+readonly gh_team="reaktor-hellops"
 readonly gh_deployment_role_secret="DEPLOY_ROLE_ARN"
 readonly dist_dir="$repo/cdk/dist"
 
 function create_env_in_github {
   info "Creating environment $ENV in Github repository $gh_org/$gh_repo"
-  gh api --method PUT "repos/$gh_org/$gh_repo/environments/$ENV"
+
+  if [[ "$ENV" = "dev" || "$ENV" = "qa" ]]; then
+    info "No review requirement in dev or qa"
+    gh api --method PUT "repos/$gh_org/$gh_repo/environments/$ENV"
+  else
+    info "Environment requires review by team $gh_team"
+    team_id="$(gh api "orgs/$gh_org/teams/$gh_team" --jq ".id")"
+    readonly team_id
+
+    gh api --method PUT "repos/$gh_org/$gh_repo/environments/$ENV" \
+      --field "reviewers[][type]=Team" \
+      --field "reviewers[][id]=$team_id"
+    fi
 }
 
 readonly cdk_outdir="cdk.out.bootstrap"
