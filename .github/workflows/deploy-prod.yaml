@@ -7,18 +7,7 @@ defaults:
     shell: bash
 
 jobs:
-  wait-for-approval:
-    name: Wait for approval
-    environment: prod
-    concurrency:
-      group: wait-for-approval-prod
-      cancel-in-progress: true
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "approved"
-
   deploy:
-    needs: wait-for-approval
     uses: ./.github/workflows/deploy.yaml
     secrets: inherit
     with:
