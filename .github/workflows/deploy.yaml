@@ -33,11 +33,13 @@ jobs:
           aws-region: eu-west-1
           role-to-assume: ${{ secrets.DEPLOY_ROLE_ARN }}
 
+      - name: test delay
+        run: sleep 120
+
       - name: 04-deploy-cdk.sh
         id: deploy
         if: ${{ always() }}
         run: |
-          sleep 60
           ./deploy-scripts/04-deploy-cdk-${{ inputs.env }}.sh
           echo "timestamp=$(date -Iseconds | sed s/:/_/g )" >> $GITHUB_OUTPUT
 
