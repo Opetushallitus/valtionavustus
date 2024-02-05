@@ -42,6 +42,7 @@ jobs:
         id: deploy
         if: steps.before-deploy.outcome == 'success'
         run: |
+          sleep 60
           ./deploy-scripts/04-deploy-cdk-${{ inputs.env }}.sh
           echo "timestamp=$(date -Iseconds | sed s/:/_/g )" >> $GITHUB_OUTPUT
 
