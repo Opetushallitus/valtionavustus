@@ -17,7 +17,7 @@
   <suppress>
     <notes><![CDATA[
    file name: snakeyaml-1.33.jar
-   ]]></notes>
+   ]]>    </notes>
     <packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
     <cve>CVE-2022-1471</cve>
   </suppress>
@@ -25,15 +25,21 @@
     <notes><![CDATA[
    Might be non issue https://github.com/FasterXML/jackson-databind/issues/3972
    Also no fix as of 19.9.2023. Suppressed indefinitely as it's most likely there will be no fix
-   ]]></notes>
+   ]]>    </notes>
     <cve>CVE-2023-35116</cve>
   </suppress>
   <suppress>
     <notes><![CDATA[
       Vulnerability is in JMS API, which is not being used. CVE is also disputed as possibly non-exploitable
       https://github.com/quartz-scheduler/quartz/issues/943
-   ]]></notes>
+   ]]>    </notes>
     <packageUrl regex="true">^pkg:maven/org\.quartz\-scheduler/quartz@.*$</packageUrl>
     <cve>CVE-2023-39017</cve>
+  </suppress>
+  <suppress until="2024-03-06Z">
+    <notes><![CDATA[
+    Possibly false positive: https://github.com/jeremylong/DependencyCheck/issues/6438
+   ]]>    </notes>
+    <cve>CVE-2017-20189</cve>
   </suppress>
 </suppressions>
