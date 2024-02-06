@@ -13,9 +13,6 @@ defaults:
 jobs:
   deploy:
     name: Deploy to ${{ inputs.env }}
-    concurrency:
-      group: deploy-${{ inputs.env }}
-      cancel-in-progress: true
     environment: ${{ inputs.env }}
     env:
       AWS_ACCOUNT_ID_DEV: ${{ secrets.AWS_ACCOUNT_ID_DEV }}

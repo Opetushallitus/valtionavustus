@@ -6,6 +6,8 @@ defaults:
   run:
     shell: bash
 
+concurrency: deploy-qa
+
 jobs:
   deploy:
     uses: ./.github/workflows/deploy.yaml
