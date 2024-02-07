@@ -7,8 +7,28 @@ defaults:
     shell: bash
 
 jobs:
-  deploy:
-    uses: ./.github/workflows/deploy.yaml
-    secrets: inherit
-    with:
-      env: prod
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - run: sleep 30
+
+  deploy-dev:
+    needs: build
+    runs-on: ubuntu-22.04
+    concurrency: test-deploy-dev
+    steps:
+      - run: sleep 30
+
+  deploy-qa:
+    needs: deploy-dev
+    runs-on: ubuntu-22.04
+    concurrency: test-deploy-qa
+    steps:
+      - run: sleep 30
+
+  deploy-prod:
+    needs: deploy-qa
+    runs-on: ubuntu-22.04
+    environment: prod
+    steps:
+      - run: sleep 30
