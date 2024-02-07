@@ -99,7 +99,7 @@
                  [org.clojure/core.async "1.6.681"]
                  [org.clojure/data.xml "0.0.8"]
                  [org.clojure/tools.trace "0.7.11"]
-                 [org.clojure/tools.logging "1.2.4"]
+                 [org.clojure/tools.logging "1.3.0"]
 
                  ;; logging
                  [org.apache.logging.log4j/log4j-core ~log4j-version]
