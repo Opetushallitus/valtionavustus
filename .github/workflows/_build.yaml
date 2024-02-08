@@ -53,7 +53,7 @@ jobs:
       - name: Run 03-playwright-tests.sh
         run: ./deploy-scripts/03-playwright-tests.sh
         env:
-          PLAYWRIGHT_WORKERS: 1 # GH Actions will choke to death with more workers
+          PLAYWRIGHT_WORKERS: 2 # GH Actions will choke to death with more workers
           PLAYWRIGHT_SHARD: ${{ matrix.shard }}
           PLAYWRIGHT_SHARDS_AMOUNT: ${{ matrix.total_shards }}
       - name: Upload Playwright results
