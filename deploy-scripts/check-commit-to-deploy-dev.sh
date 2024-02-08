@@ -1,0 +1,1 @@
+check-commit-to-deploy.sh

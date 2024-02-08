@@ -6,32 +6,14 @@ on:
 
 jobs:
   lint:
-    uses: ./.github/workflows/lint.yaml
+    uses: ./.github/workflows/_lint.yaml
 
   build:
     needs: lint
-    uses: ./.github/workflows/build.yaml
+    uses: ./.github/workflows/_build.yaml
     secrets: inherit
 
-  push-green:
-    name: Push to green-master and deploy to dev
+  deploy:
     needs: build
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: write
-      actions: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Update green-master and run deploy-dev.yaml workflow
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git fetch origin green-master:green-master
-          git checkout green-master
-          git merge --ff-only ${{ github.sha }}
-          git push origin green-master
-          gh workflow run deploy-dev.yaml --ref green-master
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    uses: ./.github/workflows/_deploy-all.yaml
+    secrets: inherit

@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy to environment
 on:
   workflow_call:
     inputs:
@@ -9,8 +9,6 @@ on:
 defaults:
   run:
     shell: bash
-
-concurrency: deploy-${{ inputs.env }}
 
 jobs:
   deploy:
@@ -25,6 +23,9 @@ jobs:
       id-token: write
       contents: write
     steps:
+      - name: Check commit deployment status
+        run: ./deploy-scripts/check-commit-to-deploy-${{ inputs.env }}.sh
+
       - uses: actions/checkout@v4.1.1
 
       - uses: aws-actions/configure-aws-credentials@v4

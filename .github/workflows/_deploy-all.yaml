@@ -1,0 +1,28 @@
+name: Deploy
+on:
+  workflow_call:
+
+jobs:
+  deploy-dev:
+    uses: ./.github/workflows/_deploy-env.yaml
+    concurrency: deploy-dev
+    secrets: inherit
+    with:
+      env: dev
+
+  deploy-qa:
+    needs: deploy-dev
+    concurrency: deploy-qa
+    uses: ./.github/workflows/_deploy-env.yaml
+    secrets: inherit
+    with:
+      env: qa
+
+  deploy-prod:
+    needs: deploy-qa
+    # No concurrency because it only allows one waiting and one pending job
+    # Prod deployments will wait for approval
+    uses: ./.github/workflows/_deploy-env.yaml
+    secrets: inherit
+    with:
+      env: prod
