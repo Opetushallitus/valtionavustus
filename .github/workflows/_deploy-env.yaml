@@ -35,9 +35,9 @@ jobs:
           aws-region: eu-west-1
           role-to-assume: ${{ secrets.DEPLOY_ROLE_ARN }}
 
-      - name: 04-deploy-cdk.sh
+      - name: 05-deploy-cdk.sh
         id: deploy
-        run: ./deploy-scripts/04-deploy-cdk-${{ inputs.env }}.sh
+        run: ./deploy-scripts/05-deploy-cdk-${{ inputs.env }}.sh
 
       - name: set now timestamp
         id: now

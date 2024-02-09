@@ -63,3 +63,11 @@ jobs:
           name: playwright-results-${{ matrix.shard }}
           path: playwright-results/
 
+  lint:
+    name: 04-lint.sh
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - name: Run 04-lint.sh
+        run: ./deploy-scripts/04-lint.sh
+

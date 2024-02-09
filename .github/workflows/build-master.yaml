@@ -5,11 +5,7 @@ on:
       - master
 
 jobs:
-  lint:
-    uses: ./.github/workflows/_lint.yaml
-
   build:
-    needs: lint
     uses: ./.github/workflows/_build.yaml
     secrets: inherit
 

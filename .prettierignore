@@ -17,3 +17,9 @@
 
 # More folders to ignore
 playwright-results/
+
+# Generated files in CDK project
+cdk/cdk.out*/
+cdk/**/*.d.ts
+cdk/bin/**/*.js
+cdk/lib/**/*.js
