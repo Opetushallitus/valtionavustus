@@ -26,7 +26,28 @@ export interface SmokeTestConfig {
   env: 'qa' | 'prod'
 }
 
+function generateMetadata() {
+  const { GITHUB_SHA, GITHUB_SERVER_URL, GITHUB_REPOSITORY, GITHUB_RUN_ID } = process.env
+
+  const ciLink =
+    GITHUB_SERVER_URL && GITHUB_REPOSITORY && GITHUB_RUN_ID
+      ? `${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}`
+      : undefined
+
+  return {
+    'revision.id': GITHUB_SHA,
+    'revision.author': undefined,
+    'revision.email': undefined,
+    'revision.subject': undefined,
+    'revision.timestamp': undefined,
+    'revision.link': undefined,
+    'ci.link': ciLink,
+    timestamp: Date.now(),
+  }
+}
+
 const config: PlaywrightTestConfig<SmokeTestConfig> = {
+  metadata: generateMetadata(),
   expect: {
     toMatchSnapshot: {
       maxDiffPixelRatio: 0.015,

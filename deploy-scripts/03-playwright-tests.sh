@@ -47,6 +47,10 @@ function main {
   --env PLAYWRIGHT_RETRIES=1\
   --env PLAYWRIGHT_SHARD="${PLAYWRIGHT_SHARD-}"\
   --env PLAYWRIGHT_SHARDS_AMOUNT="${PLAYWRIGHT_SHARDS_AMOUNT-}"\
+  --env GITHUB_SHA \
+  --env GITHUB_SERVER_URL \
+  --env GITHUB_REPOSITORY \
+  --env GITHUB_RUN_ID \
   playwright-image \
   "$@"
 
