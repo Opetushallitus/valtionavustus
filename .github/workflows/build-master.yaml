@@ -13,7 +13,7 @@ jobs:
     name: Generate report from Playwright runs
     runs-on: ubuntu-22.04
     needs: build
-    if: !cancelled()
+    if: ${{ !cancelled() }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
