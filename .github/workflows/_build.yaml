@@ -46,8 +46,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5]
-        total_shards: [5]
+        shard: [1, 2, 3, 4, 5, 6]
+        total_shards: [6]
     steps:
       - uses: actions/checkout@v4.1.1
       - name: Run 03-playwright-tests.sh
@@ -60,8 +60,9 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-results-${{ matrix.shard }}
-          path: playwright-results/
+          name: playwright-blob-${{ matrix.shard }}
+          path: playwright-results/blob-report
+          retention-days: 1
 
   lint:
     name: 04-lint.sh

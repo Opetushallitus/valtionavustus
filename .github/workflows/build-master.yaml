@@ -9,6 +9,31 @@ jobs:
     uses: ./.github/workflows/_build.yaml
     secrets: inherit
 
+  generate-playwright-report:
+    name: Generate report from Playwright runs
+    runs-on: ubuntu-22.04
+    needs: build
+    if: !cancelled()
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          path: all-blob-reports
+          pattern: playwright-blob-*
+          merge-multiple: true
+      - run: npx playwright merge-reports --reporter html ./all-blob-reports 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: playwright-html-report
+          path: playwright-report
+          retention-days: 14
+
+
   deploy:
     needs: build
     uses: ./.github/workflows/_deploy-all.yaml

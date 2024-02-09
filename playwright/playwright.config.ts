@@ -93,6 +93,12 @@ const config: PlaywrightTestConfig<SmokeTestConfig> = {
         open: 'never',
       },
     ],
+    [
+      'blob',
+      {
+        outputDir: '../playwright-results/blob-report',
+      },
+    ],
   ],
 }
 
