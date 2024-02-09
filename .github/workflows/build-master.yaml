@@ -26,7 +26,7 @@ jobs:
           path: all-blob-reports
           pattern: playwright-blob-*
           merge-multiple: true
-      - run: npx playwright merge-reports --reporter html ./all-blob-reports 
+      - run: npx playwright merge-reports --reporter github,html ./all-blob-reports
       - uses: actions/upload-artifact@v4
         with:
           name: playwright-html-report
