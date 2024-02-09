@@ -92,7 +92,7 @@ const config: PlaywrightTestConfig<SmokeTestConfig> = {
       mode: 'only-on-failure',
       fullPage: true,
     },
-    trace: 'on',
+    trace: 'retain-on-failure',
     testIdAttribute: 'data-test-id',
   },
   reportSlowTests: {
