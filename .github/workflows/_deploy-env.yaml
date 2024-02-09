@@ -23,10 +23,12 @@ jobs:
       id-token: write
       contents: write
     steps:
+      - uses: actions/checkout@v4.1.1
+
       - name: Check commit deployment status
         run: ./deploy-scripts/check-commit-to-deploy-${{ inputs.env }}.sh
-
-      - uses: actions/checkout@v4.1.1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
