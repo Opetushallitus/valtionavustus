@@ -14,6 +14,14 @@ jobs:
     runs-on: ubuntu-22.04
     needs: build
     if: ${{ !cancelled() }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{steps.pages-deployment.outputs.page_url}}
+    concurrency: github-pages
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -32,7 +40,15 @@ jobs:
           name: playwright-html-report
           path: playwright-report
           retention-days: 14
-
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: 'playwright-report'
+      - name: Deploy artifact
+        id: pages-deployment
+        uses: actions/deploy-pages@v1
 
   deploy:
     needs: build
