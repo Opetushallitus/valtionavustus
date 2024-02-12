@@ -56,6 +56,13 @@
         "groupName": "redux packages"
       },
       {
+        "matchPackageNames": [
+          "aws-cdk",
+          "aws-cdk-lib"
+        ],
+        "groupName": "AWS CDK"
+      },
+      {
         "matchManagers": ["nvm", "npm", "dockerfile"],
         "matchPackageNames": ["@types/node", "node"],
         "updateTypes": ["major"],
