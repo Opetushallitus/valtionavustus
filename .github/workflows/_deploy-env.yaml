@@ -39,6 +39,15 @@ jobs:
         id: deploy
         run: ./deploy-scripts/05-deploy-cdk-${{ inputs.env }}.sh
 
+      - name: Send deployment Slack notification
+        if: always()
+        env:
+          ENVIRONMENT: ${{ inputs.env }}
+          OPH_SLACK_WEBHOOK: ${{ secrets.OPH_SLACK_WEBHOOK }}
+          APP_SUCCESSFULLY_DEPLOYED: ${{ steps.deploy.outcome == 'success' }}
+          COMMIT_HASH: ${{ github.sha }}
+        run: ./scripts/slack/post-github-deploy-status-to-slack.sh
+
       - name: set now timestamp
         id: now
         run: echo "timestamp=$(date -Iseconds | sed s/:/_/g )" >> $GITHUB_OUTPUT
@@ -54,3 +63,4 @@ jobs:
           git push origin va-green-${{ inputs.env }}-${{ steps.now.outputs.timestamp }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
