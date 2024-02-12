@@ -48,7 +48,7 @@ jobs:
           path: 'playwright-report'
       - name: Deploy artifact
         id: pages-deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
 
   deploy:
     needs: build
