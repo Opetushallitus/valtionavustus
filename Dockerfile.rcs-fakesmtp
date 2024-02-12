@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM openjdk:23
 
 ADD https://nilhcem.github.io/FakeSMTP/downloads/fakeSMTP-latest.zip /fakeSMTP-latest.zip
 RUN unzip /fakeSMTP-latest.zip
