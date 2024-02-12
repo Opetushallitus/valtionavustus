@@ -1,9 +1,11 @@
 (ns oph.va.virkailija.cas
-  (:require [oph.soresu.common.config :refer [config]]
-            [oph.va.virkailija.http :as http]
-            [oph.common.caller-id :refer [caller-id]])
-  (:import [org.http4s.client Client]
-           [fi.vm.sade.utils.cas CasAuthenticatingClient CasClient CasParams]))
+  (:require [clojure.data.json :as json]
+            [org.httpkit.client :as hk-client]
+            [oph.common.caller-id :refer [caller-id]]
+            [oph.soresu.common.config :refer [config]]
+            [oph.va.virkailija.http :as http])
+  (:import [fi.vm.sade.utils.cas CasAuthenticatingClient CasClient CasParams]
+           [org.http4s.client Client]))
 
 (def ^:private cas-client
   (when-not *compile-files*
@@ -38,8 +40,14 @@
 (defmacro try3 [& body]
   `(try-n-times (fn [] ~@body) 3))
 
-(defn validate-service-ticket [^String service ^String cas-ticket]
-  (try3 (-> @cas-client
-        (.validateServiceTicketWithVirkailijaUsername service cas-ticket)
-        .run)))
+(defn validateServiceTicketWithVirkailijaUsername [^String service ^String cas-ticket]
+  (let [casRes (hk-client/get (str (-> config :opintopolku :url) "/cas/serviceValidate")
+                              {:query-params {:ticket cas-ticket
+                                              :service service
+                                              :format "json"}
+                               :headers {"caller-id" caller-id}})
+        res-body (json/read-str (:body @casRes) :key-fn keyword)]
+    (-> res-body :serviceResponse :authenticationSuccess :user)))
 
+(defn validate-service-ticket [^String service ^String cas-ticket]
+  (try3 (validateServiceTicketWithVirkailijaUsername service cas-ticket)))
