@@ -7,12 +7,13 @@
   "username": "valtionavustus-renovate[bot]",
   "branchPrefix": "github-renovate/",
   "platform": "github",
-  "includeForks": false,
+  "forkProcessing": "disabled",
   "ignoreTests": false,
   "automergeType": "pr",
   "schedule": [
     "every weekend",
-    "after 5pm and before 5am"
+    "after 5pm",
+    "before 5am"
   ],
   "automergeSchedule": [
     "every weekend",
