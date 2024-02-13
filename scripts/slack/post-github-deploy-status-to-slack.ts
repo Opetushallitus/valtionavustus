@@ -10,8 +10,6 @@ const webhook = getWebhookURL()
 const currentCommitHash = getCurrentCommitHash()
 
 async function main() {
-  printDebug()
-
   const statusMessage = isSuccessfullyDeployed() ? 'Deployment success' : 'Deployment failure'
   const icon = isSuccessfullyDeployed() ? successIcon : failureIcon
   const changes = await getChangedGitCommitMessagesWithAuthor()
@@ -57,7 +55,7 @@ function getWebhookURL(): string {
   const webhook = process.env['OPH_SLACK_WEBHOOK']
   if (!webhook) {
     console.error('You must set OPH_SLACK_WEBHOOK for every env in Github environment secrets')
-    throw new Error('OPH_SLACK_WEBHOOK environment variable missing, cannot continue')
+    throw new Error(`OPH_SLACK_WEBHOOK environment variable missing for '${env}', cannot continue`)
   }
 
   return webhook
@@ -76,10 +74,6 @@ function getCurrentCommitHash(): string {
   if (!hash) throw new Error(`COMMIT_HASH is missing, cannot continue`)
 
   return hash
-}
-
-function printDebug() {
-  console.log(process.env)
 }
 
 main()
