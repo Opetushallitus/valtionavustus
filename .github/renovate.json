@@ -1,111 +1,162 @@
 {
-    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "onboarding": false,
-    "dependencyDashboard": true,
-    "dependencyDashboardTitle": "Dependency Dashboard self-hosted",
-    "gitAuthor": "Self-hosted Renovate Bot <130737409+valtionavustus-renovate[bot]@users.noreply.github.com>",
-    "username": "valtionavustus-renovate[bot]",
-    "branchPrefix": "github-renovate/",
-    "platform": "github",
-    "includeForks": false,
-    "ignoreTests": false,
-    "automergeType": "pr",
-    "schedule": ["every weekend", "after 5pm and before 5am"],
-    "automergeSchedule": ["every weekend", "after 5pm and before 5am"],
-    "platformAutomerge": true,
-    "automerge": true,
-    "repositories": ["Opetushallitus/valtionavustus"],
-    "enabledManagers": [
-      "nvm",
-      "npm",
-      "github-actions",
-      "leiningen",
-      "dockerfile"
-    ],
-    "packageRules": [
-      {
-        "matchDatasources": ["clojure"],
-        "registryUrls": [
-          "https://repo1.maven.org/maven2/",
-          "https://repo.clojars.org/",
-          "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"
-        ]
-      },
-      {
-        "matchPackageNames": [
-          "playwright-chromium",
-          "@playwright/test",
-          "mcr.microsoft.com/playwright"
-        ],
-        "groupName": "playwright packages"
-      },
-      {
-        "matchPackageNames": [
-          "react",
-          "react-dom",
-          "@types/react",
-          "@types/react-dom"
-        ],
-        "groupName": "react packages"
-      },
-      {
-        "matchPackageNames": [
-          "@reduxjs/toolkit",
-          "react-redux"
-        ],
-        "groupName": "redux packages"
-      },
-      {
-        "matchPackageNames": [
-          "aws-cdk",
-          "aws-cdk-lib"
-        ],
-        "groupName": "AWS CDK"
-      },
-      {
-        "matchManagers": ["nvm", "npm", "dockerfile"],
-        "matchPackageNames": ["@types/node", "node"],
-        "matchUpdateTypes": ["major"],
-        "groupName": "Node.js major updates",
-        "description": "Node.js version limited to 16 until we don't use CentOS 7 any more (node 18 and above require a newer glibc version than is available on CentOS 7)",
-        "enabled": false
-      },
-      {
-        "matchManagers": ["nvm", "npm", "dockerfile"],
-        "matchPackageNames": ["@types/node", "node"],
-        "matchUpdateTypes": ["minor", "patch"],
-        "groupName": "Node.js"
-      },
-      {
-        "matchManagers": ["dockerfile"],
-        "matchPackageNames": ["eclipse-temurin"],
-        "versioning": "regex:^(?<major>\\d+)(((\\.|u)(?<minor>\\d+))?(\\.(?<patch>\\d+))?((_|-b)(?<build>\\d+))?)-(?<compatibility>.*)$"
-      },
-      {
-        "matchPackageNames": ["eclipse-temurin"],
-        "matchUpdateTypes": ["major"],
-        "enabled": false
-      },
-      {
-        "matchPackageNames": ["com.google.guava:guava"],
-        "description": "Custom versioning regex for Guava so that we keep `-android` versions",
-        "versioning": "regex:^(?<major>\\d+)(\\.(?<minor>\\d+))?(\\.(?<patch>\\d+))?(-(?<compatibility>.*))?$"
-      },
-      {
-        "matchManagers": ["npm"],
-        "matchPackageNames": ["pdfjs-dist"],
-        "matchUpdateTypes": ["major"],
-        "groupName": "Pdf.js",
-        "description": "Pdf.js only provides ES module based version starting from major version 4. Migrating the project completely or partially (Playwright tests) to ESM is postponed until there a more urgent need",
-        "enabled": false
-      },
-      {
-        "matchManagers": ["leiningen"],
-        "matchPackageNames": ["org.flywaydb:flyway-core"],
-        "description": "Suspend updates until we update JDK from current (8)",
-        "matchUpdateTypes": ["major"],
-        "enabled": false
-      }
-    ],
-    "prConcurrentLimit": 5
-  }
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "onboarding": false,
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "Dependency Dashboard self-hosted",
+  "gitAuthor": "Self-hosted Renovate Bot <130737409+valtionavustus-renovate[bot]@users.noreply.github.com>",
+  "username": "valtionavustus-renovate[bot]",
+  "branchPrefix": "github-renovate/",
+  "platform": "github",
+  "includeForks": false,
+  "ignoreTests": false,
+  "automergeType": "pr",
+  "schedule": [
+    "every weekend",
+    "after 5pm and before 5am"
+  ],
+  "automergeSchedule": [
+    "every weekend",
+    "after 5pm and before 5am"
+  ],
+  "platformAutomerge": true,
+  "automerge": true,
+  "repositories": [
+    "Opetushallitus/valtionavustus"
+  ],
+  "enabledManagers": [
+    "nvm",
+    "npm",
+    "github-actions",
+    "leiningen",
+    "dockerfile"
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": [
+        "clojure"
+      ],
+      "registryUrls": [
+        "https://repo1.maven.org/maven2/",
+        "https://repo.clojars.org/",
+        "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"
+      ]
+    },
+    {
+      "matchPackageNames": [
+        "playwright-chromium",
+        "@playwright/test",
+        "mcr.microsoft.com/playwright"
+      ],
+      "groupName": "playwright packages"
+    },
+    {
+      "matchPackageNames": [
+        "react",
+        "react-dom",
+        "@types/react",
+        "@types/react-dom"
+      ],
+      "groupName": "react packages"
+    },
+    {
+      "matchPackageNames": [
+        "@reduxjs/toolkit",
+        "react-redux"
+      ],
+      "groupName": "redux packages"
+    },
+    {
+      "matchPackageNames": [
+        "aws-cdk",
+        "aws-cdk-lib"
+      ],
+      "groupName": "AWS CDK"
+    },
+    {
+      "matchManagers": [
+        "nvm",
+        "npm",
+        "dockerfile"
+      ],
+      "matchPackageNames": [
+        "@types/node",
+        "node"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "groupName": "Node.js major updates",
+      "description": "Node.js version limited to 16 until we don't use CentOS 7 any more (node 18 and above require a newer glibc version than is available on CentOS 7)",
+      "enabled": false
+    },
+    {
+      "matchManagers": [
+        "nvm",
+        "npm",
+        "dockerfile"
+      ],
+      "matchPackageNames": [
+        "@types/node",
+        "node"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "groupName": "Node.js"
+    },
+    {
+      "matchManagers": [
+        "dockerfile"
+      ],
+      "matchPackageNames": [
+        "eclipse-temurin"
+      ],
+      "versioning": "regex:^(?<major>\\d+)(((\\.|u)(?<minor>\\d+))?(\\.(?<patch>\\d+))?((_|-b)(?<build>\\d+))?)-(?<compatibility>.*)$"
+    },
+    {
+      "matchPackageNames": [
+        "eclipse-temurin"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "enabled": false
+    },
+    {
+      "matchPackageNames": [
+        "com.google.guava:guava"
+      ],
+      "description": "Custom versioning regex for Guava so that we keep `-android` versions",
+      "versioning": "regex:^(?<major>\\d+)(\\.(?<minor>\\d+))?(\\.(?<patch>\\d+))?(-(?<compatibility>.*))?$"
+    },
+    {
+      "matchManagers": [
+        "npm"
+      ],
+      "matchPackageNames": [
+        "pdfjs-dist"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "groupName": "Pdf.js",
+      "description": "Pdf.js only provides ES module based version starting from major version 4. Migrating the project completely or partially (Playwright tests) to ESM is postponed until there a more urgent need",
+      "enabled": false
+    },
+    {
+      "matchManagers": [
+        "leiningen"
+      ],
+      "matchPackageNames": [
+        "org.flywaydb:flyway-core"
+      ],
+      "description": "Suspend updates until we update JDK from current (8)",
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "enabled": false
+    }
+  ],
+  "prConcurrentLimit": 5
+}
