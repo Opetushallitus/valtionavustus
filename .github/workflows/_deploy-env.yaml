@@ -43,6 +43,7 @@ jobs:
 
       - name: Send deployment Slack notification
         if: always()
+        continue-on-error: true
         env:
           ENVIRONMENT: ${{ inputs.env }}
           OPH_SLACK_WEBHOOK: ${{ secrets.OPH_SLACK_WEBHOOK }}
