@@ -98,6 +98,13 @@
         "groupName": "Pdf.js",
         "description": "Pdf.js only provides ES module based version starting from major version 4. Migrating the project completely or partially (Playwright tests) to ESM is postponed until there a more urgent need",
         "enabled": false
+      },
+      {
+        "matchManagers": ["leiningen"],
+        "matchPackageNames": ["org.flywaydb:flyway-core"],
+        "description": "Suspend updates until we update JDK from current (8)",
+        "matchUpdateTypes": ["major"],
+        "enabled": false
       }
     ],
     "prConcurrentLimit": 5
