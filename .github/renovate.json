@@ -90,6 +90,14 @@
         "matchPackageNames": ["com.google.guava:guava"],
         "description": "Custom versioning regex for Guava so that we keep `-android` versions",
         "versioning": "regex:^(?<major>\\d+)(\\.(?<minor>\\d+))?(\\.(?<patch>\\d+))?(-(?<compatibility>.*))?$"
+      },
+      {
+        "matchManagers": ["npm"],
+        "matchPackageNames": ["pdfjs-dist"],
+        "updateTypes": ["major"],
+        "groupName": "Pdf.js",
+        "description": "Pdf.js only provides ES module based version starting from major version 4. Migrating the project completely or partially (Playwright tests) to ESM is postponed until there a more urgent need",
+        "enabled": false
       }
     ],
     "prConcurrentLimit": 5
