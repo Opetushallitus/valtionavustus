@@ -1,10 +1,11 @@
 (ns oph.va.virkailija.kayttooikeus-service
-  (:require [oph.soresu.common.config :refer [config]]
+  (:require [cheshire.core :as cheshire]
+            [clojure.tools.logging :as log]
+            [oph.common.caller-id :as caller-id]
             [oph.common.string :as common-string]
-            [oph.va.virkailija.cas :as cas]
-            [oph.va.virkailija.http :as http]
-            [oph.va.virkailija.url :as url]
-            [clojure.tools.logging :as log]))
+            [oph.soresu.common.config :refer [config]]
+            [oph.va.virkailija.http :as http :refer [get-st get-tgt]]
+            [org.httpkit.client :as hk-client]))
 
 (def ^:private va-service-name
   (when-not *compile-files*
@@ -21,19 +22,18 @@
   (when-not *compile-files*
     (str (get-in config [:opintopolku :url]) "/kayttooikeus-service")))
 
-(def ^:private service-client
-  (when-not *compile-files*
-    (delay (http/make-http-client (cas/make-cas-authenticating-client service-base-url)))))
-
-(defn make-person-kayttooikeus-url [query]
-  (str service-base-url "/kayttooikeus/kayttaja?" (url/encode-map->query query)))
-
 (defn- get-person-details [username]
-  (let [matches     (http/client-get-json @service-client
-                                          (str service-base-url
-                                               "/kayttooikeus/kayttaja?"
-                                               (url/encode-map->query {:username username})))
-        num-matches (count matches)]
+  (let [tgt (get-tgt)
+        st (get-st tgt service-base-url)
+        res @(hk-client/get (str service-base-url
+                                 "/kayttooikeus/kayttaja") {:query-params {:username username
+                                                                           :ticket st}
+                                                            :headers {"caller-id" caller-id/caller-id}})]
+    (cheshire/parse-string (:body res) true)))
+
+
+(defn- validate-response-body-count [matches username]
+  (let [num-matches (count matches)]
     (cond
       (= num-matches 1)
       (first matches)
@@ -62,10 +62,11 @@
        (keep parse-va-privilege)
        seq))
 
-(defn get-va-person-privileges [username]
-  (when-let [person (get-person-details username)]
-    (if-let [oid (parse-person-oid person)]
-      (if-let [privileges (parse-va-privileges person)]
+(defn parse-person-privileges [person-response-body username]
+  (let [match (validate-response-body-count  person-response-body username)]
+    (if-let [oid (parse-person-oid match)]
+
+      (if-let [privileges (parse-va-privileges match)]
         {:person-oid oid :privileges privileges}
         (do
           (log/warnf "Person with username \"%s\" (%s) in kayttooikeus-service is not VA admin or user" username oid)
@@ -74,15 +75,27 @@
         (log/warnf "Person with username \"%s\" in kayttooikeus-service has empty person-oid" username)
         nil))))
 
+(defn get-va-person-privileges [username]
+  (when-let [response-body (get-person-details username)]
+    (parse-person-privileges response-body username)))
+
+(defn parse-va-people-privileges-from-response [found]
+  (reduce (fn [acc person]
+            (if-let [oid (parse-person-oid person)]
+              (if-let [privileges (parse-va-privileges person)]
+                (assoc acc oid {:privileges privileges})
+                acc)
+              acc))
+          {}
+          found))
+
 (defn get-va-people-privileges []
-  (let [found (http/client-get-json @service-client
-                                    (str service-base-url
-                                         "/kayttooikeus/kayttaja?palvelu=VALTIONAVUSTUS"))]
-    (reduce (fn [acc person]
-              (if-let [oid (parse-person-oid person)]
-                (if-let [privileges (parse-va-privileges person)]
-                  (assoc acc oid {:privileges privileges})
-                  acc)
-                acc))
-            {}
-            found)))
+  (let [tgt (get-tgt)
+        st (get-st tgt service-base-url)
+        res @(hk-client/get (str service-base-url
+                                 "/kayttooikeus/kayttaja") {:query-params {:palvelu "VALTIONAVUSTUS"
+                                                                           :ticket st}
+                                                            :headers {"caller-id" caller-id/caller-id}})
+        found (cheshire/parse-string (:body res) true)]
+
+    (parse-va-people-privileges-from-response found)))

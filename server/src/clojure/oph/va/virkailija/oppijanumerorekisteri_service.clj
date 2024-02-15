@@ -3,6 +3,7 @@
             [clojure.string :as str :refer [includes?]]
             [oph.common.caller-id :as caller-id]
             [oph.soresu.common.config :refer [config]]
+            [oph.va.virkailija.http :refer [get-st get-tgt]]
             [oph.va.virkailija.url :as url]
             [org.httpkit.client :as hk-client]))
 
@@ -38,21 +39,6 @@
    :lang       (find-person-lang person)
    :email      (find-person-email person)})
 
-(defn get-tgt []
-  (let [opintopolku-url (-> config :opintopolku :url)
-        username (get-in config [:opintopolku :cas-service-username])
-        password (get-in config [:opintopolku :cas-service-password])
-        tgt-response @(hk-client/post (str opintopolku-url "/cas/v1/tickets") {:form-params {:username username :password password}})
-        location-header (-> tgt-response :headers :location)
-        tgt (re-find (re-pattern "TGT-.*") location-header)]
-    tgt))
-(defn get-st [tgt]
-  (let [opintopolku-url (-> config :opintopolku :url)
-        service (str service-base-url "/j_spring_cas_security_check")
-        st-res @(hk-client/post (str opintopolku-url "/cas/v1/tickets/" tgt) {:query-params {:service service} :headers {"caller-id" caller-id/caller-id
-                                                                                                                         "CSRF" caller-id/caller-id}})
-        st (slurp (:body st-res))]
-    st))
 
 (defn get-person-req [person-oid st]
   (let [res @(hk-client/get (make-person-url person-oid) {:query-params {:ticket st}
@@ -84,7 +70,7 @@
 (defn get-all-people [person-oids]
   (let [first-oid (first person-oids)
         tgt (get-tgt)
-        st (get-st tgt)
+        st (get-st tgt service-base-url)
         first-person-response (get-person-req first-oid st)
         cookies (str (-> first-person-response :headers :set-cookie))
         jsession-id  (first (filter (fn [x] (includes? x "JSESSIONID")) (str/split cookies #";")))
@@ -95,7 +81,7 @@
 
 (defn get-person [person-oid]
   (let [tgt (get-tgt)
-        st (get-st tgt)
+        st (get-st tgt service-base-url)
         person-response (get-person-req person-oid st)]
 
     (try-response->va-user-info person-response)))
