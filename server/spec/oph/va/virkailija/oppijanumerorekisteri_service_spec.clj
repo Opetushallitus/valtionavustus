@@ -1,6 +1,5 @@
 (ns oph.va.virkailija.oppijanumerorekisteri-service-spec
   (:require [cheshire.core :as cheshire]
-            [oph.va.virkailija.fake-http :as fake-http]
             [oph.va.virkailija.oppijanumerorekisteri-service :as onrs]
             [speclj.core :refer :all]))
 
