@@ -3,7 +3,7 @@
             [clojure.string :as str :refer [includes?]]
             [oph.common.caller-id :as caller-id]
             [oph.soresu.common.config :refer [config]]
-            [oph.va.virkailija.http :refer [get-st get-tgt]]
+            [oph.va.virkailija.cas :refer [get-st get-tgt]]
             [oph.va.virkailija.url :as url]
             [org.httpkit.client :as hk-client]))
 

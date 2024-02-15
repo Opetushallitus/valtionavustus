@@ -1,33 +1,9 @@
 (ns oph.va.virkailija.cas
   (:require [clojure.data.json :as json]
-            [org.httpkit.client :as hk-client]
-            [oph.common.caller-id :refer [caller-id]]
+            [oph.common.caller-id :as caller-id]
             [oph.soresu.common.config :refer [config]]
-            [oph.va.virkailija.http :as http])
-  (:import [fi.vm.sade.utils.cas CasAuthenticatingClient CasClient CasParams]
-           [org.http4s.client Client]))
+            [org.httpkit.client :as hk-client]))
 
-(def ^:private cas-client
-  (when-not *compile-files*
-    (delay (CasClient. (str (-> config :opintopolku :url) "/cas") @http/blaze-client caller-id))))
-
-(defn make-cas-authenticating-client
-  ([^String service-url]
-   (let [username (get-in config [:opintopolku :cas-service-username])
-         password (get-in config [:opintopolku :cas-service-password])]
-     (make-cas-authenticating-client service-url username password)))
-
-  ([^String service-url
-    ^String username
-    ^String password]
-   (make-cas-authenticating-client service-url username password @http/blaze-client))
-
-  ([^String service-url
-    ^String username
-    ^String password
-    ^Client service-client]
-   {:pre [(seq service-url) (seq username) (seq password)]}
-   (CasAuthenticatingClient/apply @cas-client (CasParams/apply service-url username password) service-client caller-id "JSESSIONID")))
 
 (defn try-n-times [f n]
   (try
@@ -40,12 +16,29 @@
 (defmacro try3 [& body]
   `(try-n-times (fn [] ~@body) 3))
 
+(defn get-tgt []
+  (let [opintopolku-url (-> config :opintopolku :url)
+        username (get-in config [:opintopolku :cas-service-username])
+        password (get-in config [:opintopolku :cas-service-password])
+        tgt-response @(hk-client/post (str opintopolku-url "/cas/v1/tickets") {:form-params {:username username :password password}})
+        location-header (-> tgt-response :headers :location)
+        tgt (re-find (re-pattern "TGT-.*") location-header)]
+    tgt))
+
+(defn get-st [tgt service-url]
+  (let [opintopolku-url (-> config :opintopolku :url)
+        service (str service-url "/j_spring_cas_security_check")
+        st-res @(hk-client/post (str opintopolku-url "/cas/v1/tickets/" tgt) {:query-params {:service service} :headers {"caller-id" caller-id/caller-id
+                                                                                                                         "CSRF" caller-id/caller-id}})
+        st (slurp (:body st-res))]
+    st))
+
 (defn validateServiceTicketWithVirkailijaUsername [^String service ^String cas-ticket]
-  (let [casRes (hk-client/get (str (-> config :opintopolku :url) "/cas/serviceValidate")
-                              {:query-params {:ticket cas-ticket
-                                              :service service
-                                              :format "json"}
-                               :headers {"caller-id" caller-id}})
+  (let [url (str (-> config :opintopolku :url) "/cas/serviceValidate")
+        casRes (hk-client/get url {:query-params {:ticket cas-ticket
+                                                  :service service
+                                                  :format "json"}
+                                   :headers {"caller-id" caller-id/caller-id}})
         res-body (json/read-str (:body @casRes) :key-fn keyword)]
     (-> res-body :serviceResponse :authenticationSuccess :user)))
 

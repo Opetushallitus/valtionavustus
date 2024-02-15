@@ -4,7 +4,7 @@
             [oph.common.caller-id :as caller-id]
             [oph.common.string :as common-string]
             [oph.soresu.common.config :refer [config]]
-            [oph.va.virkailija.http :as http :refer [get-st get-tgt]]
+            [oph.va.virkailija.cas :refer [get-st get-tgt]]
             [org.httpkit.client :as hk-client]))
 
 (def ^:private va-service-name
