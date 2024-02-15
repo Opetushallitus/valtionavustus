@@ -124,7 +124,6 @@
                  [buddy/buddy-auth "3.0.323"]
                  [buddy/buddy-sign "3.5.351"]
                  [fi.vm.sade/scala-cas_2.11 "2.2.3-SNAPSHOT"]
-                 [org.http4s/http4s-blaze-client_2.11]
 
                  ;; json
                  [cheshire "5.12.0"]
@@ -159,7 +158,7 @@
 
                  ;; ????
                  [com.cemerick/url "0.1.1" :exclusions [com.cemerick/clojurescript.test]] ; this is basically useless, we only use one function that would be trivial to implement
-  ]
+                 ]
 
   :profiles {:uberjar {:aot [oph.va.hakija.main]}
              :server-dev {:env {:config "va-hakija/config/dev.edn"
