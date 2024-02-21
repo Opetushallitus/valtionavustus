@@ -27,6 +27,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Send in-progress status to radiator
+        run: |
+          curl \
+            -H "AUTH_TOKEN: ${{ secrets.RADIATOR_AUTH_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -X PUT \
+            https://radiator.continuous-services.services/api/v2/buildstatus/valtionavustus/valtionavustus-deploy-${{ inputs.env }} \
+            -d '{"status": "inProgress"}'
+
       - name: Check commit deployment status
         run: ./deploy-scripts/check-commit-to-deploy-${{ inputs.env }}.sh ${{ github.sha }}
         env:
@@ -50,6 +59,19 @@ jobs:
           APP_SUCCESSFULLY_DEPLOYED: ${{ steps.deploy.outcome == 'success' }}
           COMMIT_HASH: ${{ github.sha }}
         run: ./scripts/slack/post-github-deploy-status-to-slack.sh
+
+      - name: Send deploy status to radiator
+        if: always()
+        continue-on-error: true
+        env:
+          DEPLOY_STATUS: ${{ steps.deploy.outcome == 'success' && 'success' || 'failure' }}
+        run: |
+          curl \
+            -H "AUTH_TOKEN: ${{ secrets.RADIATOR_AUTH_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -X PUT \
+            https://radiator.continuous-services.services/api/v2/buildstatus/valtionavustus/valtionavustus-deploy-${{ inputs.env }} \
+            -d "{\"status\": \"${DEPLOY_STATUS}\"}"
 
       - name: set now timestamp
         id: now
