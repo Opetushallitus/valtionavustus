@@ -26,7 +26,6 @@ jobs:
 
   build:
     name: 01-build.sh
-    id: build
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4.1.1
@@ -41,7 +40,6 @@ jobs:
 
   other-tests:
     name: 02-other-tests.sh
-    id: othertests
     runs-on: ubuntu-22.04
     needs: build
     steps:
@@ -57,7 +55,6 @@ jobs:
 
   playwright-tests:
     name: 03-playwright-tests.sh (shard ${{ matrix.shard }}/${{ matrix.total_shards }})
-    id: playwright
     runs-on: ubuntu-22.04
     needs: build
     strategy:
@@ -83,7 +80,6 @@ jobs:
 
   lint:
     name: 04-lint.sh
-    id: lint
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4.1.1
@@ -92,7 +88,7 @@ jobs:
 
   radiator-status-failure:
     name: Send failure status to radiator
-    needs: [ build, othertests, playwright, lint ]
+    needs: [ build, other-tests, playwright-tests, lint ]
     if: ${{ always() && contains(needs.*.result, 'failure') }}
     runs-on: ubuntu-22.04
     steps:
