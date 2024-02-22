@@ -2,6 +2,8 @@ name: Build
 on:
   workflow_call:
 
+concurrency: build-workflow-run
+
 env:
   DOCKER_BUILDKIT: "1" # BuildKit is enabled by default starting in Docker v23, Ubuntu 22.04 has an older version
 
@@ -10,8 +12,21 @@ defaults:
     shell: bash
 
 jobs:
+  radiator-status-in-progress:
+    name: Send in-progress status to radiator
+    runs-on: ubuntu-22.04
+    steps:
+      - run: |
+          curl \
+            -H "AUTH_TOKEN: ${{ secrets.RADIATOR_AUTH_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -X PUT \
+            https://radiator.continuous-services.services/api/v2/buildstatus/valtionavustus/valtionavustus-deploy-dev \
+            -d '{"status": "inProgress"}'
+
   build:
     name: 01-build.sh
+    id: build
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4.1.1
@@ -26,6 +41,7 @@ jobs:
 
   other-tests:
     name: 02-other-tests.sh
+    id: othertests
     runs-on: ubuntu-22.04
     needs: build
     steps:
@@ -41,6 +57,7 @@ jobs:
 
   playwright-tests:
     name: 03-playwright-tests.sh (shard ${{ matrix.shard }}/${{ matrix.total_shards }})
+    id: playwright
     runs-on: ubuntu-22.04
     needs: build
     strategy:
@@ -66,9 +83,23 @@ jobs:
 
   lint:
     name: 04-lint.sh
+    id: lint
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4.1.1
       - name: Run 04-lint.sh
         run: ./deploy-scripts/04-lint.sh
 
+  radiator-status-failure:
+    name: Send failure status to radiator
+    needs: [ build, othertests, playwright, lint ]
+    if: ${{ always() && contains(needs.*.result, 'failure') }}
+    runs-on: ubuntu-22.04
+    steps:
+      - run: |
+          curl \
+            -H "AUTH_TOKEN: ${{ secrets.RADIATOR_AUTH_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -X PUT \
+            https://radiator.continuous-services.services/api/v2/buildstatus/valtionavustus/valtionavustus-deploy-dev \
+            -d '{"status": "failure"}'
