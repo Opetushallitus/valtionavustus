@@ -460,7 +460,7 @@ const KayttoajanPidennysAcceptWithChangesForm = ({
     f.touched['haen-kayttoajan-pidennysta'] &&
     getNestedInputErrorClass(f, ['haen-kayttoajan-pidennysta', 'paattymispaiva'])
   return (
-    <div className="muutoshakemus-row muutoshakemus__project-end-row muutoshakemus__accept-with-changes">
+    <div className="muutoshakemus-row muutoshakemus__accept-with-changes">
       <h3 className="muutoshakemus__header row1 col1">Voimassaoleva päättymisaika</h3>
       <div
         data-test-id="current-project-end-date"
