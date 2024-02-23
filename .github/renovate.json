@@ -157,6 +157,19 @@
         "major"
       ],
       "enabled": false
+    },
+    {
+      "matchManagers": [
+        "leiningen"
+      ],
+      "matchPackageNames": [
+        "org.scala-lang:scala-library"
+      ],
+      "description": "Keep compatible version of scala-library",
+      "matchUpdateTypes": [
+        "major", "minor"
+      ],
+      "enabled": false
     }
   ],
   "prConcurrentLimit": 5
