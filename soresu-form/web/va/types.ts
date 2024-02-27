@@ -200,7 +200,8 @@ export interface Comment {
 
 export interface Selvitys {
   id: number
-  'budget-oph-share'?: string
+  'budget-oph-share': string
+  'budget-total': string
   'project-name'?: string
   'register-number'?: string
   'selvitys-email'?: SelvitysEmail
