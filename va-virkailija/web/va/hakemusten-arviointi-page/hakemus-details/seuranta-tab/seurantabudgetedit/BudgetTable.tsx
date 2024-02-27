@@ -142,9 +142,7 @@ export const BudgetTable = (props: BudgetTableProps) => {
                 )}
                 {isLoppuselvitys && (
                   <td className="loppuselvitys-amount-column">
-                    <span className="money">
-                      {hakemus.selvitys?.loppuselvitys['budget-oph-share']}
-                    </span>
+                    <span className="money">{hakemus.selvitys?.loppuselvitys['budget-total']}</span>
                   </td>
                 )}
                 <td className="amount-column" data-test-id="amount-total">
