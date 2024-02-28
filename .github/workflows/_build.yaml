@@ -14,6 +14,7 @@ defaults:
 jobs:
   radiator-status-in-progress:
     name: Send in-progress status to radiator
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-22.04
     steps:
       - run: |
@@ -89,7 +90,7 @@ jobs:
   radiator-status-failure:
     name: Send failure status to radiator
     needs: [ build, other-tests, playwright-tests, lint ]
-    if: ${{ always() && contains(needs.*.result, 'failure') }}
+    if: ${{ always() && contains(needs.*.result, 'failure') && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-22.04
     steps:
       - run: |
