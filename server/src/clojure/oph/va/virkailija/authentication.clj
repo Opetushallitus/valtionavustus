@@ -5,8 +5,7 @@
             [oph.va.virkailija.fake-authentication :as fake-authentication]
             [oph.common.background-job-supervisor :as job-supervisor]
             [clojure.core.async :refer [>!! alts! go chan timeout]]
-            [clojure.tools.logging :as log])
-  (:import (fi.vm.sade.utils.cas CasLogout)))
+            [clojure.tools.logging :as log]))
 
 (def ^:private session-store (atom {}))
 
@@ -94,11 +93,9 @@
     (log/info "Trying to logout CAS ticket without active session with " cas-ticket)))
 
 (defn cas-initiated-logout [logout-request]
-  (let [cas-ticket-option (CasLogout/parseTicketFromLogoutRequest logout-request)]
-    (if (.isEmpty cas-ticket-option)
-      (log/error "Could not parse ticket from CAS request: " logout-request)
-      (if-let [cas-ticket (.get cas-ticket-option)]
-        (do-logout cas-ticket "CAS initiated")))))
+  (let [cas-ticket (cas/parse-ticket logout-request)]
+    (when cas-ticket
+      (do-logout cas-ticket "CAS initiated"))))
 
 (defn user-initiated-logout [cas-ticket]
   (do-logout cas-ticket "user initiated"))

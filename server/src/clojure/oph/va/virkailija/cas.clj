@@ -2,8 +2,9 @@
   (:require [clojure.data.json :as json]
             [oph.common.caller-id :as caller-id]
             [oph.soresu.common.config :refer [config]]
-            [org.httpkit.client :as hk-client]))
-
+            [org.httpkit.client :as hk-client]
+            [clojure.tools.logging :as log]
+            [clojure.xml :as xml]))
 
 (defn try-n-times [f n]
   (try
@@ -41,6 +42,21 @@
                                    :headers {"caller-id" caller-id/caller-id}})
         res-body (json/read-str (:body @casRes) :key-fn keyword)]
     (-> res-body :serviceResponse :authenticationSuccess :user)))
+
+(defn- parse-ticket-inner [logout-request]
+  (let [parsed (xml/parse (java.io.ByteArrayInputStream. (.getBytes logout-request)))]
+    (->> parsed
+         :content
+         (filter (fn [e] (= (:tag e) :samlp:SessionIndex)))
+         first
+         :content
+         first)))
+
+(defn parse-ticket [logout-request]
+  (let [parsed-ticket (parse-ticket-inner logout-request)]
+    (if (nil? parsed-ticket)
+      (log/error "Could not parse ticket from CAS request: " logout-request)
+      parsed-ticket)))
 
 (defn validate-service-ticket [^String service ^String cas-ticket]
   (try3 (validateServiceTicketWithVirkailijaUsername service cas-ticket)))
