@@ -45,6 +45,8 @@ import './hakemusten-arviointi.less'
 import { UserInfo } from '../types'
 import LoadingSitePage from '../common-components/LoadingSitePage'
 import ErrorBoundary from '../common-components/ErrorBoundary'
+import { ExcelLatauslinkki } from './ExcelLatauslinkki'
+import { TutkiavustuksiaLatauslinkki } from './TutkiavustuksiaLatauslinkki'
 
 const SHOW_ALL = 'showAll' as const
 const SHOW_ADDITIONAL_INFO = 'showAdditionalInfo' as const
@@ -111,16 +113,18 @@ const App = () => {
           <div id="list-heading">
             <AvustushakuDropdown />
             <div className="right-side">
-              <button
-                className="hakemus-btn"
-                onClick={() => {
-                  const newState = !showInfo
-                  setUrlParams(SHOW_ADDITIONAL_INFO, newState)
-                  setShowInfo(newState)
-                }}
-              >
-                {showInfo ? 'Piilota' : 'Näytä'} lisätiedot
-              </button>
+              <div>
+                <button
+                  className="hakemus-btn"
+                  onClick={() => {
+                    const newState = !showInfo
+                    setUrlParams(SHOW_ADDITIONAL_INFO, newState)
+                    setShowInfo(newState)
+                  }}
+                >
+                  {showInfo ? 'Piilota' : 'Näytä'} lisätiedot
+                </button>
+              </div>
               <HakemusFilter />
               {!isResolved && (
                 <Switch
@@ -133,15 +137,9 @@ const App = () => {
                   label="Näytä keskeneräiset"
                 />
               )}
-              {avustushaku && (
-                <a
-                  className="excel-export"
-                  href={`/api/avustushaku/${avustushaku.id}/export.xslx`}
-                  target="_"
-                >
-                  Lataa Excel
-                </a>
-              )}
+
+              <ExcelLatauslinkki avustushaku={avustushaku} />
+              <TutkiavustuksiaLatauslinkki avustushaku={avustushaku} />
             </div>
           </div>
           <div>
