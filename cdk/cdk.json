@@ -1,5 +1,5 @@
 {
-  "app": "bin/cdk.js",
+  "app": "dist/bin/cdk.js",
   "build": "npm run build",
   "watch": {
     "include": [
