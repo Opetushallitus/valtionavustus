@@ -1,6 +1,7 @@
 import * as cdk from 'aws-cdk-lib'
 import { ARecord, PublicHostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53'
 import { Environment } from './va-env-stage'
+import { getEnv } from './va-context'
 
 interface DnsStackProps extends cdk.StackProps {
   hakijaDomain: string
@@ -33,6 +34,10 @@ export class DnsStack extends cdk.Stack {
         zone: virkailijaZone,
         target: RecordTarget.fromIpAddresses(virkailijaLegacyARecord),
       })
+    }
+
+    if (getEnv(this) === 'prod') {
+      hakijaZone.addDelegation(virkailijaZone)
     }
   }
 }
