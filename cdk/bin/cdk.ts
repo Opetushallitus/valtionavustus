@@ -27,7 +27,9 @@ const app = new cdk.App()
   new VaServiceStack(qa, 'va')
   const dns = new DnsStack(qa, 'dns', {
     hakijaDomain: `testi.${HAKIJA_DOMAIN}`,
+    hakijaLegacyARecord: LEGACY_LOADBALANCER_IP,
     virkailijaDomain: `testi.${VIRKAILIJA_DOMAIN}`,
+    virkailijaLegacyARecord: LEGACY_LOADBALANCER_IP,
   })
 }
 
@@ -37,6 +39,8 @@ const app = new cdk.App()
   new OphDnsStack(prod, 'oph-dns')
   const dns = new DnsStack(prod, 'dns', {
     hakijaDomain: HAKIJA_DOMAIN,
+    hakijaLegacyARecord: LEGACY_LOADBALANCER_IP,
     virkailijaDomain: VIRKAILIJA_DOMAIN,
+    virkailijaLegacyARecord: LEGACY_LOADBALANCER_IP,
   })
 }
