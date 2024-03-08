@@ -9,12 +9,15 @@ import { DnsStack } from '../lib/dns-stack'
 const HAKIJA_DOMAIN = 'valtionavustukset.oph.fi'
 const VIRKAILIJA_DOMAIN = 'virkailija.valtionavustukset.oph.fi'
 
+const LEGACY_LOADBALANCER_IP = '86.50.28.144'
+
 const app = new cdk.App()
 {
   const dev = new Environment(app, 'dev')
   new VaServiceStack(dev, 'va')
   const dns = new DnsStack(dev, 'dns', {
     hakijaDomain: `dev.${HAKIJA_DOMAIN}`,
+    hakijaLegacyARecord: LEGACY_LOADBALANCER_IP,
     virkailijaDomain: `dev.${VIRKAILIJA_DOMAIN}`,
   })
 }
