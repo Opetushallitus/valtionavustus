@@ -15,9 +15,12 @@ function getAccount(env: ValtionavustusEnvironment): string {
 }
 
 export class Environment extends cdk.Stage {
+  env: ValtionavustusEnvironment
+
   constructor(scope: Construct, env: ValtionavustusEnvironment) {
     const account = getAccount(env)
     super(scope, env, { env: { region: DEFAULT_REGION, account } })
+    this.env = env
 
     setContext(this, env)
   }

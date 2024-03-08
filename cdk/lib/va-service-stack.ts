@@ -1,8 +1,8 @@
 import * as cdk from 'aws-cdk-lib'
-import { Construct } from 'constructs'
+import { Environment } from './va-env-stage'
 
 export class VaServiceStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Environment, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
 
     // The code that defines your stack goes here
