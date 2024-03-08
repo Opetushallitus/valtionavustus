@@ -13,12 +13,7 @@
 
   :min-lein-version "2.7.1"
 
-  :repositories [["releases"       {:url "https://artifactory.opintopolku.fi/artifactory/oph-sade-release-local"
-                                    :sign-releases false
-                                    :snapshots false}]
-                 ["snapshots"      {:url "https://artifactory.opintopolku.fi/artifactory/oph-sade-snapshot-local"
-                                    :releases false}]
-                 ["public-github"  {:url "git://github.com"}]]
+  :repositories [["public-github"  {:url "git://github.com"}]]
 
   :pedantic? :abort
 
@@ -77,11 +72,6 @@
                          [speclj "3.4.3"]
                          [speclj-junit "0.0.11"]
 
-                         ;; cas
-                         [org.http4s/http4s-blaze-client_2.11 ~http4s-version]
-                         [org.http4s/http4s-client_2.11 ~http4s-version]
-                         [org.http4s/http4s-dsl_2.11 ~http4s-version]
-
                          ;; other
                          [metosin/ring-swagger-ui "5.9.0"]
 
@@ -123,7 +113,6 @@
                  ;; auth
                  [buddy/buddy-auth "3.0.323"]
                  [buddy/buddy-sign "3.5.351"]
-                 [fi.vm.sade/scala-cas_2.11 "2.2.3-SNAPSHOT"]
 
                  ;; json
                  [cheshire "5.12.0"]
