@@ -23,6 +23,7 @@ jobs:
           NVD_API_TOKEN: ${{ secrets.NVD_API_TOKEN }}
 
       - name: Upload lein dependency check report
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
           name: lein_dependency_check_report
