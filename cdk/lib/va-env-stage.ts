@@ -14,6 +14,14 @@ function getAccount(env: ValtionavustusEnvironment): string {
   return accountId
 }
 
+function getAccountIds(): Record<ValtionavustusEnvironment, string> {
+  return {
+    dev: getAccount('dev'),
+    qa: getAccount('qa'),
+    prod: getAccount('prod'),
+  }
+}
+
 export class Environment extends cdk.Stage {
   env: ValtionavustusEnvironment
 
@@ -22,6 +30,6 @@ export class Environment extends cdk.Stage {
     super(scope, env, { env: { region: DEFAULT_REGION, account } })
     this.env = env
 
-    setContext(this, env)
+    setContext(this, env, getAccountIds())
   }
 }
