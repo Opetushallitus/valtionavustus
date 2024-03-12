@@ -2,31 +2,10 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
   <suppress>
     <notes><![CDATA[
-    Does not affect client use and update is currently very labourous
-    ]]>    </notes>
-    <packageUrl regex="true">^pkg:maven/org.http4s/blaze-core_2.11@0.12.11</packageUrl>
-    <cve>CVE-2021-21293</cve>
-  </suppress>
-  <suppress until="2666-10-01Z">
-    <notes><![CDATA[
-    False positive, actual vulnerability in pki-core
-    ]]>    </notes>
-    <packageUrl regex="true">^pkg:maven/org\.scalaz/scalaz-core.*</packageUrl>
-    <cve>CVE-2022-2393</cve>
-  </suppress>
-  <suppress>
-    <notes><![CDATA[
    file name: snakeyaml-1.33.jar
    ]]>    </notes>
     <packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
     <cve>CVE-2022-1471</cve>
-  </suppress>
-  <suppress>
-    <notes><![CDATA[
-   Might be non issue https://github.com/FasterXML/jackson-databind/issues/3972
-   Also no fix as of 19.9.2023. Suppressed indefinitely as it's most likely there will be no fix
-   ]]>    </notes>
-    <cve>CVE-2023-35116</cve>
   </suppress>
   <suppress>
     <notes><![CDATA[
