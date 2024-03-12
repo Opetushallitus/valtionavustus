@@ -2,7 +2,7 @@ name: Build
 on:
   workflow_call:
 
-concurrency: build-workflow-run
+concurrency: build-${{ github.ref }}
 
 env:
   DOCKER_BUILDKIT: "1" # BuildKit is enabled by default starting in Docker v23, Ubuntu 22.04 has an older version
