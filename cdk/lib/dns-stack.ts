@@ -142,6 +142,18 @@ export class DnsStack extends cdk.Stack {
         parentHostedZoneName: delegationRecord.hakijaDomain,
         delegationRole: delegationRole,
       })
+      new CrossAccountZoneDelegationRecord(this, 'EnvDelegationRecordHakijaSv', {
+        delegatedZone: hakijaZoneSv,
+
+        parentHostedZoneName: delegationRecord.hakijaDomain,
+        delegationRole: delegationRole,
+      })
+      new CrossAccountZoneDelegationRecord(this, 'EnvDelegationRecordVirkailija', {
+        delegatedZone: virkailijaZone,
+
+        parentHostedZoneName: delegationRecord.hakijaDomain,
+        delegationRole: delegationRole,
+      })
     }
   }
 }
