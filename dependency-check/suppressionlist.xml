@@ -15,7 +15,7 @@
     <packageUrl regex="true">^pkg:maven/org\.quartz\-scheduler/quartz@.*$</packageUrl>
     <cve>CVE-2023-39017</cve>
   </suppress>
-  <suppress until="2024-04-11Z">
+  <suppress until="2024-05-11Z">
     <notes><![CDATA[
     Possibly false positive: https://github.com/jeremylong/DependencyCheck/issues/6438
    ]]>    </notes>
