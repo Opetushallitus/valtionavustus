@@ -19,6 +19,11 @@ const app = new cdk.App()
     hakijaDomain: `dev.${HAKIJA_DOMAIN}`,
     hakijaLegacyARecord: LEGACY_LOADBALANCER_IP,
     virkailijaDomain: `dev.${VIRKAILIJA_DOMAIN}`,
+
+    delegationRecord: {
+      env: 'prod',
+      hakijaDomain: HAKIJA_DOMAIN,
+    },
   })
 }
 
@@ -30,6 +35,11 @@ const app = new cdk.App()
     hakijaLegacyARecord: LEGACY_LOADBALANCER_IP,
     virkailijaDomain: `testi.${VIRKAILIJA_DOMAIN}`,
     virkailijaLegacyARecord: LEGACY_LOADBALANCER_IP,
+
+    delegationRecord: {
+      env: 'prod',
+      hakijaDomain: HAKIJA_DOMAIN,
+    },
   })
 }
 
