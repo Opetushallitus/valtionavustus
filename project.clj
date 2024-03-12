@@ -103,7 +103,7 @@
                  [radicalzephyr/ring.middleware.logger "0.6.0"]
                  [ring/ring-codec "1.2.0"]
                  [ring/ring-core "1.12.0"]
-                 [ring/ring-devel "1.11.0"]
+                 [ring/ring-devel "1.12.0"]
                  [ring/ring-defaults "0.4.0"]
                  [ring/ring-session-timeout "0.3.0"]
                  [ring/ring-ssl "0.3.0"]
