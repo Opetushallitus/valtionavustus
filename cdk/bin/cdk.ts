@@ -25,6 +25,7 @@ const app = new cdk.App()
     delegationRecord: {
       env: 'prod',
       hakijaDomain: HAKIJA_DOMAIN,
+      hakijaDomainSv: HAKIJA_DOMAIN_SV,
     },
   })
 }
@@ -42,6 +43,7 @@ const app = new cdk.App()
     delegationRecord: {
       env: 'prod',
       hakijaDomain: HAKIJA_DOMAIN,
+      hakijaDomainSv: HAKIJA_DOMAIN_SV,
     },
   })
 }

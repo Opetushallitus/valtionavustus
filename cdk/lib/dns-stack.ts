@@ -27,6 +27,7 @@ interface DnsStackProps extends cdk.StackProps {
   delegationRecord?: {
     env: ValtionavustusEnvironment
     hakijaDomain: string
+    hakijaDomainSv: string
   }
 }
 
@@ -145,7 +146,7 @@ export class DnsStack extends cdk.Stack {
       new CrossAccountZoneDelegationRecord(this, 'EnvDelegationRecordHakijaSv', {
         delegatedZone: hakijaZoneSv,
 
-        parentHostedZoneName: delegationRecord.hakijaDomain,
+        parentHostedZoneName: delegationRecord.hakijaDomainSv,
         delegationRole: delegationRole,
       })
       new CrossAccountZoneDelegationRecord(this, 'EnvDelegationRecordVirkailija', {
