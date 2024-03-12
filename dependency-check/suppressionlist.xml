@@ -21,4 +21,12 @@
    ]]>    </notes>
     <cve>CVE-2017-20189</cve>
   </suppress>
+  <suppress until="2024-06-01Z">
+    <notes><![CDATA[
+    Wait until Clojure 1.12 gets released, currently still in alpha.
+    clojure-1.11.2.jar
+   ]]>
+    </notes>
+    <cve>CVE-2024-22871</cve>
+  </suppress>
 </suppressions>
