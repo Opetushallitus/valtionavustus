@@ -18,8 +18,10 @@ import { ValtionavustusEnvironment, getAccountId, getEnv } from './va-context'
 
 interface DnsStackProps extends cdk.StackProps {
   hakijaDomain: string
-  virkailijaDomain: string
+  hakijaDomainSv: string
   hakijaLegacyARecord?: string
+
+  virkailijaDomain: string
   virkailijaLegacyARecord?: string
 
   delegationRecord?: {
@@ -37,11 +39,16 @@ export class DnsStack extends cdk.Stack {
     //
     // Hosted zones for hakija and virkailija
     //
-    const { hakijaDomain, virkailijaDomain } = props
+    const { hakijaDomain, hakijaDomainSv, virkailijaDomain } = props
     const hakijaZone = new PublicHostedZone(this, 'HakijaZone', {
       zoneName: hakijaDomain,
     })
     hakijaZone.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN)
+
+    const hakijaZoneSv = new PublicHostedZone(this, 'HakijaZoneSv', {
+      zoneName: hakijaDomainSv,
+    })
+    hakijaZoneSv.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN)
 
     const virkailijaZone = new PublicHostedZone(this, 'VirkailijaZone', {
       zoneName: virkailijaDomain,
@@ -55,6 +62,10 @@ export class DnsStack extends cdk.Stack {
     if (hakijaLegacyARecord) {
       new ARecord(this, 'HakijaLegacyARecord', {
         zone: hakijaZone,
+        target: RecordTarget.fromIpAddresses(hakijaLegacyARecord),
+      })
+      new ARecord(this, 'HakijaLegacyARecordSv', {
+        zone: hakijaZoneSv,
         target: RecordTarget.fromIpAddresses(hakijaLegacyARecord),
       })
     }
@@ -75,6 +86,7 @@ export class DnsStack extends cdk.Stack {
       // Create policy that allows making delegation records to this environment's zones
       const allowDelegationPolicy = new Policy(this, 'AllowDNSDelegation')
       hakijaZone.grantDelegation(allowDelegationPolicy)
+      hakijaZoneSv.grantDelegation(allowDelegationPolicy)
       virkailijaZone.grantDelegation(allowDelegationPolicy)
 
       // Since this policy is used from lower environments, explicitly deny
@@ -87,6 +99,7 @@ export class DnsStack extends cdk.Stack {
           'ForAnyValue:StringEquals': {
             'route53:ChangeResourceRecordSetsNormalizedRecordNames': [
               hakijaDomain,
+              hakijaDomainSv,
               virkailijaDomain,
             ],
           },
