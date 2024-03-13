@@ -8,7 +8,7 @@ function main {
   cd "$repo/cdk"
   init_nodejs_cdk
   
-  node --import tsx --test "$@" tests/*.test.ts
+  node --import tsx --test --test-reporter=spec "$@" tests/*.test.ts
 }
 
 main "$@"
