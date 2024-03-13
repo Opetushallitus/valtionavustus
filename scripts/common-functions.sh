@@ -12,6 +12,7 @@ repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )" && readonly re
 readonly revision="${GITHUB_SHA:-$(git rev-parse HEAD)}"
 readonly VA_SECRETS_REPO="$repo/../valtionavustus-secret"
 node_version="$(cat "$repo/.nvmrc")" && readonly node_version
+node_version_cdk="$(cat "$repo/cdk/.nvmrc")" && readonly node_version_cdk
 readonly ansible_version="8.1.0"
 readonly python_version="3.9.0"
 readonly local_docker_namespace="va"
@@ -179,6 +180,15 @@ function init_nodejs {
   set +o errexit
   source "$repo/nvm.sh"
   nvm use "${node_version}" || nvm install -b "${node_version}" # -b means install from binary only, better fail fast than compile node for three hours
+  set -o errexit
+}
+
+# using 20 temporarily just for cdk until we can get rid of 16 elsewhere
+function init_nodejs_cdk {
+  export NVM_DIR="${NVM_DIR:-$HOME/.cache/nvm}"
+  set +o errexit
+  source "$repo/nvm.sh"
+  nvm use "${node_version_cdk}" || nvm install -b "${node_version_cdk}" # -b means install from binary only, better fail fast than compile node for three hours
   set -o errexit
 }
 
