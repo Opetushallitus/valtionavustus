@@ -35,6 +35,10 @@ function main {
     $compose up --wait db
     docker run --rm --network valtionavustus_local-dev "$test_image_tag"
     end_gh_actions_group
+
+    start_gh_actions_group "Run CDK tests"
+    "$repo/cdk/run-tests.sh"
+    end_gh_actions_group
 }
 
 main "$@"
