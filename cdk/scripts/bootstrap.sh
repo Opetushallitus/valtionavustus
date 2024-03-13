@@ -35,7 +35,7 @@ function prepare_cdk {
   cd "$repo/cdk"
   info "Preparing CDK"
 
-  init_nodejs
+  init_nodejs_cdk
   npm_ci_if_package_lock_has_changed
 
   ./cdk.sh --app "$cdk_app" --output "$cdk_outdir" synth
