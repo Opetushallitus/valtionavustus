@@ -1,24 +1,36 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
 
-DNSTEST_IP=$(dig +short dnstesti.valtionavustukset.oph.fi)
+echo "========================================"
 
-if [ "$DNSTEST_IP" = "69.69.69.69" ]; then
-  echo "Sun DNS-konffit toimii"
+DNSTEST_IP=$(dig +short testi.statsunderstod.oph.fi) ## This A record does not exist in actual production name servers
+
+if [ "$DNSTEST_IP" = "86.50.28.144" ]; then
+  echo "Sun kone käyttää manuaalisia DNS-konffeja, testi voidaan ajaa..."
 else
-  echo "Sun DNS-konffit ei toimi"
+  echo "Sun kone käyttää julkisia nimipalvelimia, testiä ei voida ajaa"
   exit 1
 fi
 
-echo "========================================"
-dig ns testi.virkailija.valtionavustukset.oph.fi
-dig ns dev.virkailija.valtionavustukset.oph.fi
-dig ns virkailija.valtionavustukset.oph.fi
+assert_domain_exists () {
+  if [[ -z $(dig +short "${1}") ]]; then
+    echo -e "\033[0;31m${1} ei löydy"
+    exit 1
+  else
+    echo "${1} OK"
+  fi
+}
 
-dig a dev.valtionavustukset.oph.fi
-dig ns dev.valtionavustukset.oph.fi
-dig ns testi.valtionavustukset.oph.fi
-dig ns valtionavustukset.oph.fi
+assert_domain_exists "valtionavustukset.oph.fi"
+assert_domain_exists "testi.valtionavustukset.oph.fi"
+assert_domain_exists "dev.valtionavustukset.oph.fi"
 
-dig dnstesti.valtionavustukset.oph.fi
-echo "========================================"
+assert_domain_exists "statsunderstod.oph.fi"
+assert_domain_exists "testi.statsunderstod.oph.fi"
+assert_domain_exists "dev.statsunderstod.oph.fi"
+
+assert_domain_exists "virkailija.valtionavustukset.oph.fi"
+assert_domain_exists "dev.virkailija.valtionavustukset.oph.fi"
+assert_domain_exists "testi.virkailija.valtionavustukset.oph.fi"
+
+assert_domain_exists "dev.valtionavustukset.oph.fi"

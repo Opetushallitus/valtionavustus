@@ -1,0 +1,21 @@
+$TTL    10
+oph.fi.                 IN      SOA     ns.example.com. hostmaster.example.com. (
+                                        1709907404   ; Serial
+                                        10           ; Refresh
+                                        10           ; Retry
+                                        604800       ; Expire
+                                        10)          ; NegativeCacheTTL
+
+                                        IN NS ns1.example.com.
+                                        IN NS ns2.example.com.
+
+valtionavustukset.oph.fi.                  IN      NS      ns-276.awsdns-34.com.
+valtionavustukset.oph.fi.                  IN      NS      ns-1359.awsdns-41.org.
+valtionavustukset.oph.fi.                  IN      NS      ns-950.awsdns-54.net.
+valtionavustukset.oph.fi.                  IN      NS      ns-2032.awsdns-62.co.uk.
+
+
+statsunderstod.oph.fi.                     IN      NS      ns-276.awsdns-34.com.
+statsunderstod.oph.fi.                     IN      NS      ns-1359.awsdns-41.org.
+statsunderstod.oph.fi.                     IN      NS      ns-950.awsdns-54.net.
+statsunderstod.oph.fi.                     IN      NS      ns-2032.awsdns-62.co.uk.

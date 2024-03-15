@@ -5,11 +5,10 @@ services:
     build:
       context: ./
       dockerfile: ./Dockerfile
-    command: ["/usr/sbin/named", "-4", "-g", "-d9"]
+    command: ["/usr/sbin/named", "-4", "-g", "-d6"]
     hostname: dns
     ports:
       - "53:53/udp"
     volumes:
       - ./bind9/named.conf:/etc/bind/named.conf
-      - ./bind9/valtionavustukset.oph.fi:/etc/bind/valtionavustukset.oph.fi
-      - ./bind9/virkailija.valtionavustukset.oph.fi:/etc/bind/virkailija.valtionavustukset.oph.fi
+      - ./bind9/oph.fi:/etc/bind/oph.fi
