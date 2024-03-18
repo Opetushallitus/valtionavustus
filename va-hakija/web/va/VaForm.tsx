@@ -14,7 +14,7 @@ import GrantRefuse from './GrantRefuse'
 import OpenContactsEdit from './OpenContactsEdit'
 
 import './style/main.less'
-import { isJotpaAvustushaku, isJotpaHakemusLomakeCustomizationEnabled } from './jotpa'
+import { isJotpaAvustushaku } from './jotpa'
 import { changeFaviconIconTo } from './favicon'
 
 const allowedStatuses = ['officer_edit', 'submitted', 'pending_change_request', 'applicant_edit']
@@ -34,12 +34,8 @@ export default function VaForm<T extends BaseStateLoopState<T>>(props: VaFormPro
   const { controller, state, hakemusType, isExpired, refuseGrant, modifyApplication, readOnly } =
     props
   const { saveStatus, configuration } = state
-  const { embedForMuutoshakemus, environment } = configuration
-
-  const isJotpaHakemus =
-    hakemusType === 'hakemus' &&
-    isJotpaAvustushaku(state.avustushaku) &&
-    isJotpaHakemusLomakeCustomizationEnabled({ environment })
+  const { embedForMuutoshakemus } = configuration
+  const isJotpaHakemus = hakemusType === 'hakemus' && isJotpaAvustushaku(state.avustushaku)
 
   const setCorrectFavicon = () => {
     if (isJotpaHakemus) {

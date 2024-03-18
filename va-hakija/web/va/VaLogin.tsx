@@ -20,7 +20,7 @@ import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 import VaLoginTopbar from './VaLoginTopbar'
 import VaUrlCreator from './VaUrlCreator.js'
-import { isJotpaAvustushaku, isJotpaHakemusLomakeCustomizationEnabled } from './jotpa'
+import { isJotpaAvustushaku } from './jotpa'
 import { changeFaviconIconTo } from './favicon'
 
 type VaLoginProps = {
@@ -43,15 +43,7 @@ export default function VaLogin(props: VaLoginProps) {
   const translations = model.translations
   const avustushaku = model.avustushaku
   const environment = model.environment
-
-  const useJotpaCustomization = () => {
-    return (
-      isJotpaAvustushaku(avustushaku) &&
-      isJotpaHakemusLomakeCustomizationEnabled({ environment: environment })
-    )
-  }
-
-  const isJotpaHakemus = useJotpaCustomization()
+  const isJotpaHakemus = isJotpaAvustushaku(avustushaku)
 
   useEffect(() => {
     setCorrectFavicon()
@@ -66,7 +58,7 @@ export default function VaLogin(props: VaLoginProps) {
   })
 
   const setCorrectFavicon = () => {
-    if (useJotpaCustomization()) {
+    if (isJotpaHakemus) {
       changeFaviconIconTo('jotpa')
     } else {
       changeFaviconIconTo('oph')
@@ -127,12 +119,12 @@ export default function VaLogin(props: VaLoginProps) {
   const hakemusPreviewUrl = urlCreator.existingSubmissionEditUrl(avustushaku.id, '', lang)
 
   return (
-    <div className={useJotpaCustomization() ? 'jotpa-customizations' : ''}>
+    <div className={isJotpaHakemus ? 'jotpa-customizations' : ''}>
       <VaLoginTopbar
         environment={environment}
         translations={translations}
         lang={lang}
-        isJotpaTopBar={useJotpaCustomization()}
+        isJotpaTopBar={isJotpaHakemus}
       />
       <section id="container" className="soresu-fieldset">
         <H1InfoElement htmlId="name" lang={lang} values={content} />
@@ -194,7 +186,7 @@ export default function VaLogin(props: VaLoginProps) {
             translations={translations.login}
             translationKey="submit"
             lang={lang}
-            useJotpaColour={useJotpaCustomization()}
+            useJotpaColour={isJotpaHakemus}
           />
           <div className="message-container">
             <LocalizedString

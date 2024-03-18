@@ -13,7 +13,7 @@ import ServerError from 'soresu-form/web/form/component/ServerError.jsx'
 import FormController from 'soresu-form/web/form/FormController'
 import { BaseStateLoopState } from 'soresu-form/web/form/types/Form'
 import { Logo } from './Logo'
-import { isJotpaAvustushaku, isJotpaHakemusLomakeCustomizationEnabled } from './jotpa'
+import { isJotpaAvustushaku } from './jotpa'
 
 interface Props<T extends BaseStateLoopState<T>> {
   controller: FormController<T>
@@ -80,10 +80,7 @@ const VaFormTopbar = <T extends BaseStateLoopState<T>>(props: Props<T>) => {
   // selvitys-updatable can be undefined, we only care if its false
   const selvitysNotUpdateable = (isValiselvitys || isLoppuselvitys) && selvitysUpdateable === false
   const previewOrSelvitysNotUpdateable = preview || selvitysNotUpdateable
-  const showJotpaLogo =
-    isHakemus &&
-    isJotpaAvustushaku(avustushaku) &&
-    isJotpaHakemusLomakeCustomizationEnabled(configuration)
+  const showJotpaLogo = isHakemus && isJotpaAvustushaku(avustushaku)
   const helpText = formTranslator.translate(
     `savehelp-${hakemusType}${showJotpaLogo ? '-jotpa' : ''}`,
     lang
