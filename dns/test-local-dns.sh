@@ -13,6 +13,7 @@ else
 fi
 
 assert_domain_exists () {
+  RECORD="${2:-A}"
   if [[ -z $(dig +short "${1}") ]]; then
     echo -e "\033[0;31m${1} ei löydy"
     exit 1
@@ -30,7 +31,7 @@ assert_domain_exists "testi.statsunderstod.oph.fi"
 assert_domain_exists "dev.statsunderstod.oph.fi"
 
 assert_domain_exists "virkailija.valtionavustukset.oph.fi"
-assert_domain_exists "dev.virkailija.valtionavustukset.oph.fi"
+assert_domain_exists "dev.virkailija.valtionavustukset.oph.fi" "SOA"
 assert_domain_exists "testi.virkailija.valtionavustukset.oph.fi"
 
 assert_domain_exists "dev.valtionavustukset.oph.fi"
