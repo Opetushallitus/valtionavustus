@@ -16,7 +16,7 @@ const LEGACY_LOADBALANCER_IP = '86.50.28.144'
 const app = new cdk.App()
 {
   const dev = new Environment(app, 'dev')
-  const vpcStack = new VpcStack(dev, 'dev')
+  const vpcStack = new VpcStack(dev, 'vpc')
   new VaServiceStack(dev, 'va')
   const dns = new DnsStack(dev, 'dns', {
     hakijaDomain: `dev.${HAKIJA_DOMAIN}`,
@@ -34,7 +34,7 @@ const app = new cdk.App()
 
 {
   const qa = new Environment(app, 'qa')
-  const vpcStack = new VpcStack(qa, 'qa')
+  const vpcStack = new VpcStack(qa, 'vpc')
   new VaServiceStack(qa, 'va')
   const dns = new DnsStack(qa, 'dns', {
     hakijaDomain: `testi.${HAKIJA_DOMAIN}`,
@@ -53,7 +53,7 @@ const app = new cdk.App()
 
 {
   const prod = new Environment(app, 'prod')
-  const vpcStack = new VpcStack(prod, 'prod')
+  const vpcStack = new VpcStack(prod, 'vpc')
   new VaServiceStack(prod, 'va')
   new OphDnsStack(prod, 'oph-dns')
   const dns = new DnsStack(prod, 'dns', {
