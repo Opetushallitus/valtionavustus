@@ -16,6 +16,16 @@ export class VpcStack extends cdk.Stack {
           subnetType: SubnetType.PRIVATE_ISOLATED,
           cidrMask: 24,
         },
+        {
+          name: 'valtionavustukset-private-subnet',
+          subnetType: SubnetType.PRIVATE_WITH_EGRESS,
+          cidrMask: 24,
+        },
+        {
+          name: 'valtionavustukset-public-subnet',
+          subnetType: SubnetType.PUBLIC,
+          cidrMask: 24,
+        },
       ],
     })
 

@@ -6,6 +6,8 @@ export const DB_NAME = 'va'
 export const DB_USER = 'va_cluster_admin'
 
 export class DbStack extends cdk.Stack {
+  permitDBAccessSecurityGroup: cdk.aws_ec2.SecurityGroup
+
   constructor(scope: Environment, id: string, vpc: cdk.aws_ec2.IVpc, props?: cdk.StackProps) {
     super(scope, id, props)
     const secret = new cdk.aws_rds.DatabaseSecret(this, 'Secret', {
@@ -54,5 +56,7 @@ export class DbStack extends cdk.Stack {
       parameterGroup: parameterGroup,
       securityGroups: [dbSecurityGroup],
     })
+
+    this.permitDBAccessSecurityGroup = accessVaDBSecurityGroup
   }
 }

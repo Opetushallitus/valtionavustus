@@ -5,7 +5,7 @@
     "cdk": "bin/cdk.js"
   },
   "scripts": {
-    "build": "rm -rf dist && tsc",
+    "build": "rm -rf dist && tsc && cp -r lib/assets dist/lib/",
     "watch": "tsc -w",
     "cdk": "cdk"
   },

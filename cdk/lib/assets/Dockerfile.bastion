@@ -1,0 +1,9 @@
+FROM amazonlinux:2023
+
+RUN yum install -y \
+    procps \
+    findutils \
+    which
+
+# Fargate 1.4 ships with SSM agent, we just need to wait for incoming commands
+ENTRYPOINT ["/usr/bin/sleep", "infinity"]

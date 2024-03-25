@@ -7,6 +7,8 @@ import { Environment } from '../lib/va-env-stage'
 import { DnsStack } from '../lib/dns-stack'
 import { VpcStack } from '../lib/vpc-stack'
 import { DbStack } from '../lib/db-stack'
+import { BastionStack } from '../lib/bastion-stack'
+import { EcsStack } from '../lib/ecs-stack'
 
 const HAKIJA_DOMAIN = 'valtionavustukset.oph.fi'
 const HAKIJA_DOMAIN_SV = 'statsunderstod.oph.fi'
@@ -20,6 +22,13 @@ const app = new cdk.App()
   const vpcStack = new VpcStack(dev, 'vpc')
   new VaServiceStack(dev, 'va')
   const dbStack = new DbStack(dev, 'db', vpcStack.vpc)
+  const ecsStack = new EcsStack(dev, 'ecs', vpcStack.vpc)
+  const bastionStack = new BastionStack(
+    dev,
+    'bastion',
+    ecsStack.ecsCluster,
+    dbStack.permitDBAccessSecurityGroup
+  )
   const dns = new DnsStack(dev, 'dns', {
     hakijaDomain: `dev.${HAKIJA_DOMAIN}`,
     hakijaDomainSv: `dev.${HAKIJA_DOMAIN_SV}`,
