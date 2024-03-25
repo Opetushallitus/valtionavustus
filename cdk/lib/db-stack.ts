@@ -3,7 +3,7 @@ import { Environment } from './va-env-stage'
 import { ParameterGroup } from 'aws-cdk-lib/aws-rds'
 
 export const DB_NAME = 'va'
-export const DB_USER = 'va-cluster-admin'
+export const DB_USER = 'va_cluster_admin'
 export class DbStack extends cdk.Stack {
   constructor(scope: Environment, id: string, vpc: cdk.aws_ec2.IVpc, props?: cdk.StackProps) {
     super(scope, id, props)
