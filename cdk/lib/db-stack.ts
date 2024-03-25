@@ -11,6 +11,12 @@ export class DbStack extends cdk.Stack {
       username: DB_USER,
     })
 
+    const parameterGroup = new ParameterGroup(this, 'VaPostgresParameterGroup', {
+      engine: cdk.aws_rds.DatabaseClusterEngine.AURORA_POSTGRESQL,
+      description: 'Custom parameter group for VA Postgres',
+      parameters: {},
+    })
+
     const auroraPg = new cdk.aws_rds.ServerlessCluster(this, 'AuroraPg', {
       defaultDatabaseName: DB_NAME,
       engine: cdk.aws_rds.DatabaseClusterEngine.AURORA_POSTGRESQL,
@@ -23,6 +29,7 @@ export class DbStack extends cdk.Stack {
         minCapacity: 1,
         maxCapacity: 2,
       },
+      parameterGroup: parameterGroup,
     })
   }
 }
