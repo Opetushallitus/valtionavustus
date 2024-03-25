@@ -10,18 +10,19 @@ export class DbStack extends cdk.Stack {
     const secret = new cdk.aws_rds.DatabaseSecret(this, 'Secret', {
       username: DB_USER,
     })
+
     const auroraPg = new cdk.aws_rds.ServerlessCluster(this, 'AuroraPg', {
       defaultDatabaseName: DB_NAME,
       engine: cdk.aws_rds.DatabaseClusterEngine.AURORA_POSTGRESQL,
       vpc,
-      credentials: { username: DB_USER },
+      credentials: cdk.aws_rds.Credentials.fromSecret(secret),
       clusterIdentifier: 'va-cluster',
       vpcSubnets: { subnetType: cdk.aws_ec2.SubnetType.PRIVATE_ISOLATED },
-      parameterGroup: ParameterGroup.fromParameterGroupName(
-        this,
-        'ParameterGroup',
-        'default.aurora-postgresql16'
-      ),
+      scaling: {
+        autoPause: cdk.Duration.minutes(10),
+        minCapacity: 1,
+        maxCapacity: 2,
+      },
     })
   }
 }
