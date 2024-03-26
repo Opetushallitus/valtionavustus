@@ -29,7 +29,7 @@ export class DbStack extends cdk.Stack {
       scaling: {
         autoPause: cdk.Duration.minutes(10),
         minCapacity: 2,
-        maxCapacity: 6,
+        maxCapacity: 4,
       },
       parameterGroup: parameterGroup,
     })
