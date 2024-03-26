@@ -38,6 +38,7 @@ const app = new cdk.App()
   const qa = new Environment(app, 'qa')
   const vpcStack = new VpcStack(qa, 'vpc')
   new VaServiceStack(qa, 'va')
+  const dbStack = new DbStack(qa, 'db', vpcStack.vpc)
   const dns = new DnsStack(qa, 'dns', {
     hakijaDomain: `testi.${HAKIJA_DOMAIN}`,
     hakijaDomainSv: `testi.${HAKIJA_DOMAIN_SV}`,
