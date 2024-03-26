@@ -4,6 +4,7 @@ import { ParameterGroup } from 'aws-cdk-lib/aws-rds'
 
 export const DB_NAME = 'va'
 export const DB_USER = 'va_cluster_admin'
+
 export class DbStack extends cdk.Stack {
   constructor(scope: Environment, id: string, vpc: cdk.aws_ec2.IVpc, props?: cdk.StackProps) {
     super(scope, id, props)
@@ -19,6 +20,25 @@ export class DbStack extends cdk.Stack {
       parameters: {},
     })
 
+    const accessVaDBSecurityGroup = new cdk.aws_ec2.SecurityGroup(this, 'AccessVADBSecurityGroup', {
+      description: 'Security group for accessing VA Postgres',
+      vpc,
+      allowAllOutbound: true,
+      securityGroupName: 'access-va-db-security-group',
+    })
+
+    const dbSecurityGroup = new cdk.aws_ec2.SecurityGroup(this, 'DBSecurityGroup', {
+      description: 'Security group for VA Postgres',
+      vpc,
+      allowAllOutbound: true,
+      securityGroupName: 'va-db-security-group',
+    })
+    dbSecurityGroup.addIngressRule(
+      accessVaDBSecurityGroup,
+      cdk.aws_ec2.Port.tcp(5432),
+      'Allow access from VA DB security group'
+    )
+
     const auroraPg = new cdk.aws_rds.ServerlessCluster(this, 'AuroraPg', {
       defaultDatabaseName: DB_NAME,
       engine: cdk.aws_rds.DatabaseClusterEngine.AURORA_POSTGRESQL,
@@ -32,6 +52,7 @@ export class DbStack extends cdk.Stack {
         maxCapacity: 4,
       },
       parameterGroup: parameterGroup,
+      securityGroups: [dbSecurityGroup],
     })
   }
 }
