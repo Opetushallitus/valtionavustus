@@ -28,8 +28,8 @@ export class DbStack extends cdk.Stack {
       vpcSubnets: { subnetType: cdk.aws_ec2.SubnetType.PRIVATE_ISOLATED },
       scaling: {
         autoPause: cdk.Duration.minutes(10),
-        minCapacity: 1,
-        maxCapacity: 2,
+        minCapacity: 2,
+        maxCapacity: 6,
       },
       parameterGroup: parameterGroup,
     })
