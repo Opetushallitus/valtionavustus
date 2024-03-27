@@ -1,5 +1,5 @@
 import * as cdk from 'aws-cdk-lib'
-import { aws_ec2 } from 'aws-cdk-lib'
+import { aws_ec2, Duration } from 'aws-cdk-lib'
 import { Environment } from './va-env-stage'
 import { DockerImageAsset, Platform } from 'aws-cdk-lib/aws-ecr-assets'
 import * as path from 'node:path'
@@ -53,6 +53,13 @@ export class BastionStack extends cdk.Stack {
     bastionTaskDef.addContainer('BastionContainer', {
       containerName: 'bastion-container',
       image: ContainerImage.fromDockerImageAsset(bastionImageAsset),
+      healthCheck: {
+        command: ['CMD-SHELL', '/usr/sbin/pidof amazon-ssm-agent || exit 1'],
+        interval: Duration.seconds(60),
+        retries: 5,
+        startPeriod: Duration.seconds(60),
+        timeout: Duration.seconds(10),
+      },
       linuxParameters: new LinuxParameters(this, 'Bastion-Linux-Parameters', {
         initProcessEnabled: true,
       }),
