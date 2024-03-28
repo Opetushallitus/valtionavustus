@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  tunnel:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.psql-tunnel
+    ports:
+      - "5432:5432/tcp"
+    volumes:
+      - $HOME/.aws/credentials:/root/.aws/credentials:ro
+      - $HOME/.aws/config:/root/.aws/config:ro
+    environment:
+      - AWS_PROFILE
