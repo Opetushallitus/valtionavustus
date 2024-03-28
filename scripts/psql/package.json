@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "AWS_SDK_JS_SUPPRESS_MAINTENANCE_MODE_MESSAGE=1 tsx src/get-session-target.ts"
+    "start": "AWS_SDK_LOAD_CONFIG=1 tsx src/get-session-target.ts"
   },
   "license": "EUPL-1.1",
   "dependencies": {
-    "aws-sdk": "^2.1586.0",
+    "@aws-sdk/client-ecs": "^3.542.0",
     "typescript": "^5.4.3"
   },
   "devDependencies": {
