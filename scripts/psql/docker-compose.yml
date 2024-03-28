@@ -6,7 +6,7 @@ services:
       context: ./
       dockerfile: ./Dockerfile.psql-tunnel
     ports:
-      - "5432:5432/tcp"
+      - "127.0.0.1:5432:5432/tcp"
     volumes:
       - $HOME/.aws/credentials:/root/.aws/credentials:ro
       - $HOME/.aws/config:/root/.aws/config:ro

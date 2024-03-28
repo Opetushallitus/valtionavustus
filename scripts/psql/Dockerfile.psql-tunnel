@@ -2,6 +2,13 @@ FROM node:21-bookworm
 
 COPY . /app
 WORKDIR /app
+
+RUN curl \
+    "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_arm64/session-manager-plugin.deb" \
+    -o "/tmp/session-manager-plugin.deb"
+RUN dpkg -i /tmp/session-manager-plugin.deb
+
+RUN apt-get update && apt-get install -y awscli bash socat daemonize
 RUN npm ci
 
-CMD ["npm", "start"]
+CMD ["/app/entrypoint.sh"]
