@@ -69,7 +69,7 @@
                          [com.fasterxml.jackson.dataformat/jackson-dataformat-smile ~jackson-version]
 
                          ;; testing
-                         [speclj "3.4.3"]
+                         [speclj "3.4.6"]
                          [speclj-junit "0.0.11"]
 
                          ;; other
@@ -164,7 +164,7 @@
                           :environment "test"}
                     :test-paths ["server/spec"]
                     :resource-paths ["server/test-resources"]
-                    :plugins [[speclj "3.4.3"]]
+                    :plugins [[speclj "3.4.6"]]
                     :dependencies [[speclj]
                                    [speclj-junit]]}
 
@@ -173,7 +173,7 @@
                                  :environment "test"}
                            :test-paths ["server/spec"]
                            :resource-paths ["server/test-resources"]
-                           :plugins [[speclj "3.4.3"]]
+                           :plugins [[speclj "3.4.6"]]
                            :dependencies [[speclj]
                                           [speclj-junit]]}}
 
