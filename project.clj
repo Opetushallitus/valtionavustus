@@ -34,7 +34,7 @@
 
                          ;; [yesql "0.5.3"] ->
                          ;; ... -> [clout "2.2.1"] ->
-                         [instaparse "1.4.12"]
+                         [instaparse "1.4.14"]
 
                          ;; [clj-pdf "2.6.8"] ->
                          ;; [buddy/buddy-sign "3.5.351"] -> [buddy/buddy-core "1.11.423"] ->
