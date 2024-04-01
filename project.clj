@@ -63,7 +63,7 @@
                          [com.fasterxml.jackson.core/jackson-annotations ~jackson-version]
 
 
-                         ;; [cheshire "5.12.0"] -> [com.fasterxml.jackson.core/jackson-core ~jackson-version]
+                         ;; [cheshire "5.13.0"] -> [com.fasterxml.jackson.core/jackson-core ~jackson-version]
                          [com.fasterxml.jackson.core/jackson-core ~jackson-version]
                          [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor ~jackson-version]
                          [com.fasterxml.jackson.dataformat/jackson-dataformat-smile ~jackson-version]
@@ -115,7 +115,7 @@
                  [buddy/buddy-sign "3.5.351"]
 
                  ;; json
-                 [cheshire "5.12.0"]
+                 [cheshire "5.13.0"]
                  [org.clojure/data.json "2.5.0"]
 
                  ;; database
