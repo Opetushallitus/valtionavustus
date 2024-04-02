@@ -46,7 +46,7 @@ export class DbStack extends cdk.Stack {
       engine: cdk.aws_rds.DatabaseClusterEngine.AURORA_POSTGRESQL,
       vpc,
       credentials: cdk.aws_rds.Credentials.fromSecret(secret),
-      clusterIdentifier: 'va-cluster',
+      clusterIdentifier: 'va-aurora-cluster',
       vpcSubnets: { subnetType: cdk.aws_ec2.SubnetType.PRIVATE_ISOLATED },
       serverlessV2MinCapacity: 0.5,
       serverlessV2MaxCapacity: 4,
