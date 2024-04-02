@@ -53,6 +53,7 @@ export class DbStack extends cdk.Stack {
       securityGroups: [dbSecurityGroup],
       writer: cdk.aws_rds.ClusterInstance.serverlessV2('writer'),
       readers: [cdk.aws_rds.ClusterInstance.serverlessV2('reader')],
+      parameterGroup,
     })
     this.permitDBAccessSecurityGroup = accessVaDBSecurityGroup
   }
