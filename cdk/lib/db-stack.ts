@@ -41,22 +41,19 @@ export class DbStack extends cdk.Stack {
       'Allow access from VA DB security group'
     )
 
-    const auroraPg = new cdk.aws_rds.ServerlessCluster(this, 'AuroraPg', {
+    const auroraV2Cluster = new cdk.aws_rds.DatabaseCluster(this, 'AuroraV2Cluster', {
       defaultDatabaseName: DB_NAME,
       engine: cdk.aws_rds.DatabaseClusterEngine.AURORA_POSTGRESQL,
       vpc,
       credentials: cdk.aws_rds.Credentials.fromSecret(secret),
       clusterIdentifier: 'va-cluster',
       vpcSubnets: { subnetType: cdk.aws_ec2.SubnetType.PRIVATE_ISOLATED },
-      scaling: {
-        autoPause: cdk.Duration.minutes(10),
-        minCapacity: 2,
-        maxCapacity: 4,
-      },
-      parameterGroup: parameterGroup,
+      serverlessV2MinCapacity: 0.5,
+      serverlessV2MaxCapacity: 4,
       securityGroups: [dbSecurityGroup],
+      writer: cdk.aws_rds.ClusterInstance.serverlessV2('writer'),
+      readers: [cdk.aws_rds.ClusterInstance.serverlessV2('reader')],
     })
-
     this.permitDBAccessSecurityGroup = accessVaDBSecurityGroup
   }
 }
