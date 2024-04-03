@@ -16,7 +16,7 @@ export class DbStack extends cdk.Stack {
 
     const parameterGroup = new ParameterGroup(this, 'VaPostgresParameterGroup', {
       engine: cdk.aws_rds.DatabaseClusterEngine.auroraPostgres({
-        version: cdk.aws_rds.AuroraPostgresEngineVersion.VER_15_5,
+        version: cdk.aws_rds.AuroraPostgresEngineVersion.VER_16_1,
       }),
       description: 'Custom parameter group for VA Postgres',
       parameters: {},
