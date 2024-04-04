@@ -23,28 +23,9 @@ Repon juuresta löytyy seuraavat skriptit palvelinten provisiointiin:
 
 ## Yhteyden testaaminen palvelimille
 
-Palvelimet ovat CSC:n VMware-ympäristössä. Palvelinten Ansible
-inventoryn meta-tiedot on listattu staattisesti tiedostossa
-`vmware_inventory.json`. Käyttö:
-
+Repon juuressa `ssh.sh` scripti.
 ``` bash
-./vmware_inventory.py
-```
-
-CSC:n palomuuri suojaa VMware-ympäristöä. Tarvitset OPH:n VPN:n
-päästäksesi ssh:lla palvelimille. VPN:n ollessa päällä, testaa
-ssh-yhteyttä:
-
-``` bash
-ssh -F ssh.config oph-va-app-test01 'echo ok'
-```
-
-## Yleisiä tehtäviä palvelimilla
-
-Kirjaudu ensin palvelimelle:
-
-``` bash
-ssh -F ssh.config oph-va-app-test01
+./ssh.sh qa
 ```
 
 ### Lue palvelimen lokeja
@@ -62,20 +43,13 @@ sudo supervisorctl status
 ```
 
 ```
-va-hakija                        RUNNING   pid 924, uptime 0:23:43
-va-virkailija                    RUNNING   pid 24412, uptime 5 days, 1:43:38
+va                        RUNNING   pid 924, uptime 0:23:43
 ```
 
-va-hakijan uudelleenkäynnistys:
+va:n uudelleenkäynnistys:
 
 ``` bash
-sudo supervisorctl restart va-hakija
-```
-
-va-virkailijan uudelleenkäynnistys:
-
-``` bash
-sudo supervisorctl restart va-virkailija
+sudo supervisorctl restart va
 ```
 
 ### Thread dump
@@ -90,61 +64,29 @@ less +F /logs/valtionavustus/va-hakija_run.log
 
 ### psql-yhteys palvelimelle
 
-Tiedostoon `ssh.config` on asetettu valmiiksi PostgreSQL:n daemonin
-portin 5432 forwardointi.
+Repon juuressa `psql.sh` scripti.
 
-1. Luo ssh-yhteys palvelimelle, esim: `ssh -F ssh.config
-   oph-va-app-test01`
-2. Lokaalisti: `psql -d va-qa -U va_hakija -h localhost -p 30012`
+```bash
+./scripts/psql-qa.sh
+```
 
-### JConsole-yhteys palvelimelle
+# AWS configurointi
 
-Tiedostoon `ssh.config` on asetettu valmiiksi porttiforwardoinnit osalle
-JConsolen vaatimista RMI-porteista.
+Lisää `~/.aws/config` tiedostoon seuraavat profiilit:
 
-1. Luo ssh-yhteys palvelimelle, esim: `ssh -F ssh.config
-   oph-va-app-test01`
-2. Etsi Java-sovelluksen prosessi-id: `ps -fe | grep java`
-3. Etsi mitä portteja prosessi kuuntelee, esim: `sudo lsof -a -iTCP
-   -sTCP:LISTEN -n -P | grep $PID`
-   * Katso mikä on prosessin vaihtuva RMI-portti (se, joka ei ole
-     palvelun oletus-http-portti eikä oletus-JMX-portti)
-   * Oletetaan, että JMX-portit ovat: va-hakija=10876, va.virkailija=11322
-4. Avaa uusi ssh-yhteys koneelle ja putkita RMI-portti (JMX-portti
-   putkitetaan valmiiksi ssh-skriptissä), esim:
-   `ssh -F ssh.config -L46498:localhost:46498 oph-va-app-test01`
-5. Avaa JConsole omalla koneellasi (`jconsole &`) ja muodosta
-   remote-yhteydet Java-sovelluksiin käyttäen osoitteina:
-   * testiympäristöön:
-     - va-hakija: "localhost:30013"
-     - va-virkailija: "localhost:30014"
-   * tuotantoympäristöön:
-     - va-hakija: "localhost:30023"
-     - va-virkailija: "localhost:30024"
+```
+[profile oph-va-dev]
+source_profile = oph-federation
+role_arn = arn:aws:iam::744751949839:role/CustomerCloudAdmin
+region = eu-west-1
 
-## Tuotantoonvienti
+[profile oph-va-qa]
+source_profile = oph-federation
+role_arn = arn:aws:iam::596991599170:role/CustomerCloudAdmin
+region = eu-west-1
 
-Tuotantoonvienti päivittää molemmat sovellukset, va-hakijan ja
-va-virkailijan.
-
-1. Mene Jenkinsin web-käyttöliittymään
-2. Aja jobi valtionavustus-deploy-production
-3. Seuraa console outputia
-4. Tarkista tuotannon lokeista, että kaikki on ok
-
-### Rollback
-
-Web-sovelluksen rollbackin voi tehdä vaihtamalla kohde, johon symlink
-`va-hakija-current` tai `va-virkailija-curren` osoittaa. Esimerkkinä
-va-hakijan rollback:
-
-``` bash
-ssh -F ssh.config oph-va-app-prod01
-
-cd /data/www
-sudo supervisorctl stop va-hakija
-sudo rm va-hakija-current
-sudo ln -s va-hakija-20170601152639 va-hakija-current
-sudo chown -h va-deploy:www-data va-hakija-current
-sudo supervisorctl start va-hakija
+[profile oph-va-prod]
+source_profile = oph-federation
+role_arn = arn:aws:iam::250854697970:role/CustomerCloudAdmin
+region = eu-west-1
 ```
