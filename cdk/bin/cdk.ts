@@ -48,6 +48,13 @@ const app = new cdk.App()
   const vpcStack = new VpcStack(qa, 'vpc')
   new VaServiceStack(qa, 'va')
   const dbStack = new DbStack(qa, 'db', vpcStack.vpc)
+  const ecsStack = new EcsStack(qa, 'ecs', vpcStack.vpc)
+  const bastionStack = new BastionStack(
+    qa,
+    'bastion',
+    ecsStack.ecsCluster,
+    dbStack.permitDBAccessSecurityGroup
+  )
   const dns = new DnsStack(qa, 'dns', {
     hakijaDomain: `testi.${HAKIJA_DOMAIN}`,
     hakijaDomainSv: `testi.${HAKIJA_DOMAIN_SV}`,
@@ -67,6 +74,14 @@ const app = new cdk.App()
   const prod = new Environment(app, 'prod')
   const vpcStack = new VpcStack(prod, 'vpc')
   new VaServiceStack(prod, 'va')
+  const dbStack = new DbStack(prod, 'db', vpcStack.vpc)
+  const ecsStack = new EcsStack(prod, 'ecs', vpcStack.vpc)
+  const bastionStack = new BastionStack(
+    prod,
+    'bastion',
+    ecsStack.ecsCluster,
+    dbStack.permitDBAccessSecurityGroup
+  )
   new OphDnsStack(prod, 'oph-dns')
   const dns = new DnsStack(prod, 'dns', {
     hakijaDomain: HAKIJA_DOMAIN,
