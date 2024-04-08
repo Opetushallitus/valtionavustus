@@ -7,7 +7,7 @@ echo "Connecting to ${BASTION_TARGET}"
 daemonize -o /tmp/session-log /usr/bin/aws ssm start-session \
     --target "ecs:${BASTION_TARGET}" \
     --document-name AWS-StartPortForwardingSessionToRemoteHost \
-    --parameters '{"host":["va-cluster.cluster-cthijsk23qn5.eu-west-1.rds.amazonaws.com"],"portNumber":["5432"], "localPortNumber":["5431"]}'
+    --parameters '{"host":["va-aurora-cluster.cluster-cthijsk23qn5.eu-west-1.rds.amazonaws.com"],"portNumber":["5432"], "localPortNumber":["5431"]}'
 
 echo "Created tunnel to AWS DB"
 
