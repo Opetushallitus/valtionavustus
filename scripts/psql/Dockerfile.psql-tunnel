@@ -8,7 +8,7 @@ RUN curl \
     -o "/tmp/session-manager-plugin.deb"
 RUN dpkg -i /tmp/session-manager-plugin.deb
 
-RUN apt-get update && apt-get install -y awscli bash socat daemonize
+RUN apt-get update && apt-get install -y awscli bash socat daemonize netcat-traditional
 RUN npm ci
 
 CMD ["/app/entrypoint.sh"]
