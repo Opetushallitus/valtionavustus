@@ -2,12 +2,14 @@
 set -o errexit -o nounset -o pipefail
 
 BASTION_TARGET=$(npm start --silent)
-echo "Connecting to ${BASTION_TARGET}"
+DB_WRITER_ENDPOINT=$(aws rds describe-db-cluster-endpoints --query "DBClusterEndpoints[?DBClusterIdentifier=='va-aurora-cluster' && EndpointType=='WRITER'].Endpoint" --output text)
+echo "Using bastion ${BASTION_TARGET}"
+echo "To connect to DB ${DB_WRITER_ENDPOINT}"
 
 daemonize -o /tmp/session-log /usr/bin/aws ssm start-session \
     --target "ecs:${BASTION_TARGET}" \
     --document-name AWS-StartPortForwardingSessionToRemoteHost \
-    --parameters '{"host":["va-aurora-cluster.cluster-cthijsk23qn5.eu-west-1.rds.amazonaws.com"],"portNumber":["5432"], "localPortNumber":["5431"]}'
+    --parameters "{\"host\":[\"${DB_WRITER_ENDPOINT}\"],\"portNumber\":[\"5432\"], \"localPortNumber\":[\"5431\"]}"
 
 echo "Created tunnel to AWS DB"
 
