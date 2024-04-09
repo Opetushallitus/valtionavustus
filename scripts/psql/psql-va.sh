@@ -35,7 +35,7 @@ function main {
   elif [[ ${ENV} = "qa"  ]]; then
     SECRET_NAME="SecretA720EF05-190KlLt98ngt"
   elif [[ ${ENV} = "prod"  ]]; then
-    SECRET_NAME=""
+    SECRET_NAME="SecretA720EF05-8IPOrirGbwh0"
   fi
 
   DBNAME=$(aws secretsmanager get-secret-value --secret-id "${SECRET_NAME}" --query "SecretString" --output text | jq -r ".dbname")
