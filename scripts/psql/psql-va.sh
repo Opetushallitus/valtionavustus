@@ -8,13 +8,13 @@ function main {
   SSH_TUNNEL_PORT=40077
 
   function start_db_tunnel {
-    docker-compose up --build --detach --wait
+    docker-compose -f "${repo}/scripts/psql/docker-compose.yml" up --build --detach --wait
     wait_until_port_is_listening "${SSH_TUNNEL_PORT}"
     docker-compose logs
   }
 
   function stop_db_tunnel {
-    docker-compose down
+    docker-compose -f "${repo}/scripts/psql/docker-compose.yml" down
   }
 
   require_command jq
@@ -27,7 +27,7 @@ function main {
 
   echo "Connecting to VA db on [${ENV}]"
 
-  export PSQLRC="psqlrc"
+  export PSQLRC="${repo}/scripts/psql/psqlrc"
   if [ ! -f "$PSQLRC" ]; then fatal "File $PSQLRC not found"; fi
 
   if [[ ${ENV} = "dev" ]]; then
