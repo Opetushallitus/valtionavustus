@@ -25,6 +25,7 @@ function main {
 
   parse_env_from_script_name "psql-va"
   configure_aws
+  ensure_aws_mfa_token_is_valid
   start_db_tunnel
 
   echo "Connecting to VA db on [${ENV}]"

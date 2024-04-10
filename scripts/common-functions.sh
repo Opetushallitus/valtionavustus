@@ -47,6 +47,12 @@ function configure_aws {
   fi
 }
 
+function ensure_aws_mfa_token_is_valid {
+  aws sts get-caller-identity || {
+      fatal "Could not check that AWS credentials are working. Please log in with cdk/scripts/refresh-oph-federation-session.sh"
+    }
+}
+
 function aws {
   if running_on_gh_actions; then
     docker run --interactive --rm \
