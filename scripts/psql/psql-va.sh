@@ -8,7 +8,9 @@ function main {
   SSH_TUNNEL_PORT=40077
 
   function start_db_tunnel {
-    docker-compose -f "${repo}/scripts/psql/docker-compose.yml" up --build --detach --wait
+    docker-compose -f "${repo}/scripts/psql/docker-compose.yml" up --build --detach --wait || {
+      docker-compose -f "${repo}/scripts/psql/docker-compose.yml" logs && exit 1
+    }
     wait_until_port_is_listening "${SSH_TUNNEL_PORT}"
     docker-compose logs
   }
