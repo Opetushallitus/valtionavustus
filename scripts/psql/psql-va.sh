@@ -6,6 +6,7 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../scripts/common-f
 
 function main {
   SSH_TUNNEL_PORT=40077
+  export AWS_CONFIG_FILE="${VA_SECRETS_REPO}/aws_config"
 
   function start_db_tunnel {
     docker-compose -f "${repo}/scripts/psql/docker-compose.yml" up --build --detach --wait || {
@@ -25,7 +26,7 @@ function main {
 
   parse_env_from_script_name "psql-va"
   configure_aws
-  ensure_aws_mfa_token_is_valid
+  require_federation_session
   start_db_tunnel
 
   echo "Connecting to VA db on [${ENV}]"

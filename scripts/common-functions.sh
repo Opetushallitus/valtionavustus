@@ -26,10 +26,10 @@ readonly AWS_CLI_VERSION="2.15.1"
 function require_federation_session {
   info "Verifying that oph-federation session has not expired"
 
-  # The following command will either
-  # a) succeed silently or
-  # b) print error message and exit with code 254 if session has expired
-  aws sts get-caller-identity --profile=oph-federation 1>/dev/null
+  aws sts get-caller-identity --profile=oph-federation 1>/dev/null || {
+    fatal "Could not check that AWS credentials are working. Please log in with cdk/scripts/refresh-oph-federation-session.sh"
+    exit 254
+  }
 }
 
 function require_cdk_context {
@@ -45,12 +45,6 @@ function configure_aws {
     export AWS_PROFILE="oph-va-$ENV"
     info "Using AWS config from secrets repo, with profile $AWS_PROFILE"
   fi
-}
-
-function ensure_aws_mfa_token_is_valid {
-  aws sts get-caller-identity || {
-      fatal "Could not check that AWS credentials are working. Please log in with cdk/scripts/refresh-oph-federation-session.sh"
-    }
 }
 
 function aws {

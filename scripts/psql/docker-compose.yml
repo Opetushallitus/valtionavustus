@@ -12,7 +12,10 @@ services:
       interval: 5s
       timeout: 2s
     volumes:
-      - $HOME/.aws/credentials:/root/.aws/credentials:ro
-      - $HOME/.aws/config:/root/.aws/config:ro
+      - $HOME/.aws:/root/.aws
+      - $AWS_CONFIG_FILE:/aws_config:ro
     environment:
       - AWS_PROFILE
+      - AWS_REGION
+      - AWS_DEFAULT_REGION
+      - AWS_CONFIG_FILE=/aws_config
