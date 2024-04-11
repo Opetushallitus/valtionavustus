@@ -29,4 +29,13 @@
     </notes>
     <cve>CVE-2024-22871</cve>
   </suppress>
+  <suppress>
+    <notes><![CDATA[
+      "Bogus CVE claimed on this project" : https://github.com/jfree/jfreechart/issues/396
+       Original claim: "JFreeChart v1.5.4 was discovered to contain a NullPointerException"
+      ]]>
+    </notes>
+    <packageUrl regex="true">^pkg:maven/org\.jfree/jfreechart@.*$</packageUrl>
+    <cve>CVE-2024-22949</cve>
+  </suppress>
 </suppressions>
