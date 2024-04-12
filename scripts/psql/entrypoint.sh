@@ -2,7 +2,7 @@
 set -o errexit -o nounset -o pipefail
 
 BASTION_TARGET=$(npm start --silent)
-DB_WRITER_ENDPOINT=$(aws rds describe-db-cluster-endpoints --query "DBClusterEndpoints[?DBClusterIdentifier=='va-aurora-cluster' && EndpointType=='WRITER'].Endpoint" --output text)
+DB_WRITER_ENDPOINT=$(aws rds describe-db-cluster-endpoints --query "DBClusterEndpoints[?DBClusterIdentifier=='va-aurora-cluster-2' && EndpointType=='WRITER'].Endpoint" --output text)
 echo "Using bastion ${BASTION_TARGET}"
 echo "To connect to DB ${DB_WRITER_ENDPOINT}"
 

@@ -1,6 +1,7 @@
 import * as cdk from 'aws-cdk-lib'
 import { Environment } from './va-env-stage'
 import { ParameterGroup } from 'aws-cdk-lib/aws-rds'
+import { aws_kms } from 'aws-cdk-lib'
 
 export const DB_NAME = 'va'
 export const DB_USER = 'va_cluster_admin'
@@ -8,9 +9,16 @@ export const DB_USER = 'va_cluster_admin'
 export class DbStack extends cdk.Stack {
   permitDBAccessSecurityGroup: cdk.aws_ec2.SecurityGroup
 
-  constructor(scope: Environment, id: string, vpc: cdk.aws_ec2.IVpc, props?: cdk.StackProps) {
+  constructor(
+    scope: Environment,
+    id: string,
+    vpc: cdk.aws_ec2.IVpc,
+    storageEncryptionKey: aws_kms.Key,
+    props?: cdk.StackProps
+  ) {
     super(scope, id, props)
     const secret = new cdk.aws_rds.DatabaseSecret(this, 'Secret', {
+      secretName: '/db/databaseSecrets',
       username: DB_USER,
     })
 
@@ -46,7 +54,7 @@ export class DbStack extends cdk.Stack {
       engine: cdk.aws_rds.DatabaseClusterEngine.AURORA_POSTGRESQL,
       vpc,
       credentials: cdk.aws_rds.Credentials.fromSecret(secret),
-      clusterIdentifier: 'va-aurora-cluster',
+      clusterIdentifier: 'va-aurora-cluster-2',
       vpcSubnets: { subnetType: cdk.aws_ec2.SubnetType.PRIVATE_ISOLATED },
       serverlessV2MinCapacity: 0.5,
       serverlessV2MaxCapacity: 4,
@@ -54,6 +62,7 @@ export class DbStack extends cdk.Stack {
       writer: cdk.aws_rds.ClusterInstance.serverlessV2('writer'),
       readers: [cdk.aws_rds.ClusterInstance.serverlessV2('reader')],
       parameterGroup,
+      storageEncryptionKey,
     })
     this.permitDBAccessSecurityGroup = accessVaDBSecurityGroup
   }

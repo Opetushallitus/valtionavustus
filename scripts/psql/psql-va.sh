@@ -34,14 +34,7 @@ function main {
   export PSQLRC="${repo}/scripts/psql/psqlrc"
   if [ ! -f "$PSQLRC" ]; then fatal "File $PSQLRC not found"; fi
 
-  if [[ ${ENV} = "dev" ]]; then
-    SECRET_NAME="SecretA720EF05-rtkostJfA2hp"
-  elif [[ ${ENV} = "qa"  ]]; then
-    SECRET_NAME="SecretA720EF05-190KlLt98ngt"
-  elif [[ ${ENV} = "prod"  ]]; then
-    SECRET_NAME="SecretA720EF05-8IPOrirGbwh0"
-  fi
-
+  SECRET_NAME="/db/databaseSecrets"
   DBNAME=$(aws secretsmanager get-secret-value --secret-id "${SECRET_NAME}" --query "SecretString" --output text | jq -r ".dbname")
   USERNAME=$(aws secretsmanager get-secret-value --secret-id "${SECRET_NAME}" --query "SecretString" --output text | jq -r ".username")
   PGPASSWORD=$(aws secretsmanager get-secret-value --secret-id "${SECRET_NAME}" --query "SecretString" --output text | jq -r ".password")

@@ -9,6 +9,7 @@ import { VpcStack } from '../lib/vpc-stack'
 import { DbStack } from '../lib/db-stack'
 import { BastionStack } from '../lib/bastion-stack'
 import { EcsStack } from '../lib/ecs-stack'
+import { EncryptionStack } from '../lib/encryption-stack'
 
 const HAKIJA_DOMAIN = 'valtionavustukset.oph.fi'
 const HAKIJA_DOMAIN_SV = 'statsunderstod.oph.fi'
@@ -20,8 +21,9 @@ const app = new cdk.App()
 {
   const dev = new Environment(app, 'dev')
   const vpcStack = new VpcStack(dev, 'vpc')
+  const encryptionStack = new EncryptionStack(dev, 'encryption')
   new VaServiceStack(dev, 'va')
-  const dbStack = new DbStack(dev, 'db', vpcStack.vpc)
+  const dbStack = new DbStack(dev, 'db', vpcStack.vpc, encryptionStack.dbEncryptionKey)
   const ecsStack = new EcsStack(dev, 'ecs', vpcStack.vpc)
   const bastionStack = new BastionStack(
     dev,
@@ -46,8 +48,9 @@ const app = new cdk.App()
 {
   const qa = new Environment(app, 'qa')
   const vpcStack = new VpcStack(qa, 'vpc')
+  const encryptionStack = new EncryptionStack(qa, 'encryption')
   new VaServiceStack(qa, 'va')
-  const dbStack = new DbStack(qa, 'db', vpcStack.vpc)
+  const dbStack = new DbStack(qa, 'db', vpcStack.vpc, encryptionStack.dbEncryptionKey)
   const ecsStack = new EcsStack(qa, 'ecs', vpcStack.vpc)
   const bastionStack = new BastionStack(
     qa,
@@ -73,8 +76,9 @@ const app = new cdk.App()
 {
   const prod = new Environment(app, 'prod')
   const vpcStack = new VpcStack(prod, 'vpc')
+  const encryptionStack = new EncryptionStack(prod, 'encryption')
   new VaServiceStack(prod, 'va')
-  const dbStack = new DbStack(prod, 'db', vpcStack.vpc)
+  const dbStack = new DbStack(prod, 'db', vpcStack.vpc, encryptionStack.dbEncryptionKey)
   const ecsStack = new EcsStack(prod, 'ecs', vpcStack.vpc)
   const bastionStack = new BastionStack(
     prod,
