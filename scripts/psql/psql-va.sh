@@ -22,7 +22,6 @@ function main {
 
   require_command jq
   require_command psql
-  require_reaktor_vpn
 
   parse_env_from_script_name "psql-va"
   configure_aws
