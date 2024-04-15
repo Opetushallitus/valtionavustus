@@ -38,4 +38,12 @@
     <packageUrl regex="true">^pkg:maven/org\.jfree/jfreechart@.*$</packageUrl>
     <cve>CVE-2024-22949</cve>
   </suppress>
+  <suppress>
+    <notes><![CDATA[
+      "The CVE is raised by a brain-dead AI bot" : https://github.com/JodaOrg/joda-time/issues/780
+      ]]>
+    </notes>
+    <packageUrl regex="true">^pkg:maven/joda-time/joda-time@.*$</packageUrl>
+    <cve>CVE-2024-23080</cve>
+  </suppress>
 </suppressions>
