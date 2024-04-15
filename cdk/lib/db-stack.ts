@@ -1,7 +1,7 @@
 import * as cdk from 'aws-cdk-lib'
 import { Environment } from './va-env-stage'
 import { ParameterGroup } from 'aws-cdk-lib/aws-rds'
-import { aws_kms } from 'aws-cdk-lib'
+import { aws_kms, Duration } from 'aws-cdk-lib'
 
 export const DB_NAME = 'va'
 export const DB_USER = 'va_cluster_admin'
@@ -59,8 +59,15 @@ export class DbStack extends cdk.Stack {
       serverlessV2MinCapacity: 0.5,
       serverlessV2MaxCapacity: 4,
       securityGroups: [dbSecurityGroup],
-      writer: cdk.aws_rds.ClusterInstance.serverlessV2('writer'),
-      readers: [cdk.aws_rds.ClusterInstance.serverlessV2('reader')],
+      writer: cdk.aws_rds.ClusterInstance.serverlessV2('writer', {
+        enablePerformanceInsights: true,
+      }),
+      monitoringInterval: Duration.seconds(15),
+      readers: [
+        cdk.aws_rds.ClusterInstance.serverlessV2('reader', {
+          enablePerformanceInsights: true,
+        }),
+      ],
       parameterGroup,
       storageEncryptionKey,
     })
