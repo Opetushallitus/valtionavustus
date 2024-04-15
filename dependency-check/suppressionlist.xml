@@ -37,6 +37,8 @@
     </notes>
     <packageUrl regex="true">^pkg:maven/org\.jfree/jfreechart@.*$</packageUrl>
     <cve>CVE-2024-22949</cve>
+    <cve>CVE-2023-52070</cve>
+    <cve>CVE-2024-23076</cve>
   </suppress>
   <suppress>
     <notes><![CDATA[
