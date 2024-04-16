@@ -47,7 +47,14 @@
                               {:id          "_2022-09"
                                :description "Voimassa 13.9.2022 alkaen"}
                               {:id          "_2023-05"
-                               :description "Voimassa 15.5.2023 alkaen"}]}]}])
+                               :description "Voimassa 15.5.2023 alkaen"}]}
+
+                  {:id       "jotpa_vakioehdot"
+                   :langs    {:fi "JOTPA: Valtionavustusten vakioehdot"
+                              :sv "Skols: Standardvillkor för statsunderstöd"}
+                   :versions [{:id          "_2024-03-01"
+                               :description "Voimassa 21.3.2024"}]}]}
+   ])
 
 (def PakoteOhjeLiitteet
   {:id    "va_pakoteohje"
