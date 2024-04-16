@@ -1,4 +1,5 @@
 import { Blob } from 'node:buffer'
+import { blob as blobConsumer } from 'node:stream/consumers'
 import { expect } from '@playwright/test'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
@@ -7,6 +8,7 @@ import { expectToBeDefined } from '../../utils/util'
 import { HAKIJA_URL } from '../../utils/constants'
 import { getPdfFirstPageTextContent } from '../../utils/pdfUtil'
 import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
+import { waitForSave } from '../../pages/virkailija/hakujen-hallinta/CommonHakujenHallintaPage'
 
 test('paatos liitteet', async ({
   page,
@@ -36,6 +38,7 @@ test('paatos liitteet', async ({
     yleisOhjeCheckbox,
     yleisOhjeLiite,
     pakoteOhjeCheckbox,
+    jotpaOhjeCheckbox,
   } = paatosPage.locators
   const amountOfYleisohjeet = 6
   const yleisohjeAmountStartingFromZero = amountOfYleisohjeet - 1
@@ -81,6 +84,10 @@ test('paatos liitteet', async ({
   await test.step('pakote ohje is enabled by default', async () => {
     await expect(pakoteOhjeCheckbox).toBeChecked()
   })
+  await test.step('JOTPA ohje is not enabled by default', async () => {
+    await expect(jotpaOhjeCheckbox).not.toBeChecked()
+  })
+
   await test.step('make sure link to yleisohje is in paatos', async () => {
     const paatosPage = PaatosPage(page)
     await paatosPage.navigateTo(avustushakuID)
@@ -96,11 +103,19 @@ test('paatos liitteet', async ({
     await expect(yleisohjeLink).toBeVisible()
     const href = '/liitteet/va_yleisohje_2023-05_fi.pdf'
     expect(await yleisohjeLink.getAttribute('href')).toBe(href)
-    const res = await page.request.get(`${HAKIJA_URL}${href}`)
-    const pdfBody = await res.body()
-    const pdfText = await getPdfFirstPageTextContent(new Blob([pdfBody]))
-    expect(pdfText).toContain('12.5.2023')
-    expect(pdfText).toContain('YLEISOHJE')
+
+    await test.step('Make sure user can download yleisohje PDF', async () => {
+      const res = await page.request.get(`${HAKIJA_URL}${href}`)
+      const pdfBody = await res.body()
+      const pdfText = await getPdfFirstPageTextContent(new Blob([pdfBody]))
+      expect(pdfText).toContain('12.5.2023')
+      expect(pdfText).toContain('YLEISOHJE')
+    })
+  })
+
+  await test.step('make sure JOTPA yleisohje is not visible', async () => {
+    const yleisohjeLink = page.locator('a').locator('text=JOTPA: Valtionavustusten vakioehdot')
+    await expect(yleisohjeLink).not.toBeVisible()
   })
 
   await test.step('make sure pakoteohje is in paatos', async () => {
@@ -144,5 +159,35 @@ test('paatos liitteet', async ({
         'text=Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen valtionavustustoiminnassa'
       )
     await expect(pakoteohjeLink).toBeHidden()
+  })
+
+  await test.step('When JOTPA vakioehdot is added and päätös is created', async () => {
+    await paatosPage.navigateTo(avustushakuID)
+    await Promise.all([paatosPage.locators.jotpaOhjeCheckbox.click(), waitForSave(page)])
+    await paatosPage.recreatePaatokset()
+    await paatosPage.resendPaatokset()
+
+    await test.step('And user navigates to päätös page', async () => {
+      await paatosPage.navigateToLatestHakijaPaatos(hakemusID)
+
+      await test.step('JOTPA yleisohje is visible', async () => {
+        const yleisohjeLink = page.locator('a').locator('text=JOTPA: Valtionavustusten vakioehdot')
+        await expect(yleisohjeLink).toBeVisible()
+      })
+      await test.step('VA yleisohje is not visible', async () => {
+        const yleisohjeLink = page.locator('a').locator('text=Valtionavustusten yleisohje')
+        await expect(yleisohjeLink).not.toBeVisible()
+      })
+      await test.step('PDF contains Jotpa yleisohje', async () => {
+        const downloadPromise = page.waitForEvent('download')
+        await page.getByText('JOTPA: Valtionavustusten vakioehdot').click()
+        const download = await downloadPromise
+
+        const blob = await blobConsumer(await download.createReadStream())
+        const pdfText = await getPdfFirstPageTextContent(blob)
+        expect(pdfText).toContain('1.3.2024')
+        expect(pdfText).toContain('Jatkuvan oppimisen ja työllisyyden palvelukeskus')
+      })
+    })
   })
 })

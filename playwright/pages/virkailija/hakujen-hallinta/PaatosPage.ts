@@ -2,6 +2,8 @@ import { expect, Page } from '@playwright/test'
 import { navigate } from '../../../utils/navigate'
 import * as common from './CommonHakujenHallintaPage'
 import { CommonHakujenHallintaPage } from './CommonHakujenHallintaPage'
+import { getAcceptedPäätösEmails } from '../../../utils/emails'
+import { expectToBeDefined } from '../../../utils/util'
 
 export function PaatosPage(page: Page) {
   const datePicker = 'div.datepicker input'
@@ -29,6 +31,7 @@ export function PaatosPage(page: Page) {
       .locator('label')
       .locator('text=Yleisavustukseen liittyvät ehdot ja rajoitukset'),
     yleisOhjeCheckbox: page.locator('label').locator('text="Valtionavustusten yleisohje"'),
+    jotpaOhjeCheckbox: page.locator('input[value="jotpa_vakioehdot"]'),
     yleisOhjeLiite: page.locator('[data-liite=va_yleisohje]'),
     pakoteOhjeCheckbox: page
       .locator('label')
@@ -47,6 +50,15 @@ export function PaatosPage(page: Page) {
 
   async function navigateTo(avustushakuID: number) {
     await navigate(page, `/admin/decision/?avustushaku=${avustushakuID}`)
+  }
+
+  async function navigateToLatestHakijaPaatos(hakemusID: number) {
+    const emails = await getAcceptedPäätösEmails(hakemusID)
+    const latestEmail = [...emails].pop()
+    expectToBeDefined(latestEmail)
+    const url = latestEmail.formatted.match(/https?:\/\/.*\/paatos\/avustushaku\/.*/)?.[0]
+    expectToBeDefined(url)
+    await page.goto(url)
   }
 
   async function resendPaatokset(amount: number = 1) {
@@ -86,6 +98,7 @@ export function PaatosPage(page: Page) {
     common: CommonHakujenHallintaPage(page),
     locators,
     navigateTo,
+    navigateToLatestHakijaPaatos,
     sendPaatos,
     recreatePaatokset,
     resendPaatokset,
