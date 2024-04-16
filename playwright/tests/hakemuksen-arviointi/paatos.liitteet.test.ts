@@ -3,8 +3,6 @@ import { blob as blobConsumer } from 'node:stream/consumers'
 import { expect } from '@playwright/test'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
-import { getAcceptedPäätösEmails } from '../../utils/emails'
-import { expectToBeDefined } from '../../utils/util'
 import { HAKIJA_URL } from '../../utils/constants'
 import { getPdfFirstPageTextContent } from '../../utils/pdfUtil'
 import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
@@ -92,13 +90,8 @@ test('paatos liitteet', async ({
     const paatosPage = PaatosPage(page)
     await paatosPage.navigateTo(avustushakuID)
     await paatosPage.sendPaatos()
+    await paatosPage.navigateToLatestHakijaPaatos(hakemusID)
 
-    const emails = await getAcceptedPäätösEmails(hakemusID)
-    expect(emails).toHaveLength(1)
-    const url = emails[0].formatted.match(/https?:\/\/.*\/paatos\/avustushaku\/.*/)?.[0]
-    expectToBeDefined(url)
-
-    await page.goto(url)
     const yleisohjeLink = page.locator('a').locator('text=Valtionavustusten yleisohje')
     await expect(yleisohjeLink).toBeVisible()
     const href = '/liitteet/va_yleisohje_2023-05_fi.pdf'
@@ -144,13 +137,8 @@ test('paatos liitteet', async ({
   await test.step('pakoteohje gets removed after recreating and sending paatokset', async () => {
     await paatosPage.recreatePaatokset()
     await paatosPage.resendPaatokset()
+    await paatosPage.navigateToLatestHakijaPaatos(hakemusID)
 
-    const emails = await getAcceptedPäätösEmails(hakemusID)
-    expect(emails).toHaveLength(2)
-
-    const url = emails[1].formatted.match(/https?:\/\/.*\/paatos\/avustushaku\/.*/)?.[0]
-    expectToBeDefined(url)
-    await page.goto(url)
     const yleisohjeLink = page.locator('a').locator('text=Valtionavustusten yleisohje')
     await expect(yleisohjeLink).toBeVisible()
     const pakoteohjeLink = page
