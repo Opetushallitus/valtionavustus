@@ -1,10 +1,18 @@
 import { blob as blobConsumer } from 'node:stream/consumers'
-import { expect } from '@playwright/test'
+import { expect, Locator } from '@playwright/test'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { getPdfFirstPageTextContent } from '../../utils/pdfUtil'
 import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
 import { waitForSave } from '../../pages/virkailija/hakujen-hallinta/CommonHakujenHallintaPage'
+import type { Blob } from 'node:buffer'
+
+async function downloadPdfFromLocator(locator: Locator): Promise<Blob> {
+  const downloadPromise = locator.page().waitForEvent('download')
+  await locator.click()
+  const download = await downloadPromise
+  return await blobConsumer(await download.createReadStream())
+}
 
 test('paatos liitteet', async ({
   page,
@@ -95,11 +103,7 @@ test('paatos liitteet', async ({
     expect(await yleisohjeLink.getAttribute('href')).toBe(href)
 
     await test.step('Make sure user can download yleisohje PDF', async () => {
-      const downloadPromise = page.waitForEvent('download')
-      await yleisohjeLink.click()
-      const download = await downloadPromise
-      const blob = await blobConsumer(await download.createReadStream())
-
+      const blob = await downloadPdfFromLocator(yleisohjeLink)
       const pdfText = await getPdfFirstPageTextContent(blob)
       expect(pdfText).toContain('12.5.2023')
       expect(pdfText).toContain('YLEISOHJE')
@@ -117,10 +121,7 @@ test('paatos liitteet', async ({
       .locator(
         'text=Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen valtionavustustoiminnassa'
       )
-    const downloadPromise = page.waitForEvent('download')
-    await pakoteohjeLink.click()
-    const download = await downloadPromise
-    const blob = await blobConsumer(await download.createReadStream())
+    const blob = await downloadPdfFromLocator(pakoteohjeLink)
     const pdfText = await getPdfFirstPageTextContent(blob)
     expect(pdfText).toContain('Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen')
   })
@@ -166,11 +167,8 @@ test('paatos liitteet', async ({
         await expect(yleisohjeLink).not.toBeVisible()
       })
       await test.step('PDF contains Jotpa yleisohje', async () => {
-        const downloadPromise = page.waitForEvent('download')
-        await page.getByText('JOTPA: Valtionavustusten vakioehdot').click()
-        const download = await downloadPromise
-
-        const blob = await blobConsumer(await download.createReadStream())
+        const pdfLink = page.getByText('JOTPA: Valtionavustusten vakioehdot')
+        const blob = await downloadPdfFromLocator(pdfLink)
         const pdfText = await getPdfFirstPageTextContent(blob)
         expect(pdfText).toContain('1.3.2024')
         expect(pdfText).toContain('Jatkuvan oppimisen ja työllisyyden palvelukeskus')
