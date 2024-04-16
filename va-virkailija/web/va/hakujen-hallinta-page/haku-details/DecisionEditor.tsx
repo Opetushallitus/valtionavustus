@@ -270,8 +270,9 @@ const AttachmentLiite = ({
 }) => {
   const { environment } = useHakujenHallintaSelector(selectLoadedInitialData)
   const disableOldVersions = attachment.id === 'va_yleisohje'
+  const showAllAvailableVersions = attachment.id === 'jotpa_vakioehdot'
   const amountOfVersions = attachment.versions.length
-  if (attachment.versions.length > 1) {
+  if (attachment.versions.length > 1 || showAllAvailableVersions) {
     return (
       <div>
         {attachment.versions.map((v, index) => (
