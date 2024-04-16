@@ -1,9 +1,7 @@
-import { Blob } from 'node:buffer'
 import { blob as blobConsumer } from 'node:stream/consumers'
 import { expect } from '@playwright/test'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
-import { HAKIJA_URL } from '../../utils/constants'
 import { getPdfFirstPageTextContent } from '../../utils/pdfUtil'
 import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
 import { waitForSave } from '../../pages/virkailija/hakujen-hallinta/CommonHakujenHallintaPage'
@@ -93,14 +91,16 @@ test('paatos liitteet', async ({
     await paatosPage.navigateToLatestHakijaPaatos(hakemusID)
 
     const yleisohjeLink = page.locator('a').locator('text=Valtionavustusten yleisohje')
-    await expect(yleisohjeLink).toBeVisible()
     const href = '/liitteet/va_yleisohje_2023-05_fi.pdf'
     expect(await yleisohjeLink.getAttribute('href')).toBe(href)
 
     await test.step('Make sure user can download yleisohje PDF', async () => {
-      const res = await page.request.get(`${HAKIJA_URL}${href}`)
-      const pdfBody = await res.body()
-      const pdfText = await getPdfFirstPageTextContent(new Blob([pdfBody]))
+      const downloadPromise = page.waitForEvent('download')
+      await yleisohjeLink.click()
+      const download = await downloadPromise
+      const blob = await blobConsumer(await download.createReadStream())
+
+      const pdfText = await getPdfFirstPageTextContent(blob)
       expect(pdfText).toContain('12.5.2023')
       expect(pdfText).toContain('YLEISOHJE')
     })
@@ -117,12 +117,11 @@ test('paatos liitteet', async ({
       .locator(
         'text=Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen valtionavustustoiminnassa'
       )
-    await expect(pakoteohjeLink).toBeVisible()
-    const href = '/liitteet/va_pakoteohje.pdf'
-    expect(await pakoteohjeLink.getAttribute('href')).toBe(href)
-    const res = await page.request.get(`${HAKIJA_URL}${href}`)
-    const pdfBody = await res.body()
-    const pdfText = await getPdfFirstPageTextContent(new Blob([pdfBody]))
+    const downloadPromise = page.waitForEvent('download')
+    await pakoteohjeLink.click()
+    const download = await downloadPromise
+    const blob = await blobConsumer(await download.createReadStream())
+    const pdfText = await getPdfFirstPageTextContent(blob)
     expect(pdfText).toContain('Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen')
   })
   await test.step('uncheck pakoteohje', async () => {
