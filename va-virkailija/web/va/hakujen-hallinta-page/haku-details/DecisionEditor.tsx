@@ -482,6 +482,16 @@ const LiitteetSelection = ({
   const [selectedVersions, setSelectedVersions] = useState(() =>
     makeSelectedVersions(decisionLiitteet, avustushaku?.decision?.liitteet ?? [])
   )
+
+  useEffect(() => {
+    setSelectedLiitteet(
+      makeSelectedLiitteet(decisionLiitteet, avustushaku?.decision?.liitteet ?? [])
+    )
+    setSelectedVersions(
+      makeSelectedVersions(decisionLiitteet, avustushaku?.decision?.liitteet ?? [])
+    )
+  }, [avustushaku.id])
+
   const dispatch = useHakujenHallintaDispatch()
 
   const updateSelectedLiitteet = (
