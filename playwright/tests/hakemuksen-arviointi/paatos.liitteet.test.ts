@@ -125,6 +125,14 @@ test('paatos liitteet', async ({
     const pdfText = await getPdfFirstPageTextContent(blob)
     expect(pdfText).toContain('Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen')
   })
+
+  await test.step('paatos page matches snapshot', async () => {
+    await expect(page).toHaveScreenshot({
+      fullPage: true,
+      maxDiffPixelRatio: 0.1,
+    })
+  })
+
   await test.step('uncheck pakoteohje', async () => {
     await paatosPage.navigateTo(avustushakuID)
 
@@ -172,6 +180,12 @@ test('paatos liitteet', async ({
         const pdfText = await getPdfFirstPageTextContent(blob)
         expect(pdfText).toContain('1.3.2024')
         expect(pdfText).toContain('Jatkuvan oppimisen ja työllisyyden palvelukeskus')
+      })
+      await test.step('JOTPA paatos matches snapshot', async () => {
+        await expect(page).toHaveScreenshot({
+          fullPage: true,
+          maxDiffPixelRatio: 0.1,
+        })
       })
     })
   })

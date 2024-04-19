@@ -74,5 +74,11 @@ fornamn.efternamn@oph.fi
       await expect(hakijaPaatosPage.avustuslajiTitle).toHaveText('Typ av statsunderstöd')
       await expect(hakijaPaatosPage.avustuslaji).toHaveText('Specialunderstöd')
     })
+    await test.step('swedish paatos matches snapshot', async () => {
+      await expect(page).toHaveScreenshot({
+        fullPage: true,
+        maxDiffPixelRatio: 0.1,
+      })
+    })
   }
 )
