@@ -85,7 +85,7 @@ fornamn.efternamn@oph.fi
     await test.step('swedish paatos matches snapshot', async () => {
       await expect(page).toHaveScreenshot({
         fullPage: true,
-        maxDiffPixelRatio: 0.1,
+        maxDiffPixelRatio: 0.05,
       })
     })
   }

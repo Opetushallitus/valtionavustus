@@ -141,7 +141,7 @@ test.extend({
     await test.step('paatos page matches snapshot', async () => {
       await expect(page).toHaveScreenshot({
         fullPage: true,
-        maxDiffPixelRatio: 0.1,
+        maxDiffPixelRatio: 0.05,
       })
     })
 
@@ -241,7 +241,7 @@ test.extend({
         await test.step('JOTPA paatos matches snapshot', async () => {
           await expect(page).toHaveScreenshot({
             fullPage: true,
-            maxDiffPixelRatio: 0.1,
+            maxDiffPixelRatio: 0.05,
           })
         })
       })
