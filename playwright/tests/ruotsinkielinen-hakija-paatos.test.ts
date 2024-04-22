@@ -10,7 +10,15 @@ import { HAKIJA_URL } from '../utils/constants'
 
 svTest.setTimeout(180000)
 
-svTest(
+svTest.extend({
+  avustushakuName: async ({}, use) => await use('Svenska applikantten hufvud testen'),
+  hakuProps: async ({ hakuProps }, use) => {
+    await use({
+      ...hakuProps,
+      registerNumber: '6/69',
+    })
+  },
+})(
   'When avustushaku has been created and swedish hakemus has been submitted and approved',
   async ({ page, acceptedHakemus: { hakemusID, userKey }, answers, avustushakuID, hakuProps }) => {
     await test.step('hakija gets an email in swedish', async () => {
