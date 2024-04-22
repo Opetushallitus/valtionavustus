@@ -240,12 +240,17 @@ export class HakemustenArviointiPage {
     await expect(projektikoodi.value).toContainText(projectCode)
   }
 
+  async fillPaatoksenPerustelut(perustelut: string) {
+    await this.page.fill(`#perustelut`, perustelut)
+  }
+
   async acceptAvustushaku({
     projectName,
     budget = '100000',
     rahoitusalue = 'Ammatillinen koulutus',
     projektikoodi,
     codes,
+    paatoksenPerustelut,
   }: {
     avustushakuID: number
     projectName: string
@@ -253,12 +258,17 @@ export class HakemustenArviointiPage {
     budget?: AcceptedBudget
     rahoitusalue?: string
     codes?: VaCodeValues
+    paatoksenPerustelut?: string
   }) {
     // Accept the hakemus
     await this.selectHakemusFromList(projectName)
     const hakemusID = await this.getHakemusID()
 
     await this.selectProject(projektikoodi, codes)
+
+    if (paatoksenPerustelut) {
+      await this.fillPaatoksenPerustelut(paatoksenPerustelut)
+    }
 
     expectToBeDefined(hakemusID)
     console.log('Hakemus ID:', hakemusID)

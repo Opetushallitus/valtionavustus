@@ -520,6 +520,10 @@
       "fi": "Päätöksen perustelut",
       "sv": "Motiveringar för beslutet"
     },
+    "paatoksen-perustelut-jotpa": {
+      "fi": "Avustuksen käyttötarkoitus",
+      "sv": "Användning av understödet"
+    },
     "lisatietoja": {
       "fi": "Lisätietoja",
       "sv": "Mer information"

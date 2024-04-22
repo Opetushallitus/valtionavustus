@@ -37,6 +37,7 @@ test.extend({
       avustushakuID,
       projectName: answers.projectName,
       projektikoodi,
+      paatoksenPerustelut: 'Timanttinen hakemus, ei voi muuta sanoa kun hattua nostaa!',
     })
     const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
     await haunTiedotPage.resolveAvustushaku()

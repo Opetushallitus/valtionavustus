@@ -241,7 +241,9 @@
                 :section-selvitysvelvollisuus  selvitysvelvollisuus
                 :section-kayttooikeudet        (optional-section decision :kayttooikeudet :kayttooikeudet translate language)
                 :section-hyvaksyminen          (optional-section decision :hyvaksyminen :hyvaksyminen translate language)
-                :section-perustelut            (optional-section-content :paatoksen-perustelut (:perustelut arvio) translate)
+                :section-perustelut            (if is-jotpa-paatos
+                                                 (optional-section-content :paatoksen-perustelut-jotpa (:perustelut arvio) translate)
+                                                 (optional-section-content :paatoksen-perustelut (:perustelut arvio) translate))
                 :section-tarkastusoikeus       (section-translated
                                                    :tarkastusoikeus-title
                                                    (if is-jotpa-paatos
