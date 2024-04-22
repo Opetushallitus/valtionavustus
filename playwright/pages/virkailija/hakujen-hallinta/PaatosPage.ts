@@ -20,6 +20,7 @@ export function PaatosPage(page: Page) {
     hankkeenPaattymisPaiva: paattymisPaiva.locator(datePicker),
     hankkeenPaattymisPaivaLabel: paattymisPaiva.locator(label),
     taustaa: page.locator('[id="decision.taustaa.fi"]'),
+    kayttotarkoitus: page.locator('[id="decision.kayttotarkoitus.fi"]'),
     decisionEditor: page.locator('.decision-editor'),
     confirmSending: page.locator('text="Vahvista lähetys"'),
     paatosSendError: page.locator('#päätös-send-error'),

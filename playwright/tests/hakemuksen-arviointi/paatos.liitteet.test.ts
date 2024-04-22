@@ -200,6 +200,7 @@ test.extend({
       projektikoodi,
       paatoksenPerustelut: 'Timanttinen hakemus, ei voi muuta sanoa kun hattua nostaa!',
     })
+    const kayttotarkoitus = 'Tarkoitus olisi olla käyttämättä koko summaa Alkoon'
     const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
     await haunTiedotPage.resolveAvustushaku()
     await hakemustenArviointiPage.navigate(avustushakuID)
@@ -210,6 +211,7 @@ test.extend({
 
     await test.step('When JOTPA vakioehdot is added and päätös is created', async () => {
       await paatosPage.navigateTo(avustushakuID)
+      await paatosPage.locators.kayttotarkoitus.fill(kayttotarkoitus)
       await Promise.all([paatosPage.locators.jotpaOhjeCheckbox.click(), waitForSave(page)])
       await paatosPage.sendPaatos()
 
@@ -225,6 +227,9 @@ test.extend({
         await test.step('VA yleisohje is not visible', async () => {
           const yleisohjeLink = page.locator('a').locator('text=Valtionavustusten yleisohje')
           await expect(yleisohjeLink).not.toBeVisible()
+        })
+        await test.step('Käyttötarkoitus is not visible', async () => {
+          await expect(page.getByText(kayttotarkoitus)).toHaveCount(0)
         })
         await test.step('PDF contains Jotpa yleisohje', async () => {
           const pdfLink = page.getByText('JOTPA: Valtionavustusten vakioehdot')

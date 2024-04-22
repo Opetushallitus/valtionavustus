@@ -232,6 +232,7 @@
         params {:avustushaku                   avustushaku
                 :is-yleisavustus               is-yleisavustus
                 :is-erityisavustus             is-erityisavustus
+                :is-jotpa-paatos               is-jotpa-paatos
                 :hakemus                       hakemus
                 :section-asia                  (asia-section avustushaku-name translate)
                 :section-taustaa               (optional-section decision :taustaa :taustaa translate language)
