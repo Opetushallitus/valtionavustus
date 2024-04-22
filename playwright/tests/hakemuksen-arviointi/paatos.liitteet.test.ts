@@ -6,6 +6,7 @@ import { getPdfFirstPageTextContent } from '../../utils/pdfUtil'
 import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
 import { waitForSave } from '../../pages/virkailija/hakujen-hallinta/CommonHakujenHallintaPage'
 import type { Blob } from 'node:buffer'
+import { createJotpaCodes } from '../../fixtures/JotpaTest'
 
 async function downloadPdfFromLocator(locator: Locator): Promise<Blob> {
   const downloadPromise = locator.page().waitForEvent('download')
@@ -167,12 +168,50 @@ test.extend({
         )
       await expect(pakoteohjeLink).toBeHidden()
     })
+  }
+)
+
+test.extend({
+  avustushakuName: async ({}, use) => await use('Jotpa paatos liitteet test'),
+  codes: async ({ page }, use) => {
+    const codes = await createJotpaCodes(page)
+    await use(codes)
+  },
+  hakuProps: async ({ hakuProps }, use) => {
+    await use({
+      ...hakuProps,
+      registerNumber: '4/20',
+    })
+  },
+})(
+  'Jotpa paatos liitteet',
+  async ({
+    page,
+    closedAvustushaku: { id: avustushakuID },
+    answers,
+    ukotettuValmistelija,
+    projektikoodi,
+  }) => {
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    await hakemustenArviointiPage.navigate(avustushakuID)
+    const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
+      avustushakuID,
+      projectName: answers.projectName,
+      projektikoodi,
+      paatoksenPerustelut: 'Timanttinen hakemus, ei voi muuta sanoa kun hattua nostaa!',
+    })
+    const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
+    await haunTiedotPage.resolveAvustushaku()
+    await hakemustenArviointiPage.navigate(avustushakuID)
+    await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
+
+    const paatosPage = PaatosPage(page)
+    await paatosPage.navigateTo(avustushakuID)
 
     await test.step('When JOTPA vakioehdot is added and päätös is created', async () => {
       await paatosPage.navigateTo(avustushakuID)
       await Promise.all([paatosPage.locators.jotpaOhjeCheckbox.click(), waitForSave(page)])
-      await paatosPage.recreatePaatokset()
-      await paatosPage.resendPaatokset()
+      await paatosPage.sendPaatos()
 
       await test.step('And user navigates to päätös page', async () => {
         await paatosPage.navigateToLatestHakijaPaatos(hakemusID)
