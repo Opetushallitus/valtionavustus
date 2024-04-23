@@ -9,11 +9,7 @@ import {
   waitUntilMinEmails,
 } from '../../utils/emails'
 import { HakijaPaatosPage } from '../../pages/hakija/HakijaPaatosPage'
-import {
-  expectIsFinnishJotpaEmail,
-  expectIsFinnishOphEmail,
-  expectIsSwedishJotpaEmail,
-} from '../../utils/email-signature'
+import { expectIsFinnishJotpaEmail, expectIsSwedishJotpaEmail } from '../../utils/email-signature'
 
 const jotpaFont = 'Montserrat, sans-serif'
 const jotpaColour = 'rgb(0, 155, 98)'
@@ -97,7 +93,7 @@ JotpaTest(
             'Kun hakemus on valmis, se lähetetään Jatkuvan oppimisen ja työllisyyden palvelukeskuksen käsiteltäväksi'
           )
         ).not.toBeVisible()
-        page.getByText('Lähetä käsiteltäväksi').hover()
+        await page.getByText('Lähetä käsiteltäväksi').hover()
         await expect(
           page.getByText(
             'Kun hakemus on valmis, se lähetetään Jatkuvan oppimisen ja työllisyyden palvelukeskuksen käsiteltäväksi'
@@ -286,7 +282,7 @@ JotpaTest(
         await expect(page.getByText('Opetushallituksella')).not.toBeVisible()
         await expect(
           page.getByText(
-            'Jatkuvan oppimisen ja työllisyyden palvelukeskuksella ja muilla tässä päätöksessä listatuilla viranomaistahoilla'
+            'Jatkuvan oppimisen ja työllisyyden palvelukeskuksella ja palvelukeskuksen valtionavustuksen vakioehdoissa mainituilla tahoilla'
           )
         ).toBeVisible()
 
