@@ -14,7 +14,7 @@ fi
 
 assert_domain_exists () {
   RECORD="${2:-A}"
-  if [[ -z $(dig +short "${1}") ]]; then
+  if [[ -z $(dig +short "${RECORD}" "${1}") ]]; then
     echo -e "\033[0;31m${1} ei löydy"
     exit 1
   else
