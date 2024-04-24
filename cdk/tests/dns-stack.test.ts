@@ -149,6 +149,7 @@ describe('Delegation', () => {
           env: 'prod',
           hakijaDomain: 'valtionavustukset.oph.fi',
           hakijaDomainSv: 'statsunderstod.oph.fi',
+          virkailijaDomain: 'virkailija.valtionavustukset.oph.fi',
         },
       })
     )

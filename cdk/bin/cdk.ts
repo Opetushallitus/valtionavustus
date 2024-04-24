@@ -41,6 +41,7 @@ const app = new cdk.App()
       env: 'prod',
       hakijaDomain: HAKIJA_DOMAIN,
       hakijaDomainSv: HAKIJA_DOMAIN_SV,
+      virkailijaDomain: VIRKAILIJA_DOMAIN,
     },
   })
 }
@@ -69,6 +70,7 @@ const app = new cdk.App()
       env: 'prod',
       hakijaDomain: HAKIJA_DOMAIN,
       hakijaDomainSv: HAKIJA_DOMAIN_SV,
+      virkailijaDomain: VIRKAILIJA_DOMAIN,
     },
   })
 }
