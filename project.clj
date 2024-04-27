@@ -104,7 +104,7 @@
                  [ring/ring-codec "1.2.0"]
                  [ring/ring-core "1.12.1"]
                  [ring/ring-devel "1.12.1"]
-                 [ring/ring-defaults "0.4.0"]
+                 [ring/ring-defaults "0.5.0"]
                  [ring/ring-session-timeout "0.3.0"]
                  [ring/ring-ssl "0.4.0"]
                  [prismatic/schema "1.4.1"]
