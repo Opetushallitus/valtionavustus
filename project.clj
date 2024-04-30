@@ -97,7 +97,7 @@
 
                  ;; http
                  [compojure "1.7.1"]
-                 [http-kit "2.7.0"]
+                 [http-kit "2.8.0"]
                  [metosin/compojure-api "1.1.13"]
                  [ring.middleware.conditional "0.2.0" :exclusions [ring]]
                  [radicalzephyr/ring.middleware.logger "0.6.0"]
