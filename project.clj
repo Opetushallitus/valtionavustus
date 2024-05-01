@@ -22,7 +22,7 @@
 
   :managed-dependencies [
 
-                         ;; [metosin/compojure-api 1.1.13] -> [metosin/ring-swagger 0.26.2] -> [metosin/scjsv 0.6.2] ->
+                         ;; [metosin/compojure-api 1.1.14] -> [metosin/ring-swagger 0.26.2] -> [metosin/scjsv 0.6.2] ->
                          [com.github.java-json-tools/json-schema-validator "2.2.14"]
                          ;; ... -> [com.github.java-json-tools/json-schema-validator "2.2.14"] ->
                          ;; fixes https://nvd.nist.gov/vuln/detail/cve-2020-8908
@@ -56,7 +56,7 @@
                          [ring-middleware-format "0.7.5"]
                          [org.yaml/snakeyaml "1.33"]
 
-                         ;; [metosin/compojure-api "1.1.13"] ->
+                         ;; [metosin/compojure-api "1.1.14"] ->
                          ;;   ... -> [com.fasterxml.jackson.core/jackson-databind ~jackson-version] ->
                          ;;             [com.fasterxml.jackson.core/jackson-annotations ~jackson-version]
                          [com.fasterxml.jackson.core/jackson-databind ~jackson-version]
@@ -98,7 +98,7 @@
                  ;; http
                  [compojure "1.7.1"]
                  [http-kit "2.8.0"]
-                 [metosin/compojure-api "1.1.13"]
+                 [metosin/compojure-api "1.1.14"]
                  [ring.middleware.conditional "0.2.0" :exclusions [ring]]
                  [radicalzephyr/ring.middleware.logger "0.6.0"]
                  [ring/ring-codec "1.2.0"]
