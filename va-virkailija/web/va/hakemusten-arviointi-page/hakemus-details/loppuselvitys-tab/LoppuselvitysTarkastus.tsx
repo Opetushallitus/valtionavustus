@@ -4,19 +4,19 @@ import { isString } from 'lodash'
 
 import { Hakemus, SelvitysEmail } from 'soresu-form/web/va/types'
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import { Language } from 'soresu-form/web/va/i18n/translations'
+import { Language, translations } from 'soresu-form/web/va/i18n/translations'
 
 import ViestiLista, { ViestiDetails, ViestiListaRow } from '../ViestiLista'
 import { useHakemus } from '../../useHakemus'
 import { useAvustushakuId } from '../../useAvustushaku'
-import MultipleRecipentEmailForm from '../common-components/MultipleRecipentsEmailForm'
+import MultipleRecipentEmailForm, { Email } from '../common-components/MultipleRecipentsEmailForm'
 import {
   EmailType,
   useGetTapahtumalokiForEmailTypeQuery,
   usePostLoppuselvitysTaydennyspyyntoMutation,
 } from '../../../apiSlice'
 import { hasFetchErrorMsg } from '../../../isFetchBaseQueryError'
-import { useUserInfo } from '../../../initial-data-context'
+import { useEnvironment, useUserInfo } from '../../../initial-data-context'
 import { getLoadedAvustushakuData, refreshHakemus } from '../../arviointiReducer'
 import {
   useHakemustenArviointiDispatch,
@@ -24,15 +24,41 @@ import {
 } from '../../arviointiStore'
 import { initialRecipientEmails } from '../emailRecipients'
 import { VerificationBox } from './VerificationBox'
+import { UserInfo } from '../../../types'
 
-function createInitialTaydennyspyyntoEmail(hakemus: Hakemus) {
+function createInitialTaydennyspyyntoEmail(
+  hakemus: Hakemus,
+  avustushakuId: number,
+  userInfo: UserInfo,
+  hakijaServerUrl: string
+): Email {
   const contactEmail = hakemus.normalizedData?.['contact-email']
   const trustedContactEmail = hakemus.normalizedData?.['trusted-contact-email']
+  const arkistointiTunnus = hakemus['register-number']
+  const hakemusName = hakemus['project-name']
+  const userKey = hakemus['user-key']
+  const selvitysType = 'loppuselvitys'
+  const publicUrl = `/selvitys/avustushaku/${avustushakuId}/${selvitysType}?hakemus=${userKey}`
+  const fullUrl = `${hakijaServerUrl}${publicUrl}`
+
   return {
     lang: hakemus.language,
-    subject: '',
-    content: '',
+    subject: translations[hakemus.language].loppuselvitys.asiatarkastus.subject(
+      arkistointiTunnus!,
+      hakemusName
+    ),
+    content: translations[hakemus.language].loppuselvitys.asiatarkastus.content,
     receivers: [contactEmail, trustedContactEmail].filter(isString),
+    header: translations[hakemus.language].loppuselvitys.asiatarkastus.header(
+      arkistointiTunnus!,
+      hakemusName
+    ),
+    footer: translations[hakemus.language].loppuselvitys.asiatarkastus.footer(
+      fullUrl,
+      userInfo['first-name'],
+      userInfo['surname'],
+      userInfo.email
+    ),
   }
 }
 
@@ -261,6 +287,9 @@ function LoppuselvitysTarkastus({
   showCancelButton,
 }: LoppuselvitysTarkastusProps) {
   const hakemus = useHakemus()
+  const userInfo = useUserInfo()
+  const env = useEnvironment()
+  const hakijaServerUrl = env['hakija-server'].url[hakemus.language]
   const avustushakuId = useAvustushakuId()
   const { data: sentEmails } = useGetTapahtumalokiForEmailTypeQuery({
     hakemusId: hakemus.id,
@@ -272,7 +301,9 @@ function LoppuselvitysTarkastus({
   const [showEmailForm, setShowEmailForm] = useState(false)
   const emailFormRef = useRef<HTMLDivElement>(null)
   const [formErrorMessage, setFormErrorMessage] = useState<string>()
-  const [email, setEmail] = useState(createInitialTaydennyspyyntoEmail(hakemus))
+  const [email, setEmail] = useState(
+    createInitialTaydennyspyyntoEmail(hakemus, avustushakuId, userInfo, hakijaServerUrl)
+  )
   const revealEmailForm = () => emailFormRef.current?.scrollIntoView({ behavior: 'smooth' })
   const [showMessage, setShowMessage] = useState(false)
   const [cancellingTaydennys, setCancellingTaydennys] = useState(false)
@@ -290,7 +321,7 @@ function LoppuselvitysTarkastus({
   }
 
   function cancelForm() {
-    setEmail(createInitialTaydennyspyyntoEmail(hakemus))
+    setEmail(createInitialTaydennyspyyntoEmail(hakemus, avustushakuId, userInfo, hakijaServerUrl))
     setShowEmailForm(false)
     setFormErrorMessage(undefined)
   }
