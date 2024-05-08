@@ -131,6 +131,29 @@ export const translationsFi = {
     },
   },
   loppuselvitys: {
+    asiatarkastus: {
+      subject: (asiatunnus: string, name: string) =>
+        `Täydennyspyyntö Opetushallituksen avustuksen loppuselvitykseen liittyen: ${asiatunnus} ${name}`,
+      content: 'Kirjoita kuvaus täydennyspyynnöstä ja sen määräajasta tähän',
+      header: (asiatunnus: string, name: string) =>
+        `Hyvä vastaanottaja,
+
+tämä viesti koskee avustusta: ${asiatunnus} ${name}`,
+      footer: (
+        loppuselvitysLomakeUrl: string,
+        firstName: string,
+        lastName: string,
+        email: string
+      ) => `Linkki loppuselvityslomakkeelle: ${loppuselvitysLomakeUrl}
+
+Muokkaa vain pyydettyjä kohtia.
+
+Tarvittaessa tarkempia lisätietoja voi kysyä viestin lähettäjältä.
+
+Ystävällisin terveisin,
+${firstName} ${lastName}
+${email}`,
+    },
     status: {
       missing: 'Puuttuu',
       submitted: 'Asiatarkastuksessa',
@@ -340,6 +363,29 @@ const translationsSv: Translations = {
     },
   },
   loppuselvitys: {
+    asiatarkastus: {
+      subject: (asiatunnus: string, name: string) =>
+        `Begäran om komplettering av slutredovisningen för statsunderstöd från Utbildningsstyrelsen:: ${asiatunnus} ${name}`,
+      content: 'Kirjoita kuvaus täydennyspyynnöstä ja sen määräajasta tähän',
+      header: (asiatunnus: string, name: string) =>
+        `Bästa mottagare
+
+det här meddelandet gäller statsunderstödet: ${asiatunnus} ${name}`,
+      footer: (
+        loppuselvitysLomakeUrl: string,
+        firstName: string,
+        lastName: string,
+        email: string
+      ) => `Länk till blanktten för slutredovisning: ${loppuselvitysLomakeUrl}
+
+Redigera endast de ställen som ingår i begäran.
+
+Vid behov kan ni be om mer information av avsändaren till detta meddelande.
+
+Med vänlig hälsning
+${firstName} ${lastName}
+${email}`,
+    },
     status: {
       missing: 'Saknas',
       submitted: 'I faktasökning',
