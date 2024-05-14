@@ -17,7 +17,9 @@ export default class VaHakemusRegisterNumber extends React.Component {
             />
             :
           </span>
-          <span className="value">{registerNumber}</span>
+          <span data-test-id={'hakemus-arkistointitunnus'} className="value">
+            {registerNumber}
+          </span>
         </section>
       )
     }

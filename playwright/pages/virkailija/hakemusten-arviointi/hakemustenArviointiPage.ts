@@ -642,4 +642,8 @@ export class HakemustenArviointiPage {
         .locator('button:text-is("budjettimuutos")'),
     }
   }
+
+  async getArkistointitunnus() {
+    return this.page.getByTestId('hakemus-arkistointitunnus').textContent()
+  }
 }

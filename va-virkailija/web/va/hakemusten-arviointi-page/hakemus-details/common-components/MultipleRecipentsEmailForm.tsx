@@ -212,7 +212,9 @@ function EmailContent({
     <>
       <label htmlFor={contentId}>Sisältö</label>
       {!isPreviewing && email.header && (
-        <pre className={styles.emailFixedContent}>{email.header}</pre>
+        <pre data-test-id={`${formName}-email-header`} className={styles.emailFixedContent}>
+          {email.header}
+        </pre>
       )}
       <textarea
         id={contentId}
@@ -225,7 +227,9 @@ function EmailContent({
         required
       />
       {!isPreviewing && email.footer && (
-        <pre className={styles.emailFixedContent}>{email.footer}</pre>
+        <pre data-test-id={`${formName}-email-footer`} className={styles.emailFixedContent}>
+          {email.footer}
+        </pre>
       )}
     </>
   )

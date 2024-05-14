@@ -365,7 +365,7 @@ const translationsSv: Translations = {
   loppuselvitys: {
     asiatarkastus: {
       subject: (asiatunnus: string, name: string) =>
-        `Begäran om komplettering av slutredovisningen för statsunderstöd från Utbildningsstyrelsen:: ${asiatunnus} ${name}`,
+        `Begäran om komplettering av slutredovisningen för statsunderstöd från Utbildningsstyrelsen: ${asiatunnus} ${name}`,
       content: 'Kirjoita kuvaus täydennyspyynnöstä ja sen määräajasta tähän',
       header: (asiatunnus: string, name: string) =>
         `Bästa mottagare

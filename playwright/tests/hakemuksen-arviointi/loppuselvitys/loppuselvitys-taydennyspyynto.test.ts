@@ -35,8 +35,33 @@ test.extend<{ answers: Answers }>({
 
     const emails = await getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails(hakemusID)
     expect(emails).toHaveLength(0)
+    await loppuselvitysPage.locators.asiatarkastus.taydennyspyynto.click()
+    const arkistointiTunnus = await hakemustenArviointiPage.getArkistointitunnus()
+    await test.step('has prefilled subject', async () => {
+      await expect(
+        page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-email-subject')
+      ).toHaveValue(
+        `Begäran om komplettering av slutredovisningen för statsunderstöd från Utbildningsstyrelsen: ${arkistointiTunnus} Vi Simmar i Pengar Ab`
+      )
+    })
+
+    await test.step('has fixed header', async () => {
+      await expect(page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-email-header'))
+        .toHaveText(`Bästa mottagare
+
+det här meddelandet gäller statsunderstödet: ${arkistointiTunnus} Vi Simmar i Pengar Ab`)
+    })
+    await test.step('has fixed footer', async () => {
+      const footer = page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-email-footer')
+      await expect(footer).toContainText(`Länk till blanktten för slutredovisning:`)
+      await expect(footer).toContainText(`
+      Redigera endast de ställen som ingår i begäran.
+
+Vid behov kan ni be om mer information av avsändaren till detta meddelande.
+
+Med vänlig hälsning`)
+    })
     await test.step('can send täydennyspyyntö email in asiatarkastus phase', async () => {
-      await loppuselvitysPage.locators.asiatarkastus.taydennyspyynto.click()
       const subject = 'Behöver mer ångfartygspengar'
       await page
         .getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-email-subject')
