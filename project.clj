@@ -94,6 +94,7 @@
                  ;; logging
                  [org.apache.logging.log4j/log4j-core ~log4j-version]
                  [org.apache.logging.log4j/log4j-slf4j2-impl ~log4j-version]
+                 [org.apache.logging.log4j/log4j-layout-template-json ~log4j-version]
 
                  ;; http
                  [compojure "1.7.1"]

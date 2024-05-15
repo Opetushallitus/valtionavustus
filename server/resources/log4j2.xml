@@ -2,10 +2,10 @@
 <Configuration status="warn">
   <Appenders>
     <Console name="ApplicationLog" target="SYSTEM_OUT">
-      <PatternLayout pattern="%d{ISO8601} %-5p [%t] %c: %m%n"/>
+      <JsonTemplateLayout eventTemplateUri="classpath:EcsLayout.json"/>
     </Console>
     <Console name="AccessLog" target="SYSTEM_OUT">
-      <PatternLayout pattern="%d{ISO8601} %-5p [%t] ACCESS: %m%n"/>
+      <JsonTemplateLayout eventTemplateUri="classpath:EcsLayout.json"/>
     </Console>
   </Appenders>
   <Loggers>
