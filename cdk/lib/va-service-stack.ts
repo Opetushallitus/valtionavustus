@@ -61,7 +61,7 @@ export class VaServiceStack extends cdk.Stack {
     })
 
     const valtionavustuksetImage = ContainerImage.fromRegistry(
-      'ghcr.io/opetushallitus/va-server:b2198e4dc527ba82519e54ee339f0bddc5dd7f85'
+      `ghcr.io/opetushallitus/va-server:${scope.currentGitRevision}`
     )
 
     taskDefinition.addContainer('valtionavustukset-container', {

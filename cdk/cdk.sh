@@ -12,7 +12,7 @@ function main {
 
   require_cdk_context
 
-  npm run cdk -- "$@"
+  REVISION=${revision} npm run cdk -- "$@"
 }
 
 main "$@"
