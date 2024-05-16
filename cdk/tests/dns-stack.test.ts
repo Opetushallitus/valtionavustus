@@ -15,6 +15,7 @@ function createEnvStage(env: ValtionavustusEnvironment): Environment {
     AWS_ACCOUNT_ID_DEV: DEV_ACCOUNT,
     AWS_ACCOUNT_ID_QA: QA_ACCOUNT,
     AWS_ACCOUNT_ID_PROD: PROD_ACCOUNT,
+    REVISION: 'test',
   }
   return new Environment(app, env)
 }
