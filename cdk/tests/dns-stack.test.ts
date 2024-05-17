@@ -27,6 +27,7 @@ describe('hosted zones', () => {
       hakijaDomain: 'dev.valtionavustukset.oph.fi',
       hakijaDomainSv: 'dev.statsunderstod.oph.fi',
       virkailijaDomain: 'dev.virkailija.valtionavustukset.oph.fi',
+      databaseHostname: 'va-aurora-cluster.cluster-9asdfkjewoidfn.eu-west-1.rds.amazonaws.com',
     })
   )
 
@@ -69,6 +70,7 @@ describe('legacy A records', () => {
         hakijaDomainSv: 'dev.statsunderstod.oph.fi',
         virkailijaDomain: 'dev.virkailija.valtionavustukset.oph.fi',
         hakijaLegacyARecord: '123.123.123.123',
+        databaseHostname: 'va-aurora-cluster.cluster-9asdfkjewoidfn.eu-west-1.rds.amazonaws.com',
       })
     )
 
@@ -94,6 +96,7 @@ describe('legacy A records', () => {
         hakijaDomainSv: 'dev.statsunderstod.oph.fi',
         virkailijaDomain: 'dev.virkailija.valtionavustukset.oph.fi',
         virkailijaLegacyARecord: '123.123.123.123',
+        databaseHostname: 'va-aurora-cluster.cluster-9asdfkjewoidfn.eu-west-1.rds.amazonaws.com',
       })
     )
 
@@ -115,6 +118,7 @@ describe('legacy A records', () => {
         hakijaLegacyARecord: '123.0.0.123',
         virkailijaDomain: 'dev.virkailija.valtionavustukset.oph.fi',
         virkailijaLegacyARecord: '123.123.123.123',
+        databaseHostname: 'va-aurora-cluster.cluster-9asdfkjewoidfn.eu-west-1.rds.amazonaws.com',
       })
     )
 
@@ -146,6 +150,7 @@ describe('Delegation', () => {
         hakijaDomain: 'dev.valtionavustukset.oph.fi',
         hakijaDomainSv: 'dev.statsunderstod.oph.fi',
         virkailijaDomain: 'dev.virkailija.valtionavustukset.oph.fi',
+        databaseHostname: 'va-aurora-cluster.cluster-9asdfkjewoidfn.eu-west-1.rds.amazonaws.com',
         delegationRecord: {
           env: 'prod',
           hakijaDomain: 'valtionavustukset.oph.fi',
@@ -167,6 +172,7 @@ describe('Delegation', () => {
         hakijaDomain: 'va.oph.fi',
         hakijaDomainSv: 'va.oph.fi',
         virkailijaDomain: 'virkailija.va.oph.fi',
+        databaseHostname: 'va-aurora-cluster.cluster-9asdfkjewoidfn.eu-west-1.rds.amazonaws.com',
       })
     )
 

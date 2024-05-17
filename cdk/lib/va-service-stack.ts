@@ -43,8 +43,7 @@ export class VaServiceStack extends cdk.Stack {
     const taskDefinition = new FargateTaskDefinition(this, 'va-task-def', {
       family: 'valtionavustukset',
       runtimePlatform: {
-        cpuArchitecture:
-          CpuArchitecture.X86_64 /* CpuArchitecture.ARM64, TODO: Build ARM image first */,
+        cpuArchitecture: CpuArchitecture.X86_64,
         operatingSystemFamily: OperatingSystemFamily.LINUX,
       },
       taskRole: vaTaskRole,

@@ -8,6 +8,7 @@ export const DB_USER = 'va_cluster_admin'
 
 export class DbStack extends cdk.Stack {
   permitDBAccessSecurityGroup: cdk.aws_ec2.SecurityGroup
+  clusterWriterEndpointHostname: string
 
   constructor(
     scope: Environment,
@@ -72,5 +73,6 @@ export class DbStack extends cdk.Stack {
       storageEncryptionKey,
     })
     this.permitDBAccessSecurityGroup = accessVaDBSecurityGroup
+    this.clusterWriterEndpointHostname = auroraV2Cluster.clusterEndpoint.hostname
   }
 }

@@ -9,12 +9,14 @@ import {
 } from 'aws-cdk-lib/aws-iam'
 import {
   ARecord,
+  CnameRecord,
   CrossAccountZoneDelegationRecord,
   PublicHostedZone,
   RecordTarget,
 } from 'aws-cdk-lib/aws-route53'
 import { Environment } from './va-env-stage'
 import { ValtionavustusEnvironment, getAccountId, getEnv } from './va-context'
+import { Duration } from 'aws-cdk-lib'
 
 interface DnsStackProps extends cdk.StackProps {
   hakijaDomain: string
@@ -23,6 +25,8 @@ interface DnsStackProps extends cdk.StackProps {
 
   virkailijaDomain: string
   virkailijaLegacyARecord?: string
+
+  databaseHostname: string
 
   delegationRecord?: {
     env: ValtionavustusEnvironment
@@ -77,6 +81,15 @@ export class DnsStack extends cdk.Stack {
         target: RecordTarget.fromIpAddresses(virkailijaLegacyARecord),
       })
     }
+
+    const { databaseHostname } = props
+    new CnameRecord(this, 'DbWriterCnameRecord', {
+      domainName: databaseHostname,
+      zone: hakijaZone,
+      recordName: 'db',
+      ttl: Duration.minutes(10),
+      comment: 'db.valtionavustukset.oph.fi -> RDS cluster writer hostname CNAME record',
+    })
 
     //
     // Delegation from hakijaZone in prod to other environments and virkailijaZone

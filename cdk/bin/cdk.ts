@@ -43,6 +43,7 @@ const app = new cdk.App()
     hakijaDomainSv: `dev.${HAKIJA_DOMAIN_SV}`,
     hakijaLegacyARecord: LEGACY_LOADBALANCER_IP,
     virkailijaDomain: `dev.${VIRKAILIJA_DOMAIN}`,
+    databaseHostname: dbStack.clusterWriterEndpointHostname,
 
     delegationRecord: {
       env: 'prod',
@@ -71,6 +72,7 @@ const app = new cdk.App()
     hakijaLegacyARecord: LEGACY_LOADBALANCER_IP,
     virkailijaDomain: `testi.${VIRKAILIJA_DOMAIN}`,
     virkailijaLegacyARecord: LEGACY_LOADBALANCER_IP,
+    databaseHostname: dbStack.clusterWriterEndpointHostname,
 
     delegationRecord: {
       env: 'prod',
@@ -100,5 +102,6 @@ const app = new cdk.App()
     hakijaLegacyARecord: LEGACY_LOADBALANCER_IP,
     virkailijaDomain: VIRKAILIJA_DOMAIN,
     virkailijaLegacyARecord: LEGACY_LOADBALANCER_IP,
+    databaseHostname: dbStack.clusterWriterEndpointHostname,
   })
 }
