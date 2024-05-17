@@ -17,6 +17,7 @@ import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam'
 import { SecurityGroup } from 'aws-cdk-lib/aws-ec2'
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs'
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager'
+import { DB_NAME as VA_DATABASE_NAME } from './db-stack'
 
 export class VaServiceStack extends cdk.Stack {
   constructor(
@@ -86,6 +87,7 @@ export class VaServiceStack extends cdk.Stack {
       environment: {
         DB_HOSTNAME: databaseHostname,
         DB_USERNAME: 'va_application',
+        DB_NAME: VA_DATABASE_NAME,
       },
       secrets: {
         DB_PASSWORD: EcsSecret.fromSecretsManager(dbUserPassword),
