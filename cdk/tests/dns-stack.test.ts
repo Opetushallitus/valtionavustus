@@ -56,8 +56,8 @@ describe('hosted zones', () => {
     })
   })
 
-  it('should not have any records by default', () => {
-    template.resourceCountIs('AWS::Route53::RecordSet', 0)
+  it('should have 1 record by default', () => {
+    template.resourceCountIs('AWS::Route53::RecordSet', 1)
   })
 })
 
@@ -84,8 +84,13 @@ describe('legacy A records', () => {
       Type: 'A',
       ResourceRecords: ['123.123.123.123'],
     })
+    template.hasResourceProperties('AWS::Route53::RecordSet', {
+      Name: 'db.dev.valtionavustukset.oph.fi.',
+      Type: 'CNAME',
+      ResourceRecords: ['va-aurora-cluster.cluster-9asdfkjewoidfn.eu-west-1.rds.amazonaws.com'],
+    })
 
-    template.resourceCountIs('AWS::Route53::RecordSet', 2)
+    template.resourceCountIs('AWS::Route53::RecordSet', 3)
   })
 
   it('should have A record for virkailija domain', () => {
@@ -105,8 +110,6 @@ describe('legacy A records', () => {
       Type: 'A',
       ResourceRecords: ['123.123.123.123'],
     })
-
-    template.resourceCountIs('AWS::Route53::RecordSet', 1)
   })
 
   it('should have A record for both domains', () => {
@@ -137,8 +140,13 @@ describe('legacy A records', () => {
       Type: 'A',
       ResourceRecords: ['123.0.0.123'],
     })
+    template.hasResourceProperties('AWS::Route53::RecordSet', {
+      Name: 'db.dev.valtionavustukset.oph.fi.',
+      Type: 'CNAME',
+      ResourceRecords: ['va-aurora-cluster.cluster-9asdfkjewoidfn.eu-west-1.rds.amazonaws.com'],
+    })
 
-    template.resourceCountIs('AWS::Route53::RecordSet', 3)
+    template.resourceCountIs('AWS::Route53::RecordSet', 4)
   })
 })
 

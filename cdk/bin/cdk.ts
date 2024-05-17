@@ -31,7 +31,7 @@ const app = new cdk.App()
     ecsStack.ecsCluster,
     dbStack.permitDBAccessSecurityGroup,
     encryptionStack.logGroupEncryptionKey,
-    databaseHostname: dbStack.clusterWriterEndpointHostname,
+    dbStack.clusterWriterEndpointHostname
   )
   const bastionStack = new BastionStack(
     dev,
