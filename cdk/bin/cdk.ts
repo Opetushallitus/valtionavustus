@@ -30,7 +30,8 @@ const app = new cdk.App()
     vpcStack.vpc,
     ecsStack.ecsCluster,
     dbStack.permitDBAccessSecurityGroup,
-    encryptionStack.logGroupEncryptionKey
+    encryptionStack.logGroupEncryptionKey,
+    databaseHostname: dbStack.clusterWriterEndpointHostname,
   )
   const bastionStack = new BastionStack(
     dev,

@@ -37,13 +37,20 @@
     (merge-with merge config secrets-config)
     config))
 
+(defn- merge-with-environment [config]
+  (merge-with merge config
+              (into {:db (filter val {:server-name (System/getenv "DB_HOSTNAME")
+                                      :password (System/getenv "DB_PASSWORD")})
+                     })))
+
 (def config
   (when-not *compile-files*
     (->> (or (env :config) "config/dev.edn")
          (slurp)
          (clojure.edn/read-string)
          (merge-with-secrets)
-         (merge-with-defaults))))
+         (merge-with-defaults)
+         (merge-with-environment))))
 
 (def environment
   (when-not *compile-files*

@@ -24,6 +24,7 @@ export class VaServiceStack extends cdk.Stack {
     cluster: Cluster,
     dbAccessSecurityGroup: cdk.aws_ec2.SecurityGroup,
     storageEncryptionKey: aws_kms.Key,
+    databaseHostname: string,
     props?: cdk.StackProps
   ) {
     super(scope, id, props)
@@ -67,6 +68,9 @@ export class VaServiceStack extends cdk.Stack {
       image: valtionavustuksetImage,
       command: ['with-profile', 'server-dev', 'run', '-m', 'oph.va.hakija.main'],
       containerName: 'valtionavustukset',
+      environment: {
+        DB_HOSTNAME: databaseHostname,
+      },
       logging: LogDriver.awsLogs({
         streamPrefix: 'fargate',
         logGroup: logGroup,
