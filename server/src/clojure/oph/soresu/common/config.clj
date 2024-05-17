@@ -40,6 +40,7 @@
 (defn- merge-with-environment [config]
   (merge-with merge config
               (into {:db (filter val {:server-name (System/getenv "DB_HOSTNAME")
+                                      :username (System/getenv "DB_USERNAME")
                                       :password (System/getenv "DB_PASSWORD")})
                      })))
 

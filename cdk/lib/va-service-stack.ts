@@ -11,10 +11,12 @@ import {
   LogDriver,
   OperatingSystemFamily,
   UlimitName,
+  Secret as EcsSecret,
 } from 'aws-cdk-lib/aws-ecs'
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam'
 import { SecurityGroup } from 'aws-cdk-lib/aws-ec2'
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs'
+import { Secret } from 'aws-cdk-lib/aws-secretsmanager'
 
 export class VaServiceStack extends cdk.Stack {
   constructor(
@@ -64,12 +66,29 @@ export class VaServiceStack extends cdk.Stack {
       `ghcr.io/opetushallitus/va-server:${scope.currentGitRevision}`
     )
 
+    // This password has been manually set using psql-va-[env].sh and CREATE USER 'va_application'
+    const dbUserPassword = new Secret(this, 'va-db-user-password', {
+      secretName: '/db/va-application-db-user-password',
+      description: 'Valtionavustukset application DB password',
+      generateSecretString: {
+        passwordLength: 64,
+        requireEachIncludedType: true,
+        includeSpace: false,
+        excludePunctuation: true,
+      },
+      removalPolicy: RemovalPolicy.RETAIN,
+    })
+
     taskDefinition.addContainer('valtionavustukset-container', {
       image: valtionavustuksetImage,
       command: ['with-profile', 'server-dev', 'run', '-m', 'oph.va.hakija.main'],
       containerName: 'valtionavustukset',
       environment: {
         DB_HOSTNAME: databaseHostname,
+        DB_USERNAME: 'va_application',
+      },
+      secrets: {
+        DB_PASSWORD: EcsSecret.fromSecretsManager(dbUserPassword),
       },
       logging: LogDriver.awsLogs({
         streamPrefix: 'fargate',
