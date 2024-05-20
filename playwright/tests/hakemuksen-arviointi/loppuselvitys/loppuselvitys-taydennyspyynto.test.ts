@@ -61,8 +61,8 @@ Vid behov kan ni be om mer information av avsändaren till detta meddelande.
 
 Med vänlig hälsning`)
     })
+    const subject = 'Behöver mer ångfartygspengar'
     await test.step('can send täydennyspyyntö email in asiatarkastus phase', async () => {
-      const subject = 'Behöver mer ångfartygspengar'
       await page
         .getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-email-subject')
         .fill(subject)
@@ -76,6 +76,23 @@ Med vänlig hälsning`)
           return (await getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails(hakemusID)).length
         })
         .toBe(1)
+    })
+    await test.step('email contains the contents shown in the form', async () => {
+      const emails = await getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails(hakemusID)
+      const email = emails[0]
+
+      expect(email.subject).toBe(subject)
+      expect(email.formatted).toContain('Det fanns inte tillräckligt med pengar för ångfartyg')
+      expect(email.formatted).toContain(`Bästa mottagare
+
+det här meddelandet gäller statsunderstödet: ${arkistointiTunnus} Vi Simmar i Pengar Ab
+
+`)
+      expect(email.formatted).toContain(`Redigera endast de ställen som ingår i begäran.
+
+Vid behov kan ni be om mer information av avsändaren till detta meddelande.
+
+Med vänlig hälsning`)
     })
     const tavoiteLocator = page.locator('[id="project-description.project-description-1.goal"]')
     const defaultTavoite = 'Tavoite'

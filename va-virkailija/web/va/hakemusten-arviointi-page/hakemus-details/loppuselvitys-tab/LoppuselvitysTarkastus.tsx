@@ -336,7 +336,11 @@ function LoppuselvitysTarkastus({
         email: {
           lang: email.lang,
           type: taydennyspyyntoType,
-          body: email.content,
+          body: `${email.header}
+
+${email.content}
+
+${email.footer}`,
           subject: email.subject,
           to: email.receivers,
         },
