@@ -2,6 +2,7 @@ import * as cdk from 'aws-cdk-lib'
 import { Environment } from './va-env-stage'
 import { ParameterGroup } from 'aws-cdk-lib/aws-rds'
 import { aws_kms, Duration } from 'aws-cdk-lib'
+import { SecurityGroup } from 'aws-cdk-lib/aws-ec2'
 
 export const DB_NAME = 'va'
 export const DB_USER = 'va_cluster_admin'
@@ -14,6 +15,7 @@ export class DbStack extends cdk.Stack {
     scope: Environment,
     id: string,
     vpc: cdk.aws_ec2.IVpc,
+    dbSecurityGroup: SecurityGroup,
     storageEncryptionKey: aws_kms.Key,
     props?: cdk.StackProps
   ) {
@@ -38,18 +40,6 @@ export class DbStack extends cdk.Stack {
       securityGroupName: 'access-va-db-security-group',
     })
 
-    const dbSecurityGroup = new cdk.aws_ec2.SecurityGroup(this, 'DBSecurityGroup', {
-      description: 'Security group for VA Postgres',
-      vpc,
-      allowAllOutbound: true,
-      securityGroupName: 'va-db-security-group',
-    })
-    dbSecurityGroup.addIngressRule(
-      accessVaDBSecurityGroup,
-      cdk.aws_ec2.Port.tcp(5432),
-      'Allow access from VA DB security group'
-    )
-
     const auroraV2Cluster = new cdk.aws_rds.DatabaseCluster(this, 'AuroraV2Cluster', {
       defaultDatabaseName: DB_NAME,
       engine: cdk.aws_rds.DatabaseClusterEngine.AURORA_POSTGRESQL,
@@ -59,7 +49,7 @@ export class DbStack extends cdk.Stack {
       vpcSubnets: { subnetType: cdk.aws_ec2.SubnetType.PRIVATE_ISOLATED },
       serverlessV2MinCapacity: 0.5,
       serverlessV2MaxCapacity: 4,
-      securityGroups: [dbSecurityGroup],
+      securityGroups: [dbSecurityGroup, accessVaDBSecurityGroup],
       writer: cdk.aws_rds.ClusterInstance.serverlessV2('writer', {
         enablePerformanceInsights: true,
       }),

@@ -10,6 +10,8 @@ import { DbStack } from '../lib/db-stack'
 import { BastionStack } from '../lib/bastion-stack'
 import { EcsStack } from '../lib/ecs-stack'
 import { EncryptionStack } from '../lib/encryption-stack'
+import { SecurityGroupStack } from '../lib/security-group-stack'
+import { PersistentResourcesStack } from '../lib/persistent-resources-stack'
 
 const HAKIJA_DOMAIN = 'valtionavustukset.oph.fi'
 const HAKIJA_DOMAIN_SV = 'statsunderstod.oph.fi'
@@ -21,23 +23,36 @@ const app = new cdk.App()
 {
   const dev = new Environment(app, 'dev')
   const vpcStack = new VpcStack(dev, 'vpc')
+  const securityGroupStack = new SecurityGroupStack(dev, 'security-group', vpcStack.vpc)
   const encryptionStack = new EncryptionStack(dev, 'encryption')
-  const dbStack = new DbStack(dev, 'db', vpcStack.vpc, encryptionStack.dbEncryptionKey)
-  const ecsStack = new EcsStack(dev, 'ecs', vpcStack.vpc)
-  const vaService = new VaServiceStack(
+  const persistentResources = new PersistentResourcesStack(
     dev,
-    'application',
-    vpcStack.vpc,
-    ecsStack.ecsCluster,
-    dbStack.permitDBAccessSecurityGroup,
-    encryptionStack.logGroupEncryptionKey,
-    dbStack.clusterWriterEndpointHostname
+    'persistent-resources',
+    encryptionStack.logGroupEncryptionKey
   )
+  const dbStack = new DbStack(
+    dev,
+    'db',
+    vpcStack.vpc,
+    securityGroupStack.securityGroups.dbSecurityGroup,
+    encryptionStack.dbEncryptionKey
+  )
+  const ecsStack = new EcsStack(dev, 'ecs', vpcStack.vpc)
+  const vaService = new VaServiceStack(dev, 'application', {
+    vpc: vpcStack.vpc,
+    cluster: ecsStack.ecsCluster,
+    applicationLogGroup: persistentResources.applicationLogGroup,
+    db: {
+      hostname: dbStack.clusterWriterEndpointHostname,
+      passwordSecret: persistentResources.databasePasswordSecret,
+    },
+    securityGroups: securityGroupStack.securityGroups,
+  })
   const bastionStack = new BastionStack(
     dev,
     'bastion',
     ecsStack.ecsCluster,
-    dbStack.permitDBAccessSecurityGroup
+    securityGroupStack.securityGroups.dbAccessSecurityGroup
   )
   const dns = new DnsStack(dev, 'dns', {
     hakijaDomain: `dev.${HAKIJA_DOMAIN}`,
@@ -58,14 +73,21 @@ const app = new cdk.App()
 {
   const qa = new Environment(app, 'qa')
   const vpcStack = new VpcStack(qa, 'vpc')
+  const securityGroupStack = new SecurityGroupStack(qa, 'security-group', vpcStack.vpc)
   const encryptionStack = new EncryptionStack(qa, 'encryption')
-  const dbStack = new DbStack(qa, 'db', vpcStack.vpc, encryptionStack.dbEncryptionKey)
+  const dbStack = new DbStack(
+    qa,
+    'db',
+    vpcStack.vpc,
+    securityGroupStack.securityGroups.dbSecurityGroup,
+    encryptionStack.dbEncryptionKey
+  )
   const ecsStack = new EcsStack(qa, 'ecs', vpcStack.vpc)
   const bastionStack = new BastionStack(
     qa,
     'bastion',
     ecsStack.ecsCluster,
-    dbStack.permitDBAccessSecurityGroup
+    securityGroupStack.securityGroups.dbAccessSecurityGroup
   )
   const dns = new DnsStack(qa, 'dns', {
     hakijaDomain: `testi.${HAKIJA_DOMAIN}`,
@@ -87,14 +109,21 @@ const app = new cdk.App()
 {
   const prod = new Environment(app, 'prod')
   const vpcStack = new VpcStack(prod, 'vpc')
+  const securityGroupStack = new SecurityGroupStack(prod, 'security-group', vpcStack.vpc)
   const encryptionStack = new EncryptionStack(prod, 'encryption')
-  const dbStack = new DbStack(prod, 'db', vpcStack.vpc, encryptionStack.dbEncryptionKey)
+  const dbStack = new DbStack(
+    prod,
+    'db',
+    vpcStack.vpc,
+    securityGroupStack.securityGroups.dbSecurityGroup,
+    encryptionStack.dbEncryptionKey
+  )
   const ecsStack = new EcsStack(prod, 'ecs', vpcStack.vpc)
   const bastionStack = new BastionStack(
     prod,
     'bastion',
     ecsStack.ecsCluster,
-    dbStack.permitDBAccessSecurityGroup
+    securityGroupStack.securityGroups.dbAccessSecurityGroup
   )
   new OphDnsStack(prod, 'oph-dns')
   const dns = new DnsStack(prod, 'dns', {

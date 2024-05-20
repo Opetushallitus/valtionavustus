@@ -1,5 +1,5 @@
 import * as cdk from 'aws-cdk-lib'
-import { aws_kms, RemovalPolicy } from 'aws-cdk-lib'
+import { Duration } from 'aws-cdk-lib'
 import { Environment } from './va-env-stage'
 import {
   Cluster,
@@ -10,27 +10,47 @@ import {
   FargateTaskDefinition,
   LogDriver,
   OperatingSystemFamily,
-  UlimitName,
   Secret as EcsSecret,
+  UlimitName,
+  AppProtocol,
 } from 'aws-cdk-lib/aws-ecs'
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam'
-import { SecurityGroup } from 'aws-cdk-lib/aws-ec2'
-import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs'
-import { Secret } from 'aws-cdk-lib/aws-secretsmanager'
 import { DB_NAME as VA_DATABASE_NAME } from './db-stack'
+import {
+  ApplicationLoadBalancer,
+  ApplicationProtocol,
+  ApplicationTargetGroup,
+  XffHeaderProcessingMode,
+} from 'aws-cdk-lib/aws-elasticloadbalancingv2'
+import { Secret } from 'aws-cdk-lib/aws-secretsmanager'
+import { LogGroup } from 'aws-cdk-lib/aws-logs'
+import type { VaSecurityGroups } from './security-group-stack'
+
+const CONTAINER_NAME = 'valtionavustukset'
+export const CONTAINER_PORT = 8081 // = virkailija port. Hakija uses 8080
+
+interface VaServiceStackProps extends cdk.StackProps {
+  vpc: cdk.aws_ec2.Vpc
+  cluster: Cluster
+  db: DbProps
+  applicationLogGroup: LogGroup
+  securityGroups: VaSecurityGroups
+}
+
+interface DbProps {
+  hostname: string
+  passwordSecret: Secret
+}
 
 export class VaServiceStack extends cdk.Stack {
-  constructor(
-    scope: Environment,
-    id: string,
-    vpc: cdk.aws_ec2.Vpc,
-    cluster: Cluster,
-    dbAccessSecurityGroup: cdk.aws_ec2.SecurityGroup,
-    storageEncryptionKey: aws_kms.Key,
-    databaseHostname: string,
-    props?: cdk.StackProps
-  ) {
+  constructor(scope: Environment, id: string, props: VaServiceStackProps) {
     super(scope, id, props)
+
+    const { vpc, cluster, db, applicationLogGroup, securityGroups } = props
+    const { hostname: databaseHostname, passwordSecret: databasePasswordSecret } = db
+    const { vaServiceSecurityGroup, dbAccessSecurityGroup, albSecurityGroup } = securityGroups
+
+    /* ---------- FARGATE SERVICE ---------- */
 
     const vaTaskRole = new Role(this, 'va-task-role', {
       roleName: 'valtionavustukset-ecs-task-role',
@@ -56,50 +76,36 @@ export class VaServiceStack extends cdk.Stack {
       memoryLimitMiB: 1024,
     })
 
-    const logGroup = new LogGroup(this, 'va-log-group', {
-      logGroupName: '/fargate/valtionavustukset-application',
-      encryptionKey: storageEncryptionKey,
-      retention: RetentionDays.ONE_YEAR,
-      removalPolicy: RemovalPolicy.RETAIN,
-    })
-
     const valtionavustuksetImage = ContainerImage.fromRegistry(
       `ghcr.io/opetushallitus/va-server:${scope.currentGitRevision}`
     )
 
-    // This password has been manually set using psql-va-[env].sh and CREATE USER 'va_application'
-    const dbUserPassword = new Secret(this, 'va-db-user-password', {
-      secretName: '/db/va-application-db-user-password',
-      description: 'Valtionavustukset application DB password',
-      generateSecretString: {
-        passwordLength: 64,
-        requireEachIncludedType: true,
-        includeSpace: false,
-        excludePunctuation: true,
-      },
-      removalPolicy: RemovalPolicy.RETAIN,
-    })
-
     taskDefinition.addContainer('valtionavustukset-container', {
       image: valtionavustuksetImage,
       command: ['with-profile', 'server-dev', 'run', '-m', 'oph.va.hakija.main'],
-      containerName: 'valtionavustukset',
+      healthCheck: {
+        command: ['CMD-SHELL', 'curl -f http://localhost:8081/api/healthcheck || exit 1'],
+        startPeriod: Duration.minutes(5),
+      },
+      containerName: CONTAINER_NAME,
       environment: {
         DB_HOSTNAME: databaseHostname,
         DB_USERNAME: 'va_application',
         DB_NAME: VA_DATABASE_NAME,
       },
       secrets: {
-        DB_PASSWORD: EcsSecret.fromSecretsManager(dbUserPassword),
+        DB_PASSWORD: EcsSecret.fromSecretsManager(databasePasswordSecret),
       },
       logging: LogDriver.awsLogs({
         streamPrefix: 'fargate',
-        logGroup: logGroup,
+        logGroup: applicationLogGroup,
       }),
       portMappings: [
         {
           name: 'http',
-          containerPort: 80,
+          containerPort: CONTAINER_PORT,
+          hostPort: CONTAINER_PORT,
+          appProtocol: AppProtocol.http,
         },
       ],
       ulimits: [
@@ -111,13 +117,6 @@ export class VaServiceStack extends cdk.Stack {
       ],
     })
 
-    const securityGroup = new SecurityGroup(this, 'va-app-sg', {
-      securityGroupName: 'valtionavustukset-app-sg',
-      description: 'Valtionavustukset application security group',
-      vpc: vpc,
-      allowAllOutbound: true,
-    })
-
     const vaService = new FargateService(this, 'va-service', {
       serviceName: 'valtionavustukset',
       desiredCount: 1,
@@ -126,11 +125,42 @@ export class VaServiceStack extends cdk.Stack {
       cluster: cluster,
       taskDefinition: taskDefinition,
       vpcSubnets: { subnets: vpc.privateSubnets },
-      securityGroups: [securityGroup, dbAccessSecurityGroup],
+      securityGroups: [vaServiceSecurityGroup, dbAccessSecurityGroup],
       enableExecuteCommand: true,
       circuitBreaker: { enable: true, rollback: true },
       deploymentController: { type: DeploymentControllerType.ECS },
-      //healthCheckGracePeriod: Duration.seconds(30), TODO: Must create load balancer before setting this
+      healthCheckGracePeriod: Duration.minutes(10),
+    })
+
+    /* ---------- LOAD BALANCER ---------- */
+
+    const vaServiceTargetGroup = new ApplicationTargetGroup(this, 'va-service-target-group', {
+      vpc: vpc,
+      targets: [vaService],
+      protocol: ApplicationProtocol.HTTP,
+      port: CONTAINER_PORT,
+      healthCheck: {
+        enabled: true,
+        interval: Duration.seconds(30),
+        path: '/api/healthcheck',
+        port: `${CONTAINER_PORT}`,
+      },
+    })
+
+    const lb = new ApplicationLoadBalancer(this, 'va-service-load-balancer', {
+      loadBalancerName: 'valtionavustukset-service',
+      securityGroup: albSecurityGroup,
+      xffHeaderProcessingMode: XffHeaderProcessingMode.APPEND,
+      internetFacing: true,
+      vpc: vpc,
+      preserveHostHeader: true,
+    })
+
+    const httpListener = lb.addListener('lb-http', {
+      protocol: ApplicationProtocol.HTTP,
+      port: 80,
+      defaultTargetGroups: [vaServiceTargetGroup],
+      open: false, // Allow only Reaktor office for now, app is not configured properly yet
     })
   }
 }
