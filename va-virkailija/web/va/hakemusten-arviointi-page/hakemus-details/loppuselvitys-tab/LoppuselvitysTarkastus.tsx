@@ -38,7 +38,7 @@ function createInitialTaydennyspyyntoEmail(
   const hakemusName = hakemus['project-name']
   const userKey = hakemus['user-key']
   const selvitysType = 'loppuselvitys'
-  const publicUrl = `/selvitys/avustushaku/${avustushakuId}/${selvitysType}?hakemus=${userKey}`
+  const publicUrl = `avustushaku/${avustushakuId}/${selvitysType}?hakemus=${userKey}`
   const fullUrl = `${hakijaServerUrl}${publicUrl}`
 
   return {
