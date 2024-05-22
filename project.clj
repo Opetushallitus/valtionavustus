@@ -81,7 +81,7 @@
                          [org.scala-lang/scala-library "2.11.12"]]
 
   :dependencies [[org.clojure/clojure "1.11.3"]
-                 [nrepl "1.1.1"]
+                 [nrepl "1.1.2"]
                  [cider/cider-nrepl "0.48.0"]
                  [environ "1.2.0"]
 
