@@ -27,7 +27,8 @@ import { LogGroup } from 'aws-cdk-lib/aws-logs'
 import type { VaSecurityGroups } from './security-group-stack'
 
 const CONTAINER_NAME = 'valtionavustukset'
-export const CONTAINER_PORT = 8081 // = virkailija port. Hakija uses 8080
+export const VIRKAILIJA_PORT = 8081 // = virkailija port
+export const HAKIJA_PORT = 8080 // hakija port
 
 interface VaServiceStackProps extends cdk.StackProps {
   vpc: cdk.aws_ec2.Vpc
@@ -103,8 +104,14 @@ export class VaServiceStack extends cdk.Stack {
       portMappings: [
         {
           name: 'http',
-          containerPort: CONTAINER_PORT,
-          hostPort: CONTAINER_PORT,
+          containerPort: VIRKAILIJA_PORT,
+          hostPort: VIRKAILIJA_PORT,
+          appProtocol: AppProtocol.http,
+        },
+        {
+          name: 'hakija',
+          containerPort: HAKIJA_PORT,
+          hostPort: HAKIJA_PORT,
           appProtocol: AppProtocol.http,
         },
       ],
@@ -134,16 +141,29 @@ export class VaServiceStack extends cdk.Stack {
 
     /* ---------- LOAD BALANCER ---------- */
 
-    const vaServiceTargetGroup = new ApplicationTargetGroup(this, 'va-service-target-group', {
+    const virkailijaTargetGroup = new ApplicationTargetGroup(this, 'va-service-target-group', {
       vpc: vpc,
       targets: [vaService],
       protocol: ApplicationProtocol.HTTP,
-      port: CONTAINER_PORT,
+      port: VIRKAILIJA_PORT,
       healthCheck: {
         enabled: true,
         interval: Duration.seconds(30),
         path: '/api/healthcheck',
-        port: `${CONTAINER_PORT}`,
+        port: `${VIRKAILIJA_PORT}`,
+      },
+    })
+
+    const hakijaTargetGroup = new ApplicationTargetGroup(this, 'hakija-target-group', {
+      vpc: vpc,
+      targets: [vaService],
+      protocol: ApplicationProtocol.HTTP,
+      port: HAKIJA_PORT,
+      healthCheck: {
+        enabled: true,
+        interval: Duration.seconds(30),
+        path: '/api/healthcheck',
+        port: `${HAKIJA_PORT}`,
       },
     })
 
@@ -159,7 +179,7 @@ export class VaServiceStack extends cdk.Stack {
     const httpListener = lb.addListener('lb-http', {
       protocol: ApplicationProtocol.HTTP,
       port: 80,
-      defaultTargetGroups: [vaServiceTargetGroup],
+      defaultTargetGroups: [virkailijaTargetGroup, hakijaTargetGroup],
       open: false, // Allow only Reaktor office for now, app is not configured properly yet
     })
   }

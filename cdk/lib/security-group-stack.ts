@@ -1,7 +1,7 @@
 import * as cdk from 'aws-cdk-lib'
 import { Environment } from './va-env-stage'
 import { Peer, Port, SecurityGroup, IVpc } from 'aws-cdk-lib/aws-ec2'
-import { CONTAINER_PORT } from './va-service-stack'
+import { VIRKAILIJA_PORT } from './va-service-stack'
 
 export interface VaSecurityGroups {
   vaServiceSecurityGroup: SecurityGroup
@@ -63,12 +63,12 @@ export class SecurityGroupStack extends cdk.Stack {
     )
     this.securityGroups.albSecurityGroup.addEgressRule(
       this.securityGroups.vaServiceSecurityGroup,
-      Port.tcp(CONTAINER_PORT),
+      Port.tcp(VIRKAILIJA_PORT),
       'Allow egress to VA service'
     )
     this.securityGroups.vaServiceSecurityGroup.addIngressRule(
       this.securityGroups.albSecurityGroup,
-      Port.tcp(CONTAINER_PORT),
+      Port.tcp(VIRKAILIJA_PORT),
       'Allow access from ALB'
     )
   }
