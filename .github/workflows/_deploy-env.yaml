@@ -45,6 +45,7 @@ jobs:
         with:
           aws-region: eu-west-1
           role-to-assume: ${{ secrets.DEPLOY_ROLE_ARN }}
+          role-duration-seconds: 7200 #two hours
 
       - uses: docker/setup-qemu-action@v3
         with:
