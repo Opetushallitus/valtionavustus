@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect } from '@playwright/test'
 
 import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
 import avustushaku417LyhennettyHakulomake from './ophy-654-avustushaku-417.hakulomake.json'
@@ -24,8 +24,6 @@ muutoshakemusTest.use({
 muutoshakemusTest(
   `OPHY-654 regression: avustushaku with very simple budget shouldn't break seuranta page`,
   async ({ acceptedHakemus, avustushakuID, page }) => {
-    test.fail() // bug not fixed yet
-
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigateToHakemusArviointi(
       avustushakuID,

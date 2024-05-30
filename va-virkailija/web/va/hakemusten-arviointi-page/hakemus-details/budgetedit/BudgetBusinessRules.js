@@ -1,6 +1,8 @@
 export default class BudgetBusinessRules {
   constructor(budgetFormSpec, arvio) {
-    this.projectBudgetFieldId = budgetFormSpec.children[0].id
+    this.projectBudgetFieldId = budgetFormSpec.children[0]
+      ? budgetFormSpec.children[0].id
+      : undefined
     this.arvio = arvio
   }
 
