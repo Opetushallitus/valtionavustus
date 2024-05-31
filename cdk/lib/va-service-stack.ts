@@ -103,7 +103,7 @@ export class VaServiceStack extends cdk.Stack {
       }),
       portMappings: [
         {
-          name: 'http',
+          name: 'virkailija',
           containerPort: VIRKAILIJA_PORT,
           hostPort: VIRKAILIJA_PORT,
           appProtocol: AppProtocol.http,
@@ -139,9 +139,9 @@ export class VaServiceStack extends cdk.Stack {
       healthCheckGracePeriod: Duration.minutes(10),
     })
 
-    /* ---------- LOAD BALANCER ---------- */
+    /* ---------- VIRKAILIJA LOAD BALANCER ---------- */
 
-    const virkailijaTargetGroup = new ApplicationTargetGroup(this, 'va-service-target-group', {
+    const virkailijaTargetGroup = new ApplicationTargetGroup(this, 'va-virkailija-target-group', {
       vpc: vpc,
       targets: [vaService],
       protocol: ApplicationProtocol.HTTP,
@@ -154,7 +154,29 @@ export class VaServiceStack extends cdk.Stack {
       },
     })
 
-    const hakijaTargetGroup = new ApplicationTargetGroup(this, 'hakija-target-group', {
+    const virkailijaLoadBalancer = new ApplicationLoadBalancer(
+      this,
+      'va-virkailija-load-balancer',
+      {
+        loadBalancerName: 'va-virkailija-service',
+        securityGroup: albSecurityGroup,
+        xffHeaderProcessingMode: XffHeaderProcessingMode.APPEND,
+        internetFacing: true,
+        vpc: vpc,
+        preserveHostHeader: true,
+      }
+    )
+
+    const virkailijaListener = virkailijaLoadBalancer.addListener('lb-http', {
+      protocol: ApplicationProtocol.HTTP,
+      port: 80,
+      defaultTargetGroups: [virkailijaTargetGroup],
+      open: false, // Allow only Reaktor office for now, app is not configured properly yet
+    })
+
+    /* ---------- HAKIJA LOAD BALANCER ---------- */
+
+    const hakijaTargetGroup = new ApplicationTargetGroup(this, 'va-hakija-target-group', {
       vpc: vpc,
       targets: [vaService],
       protocol: ApplicationProtocol.HTTP,
@@ -167,8 +189,8 @@ export class VaServiceStack extends cdk.Stack {
       },
     })
 
-    const lb = new ApplicationLoadBalancer(this, 'va-service-load-balancer', {
-      loadBalancerName: 'valtionavustukset-service',
+    const hakijaLoadBalancer = new ApplicationLoadBalancer(this, 'va-hakija-load-balancer', {
+      loadBalancerName: 'va-hakija-service',
       securityGroup: albSecurityGroup,
       xffHeaderProcessingMode: XffHeaderProcessingMode.APPEND,
       internetFacing: true,
@@ -176,10 +198,10 @@ export class VaServiceStack extends cdk.Stack {
       preserveHostHeader: true,
     })
 
-    const httpListener = lb.addListener('lb-http', {
+    const hakijaListener = hakijaLoadBalancer.addListener('lb-http', {
       protocol: ApplicationProtocol.HTTP,
       port: 80,
-      defaultTargetGroups: [virkailijaTargetGroup, hakijaTargetGroup],
+      defaultTargetGroups: [hakijaTargetGroup],
       open: false, // Allow only Reaktor office for now, app is not configured properly yet
     })
   }
