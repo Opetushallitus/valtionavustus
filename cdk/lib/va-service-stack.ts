@@ -167,7 +167,7 @@ export class VaServiceStack extends cdk.Stack {
       }
     )
 
-    const virkailijaListener = virkailijaLoadBalancer.addListener('lb-http', {
+    const virkailijaListener = virkailijaLoadBalancer.addListener('virkailija-lb-http', {
       protocol: ApplicationProtocol.HTTP,
       port: 80,
       defaultTargetGroups: [virkailijaTargetGroup],
@@ -198,7 +198,7 @@ export class VaServiceStack extends cdk.Stack {
       preserveHostHeader: true,
     })
 
-    const hakijaListener = hakijaLoadBalancer.addListener('lb-http', {
+    const hakijaListener = hakijaLoadBalancer.addListener('hakija-lb-http', {
       protocol: ApplicationProtocol.HTTP,
       port: 80,
       defaultTargetGroups: [hakijaTargetGroup],
