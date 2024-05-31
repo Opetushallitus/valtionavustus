@@ -60,6 +60,7 @@
     (str (-> config :server :virkailija-url) "/login/cas")))
 
 (defn- on-healthcheck []
+  (log/info "Healthcheck called")
   (if (virkailija-db/health-check)
     (ok {})
     (not-found)))
