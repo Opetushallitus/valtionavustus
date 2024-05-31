@@ -27,6 +27,7 @@
   (:import (org.postgresql.util PSQLException)))
 
 (defn- on-healthcheck []
+  (log/info "hakija healthcheck")
   (if (hakija-db/health-check)
     (ok {})
     (not-found)))
