@@ -103,15 +103,16 @@ export class VaServiceStack extends cdk.Stack {
       }),
       portMappings: [
         {
-          name: 'virkailija',
-          containerPort: VIRKAILIJA_PORT,
-          hostPort: VIRKAILIJA_PORT,
-          appProtocol: AppProtocol.http,
-        },
-        {
           name: 'hakija',
           containerPort: HAKIJA_PORT,
           hostPort: HAKIJA_PORT,
+          appProtocol: AppProtocol.http,
+        },
+
+        {
+          name: 'virkailija',
+          containerPort: VIRKAILIJA_PORT,
+          hostPort: VIRKAILIJA_PORT,
           appProtocol: AppProtocol.http,
         },
       ],
@@ -143,9 +144,14 @@ export class VaServiceStack extends cdk.Stack {
 
     const virkailijaTargetGroup = new ApplicationTargetGroup(this, 'va-virkailija-target-group', {
       vpc: vpc,
-      targets: [vaService],
       protocol: ApplicationProtocol.HTTP,
       port: VIRKAILIJA_PORT,
+      targets: [
+        vaService.loadBalancerTarget({
+          containerName: CONTAINER_NAME,
+          containerPort: VIRKAILIJA_PORT,
+        }),
+      ],
       healthCheck: {
         enabled: true,
         interval: Duration.seconds(30),
@@ -178,9 +184,14 @@ export class VaServiceStack extends cdk.Stack {
 
     const hakijaTargetGroup = new ApplicationTargetGroup(this, 'va-hakija-target-group', {
       vpc: vpc,
-      targets: [vaService],
       protocol: ApplicationProtocol.HTTP,
       port: HAKIJA_PORT,
+      targets: [
+        vaService.loadBalancerTarget({
+          containerName: CONTAINER_NAME,
+          containerPort: HAKIJA_PORT,
+        }),
+      ],
       healthCheck: {
         enabled: true,
         interval: Duration.seconds(30),
@@ -188,7 +199,6 @@ export class VaServiceStack extends cdk.Stack {
         port: `${HAKIJA_PORT}`,
       },
     })
-
     const hakijaLoadBalancer = new ApplicationLoadBalancer(this, 'va-hakija-load-balancer', {
       loadBalancerName: 'va-hakija-service',
       securityGroup: albSecurityGroup,
