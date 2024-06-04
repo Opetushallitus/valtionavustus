@@ -2,6 +2,7 @@ import * as cdk from 'aws-cdk-lib'
 import { Duration } from 'aws-cdk-lib'
 import { Environment } from './va-env-stage'
 import {
+  AppProtocol,
   Cluster,
   ContainerImage,
   CpuArchitecture,
@@ -12,7 +13,6 @@ import {
   OperatingSystemFamily,
   Secret as EcsSecret,
   UlimitName,
-  AppProtocol,
 } from 'aws-cdk-lib/aws-ecs'
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam'
 import { DB_NAME as VA_DATABASE_NAME } from './db-stack'
@@ -25,6 +25,18 @@ import {
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager'
 import { LogGroup } from 'aws-cdk-lib/aws-logs'
 import type { VaSecurityGroups } from './security-group-stack'
+import { Bucket } from 'aws-cdk-lib/aws-s3'
+import { BucketDeployment, CacheControl, Source } from 'aws-cdk-lib/aws-s3-deployment'
+import * as path from 'node:path'
+import {
+  AllowedMethods,
+  CachePolicy,
+  Distribution,
+  OriginAccessIdentity,
+  OriginRequestPolicy,
+  ViewerProtocolPolicy,
+} from 'aws-cdk-lib/aws-cloudfront'
+import * as origins from 'aws-cdk-lib/aws-cloudfront-origins'
 
 const CONTAINER_NAME = 'valtionavustukset'
 export const VIRKAILIJA_PORT = 8081 // = virkailija port
@@ -213,6 +225,49 @@ export class VaServiceStack extends cdk.Stack {
       port: 80,
       defaultTargetGroups: [hakijaTargetGroup],
       open: false, // Allow only Reaktor office for now, app is not configured properly yet
+    })
+
+    /* ------------------------------ CDN -------------------------------- */
+
+    const bucketName = `oph-va-maintenance-page-${scope.env}`
+    const maintenancePageBucket = new Bucket(this, 'maintenance-page-bucket', {
+      bucketName: bucketName,
+    })
+
+    new BucketDeployment(this, 'maintenance-page-bucket-deployment', {
+      destinationBucket: maintenancePageBucket,
+      sources: [Source.asset(path.join(__dirname, 'assets/maintenance-page'))],
+      cacheControl: [CacheControl.noCache()],
+      destinationKeyPrefix: 'maintenance-page/', // This must match with CDN "path pattern"
+    })
+
+    const oai = new OriginAccessIdentity(this, 'cdn-oai')
+    maintenancePageBucket.grantRead(oai)
+
+    const cdnDistribution = new Distribution(this, 'va-cdn', {
+      defaultBehavior: {
+        origin: new origins.LoadBalancerV2Origin(virkailijaLoadBalancer),
+        allowedMethods: AllowedMethods.ALLOW_ALL,
+        originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
+        cachePolicy: CachePolicy.CACHING_DISABLED,
+        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      },
+      errorResponses: [
+        { httpStatus: 500, responsePagePath: '/maintenance-page/index.html' },
+        { httpStatus: 502, responsePagePath: '/maintenance-page/index.html' },
+        { httpStatus: 503, responsePagePath: '/maintenance-page/index.html' },
+        { httpStatus: 504, responsePagePath: '/maintenance-page/index.html' },
+      ],
+      additionalBehaviors: {
+        '/maintenance-page/*': {
+          origin: new origins.S3Origin(maintenancePageBucket, {
+            originAccessIdentity: oai,
+          }),
+          allowedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+          viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+          cachePolicy: CachePolicy.CACHING_DISABLED,
+        },
+      },
     })
   }
 }
