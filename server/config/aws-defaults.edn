@@ -1,0 +1,64 @@
+{:server                                      {:auto-reload?            false
+                                               :allow-db-clear?         false
+                                               :enable-access-log?      true
+                                               :enable-hsts?            true
+                                               :enable-csp?             true
+                                               :without-authentication? false
+                                               :hakija-port             8080
+                                               :virkailija-port         8081
+                                               :require-https?          true
+                                               :attachment-max-size     50 ;in megabytes
+                                               :session-timeout-in-s    28800
+                                               :attachment-mime-types   ["text/plain"
+                                                                         "application/rtf"
+                                                                         "application/pdf"
+                                                                         "application/vnd.oasis.opendocument.text"
+                                                                         "application/msword"
+                                                                         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                                         "application/vnd.oasis.opendocument.spreadsheet"
+                                                                         "application/vnd.ms-excel"
+                                                                         "application/x-tika-msoffice",
+                                                                         "application/x-tika-ooxml",
+                                                                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                                                         "application/zip"]
+                                               :threads                 16}
+
+:db                                           {:database-name "va"
+                                               :username "va_application"
+                                               :port-number   5432}
+ :opintopolku                                 {:url                "https://virkailija.testiopintopolku.fi"
+                                               :cas-login          "/cas/login?service="
+                                               :cas-logout         "/cas/logout?service="
+                                               :permission-request "/henkilo-ui/omattiedot"}
+ :ui                                          {:show-environment? true
+                                               :paatos-path       "/public/api/avustushaku/paatos/"}
+ :api                                         {:restricted-routes? true}
+ :grant-select-for-other-db-user              "va_virkailija"
+ :email                                       {:enabled?                     false
+                                               :host                         nil
+                                               :port                         nil
+                                               :queue-size                   1024
+                                               :from                         {:fi "no-reply@valtionavustukset.oph.fi"
+                                                                              :sv "no-reply@statsunderstod.oph.fi"}
+                                               :sender                       "no-reply@csc.fi"
+                                               :to-taloustarkastaja          ["taloustarkastus@localhost"]
+                                               :to-palkeet                   ["palkeet@localhost"]
+                                               :to-palkeet-ja-talouspalvelut ["palkeet@localhost" "talouspalvelut@localhost"]
+                                               :bounce-address               "oph-va-alerts@reaktor.com"
+                                               :persistent-retry             {:enabled? false
+                                                                              :schedule "0 * * * * ?"}
+                                               }
+ :va-users                                    {:use-cache?                      true
+                                               :cache-refresh-interval-in-s     300
+                                               :cache-max-refresh-interval-in-s 10800}
+ :kayttooikeus-service                        {:va-service-name      "VALTIONAVUSTUS"
+                                               :admin-privilege-name "ADMIN"
+                                               :user-privilege-name  "USER"}
+ :rondo-scheduler                             {:enabled? false}
+ :reminder-scheduler                          {:enabled? true}
+ :payments                                    {:enabled? true}
+ :integration-healthcheck {:enabled?         true
+                           :timeout          5000
+                           :interval-minutes 15}
+ :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
+ :test-apis                                   {:enabled? false}}

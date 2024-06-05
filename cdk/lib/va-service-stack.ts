@@ -107,6 +107,7 @@ export class VaServiceStack extends cdk.Stack {
         DB_HOSTNAME: databaseHostname,
         HEADLESS: 'true',
         config: `config/aws-${scope.env}.edn`,
+        configdefaults: 'config/aws-defaults.edn',
       },
       secrets: {
         DB_PASSWORD: EcsSecret.fromSecretsManager(databasePasswordSecret),
