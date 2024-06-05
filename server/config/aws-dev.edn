@@ -1,0 +1,40 @@
+{:environment              "aws-dev"
+ :server                  {:auto-reload?    false
+                           :allow-db-clear? false
+                           :hakija-port     8080
+                           :hakija-host     "*"
+                           :virkailija-host "*"
+                           :virkailija-port 8081
+                           :url             {:fi "https://dev.valtionavustukset.oph.fi/"
+                                             :sv "https://dev.statsunderstod.oph.fi/"}
+                           :virkailija-url  "https://dev.virkailija.valtionavustukset.oph.fi"}
+ :db                      {:database-name "va"
+                           :username "va_application"
+                           :port-number   5432}
+ :email                   {:enabled?         false}
+ :rondo-scheduler         {:enabled?                 false
+                           :scheduling               "0 00 04 ? * *"
+                           :strict-host-key-checking :yes}
+ :notifications           {:asiatarkastus                   {:enabled? true
+                                                             :schedule "0 0 14 ? * 1,2,3,4,5"}
+                           :valiselvitys                    {:enabled? true
+                                                             :schedule "0 0 14 ? * 1,2,3,4,5"}
+                           :loppuselvitys-palauttamatta     {:enabled? true
+                                                             :schedule "0 0 14 ? * 1,2,3,4,5"}
+                           :valiselvitys-palauttamatta      {:enabled? true
+                                                             :schedule "0 0 14 ? * 1,2,3,4,5"}
+                           :laheta-valiselvityspyynnot      {:enabled? true
+                                                             :schedule "0 0 14 ? * 1,2,3,4,5"}
+                           :laheta-loppuselvityspyynnot     {:enabled? true
+                                                             :schedule "0 0 14 ? * 1,2,3,4,5"}
+                           :hakuaika-paattymassa            {:enabled? true
+                                                             :schedule "0 0 14 ? * 1,2,3,4,5"}
+                           :hakuaika-paattynyt              {:enabled? true
+                                                             :schedule "0 0 7 ? * *"}
+                           :muutoshakemuksia-kasittelematta {:enabled? true
+                                                             :schedule "0 0 14 ? * MON-FRI"}
+                           }
+ :payments                {:enabled? false :delete-payments? true}
+ :integration-healthcheck {:enabled?         true
+                           :timeout          5000
+                           :interval-minutes 15}}

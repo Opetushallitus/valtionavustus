@@ -95,7 +95,7 @@ export class VaServiceStack extends cdk.Stack {
 
     taskDefinition.addContainer('valtionavustukset-container', {
       image: valtionavustuksetImage,
-      command: ['with-profile', 'server-dev', 'run', '-m', 'oph.va.hakija.main'],
+      command: ['run', '-m', 'oph.va.hakija.main'],
       healthCheck: {
         command: ['CMD-SHELL', 'curl -f http://localhost:8081/api/healthcheck || exit 1'],
         startPeriod: Duration.minutes(5),
@@ -103,8 +103,8 @@ export class VaServiceStack extends cdk.Stack {
       containerName: CONTAINER_NAME,
       environment: {
         DB_HOSTNAME: databaseHostname,
-        DB_USERNAME: 'va_application',
-        DB_NAME: VA_DATABASE_NAME,
+        HEADLESS: 'true',
+        config: `config/aws-${scope.env}.edn`,
       },
       secrets: {
         DB_PASSWORD: EcsSecret.fromSecretsManager(databasePasswordSecret),
