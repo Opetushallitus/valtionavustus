@@ -10,6 +10,8 @@
                            :strict-host-key-checking :yes}
  :notifications           {:asiatarkastus                   {:enabled? true
                                                              :schedule "0 0 14 ? * 1,2,3,4,5"}
+                           :taloustarkastus                 {:enabled? false
+                                                             :schedule "0 0 7 ? * 2"}
                            :valiselvitys                    {:enabled? true
                                                              :schedule "0 0 14 ? * 1,2,3,4,5"}
                            :loppuselvitys-palauttamatta     {:enabled? true
