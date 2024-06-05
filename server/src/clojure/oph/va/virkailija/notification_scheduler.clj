@@ -121,6 +121,7 @@
     ]))
 
 (defn- start-job [job]
+  (log/info (str "Starting job with key: " (:key job)))
   (qs/schedule
     (qs/start (qs/initialize))
     (j/build
