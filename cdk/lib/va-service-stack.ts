@@ -106,8 +106,8 @@ export class VaServiceStack extends cdk.Stack {
           '-Dlog4j2.formatMsgNoLookups=true -Dfile.encoding=UTF-8 -Djava.awt.headless=true -Dclojure.main.report=stderr',
         DB_HOSTNAME: databaseHostname,
         HEADLESS: 'true',
-        config: `config/aws-${scope.env}.edn`,
-        configdefaults: 'config/aws-defaults.edn',
+        config: `/app/server/config/aws-${scope.env}.edn`,
+        configdefaults: '/app/server/config/aws-defaults.edn',
       },
       secrets: {
         DB_PASSWORD: EcsSecret.fromSecretsManager(databasePasswordSecret),
