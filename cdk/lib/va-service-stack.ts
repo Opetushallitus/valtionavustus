@@ -27,20 +27,8 @@ import {
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager'
 import { LogGroup } from 'aws-cdk-lib/aws-logs'
 import type { VaSecurityGroups } from './security-group-stack'
-import { Bucket } from 'aws-cdk-lib/aws-s3'
-import { BucketDeployment, CacheControl, Source } from 'aws-cdk-lib/aws-s3-deployment'
-import * as path from 'node:path'
-import {
-  AllowedMethods,
-  CachePolicy,
-  Distribution,
-  OriginAccessIdentity,
-  OriginRequestPolicy,
-  SSLMethod,
-  ViewerProtocolPolicy,
-} from 'aws-cdk-lib/aws-cloudfront'
-import * as origins from 'aws-cdk-lib/aws-cloudfront-origins'
 import { AWS_SERVICE_PREFIX } from '../bin/cdk'
+import { Domains } from './dns-stack'
 
 const CONTAINER_NAME = 'valtionavustukset'
 export const VIRKAILIJA_PORT = 8081 // = virkailija port
@@ -52,7 +40,7 @@ interface VaServiceStackProps extends cdk.StackProps {
   db: DbProps
   applicationLogGroup: LogGroup
   securityGroups: VaSecurityGroups
-  domains: Domains
+  domains: Pick<Domains, 'virkailijaDomain'>
 }
 
 interface DbProps {
@@ -60,14 +48,8 @@ interface DbProps {
   passwordSecret: Secret
 }
 
-interface Domains {
-  hakijaDomain: string
-  hakijaDomainSv: string
-  virkailijaDomain: string
-}
-
 export class VaServiceStack extends cdk.Stack {
-  cdnDistribution: Distribution
+  loadbalancer: ApplicationLoadBalancer
 
   constructor(scope: Environment, id: string, props: VaServiceStackProps) {
     super(scope, id, props)
@@ -207,8 +189,6 @@ export class VaServiceStack extends cdk.Stack {
       }
     )
 
-    /* ---------- HAKIJA LOAD BALANCER ---------- */
-
     const hakijaTargetGroup = new ApplicationTargetGroup(this, 'va-hakija-alb-target-group', {
       vpc: vpc,
       protocol: ApplicationProtocol.HTTP,
@@ -227,8 +207,7 @@ export class VaServiceStack extends cdk.Stack {
       },
     })
 
-    const { hakijaDomain, hakijaDomainSv, virkailijaDomain } = props.domains
-
+    const { virkailijaDomain } = props.domains
     /*  ---------- VIRKAILIJA FQDN ---------- */
     //  aws.dev.virkailija.valtionavustukset.oph.fi
     new ApplicationListenerRule(this, 'route-to-virkailija-from-host-headers', {
@@ -245,56 +224,6 @@ export class VaServiceStack extends cdk.Stack {
       action: ListenerAction.forward([hakijaTargetGroup]),
     })
 
-    /* ------------------------------ CDN -------------------------------- */
-
-    const bucketName = `oph-va-maintenance-page-${scope.env}`
-    const maintenancePageBucket = new Bucket(this, 'maintenance-page-bucket', {
-      bucketName: bucketName,
-    })
-
-    new BucketDeployment(this, 'maintenance-page-bucket-deployment', {
-      destinationBucket: maintenancePageBucket,
-      sources: [Source.asset(path.join(__dirname, 'assets/maintenance-page'))],
-      cacheControl: [CacheControl.noCache()],
-      destinationKeyPrefix: 'maintenance-page/', // This must match with CDN "path pattern"
-    })
-
-    const oai = new OriginAccessIdentity(this, 'cdn-oai')
-    maintenancePageBucket.grantRead(oai)
-
-    this.cdnDistribution = new Distribution(this, 'va-cdn', {
-      /*
-      domainNames: [
-        `${AWS_SERVICE_PREFIX}${hakijaDomain}`,
-        `${AWS_SERVICE_PREFIX}${hakijaDomainSv}`,
-        `${AWS_SERVICE_PREFIX}${virkailijaDomain}`,
-      ],
-      sslSupportMethod: SSLMethod.SNI,
-      */
-      defaultBehavior: {
-        origin: new origins.LoadBalancerV2Origin(loadBalancer),
-        allowedMethods: AllowedMethods.ALLOW_ALL,
-        originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
-        cachePolicy: CachePolicy.CACHING_DISABLED,
-        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-      },
-      errorResponses: [
-        { httpStatus: 500, responsePagePath: '/maintenance-page/index.html' },
-        { httpStatus: 502, responsePagePath: '/maintenance-page/index.html' },
-        { httpStatus: 503, responsePagePath: '/maintenance-page/index.html' },
-        { httpStatus: 504, responsePagePath: '/maintenance-page/index.html' },
-      ],
-      additionalBehaviors: {
-        '/maintenance-page/*': {
-          origin: new origins.S3Origin(maintenancePageBucket, {
-            originAccessIdentity: oai,
-          }),
-          allowedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
-          viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-          cachePolicy: CachePolicy.CACHING_DISABLED,
-        },
-      },
-      enableIpv6: false,
-    })
+    this.loadbalancer = loadBalancer
   }
 }

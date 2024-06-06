@@ -12,6 +12,8 @@ import { EcsStack } from '../lib/ecs-stack'
 import { EncryptionStack } from '../lib/encryption-stack'
 import { SecurityGroupStack } from '../lib/security-group-stack'
 import { PersistentResourcesStack } from '../lib/persistent-resources-stack'
+import { CdnStack } from '../lib/cdn-stack'
+import { CertificateStack } from '../lib/certificate-stack'
 
 const HAKIJA_DOMAIN = 'valtionavustukset.oph.fi'
 const HAKIJA_DOMAIN_SV = 'statsunderstod.oph.fi'
@@ -61,8 +63,6 @@ const app = new cdk.App()
     },
     securityGroups: securityGroupStack.securityGroups,
     domains: {
-      hakijaDomain: `dev.${HAKIJA_DOMAIN}`,
-      hakijaDomainSv: `dev.${HAKIJA_DOMAIN_SV}`,
       virkailijaDomain: `dev.${VIRKAILIJA_DOMAIN}`,
     },
   })
@@ -72,7 +72,6 @@ const app = new cdk.App()
     hakijaLegacyARecord: LEGACY_LOADBALANCER_IP,
     virkailijaDomain: `dev.${VIRKAILIJA_DOMAIN}`,
     databaseHostname: dbStack.clusterWriterEndpointHostname,
-    cloudfrontDistribution: vaService.cdnDistribution,
 
     delegationRecord: {
       env: 'prod',
@@ -80,6 +79,21 @@ const app = new cdk.App()
       hakijaDomainSv: HAKIJA_DOMAIN_SV,
       virkailijaDomain: VIRKAILIJA_DOMAIN,
     },
+  })
+
+  const certificateStack = new CertificateStack(dev, 'certs', {
+    domains: dns.domains,
+    zones: dns.zones,
+    crossRegionReferences: true,
+    env: { region: 'us-east-1' }, // Certs used by CDN must be in us-east-1
+  })
+
+  const cdn = new CdnStack(dev, 'cdn', {
+    domains: dns.domains,
+    zones: dns.zones,
+    loadBalancer: vaService.loadbalancer,
+    sslCertificate: certificateStack.sslCertificate,
+    crossRegionReferences: true, // Cert is in us-east-1
   })
 }
 
