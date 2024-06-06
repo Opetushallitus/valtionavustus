@@ -17,6 +17,13 @@ const HAKIJA_DOMAIN = 'valtionavustukset.oph.fi'
 const HAKIJA_DOMAIN_SV = 'statsunderstod.oph.fi'
 const VIRKAILIJA_DOMAIN = 'virkailija.valtionavustukset.oph.fi'
 
+/* Use prefix so we can access the services in AWS during development, as the above hostnames are already used by CSC by current production servers
+ * for example:
+ * aws.dev.valtionavustukset.oph.fi
+ * aws.dev.virkailija.valtionavustukset.oph.fi
+ * This can be removed or set to empty string once we want to go live and stop using CSC servers in production
+ * */
+export const AWS_SERVICE_PREFIX = 'aws.'
 const LEGACY_LOADBALANCER_IP = '86.50.28.144'
 
 const app = new cdk.App()
@@ -53,6 +60,11 @@ const app = new cdk.App()
       passwordSecret: persistentResources.databasePasswordSecret,
     },
     securityGroups: securityGroupStack.securityGroups,
+    domains: {
+      hakijaDomain: `dev.${HAKIJA_DOMAIN}`,
+      hakijaDomainSv: `dev.${HAKIJA_DOMAIN_SV}`,
+      virkailijaDomain: `dev.${VIRKAILIJA_DOMAIN}`,
+    },
   })
   const dns = new DnsStack(dev, 'dns', {
     hakijaDomain: `dev.${HAKIJA_DOMAIN}`,
@@ -60,6 +72,7 @@ const app = new cdk.App()
     hakijaLegacyARecord: LEGACY_LOADBALANCER_IP,
     virkailijaDomain: `dev.${VIRKAILIJA_DOMAIN}`,
     databaseHostname: dbStack.clusterWriterEndpointHostname,
+    cloudfrontDistribution: vaService.cdnDistribution,
 
     delegationRecord: {
       env: 'prod',

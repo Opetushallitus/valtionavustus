@@ -1,6 +1,6 @@
 import * as cdk from 'aws-cdk-lib'
 import { Environment } from './va-env-stage'
-import { Peer, Port, SecurityGroup, IVpc } from 'aws-cdk-lib/aws-ec2'
+import { Peer, Port, SecurityGroup, IVpc, PrefixList } from 'aws-cdk-lib/aws-ec2'
 import { HAKIJA_PORT, VIRKAILIJA_PORT } from './va-service-stack'
 
 export interface VaSecurityGroups {
@@ -56,11 +56,19 @@ export class SecurityGroupStack extends cdk.Stack {
       allowAllOutbound: true,
     })
 
+    // Optimally we'd use AWS-managed prefix lists to allow CDN ingress only, but this is not yet properly supported
+    // https://github.com/aws/aws-cdk/issues/15115
     this.securityGroups.albSecurityGroup.addIngressRule(
-      Peer.ipv4('62.165.154.10/32'),
+      Peer.anyIpv4(),
       Port.tcp(80),
-      'Allow access from Reaktor office'
+      'Allow access from anywhere'
     )
+    this.securityGroups.albSecurityGroup.addIngressRule(
+      Peer.anyIpv6(),
+      Port.tcp(80),
+      'Allow access from anywhere'
+    )
+
     this.securityGroups.albSecurityGroup.addEgressRule(
       this.securityGroups.vaServiceSecurityGroup,
       Port.tcp(VIRKAILIJA_PORT),
@@ -71,7 +79,6 @@ export class SecurityGroupStack extends cdk.Stack {
       Port.tcp(VIRKAILIJA_PORT),
       'Allow access to virkailija from ALB'
     )
-
     this.securityGroups.albSecurityGroup.addEgressRule(
       this.securityGroups.vaServiceSecurityGroup,
       Port.tcp(HAKIJA_PORT),

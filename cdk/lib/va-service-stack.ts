@@ -15,11 +15,13 @@ import {
   UlimitName,
 } from 'aws-cdk-lib/aws-ecs'
 import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam'
-import { DB_NAME as VA_DATABASE_NAME } from './db-stack'
 import {
+  ApplicationListenerRule,
   ApplicationLoadBalancer,
   ApplicationProtocol,
   ApplicationTargetGroup,
+  ListenerAction,
+  ListenerCondition,
   XffHeaderProcessingMode,
 } from 'aws-cdk-lib/aws-elasticloadbalancingv2'
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager'
@@ -34,9 +36,11 @@ import {
   Distribution,
   OriginAccessIdentity,
   OriginRequestPolicy,
+  SSLMethod,
   ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront'
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins'
+import { AWS_SERVICE_PREFIX } from '../bin/cdk'
 
 const CONTAINER_NAME = 'valtionavustukset'
 export const VIRKAILIJA_PORT = 8081 // = virkailija port
@@ -48,6 +52,7 @@ interface VaServiceStackProps extends cdk.StackProps {
   db: DbProps
   applicationLogGroup: LogGroup
   securityGroups: VaSecurityGroups
+  domains: Domains
 }
 
 interface DbProps {
@@ -55,7 +60,15 @@ interface DbProps {
   passwordSecret: Secret
 }
 
+interface Domains {
+  hakijaDomain: string
+  hakijaDomainSv: string
+  virkailijaDomain: string
+}
+
 export class VaServiceStack extends cdk.Stack {
+  cdnDistribution: Distribution
+
   constructor(scope: Environment, id: string, props: VaServiceStackProps) {
     super(scope, id, props)
 
@@ -155,49 +168,48 @@ export class VaServiceStack extends cdk.Stack {
       healthCheckGracePeriod: Duration.minutes(10),
     })
 
-    /* ---------- VIRKAILIJA LOAD BALANCER ---------- */
+    /* ---------- LOAD BALANCER ---------- */
 
-    const virkailijaTargetGroup = new ApplicationTargetGroup(this, 'va-virkailija-target-group', {
+    const loadBalancer = new ApplicationLoadBalancer(this, 'va-load-balancer', {
+      loadBalancerName: 'va-service',
+      securityGroup: albSecurityGroup,
+      xffHeaderProcessingMode: XffHeaderProcessingMode.APPEND,
+      internetFacing: true,
       vpc: vpc,
-      protocol: ApplicationProtocol.HTTP,
-      port: VIRKAILIJA_PORT,
-      targets: [
-        vaService.loadBalancerTarget({
-          containerName: CONTAINER_NAME,
-          containerPort: VIRKAILIJA_PORT,
-        }),
-      ],
-      healthCheck: {
-        enabled: true,
-        interval: Duration.seconds(30),
-        path: '/api/healthcheck',
-        port: `${VIRKAILIJA_PORT}`,
-      },
+      preserveHostHeader: true,
     })
 
-    const virkailijaLoadBalancer = new ApplicationLoadBalancer(
+    const loadbalancerListener = loadBalancer.addListener('lb-http-listener', {
+      protocol: ApplicationProtocol.HTTP,
+      port: 80,
+      open: true,
+    })
+
+    const virkailijaTargetGroup = new ApplicationTargetGroup(
       this,
-      'va-virkailija-load-balancer',
+      'va-virkailija-alb-target-group',
       {
-        loadBalancerName: 'va-virkailija-service',
-        securityGroup: albSecurityGroup,
-        xffHeaderProcessingMode: XffHeaderProcessingMode.APPEND,
-        internetFacing: true,
         vpc: vpc,
-        preserveHostHeader: true,
+        protocol: ApplicationProtocol.HTTP,
+        port: VIRKAILIJA_PORT,
+        targets: [
+          vaService.loadBalancerTarget({
+            containerName: CONTAINER_NAME,
+            containerPort: VIRKAILIJA_PORT,
+          }),
+        ],
+        healthCheck: {
+          enabled: true,
+          interval: Duration.seconds(30),
+          path: '/api/healthcheck',
+          port: `${VIRKAILIJA_PORT}`,
+        },
       }
     )
 
-    const virkailijaListener = virkailijaLoadBalancer.addListener('virkailija-lb-http', {
-      protocol: ApplicationProtocol.HTTP,
-      port: 80,
-      defaultTargetGroups: [virkailijaTargetGroup],
-      open: false, // Allow only Reaktor office for now, app is not configured properly yet
-    })
-
     /* ---------- HAKIJA LOAD BALANCER ---------- */
 
-    const hakijaTargetGroup = new ApplicationTargetGroup(this, 'va-hakija-target-group', {
+    const hakijaTargetGroup = new ApplicationTargetGroup(this, 'va-hakija-alb-target-group', {
       vpc: vpc,
       protocol: ApplicationProtocol.HTTP,
       port: HAKIJA_PORT,
@@ -214,20 +226,23 @@ export class VaServiceStack extends cdk.Stack {
         port: `${HAKIJA_PORT}`,
       },
     })
-    const hakijaLoadBalancer = new ApplicationLoadBalancer(this, 'va-hakija-load-balancer', {
-      loadBalancerName: 'va-hakija-service',
-      securityGroup: albSecurityGroup,
-      xffHeaderProcessingMode: XffHeaderProcessingMode.APPEND,
-      internetFacing: true,
-      vpc: vpc,
-      preserveHostHeader: true,
+
+    const { hakijaDomain, hakijaDomainSv, virkailijaDomain } = props.domains
+
+    /*  ---------- VIRKAILIJA FQDN ---------- */
+    //  aws.dev.virkailija.valtionavustukset.oph.fi
+    new ApplicationListenerRule(this, 'route-to-virkailija-from-host-headers', {
+      listener: loadbalancerListener,
+      priority: 10,
+      action: ListenerAction.forward([virkailijaTargetGroup]),
+      conditions: [ListenerCondition.hostHeaders([`${AWS_SERVICE_PREFIX}${virkailijaDomain}`])],
     })
 
-    const hakijaListener = hakijaLoadBalancer.addListener('hakija-lb-http', {
-      protocol: ApplicationProtocol.HTTP,
-      port: 80,
-      defaultTargetGroups: [hakijaTargetGroup],
-      open: false, // Allow only Reaktor office for now, app is not configured properly yet
+    /* ---------- HAKIJA FQDN ---------- */
+    // aws.dev.valtionavustukset.oph.fi
+    // aws.dev.statsunderstod.oph.fi
+    loadbalancerListener.addAction('route-to-hakija-as-default', {
+      action: ListenerAction.forward([hakijaTargetGroup]),
     })
 
     /* ------------------------------ CDN -------------------------------- */
@@ -247,9 +262,17 @@ export class VaServiceStack extends cdk.Stack {
     const oai = new OriginAccessIdentity(this, 'cdn-oai')
     maintenancePageBucket.grantRead(oai)
 
-    const cdnDistribution = new Distribution(this, 'va-cdn', {
+    this.cdnDistribution = new Distribution(this, 'va-cdn', {
+      /*
+      domainNames: [
+        `${AWS_SERVICE_PREFIX}${hakijaDomain}`,
+        `${AWS_SERVICE_PREFIX}${hakijaDomainSv}`,
+        `${AWS_SERVICE_PREFIX}${virkailijaDomain}`,
+      ],
+      sslSupportMethod: SSLMethod.SNI,
+      */
       defaultBehavior: {
-        origin: new origins.LoadBalancerV2Origin(virkailijaLoadBalancer),
+        origin: new origins.LoadBalancerV2Origin(loadBalancer),
         allowedMethods: AllowedMethods.ALLOW_ALL,
         originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
         cachePolicy: CachePolicy.CACHING_DISABLED,
@@ -271,6 +294,7 @@ export class VaServiceStack extends cdk.Stack {
           cachePolicy: CachePolicy.CACHING_DISABLED,
         },
       },
+      enableIpv6: false,
     })
   }
 }
