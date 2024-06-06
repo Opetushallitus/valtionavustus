@@ -28,7 +28,7 @@ function create_env_in_github {
 }
 
 readonly cdk_outdir="cdk.out.bootstrap"
-readonly cdk_app="bin/bootstrap.js"
+readonly cdk_app="dist/bin/bootstrap.js"
 readonly cdk_outputs="$dist_dir/outputs.json"
 
 function prepare_cdk {
@@ -38,6 +38,7 @@ function prepare_cdk {
   init_nodejs_cdk
   npm_ci_if_package_lock_has_changed
 
+  npm run build
   ./cdk.sh --app "$cdk_app" --output "$cdk_outdir" synth
 }
 
@@ -58,12 +59,14 @@ function bootstrap_cdk {
   readonly context_variable_name="AWS_ACCOUNT_ID_$env_upper"
   readonly aws_account_id="${!context_variable_name}"
   readonly aws_region="eu-west-1"
+  readonly us_east_1="us-east-1"
 
-  info "Running cdk bootstrap in account $aws_account_id in region $aws_region"
+  info "Running cdk bootstrap in account $aws_account_id in region $aws_region and $us_east_1"
   export AWS_PROFILE="oph-va-$ENV"
   export AWS_CONFIG_FILE="$VA_SECRETS_REPO/aws_config"
 
-  npm run cdk -- bootstrap "$aws_account_id/$aws_region"
+  REVISION=${revision} \
+  npm run cdk -- bootstrap "$aws_account_id/$aws_region" "$aws_account_id/$us_east_1"
 }
 
 function set_deployment_role_secret {
