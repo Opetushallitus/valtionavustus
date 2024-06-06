@@ -17,6 +17,10 @@ import {
 import { Environment } from './va-env-stage'
 import { ValtionavustusEnvironment, getAccountId, getEnv } from './va-context'
 import { Duration } from 'aws-cdk-lib'
+import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets'
+import { Distribution } from 'aws-cdk-lib/aws-cloudfront'
+import { AWS_SERVICE_PREFIX } from '../bin/cdk'
+import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager'
 
 interface DnsStackProps extends cdk.StackProps {
   hakijaDomain: string
@@ -27,6 +31,7 @@ interface DnsStackProps extends cdk.StackProps {
   virkailijaLegacyARecord?: string
 
   databaseHostname: string
+  cloudfrontDistribution?: Distribution
 
   delegationRecord?: {
     env: ValtionavustusEnvironment
@@ -90,6 +95,28 @@ export class DnsStack extends cdk.Stack {
       ttl: Duration.minutes(10),
       comment: 'db.valtionavustukset.oph.fi -> RDS cluster writer hostname CNAME record',
     })
+
+    const { cloudfrontDistribution } = props
+    if (cloudfrontDistribution && getEnv(this) === 'dev') {
+      new ARecord(this, 'cdn-a-alias-hakija-fi-record', {
+        zone: hakijaZone,
+        recordName: `${AWS_SERVICE_PREFIX}${hakijaDomain}.`,
+        target: RecordTarget.fromAlias(new CloudFrontTarget(cloudfrontDistribution)),
+        comment: 'CDN A record "alias" for hakija FI',
+      })
+      new ARecord(this, 'cdn-a-alias-hakija-sv-record', {
+        zone: hakijaZoneSv,
+        recordName: `${AWS_SERVICE_PREFIX}${hakijaDomainSv}.`,
+        target: RecordTarget.fromAlias(new CloudFrontTarget(cloudfrontDistribution)),
+        comment: 'CDN A record "alias" for hakija SV',
+      })
+      new ARecord(this, 'cdn-a-alias-virkailija-record', {
+        zone: virkailijaZone,
+        recordName: `${AWS_SERVICE_PREFIX}${virkailijaDomain}.`,
+        target: RecordTarget.fromAlias(new CloudFrontTarget(cloudfrontDistribution)),
+        comment: 'CDN A record "alias" for virkailija',
+      })
+    }
 
     //
     // Delegation from hakijaZone in prod to other environments and virkailijaZone
@@ -168,6 +195,24 @@ export class DnsStack extends cdk.Stack {
 
         parentHostedZoneName: delegationRecord.virkailijaDomain,
         delegationRole: delegationRole,
+      })
+
+      /* ---------- SSL certificate --------------- */
+
+      const hakijaCertFi = new Certificate(this, 'ssl-certificate-hakija-fi', {
+        domainName: hakijaDomain,
+        subjectAlternativeNames: [`*.${hakijaDomain}`],
+        validation: CertificateValidation.fromDns(hakijaZone),
+      })
+      const hakijaCertSv = new Certificate(this, 'ssl-certificate-hakija-sv', {
+        domainName: hakijaDomainSv,
+        subjectAlternativeNames: [`*.${hakijaDomainSv}`],
+        validation: CertificateValidation.fromDns(hakijaZoneSv),
+      })
+      const virkailijaCertFi = new Certificate(this, 'ssl-certificate-virkailija', {
+        domainName: virkailijaDomain,
+        subjectAlternativeNames: [`*.${virkailijaDomain}`],
+        validation: CertificateValidation.fromDns(virkailijaZone),
       })
     }
   }
