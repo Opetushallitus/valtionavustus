@@ -53,19 +53,6 @@ const app = new cdk.App()
     securityGroupStack.securityGroups.dbSecurityGroup,
     encryptionStack.dbEncryptionKey
   )
-  const vaService = new VaServiceStack(dev, 'application', {
-    vpc: vpcStack.vpc,
-    cluster: ecsStack.ecsCluster,
-    applicationLogGroup: persistentResources.applicationLogGroup,
-    db: {
-      hostname: dbStack.clusterWriterEndpointHostname,
-      passwordSecret: persistentResources.databasePasswordSecret,
-    },
-    securityGroups: securityGroupStack.securityGroups,
-    domains: {
-      virkailijaDomain: `dev.${VIRKAILIJA_DOMAIN}`,
-    },
-  })
   const dns = new DnsStack(dev, 'dns', {
     hakijaDomain: `dev.${HAKIJA_DOMAIN}`,
     hakijaDomainSv: `dev.${HAKIJA_DOMAIN_SV}`,
@@ -81,7 +68,25 @@ const app = new cdk.App()
     },
   })
 
-  const certificateStack = new CertificateStack(dev, 'certs', {
+  const vaService = new VaServiceStack(dev, 'application', {
+    vpc: vpcStack.vpc,
+    cluster: ecsStack.ecsCluster,
+    applicationLogGroup: persistentResources.applicationLogGroup,
+    db: {
+      hostname: dbStack.clusterWriterEndpointHostname,
+      passwordSecret: persistentResources.databasePasswordSecret,
+    },
+    securityGroups: securityGroupStack.securityGroups,
+    domains: {
+      hakijaDomain: `dev.${HAKIJA_DOMAIN}`,
+      virkailijaDomain: `dev.${VIRKAILIJA_DOMAIN}`,
+    },
+    zones: {
+      hakijaZone: dns.zones.hakijaZone,
+    },
+  })
+
+  const globalCertificatesStack = new CertificateStack(dev, 'certs', {
     domains: dns.domains,
     zones: dns.zones,
     crossRegionReferences: true,
@@ -91,8 +96,8 @@ const app = new cdk.App()
   const cdn = new CdnStack(dev, 'cdn', {
     domains: dns.domains,
     zones: dns.zones,
-    loadBalancer: vaService.loadbalancer,
-    sslCertificate: certificateStack.sslCertificate,
+    loadBalancerARecord: vaService.loadbalancerARecord,
+    sslCertificate: globalCertificatesStack.sslCertificate,
     crossRegionReferences: true, // Cert is in us-east-1
   })
 }

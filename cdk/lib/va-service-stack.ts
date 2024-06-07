@@ -28,7 +28,10 @@ import { Secret } from 'aws-cdk-lib/aws-secretsmanager'
 import { LogGroup } from 'aws-cdk-lib/aws-logs'
 import type { VaSecurityGroups } from './security-group-stack'
 import { AWS_SERVICE_PREFIX } from '../bin/cdk'
-import { Domains } from './dns-stack'
+import { Domains, HostedZones } from './dns-stack'
+import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager'
+import { LoadBalancerTarget } from 'aws-cdk-lib/aws-route53-targets'
+import { ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53'
 
 const CONTAINER_NAME = 'valtionavustukset'
 export const VIRKAILIJA_PORT = 8081 // = virkailija port
@@ -40,7 +43,8 @@ interface VaServiceStackProps extends cdk.StackProps {
   db: DbProps
   applicationLogGroup: LogGroup
   securityGroups: VaSecurityGroups
-  domains: Pick<Domains, 'virkailijaDomain'>
+  domains: Pick<Domains, 'virkailijaDomain' | 'hakijaDomain'>
+  zones: Pick<HostedZones, 'hakijaZone'>
 }
 
 interface DbProps {
@@ -50,6 +54,7 @@ interface DbProps {
 
 export class VaServiceStack extends cdk.Stack {
   loadbalancer: ApplicationLoadBalancer
+  loadbalancerARecord: ARecord
 
   constructor(scope: Environment, id: string, props: VaServiceStackProps) {
     super(scope, id, props)
@@ -57,6 +62,8 @@ export class VaServiceStack extends cdk.Stack {
     const { vpc, cluster, db, applicationLogGroup, securityGroups } = props
     const { hostname: databaseHostname, passwordSecret: databasePasswordSecret } = db
     const { vaServiceSecurityGroup, dbAccessSecurityGroup, albSecurityGroup } = securityGroups
+    const { hakijaDomain, virkailijaDomain } = props.domains
+    const { hakijaZone } = props.zones
 
     /* ---------- FARGATE SERVICE ---------- */
 
@@ -161,10 +168,24 @@ export class VaServiceStack extends cdk.Stack {
       preserveHostHeader: true,
     })
 
+    const ALB_FQDN = `alb.${hakijaDomain}`
+    this.loadbalancerARecord = new ARecord(this, 'alb-a-alias-record', {
+      zone: hakijaZone,
+      recordName: `${ALB_FQDN}.`,
+      target: RecordTarget.fromAlias(new LoadBalancerTarget(loadBalancer)),
+      comment: 'ALB A record "alias"',
+    })
+
+    const loadBalancerCertificate = new Certificate(this, 'ssl-certificate-alb', {
+      domainName: ALB_FQDN,
+      validation: CertificateValidation.fromDns(hakijaZone),
+    })
+
     const loadbalancerListener = loadBalancer.addListener('lb-http-listener', {
-      protocol: ApplicationProtocol.HTTP,
-      port: 80,
+      protocol: ApplicationProtocol.HTTPS,
+      port: 443,
       open: true,
+      certificates: [loadBalancerCertificate],
     })
 
     const virkailijaTargetGroup = new ApplicationTargetGroup(
@@ -207,7 +228,6 @@ export class VaServiceStack extends cdk.Stack {
       },
     })
 
-    const { virkailijaDomain } = props.domains
     /*  ---------- VIRKAILIJA FQDN ---------- */
     //  aws.dev.virkailija.valtionavustukset.oph.fi
     new ApplicationListenerRule(this, 'route-to-virkailija-from-host-headers', {
@@ -225,5 +245,6 @@ export class VaServiceStack extends cdk.Stack {
     })
 
     this.loadbalancer = loadBalancer
+    this.exportValue(this.loadbalancer.loadBalancerDnsName)
   }
 }

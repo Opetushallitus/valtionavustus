@@ -60,13 +60,13 @@ export class SecurityGroupStack extends cdk.Stack {
     // https://github.com/aws/aws-cdk/issues/15115
     this.securityGroups.albSecurityGroup.addIngressRule(
       Peer.anyIpv4(),
-      Port.tcp(80),
-      'Allow access from anywhere'
+      Port.tcp(443),
+      'Allow HTTPS access from anywhere'
     )
     this.securityGroups.albSecurityGroup.addIngressRule(
       Peer.anyIpv6(),
-      Port.tcp(80),
-      'Allow access from anywhere'
+      Port.tcp(443),
+      'Allow HTTPS access from anywhere'
     )
 
     this.securityGroups.albSecurityGroup.addEgressRule(

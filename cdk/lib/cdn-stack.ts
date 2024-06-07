@@ -34,7 +34,7 @@ export interface HostedZones {
 }
 
 interface CdnStackProps extends cdk.StackProps {
-  loadBalancer: ApplicationLoadBalancer
+  loadBalancerARecord: ARecord
   domains: Domains
   zones: HostedZones
   sslCertificate: Certificate
@@ -46,7 +46,7 @@ export class CdnStack extends cdk.Stack {
   constructor(scope: Environment, id: string, props: CdnStackProps) {
     super(scope, id, props)
 
-    const { domains, zones, loadBalancer, sslCertificate } = props
+    const { domains, zones, loadBalancerARecord, sslCertificate } = props
     const { hakijaDomain, hakijaDomainSv, virkailijaDomain } = domains
     const { hakijaZone, hakijaZoneSv, virkailijaZone } = zones
 
@@ -76,8 +76,8 @@ export class CdnStack extends cdk.Stack {
       certificate: sslCertificate,
       sslSupportMethod: SSLMethod.SNI,
       defaultBehavior: {
-        origin: new origins.LoadBalancerV2Origin(loadBalancer, {
-          protocolPolicy: OriginProtocolPolicy.HTTP_ONLY,
+        origin: new origins.HttpOrigin(loadBalancerARecord.domainName, {
+          protocolPolicy: OriginProtocolPolicy.HTTPS_ONLY,
         }),
         allowedMethods: AllowedMethods.ALLOW_ALL,
         originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
