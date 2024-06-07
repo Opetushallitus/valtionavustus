@@ -72,6 +72,7 @@ const app = new cdk.App()
     vpc: vpcStack.vpc,
     cluster: ecsStack.ecsCluster,
     applicationLogGroup: persistentResources.applicationLogGroup,
+    loadBalancerAccessLogBucket: persistentResources.loadBalancerAccessLogBucket,
     db: {
       hostname: dbStack.clusterWriterEndpointHostname,
       passwordSecret: persistentResources.databasePasswordSecret,

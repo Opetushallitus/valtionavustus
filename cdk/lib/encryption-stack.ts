@@ -7,7 +7,6 @@ import { PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam'
 export class EncryptionStack extends cdk.Stack {
   public readonly dbEncryptionKey: aws_kms.Key
   public readonly logGroupEncryptionKey: aws_kms.Key
-
   constructor(scope: Environment, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
 

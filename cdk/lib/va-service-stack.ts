@@ -32,6 +32,7 @@ import { Domains, HostedZones } from './dns-stack'
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager'
 import { LoadBalancerTarget } from 'aws-cdk-lib/aws-route53-targets'
 import { ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53'
+import { Bucket } from 'aws-cdk-lib/aws-s3'
 
 const CONTAINER_NAME = 'valtionavustukset'
 export const VIRKAILIJA_PORT = 8081 // = virkailija port
@@ -42,6 +43,7 @@ interface VaServiceStackProps extends cdk.StackProps {
   cluster: Cluster
   db: DbProps
   applicationLogGroup: LogGroup
+  loadBalancerAccessLogBucket: Bucket
   securityGroups: VaSecurityGroups
   domains: Pick<Domains, 'virkailijaDomain' | 'hakijaDomain'>
   zones: Pick<HostedZones, 'hakijaZone'>
@@ -167,6 +169,7 @@ export class VaServiceStack extends cdk.Stack {
       vpc: vpc,
       preserveHostHeader: true,
     })
+    loadBalancer.logAccessLogs(props.loadBalancerAccessLogBucket)
 
     const ALB_FQDN = `alb.${hakijaDomain}`
     this.loadbalancerARecord = new ARecord(this, 'alb-a-alias-record', {
@@ -245,6 +248,5 @@ export class VaServiceStack extends cdk.Stack {
     })
 
     this.loadbalancer = loadBalancer
-    this.exportValue(this.loadbalancer.loadBalancerDnsName)
   }
 }
