@@ -1,0 +1,38 @@
+{
+  "routing_key": "${env:PAGERDUTY_ROUTING_KEY}",
+  "payload": {
+    "summary": {
+      "$resolver": "message",
+      "stringified": true
+    },
+    "timestamp": {
+      "$resolver": "timestamp"
+    },
+    "source": "valtionavustukset-logs",
+    "severity": {
+      "$resolver": "level",
+      "field": "name"
+    },
+    "custom_details": {
+      "thread_name": {
+        "$resolver": "thread",
+        "field": "name"
+      },
+      "logger_name": {
+        "$resolver": "logger",
+        "field": "name"
+      },
+      "stack_trace": {
+        "$resolver": "exception",
+        "field": "stackTrace",
+        "stackTrace": {
+          "stringified": true
+        }
+      },
+      "file": {
+        "$resolver": "source",
+        "field": "fileName"
+      }
+    }
+  }
+}

@@ -2,21 +2,33 @@
 <Configuration status="warn">
   <Appenders>
     <Console name="ApplicationLog" target="SYSTEM_OUT">
+      <Filters>
+        <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+      </Filters>
       <JsonTemplateLayout eventTemplateUri="classpath:EcsLayout.json"/>
     </Console>
     <Console name="AccessLog" target="SYSTEM_OUT">
       <JsonTemplateLayout eventTemplateUri="classpath:EcsLayout.json"/>
     </Console>
+    <Http name="PagerdutyEventsApi" url="${env:PAGERDUTY_API_ENDPOINT}">
+      <Filters><ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/></Filters>
+      <JsonTemplateLayout
+        eventTemplateUri="classpath:pagerduty_log4j_json_template.json"
+        locationInfoEnabled="true"
+      />
+    </Http>
   </Appenders>
   <Loggers>
     <Logger name="oph" level="trace" additivity="false">
       <AppenderRef ref="ApplicationLog"/>
+      <AppenderRef ref="PagerdutyEventsApi"/>
     </Logger>
     <Logger name="ring" level="trace" additivity="false">
       <AppenderRef ref="AccessLog"/>
     </Logger>
-    <Root level="info">
+    <Root>
       <AppenderRef ref="ApplicationLog"/>
+      <AppenderRef ref="PagerdutyEventsApi"/>
     </Root>
   </Loggers>
 </Configuration>

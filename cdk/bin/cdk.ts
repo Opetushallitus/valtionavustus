@@ -73,10 +73,7 @@ const app = new cdk.App()
     cluster: ecsStack.ecsCluster,
     applicationLogGroup: persistentResources.applicationLogGroup,
     loadBalancerAccessLogBucket: persistentResources.loadBalancerAccessLogBucket,
-    db: {
-      hostname: dbStack.clusterWriterEndpointHostname,
-      passwordSecret: persistentResources.databasePasswordSecret,
-    },
+    databaseHostname: dbStack.clusterWriterEndpointHostname,
     securityGroups: securityGroupStack.securityGroups,
     domains: {
       hakijaDomain: `dev.${HAKIJA_DOMAIN}`,
@@ -84,6 +81,10 @@ const app = new cdk.App()
     },
     zones: {
       hakijaZone: dns.zones.hakijaZone,
+    },
+    secrets: {
+      databasePassword: persistentResources.databasePasswordSecret,
+      pagerdutySecrets: persistentResources.pagerdutyApiSecrets,
     },
   })
 

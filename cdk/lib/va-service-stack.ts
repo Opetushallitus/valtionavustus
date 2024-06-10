@@ -41,17 +41,18 @@ export const HAKIJA_PORT = 8080 // hakija port
 interface VaServiceStackProps extends cdk.StackProps {
   vpc: cdk.aws_ec2.Vpc
   cluster: Cluster
-  db: DbProps
+  databaseHostname: string
   applicationLogGroup: LogGroup
   loadBalancerAccessLogBucket: Bucket
   securityGroups: VaSecurityGroups
   domains: Pick<Domains, 'virkailijaDomain' | 'hakijaDomain'>
   zones: Pick<HostedZones, 'hakijaZone'>
+  secrets: AppSecrets
 }
 
-interface DbProps {
-  hostname: string
-  passwordSecret: Secret
+interface AppSecrets {
+  databasePassword: Secret
+  pagerdutySecrets: Secret
 }
 
 export class VaServiceStack extends cdk.Stack {
@@ -61,11 +62,11 @@ export class VaServiceStack extends cdk.Stack {
   constructor(scope: Environment, id: string, props: VaServiceStackProps) {
     super(scope, id, props)
 
-    const { vpc, cluster, db, applicationLogGroup, securityGroups } = props
-    const { hostname: databaseHostname, passwordSecret: databasePasswordSecret } = db
+    const { vpc, cluster, databaseHostname, applicationLogGroup, securityGroups } = props
     const { vaServiceSecurityGroup, dbAccessSecurityGroup, albSecurityGroup } = securityGroups
     const { hakijaDomain, virkailijaDomain } = props.domains
     const { hakijaZone } = props.zones
+    const { databasePassword, pagerdutySecrets } = props.secrets
 
     /* ---------- FARGATE SERVICE ---------- */
 
@@ -114,7 +115,9 @@ export class VaServiceStack extends cdk.Stack {
         configdefaults: '/app/server/config/aws-defaults.edn',
       },
       secrets: {
-        DB_PASSWORD: EcsSecret.fromSecretsManager(databasePasswordSecret),
+        DB_PASSWORD: EcsSecret.fromSecretsManager(databasePassword),
+        PAGERDUTY_API_ENDPOINT: EcsSecret.fromSecretsManager(pagerdutySecrets, 'API_ENDPOINT'),
+        PAGERDUTY_ROUTING_KEY: EcsSecret.fromSecretsManager(pagerdutySecrets, 'ROUTING_KEY'),
       },
       logging: LogDriver.awsLogs({
         streamPrefix: 'fargate',
