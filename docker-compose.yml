@@ -15,6 +15,8 @@ services:
         condition: service_started
       maksatuspalvelu:
         condition: service_started
+      pagerduty:
+        condition: service_started
     healthcheck:
       test: ["CMD-SHELL", "curl http://localhost:8081/api/healthcheck"]
 
@@ -30,6 +32,8 @@ services:
       - /dev/urandom:/dev/random
     environment:
       JAVA_TOOL_OPTIONS: '-Duser.timezone="Europe/Helsinki"'
+      PAGERDUTY_API_ENDPOINT: 'http://pagerduty:8080/v2/enqueue'
+      PAGERDUTY_ROUTING_KEY: '_not_used_on_local_dev_'
     healthcheck:
       interval: 10s
       timeout: 5s
@@ -70,6 +74,12 @@ services:
     logging:
       options:
         mode: 'non-blocking'
+
+  pagerduty:
+    image: mendhak/http-https-echo:33
+    hostname: pagerduty
+    environment:
+      ECHO_BACK_TO_CLIENT: false
 
   maksatuspalvelu:
     image: atmoz/sftp

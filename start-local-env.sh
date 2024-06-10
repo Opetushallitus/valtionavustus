@@ -29,11 +29,12 @@ function rename_panes_to_match_the_script_they_run {
   tmux select-pane -t 2 -T run_hakija_server
   tmux select-pane -t 3 -T run_fakesmtp
   tmux select-pane -t 4 -T run_maksatuspalvelu
+  tmux select-pane -t 5 -T run_pagerduty
 }
 
 init
 
-$compose create --build -- va db fakesmtp maksatuspalvelu
+$compose create --build -- va db fakesmtp maksatuspalvelu pagerduty
 
 session="valtionavustus"
 
@@ -62,6 +63,10 @@ tmux send-keys "$up_cmd fakesmtp" C-m
 tmux splitw
 tmux select-pane -t 4
 tmux send-keys "$up_cmd maksatuspalvelu" C-m
+
+tmux splitw
+tmux select-pane -t 5
+tmux send-keys "$up_cmd pagerduty" C-m
 
 rename_panes_to_match_the_script_they_run
 
