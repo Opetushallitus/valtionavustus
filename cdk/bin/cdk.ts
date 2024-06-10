@@ -115,6 +115,11 @@ const app = new cdk.App()
     ecsStack.ecsCluster,
     securityGroupStack.securityGroups.dbAccessSecurityGroup
   )
+  const persistentResources = new PersistentResourcesStack(
+    qa,
+    'persistent-resources',
+    encryptionStack.logGroupEncryptionKey
+  )
   const dbStack = new DbStack(
     qa,
     'db',
@@ -150,6 +155,11 @@ const app = new cdk.App()
     'bastion',
     ecsStack.ecsCluster,
     securityGroupStack.securityGroups.dbAccessSecurityGroup
+  )
+  const persistentResources = new PersistentResourcesStack(
+    dev,
+    'persistent-resources',
+    encryptionStack.logGroupEncryptionKey
   )
   const dbStack = new DbStack(
     prod,
