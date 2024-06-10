@@ -10,10 +10,7 @@
       "$resolver": "timestamp"
     },
     "source": "valtionavustukset-logs",
-    "severity": {
-      "$resolver": "level",
-      "field": "name"
-    },
+    "severity": "error",
     "custom_details": {
       "thread_name": {
         "$resolver": "thread",
