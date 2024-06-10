@@ -158,7 +158,7 @@ const app = new cdk.App()
     securityGroupStack.securityGroups.dbAccessSecurityGroup
   )
   const persistentResources = new PersistentResourcesStack(
-    dev,
+    prod,
     'persistent-resources',
     encryptionStack.logGroupEncryptionKey
   )
