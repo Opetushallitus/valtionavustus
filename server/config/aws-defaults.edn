@@ -23,8 +23,8 @@
                                                                          "application/zip"]
                                                :threads                 16}
 
-:db                                           {:database-name "va"
-                                               :username "va_application"
+ :db                                          {:database-name "va"
+                                               :username      "va_application"
                                                :port-number   5432}
  :opintopolku                                 {:url                "https://virkailija.testiopintopolku.fi"
                                                :cas-login          "/cas/login?service="
