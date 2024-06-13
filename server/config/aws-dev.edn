@@ -34,5 +34,5 @@
                                                               :schedule "0 0 7 ? * *"}
                             :muutoshakemuksia-kasittelematta {:enabled? false
                                                               :schedule "0 0 14 ? * MON-FRI"}}
- :payments                 {:enabled? false :delete-payments? true}
+ :payments                 {:enabled? false :delete-payments? false}
  }
