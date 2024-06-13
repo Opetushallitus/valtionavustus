@@ -124,6 +124,12 @@
       (.addReplyTo msg reply-to))
     (when bcc
       (.addBcc msg bcc))
+    (when (:username smtp-config)
+      (.setAuthentication msg (:username smtp-config) (:password smtp-config)))
+    (when (= 587 (:port smtp-config))
+      (.setStartTLSRequired msg true)
+      (.setSSLCheckServerIdentity msg true)
+      (.setSslSmtpPort msg (str 587)))
     (doseq [address cc]
       (.addCc msg address))
     (when attachment

@@ -14,6 +14,7 @@ import { SecurityGroupStack } from '../lib/security-group-stack'
 import { PersistentResourcesStack } from '../lib/persistent-resources-stack'
 import { CdnStack } from '../lib/cdn-stack'
 import { CertificateStack } from '../lib/certificate-stack'
+import { SmtpStack } from '../lib/smtp-stack'
 
 const HAKIJA_DOMAIN = 'valtionavustukset.oph.fi'
 const HAKIJA_DOMAIN_SV = 'statsunderstod.oph.fi'
@@ -67,6 +68,10 @@ const app = new cdk.App()
       virkailijaDomain: VIRKAILIJA_DOMAIN,
     },
   })
+  const smtpStack = new SmtpStack(dev, 'smtp', {
+    emailDomainName: `dev.${HAKIJA_DOMAIN}`,
+    emailHostedZone: dns.zones.hakijaZone,
+  })
 
   const vaService = new VaServiceStack(dev, 'application', {
     vpc: vpcStack.vpc,
@@ -85,6 +90,7 @@ const app = new cdk.App()
     secrets: {
       databasePassword: persistentResources.databasePasswordSecret,
       pagerdutySecrets: persistentResources.pagerdutyApiSecrets,
+      smtpSecrets: smtpStack.smtpSecrets,
     },
   })
 

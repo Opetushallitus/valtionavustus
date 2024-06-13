@@ -35,17 +35,18 @@
  :api                                         {:restricted-routes? true}
  :grant-select-for-other-db-user              "va_virkailija"
  :email                                       {:enabled?                     false
-                                               :host                         nil
-                                               :port                         nil
+                                               :host                         "email-smtp.eu-west-1.amazonaws.com"
+                                               :port                         587
+                                               :username                     nil ;; Read from AWS secrets and passed as ENV variable
+                                               :password                     nil ;; Read from AWS secrets and passed as ENV variable
+                                               :bounce-address               nil ;; Read from AWS secrets and passed as ENV variable
                                                :queue-size                   1024
-                                               :from                         {:fi "no-reply@valtionavustukset.oph.fi"
-                                                                              :sv "no-reply@statsunderstod.oph.fi"}
                                                :sender                       "no-reply@csc.fi"
                                                :to-taloustarkastaja          ["taloustarkastus@localhost"]
                                                :to-palkeet                   ["palkeet@localhost"]
                                                :to-palkeet-ja-talouspalvelut ["palkeet@localhost" "talouspalvelut@localhost"]
                                                :bounce-address               "oph-va-alerts@reaktor.com"
-                                               :persistent-retry             {:enabled? false
+                                               :persistent-retry             {:enabled? true
                                                                               :schedule "0 * * * * ?"}
                                                }
  :va-users                                    {:use-cache?                      true
@@ -57,8 +58,8 @@
  :rondo-scheduler                             {:enabled? false}
  :reminder-scheduler                          {:enabled? true}
  :payments                                    {:enabled? true}
- :integration-healthcheck {:enabled?         true
-                           :timeout          5000
-                           :interval-minutes 15}
+ :integration-healthcheck                     {:enabled?         true
+                                               :timeout          5000
+                                               :interval-minutes 15}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :test-apis                                   {:enabled? false}}

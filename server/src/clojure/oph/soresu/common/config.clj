@@ -43,7 +43,12 @@
                                       :database-name (System/getenv "DB_NAME")
                                       :username (System/getenv "DB_USERNAME")
                                       :password (System/getenv "DB_PASSWORD")})
-                     })))
+                     :email (filter val {
+                                         :username       (System/getenv "SMTP_AUTH_USERNAME")
+                                         :password       (System/getenv "SMTP_AUTH_PASSWORD")
+                                         :host           (System/getenv "SMTP_HOSTNAME")
+                                         :bounce-address (System/getenv "SMTP_BOUNCE_ADDRESS")
+                                         })})))
 
 (def config
   (when-not *compile-files*
