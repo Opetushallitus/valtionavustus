@@ -149,6 +149,10 @@ const app = new cdk.App()
       virkailijaDomain: VIRKAILIJA_DOMAIN,
     },
   })
+  const smtpStack = new SmtpStack(qa, 'smtp', {
+    emailDomainName: `testi.${HAKIJA_DOMAIN}`,
+    emailHostedZone: dns.zones.hakijaZone,
+  })
 }
 
 {
