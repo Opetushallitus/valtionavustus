@@ -26,8 +26,7 @@
  :db                                          {:database-name "va"
                                                :username      "va_application"
                                                :port-number   5432}
- :opintopolku                                 {:url                "https://virkailija.testiopintopolku.fi"
-                                               :cas-login          "/cas/login?service="
+ :opintopolku                                 {:cas-login          "/cas/login?service="
                                                :cas-logout         "/cas/logout?service="
                                                :permission-request "/henkilo-ui/omattiedot"}
  :ui                                          {:show-environment? true

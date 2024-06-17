@@ -4,6 +4,7 @@
                    :url             {:fi "https://aws.dev.valtionavustukset.oph.fi/"
                                      :sv "https://aws.dev.statsunderstod.oph.fi/"}
                    :virkailija-url  "https://aws.dev.virkailija.valtionavustukset.oph.fi"}
+ :opintopolku     {:url "https://virkailija.untuvaopintopolku.fi"}
  :email           {:enabled?                     true
                    :from                         {:fi "no-reply@dev.valtionavustukset.oph.fi"
                                                   :sv "no-reply@dev.statsunderstod.oph.fi"}
