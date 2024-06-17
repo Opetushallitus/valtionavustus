@@ -8,6 +8,7 @@ import { Bucket } from 'aws-cdk-lib/aws-s3'
 export class PersistentResourcesStack extends cdk.Stack {
   databasePasswordSecret: Secret
   pagerdutyApiSecrets: Secret
+  ansibleVaultSecrets: Secret
   applicationLogGroup: LogGroup
   loadBalancerAccessLogBucket: Bucket
 
@@ -54,6 +55,12 @@ export class PersistentResourcesStack extends cdk.Stack {
     this.pagerdutyApiSecrets = new Secret(this, 'pagerduty-events-api-secrets', {
       secretName: '/pagerduty/events_api',
       description: 'Secrets for creating Pagerduty alerts via Events API v2',
+      removalPolicy: RemovalPolicy.RETAIN,
+    })
+
+    this.ansibleVaultSecrets = new Secret(this, 'application-configuration-secrets', {
+      secretName: '/application/config_secrets',
+      description: 'Secrets migrated from Ansible Vaults',
       removalPolicy: RemovalPolicy.RETAIN,
     })
   }
