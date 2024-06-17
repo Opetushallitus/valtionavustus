@@ -54,6 +54,7 @@ interface AppSecrets {
   databasePassword: Secret
   pagerdutySecrets: Secret
   smtpSecrets: Secret
+  vaultSecrets: Secret
 }
 
 export class VaServiceStack extends cdk.Stack {
@@ -67,7 +68,7 @@ export class VaServiceStack extends cdk.Stack {
     const { vaServiceSecurityGroup, dbAccessSecurityGroup, albSecurityGroup } = securityGroups
     const { hakijaDomain, virkailijaDomain } = props.domains
     const { hakijaZone } = props.zones
-    const { databasePassword, pagerdutySecrets, smtpSecrets } = props.secrets
+    const { databasePassword, pagerdutySecrets, smtpSecrets, vaultSecrets } = props.secrets
 
     /* ---------- FARGATE SERVICE ---------- */
 
@@ -122,6 +123,8 @@ export class VaServiceStack extends cdk.Stack {
         SMTP_AUTH_USERNAME: EcsSecret.fromSecretsManager(smtpSecrets, 'SMTP_USERNAME'),
         SMTP_AUTH_PASSWORD: EcsSecret.fromSecretsManager(smtpSecrets, 'SMTP_PASSWORD'),
         SMTP_BOUNCE_ADDRESS: EcsSecret.fromSecretsManager(smtpSecrets, 'BOUNCE_ADDRESS'),
+        CAS_SERVICE_USERNAME: EcsSecret.fromSecretsManager(vaultSecrets, 'CAS_SERVICE_USERNAME'),
+        CAS_SERVICE_PASSWORD: EcsSecret.fromSecretsManager(vaultSecrets, 'CAS_SERVICE_PASSWORD'),
       },
       logging: LogDriver.awsLogs({
         streamPrefix: 'fargate',

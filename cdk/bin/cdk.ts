@@ -89,6 +89,7 @@ const app = new cdk.App()
     },
     secrets: {
       databasePassword: persistentResources.databasePasswordSecret,
+      vaultSecrets: persistentResources.ansibleVaultSecrets,
       pagerdutySecrets: persistentResources.pagerdutyApiSecrets,
       smtpSecrets: smtpStack.smtpSecrets,
     },

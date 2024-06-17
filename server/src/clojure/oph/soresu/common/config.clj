@@ -39,16 +39,20 @@
 
 (defn- merge-with-environment [config]
   (merge-with merge config
-              (into {:db (filter val {:server-name (System/getenv "DB_HOSTNAME")
-                                      :database-name (System/getenv "DB_NAME")
-                                      :username (System/getenv "DB_USERNAME")
-                                      :password (System/getenv "DB_PASSWORD")})
-                     :email (filter val {
-                                         :username       (System/getenv "SMTP_AUTH_USERNAME")
-                                         :password       (System/getenv "SMTP_AUTH_PASSWORD")
-                                         :host           (System/getenv "SMTP_HOSTNAME")
-                                         :bounce-address (System/getenv "SMTP_BOUNCE_ADDRESS")
-                                         })})))
+              (into {:db          (filter val {:server-name   (System/getenv "DB_HOSTNAME")
+                                               :database-name (System/getenv "DB_NAME")
+                                               :username      (System/getenv "DB_USERNAME")
+                                               :password      (System/getenv "DB_PASSWORD")})
+                     :email       (filter val {
+                                               :username       (System/getenv "SMTP_AUTH_USERNAME")
+                                               :password       (System/getenv "SMTP_AUTH_PASSWORD")
+                                               :host           (System/getenv "SMTP_HOSTNAME")
+                                               :bounce-address (System/getenv "SMTP_BOUNCE_ADDRESS")
+                                               })
+                     :opintopolku (filter val {
+                                               :cas-service-username (System/getenv "CAS_SERVICE_USERNAME")
+                                               :cas-service-password (System/getenv "CAS_SERVICE_PASSWORD")
+                                               })})))
 
 (def config
   (when-not *compile-files*
