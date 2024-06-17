@@ -188,18 +188,18 @@ export class DnsStack extends cdk.Stack {
         parentHostedZoneName: delegationRecord.virkailijaDomain,
         delegationRole: delegationRole,
       })
+    }
 
-      this.domains = {
-        hakijaDomain,
-        hakijaDomainSv,
-        virkailijaDomain,
-      }
+    this.zones = {
+      hakijaZone,
+      hakijaZoneSv,
+      virkailijaZone,
+    }
 
-      this.zones = {
-        hakijaZone,
-        hakijaZoneSv,
-        virkailijaZone,
-      }
+    this.domains = {
+      hakijaDomain,
+      hakijaDomainSv,
+      virkailijaDomain,
     }
   }
 }
