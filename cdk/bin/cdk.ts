@@ -188,4 +188,8 @@ const app = new cdk.App()
     virkailijaLegacyARecord: LEGACY_LOADBALANCER_IP,
     databaseHostname: dbStack.clusterWriterEndpointHostname,
   })
+  const smtpStack = new SmtpStack(prod, 'smtp', {
+    emailDomainName: HAKIJA_DOMAIN,
+    emailHostedZone: dns.zones.hakijaZone,
+  })
 }
