@@ -8,10 +8,10 @@ import {
   VdmAttributes,
   ConfigurationSet,
 } from 'aws-cdk-lib/aws-ses'
-import { Construct } from 'constructs'
 import type { IPublicHostedZone } from 'aws-cdk-lib/aws-route53'
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager'
 import { RemovalPolicy } from 'aws-cdk-lib'
+import { Environment } from './va-env-stage'
 
 interface SmtpStackProps extends cdk.StackProps {
   emailDomainName: string
@@ -21,7 +21,7 @@ interface SmtpStackProps extends cdk.StackProps {
 export class SmtpStack extends cdk.Stack {
   smtpSecrets: Secret
 
-  constructor(scope: Construct, id: string, props: SmtpStackProps) {
+  constructor(scope: Environment, id: string, props: SmtpStackProps) {
     super(scope, id, props)
 
     const { emailHostedZone, emailDomainName } = props
@@ -33,7 +33,7 @@ export class SmtpStack extends cdk.Stack {
 
     const configurationSet = new ConfigurationSet(this, 'va-smtp-configuration-set', {
       configurationSetName: 'valtionavustukset-smtp-configuration-set',
-      sendingEnabled: true,
+      sendingEnabled: scope.env !== 'prod',
       dedicatedIpPool,
       reputationMetrics: true,
       suppressionReasons: SuppressionReasons.COMPLAINTS_ONLY,
