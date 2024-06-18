@@ -61,7 +61,7 @@
     "fork-ts-checker-webpack-plugin": "^9.0.0",
     "less": "^4.1.2",
     "less-loader": "^12.0.0",
-    "pdfjs-dist": "^3.7.107",
+    "pdfjs-dist": "^4.2.67",
     "prettier": "^3.1.0",
     "style-loader": "^4.0.0",
     "ts-loader": "^9.3.1",
