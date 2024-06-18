@@ -231,12 +231,14 @@ export default class FormStateTransitions {
           return null
         })
         .catch(function (error) {
-          FormStateTransitions.handleAttachmentSaveError(
-            'attachment-remove-error',
-            error,
-            translations,
-            lang
-          )
+          if (error.response.status !== 404) {
+            FormStateTransitions.handleAttachmentSaveError(
+              'attachment-remove-error',
+              error,
+              translations,
+              lang
+            )
+          }
         })
     }
     return state
