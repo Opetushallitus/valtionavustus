@@ -17,10 +17,6 @@ import {
 import { Environment } from './va-env-stage'
 import { ValtionavustusEnvironment, getAccountId, getEnv } from './va-context'
 import { Duration } from 'aws-cdk-lib'
-import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets'
-import { Distribution } from 'aws-cdk-lib/aws-cloudfront'
-import { AWS_SERVICE_PREFIX } from '../bin/cdk'
-import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager'
 
 interface DnsStackProps extends cdk.StackProps {
   hakijaDomain: string
