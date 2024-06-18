@@ -1,6 +1,5 @@
 import { PlaywrightTestConfig } from '@playwright/test'
 
-const headless = process.env['HEADLESS'] === 'true'
 const workersEnv = process.env['PLAYWRIGHT_WORKERS']
 const workersEnvNumber = Number(workersEnv)
 const workers = isNaN(workersEnvNumber) ? workersEnv : workersEnvNumber
@@ -84,7 +83,6 @@ const config: PlaywrightTestConfig<SmokeTestConfig> = {
   use: {
     actionTimeout: 10000,
     navigationTimeout: 10000,
-    headless,
     viewport: { width: 1920, height: 1080 },
     ignoreHTTPSErrors: true,
     video: 'off',
