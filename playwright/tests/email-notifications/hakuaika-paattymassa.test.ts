@@ -1,47 +1,21 @@
-import { expect, Page } from '@playwright/test'
+import { expect } from '@playwright/test'
 import moment from 'moment'
 
-import { getHakuaikaPaattymassaEmails, waitUntilMinEmails } from '../../utils/emails'
-import { VIRKAILIJA_URL } from '../../utils/constants'
-import { randomString } from '../../utils/random'
-import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
-import { createJotpaCodes } from '../../fixtures/JotpaTest'
-import { expectToBeDefined } from '../../utils/util'
+import { getHakuaikaPaattymassaEmails, timezones, waitUntilMinEmails } from '../../utils/emails'
 import {
   expectIsFinnishJotpaEmail,
   expectIsFinnishOphEmail,
   expectIsSwedishJotpaEmail,
 } from '../../utils/email-signature'
-
-const sendHakuaikaPaattymassaNotifications = (page: Page) =>
-  page.request.post(`${VIRKAILIJA_URL}/api/test/send-hakuaika-paattymassa-notifications`)
-
-type HakuaikaPaattymassaFixtures = {
-  randomEmail: string
-}
-
-const hakuaikaPaattymassaTest = muutoshakemusTest.extend<HakuaikaPaattymassaFixtures>({
-  randomEmail: async ({}, use) => {
-    await use(`${randomString()}@example.com`)
-  },
-  answers: async ({ answers, randomEmail }, use) => {
-    await use({
-      ...answers,
-      contactPersonEmail: randomEmail,
-    })
-  },
-})
-
-const jotpaHakuaikaPaattymassaTest = hakuaikaPaattymassaTest.extend({
-  codes: async ({ page }, use) => {
-    const codes = await createJotpaCodes(page)
-    await use(codes)
-  },
-})
+import {
+  hakuaikaPaattymassaTest,
+  jotpaHakuaikaPaattymassaTest,
+  sendHakuaikaPaattymassaNotifications,
+} from '../../fixtures/hakuaikaPaattymassaTest'
+import { expectToBeDefined } from '../../utils/util'
 
 hakuaikaPaattymassaTest.describe.configure({ mode: 'serial' })
 
-const timezones = ['Europe/Helsinki', 'Europe/Stockholm']
 for (const tz of timezones) {
   // All serial since sending hakuaika päättymässä notifications is global for all avustushakus
   hakuaikaPaattymassaTest.describe(`With time zone ${tz}`, async () => {
@@ -180,37 +154,54 @@ for (const tz of timezones) {
   // All serial since sending hakuaika päättymässä notifications is global for all avustushakus
   jotpaHakuaikaPaattymassaTest.describe(`With time zone ${tz}`, async () => {
     jotpaHakuaikaPaattymassaTest.use({ timezoneId: tz })
+    jotpaHakuaikaPaattymassaTest.describe('When Jotpa avustushaku is closing tomorrow', () => {
+      const today = new Date()
+      const tomorrow = new Date(today)
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      tomorrow.setHours(12, 0, 0, 0)
 
-    jotpaHakuaikaPaattymassaTest(
-      'sends an email to those whose jotpa hakemus is expiring tomorrow',
-      async ({ page, avustushakuID, filledHakemus }) => {
-        expectToBeDefined(filledHakemus)
-        await sendHakuaikaPaattymassaNotifications(page)
-        const emails = await waitUntilMinEmails(getHakuaikaPaattymassaEmails, 1, avustushakuID)
-        const email = emails[0]
-        await expectIsFinnishJotpaEmail(email)
-      }
-    )
+      jotpaHakuaikaPaattymassaTest.use({
+        hakuProps: ({ hakuProps }, use) => {
+          use({
+            ...hakuProps,
+            hakuaikaEnd: tomorrow,
+          })
+        },
+      })
 
-    jotpaHakuaikaPaattymassaTest.use({
-      answers: async ({ swedishAnswers, randomEmail }, use) => {
-        await use({
-          ...swedishAnswers,
-          contactPersonEmail: randomEmail,
+      jotpaHakuaikaPaattymassaTest(
+        'sends an email to those whose jotpa hakemus is expiring tomorrow',
+        async ({ page, avustushakuID, filledHakemus }) => {
+          expectToBeDefined(filledHakemus)
+          await sendHakuaikaPaattymassaNotifications(page)
+          const emails = await waitUntilMinEmails(getHakuaikaPaattymassaEmails, 1, avustushakuID)
+          const email = emails[0]
+          await expectIsFinnishJotpaEmail(email)
+        }
+      )
+
+      jotpaHakuaikaPaattymassaTest.describe('when hakemus is in Swedish', () => {
+        jotpaHakuaikaPaattymassaTest.use({
+          answers: async ({ swedishAnswers, randomEmail }, use) => {
+            await use({
+              ...swedishAnswers,
+              contactPersonEmail: randomEmail,
+            })
+          },
         })
-      },
-    })
 
-    jotpaHakuaikaPaattymassaTest(
-      'sends Jotpa email in Swedish to those whose swedish jotpa hakemus is expiring tomorrow',
-      async ({ page, avustushakuID, filledHakemus }) => {
-        expectToBeDefined(filledHakemus)
-        await sendHakuaikaPaattymassaNotifications(page)
-        const emails = await waitUntilMinEmails(getHakuaikaPaattymassaEmails, 1, avustushakuID)
-        const email = emails[0]
-        await expectIsSwedishJotpaEmail(email)
-      }
-    )
+        jotpaHakuaikaPaattymassaTest(
+          'sends Jotpa email in Swedish to those whose swedish jotpa hakemus is expiring tomorrow',
+          async ({ page, avustushakuID, filledHakemus }) => {
+            expectToBeDefined(filledHakemus)
+            await sendHakuaikaPaattymassaNotifications(page)
+            const emails = await waitUntilMinEmails(getHakuaikaPaattymassaEmails, 1, avustushakuID)
+            const email = emails[0]
+            await expectIsSwedishJotpaEmail(email)
+          }
+        )
+      })
+    })
   })
 }
 
