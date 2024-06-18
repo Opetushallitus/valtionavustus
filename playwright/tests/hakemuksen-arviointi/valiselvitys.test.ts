@@ -17,7 +17,7 @@ import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hak
 import { ValiselvitysPage } from '../../pages/virkailija/hakujen-hallinta/ValiselvitysPage'
 import { expectIsFinnishOphEmail } from '../../utils/email-signature'
 
-test.describe('Väliselvitys', () => {
+selvitysTest.describe('Väliselvitys', () => {
   selvitysTest(
     'väliselvityksen esikatelu näyttää miltä väliselvitys näyttää hakijalle',
     async ({ page, avustushakuID }) => {

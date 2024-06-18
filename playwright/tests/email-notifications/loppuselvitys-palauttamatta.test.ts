@@ -16,7 +16,7 @@ import {
 } from '../../utils/email-signature'
 import { createJotpaCodes } from '../../fixtures/JotpaTest'
 
-test.describe('loppuselvitys-palauttamatta', () => {
+selvitysTest.describe('loppuselvitys-palauttamatta', () => {
   selvitysTest(
     'reminder email is not sent for hakemus with loppuselvitys deadline 15 or more days in the future',
     async ({ page, avustushakuID, acceptedHakemus: { hakemusID }, loppuselvityspyyntöSent }) => {
@@ -106,46 +106,6 @@ Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen
     }
   )
 
-  selvitysTest.extend<{ answers: Answers }>({
-    answers: swedishAnswers,
-  })(
-    'reminder mail is sent in swedish for swedish hakemus',
-    async ({
-      page,
-      hakuProps,
-      avustushakuID,
-      acceptedHakemus: { hakemusID, userKey },
-      loppuselvityspyyntöSent,
-    }) => {
-      expectToBeDefined(loppuselvityspyyntöSent)
-      const loppuselvitysdate = moment().add(14, 'days').format('DD.MM.YYYY')
-      await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
-
-      await sendLoppuselvitysPalauttamattaNotifications(page)
-      const emails = await waitUntilMinEmails(getLoppuselvitysPalauttamattaEmails, 1, hakemusID)
-      const email = emails[0]
-      expect(email['to-address']).toHaveLength(1)
-      expect(email['to-address']).toContain('lars.andersson@example.com')
-      await expectIsSwedishOphEmail(email)
-      expect(email.subject).toContain('Påminnelse om att lämna in slutredovisningen')
-      expect(email['formatted']).toContain(`Bästa mottagare,
-
-er slutredovisning för användningen av statsunderstödet ${
-        hakuProps.avustushakuName + ' på svenska'
-      } har ännu inte lämnats in.
-
-Kom ihåg att skicka slutredovisningen för behandling inom utsatt tid, senast ${loppuselvitysdate}.
-
-Projekt som har beviljats förlängd användningstid för understödet kan ha en sista inlämningsdag för slutredovisningen som avviker från vad som nämns ovan. Den sista inlämningsdagen för redovisningar inom projekt som beviljats förlängd användningstid anges i beslutet som fattats utifrån en ändringsansökan.
-
-Om ett projekt som beviljats förlängd användningstid inte har fått en ny tidsfrist för redovisningen, ska slutredovisningen lämnas in inom två månader efter att den förlängda användningstiden har gått ut.
-
-Länk till er redovisningsblankett: ${HAKIJA_URL}/avustushaku/${avustushakuID}/loppuselvitys?hakemus=${userKey}&lang=sv
-
-Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid tekniska problem, ta kontakt på adressen valtionavustukset@oph.fi`)
-    }
-  )
-
   selvitysTest(
     'do not send reminders if loppuselvitys pyyntö has not been sent',
     async ({ page, avustushakuID, acceptedHakemus: { hakemusID } }) => {
@@ -210,13 +170,57 @@ Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid 
   )
 })
 
-test.describe('Jotpan loppuselvitys palauttamatta', () => {
-  selvitysTest.extend({
-    codes: async ({ page }, use) => {
-      const codes = await createJotpaCodes(page)
-      await use(codes)
-    },
-  })(
+const swedishLoppuselvitysTest = selvitysTest.extend<{ answers: Answers }>({
+  answers: swedishAnswers,
+})
+
+swedishLoppuselvitysTest(
+  'reminder mail is sent in swedish for swedish hakemus',
+  async ({
+    page,
+    hakuProps,
+    avustushakuID,
+    acceptedHakemus: { hakemusID, userKey },
+    loppuselvityspyyntöSent,
+  }) => {
+    expectToBeDefined(loppuselvityspyyntöSent)
+    const loppuselvitysdate = moment().add(14, 'days').format('DD.MM.YYYY')
+    await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
+
+    await sendLoppuselvitysPalauttamattaNotifications(page)
+    const emails = await waitUntilMinEmails(getLoppuselvitysPalauttamattaEmails, 1, hakemusID)
+    const email = emails[0]
+    expect(email['to-address']).toHaveLength(1)
+    expect(email['to-address']).toContain('lars.andersson@example.com')
+    await expectIsSwedishOphEmail(email)
+    expect(email.subject).toContain('Påminnelse om att lämna in slutredovisningen')
+    expect(email['formatted']).toContain(`Bästa mottagare,
+
+er slutredovisning för användningen av statsunderstödet ${
+      hakuProps.avustushakuName + ' på svenska'
+    } har ännu inte lämnats in.
+
+Kom ihåg att skicka slutredovisningen för behandling inom utsatt tid, senast ${loppuselvitysdate}.
+
+Projekt som har beviljats förlängd användningstid för understödet kan ha en sista inlämningsdag för slutredovisningen som avviker från vad som nämns ovan. Den sista inlämningsdagen för redovisningar inom projekt som beviljats förlängd användningstid anges i beslutet som fattats utifrån en ändringsansökan.
+
+Om ett projekt som beviljats förlängd användningstid inte har fått en ny tidsfrist för redovisningen, ska slutredovisningen lämnas in inom två månader efter att den förlängda användningstiden har gått ut.
+
+Länk till er redovisningsblankett: ${HAKIJA_URL}/avustushaku/${avustushakuID}/loppuselvitys?hakemus=${userKey}&lang=sv
+
+Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid tekniska problem, ta kontakt på adressen valtionavustukset@oph.fi`)
+  }
+)
+
+const jotpaLoppuselvitysTest = selvitysTest.extend({
+  codes: async ({ page }, use) => {
+    const codes = await createJotpaCodes(page)
+    await use(codes)
+  },
+})
+
+jotpaLoppuselvitysTest.describe('Jotpan loppuselvitys palauttamatta', () => {
+  jotpaLoppuselvitysTest(
     'Jotpa reminder email is sent once for hakemus with loppuselvitys deadline in next 14 days',
     async ({
       page,
@@ -255,38 +259,41 @@ Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen
       })
     }
   )
+})
 
-  selvitysTest.extend<{ answers: Answers }>({
-    answers: swedishAnswers,
-    codes: async ({ page }, use) => {
-      const codes = await createJotpaCodes(page)
-      await use(codes)
-    },
-  })(
-    'Jotpa reminder mail is sent in swedish for swedish hakemus',
-    async ({
-      page,
-      hakuProps,
-      avustushakuID,
-      acceptedHakemus: { hakemusID, userKey },
-      loppuselvityspyyntöSent,
-    }) => {
-      expectToBeDefined(loppuselvityspyyntöSent)
-      const loppuselvitysdate = moment().add(14, 'days').format('DD.MM.YYYY')
-      await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
+const swedishJotpaLoppuselvitysTest = selvitysTest.extend<{ answers: Answers }>({
+  answers: swedishAnswers,
+  codes: async ({ page }, use) => {
+    const codes = await createJotpaCodes(page)
+    await use(codes)
+  },
+})
 
-      await sendLoppuselvitysPalauttamattaNotifications(page)
-      const emails = await waitUntilMinEmails(getLoppuselvitysPalauttamattaEmails, 1, hakemusID)
-      const email = emails[0]
-      expect(email['to-address']).toHaveLength(1)
-      expect(email['to-address']).toContain('lars.andersson@example.com')
-      await expectIsSwedishJotpaEmail(email)
-      expect(email.subject).toContain('Påminnelse om att lämna in slutredovisningen')
-      expect(email['formatted']).toContain(`Bästa mottagare,
+swedishJotpaLoppuselvitysTest(
+  'Jotpa reminder mail is sent in swedish for swedish hakemus',
+  async ({
+    page,
+    hakuProps,
+    avustushakuID,
+    acceptedHakemus: { hakemusID, userKey },
+    loppuselvityspyyntöSent,
+  }) => {
+    expectToBeDefined(loppuselvityspyyntöSent)
+    const loppuselvitysdate = moment().add(14, 'days').format('DD.MM.YYYY')
+    await setLoppuselvitysDate(page, avustushakuID, loppuselvitysdate)
+
+    await sendLoppuselvitysPalauttamattaNotifications(page)
+    const emails = await waitUntilMinEmails(getLoppuselvitysPalauttamattaEmails, 1, hakemusID)
+    const email = emails[0]
+    expect(email['to-address']).toHaveLength(1)
+    expect(email['to-address']).toContain('lars.andersson@example.com')
+    await expectIsSwedishJotpaEmail(email)
+    expect(email.subject).toContain('Påminnelse om att lämna in slutredovisningen')
+    expect(email['formatted']).toContain(`Bästa mottagare,
 
 er slutredovisning för användningen av statsunderstödet ${
-        hakuProps.avustushakuName + ' på svenska'
-      } har ännu inte lämnats in.
+      hakuProps.avustushakuName + ' på svenska'
+    } har ännu inte lämnats in.
 
 Kom ihåg att skicka slutredovisningen för behandling inom utsatt tid, senast ${loppuselvitysdate}.
 
@@ -297,9 +304,8 @@ Om ett projekt som beviljats förlängd användningstid inte har fått en ny tid
 Länk till er redovisningsblankett: ${HAKIJA_URL}/avustushaku/${avustushakuID}/loppuselvitys?hakemus=${userKey}&lang=sv
 
 Mera information får ni vid behov av kontaktpersonen som anges i beslutet. Vid tekniska problem, ta kontakt på adressen valtionavustukset@oph.fi`)
-    }
-  )
-})
+  }
+)
 
 const sendLoppuselvitysPalauttamattaNotifications = (page: Page) =>
   page.request.post(`${VIRKAILIJA_URL}/api/test/send-loppuselvitys-palauttamatta-notifications`, {

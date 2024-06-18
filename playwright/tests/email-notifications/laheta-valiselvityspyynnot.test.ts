@@ -9,7 +9,9 @@ import { expectToBeDefined } from '../../utils/util'
 import { selvitysTest } from '../../fixtures/selvitysTest'
 import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
 
-test.describe.parallel('Lähetä väliselvityspyynnöt notifications', () => {
+selvitysTest.describe.configure({ mode: 'parallel' })
+
+selvitysTest.describe('Lähetä väliselvityspyynnöt notifications', () => {
   selvitysTest(
     'Lähetä väliselvityspyynnot notifications are not sent if väliselvitys deadline is not set',
     async ({ page, avustushakuID, acceptedHakemus }) => {

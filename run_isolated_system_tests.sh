@@ -15,6 +15,7 @@ function run_playwright_tests {
     start-service test-runner
     return "$(playwright_test_runner_exit_code)"
   else
+    npx --no playwright install --with-deps chromium
     npm run playwright:test "$@"
   fi
 }

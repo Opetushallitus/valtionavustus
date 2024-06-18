@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect } from '@playwright/test'
 import { expectToBeDefined } from '../../utils/util'
 import { twoAcceptedHakemusTest } from '../../fixtures/twoHakemusTest'
 import { downloadHallinnoiAvustuksiaExcel } from '../../utils/downloadExcel'
@@ -23,7 +23,7 @@ ophTest.use({
 
 const SheetName = 'VA'
 
-test.describe('OPH', () => {
+ophTest.describe('OPH', () => {
   ophTest(
     'Hallinnoiavustuksia.fi Excel export',
     async ({ page, avustushakuID, acceptedHakemukset, hakuProps }) => {
@@ -108,7 +108,7 @@ const Jotpa = JotpaTest.extend<{ hakulomake: string }>({
     }),
 })
 
-test.describe('JOTPA', () => {
+Jotpa.describe('JOTPA', () => {
   Jotpa(
     'Hallinnoiavustuksia.fi Excel export',
     async ({ page, rejectedHakemus, hakuProps, avustushakuID }) => {

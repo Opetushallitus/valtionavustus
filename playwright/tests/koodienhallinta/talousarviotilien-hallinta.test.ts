@@ -32,7 +32,9 @@ const test = defaultValues.extend<{
   },
 })
 
-test.describe.parallel('talousarviotilien hallinta', () => {
+test.describe.configure({ mode: 'parallel' })
+
+test.describe('talousarviotilien hallinta', () => {
   test('can create and remove talousarviotili', async ({ koodienhallintaPage, randomName }) => {
     const taForm = koodienhallintaPage.taTilit.form
     const name = `Talousarviotili ${randomName}`
@@ -259,49 +261,6 @@ test.describe.parallel('talousarviotilien hallinta', () => {
     })
   })
 
-  unpublishedAvustushakuTest(
-    'tili that is in use cannot be deleted',
-    async ({ page, avustushakuID, talousarviotili, hakuProps }) => {
-      expectToBeDefined(avustushakuID)
-      const koodienhallintaPage = KoodienhallintaPage(page)
-      await koodienhallintaPage.navigate()
-      await koodienhallintaPage.switchToTatilitTab()
-      expectToBeDefined(talousarviotili.name)
-      const row = await koodienhallintaPage.page.getByTestId(talousarviotili.name)
-      const deleteRowButton = row.locator(
-        `button[title="Poista talousarviotili ${talousarviotili.code}"]`
-      )
-      await test.step('delete button is disabled', async () => {
-        await expect(row).toBeVisible()
-        await expect(deleteRowButton).toBeDisabled()
-      })
-      const deleteRequest = () =>
-        page.request.delete(`${VIRKAILIJA_URL}/api/talousarviotilit/${talousarviotili.id}/`)
-      await test.step('even trying to delete without button fails', async () => {
-        await expect(await deleteRequest()).not.toBeOK()
-      })
-      await test.step('navigate to avustushaku from where its used', async () => {
-        await row.locator('button').locator('text=1 avustuksessa').click()
-        await row.locator('a').locator(`text="${hakuProps.avustushakuName}"`).click()
-      })
-      await test.step('after removing talousarviotili its allowed to be deleted', async () => {
-        const haunTiedotPage = HaunTiedotPage(page)
-        await haunTiedotPage.locators.taTili.tili(0).removeTiliBtn.click()
-        await haunTiedotPage.common.waitForSave()
-        await koodienhallintaPage.navigate()
-        await koodienhallintaPage.switchToTatilitTab()
-        await expect(koodienhallintaPage.taTilit.form.submitBtn).toBeVisible()
-        await expect(row).toBeVisible()
-        await expect(deleteRowButton).toBeEnabled()
-      })
-      await test.step('delete through api to make sure the earlier api call actually did what it was supposed to', async () => {
-        await expect(await deleteRequest()).toBeOK()
-        await koodienhallintaPage.page.reload()
-        await expect(koodienhallintaPage.taTilit.form.submitBtn).toBeVisible()
-        await expect(row).toBeHidden()
-      })
-    }
-  )
   const doubleDots = ['..1.1.1', '00..00.00.', '0.0.21.22..'] as const
   const threeNumbersInARow = ['0.01.222.', '0.0.212.22', '012.0.21'] as const
   const startsWithDots = ['.10.22.12.32'] as const
@@ -346,6 +305,50 @@ test.describe.parallel('talousarviotilien hallinta', () => {
     await expect(res).toBeOK()
   })
 })
+
+unpublishedAvustushakuTest(
+  'tili that is in use cannot be deleted',
+  async ({ page, avustushakuID, talousarviotili, hakuProps }) => {
+    expectToBeDefined(avustushakuID)
+    const koodienhallintaPage = KoodienhallintaPage(page)
+    await koodienhallintaPage.navigate()
+    await koodienhallintaPage.switchToTatilitTab()
+    expectToBeDefined(talousarviotili.name)
+    const row = await koodienhallintaPage.page.getByTestId(talousarviotili.name)
+    const deleteRowButton = row.locator(
+      `button[title="Poista talousarviotili ${talousarviotili.code}"]`
+    )
+    await test.step('delete button is disabled', async () => {
+      await expect(row).toBeVisible()
+      await expect(deleteRowButton).toBeDisabled()
+    })
+    const deleteRequest = () =>
+      page.request.delete(`${VIRKAILIJA_URL}/api/talousarviotilit/${talousarviotili.id}/`)
+    await test.step('even trying to delete without button fails', async () => {
+      await expect(await deleteRequest()).not.toBeOK()
+    })
+    await test.step('navigate to avustushaku from where its used', async () => {
+      await row.locator('button').locator('text=1 avustuksessa').click()
+      await row.locator('a').locator(`text="${hakuProps.avustushakuName}"`).click()
+    })
+    await test.step('after removing talousarviotili its allowed to be deleted', async () => {
+      const haunTiedotPage = HaunTiedotPage(page)
+      await haunTiedotPage.locators.taTili.tili(0).removeTiliBtn.click()
+      await haunTiedotPage.common.waitForSave()
+      await koodienhallintaPage.navigate()
+      await koodienhallintaPage.switchToTatilitTab()
+      await expect(koodienhallintaPage.taTilit.form.submitBtn).toBeVisible()
+      await expect(row).toBeVisible()
+      await expect(deleteRowButton).toBeEnabled()
+    })
+    await test.step('delete through api to make sure the earlier api call actually did what it was supposed to', async () => {
+      await expect(await deleteRequest()).toBeOK()
+      await koodienhallintaPage.page.reload()
+      await expect(koodienhallintaPage.taTilit.form.submitBtn).toBeVisible()
+      await expect(row).toBeHidden()
+    })
+  }
+)
 
 const createBody = ({
   code,

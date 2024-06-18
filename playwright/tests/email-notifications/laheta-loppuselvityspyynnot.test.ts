@@ -70,8 +70,9 @@ async function sendLoppuselvitysEmails(page: Page, avustushakuID: number) {
   await loppuselvitysTab.sendSelvitysPyynnot()
 }
 
-test.describe.parallel('loppuselvitys', () => {
-  test.describe('notifications are sent repeatedly until loppuselvityspyynnöt have been sent', () => {
+notifyTest.describe(
+  'notifications are sent repeatedly until loppuselvityspyynnöt have been sent',
+  () => {
     const loppuselvitysDeadline = moment().add(8, 'months').format('DD.MM.YYYY')
     notifyTest.use({ loppuselvitysDate: loppuselvitysDeadline })
     notifyTest(
@@ -83,52 +84,47 @@ test.describe.parallel('loppuselvitys', () => {
         await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
       }
     )
-  })
+  }
+)
 
-  test.describe('when loppuselvitys deadline is in the past', () => {
-    notifyTest.use({
-      loppuselvitysDate: moment().subtract(1, 'day').format('DD.MM.YYYY'),
-    })
-    notifyTest(
-      'notification is not send',
-      async ({ page, loppuselvitysDateSet, avustushakuID }) => {
-        expect(loppuselvitysDateSet)
-        await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
-      }
-    )
+notifyTest.describe('when loppuselvitys deadline is in the past', () => {
+  notifyTest.use({
+    loppuselvitysDate: moment().subtract(1, 'day').format('DD.MM.YYYY'),
   })
-
-  test.describe('when over 8 months till loppuselvitys deadline', () => {
-    notifyTest.use({
-      loppuselvitysDate: moment().add(12, 'months').format('DD.MM.YYYY'),
-    })
-    notifyTest(
-      'notification is not send',
-      async ({ page, loppuselvitysDateSet, avustushakuID }) => {
-        expect(loppuselvitysDateSet)
-        await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
-      }
-    )
+  notifyTest('notification is not send', async ({ page, loppuselvitysDateSet, avustushakuID }) => {
+    expect(loppuselvitysDateSet)
+    await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
   })
+})
 
-  test.describe('8 months till loppuselvitys deadline', () => {
-    const loppuselvitysDeadline = moment().add(8, 'months').format('DD.MM.YYYY')
-    notifyTest.use({ loppuselvitysDate: loppuselvitysDeadline })
-    notifyTest(
-      'notification is sent',
-      async ({ page, loppuselvitysDateSet, avustushakuID, hakuProps }) => {
-        expect(loppuselvitysDateSet)
-        const emailsAfter = await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(
-          page,
-          avustushakuID
-        )
-        await test.step('email content is correct', async () => {
-          const email = lastOrFail(emailsAfter)
-          expect(email['to-address']).toHaveLength(2)
-          expect(email['to-address']).toContain('santeri.horttanainen@reaktor.com')
-          expect(email['to-address']).toContain('viivi.virkailja@exmaple.com')
-          expect(email.subject).toEqual('Muistutus loppuselvityspyyntöjen lähettämisestä')
-          expect(email.formatted).toEqual(`Hyvä vastaanottaja,
+notifyTest.describe('when over 8 months till loppuselvitys deadline', () => {
+  notifyTest.use({
+    loppuselvitysDate: moment().add(12, 'months').format('DD.MM.YYYY'),
+  })
+  notifyTest('notification is not send', async ({ page, loppuselvitysDateSet, avustushakuID }) => {
+    expect(loppuselvitysDateSet)
+    await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
+  })
+})
+
+notifyTest.describe('8 months till loppuselvitys deadline', () => {
+  const loppuselvitysDeadline = moment().add(8, 'months').format('DD.MM.YYYY')
+  notifyTest.use({ loppuselvitysDate: loppuselvitysDeadline })
+  notifyTest(
+    'notification is sent',
+    async ({ page, loppuselvitysDateSet, avustushakuID, hakuProps }) => {
+      expect(loppuselvitysDateSet)
+      const emailsAfter = await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(
+        page,
+        avustushakuID
+      )
+      await test.step('email content is correct', async () => {
+        const email = lastOrFail(emailsAfter)
+        expect(email['to-address']).toHaveLength(2)
+        expect(email['to-address']).toContain('santeri.horttanainen@reaktor.com')
+        expect(email['to-address']).toContain('viivi.virkailja@exmaple.com')
+        expect(email.subject).toEqual('Muistutus loppuselvityspyyntöjen lähettämisestä')
+        expect(email.formatted).toEqual(`Hyvä vastaanottaja,
 
 valtionavustuksen ${hakuProps.avustushakuName} loppuselvitysten palautuksen määräaika on ${loppuselvitysDeadline}.
 
@@ -140,108 +136,104 @@ Huomatkaa, että valtionavustusjärjestelmä lähettää automaattisesti muistut
 
 Ongelmatilanteissa saat apua osoitteesta: va-tuki@oph.fi
 `)
-        })
-        await test.step('notification is not sent again if loppupäätös is sent', async () => {
-          await sendLoppuselvitysEmails(page, avustushakuID)
-          await sendLahetaLoppuselvityspyynnotNotifications(page)
-          const emailsAfterSendingLoppuselvitys =
-            await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
-          expect(emailsAfter.length).toEqual(emailsAfterSendingLoppuselvitys.length)
-        })
-      }
-    )
-  })
-
-  test.describe('when sending päätös', async () => {
-    selvitysTest(
-      'send the notification only after sending päätös',
-      async ({
-        closedAvustushaku,
-        page,
-        avustushakuID,
-        answers,
-        ukotettuValmistelija,
-        projektikoodi,
-      }) => {
-        expectToBeDefined(closedAvustushaku)
-        await test.step('set loppuselvitys date', async () => {
-          const paatosPage = PaatosPage(page)
-          await paatosPage.navigateTo(avustushakuID)
-          await paatosPage.setLoppuselvitysDate(moment().add(3, 'months').format('DD.MM.YYYY'))
-          await paatosPage.waitForSave()
-        })
-
-        await test.step('make sure notifications are not send before päätös', async () => {
-          await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
-        })
-
-        await test.step('send päätös', async () => {
-          const hakemustenArviointiPage = new HakemustenArviointiPage(page)
-          await hakemustenArviointiPage.navigate(avustushakuID)
-          const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
-            avustushakuID,
-            projectName: answers.projectName,
-            projektikoodi,
-          })
-
-          const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
-          await haunTiedotPage.resolveAvustushaku()
-
-          await hakemustenArviointiPage.navigate(avustushakuID)
-          await hakemustenArviointiPage.selectValmistelijaForHakemus(
-            hakemusID,
-            ukotettuValmistelija
-          )
-
-          const paatosPage = PaatosPage(page)
-          await paatosPage.navigateTo(avustushakuID)
-          await paatosPage.sendPaatos()
-        })
-
-        await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
-      }
-    )
-  })
-
-  notifyTest(
-    'notification not sent if loppuselvitys is already submitted',
-    async ({ page, avustushakuID, loppuselvitysDateSet, acceptedHakemus }) => {
-      expectToBeDefined(loppuselvitysDateSet)
-
-      await test.step('submit loppuselvitys', async () => {
-        const loppuselvitysPage = LoppuselvitysPage(page)
-        await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, acceptedHakemus.hakemusID)
-        const loppuselvitysFormUrl = await loppuselvitysPage.getSelvitysFormUrl()
-
-        await navigate(page, loppuselvitysFormUrl)
-        const hakijaSelvitysPage = HakijaSelvitysPage(page)
-
-        await hakijaSelvitysPage.textArea(0).fill('Yhteenveto')
-        await hakijaSelvitysPage.textArea(2).fill('Työn jako')
-        await hakijaSelvitysPage.projectGoal.fill('Tavoite')
-        await hakijaSelvitysPage.projectActivity.fill('Toiminta')
-        await hakijaSelvitysPage.projectResult.fill('Tulokset')
-        await hakijaSelvitysPage.textArea(1).fill('Arviointi')
-        await hakijaSelvitysPage.textArea(3).fill('Tiedotus')
-
-        await hakijaSelvitysPage.outcomeTypeRadioButtons.operatingModel.click()
-        await hakijaSelvitysPage.outcomeDescription.fill('Kuvaus')
-        await hakijaSelvitysPage.outcomeAddress.fill('Saatavuustiedot')
-
-        await hakijaSelvitysPage.goodPracticesRadioButtons.no.click()
-        await hakijaSelvitysPage.textArea(4).fill('Lisätietoja')
-
-        await hakijaSelvitysPage.firstAttachment.setInputFiles(dummyPdfPath)
-
-        await expect(hakijaSelvitysPage.submitButton).toHaveText('Lähetä käsiteltäväksi')
-        await hakijaSelvitysPage.submitButton.click()
-        await expect(hakijaSelvitysPage.submitButton).toHaveText('Loppuselvitys lähetetty')
-        await hakijaSelvitysPage.submitButton.isDisabled()
       })
-
-      await test.step('should not send any notifications', async () => {
-        await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
+      await test.step('notification is not sent again if loppupäätös is sent', async () => {
+        await sendLoppuselvitysEmails(page, avustushakuID)
+        await sendLahetaLoppuselvityspyynnotNotifications(page)
+        const emailsAfterSendingLoppuselvitys =
+          await getLahetaLoppuselvityspyynnotEmails(avustushakuID)
+        expect(emailsAfter.length).toEqual(emailsAfterSendingLoppuselvitys.length)
       })
     }
   )
 })
+
+selvitysTest.describe('when sending päätös', async () => {
+  selvitysTest(
+    'send the notification only after sending päätös',
+    async ({
+      closedAvustushaku,
+      page,
+      avustushakuID,
+      answers,
+      ukotettuValmistelija,
+      projektikoodi,
+    }) => {
+      expectToBeDefined(closedAvustushaku)
+      await test.step('set loppuselvitys date', async () => {
+        const paatosPage = PaatosPage(page)
+        await paatosPage.navigateTo(avustushakuID)
+        await paatosPage.setLoppuselvitysDate(moment().add(3, 'months').format('DD.MM.YYYY'))
+        await paatosPage.waitForSave()
+      })
+
+      await test.step('make sure notifications are not send before päätös', async () => {
+        await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
+      })
+
+      await test.step('send päätös', async () => {
+        const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+        await hakemustenArviointiPage.navigate(avustushakuID)
+        const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
+          avustushakuID,
+          projectName: answers.projectName,
+          projektikoodi,
+        })
+
+        const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
+        await haunTiedotPage.resolveAvustushaku()
+
+        await hakemustenArviointiPage.navigate(avustushakuID)
+        await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
+
+        const paatosPage = PaatosPage(page)
+        await paatosPage.navigateTo(avustushakuID)
+        await paatosPage.sendPaatos()
+      })
+
+      await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
+    }
+  )
+})
+
+notifyTest(
+  'notification not sent if loppuselvitys is already submitted',
+  async ({ page, avustushakuID, loppuselvitysDateSet, acceptedHakemus }) => {
+    expectToBeDefined(loppuselvitysDateSet)
+
+    await test.step('submit loppuselvitys', async () => {
+      const loppuselvitysPage = LoppuselvitysPage(page)
+      await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, acceptedHakemus.hakemusID)
+      const loppuselvitysFormUrl = await loppuselvitysPage.getSelvitysFormUrl()
+
+      await navigate(page, loppuselvitysFormUrl)
+      const hakijaSelvitysPage = HakijaSelvitysPage(page)
+
+      await hakijaSelvitysPage.textArea(0).fill('Yhteenveto')
+      await hakijaSelvitysPage.textArea(2).fill('Työn jako')
+      await hakijaSelvitysPage.projectGoal.fill('Tavoite')
+      await hakijaSelvitysPage.projectActivity.fill('Toiminta')
+      await hakijaSelvitysPage.projectResult.fill('Tulokset')
+      await hakijaSelvitysPage.textArea(1).fill('Arviointi')
+      await hakijaSelvitysPage.textArea(3).fill('Tiedotus')
+
+      await hakijaSelvitysPage.outcomeTypeRadioButtons.operatingModel.click()
+      await hakijaSelvitysPage.outcomeDescription.fill('Kuvaus')
+      await hakijaSelvitysPage.outcomeAddress.fill('Saatavuustiedot')
+
+      await hakijaSelvitysPage.goodPracticesRadioButtons.no.click()
+      await hakijaSelvitysPage.textArea(4).fill('Lisätietoja')
+
+      await hakijaSelvitysPage.firstAttachment.setInputFiles(dummyPdfPath)
+
+      await expect(hakijaSelvitysPage.submitButton).toHaveText('Lähetä käsiteltäväksi')
+      await hakijaSelvitysPage.submitButton.click()
+      await expect(hakijaSelvitysPage.submitButton).toHaveText('Loppuselvitys lähetetty')
+      await hakijaSelvitysPage.submitButton.isDisabled()
+    })
+
+    await test.step('should not send any notifications', async () => {
+      await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
+    })
+  }
+)

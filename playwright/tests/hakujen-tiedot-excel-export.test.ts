@@ -1,5 +1,5 @@
 import * as xlsx from 'xlsx'
-import { expect, Page, test } from '@playwright/test'
+import { expect, Page } from '@playwright/test'
 import { muutoshakemusTest } from '../fixtures/muutoshakemusTest'
 import { expectToBeDefined } from '../utils/util'
 import { MaksatuksetPage } from '../pages/virkailija/hakujen-hallinta/maksatuksetPage'
@@ -29,7 +29,9 @@ muutoshakemusTest.use({
     }),
 })
 
-test.describe.parallel('Excel export of all hakus', () => {
+muutoshakemusTest.describe.configure({ mode: 'parallel' })
+
+muutoshakemusTest.describe('Excel export of all hakus', () => {
   muutoshakemusTest(
     'for haku that is not closed yet',
     async ({ page, userCache, hakuProps, avustushakuID, talousarviotili }) => {
