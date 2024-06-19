@@ -38,21 +38,34 @@
     config))
 
 (defn- merge-with-environment [config]
-  (merge-with merge config
-              (into {:db          (filter val {:server-name   (System/getenv "DB_HOSTNAME")
-                                               :database-name (System/getenv "DB_NAME")
-                                               :username      (System/getenv "DB_USERNAME")
-                                               :password      (System/getenv "DB_PASSWORD")})
-                     :email       (filter val {
-                                               :username       (System/getenv "SMTP_AUTH_USERNAME")
-                                               :password       (System/getenv "SMTP_AUTH_PASSWORD")
-                                               :host           (System/getenv "SMTP_HOSTNAME")
-                                               :bounce-address (System/getenv "SMTP_BOUNCE_ADDRESS")
-                                               })
-                     :opintopolku (filter val {
-                                               :cas-service-username (System/getenv "CAS_SERVICE_USERNAME")
-                                               :cas-service-password (System/getenv "CAS_SERVICE_PASSWORD")
-                                               })})))
+  (let [payment-service (merge-with merge
+                                    {:payment-service-sftp (get-in config [:server :payment-service-sftp])}
+                                    (into {:payment-service-sftp
+                                           (filter val {:host-ip  (System/getenv "PAYMENT_SERVICE_HOST")
+                                                        :username (System/getenv "PAYMENT_SERVICE_USERNAME")
+                                                        :password (System/getenv "PAYMENT_SERVICE_PASSWORD")})}))
+        merged-with-environment (merge-with merge config
+                                            (into {:server (filter val {:cookie-key           (System/getenv "SERVER_COOKIE_KEY")
+                                                                        :payment-service-sftp (:payment-service-sftp payment-service)})
+                                                   :db     (filter val {:server-name   (System/getenv "DB_HOSTNAME")
+                                                                        :database-name (System/getenv "DB_NAME")
+                                                                        :username      (System/getenv "DB_USERNAME")
+                                                                        :password      (System/getenv "DB_PASSWORD")})
+                                                   :email  (filter val {:username                     (System/getenv "SMTP_AUTH_USERNAME")
+                                                                        :password                     (System/getenv "SMTP_AUTH_PASSWORD")
+                                                                        :host                         (System/getenv "SMTP_HOSTNAME")
+                                                                        :bounce-address               (System/getenv "SMTP_BOUNCE_ADDRESS")
+                                                                        :to-palkeet                   (not-empty (filter some? [(System/getenv "EMAIL_TO_PALKEET")]))
+                                                                        :to-palkeet-ja-talouspalvelut (not-empty (filter some? [(System/getenv "EMAIL_TO_PALKEET")
+                                                                                                                                (System/getenv "EMAIL_TO_TALOUSPALVELUT")]))
+
+                                                     })
+                           :opintopolku (filter val {:cas-service-username (System/getenv "CAS_SERVICE_USERNAME")
+                                                     :cas-service-password (System/getenv "CAS_SERVICE_PASSWORD")})}))]
+
+    (if (some? (System/getenv "OFFICER_EDIT_JWT_SECRET"))
+      (assoc merged-with-environment :officer-edit-jwt-secret (System/getenv "OFFICER_EDIT_JWT_SECRET"))
+      merged-with-environment)))
 
 (def config
   (when-not *compile-files*

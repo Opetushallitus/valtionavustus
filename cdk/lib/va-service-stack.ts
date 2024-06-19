@@ -125,6 +125,25 @@ export class VaServiceStack extends cdk.Stack {
         SMTP_BOUNCE_ADDRESS: EcsSecret.fromSecretsManager(smtpSecrets, 'BOUNCE_ADDRESS'),
         CAS_SERVICE_USERNAME: EcsSecret.fromSecretsManager(vaultSecrets, 'CAS_SERVICE_USERNAME'),
         CAS_SERVICE_PASSWORD: EcsSecret.fromSecretsManager(vaultSecrets, 'CAS_SERVICE_PASSWORD'),
+        OFFICER_EDIT_JWT_SECRET: EcsSecret.fromSecretsManager(
+          vaultSecrets,
+          'OFFICER_EDIT_JWT_SECRET'
+        ),
+        PAYMENT_SERVICE_HOST: EcsSecret.fromSecretsManager(vaultSecrets, 'PAYMENT_SERVICE_HOST'),
+        PAYMENT_SERVICE_USERNAME: EcsSecret.fromSecretsManager(
+          vaultSecrets,
+          'PAYMENT_SERVICE_USERNAME'
+        ),
+        PAYMENT_SERVICE_PASSWORD: EcsSecret.fromSecretsManager(
+          vaultSecrets,
+          'PAYMENT_SERVICE_PASSWORD'
+        ),
+        SERVER_COOKIE_KEY: EcsSecret.fromSecretsManager(vaultSecrets, 'SERVER_COOKIE_KEY'),
+        EMAIL_TO_PALKEET: EcsSecret.fromSecretsManager(vaultSecrets, 'EMAIL_TO_PALKEET'),
+        EMAIL_TO_TALOUSPALVELUT: EcsSecret.fromSecretsManager(
+          vaultSecrets,
+          'EMAIL_TO_TALOUSPALVELUT'
+        ),
       },
       logging: LogDriver.awsLogs({
         streamPrefix: 'fargate',
