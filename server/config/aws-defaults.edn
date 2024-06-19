@@ -36,17 +36,13 @@
  :email                                       {:enabled?                     false
                                                :host                         "email-smtp.eu-west-1.amazonaws.com"
                                                :port                         587
-                                               :username                     nil ;; Read from AWS secrets and passed as ENV variable
-                                               :password                     nil ;; Read from AWS secrets and passed as ENV variable
-                                               :bounce-address               nil ;; Read from AWS secrets and passed as ENV variable
                                                :queue-size                   1024
                                                :sender                       "no-reply@csc.fi"
                                                :to-taloustarkastaja          ["taloustarkastus@localhost"]
                                                :to-palkeet                   ["palkeet@localhost"]
                                                :to-palkeet-ja-talouspalvelut ["palkeet@localhost" "talouspalvelut@localhost"]
                                                :persistent-retry             {:enabled? true
-                                                                              :schedule "0 * * * * ?"}
-                                               }
+                                                                              :schedule "0 * * * * ?"}}
  :va-users                                    {:use-cache?                      true
                                                :cache-refresh-interval-in-s     300
                                                :cache-max-refresh-interval-in-s 10800}
@@ -55,7 +51,12 @@
                                                :user-privilege-name  "USER"}
  :rondo-scheduler                             {:enabled? false}
  :reminder-scheduler                          {:enabled? true}
- :payments                                    {:enabled? true}
+ :payments                                    {:enabled? true
+                                               :timeout 60000
+                                               :port 22
+                                               :local-path "/tmp/"
+                                               :remote_path "./to_handi/va/"
+                                               :remote_path_from "./from_handi/va/"}
  :integration-healthcheck                     {:enabled?         true
                                                :timeout          5000
                                                :interval-minutes 15}
