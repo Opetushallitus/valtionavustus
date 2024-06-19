@@ -69,8 +69,16 @@ const app = new cdk.App()
     },
   })
   const smtpStack = new SmtpStack(dev, 'smtp', {
-    emailDomainName: `dev.${HAKIJA_DOMAIN}`,
-    emailHostedZone: dns.zones.hakijaZone,
+    emailDomain: {
+      fi: {
+        name: `dev.${HAKIJA_DOMAIN}`,
+        hostedZone: dns.zones.hakijaZone,
+      },
+      sv: {
+        name: `dev.${HAKIJA_DOMAIN_SV}`,
+        hostedZone: dns.zones.hakijaZoneSv,
+      },
+    },
   })
 
   const vaService = new VaServiceStack(dev, 'application', {
@@ -151,8 +159,16 @@ const app = new cdk.App()
     },
   })
   const smtpStack = new SmtpStack(qa, 'smtp', {
-    emailDomainName: `testi.${HAKIJA_DOMAIN}`,
-    emailHostedZone: dns.zones.hakijaZone,
+    emailDomain: {
+      fi: {
+        name: `testi.${HAKIJA_DOMAIN}`,
+        hostedZone: dns.zones.hakijaZone,
+      },
+      sv: {
+        name: `testi.${HAKIJA_DOMAIN_SV}`,
+        hostedZone: dns.zones.hakijaZoneSv,
+      },
+    },
   })
 }
 
@@ -190,7 +206,15 @@ const app = new cdk.App()
     databaseHostname: dbStack.clusterWriterEndpointHostname,
   })
   const smtpStack = new SmtpStack(prod, 'smtp', {
-    emailDomainName: HAKIJA_DOMAIN,
-    emailHostedZone: dns.zones.hakijaZone,
+    emailDomain: {
+      fi: {
+        name: HAKIJA_DOMAIN,
+        hostedZone: dns.zones.hakijaZone,
+      },
+      sv: {
+        name: HAKIJA_DOMAIN_SV,
+        hostedZone: dns.zones.hakijaZoneSv,
+      },
+    },
   })
 }

@@ -14,8 +14,16 @@ import { RemovalPolicy } from 'aws-cdk-lib'
 import { Environment } from './va-env-stage'
 
 interface SmtpStackProps extends cdk.StackProps {
-  emailDomainName: string
-  emailHostedZone: IPublicHostedZone
+  emailDomain: {
+    fi: {
+      name: string
+      hostedZone: IPublicHostedZone
+    }
+    sv: {
+      name: string
+      hostedZone: IPublicHostedZone
+    }
+  }
 }
 
 export class SmtpStack extends cdk.Stack {
@@ -23,8 +31,6 @@ export class SmtpStack extends cdk.Stack {
 
   constructor(scope: Environment, id: string, props: SmtpStackProps) {
     super(scope, id, props)
-
-    const { emailHostedZone, emailDomainName } = props
 
     const dedicatedIpPool = new DedicatedIpPool(this, 'va-smtp-ip-pool', {
       dedicatedIpPoolName: 'va-smtp-ip-pool',
@@ -39,11 +45,16 @@ export class SmtpStack extends cdk.Stack {
       suppressionReasons: SuppressionReasons.COMPLAINTS_ONLY,
     })
 
-    const mailFromDomain = `mail.${emailDomainName}`
+    const { emailDomain } = props
+    const identityFi = new EmailIdentity(this, 'va-smtp-domain-identity', {
+      identity: Identity.publicHostedZone(emailDomain.fi.hostedZone),
+      mailFromDomain: `mail.${emailDomain.fi.name}`,
+      configurationSet,
+    })
 
-    const identity = new EmailIdentity(this, 'va-smtp-domain-identity', {
-      identity: Identity.publicHostedZone(emailHostedZone),
-      mailFromDomain,
+    const identitySv = new EmailIdentity(this, 'va-smtp-domain-identity-sv', {
+      identity: Identity.publicHostedZone(emailDomain.sv.hostedZone),
+      mailFromDomain: `mail.${emailDomain.sv.name}`,
       configurationSet,
     })
 
