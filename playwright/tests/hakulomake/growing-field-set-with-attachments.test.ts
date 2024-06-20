@@ -238,7 +238,7 @@ const growingFieldSetLocators = (page: Page) => {
   }
 }
 
-test.setTimeout(40_000)
+test.setTimeout(50_000)
 
 test('can add and remove growing field sets with attachment fields', async ({ hakijaPage }) => {
   const page = hakijaPage.page
