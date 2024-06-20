@@ -254,4 +254,41 @@ const app = new cdk.App()
       },
     },
   })
+
+  const vaService = new VaServiceStack(prod, 'application', {
+    vpc: vpcStack.vpc,
+    cluster: ecsStack.ecsCluster,
+    applicationLogGroup: persistentResources.applicationLogGroup,
+    loadBalancerAccessLogBucket: persistentResources.loadBalancerAccessLogBucket,
+    databaseHostname: dbStack.clusterWriterEndpointHostname,
+    securityGroups: securityGroupStack.securityGroups,
+    domains: {
+      hakijaDomain: HAKIJA_DOMAIN,
+      virkailijaDomain: VIRKAILIJA_DOMAIN,
+    },
+    zones: {
+      hakijaZone: dns.zones.hakijaZone,
+    },
+    secrets: {
+      databasePassword: persistentResources.databasePasswordSecret,
+      vaultSecrets: persistentResources.ansibleVaultSecrets,
+      pagerdutySecrets: persistentResources.pagerdutyApiSecrets,
+      smtpSecrets: smtpStack.smtpSecrets,
+    },
+  })
+
+  const globalCertificatesStack = new CertificateStack(prod, 'certs', {
+    domains: dns.domains,
+    zones: dns.zones,
+    crossRegionReferences: true,
+    env: { region: 'us-east-1' }, // Certs used by CDN must be in us-east-1
+  })
+
+  const cdn = new CdnStack(prod, 'cdn', {
+    domains: dns.domains,
+    zones: dns.zones,
+    loadBalancerARecord: vaService.loadbalancerARecord,
+    sslCertificate: globalCertificatesStack.sslCertificate,
+    crossRegionReferences: true, // Cert is in us-east-1
+  })
 }
