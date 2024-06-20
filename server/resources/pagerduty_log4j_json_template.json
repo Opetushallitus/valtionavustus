@@ -3,8 +3,8 @@
   "routing_key": "${env:PAGERDUTY_ROUTING_KEY}",
   "payload": {
     "summary": {
-      "$resolver": "message",
-      "stringified": true
+      "$resolver": "pattern",
+      "pattern": "%maxLen{%m}{150} %ex{0}"
     },
     "timestamp": {
       "$resolver": "timestamp"
