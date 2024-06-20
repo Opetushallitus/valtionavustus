@@ -11,11 +11,9 @@ import {
   ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront'
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins'
-import { ApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2'
 import { Bucket } from 'aws-cdk-lib/aws-s3'
 import { BucketDeployment, CacheControl, Source } from 'aws-cdk-lib/aws-s3-deployment'
 import { Environment } from './va-env-stage'
-import { getEnv } from './va-context'
 import { ARecord, PublicHostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53'
 import { AWS_SERVICE_PREFIX } from '../bin/cdk'
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets'
@@ -104,25 +102,23 @@ export class CdnStack extends cdk.Stack {
     })
 
     /* ---------- CDN DNS Records --------------- */
-    if (getEnv(this) === 'dev') {
-      new ARecord(this, 'cdn-hakija-fi-a-alias-record', {
-        zone: hakijaZone,
-        recordName: `${AWS_SERVICE_PREFIX}${hakijaDomain}.`,
-        target: RecordTarget.fromAlias(new CloudFrontTarget(this.cdnDistribution)),
-        comment: 'CDN A record "alias" for hakija FI',
-      })
-      new ARecord(this, 'cdn-hakija-sv-a-alias-record', {
-        zone: hakijaZoneSv,
-        recordName: `${AWS_SERVICE_PREFIX}${hakijaDomainSv}.`,
-        target: RecordTarget.fromAlias(new CloudFrontTarget(this.cdnDistribution)),
-        comment: 'CDN A record "alias" for hakija SV',
-      })
-      new ARecord(this, 'cdn-virkailija-a-alias-record', {
-        zone: virkailijaZone,
-        recordName: `${AWS_SERVICE_PREFIX}${virkailijaDomain}.`,
-        target: RecordTarget.fromAlias(new CloudFrontTarget(this.cdnDistribution)),
-        comment: 'CDN A record "alias" for virkailija',
-      })
-    }
+    new ARecord(this, 'cdn-hakija-fi-a-alias-record', {
+      zone: hakijaZone,
+      recordName: `${AWS_SERVICE_PREFIX}${hakijaDomain}.`,
+      target: RecordTarget.fromAlias(new CloudFrontTarget(this.cdnDistribution)),
+      comment: 'CDN A record "alias" for hakija FI',
+    })
+    new ARecord(this, 'cdn-hakija-sv-a-alias-record', {
+      zone: hakijaZoneSv,
+      recordName: `${AWS_SERVICE_PREFIX}${hakijaDomainSv}.`,
+      target: RecordTarget.fromAlias(new CloudFrontTarget(this.cdnDistribution)),
+      comment: 'CDN A record "alias" for hakija SV',
+    })
+    new ARecord(this, 'cdn-virkailija-a-alias-record', {
+      zone: virkailijaZone,
+      recordName: `${AWS_SERVICE_PREFIX}${virkailijaDomain}.`,
+      target: RecordTarget.fromAlias(new CloudFrontTarget(this.cdnDistribution)),
+      comment: 'CDN A record "alias" for virkailija',
+    })
   }
 }

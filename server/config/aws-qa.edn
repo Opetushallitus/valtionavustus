@@ -1,0 +1,39 @@
+{:environment     "aws-qa"
+ :server          {:hakija-host     "*"
+                   :virkailija-host "*"
+                   :url             {:fi "https://aws.testi.valtionavustukset.oph.fi/"
+                                     :sv "https://aws.testi.statsunderstod.oph.fi/"}
+                   :virkailija-url  "https://aws.testi.virkailija.valtionavustukset.oph.fi"}
+ :opintopolku     {:url "https://virkailija.testiopintopolku.fi"}
+ :email           {:enabled?                     true
+                   :from                         {:fi "no-reply@qa.valtionavustukset.oph.fi"
+                                                  :sv "no-reply@qa.statsunderstod.oph.fi"}
+                   :sender                       "no-reply@qa.valtionavustukset.oph.fi"
+                   :to-taloustarkastaja          ["taloustarkastus@localhost"]
+                   :to-palkeet                   ["palkeet@localhost"]
+                   :to-palkeet-ja-talouspalvelut ["palkeet@localhost" "talouspalvelut@localhost"]}
+ :rondo-scheduler {:enabled?                 false
+                   :scheduling               "0 00 04 ? * *"
+                   :strict-host-key-checking :yes}
+ :notifications   {:asiatarkastus                   {:enabled? false
+                                                     :schedule "0 0 14 ? * 1,2,3,4,5"}
+                   :taloustarkastus                 {:enabled? false
+                                                     :schedule "0 0 7 ? * 2"}
+                   :valiselvitys                    {:enabled? false
+                                                     :schedule "0 0 14 ? * 1,2,3,4,5"}
+                   :loppuselvitys-palauttamatta     {:enabled? false
+                                                     :schedule "0 0 14 ? * 1,2,3,4,5"}
+                   :valiselvitys-palauttamatta      {:enabled? false
+                                                     :schedule "0 0 14 ? * 1,2,3,4,5"}
+                   :laheta-valiselvityspyynnot      {:enabled? false
+                                                     :schedule "0 0 14 ? * 1,2,3,4,5"}
+                   :laheta-loppuselvityspyynnot     {:enabled? false
+                                                     :schedule "0 0 14 ? * 1,2,3,4,5"}
+                   :hakuaika-paattymassa            {:enabled? false
+                                                     :schedule "0 0 14 ? * 1,2,3,4,5"}
+                   :hakuaika-paattynyt              {:enabled? false
+                                                     :schedule "0 0 7 ? * *"}
+                   :muutoshakemuksia-kasittelematta {:enabled? false
+                                                     :schedule "0 0 14 ? * MON-FRI"}}
+ :payments        {:enabled? false :delete-payments? false}
+ }
