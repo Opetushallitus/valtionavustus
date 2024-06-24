@@ -40,6 +40,7 @@
                                                :to-taloustarkastaja          ["taloustarkastus@localhost"]
                                                :to-palkeet                   ["palkeet@localhost"]
                                                :to-palkeet-ja-talouspalvelut ["palkeet@localhost" "talouspalvelut@localhost"]
+                                               :jotpa-from                   {:fi "rahoitus@jotpa.fi"}
                                                :persistent-retry             {:enabled? true
                                                                               :schedule "0 * * * * ?"}}
  :va-users                                    {:use-cache?                      true
