@@ -16,14 +16,12 @@ Om ni inte tar emot understödet i enlighet med beslutet, ska ni meddela om dett
 Understödsmottagaren ansvarar för att kontaktuppgifterna till den person som angetts som kontaktperson i statsunderstödssystemet alltid är uppdaterade. Ni kan göra en ändringsansökan samt byta ut kontaktpersonen och göra ändringar i hens kontaktuppgifter under hela projektperiodens gång via följande länk:{{/include-muutoshaku-link}}
 {{& modify-url }}
 
-Begäranden om redovisningar och andra meddelanden som riktas till projektet skickas från adressen {{^is-jotpa-hakemus}}no-reply@valtionavustukset.oph.fi{{/is-jotpa-hakemus}}{{#is-jotpa-hakemus}}no-reply@jotpa.fi{{/is-jotpa-hakemus}}. De skickas både till projektets kontaktperson och till den officiella e-postadress som den sökande har angett.
+Begäranden om redovisningar och andra meddelanden som riktas till projektet skickas från adressen {{ from }}. De skickas både till projektets kontaktperson och till den officiella e-postadress som den sökande har angett.
 
 Mottagaren av understöd ska spara detta meddelande och länkarna som ingår i meddelandet.
 
 Vid behov ges närmare information av den person som angetts som kontaktperson i understödsbeslutet.
 
-{{^is-jotpa-hakemus}}Utbildningsstyrelsen{{/is-jotpa-hakemus}}{{#is-jotpa-hakemus}}Servicecentret för kontinuerligt lärande och sysselsättning{{/is-jotpa-hakemus}}
-Hagnäskajen 6
-PB 380, 00531 Helsingfors
-telefon 029 533 1000
-fornamn.efternamn@{{^is-jotpa-hakemus}}oph.fi{{/is-jotpa-hakemus}}{{#is-jotpa-hakemus}}jotpa.fi{{/is-jotpa-hakemus}}
+
+
+{{>signature}}

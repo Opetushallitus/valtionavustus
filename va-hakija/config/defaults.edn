@@ -44,6 +44,7 @@
                                                :queue-size                   1024
                                                :from                         {:fi "no-reply@valtionavustukset.oph.fi"
                                                                               :sv "no-reply@statsunderstod.oph.fi"}
+                                               :jotpa-from                   {:fi "no-reply@jotpa.fi"}
                                                :sender                       "no-reply@csc.fi"
                                                :to-taloustarkastaja          ["taloustarkastus@localhost"]
                                                :to-palkeet                   ["palkeet@localhost"]

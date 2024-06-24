@@ -107,7 +107,7 @@
   (let [avustushaku-id (:id avustushaku)
         is-jotpa-avustushaku (is-jotpa-avustushaku avustushaku)
         url (email-utils/generate-url avustushaku-id lang user-key false)
-        from (if is-jotpa-avustushaku "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+        from (if is-jotpa-avustushaku (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
         mail-template (get-in mail-templates [:taydennyspyynto lang])
         mail-subject (get-in mail-titles [:taydennyspyynto lang])
         signature (email-signature-block lang)
@@ -171,7 +171,7 @@
         lang (keyword lang-str)
         muutoshakemus-paatos-url (muutoshakemus-paatos-url (:user-key paatos) lang)
         muutoshakemus-url (email-utils/modify-url (:id avustushaku) (:user_key hakemus) lang token true)
-        from (if is-jotpa-avustushaku "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+        from (if is-jotpa-avustushaku (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
         mail-subject (get-in mail-titles [:muutoshakemus-paatos lang])
         mail-template (get-in mail-templates [:muutoshakemus-paatos lang])
         signature (email-signature-block lang)
@@ -242,7 +242,7 @@
         email-signature (email-signature-block lang)
         url             (email-utils/generate-url (:avustushaku-id hakemus) lang (:user-key hakemus) false)
         is-jotpa-hakemus? (is-jotpa-avustushaku avustushaku)
-        from            (if is-jotpa-hakemus? "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+        from            (if is-jotpa-hakemus? (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
         msg             {:avustushaku-name (:avustushaku-name hakemus)
                          :paattymispaiva paattymispaiva
                          :paattymisaika paattymisaika
@@ -332,7 +332,7 @@
         mail-subject   (get-in mail-titles [:valiselvitys-palauttamatta lang])
         signature      (email-signature-block lang)
         template       (get-in mail-templates [:valiselvitys-palauttamatta lang])
-        from           (if is-jotpa-avustushaku "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+        from           (if is-jotpa-avustushaku (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
         msg            {:avustushaku-name (:avustushaku-name notification)
                         :valiselvitys-deadline (datetime/java8-date-string (:valiselvitys-deadline notification))
                         :url (valiselvitys-url (:avustushaku-id notification) (:user-key notification) lang)
@@ -377,7 +377,7 @@
         mail-subject   (get-in mail-titles [:loppuselvitys-palauttamatta lang])
         signature      (email-signature-block lang)
         template       (get-in mail-templates [:loppuselvitys-palauttamatta lang])
-        from           (if is-jotpa-avustushaku "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+        from           (if is-jotpa-avustushaku (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
         msg            { :avustushaku-name (:avustushaku-name notification)
                          :loppuselvitys-deadline (datetime/java8-date-string (:loppuselvitys-deadline notification))
                          :url (loppuselvitys-url (:avustushaku-id notification) (:user-key notification) lang)
@@ -396,7 +396,7 @@
         url (paatos-url (:id avustushaku) (:user_key hakemus) (keyword lang-str))
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
         is-jotpa-hakemus? (is-jotpa-avustushaku avustushaku)
-        from (if is-jotpa-hakemus? "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+        from (if is-jotpa-hakemus? (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
         signature (email-signature-block lang)
         mail-subject (get-in mail-titles [:paatos lang])
         template (get-in mail-templates [:paatos lang])
@@ -452,7 +452,7 @@
         avustushaku-name (get-in avustushaku [:content :name (keyword lang-str)])
         mail-subject (get-in mail-titles [:paatos lang])
         is-jotpa-hakemus? (is-jotpa-avustushaku avustushaku)
-        from (if is-jotpa-hakemus? "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+        from (if is-jotpa-hakemus? (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
         email-signature (email-signature-block lang)
         msg {
              :email-type :paatos-refuse
@@ -484,7 +484,7 @@
 (defn send-selvitys! [to hakemus mail-subject mail-message is-jotpa-hakemus]
   (let [lang (keyword (:language hakemus))
         mail-template (get-in mail-templates [:selvitys lang])
-        from (if is-jotpa-hakemus "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+        from (if is-jotpa-hakemus (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
         msg {:body mail-message :is-jotpa-hakemus is-jotpa-hakemus}
         signature (email-signature-block lang)
         body (render mail-template msg signature)]
@@ -526,7 +526,7 @@
         url (selvitys-url (:id avustushaku) (:user_key hakemus) lang selvitys-type)
         avustushaku-name (get-in avustushaku [:content :name lang])
         is-jotpa-avustushaku (is-jotpa-avustushaku avustushaku)
-        from (if is-jotpa-avustushaku "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+        from (if is-jotpa-avustushaku (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
         mail-subject (str (get-in mail-titles [(keyword type) lang]) " " avustushaku-name)
         selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
         presenter (if (nil? selected-presenter) (first roles) selected-presenter)

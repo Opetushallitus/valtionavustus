@@ -102,7 +102,7 @@
      (email/message lang type to subject body)
      {:hakemus-id     hakemus-id
       :avustushaku-id avustushaku-id
-      :from           (if is-jotpa "no-reply@jotpa.fi" (-> email/smtp-config :from lang))})))
+      :from           (if is-jotpa (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))})))
 
 (defn send-new-jotpa-hakemus-message! [lang to avustushaku-id avustushaku user-key start-date end-date]
   (let [start-date-string (datetime/date-string start-date)
@@ -114,7 +114,7 @@
         msg {:operation :send
              :email-type :new-hakemus
              :lang lang
-             :from "no-reply@jotpa.fi"
+             :from (-> email/smtp-config :jotpa-from :fi)
              :sender (-> email/smtp-config :sender)
              :subject (get-in mail-titles [:new-jotpa-hakemus lang])
              :to to
@@ -161,7 +161,7 @@
    :email-type :application-refused
    :hakemus-id hakemus-id
    :lang lang
-   :from (if is-jotpa-hakemus "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+   :from (if is-jotpa-hakemus (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
    :sender (:sender email/smtp-config)
    :subject (get-in mail-titles [:application-refused lang])
    :to recipients
@@ -196,7 +196,7 @@
   {:operation :send
    :email-type :hakemus-edited-after-applicant-edit
    :lang lang
-   :from (if is-jotpa-hakemus "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+   :from (if is-jotpa-hakemus (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
    :sender (:sender email/smtp-config)
    :subject (get-in mail-titles [:hakemus-edited-after-applicant-edit lang])
    :to recipients
@@ -268,7 +268,7 @@
 (defn send-loppuselvitys-change-request-received-message-to-hakija! [to avustushaku-id parent-hakemus-id lang register-number project-name email-of-virkailija virkailija-first-name virkailija-last-name is-jotpa-hakemus?]
   (let [subject (format "%s %s %s" (get-in mail-titles [:loppuselvitys-change-request-response-received lang]) register-number project-name)
         signature (email-signature-block lang)
-        from            (if is-jotpa-hakemus? "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+        from            (if is-jotpa-hakemus? (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
         msg {:operation :send
              :email-type :loppuselvitys-change-request-response-received
              :lang lang
@@ -293,7 +293,7 @@
         end-date-string (datetime/date-string end-date)
         end-time-string (datetime/time-string end-date)
         url (email-utils/generate-url avustushaku-id lang user-key true)
-        from (if is-jotpa-avustushaku? "no-reply@jotpa.fi" (-> email/smtp-config :from lang))
+        from (if is-jotpa-avustushaku? (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
         signature (email-signature-block lang)
         user-message {:operation :send
                       :email-type  :hakemus-submitted

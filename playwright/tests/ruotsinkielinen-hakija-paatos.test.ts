@@ -44,11 +44,13 @@ Om det uppstår förändringar som inverkar på användningen av statsunderstöd
 Understödsmottagaren ansvarar för att kontaktuppgifterna till den person som angetts som kontaktperson i statsunderstödssystemet alltid är uppdaterade. Ni kan göra en ändringsansökan samt byta ut kontaktpersonen och göra ändringar i hens kontaktuppgifter under hela projektperiodens gång via följande länk:
 ${HAKIJA_URL}/muutoshakemus?lang=sv&user-key=${userKey}&avustushaku-id=${avustushakuID}
 
-Begäranden om redovisningar och andra meddelanden som riktas till projektet skickas från adressen no-reply@valtionavustukset.oph.fi. De skickas både till projektets kontaktperson och till den officiella e-postadress som den sökande har angett.
+Begäranden om redovisningar och andra meddelanden som riktas till projektet skickas från adressen no-reply@statsunderstod.oph.fi. De skickas både till projektets kontaktperson och till den officiella e-postadress som den sökande har angett.
 
 Mottagaren av understöd ska spara detta meddelande och länkarna som ingår i meddelandet.
 
 Vid behov ges närmare information av den person som angetts som kontaktperson i understödsbeslutet.
+
+
 
 Utbildningsstyrelsen
 Hagnäskajen 6
