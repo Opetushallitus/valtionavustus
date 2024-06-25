@@ -61,6 +61,8 @@ export class SmtpStack extends cdk.Stack {
     /*
      * Bounce email address was manually created in Reaktor's Google groups
      * Bounce identity was manually configured via AWS console and clicking email confirmation link
+     * Jotpa sender identity was manually created using AWS console. Identity was manually verified by Jotpa employee
+     * Support case for getting a dedicated IP address for sending mail was done manually using AWS console
      */
 
     // Virtual Deliverability Manager (VDM)
