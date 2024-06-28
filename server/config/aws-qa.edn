@@ -6,9 +6,9 @@
                    :virkailija-url  "https://aws.testi.virkailija.valtionavustukset.oph.fi"}
  :opintopolku     {:url "https://virkailija.testiopintopolku.fi"}
  :email           {:enabled?                     true
-                   :from                         {:fi "no-reply@qa.valtionavustukset.oph.fi"
-                                                  :sv "no-reply@qa.statsunderstod.oph.fi"}
-                   :sender                       "no-reply@qa.valtionavustukset.oph.fi"
+                   :from                         {:fi "no-reply@testi.valtionavustukset.oph.fi"
+                                                  :sv "no-reply@testi.statsunderstod.oph.fi"}
+                   :sender                       "no-reply@testi.valtionavustukset.oph.fi"
                    :to-taloustarkastaja          ["taloustarkastus@localhost"]
                    :to-palkeet                   ["palkeet@localhost"]
                    :to-palkeet-ja-talouspalvelut ["palkeet@localhost" "talouspalvelut@localhost"]}
