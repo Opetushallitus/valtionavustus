@@ -22,9 +22,10 @@
         username (get-in config [:opintopolku :cas-service-username])
         password (get-in config [:opintopolku :cas-service-password])
         tgt-response @(hk-client/post (str opintopolku-url "/cas/v1/tickets") {:form-params {:username username :password password}})
-        location-header (-> tgt-response :headers :location)
-        tgt (re-find (re-pattern "TGT-.*") location-header)]
-    tgt))
+        location-header (-> tgt-response :headers :location)]
+    (when (clojure.string/blank? location-header)
+      (throw (Exception. (str "Unexpected CAS " (:status tgt-response) " response when getting TGT: " (:body tgt-response)))))
+    (re-find (re-pattern "TGT-.*") location-header)))
 
 (defn get-st [tgt service-url]
   (let [opintopolku-url (-> config :opintopolku :url)
