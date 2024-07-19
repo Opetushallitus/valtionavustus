@@ -37,7 +37,7 @@
                          [instaparse "1.5.0"]
 
                          ;; [clj-pdf "2.6.8"] ->
-                         ;; [buddy/buddy-sign "3.5.351"] -> [buddy/buddy-core "1.11.423"] ->
+                         ;; [buddy/buddy-sign "3.5.351"] -> [buddy/buddy-core "1.12.0-430"] ->
                          [commons-codec "1.17.1"]
 
                          ;; [ring/ring-core "1.12.2"] -> [commons-io "2.16.1"]
