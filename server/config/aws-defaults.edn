@@ -51,12 +51,13 @@
                                                :user-privilege-name  "USER"}
  :rondo-scheduler                             {:enabled? false}
  :reminder-scheduler                          {:enabled? true}
- :payment-service-sftp                        {:enabled?         false
-                                               :timeout          60000
-                                               :port             22
-                                               :local-path       "/tmp/"
-                                               :remote_path      "./to_handi/va/"
-                                               :remote_path_from "./from_handi/va/"}
+ :payment-service-sftp                        {:enabled?                 false
+                                               :timeout                  60000
+                                               :port                     22
+                                               :strict-host-key-checking :yes
+                                               :local-path               "/tmp/"
+                                               :remote_path              "./to_handi/va/"
+                                               :remote_path_from         "./from_handi/va/"}
  :payments                                    {:enabled? false}
  :integration-healthcheck                     {:enabled?         true
                                                :timeout          5000
