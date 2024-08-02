@@ -130,6 +130,10 @@ export class VaServiceStack extends cdk.Stack {
           'OFFICER_EDIT_JWT_SECRET'
         ),
         PAYMENT_SERVICE_HOST: EcsSecret.fromSecretsManager(vaultSecrets, 'PAYMENT_SERVICE_HOST'),
+        PAYMENT_SERVICE_HOST_KEY: EcsSecret.fromSecretsManager(
+          vaultSecrets,
+          'PAYMENT_SERVICE_HOST_KEY'
+        ),
         PAYMENT_SERVICE_USERNAME: EcsSecret.fromSecretsManager(
           vaultSecrets,
           'PAYMENT_SERVICE_USERNAME'

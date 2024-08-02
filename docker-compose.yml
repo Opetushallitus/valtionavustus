@@ -17,6 +17,12 @@ services:
         condition: service_started
       pagerduty:
         condition: service_started
+    environment:
+      JAVA_TOOL_OPTIONS: '-Duser.timezone="Europe/Helsinki"'
+      PAGERDUTY_API_ENDPOINT: 'http://pagerduty:8080/v2/enqueue'
+      PAGERDUTY_ROUTING_KEY: '_not_used_on_local_dev_'
+      PAYMENT_SERVICE_HOST: 'maksatuspalvelu'
+      PAYMENT_SERVICE_HOST_KEY: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDI3YbtcvUMQeejYZC/OEgKORe6gcYFqW+IblPkE07PrjGjHkrMzHbWYAe2BQOlaZ1leGE0SSceYYqSVbLmUSJ7bMv4QH3T+MSl2NtjH3KO3a6kX9nebc6xo3CVfm6CajdYol1/toBSXQqSwq7gcb4N1wL1Gr7569T5zXT3ecLRx/RgJTzDG1B1kWwQTDl0L8UHZuLkmuY6hnrDbfmMxYylMyqgDBUcLE9OXbO9KLQQMsHZz9X338p5jT7ZlxyfGPkNZXl7t7WPB82SWTiqL8bNOgCKWb0ktbhPIwxS4wNC0vcauT3bV/4tLG+Q9/L5GjMI4sSW3Kx9UxafJLzfxa3qtBNgTfTiwsdeDOlqHx0cpCwnA9jT/YJvt6sn+NUmPGscrb/9IgGiNO7t7MagVfhxBujimzKMojYRUsRaLgv5bKxsdBlr3OgNWzfQta2o1Ztc46bpzqd4d9WR+CHYCI+qznjU/KacFGLTwHj9BwpYXeuFzl1AAr8lX5mNFckuDbMP1PDxVg/ZEckk+qP+AOYuUyLPHoxu+9ow7ZxC4hXF1ht3CQllopxrlqHK2eSJJqwufqZEQYRXqzXP79+W0rZVHEQPTzAhbm8LDThwEcq7DoRWRE+kPxQM+Sq6l/PdCRjORITEI7iGl7bM2J1D/mB157ngWI7YNsJC9JnkzU8pFw=='
     healthcheck:
       test: ["CMD-SHELL", "curl http://localhost:8081/api/healthcheck"]
 
@@ -30,18 +36,9 @@ services:
     pull_policy: missing
     volumes:
       - /dev/urandom:/dev/random
-    environment:
-      JAVA_TOOL_OPTIONS: '-Duser.timezone="Europe/Helsinki"'
-      PAGERDUTY_API_ENDPOINT: 'http://pagerduty:8080/v2/enqueue'
-      PAGERDUTY_ROUTING_KEY: '_not_used_on_local_dev_'
-    healthcheck:
-      interval: 10s
-      timeout: 5s
-      retries: 10
     logging:
       options:
         mode: 'non-blocking'
-
 
   db:
     image: postgres:12.2

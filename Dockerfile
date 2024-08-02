@@ -33,6 +33,8 @@ FROM eclipse-temurin:8u412-b08-jdk-jammy AS va-base
 
 WORKDIR /app
 
+COPY entrypoint.sh .
+
 # lein downloads itself on first run, so prime it here
 COPY lein .
 RUN ./lein
@@ -75,4 +77,4 @@ COPY --from=uberjar-builder \
 #
 FROM va-base
 LABEL org.opencontainers.image.source=https://github.com/opetushallitus/valtionavustus
-ENTRYPOINT ["./lein"]
+ENTRYPOINT ["./entrypoint.sh"]

@@ -11,6 +11,7 @@
                                                :payment-service-sftp    {:enabled?         true
                                                                          :timeout          60000
                                                                          :host-ip          "maksatuspalvelu"
+                                                                         :strict-host-key-checking :yes
                                                                          :port             22
                                                                          :local-path       "/tmp/"
                                                                          :remote_path      "./to_handi/va/"
