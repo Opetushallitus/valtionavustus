@@ -40,7 +40,7 @@ export class DbStack extends cdk.Stack {
       securityGroupName: 'access-va-db-security-group',
     })
 
-    const serverlessV2MaxCapacity = scope.env === 'prod' ? 64 : 4
+    const serverlessV2MaxCapacity = scope.env === 'prod' ? 4 : 4
 
     const auroraV2Cluster = new cdk.aws_rds.DatabaseCluster(this, 'AuroraV2Cluster', {
       defaultDatabaseName: DB_NAME,
