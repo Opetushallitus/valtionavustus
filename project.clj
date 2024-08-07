@@ -37,7 +37,7 @@
                          [instaparse "1.5.0"]
 
                          ;; [clj-pdf "2.6.8"] ->
-                         ;; [buddy/buddy-sign "3.5.351"] -> [buddy/buddy-core "1.12.0-430"] ->
+                         ;; [buddy/buddy-sign "3.6.1-359"] -> [buddy/buddy-core "1.12.0-430"] ->
                          [commons-codec "1.17.1"]
 
                          ;; [ring/ring-core "1.12.2"] -> [commons-io "2.16.1"]
@@ -113,7 +113,7 @@
 
                  ;; auth
                  [buddy/buddy-auth "3.0.323"]
-                 [buddy/buddy-sign "3.5.351" :exclusions [org.bouncycastle/bcprov-jdk18on]]
+                 [buddy/buddy-sign "3.6.1-359" :exclusions [org.bouncycastle/bcprov-jdk18on]]
                  [org.bouncycastle/bcprov-jdk18on "1.78.1"] ;; CVE-2024-29857, CVE-2024-30171, CVE-2024-30172
 
                  ;; json
