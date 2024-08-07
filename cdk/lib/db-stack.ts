@@ -40,6 +40,8 @@ export class DbStack extends cdk.Stack {
       securityGroupName: 'access-va-db-security-group',
     })
 
+    const serverlessV2MaxCapacity = scope.env === 'prod' ? 64 : 4
+
     const auroraV2Cluster = new cdk.aws_rds.DatabaseCluster(this, 'AuroraV2Cluster', {
       defaultDatabaseName: DB_NAME,
       engine: cdk.aws_rds.DatabaseClusterEngine.AURORA_POSTGRESQL,
@@ -48,7 +50,7 @@ export class DbStack extends cdk.Stack {
       clusterIdentifier: 'va-aurora-cluster',
       vpcSubnets: { subnetType: cdk.aws_ec2.SubnetType.PRIVATE_ISOLATED },
       serverlessV2MinCapacity: 0.5,
-      serverlessV2MaxCapacity: 4,
+      serverlessV2MaxCapacity,
       securityGroups: [dbSecurityGroup, accessVaDBSecurityGroup],
       writer: cdk.aws_rds.ClusterInstance.serverlessV2('writer', {
         enablePerformanceInsights: true,
