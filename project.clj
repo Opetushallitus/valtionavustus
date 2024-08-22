@@ -80,7 +80,7 @@
                          [org.scala-lang.modules/scala-xml_2.11 "1.3.1"]
                          [org.scala-lang/scala-library "2.11.12"]]
 
-  :dependencies [[org.clojure/clojure "1.11.3"]
+  :dependencies [[org.clojure/clojure "1.11.4"]
                  [nrepl "1.2.0"]
                  [cider/cider-nrepl "0.49.1"]
                  [environ "1.2.0"]
