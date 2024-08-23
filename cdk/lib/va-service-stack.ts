@@ -91,8 +91,8 @@ export class VaServiceStack extends cdk.Stack {
       },
       taskRole: vaTaskRole,
       executionRole: vaTaskExecRole,
-      cpu: 512,
-      memoryLimitMiB: 1024,
+      cpu: 1024,
+      memoryLimitMiB: 2048,
     })
 
     const valtionavustuksetImage = ContainerImage.fromRegistry(
