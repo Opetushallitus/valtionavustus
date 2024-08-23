@@ -19,14 +19,6 @@ import { SmtpStack } from '../lib/smtp-stack'
 const HAKIJA_DOMAIN = 'valtionavustukset.oph.fi'
 const HAKIJA_DOMAIN_SV = 'statsunderstod.oph.fi'
 const VIRKAILIJA_DOMAIN = 'virkailija.valtionavustukset.oph.fi'
-
-/* Use prefix so we can access the services in AWS during development, as the above hostnames are already used by CSC by current production servers
- * for example:
- * aws.dev.valtionavustukset.oph.fi
- * aws.dev.virkailija.valtionavustukset.oph.fi
- * This can be removed or set to empty string once we want to go live and stop using CSC servers in production
- * */
-export const AWS_SERVICE_PREFIX = 'aws.'
 const LEGACY_LOADBALANCER_IP = '86.50.28.144'
 
 const app = new cdk.App()

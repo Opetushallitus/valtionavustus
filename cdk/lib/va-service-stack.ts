@@ -27,7 +27,6 @@ import {
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager'
 import { LogGroup } from 'aws-cdk-lib/aws-logs'
 import type { VaSecurityGroups } from './security-group-stack'
-import { AWS_SERVICE_PREFIX } from '../bin/cdk'
 import { Domains, HostedZones } from './dns-stack'
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager'
 import { LoadBalancerTarget } from 'aws-cdk-lib/aws-route53-targets'
@@ -265,12 +264,12 @@ export class VaServiceStack extends cdk.Stack {
     })
 
     /*  ---------- VIRKAILIJA FQDN ---------- */
-    //  aws.dev.virkailija.valtionavustukset.oph.fi
+    //  dev.virkailija.valtionavustukset.oph.fi
     new ApplicationListenerRule(this, 'route-to-virkailija-from-host-headers', {
       listener: loadbalancerListener,
       priority: 10,
       action: ListenerAction.forward([virkailijaTargetGroup]),
-      conditions: [ListenerCondition.hostHeaders([`${AWS_SERVICE_PREFIX}${virkailijaDomain}`])],
+      conditions: [ListenerCondition.hostHeaders([virkailijaDomain])],
     })
 
     /* ---------- HAKIJA FQDN ---------- */

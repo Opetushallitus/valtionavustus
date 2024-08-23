@@ -15,7 +15,6 @@ import { Bucket } from 'aws-cdk-lib/aws-s3'
 import { BucketDeployment, CacheControl, Source } from 'aws-cdk-lib/aws-s3-deployment'
 import { Environment } from './va-env-stage'
 import { ARecord, PublicHostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53'
-import { AWS_SERVICE_PREFIX } from '../bin/cdk'
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets'
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager'
 
@@ -66,11 +65,7 @@ export class CdnStack extends cdk.Stack {
 
     /* ---------- CDN --------------- */
     this.cdnDistribution = new Distribution(this, 'va-cdn-distribution', {
-      domainNames: [
-        `${AWS_SERVICE_PREFIX}${hakijaDomain}`,
-        `${AWS_SERVICE_PREFIX}${hakijaDomainSv}`,
-        `${AWS_SERVICE_PREFIX}${virkailijaDomain}`,
-      ],
+      domainNames: [hakijaDomain, hakijaDomainSv, virkailijaDomain],
       certificate: sslCertificate,
       sslSupportMethod: SSLMethod.SNI,
       defaultBehavior: {
@@ -100,6 +95,8 @@ export class CdnStack extends cdk.Stack {
       },
       enableIpv6: false,
     })
+
+    const AWS_SERVICE_PREFIX = 'aws.'
 
     /* ---------- CDN DNS Records --------------- */
     new ARecord(this, 'cdn-hakija-fi-a-alias-record', {
