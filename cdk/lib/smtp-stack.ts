@@ -39,7 +39,7 @@ export class SmtpStack extends cdk.Stack {
 
     const configurationSet = new ConfigurationSet(this, 'va-smtp-configuration-set', {
       configurationSetName: 'valtionavustukset-smtp-configuration-set',
-      sendingEnabled: scope.env !== 'prod',
+      sendingEnabled: true,
       dedicatedIpPool,
       reputationMetrics: true,
       suppressionReasons: SuppressionReasons.COMPLAINTS_ONLY,
