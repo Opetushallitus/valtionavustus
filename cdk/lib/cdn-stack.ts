@@ -113,7 +113,7 @@ export class CdnStack extends cdk.Stack {
     })
     new ARecord(this, 'cdn-virkailija-a-alias-record', {
       zone: virkailijaZone,
-      recordName: `${AWS_SERVICE_PREFIX}${virkailijaDomain}.`,
+      recordName: `${virkailijaDomain}.`,
       target: RecordTarget.fromAlias(new CloudFrontTarget(this.cdnDistribution)),
       comment: 'CDN A record "alias" for virkailija',
     })
