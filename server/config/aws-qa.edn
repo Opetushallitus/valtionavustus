@@ -1,9 +1,9 @@
 {:environment     "aws-qa"
  :server          {:hakija-host     "*"
                    :virkailija-host "*"
-                   :url             {:fi "https://aws.testi.valtionavustukset.oph.fi/"
-                                     :sv "https://aws.testi.statsunderstod.oph.fi/"}
-                   :virkailija-url  "https://aws.testi.virkailija.valtionavustukset.oph.fi"}
+                   :url             {:fi "https://testi.valtionavustukset.oph.fi/"
+                                     :sv "https://testi.statsunderstod.oph.fi/"}
+                   :virkailija-url  "https://testi.virkailija.valtionavustukset.oph.fi"}
  :opintopolku     {:url "https://virkailija.testiopintopolku.fi"}
  :email           {:enabled?                     true
                    :from                         {:fi "no-reply@testi.valtionavustukset.oph.fi"

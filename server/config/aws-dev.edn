@@ -1,9 +1,9 @@
 {:environment     "aws-dev"
  :server          {:hakija-host     "*"
                    :virkailija-host "*"
-                   :url             {:fi "https://aws.dev.valtionavustukset.oph.fi/"
-                                     :sv "https://aws.dev.statsunderstod.oph.fi/"}
-                   :virkailija-url  "https://aws.dev.virkailija.valtionavustukset.oph.fi"}
+                   :url             {:fi "https://dev.valtionavustukset.oph.fi/"
+                                     :sv "https://dev.statsunderstod.oph.fi/"}
+                   :virkailija-url  "https://dev.virkailija.valtionavustukset.oph.fi"}
  :opintopolku     {:url "https://virkailija.untuvaopintopolku.fi"}
  :email           {:enabled?                     true
                    :from                         {:fi "no-reply@dev.valtionavustukset.oph.fi"
