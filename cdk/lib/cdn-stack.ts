@@ -96,18 +96,16 @@ export class CdnStack extends cdk.Stack {
       enableIpv6: false,
     })
 
-    const AWS_SERVICE_PREFIX = 'aws.'
-
     /* ---------- CDN DNS Records --------------- */
     new ARecord(this, 'cdn-hakija-fi-a-alias-record', {
       zone: hakijaZone,
-      recordName: `${AWS_SERVICE_PREFIX}${hakijaDomain}.`,
+      recordName: `${hakijaDomain}.`,
       target: RecordTarget.fromAlias(new CloudFrontTarget(this.cdnDistribution)),
       comment: 'CDN A record "alias" for hakija FI',
     })
     new ARecord(this, 'cdn-hakija-sv-a-alias-record', {
       zone: hakijaZoneSv,
-      recordName: `${AWS_SERVICE_PREFIX}${hakijaDomainSv}.`,
+      recordName: `${hakijaDomainSv}.`,
       target: RecordTarget.fromAlias(new CloudFrontTarget(this.cdnDistribution)),
       comment: 'CDN A record "alias" for hakija SV',
     })
