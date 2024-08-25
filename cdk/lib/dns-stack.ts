@@ -8,11 +8,9 @@ import {
   Role,
 } from 'aws-cdk-lib/aws-iam'
 import {
-  ARecord,
   CnameRecord,
   CrossAccountZoneDelegationRecord,
   PublicHostedZone,
-  RecordTarget,
 } from 'aws-cdk-lib/aws-route53'
 import { Environment } from './va-env-stage'
 import { ValtionavustusEnvironment, getAccountId, getEnv } from './va-context'
@@ -21,10 +19,7 @@ import { Duration } from 'aws-cdk-lib'
 interface DnsStackProps extends cdk.StackProps {
   hakijaDomain: string
   hakijaDomainSv: string
-  hakijaLegacyARecord?: string
-
   virkailijaDomain: string
-  virkailijaLegacyARecord?: string
 
   databaseHostname: string
 
@@ -75,27 +70,6 @@ export class DnsStack extends cdk.Stack {
       zoneName: virkailijaDomain,
     })
     virkailijaZone.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN)
-
-    //
-    // A records pointing to old environments
-    //
-    const { hakijaLegacyARecord, virkailijaLegacyARecord } = props
-    if (hakijaLegacyARecord) {
-      new ARecord(this, 'HakijaLegacyARecord', {
-        zone: hakijaZone,
-        target: RecordTarget.fromIpAddresses(hakijaLegacyARecord),
-      })
-      new ARecord(this, 'HakijaLegacyARecordSv', {
-        zone: hakijaZoneSv,
-        target: RecordTarget.fromIpAddresses(hakijaLegacyARecord),
-      })
-    }
-    if (virkailijaLegacyARecord) {
-      new ARecord(this, 'VirkailijaLegacyARecord', {
-        zone: virkailijaZone,
-        target: RecordTarget.fromIpAddresses(virkailijaLegacyARecord),
-      })
-    }
 
     const { databaseHostname } = props
     new CnameRecord(this, 'DbWriterCnameRecord', {

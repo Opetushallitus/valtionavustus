@@ -19,7 +19,6 @@ import { SmtpStack } from '../lib/smtp-stack'
 const HAKIJA_DOMAIN = 'valtionavustukset.oph.fi'
 const HAKIJA_DOMAIN_SV = 'statsunderstod.oph.fi'
 const VIRKAILIJA_DOMAIN = 'virkailija.valtionavustukset.oph.fi'
-const LEGACY_LOADBALANCER_IP = '86.50.28.144'
 
 const app = new cdk.App()
 {
@@ -49,7 +48,6 @@ const app = new cdk.App()
   const dns = new DnsStack(dev, 'dns', {
     hakijaDomain: `dev.${HAKIJA_DOMAIN}`,
     hakijaDomainSv: `dev.${HAKIJA_DOMAIN_SV}`,
-    hakijaLegacyARecord: LEGACY_LOADBALANCER_IP,
     virkailijaDomain: `dev.${VIRKAILIJA_DOMAIN}`,
     databaseHostname: dbStack.clusterWriterEndpointHostname,
 
@@ -138,9 +136,7 @@ const app = new cdk.App()
   const dns = new DnsStack(qa, 'dns', {
     hakijaDomain: `testi.${HAKIJA_DOMAIN}`,
     hakijaDomainSv: `testi.${HAKIJA_DOMAIN_SV}`,
-    hakijaLegacyARecord: LEGACY_LOADBALANCER_IP,
     virkailijaDomain: `testi.${VIRKAILIJA_DOMAIN}`,
-    virkailijaLegacyARecord: LEGACY_LOADBALANCER_IP,
     databaseHostname: dbStack.clusterWriterEndpointHostname,
 
     delegationRecord: {
@@ -229,9 +225,7 @@ const app = new cdk.App()
   const dns = new DnsStack(prod, 'dns', {
     hakijaDomain: HAKIJA_DOMAIN,
     hakijaDomainSv: HAKIJA_DOMAIN_SV,
-    hakijaLegacyARecord: LEGACY_LOADBALANCER_IP,
     virkailijaDomain: VIRKAILIJA_DOMAIN,
-    virkailijaLegacyARecord: LEGACY_LOADBALANCER_IP,
     databaseHostname: dbStack.clusterWriterEndpointHostname,
   })
   const smtpStack = new SmtpStack(prod, 'smtp', {
