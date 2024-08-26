@@ -56,6 +56,9 @@ export class DbStack extends cdk.Stack {
         enablePerformanceInsights: true,
       }),
       monitoringInterval: Duration.seconds(15),
+      backup: {
+        retention: Duration.days(14),
+      },
       readers: [
         cdk.aws_rds.ClusterInstance.serverlessV2('reader', {
           enablePerformanceInsights: true,
