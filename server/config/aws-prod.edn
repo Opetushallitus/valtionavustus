@@ -14,6 +14,7 @@
                    :to-palkeet-ja-talouspalvelut ["palkeet@localhost" "talouspalvelut@localhost"]}
  :rondo-scheduler {:enabled?   false
                    :scheduling "0 00 04 ? * *"}
+ :ui              {:show-environment? false}
  :notifications   {:asiatarkastus                   {:enabled? true
                                                      :schedule "0 0 7 ? * 2"}
                    :taloustarkastus                 {:enabled? true
