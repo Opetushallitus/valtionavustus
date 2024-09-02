@@ -18,6 +18,8 @@
             [oph.va.virkailija.scoring :as scoring]
             [oph.va.virkailija.tapahtumaloki :as tapahtumaloki]
             [ring.util.http-response :as http]
+            [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
+            [oph.common.email :refer [smtp-config]]
             [schema.core :as s]))
 
 (defn- notEmptyString [x] (not (clojure.string/blank? x)))
@@ -120,7 +122,9 @@
           email-type (keyword email-type-str)]
       (when (not (seq (filter notEmptyString to)))
         (http/bad-request! {:error "Viestillä on oltava vähintään yksi vastaanottaja"}))
-      (let [email-id (common-email/try-send-email!
+      (let [is-jotpa-avustushaku (is-jotpa-avustushaku (hakija-api/get-avustushaku avustushaku-id))
+            from (if is-jotpa-avustushaku (-> smtp-config :jotpa-from :fi) (-> smtp-config :from (get (keyword lang))))
+            email-id (common-email/try-send-email!
                        (common-email/message (keyword lang)
                                              email-type
                                              to
@@ -128,7 +132,8 @@
                                              body)
                        {:hakemus-id     hakemus-id
                         :avustushaku-id avustushaku-id
-                        :from           (:email identity)})]
+                        :reply-to       (:email identity)
+                        :from           from})]
         (tapahtumaloki/create-log-entry email-type-str avustushaku-id hakemus-id identity "" {} email-id true))
       (http/created)))
 
@@ -148,16 +153,19 @@
       (let [loppuselvitys-hakemus-id (hakija-db/get-loppuselvitys-hakemus-id hakemus-id)
             loppuselvitys-hakemus (hakija-api/get-hakemus loppuselvitys-hakemus-id)]
         (hakija-api/update-hakemus-status loppuselvitys-hakemus "pending_change_request" "Täydennyspyyntö kts. sähköposti" identity))
-      (let [email-id (common-email/try-send-email!
-                      (common-email/message (keyword lang)
-                                              (keyword type)
-                                              to
-                                              subject
-                                              body)
-                      {:hakemus-id     hakemus-id
-                      :avustushaku-id avustushaku-id
-                      :from           (:email identity)})]
-        (log/info  (str "Sent with FROM address " (:email identity)))
+      (let [is-jotpa-avustushaku (is-jotpa-avustushaku (hakija-api/get-avustushaku avustushaku-id))
+            from (if is-jotpa-avustushaku (-> smtp-config :jotpa-from :fi) (-> smtp-config :from (get (keyword lang))))
+            email-id (common-email/try-send-email!
+                       (common-email/message (keyword lang)
+                                             (keyword type)
+                                             to
+                                             subject
+                                             body)
+                       {:hakemus-id     hakemus-id
+                        :avustushaku-id avustushaku-id
+                        :reply-to       (:email identity)
+                        :from           from})]
+        (log/info (str "Sent with reply-to address " (:email identity)))
         (tapahtumaloki/create-log-entry type avustushaku-id hakemus-id identity "" {} email-id true))
       (http/created)))
 
