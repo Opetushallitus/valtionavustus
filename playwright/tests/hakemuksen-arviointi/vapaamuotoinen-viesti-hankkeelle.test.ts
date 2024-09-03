@@ -28,7 +28,7 @@ muutoshakemusTest(
       acceptedHakemus.hakemusID
     )
 
-    const expectedSenderEmailAddress = 'santeri.horttanainen@reaktor.com'
+    const virkailijaEmailAddress = 'santeri.horttanainen@reaktor.com'
     const form = viestiTab.locators.sendMessageForm
     const message1 = {
       subject: 'Ensimmäinen viesti',
@@ -37,8 +37,8 @@ muutoshakemusTest(
 
     await test.step('Viestin täyttäminen', async () => {
       const { addressInputs } = form.recipients
-      const sender = page.getByTestId('email-form-message-sender')
-      await expect(sender).toHaveValue(expectedSenderEmailAddress)
+      const replyTo = page.getByTestId('email-form-message-reply-to')
+      await expect(replyTo).toHaveValue(virkailijaEmailAddress)
       await expect(addressInputs).toHaveCount(1)
       await expect(addressInputs).toHaveValue(answers.contactPersonEmail)
 
@@ -68,7 +68,10 @@ muutoshakemusTest(
       await row.click()
 
       const sender = page.getByTestId('viesti-details-email-sender')
-      await expect(sender).toHaveText(expectedSenderEmailAddress)
+      await expect(sender).toHaveText('no-reply@valtionavustukset.oph.fi')
+
+      const replyTo = page.getByTestId('viesti-details-email-reply-to')
+      await expect(replyTo).toHaveText(virkailijaEmailAddress)
 
       await expect(messageRow.subject(row)).toHaveText(message1.subject)
       await expect(messageRow.recipients(row)).toHaveText(answers.contactPersonEmail)

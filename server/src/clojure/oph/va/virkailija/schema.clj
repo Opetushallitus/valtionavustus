@@ -562,6 +562,7 @@
     :created_at s/Inst
     :to_address [s/Str]
     :from_address s/Str
+    :reply_to (s/maybe s/Str)
     :subject s/Str
   }
 )

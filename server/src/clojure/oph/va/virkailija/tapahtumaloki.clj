@@ -41,6 +41,7 @@
            'id', id,
            'formatted', formatted,
            'from_address', from_address,
+           'reply_to', reply_to,
            'sender', sender,
            'to_address', to_address,
            'created_at', created_at,

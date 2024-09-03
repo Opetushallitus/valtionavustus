@@ -101,9 +101,9 @@ function MultipleRecipentEmailForm(
         <div className={styles.formBody}>
           {heading && <h2 className={styles.formHeader}>{heading}</h2>}
           <fieldset>
-            <legend>Lähettäjä</legend>
+            <legend>Reply-To</legend>
             <input
-              data-test-id={'email-form-message-sender'}
+              data-test-id={'email-form-message-reply-to'}
               type="text"
               name="sender"
               disabled={true}

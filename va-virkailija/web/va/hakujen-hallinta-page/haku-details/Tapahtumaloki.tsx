@@ -26,6 +26,7 @@ type EmailContent = {
   created_at: string
   to_address: string[]
   from_address: string
+  reply_to: string | null
 }
 
 type LahetysType = 'paatoksen_lahetys' | 'valiselvitys-notification' | 'loppuselvitys-notification'

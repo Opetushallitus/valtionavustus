@@ -220,6 +220,7 @@ export const mapEmails = ({ user_name, email_content }: Lahetys): Message | Mess
     message: email_content.formatted,
     receivers: email_content.to_address,
     sender: email_content.from_address,
+    reply_to: email_content.reply_to,
     subject: email_content.subject,
     virkailija: user_name,
   }

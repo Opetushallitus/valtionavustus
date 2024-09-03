@@ -16,6 +16,7 @@ export interface Message {
   date: string
   virkailija: string
   sender: string
+  reply_to: string | null
   subject: string
   message: string
   receivers: string[]
@@ -54,14 +55,8 @@ export function ViestiDetails(props: { message: Message }) {
   const message = props.message
   return (
     <div role="table" className={'messageDetails'}>
-      <div role="row" className={'detailRow'}>
-        <div role="rowheader" className={'label'}>
-          Lähettäjä
-        </div>
-        <div data-test-id={'viesti-details-email-sender'} role="cell" className={'item'}>
-          {message.sender}
-        </div>
-      </div>
+      <EmailField name={'Lähettäjä'} address={message.sender} type={'sender'} />
+      <EmailField name={'Reply-To'} address={message.reply_to} type={'reply-to'} />
       <div role="row" className={'detailRow'}>
         <div role="rowheader" className={'label'}>
           Vastaanottajat
@@ -79,6 +74,23 @@ export function ViestiDetails(props: { message: Message }) {
         </div>
       </div>
       <div className={'rowMessage'}>{message.message}</div>
+    </div>
+  )
+}
+
+function EmailField(props: { name: string; address: string | null; type: string }) {
+  const { name, address, type } = props
+
+  if (!address) return <React.Fragment />
+
+  return (
+    <div role="row" className={'detailRow'}>
+      <div role="rowheader" className={'label'}>
+        {name}
+      </div>
+      <div data-test-id={`viesti-details-email-${type}`} role="cell" className={'item'}>
+        {address}
+      </div>
     </div>
   )
 }
