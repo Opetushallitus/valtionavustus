@@ -9,7 +9,7 @@ export interface Email {
   bcc: string | null
   cc?: string[]
   subject?: string
-  'reply-to': string | null
+  'reply-to'?: string | null
   'from-address'?: string
 }
 
@@ -29,7 +29,7 @@ export const emailSchema = yup
         cc: yup.array().of(yup.string().required()).optional(),
         subject: yup.string().optional(),
         'from-address': yup.string().optional(),
-        'reply-to': yup.string().defined().nullable(),
+        'reply-to': yup.string().optional().nullable(),
       })
       .required()
   )

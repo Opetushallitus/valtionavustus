@@ -46,6 +46,7 @@ export const LoppuselvitysForm = ({ hakemus, userInfo, presenter }: Loppuselvity
               message: loppuselvitysEmail.message,
               date: loppuselvitysEmail.send,
               sender: 'no-reply@oph.fi',
+              reply_to: null,
               virkailija: '',
             },
           ]}

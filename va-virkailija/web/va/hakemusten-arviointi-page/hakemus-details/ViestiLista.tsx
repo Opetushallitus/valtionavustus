@@ -16,7 +16,7 @@ export interface Message {
   date: string
   virkailija: string
   sender: string
-  reply_to: string | null
+  reply_to?: string | null
   subject: string
   message: string
   receivers: string[]
@@ -78,7 +78,7 @@ export function ViestiDetails(props: { message: Message }) {
   )
 }
 
-function EmailField(props: { name: string; address: string | null; type: string }) {
+function EmailField(props: { name: string; address: string | null | undefined; type: string }) {
   const { name, address, type } = props
 
   if (!address) return <React.Fragment />
