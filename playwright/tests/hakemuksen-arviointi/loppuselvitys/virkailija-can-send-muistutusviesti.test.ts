@@ -76,7 +76,7 @@ ${content}
 ${footer}`)
     expect(email.bcc).toBeNull()
     expect(email.cc).toEqual([])
-    expect(email['reply-to']).toBe(null)
+    expect(email['reply-to']).toBe('santeri.horttanainen@reaktor.com')
     expect(email['to-address']).toEqual([answers.contactPersonEmail, additionalReceiver])
   })
 
