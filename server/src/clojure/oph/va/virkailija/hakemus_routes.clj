@@ -129,10 +129,10 @@
                                              email-type
                                              to
                                              subject
-                                             body)
+                                             body
+                                             {:reply-to (:email identity)})
                        {:hakemus-id     hakemus-id
                         :avustushaku-id avustushaku-id
-                        :reply-to       (:email identity)
                         :from           from})]
         (tapahtumaloki/create-log-entry email-type-str avustushaku-id hakemus-id identity "" {} email-id true))
       (http/created)))
@@ -160,10 +160,10 @@
                                              (keyword type)
                                              to
                                              subject
-                                             body)
+                                             body
+                                             {:reply-to (:email identity)})
                        {:hakemus-id     hakemus-id
                         :avustushaku-id avustushaku-id
-                        :reply-to       (:email identity)
                         :from           from})]
         (log/info (str "Sent with reply-to address " (:email identity)))
         (tapahtumaloki/create-log-entry type avustushaku-id hakemus-id identity "" {} email-id true))
