@@ -23,25 +23,19 @@
     :else
       (compojure-ex/stringify-error data)))
 
-(defn describe-error [^Exception ex message request]
-  {:request-method (:request-method request)
-   :request-url    (req/request-url request)
-   :message        message
-   :exception      ex})
-
 (defn exception-handler [^Exception ex data request]
-  (log/error (describe-error ex (stringify-error ex data) request))
+  (log/error ex "Unknown 500 Internal Server Error" " Method" (:request-method request) " Url" (req/request-url request))
   (internal-server-error {:type "unknown-exception"
                           :class (.getName (.getClass ex))}))
 
 (defn compojure-error-handler [^Exception ex data request]
   (let [error-type (:type data)
         error-str  (stringify-error ex data)
-        error-desc (describe-error ex (format "%s error: %s" error-type error-str) request)]
+        error-desc (str error-type " Method " (:request-method request) " Url " (req/request-url request))]
     (if (some #{error-type} [::compojure-ex/request-parsing ::compojure-ex/request-validation])
       (do
-        (log/warn (dissoc error-desc :exception))
+        (log/warn ex "400 Bad Request" error-desc)
         (bad-request {:errors error-str}))
       (do
-        (log/error error-desc)
+        (log/error ex "500 Internal Server Error" error-desc)
         (internal-server-error {:errors error-str})))))

@@ -20,16 +20,30 @@
         "$resolver": "logger",
         "field": "name"
       },
-      "stack_trace": {
-        "$resolver": "exception",
-        "field": "stackTrace",
-        "stackTrace": {
-          "stringified": true
+      "exception": {
+        "exception_class": {
+          "$resolver": "exception",
+          "field": "className"
+        },
+        "exception_message": {
+          "$resolver": "exception",
+          "field": "message"
+        },
+        "stacktrace": {
+          "$resolver": "exception",
+          "field": "stackTrace",
+          "stackTrace": {
+            "stringified": true
+          }
         }
       },
       "file": {
         "$resolver": "source",
         "field": "fileName"
+      },
+      "method": {
+        "$resolver": "source",
+        "field": "methodName"
       }
     }
   }
