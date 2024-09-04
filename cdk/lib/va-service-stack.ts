@@ -109,7 +109,7 @@ export class VaServiceStack extends cdk.Stack {
       containerName: CONTAINER_NAME,
       environment: {
         JAVA_TOOL_OPTIONS:
-          '-Dlog4j2.formatMsgNoLookups=true -Dfile.encoding=UTF-8 -Djava.awt.headless=true -Dclojure.main.report=stderr',
+          '-Xmx1500m -Dlog4j2.formatMsgNoLookups=true -Dfile.encoding=UTF-8 -Djava.awt.headless=true -Dclojure.main.report=stderr',
         DB_HOSTNAME: databaseHostname,
         HEADLESS: 'true',
         config: `/app/server/config/aws-${scope.env}.edn`,
