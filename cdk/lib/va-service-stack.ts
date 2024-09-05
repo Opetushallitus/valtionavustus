@@ -92,7 +92,7 @@ export class VaServiceStack extends cdk.Stack {
       taskRole: vaTaskRole,
       executionRole: vaTaskExecRole,
       cpu: 1024,
-      memoryLimitMiB: 2048,
+      memoryLimitMiB: 4096,
     })
 
     const valtionavustuksetImage = ContainerImage.fromRegistry(
@@ -109,7 +109,7 @@ export class VaServiceStack extends cdk.Stack {
       containerName: CONTAINER_NAME,
       environment: {
         JAVA_TOOL_OPTIONS:
-          '-Xmx1500m -Dlog4j2.formatMsgNoLookups=true -Dfile.encoding=UTF-8 -Djava.awt.headless=true -Dclojure.main.report=stderr',
+          '-Xmx2500m -Dlog4j2.formatMsgNoLookups=true -Dfile.encoding=UTF-8 -Djava.awt.headless=true -Dclojure.main.report=stderr',
         DB_HOSTNAME: databaseHostname,
         HEADLESS: 'true',
         config: `/app/server/config/aws-${scope.env}.edn`,
