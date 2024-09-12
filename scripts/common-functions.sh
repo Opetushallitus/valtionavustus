@@ -19,7 +19,6 @@ readonly local_docker_namespace="va"
 
 readonly HAKIJA_HOSTNAME=${HAKIJA_HOSTNAME:-"localhost"}
 readonly VIRKAILIJA_HOSTNAME=${VIRKAILIJA_HOSTNAME:-"localhost"}
-readonly DOCKER_COMPOSE_FILE="$repo"/docker-compose-test.yml
 
 readonly AWS_CLI_VERSION="2.15.1"
 
