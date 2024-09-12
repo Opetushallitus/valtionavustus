@@ -29,7 +29,7 @@ services:
   va-server:
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile.va-app
       args:
         - REVISION
     image: ${VA_SERVER_IMAGE-va-server:latest}

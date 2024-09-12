@@ -22,6 +22,7 @@ function main {
   docker build \
       --build-arg "REVISION=${revision}" \
       --tag "$image_tag" \
+      --file Dockerfile.va-app \
       "$repo"
 
   tags_to_push+=("$image_tag")
