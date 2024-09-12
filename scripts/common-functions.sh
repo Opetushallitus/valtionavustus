@@ -92,61 +92,8 @@ function require_docker_compose {
   docker compose > /dev/null || fatal "docker compose missing"
 }
 
-function stop_system_under_test () {
-  info "Stopping system under test"
-  docker-compose -f "${DOCKER_COMPOSE_FILE}" down --remove-orphans
-}
-
-function fix_directory_permissions_after_test_run {
-  info "Fixing directory permissions after test run"
-
-  set +e
-  CURRENT_USER_ID="$(id -u)"
-  CURRENT_USER_GID="$(id -g)"
-
-  docker run \
-    --env CURRENT_USER_ID="${CURRENT_USER_ID}" \
-    --env CURRENT_USER_GID="${CURRENT_USER_GID}" \
-    --rm \
-    -v "$repo"/playwright-results:/playwright-results \
-    -v "$repo"/fakesmtp:/fakesmtp \
-    bash:latest bash -c "chown -R ${CURRENT_USER_ID}:${CURRENT_USER_GID} /playwright-results /fakesmtp"
-
-  set -e
-}
-
-function start_system_under_test () {
-  info "Starting system under test"
-  if running_on_jenkins
-  then
-    disable_docker_buildkit_builder
-  fi
-
-  REVISION="${revision}" docker-compose -f "$DOCKER_COMPOSE_FILE" up --force-recreate --build -d va
-  local container_name
-  container_name="$(docker-compose -f "$DOCKER_COMPOSE_FILE" ps --quiet va)"
-  wait_for_container_to_be_healthy va
-
-  follow_service_logs
-}
-
 function disable_docker_buildkit_builder {
   export DOCKER_BUILDKIT=0
-}
-
-function follow_service_logs {
-  docker-compose -f "$DOCKER_COMPOSE_FILE" logs --follow &
-}
-
-function run_tests() {
-  info "Running isolated system tests"
-  export HEADLESS=true
-  if running_on_jenkins; then
-    export PLAYWRIGHT_WORKERS=6
-    export SPECLJ_ARGS="-f junit"
-  fi
-
-  "$repo"/run_isolated_system_tests.sh
 }
 
 function parse_env_from_script_name {
@@ -255,10 +202,6 @@ function log {
   >&2 echo -e "${timestamp} ${level} ${message}"
 }
 
-function ansible-playbook {
-  ansible-command "ansible-playbook" "$@"
-}
-
 function ansible-vault {
   ansible-command "ansible-vault" "$@"
 }
@@ -343,18 +286,4 @@ function end_gh_actions_group {
   info "$CURRENT_GROUP took $(( END_TIME - GROUP_START_TIME )) seconds"
 }
 
-function build_jars {
-  require_command curl
-
-  init_nodejs
-
-  make clean
-  echo "${revision}" > "${repo}"/server/resources/public/version.txt
-  make build
-  rm "${repo}"/server/resources/public/version.txt
-}
-
-function current-commit-is-not-tested {
-  ! git tag --contains | grep -q "green-qa"
-}
 
