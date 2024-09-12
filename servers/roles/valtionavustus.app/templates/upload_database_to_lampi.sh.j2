@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-/bin/sudo -Hi -u postgres {{ pg_dump_executable }} -p {{ lampi_backup_port }} -Fc {{ dbname }} | /usr/local/bin/aws --profile oph-datalake s3 cp - s3://{{ lampi_bucket_name }}/fulldump/valtionavustukset/v1/valtionavustukset.backup

@@ -1,9 +1,0 @@
-va_git_repository: git@github.com:Opetushallitus/valtionavustus.git
-
-jenkins_jobs:
-   - name: valtionavustus-deploy-production
-     template: roles/valtionavustus.build/templates/valtionavustus-deploy-production-job.xml.j2
-   - name: valtionavustus-deploy-qa
-     template: roles/valtionavustus.build/templates/valtionavustus-deploy-qa-job.xml.j2
-   - name: valtionavustus-dependencycheck
-     template: roles/valtionavustus.build/templates/valtionavustus-dependencycheck-job.xml.j2

@@ -1,8 +1,0 @@
-- name: Upload buildstatus every 5 minutes
-  cron:
-    name: Upload buildstatus
-    weekday: "*"
-    minute: "*/5"
-    hour: "*"
-    user: jenkins
-    job: /home/jenkins/horttiksen-upload-skripti.sh

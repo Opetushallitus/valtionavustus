@@ -1,5 +1,0 @@
-[Unit]
-Description=Check disk usage and send alert mail if over threshold
-
-[Service]
-ExecStart=/bin/bash /usr/local/bin/check_disk_usage_and_send_mail_if_over_threshold.sh

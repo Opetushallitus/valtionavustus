@@ -1,3 +1,0 @@
-- name: Restart rsyslog
-  service: name=rsyslog state=restarted
-  when: rsyslog_config.changed

@@ -1,3 +1,0 @@
-- name: jenkins restart
-  shell: service jenkins restart
-  become: yes

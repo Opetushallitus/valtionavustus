@@ -1,9 +1,0 @@
-[Unit]
-Description=Runs check_disk_usage_and_send_mail_if_over_threshold.service once every fifteen minutes
-
-[Timer]
-OnCalendar=*:0/15
-Unit=check_disk_usage_and_send_mail_if_over_threshold.service
-
-[Install]
-WantedBy=multi-user.target
