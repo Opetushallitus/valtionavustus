@@ -30,16 +30,6 @@ psql-jq -d va-dev -c "select * from hakija.avustushaut where id = 165" | less
 psql-jq -d va-dev -c "select h.organization_name, h.id as hakemus_id, h.version as hakemus_version, h.user_key as hakemus_user_key, s.form as form_id, s.id as form_submission_id, s.version as form_submission_version, s.answers from hakija.hakemukset h join hakija.form_submissions s on (h.form_submission_id = s.id and h.form_submission_version = s.version) where h.avustushaku = 3 and h.status != 'cancelled' and h.status != 'new' and h.version_closed is null and h.hakemus_type = 'hakemus' order by upper(h.organization_name), upper(h.project_name)" | less
 ```
 
-### Kysely testi- tai tuotantopalvelimelta
-
-Esimerkkinä hakemuksen tilan haku tuotannosta. Avaa ensiksi ssh-yhteys
-palvelimelle oph-va-app-prod01, jotta lokaali portti 30022 forwardoituu
-palvelimen porttiin 5432. Komenna sitten lokaalisti:
-
-``` bash
-psql-jq -d va-prod -h localhost -p 30022 -U va_hakija -c "select * from hakija.hakemukset where id = 5582 and version_closed is null" | less
-```
-
 ### Hakemuksen tunnisteiden selvitys
 
 Jos tiedät hakemuksen id:n:

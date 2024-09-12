@@ -259,14 +259,6 @@ automaattisesti. [Lisätietoja Leiningenin profiileista](https://github.com/tech
 
 ### Yleisiä komentoja
 
-Hakijasovelluksen tuotantoversion ajo:
-
-``` shell
-cd va-hakija
-../lein uberjar
-CONFIG=config/va-prod.edn java -jar target/uberjar/hakija-0.1.0-SNAPSHOT-standalone.jar
-```
-
 Hakemusten generointi:
 
 ``` shell

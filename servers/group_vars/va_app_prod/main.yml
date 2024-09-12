@@ -1,6 +1,0 @@
-app_profile: va-prod
-dbname: va-prod
-pg_12_port: 5432
-lampi_backup_port: 5432
-logs_mail_recipient: "{{ alert_mail_recipient }}"
-lampi_bucket_name: oph-lampi-prod
