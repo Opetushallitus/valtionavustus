@@ -69,7 +69,7 @@
 
 (def config
   (when-not *compile-files*
-    (->> (or (env :config) "config/dev.edn")
+    (->> (or (env :config) "config/local.edn")
          (slurp)
          (clojure.edn/read-string)
          (merge-with-secrets)
@@ -82,8 +82,8 @@
 
 (defn without-authentication? []
   (let [use-fake-auth (-> config :server :without-authentication?)]
-    (when (and use-fake-auth (not= "dev" environment))
-      (throw (Exception. (str "Disabling authentication is allowed only in dev environment (env=" environment ")"))))
+    (when (and use-fake-auth (not= "local" environment))
+      (throw (Exception. (str "Disabling authentication is allowed only in local environment (env=" environment ")"))))
     use-fake-auth))
 
 (defn- enabled-features [flags env]

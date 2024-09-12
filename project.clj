@@ -154,7 +154,7 @@
                  ]
 
   :profiles {:uberjar {:aot [oph.va.hakija.main]}
-             :server-dev {:env {:config "va-hakija/config/dev.edn"
+             :server-local {:env {:config "va-hakija/config/local.edn"
                                 :configsecrets "../valtionavustus-secret/config/secret-dev.edn"
                                 :configdefaults "va-hakija/config/defaults.edn"}}
 

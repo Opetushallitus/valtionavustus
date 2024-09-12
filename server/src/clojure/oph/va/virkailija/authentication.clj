@@ -19,12 +19,12 @@
         (* 1000))))
 
 (defn add-authentication [authentication]
-  (when (and (not= environment "dev") (not= environment "test"))
+  (when (and (not= environment "local") (not= environment "test"))
     (throw (Exception. "Function is only for testing")))
   (swap! session-store assoc (:cas-ticket authentication) authentication))
 
 (defn remove-authentication [authentication]
-  (when (and (not= environment "dev") (not= environment "test"))
+  (when (and (not= environment "local") (not= environment "test"))
     (throw (Exception. "Function is only for testing")))
   (swap! session-store dissoc (:cas-ticket authentication)))
 

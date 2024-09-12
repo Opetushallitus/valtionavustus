@@ -1,4 +1,4 @@
-{:environment              "dev"
+{:environment              "local"
  :server                                      {:allow-db-clear?         true
                                                :enable-access-log?      false
                                                :enable-hsts?            false

@@ -1,4 +1,4 @@
-name: valtionavustus-dev
+name: valtionavustus-local
 services:
   va:
     ports:

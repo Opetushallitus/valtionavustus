@@ -116,9 +116,9 @@
                              (redirect-to-login request))}]})))
 
 (defn- without-authentication [site]
-  (when (not (or (= environment "dev") (= environment "test")))
+  (when (not (or (= environment "local") (= environment "test")))
     (throw (Exception.
-             "Authentication is allowed only in dev or test environments")))
+             "Authentication is allowed only in local or test environments")))
   (-> site
       (buddy-middleware/wrap-authentication (buddy-session/session-backend))
       (buddy-accessrules/wrap-access-rules
