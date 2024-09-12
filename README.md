@@ -60,7 +60,6 @@ Haun roolista huolimatta kuka tahansa VA-käyttäjä voi kommentoida hakemuksia.
 * [Leiningen](https://leiningen.org/), versio 2.8.1
 * [Java SE Development Kit](http://www.oracle.com/technetwork/java/javase/index.html), versio 8
 * [PostgreSQL](https://www.postgresql.org/), vähintään versio 12.2
-* [GNU make](https://www.gnu.org/software/make/), vähintään versio 3.81
 
 Käytä OPH:n VPN:ää, jotta voit ladata tarvittavat jar-paketit OPH:n
 Artifactorystä.
@@ -68,14 +67,6 @@ Artifactorystä.
 ## Kehitysympäristö
 
 Kehitystyössä hyödyllisiä työkaluja:
-
-* [FakeSMTP](https://nilhcem.github.io/FakeSMTP/)
-
-Projektin juurihakemistossa on `Makefile`, jolla voi ajaa koko projektia koskevia yleisiä komentoja. Sen käyttöön on ohje:
-
-``` shell
-make help
-```
 
 Juurihakemisto sisältää `lein`-skriptin, jota voi käyttää Leiningenin
 ajamiseen. Tämä takaa staattisen version käytön Leiningenistä.
@@ -180,13 +171,6 @@ createdb -E UTF-8 va-dev
 
 ### Frontend
 
-Asenna kaikki frontendin buildaamiseen käytetyt npm-moduulit, projektin
-juurihakemistossa:
-
-``` shell
-make npm-clean npm-install-modules
-```
-
 Käynnistä frontendin assettien buildi webpackilla. Tällöin webpack
 generoi selaimen käyttämät JavaScript-tiedostot. Webpack buildaa
 tarvittaessa uudelleen, jos lähdekoodi yllä olevissa hakemistoissa
@@ -200,30 +184,11 @@ cd va-virkailija
 npm run build-watch
 ```
 
-Frontendin tuotantoversion buildi, projektin juurihakemistossa:
-
-``` shell
-make npm-build
-```
-
-Kaikkien frontendin yksikkötestien ajo, projektin juurihakemistossa:
-
-``` shell
-make npm-test
-```
-
 ### Backend
 
 Varmista, että `JAVA_HOME`-ympäristömuuttuja osoittaa haluamaasi
 JDK:hon.
 
-Asenna ensin backendien riippuvuudet paikalliseen
-`~/.m2`-hakemistoon. Tarvitset tätä varten OPH:n VPN:n, koska osa
-riippuvuuksista on OPH:n Artifactoryssä. Projektin juurihakemistossa:
-
-``` shell
-make lein-clean lein-install-jar-commons
-```
 
 Backendien ajaminen Leiningenissa tapahtuu käyttämällä
 `trampoline`-komentoa, jotta JVM ajaa shutdown-hookit, joissa
@@ -258,12 +223,6 @@ tai va-virkailija requiraa sen. Ongelman voi kiertää komentamalla:
 touch soresu-form/src/oph/soresu/common/config.clj
 ```
 
-Backendin uberjarrien buildi, projektin juurihakemistossa:
-
-``` shell
-make lein-build
-```
-
 Yksittäisen Leiningen-projektin testien ajaminen, esimerkkinä va-hakija:
 
 ``` shell
@@ -279,12 +238,6 @@ Mikäli muutat frontendin koodia, pitää frontendin buildi ajaa uudelleen
 (katso ylhäältä).
 
 Huom! va-virkailijan testien ajaminen edellyttää, että va-hakijan testit on ajettu aiemmin.
-
-Kaikkien Leiningen-projektien testien ajaminen, juurihakemistossa:
-
-``` shell
-make lein-test
-```
 
 ### Ajoympäristöt
 
@@ -314,26 +267,6 @@ cd va-hakija
 CONFIG=config/va-prod.edn java -jar target/uberjar/hakija-0.1.0-SNAPSHOT-standalone.jar
 ```
 
-Frontendin ja backendin puhdas buildi ja testien ajo, projekin
-juurihakemistossa:
-
-``` shell
-make clean build test
-```
-
-Backendin riippuvuuksien versioiden tarkistus, projektin
-juurihakemistossa:
-
-``` shell
-make lein-outdated-dependencies
-```
-
-Frontendin riippuvuuksien tarkistus, projektin juurihakemistossa:
-
-``` shell
-make npm-outdated-dependencies
-```
-
 Hakemusten generointi:
 
 ``` shell
@@ -342,13 +275,6 @@ cd va-hakija
 ```
 
 ### Interaktiivinen kehitys
-
-Luo `checkouts`-hakemistot hakijan ja virkailijan
-sovellusmoduuleihin. Projektin juurihakemistossa:
-
-``` shell
-make lein-install-checkouts
-```
 
 Leiningen tunnistaa nyt `soresu` ja `common` -kirjastot ns. [checkout
 dependencyinä](https://github.com/technomancy/leiningen/blob/master/doc/TUTORIAL.md#checkout-dependencies),
