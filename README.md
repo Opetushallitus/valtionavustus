@@ -61,9 +61,6 @@ Haun roolista huolimatta kuka tahansa VA-käyttäjä voi kommentoida hakemuksia.
 * [Java SE Development Kit](http://www.oracle.com/technetwork/java/javase/index.html), versio 8
 * [PostgreSQL](https://www.postgresql.org/), vähintään versio 12.2
 
-Käytä OPH:n VPN:ää, jotta voit ladata tarvittavat jar-paketit OPH:n
-Artifactorystä.
-
 ## Kehitysympäristö
 
 Kehitystyössä hyödyllisiä työkaluja:
@@ -78,14 +75,11 @@ ls -lA oph
 ```
 
 ```
-drwxr-xr-x  26 username  staff    884 Feb 17 09:46 postgres-data/
 drwxr-xr-x  26 username  staff    884 Feb 17 09:46 valtionavustus/
 drwxr-xr-x  25 username  staff    850 Feb 17 10:54 valtionavustus-secret/
 ```
 
-Missä `postgres-data` on data-hakemisto PostgreSQL:lle ja
-`valtionavustus` ja `valtionavustus-secret` ovat projektin
-git-repositoryt.
+Missä `valtionavustus` ja `valtionavustus-secret` ovat projektin git-repositoryt.
 
 ### Tietokanta
 
@@ -118,56 +112,7 @@ pg_restore --user va -h localhost -v --clean --if-exists --no-acl --no-owner --d
 
 #### Ajaminen manuaalisesti
 
-*Huom:* Linux-koneilla Postgres-komennot on helpointa ajaa
-postgres-käyttäjänä:
-
-``` shell
-sudo -s -u postgres
-```
-
-Luo data-hakemisto:
-
-``` shell
-initdb -D postgresql-data
-```
-
-Halutessasi aseta seuraavat tiedostoon `postgres-data/postgresql.conf`,
-jotta voit seurata tarkemmin mitä tietokannassa tapahtuu:
-
-```
-log_destination = 'stderr'
-log_line_prefix = '%t %u '
-log_statement = 'mod'
-```
-
-Käynnistä tietokantapalvelin:
-
-``` shell
-postgres -D postgres-data
-```
-
-Luo käyttäjät `va-hakija` ja `va-virkailija` (kummankin salasana `va`):
-
-``` shell
-createuser -s va_hakija -P
-createuser -s va_virkailija -P
-```
-
-Luo tietokanta nimeltään `va-dev`:
-
-``` shell
-createdb -E UTF-8 va-dev
-```
-
-Kun web-sovellus käynnistyy, ajaa se tarvittavat migraatiot
-tietokantaan.
-
-Tietokannan saa tyhjennettyä ajamalla:
-
-``` shell
-dropdb va-dev
-createdb -E UTF-8 va-dev
-```
+Kun web-sovellus käynnistyy, ajaa se tarvittavat migraatiot tietokantaan.
 
 ### Frontend
 
@@ -186,44 +131,9 @@ npm run build-watch
 
 ### Backend
 
-Varmista, että `JAVA_HOME`-ympäristömuuttuja osoittaa haluamaasi
-JDK:hon.
-
-
-Backendien ajaminen Leiningenissa tapahtuu käyttämällä
-`trampoline`-komentoa, jotta JVM ajaa shutdown-hookit, joissa
-vapautetaan resursseja (uberjarin kautta ajaessa ongelmaa ei ole):
-
-``` shell
-cd va-hakija
-../lein trampoline run
-
-cd va-virkailija
-../lein trampoline run
-```
-
 Backendin käynnistys ajaa tietokannan migraatiot automaattisesti.
 
-Va-hakijan tai va-virkailijan käynnistys `lein trampoline run`:lla
-saattaa epäonnistua:
-
-```
-Exception in thread "main" java.lang.IllegalArgumentException: No matching ctor found for class java.net.Socket, compiling:(/private/var/folders/sk/grc8h2hn49lc8wfgnxnl5jqh0000gn/T/form-init5349156603706809421.clj:1:125)
-
-# tai
-
-Exception in thread "main" java.lang.IllegalArgumentException: Duplicate key: null, compiling:(kayttooikeus_service.clj:15:5)
-```
-
-Tämä on todennäköisesti bugi Leiningenissä: se ei suorita tiedostoa
-`soresu-form/src/oph/soresu/common/config.clj` silloin, kun va-hakija
-tai va-virkailija requiraa sen. Ongelman voi kiertää komentamalla:
-
-``` bash
-touch soresu-form/src/oph/soresu/common/config.clj
-```
-
-Yksittäisen Leiningen-projektin testien ajaminen, esimerkkinä va-hakija:
+#### Yksittäisen Leiningen-projektin testien ajaminen, esimerkkinä va-hakija:
 
 ``` shell
 cd va-hakija

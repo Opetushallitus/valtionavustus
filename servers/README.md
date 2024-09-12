@@ -10,19 +10,6 @@ tämä README on.
 | oph-va-app-test01 | [va-hakija](https://testi.valtionavustukset.oph.fi/avustushaku/1/), [va-hakija api](https://testi.valtionavustukset.oph.fi/doc), [va-virkailija](https://testi.virkailija.valtionavustukset.oph.fi/), [va-virkailija api](https://testi.virkailija.valtionavustukset.oph.fi/doc/) | Palvelun testiympäristö, ajaa sovelluksia ja tietokantaa. |
 | oph-va-app-prod01 | [va-hakija](https://valtionavustukset.oph.fi/avustushaku/1/), [va-hakija api](https://valtionavustukset.oph.fi/doc), [va-virkailija](https://testi.virkailija.valtionavustukset.oph.fi/), [va-virkailija api](https://virkailija.valtionavustukset.oph.fi/doc/), [avoimet avustushaut](http://oph.fi/rahoitus/valtionavustukset) | Palvelun tuotantoympäristö, ajaa sovelluksia ja tietokantaa. |
 
-## Yhteyden testaaminen palvelimille
-
-Repon juuressa `ssh.sh` scripti.
-``` bash
-./ssh.sh qa
-```
-
-### Lue palvelimen lokeja
-
-``` bash
-cd /logs/valtionavustus/
-```
-
 ### Sovelluksien hallinta
 
 Tarkista tila:
@@ -41,23 +28,6 @@ va:n uudelleenkäynnistys:
 sudo supervisorctl restart va
 ```
 
-### Thread dump
-
-Thread dump webappin stdoutiin, joka ohjautuu lokiin:
-
-``` bash
-ps -fe | grep java  # etsi sovelluksen pid
-sudo kill -3 924    # pyydä prosessilta thread dump
-less +F /logs/valtionavustus/va-hakija_run.log
-```
-
-### psql-yhteys palvelimelle
-
-Repon juuressa `psql.sh` scripti.
-
-```bash
-./scripts/psql-qa.sh
-```
 
 # AWS configurointi
 
