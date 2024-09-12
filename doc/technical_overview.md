@@ -34,10 +34,6 @@
 
 ## Architecture
 
-Valtionavustus application is deployed into CSC VMware environment.
-Environment provisioning is done with [Ansible
-scripts](../servers/README.md).
-
 Software is deployed as jar. Jar is built and deployed by [Jenkins CI
 server](https://dev.valtionavustukset.oph.fi/), which also runs in
 VMware environment.

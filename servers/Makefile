@@ -40,8 +40,6 @@ Examples:
 
 You will need a working installation of Pipenv, see https://docs.pipenv.org/install/
 
-Remember to set $$ANSIBLE_VAULT_PASSWORD_FILE if you run Ansible
-(`source .env-va.sh`).
 
 See README.md for more.
 endef

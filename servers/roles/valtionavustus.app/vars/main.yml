@@ -1,4 +1,3 @@
-app_secrets_vault_file: "{{ playbook_dir }}/config/secret-{{ app_profile }}-vault.edn"
 logs_dir: /logs
 data_dir: /data
 postgresql_version: 9.4

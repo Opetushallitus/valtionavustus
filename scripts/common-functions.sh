@@ -13,8 +13,6 @@ readonly revision="${GITHUB_SHA:-$(git rev-parse HEAD)}"
 readonly VA_SECRETS_REPO="$repo/../valtionavustus-secret"
 node_version="$(cat "$repo/.nvmrc")" && readonly node_version
 node_version_cdk="$(cat "$repo/cdk/.nvmrc")" && readonly node_version_cdk
-readonly ansible_version="8.1.0"
-readonly python_version="3.9.0"
 readonly local_docker_namespace="va"
 
 readonly HAKIJA_HOSTNAME=${HAKIJA_HOSTNAME:-"localhost"}
@@ -199,63 +197,6 @@ function log {
   local -r timestamp=$(date +"%Y-%m-%d %H:%M:%S")
 
   >&2 echo -e "${timestamp} ${level} ${message}"
-}
-
-function ansible-vault {
-  ansible-command "ansible-vault" "$@"
-}
-
-function ansible-command {
-  local -r command="$1"
-  shift
-  local -r image="${local_docker_namespace}/${command}"
-  local -r tag="${python_version}-${ansible_version}"
-  local -r ansible_vault_password_file=$(mktemp)
-  local -r ssh_config=$(mktemp)
-  local -r docker_work_dir=/servers
-  local -r user=$(whoami)
-
-  trap "rm -f ${ansible_vault_password_file} ${ssh_config}" EXIT
-  local -r password=$("${repo}/servers/gpg-wrapper.sh")
-
-  cat <<EOF > "$ansible_vault_password_file"
-#!/usr/bin/env bash
-echo "${password}"
-EOF
-  chmod u+x "$ansible_vault_password_file"
-
-  cat <<EOF > "$ssh_config"
-Host *
-  User ${user}
-EOF
-
-  if ! docker image inspect ${image}:${tag} 2>&1 > /dev/null; then
-    docker build \
-           --tag ${image}:${tag} \
-           - <<EOF
-FROM python:${python_version}
-RUN apt-get update && apt-get -y install vim
-RUN pip3 install ansible==${ansible_version}
-WORKDIR ${docker_work_dir}
-ENTRYPOINT ["$command"]
-EOF
-  fi
-
-  docker run \
-         --rm \
-         --tty \
-         --interactive \
-         --volume "${repo}/servers":"${docker_work_dir}" \
-         --volume "${ssh_config}":"${docker_work_dir}/ssh.config" \
-         --volume "${ansible_vault_password_file}":"${docker_work_dir}/gpg-wrapper.sh" \
-         --volume "${VA_SECRETS_REPO}/servers/va-secrets-vault.yml":"${docker_work_dir}/group_vars/all/vault.yml" \
-         --volume "${VA_SECRETS_REPO}/servers/va-secrets-qa-vault.yml":"${docker_work_dir}/group_vars/va_app_qa/vault.yml" \
-         --volume "${VA_SECRETS_REPO}/servers/va-secrets-prod-vault.yml":"${docker_work_dir}/group_vars/va_app_prod/vault.yml" \
-         --volume "${VA_SECRETS_REPO}/config":"${docker_work_dir}/config" \
-         --env SSH_AUTH_SOCK="/run/host-services/ssh-auth.sock" \
-         --mount type=bind,src=/run/host-services/ssh-auth.sock,target=/run/host-services/ssh-auth.sock \
-         ${image}:${tag} \
-         "$@"
 }
 
 CURRENT_GROUP=""

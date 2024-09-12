@@ -74,15 +74,6 @@
   tags:
     - app_secrets
 
-- name: Decrypt app secrets file into memory
-  local_action: shell ansible-vault view "{{ app_secrets_vault_file }}"
-  become: no
-  register: app_secrets_contents
-  changed_when: False
-  check_mode: no
-  tags:
-    - app_secrets
-
 - name: Copy app secrets to the server
   copy:
     content: "{{ app_secrets_contents.stdout }}"
