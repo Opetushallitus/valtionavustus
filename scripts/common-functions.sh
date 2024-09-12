@@ -259,13 +259,6 @@ EOF
          "$@"
 }
 
-function start-service {
-  local service_name=$1
-  pushd "$repo"
-  docker-compose -f "${DOCKER_COMPOSE_FILE}" up --force-recreate --build ${service_name}
-  popd
-}
-
 CURRENT_GROUP=""
 GROUP_START_TIME=0
 function start_gh_actions_group {

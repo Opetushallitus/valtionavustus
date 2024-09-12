@@ -10,14 +10,8 @@ function run_tests {
 }
 
 function run_playwright_tests {
-  if running_on_jenkins || running_on_gh_actions;
-  then
-    start-service test-runner
-    return "$(playwright_test_runner_exit_code)"
-  else
-    npx --no playwright install --with-deps chromium
-    npm run playwright:test "$@"
-  fi
+  npx --no playwright install --with-deps chromium
+  npm run playwright:test "$@"
 }
 
 function playwright_test_runner_exit_code {
