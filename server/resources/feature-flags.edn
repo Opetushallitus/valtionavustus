@@ -1,4 +1,4 @@
-{; available environments: [:dev :test :va-test :va-prod]
+{; available environments: [:dev :test :aws-dev :aws-qa :aws-prod :va-prod]
 
  ; https://jira.eduuni.fi/browse/VA-400
 }

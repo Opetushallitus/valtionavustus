@@ -1,6 +1,0 @@
-app_profile: va-test
-dbname: va-qa
-pg_12_port: 5432
-lampi_backup_port: 5432
-logs_mail_recipient: "{{ notification_mail_recipient }}"
-lampi_bucket_name: oph-lampi-qa
