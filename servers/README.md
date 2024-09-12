@@ -10,17 +10,6 @@ tämä README on.
 | oph-va-app-test01 | [va-hakija](https://testi.valtionavustukset.oph.fi/avustushaku/1/), [va-hakija api](https://testi.valtionavustukset.oph.fi/doc), [va-virkailija](https://testi.virkailija.valtionavustukset.oph.fi/), [va-virkailija api](https://testi.virkailija.valtionavustukset.oph.fi/doc/) | Palvelun testiympäristö, ajaa sovelluksia ja tietokantaa. |
 | oph-va-app-prod01 | [va-hakija](https://valtionavustukset.oph.fi/avustushaku/1/), [va-hakija api](https://valtionavustukset.oph.fi/doc), [va-virkailija](https://testi.virkailija.valtionavustukset.oph.fi/), [va-virkailija api](https://virkailija.valtionavustukset.oph.fi/doc/), [avoimet avustushaut](http://oph.fi/rahoitus/valtionavustukset) | Palvelun tuotantoympäristö, ajaa sovelluksia ja tietokantaa. |
 
-## Palvelinten provisiointi
-
-Repon juuresta löytyy seuraavat skriptit palvelinten provisiointiin:
-
-``` bash
-./run-ansible-jenkins.sh
-./run-ansible-qa.sh
-./run-ansible-prod.sh
-./run-ansible-loadblanacer.sh
-```
-
 ## Yhteyden testaaminen palvelimille
 
 Repon juuressa `ssh.sh` scripti.

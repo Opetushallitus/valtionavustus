@@ -3,19 +3,11 @@ set -o errexit -o nounset -o pipefail
 
 # shellcheck source=scripts/common-functions.sh
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functions.sh"
-# shellcheck source=deploy-scripts/jenkins-functions.sh
-source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/deploy-scripts/jenkins-functions.sh"
 
 trap stop_systems_under_test EXIT
 
 valtionavustus_jar="$repo"/target/*uberjar*/valtionavustus-*-standalone.jar
 function main {
-  if running_on_jenkins; then
-    docker image prune --force
-    docker volume prune --force
-    remove_all_files_ignored_or_untracked_by_git
-    install_docker_compose
-  fi
   parse_env_from_script_name "deploy"
   set_env_vars
   build_and_test_jars
