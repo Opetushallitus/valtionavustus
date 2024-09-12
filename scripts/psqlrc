@@ -1,3 +1,0 @@
-\set AUTOCOMMIT off
-\x auto
-\pset null '¤'
