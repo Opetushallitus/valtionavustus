@@ -97,12 +97,6 @@ function stop_system_under_test () {
   docker-compose -f "${DOCKER_COMPOSE_FILE}" down --remove-orphans
 }
 
-function stop_systems_under_test  {
-  info "Stopping all systems under test"
-  fix_directory_permissions_after_test_run
-  stop_system_under_test
-}
-
 function fix_directory_permissions_after_test_run {
   info "Fixing directory permissions after test run"
 
@@ -364,13 +358,3 @@ function current-commit-is-not-tested {
   ! git tag --contains | grep -q "green-qa"
 }
 
-function build_and_test_jars {
-  build_jars
-
-  if current-commit-is-not-tested;
-  then
-    start_system_under_test
-    run_tests
-    stop_system_under_test
-  fi
-}
