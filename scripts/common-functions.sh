@@ -78,11 +78,7 @@ function check_env {
 }
 
 function docker-compose () {
-    if running_on_jenkins; then
-      "$repo"/scripts/docker-compose "$@"
-    else
-      docker compose "$@"
-    fi
+  docker compose "$@"
 }
 
 function require_docker_compose {
@@ -103,10 +99,6 @@ function parse_env_from_script_name {
   else
     fatal "Don't call this script directly"
   fi
-}
-
-function running_on_jenkins {
-  [ "${JENKINS_HOME:-}" != "" ]
 }
 
 function running_on_gh_actions {

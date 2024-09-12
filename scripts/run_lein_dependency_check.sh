@@ -9,11 +9,7 @@ function lein_dep_check () {
   local configuration="nvd-config.json"
   local classpath="$(cd "$repo"; $LEIN classpath)"
 
-  if running_on_jenkins; then
-    "$LEIN" with-profile -user run -m nvd.task.check "$configuration" "$classpath"
-  else
-    "$LEIN" run -m nvd.task.check "$configuration" "$classpath"
-  fi
+  "$LEIN" run -m nvd.task.check "$configuration" "$classpath"
 }
 
 function main {
