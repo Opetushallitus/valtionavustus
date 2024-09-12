@@ -6,7 +6,7 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functio
 function run_tests {
   npm run prettier-check-project "$@"
   run_playwright_tests "$@"
-  make lein-test
+  ./lein with-profile test-legacy,user spec -f d
 }
 
 function run_playwright_tests {
