@@ -1,7 +1,8 @@
 #
 # Builder for frontend JS
 #
-FROM node:16.20.2-alpine AS web-builder
+ARG NODE_VERSION
+FROM node:${NODE_VERSION}-alpine AS web-builder
 ARG REVISION
 
 WORKDIR /app
