@@ -21,6 +21,7 @@ function main {
   export VA_SERVER_TAG="$image_tag"
   docker build \
       --build-arg "REVISION=${revision}" \
+      --build-arg "NODE_VERSION=${NODE_VERSION}" \
       --tag "$image_tag" \
       --file Dockerfile.va-app \
       "$repo"
