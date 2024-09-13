@@ -48,36 +48,6 @@
       ]
     },
     {
-      "matchPackageNames": [
-        "@playwright/test",
-        "mcr.microsoft.com/playwright"
-      ],
-      "groupName": "playwright packages"
-    },
-    {
-      "matchPackageNames": [
-        "react",
-        "react-dom",
-        "@types/react",
-        "@types/react-dom"
-      ],
-      "groupName": "react packages"
-    },
-    {
-      "matchPackageNames": [
-        "@reduxjs/toolkit",
-        "react-redux"
-      ],
-      "groupName": "redux packages"
-    },
-    {
-      "matchPackageNames": [
-        "aws-cdk",
-        "aws-cdk-lib"
-      ],
-      "groupName": "AWS CDK"
-    },
-    {
       "matchManagers": [
         "nvm",
         "npm",
@@ -86,27 +56,6 @@
       "matchPackageNames": [
         "@types/node",
         "node"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "groupName": "Node.js major updates",
-      "description": "Node.js version limited to 16 until we don't use CentOS 7 any more (node 18 and above require a newer glibc version than is available on CentOS 7)",
-      "enabled": false
-    },
-    {
-      "matchManagers": [
-        "nvm",
-        "npm",
-        "dockerfile"
-      ],
-      "matchPackageNames": [
-        "@types/node",
-        "node"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
       ],
       "groupName": "Node.js"
     },
