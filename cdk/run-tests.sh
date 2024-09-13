@@ -6,9 +6,9 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../scripts/common-func
 
 function main {
   cd "$repo/cdk"
-  init_nodejs_cdk
+  init_nodejs
   npm_ci_if_package_lock_has_changed
-  
+
   node --import tsx --test --test-reporter=spec "$@" tests/*.test.ts
 }
 

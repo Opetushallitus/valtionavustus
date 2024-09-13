@@ -35,7 +35,7 @@ function prepare_cdk {
   cd "$repo/cdk"
   info "Preparing CDK"
 
-  init_nodejs_cdk
+  init_nodejs
   npm_ci_if_package_lock_has_changed
 
   npm run build
