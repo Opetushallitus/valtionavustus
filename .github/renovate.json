@@ -64,6 +64,13 @@
       "groupName": "Node.js"
     },
     {
+      "matchPackageNames": [
+        "@playwright/test",
+        "mcr.microsoft.com/playwright"
+      ],
+      "groupName": "Playwright"
+    },
+    {
       "matchManagers": [
         "dockerfile"
       ],
