@@ -107,7 +107,8 @@
         "leiningen"
       ],
       "matchPackageNames": [
-        "org.flywaydb:flyway-core"
+        "org.flywaydb:flyway-core",
+        "buddy/buddy-sign"
       ],
       "description": "Suspend updates until we update JDK from current (8)",
       "matchUpdateTypes": [
