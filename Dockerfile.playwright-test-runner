@@ -1,12 +1,11 @@
 FROM mcr.microsoft.com/playwright:v1.45.2-focal
 
-ADD package.json package.json
-ADD package-lock.json package-lock.json
+COPY package.json package-lock.json .
 RUN npm ci
 
-ADD playwright playwright/
-ADD soresu-form soresu-form/
-ADD va-virkailija va-virkailija/
-ADD run_playwright_tests_in_container.sh run_playwright_tests_in_container.sh
+COPY playwright playwright/
+COPY soresu-form soresu-form/
+COPY va-virkailija va-virkailija/
+COPY run_playwright_tests_in_container.sh run_playwright_tests_in_container.sh
 
 ENTRYPOINT ["./run_playwright_tests_in_container.sh"]
