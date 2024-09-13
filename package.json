@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "OPH Valtionavustukset",
   "license": "EUPL-1.1",
-  "engines": {
-    "node": "^18.0.0"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Opetushallitus/valtionavustus.git"
