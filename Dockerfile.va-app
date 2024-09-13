@@ -38,7 +38,7 @@ RUN ./lein
 
 # fetch dependencies
 COPY project.clj .
-RUN ./lein deps
+RUN --mount=type=cache,target=/root/.m2 ./lein deps
 
 # add project code
 COPY server/src/ ./server/src/
