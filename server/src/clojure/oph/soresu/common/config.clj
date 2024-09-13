@@ -55,6 +55,7 @@
                                                                         :password                     (System/getenv "SMTP_AUTH_PASSWORD")
                                                                         :host                         (System/getenv "SMTP_HOSTNAME")
                                                                         :bounce-address               (System/getenv "SMTP_BOUNCE_ADDRESS")
+                                                                        :to-taloustarkastaja          (not-empty (filter some? [(System/getenv "EMAIL_TO_TALOUSPALVELUT")]))
                                                                         :to-palkeet                   (not-empty (filter some? [(System/getenv "EMAIL_TO_PALKEET")]))
                                                                         :to-palkeet-ja-talouspalvelut (not-empty (filter some? [(System/getenv "EMAIL_TO_PALKEET")
                                                                                                                                 (System/getenv "EMAIL_TO_TALOUSPALVELUT")]))
