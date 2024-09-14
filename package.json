@@ -43,7 +43,7 @@
     "@babel/core": "7.25.2",
     "@babel/preset-env": "7.25.4",
     "@babel/preset-react": "7.24.7",
-    "@playwright/test": "1.45.2",
+    "@playwright/test": "1.47.0",
     "@types/big.js": "6.2.2",
     "@types/chai": "4.3.19",
     "@types/lodash": "4.17.7",
