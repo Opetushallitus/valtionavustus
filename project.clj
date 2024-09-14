@@ -26,10 +26,10 @@
                          [com.github.java-json-tools/json-schema-validator "2.2.14"]
                          ;; ... -> [com.github.java-json-tools/json-schema-validator "2.2.14"] ->
                          ;; fixes https://nvd.nist.gov/vuln/detail/cve-2020-8908
-                         [com.google.guava/guava "33.2.1-android"]
+                         [com.google.guava/guava "33.3.0-android"]
 
                          ;; [org.postgresql/postgresql "42.7.4"] ->
-                         ;; ... -> [com.google.guava/guava "33.2.1-android"] ->
+                         ;; ... -> [com.google.guava/guava "33.3.0-android"] ->
                          [org.checkerframework/checker-qual "3.45.0"]
 
                          ;; [yesql "0.5.3"] ->
