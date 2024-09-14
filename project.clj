@@ -1,4 +1,4 @@
-(def log4j-version "2.23.1")
+(def log4j-version "2.24.0")
 (def jackson-version "2.17.2")
 (def http4s-version "0.16.6")
 
