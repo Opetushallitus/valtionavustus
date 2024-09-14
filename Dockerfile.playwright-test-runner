@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.45.2-focal@sha256:4b06530b9647eea5c66118923abd7ecf29a42caaad888632807aee1da0b9756a
+FROM mcr.microsoft.com/playwright:v1.47.1-focal@sha256:e6aea369c8061d1908223ba4d41d0244720b38f8724c78d84b6ab27d82f5a6c4
 
 COPY package.json package-lock.json .
 RUN npm ci
