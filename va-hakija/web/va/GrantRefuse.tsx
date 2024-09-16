@@ -23,7 +23,7 @@ export default class GrantRefuse<T extends BaseStateLoopState<T>> extends React.
     super(props)
     const refused = this.props.state.saveStatus.savedObject?.refused || false
     const initialComment = refused
-      ? props.state.saveStatus.savedObject?.['refused-comment'] ?? ''
+      ? (props.state.saveStatus.savedObject?.['refused-comment'] ?? '')
       : ''
     this.state = { isChecked: false, comment: initialComment }
     this.onCheckedChange = this.onCheckedChange.bind(this)
