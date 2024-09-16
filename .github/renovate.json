@@ -29,6 +29,7 @@
   "repositories": [
     "Opetushallitus/valtionavustus"
   ],
+  "osvVulnerabilityAlerts": true,
   "vulnerabilityAlerts": {
     "labels": ["security"],
     "automerge": true
