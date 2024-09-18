@@ -40,9 +40,9 @@
                          ;; [buddy/buddy-sign "3.5.351"] -> [buddy/buddy-core "1.12.0-430"] ->
                          [commons-codec "1.17.1"]
 
-                         ;; [ring/ring-core "1.12.2"] -> [commons-io "2.16.1"]
-                         ;; [org.apache.tika/tika-core "2.9.2"] -> [commons-io "2.16.1"]
-                         [commons-io "2.16.1"]
+                         ;; [ring/ring-core "1.12.2"] -> [commons-io "2.17.0"]
+                         ;; [org.apache.tika/tika-core "2.9.2"] -> [commons-io "2.17.0"]
+                         [commons-io "2.17.0"]
 
                          ;; [clojurewerkz/quartzite "2.2.0"] ->
                          ;; fixes https://nvd.nist.gov/vuln/detail/cve-2019-13990,
