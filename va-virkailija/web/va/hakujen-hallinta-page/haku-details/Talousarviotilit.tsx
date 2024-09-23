@@ -6,7 +6,7 @@ import { useGetTalousarvioTilitQuery } from '../../apiSlice'
 import { TalousarviotiliWithUsageInfo } from '../../koodienhallinta-page/types'
 import { CustomHelpTooltip } from '../../common-components/HelpTooltip'
 
-import styles from './Talousarviotilit.module.less'
+import * as styles from './Talousarviotilit.module.less'
 import { HelpTexts, Koulutusasteet } from 'soresu-form/web/va/types'
 import { useCurrentAvustushaku } from '../useAvustushaku'
 

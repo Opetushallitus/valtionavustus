@@ -1,7 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
 
-import styles from './icons.module.less'
+import * as styles from './icons.module.less'
 
 type EnvelopeProps = {
   active?: boolean

@@ -14,8 +14,8 @@ import useOutsideClick from '../../useOutsideClick'
 import { tryToUseCurrentAvustushaku } from '../useAvustushaku'
 import { Pill } from '../../common-components/Pill'
 import { VirkailijaAvustushaku, selectLoadedInitialData } from '../hakuReducer'
-import styles from './HakuListing.module.less'
-import buttonStyles from '../../style/Button.module.less'
+import * as styles from './HakuListing.module.less'
+import * as buttonStyles from '../../style/Button.module.less'
 import { useHakujenHallintaSelector } from '../hakujenHallintaStore'
 
 export const AVUSTUSHAKU_STATUSES_AVAILABLE_FOR_FILTER = AVUSTUSHAKU_STATUSES.filter(

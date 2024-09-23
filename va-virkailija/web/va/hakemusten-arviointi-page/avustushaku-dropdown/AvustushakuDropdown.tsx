@@ -2,7 +2,7 @@ import React from 'react'
 
 import DropdownList from 'react-widgets/DropdownList'
 
-import styles from './avustushaku-dropdown.module.less'
+import * as styles from './avustushaku-dropdown.module.less'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '../arviointiStore'
 import { DropdownAvustushaku, fetchAvustushakuInfo } from '../arviointiReducer'

@@ -7,7 +7,7 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 
 import '../style/virkailija.less'
 import './login.less'
-import styles from '../common-components/Header.module.less'
+import * as styles from '../common-components/Header.module.less'
 import ErrorBoundary from '../common-components/ErrorBoundary'
 
 export default class Login extends React.Component {

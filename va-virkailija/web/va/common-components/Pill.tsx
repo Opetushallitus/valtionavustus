@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import styles from './Pill.module.less'
+import * as styles from './Pill.module.less'
 
 const pillStyles = {
   green: styles.greenPill,

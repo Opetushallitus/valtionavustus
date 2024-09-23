@@ -11,7 +11,7 @@ import HakemusArviointiStatuses from '../HakemusArviointiStatuses'
 
 import 'oph-virkailija-style-guide/oph-styles-min.css'
 import '../style/main.less'
-import styles from './Search.module.less'
+import * as styles from './Search.module.less'
 import LoadingSitePage from '../common-components/LoadingSitePage'
 import ErrorBoundary from '../common-components/ErrorBoundary'
 

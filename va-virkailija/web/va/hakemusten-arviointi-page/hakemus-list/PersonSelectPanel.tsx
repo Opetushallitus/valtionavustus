@@ -12,7 +12,7 @@ import {
   startHakemusArvioAutoSave,
 } from '../arviointiReducer'
 
-import styles from './Person.module.less'
+import * as styles from './Person.module.less'
 
 export const isPresenterRole = ({ role }: Role): boolean =>
   ['presenting_officer', 'vastuuvalmistelija'].includes(role)

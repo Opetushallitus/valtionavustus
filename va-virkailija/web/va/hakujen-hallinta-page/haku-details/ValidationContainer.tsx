@@ -6,7 +6,7 @@ import { ValidationResult } from '../../types'
 import useScrollingUp from '../../useScrollingUp'
 import classNames from 'classnames'
 
-import styles from './ValidationContainer.module.less'
+import * as styles from './ValidationContainer.module.less'
 
 const fieldLabels: Record<string, string> = {
   'project-name': 'Hankkeen nimi',
