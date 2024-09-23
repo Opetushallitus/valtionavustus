@@ -73,7 +73,7 @@
                          [speclj-junit "0.0.11"]
 
                          ;; other
-                         [metosin/ring-swagger-ui "5.9.0"]
+                         [metosin/ring-swagger-ui "5.17.14"]
 
                          [org.clojure/core.memoize "1.1.266"]
 
