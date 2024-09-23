@@ -40,8 +40,6 @@ const makeConfig = (basedir, componentName) => {
                 modules: {
                   auto: true,
                   localIdentName: '[local]__[hash:base64]',
-                  namedExport: false,
-                  exportLocalsConvention: 'as-is',
                 },
               },
             },
@@ -54,12 +52,6 @@ const makeConfig = (basedir, componentName) => {
             { loader: 'style-loader' },
             {
               loader: 'css-loader',
-              options: {
-                modules: {
-                  namedExport: false,
-                  exportLocalsConvention: 'as-is',
-                },
-              },
             },
           ],
         },
