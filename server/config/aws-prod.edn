@@ -12,8 +12,6 @@
                    :to-taloustarkastaja          ["taloustarkastus@localhost"]
                    :to-palkeet                   ["palkeet@localhost"]
                    :to-palkeet-ja-talouspalvelut ["palkeet@localhost" "talouspalvelut@localhost"]}
- :rondo-scheduler {:enabled?   false
-                   :scheduling "0 00 04 ? * *"}
  :ui              {:show-environment? false}
  :notifications   {:asiatarkastus                   {:enabled? true
                                                      :schedule "0 0 7 ? * 2"}
@@ -35,5 +33,4 @@
                                                      :schedule "0 0 7 ? * *"}
                    :muutoshakemuksia-kasittelematta {:enabled? true
                                                      :schedule "0 0 8 ? * MON *"}}
- :payments        {:enabled? true :delete-payments? true}
  }

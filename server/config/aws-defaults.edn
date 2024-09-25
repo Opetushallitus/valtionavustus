@@ -49,16 +49,17 @@
  :kayttooikeus-service                        {:va-service-name      "VALTIONAVUSTUS"
                                                :admin-privilege-name "ADMIN"
                                                :user-privilege-name  "USER"}
- :rondo-scheduler                             {:enabled? false}
+ :rondo-scheduler                             {:enabled?   true
+                                               :scheduling "0 00 04 ? * *"}
  :reminder-scheduler                          {:enabled? true}
- :payment-service-sftp                        {:enabled?                 false
+ :payment-service-sftp                        {:enabled?                 true
                                                :timeout                  60000
                                                :port                     22
                                                :strict-host-key-checking :yes
                                                :local-path               "/tmp/"
                                                :remote_path              "./to_handi/va/"
                                                :remote_path_from         "./from_handi/va/"}
- :payments                                    {:enabled? false}
+ :payments                                    {:enabled? true :delete-payments? true}
  :integration-healthcheck                     {:enabled?         true
                                                :timeout          5000
                                                :interval-minutes 15}

@@ -34,5 +34,12 @@
                                                      :schedule "0 0 7 ? * *"}
                    :muutoshakemuksia-kasittelematta {:enabled? false
                                                      :schedule "0 0 14 ? * MON-FRI"}}
- :payments        {:enabled? false :delete-payments? false}
+ :payment-service-sftp {:enabled?                 false
+                        :timeout                  60000
+                        :port                     22
+                        :strict-host-key-checking :yes
+                        :local-path               "/tmp/"
+                        :remote_path              "./to_handi/va/"
+                        :remote_path_from         "./from_handi/va/"}
+ :payments {:enabled? false :delete-payments? false}
  }
