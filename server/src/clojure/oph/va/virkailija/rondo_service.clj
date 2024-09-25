@@ -71,8 +71,12 @@
             (func :method :put :file file :path (:remote_path config)
                   :config config)]
         (if (nil? result)
-          {:success true}
-          {:success false :value result}))
+          (do
+            (log/info (format "Sent %s to payment service" file))
+            {:success true})
+          (do
+            (log/error (format "Failed to send %s to payment service" file))
+            {:success false :value result})))
       (do
         (log/info (format "Would send %s to %s" file (:host-ip config)))
         {:success true}))))
