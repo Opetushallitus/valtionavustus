@@ -9,6 +9,13 @@
                                                :require-https?          true
                                                :attachment-max-size     50 ;in megabytes
                                                :session-timeout-in-s    28800
+                                               :payment-service-sftp    {:enabled?                 true
+                                                                         :timeout                  60000
+                                                                         :port                     22
+                                                                         :strict-host-key-checking :yes
+                                                                         :local-path               "/tmp/"
+                                                                         :remote_path              "./to_handi/va/"
+                                                                         :remote_path_from         "./from_handi/va/"}
                                                :attachment-mime-types   ["text/plain"
                                                                          "application/rtf"
                                                                          "application/pdf"
@@ -22,7 +29,6 @@
                                                                          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                                                                          "application/zip"]
                                                :threads                 16}
-
  :db                                          {:database-name "va"
                                                :username      "va_application"
                                                :port-number   5432}
@@ -52,13 +58,6 @@
  :rondo-scheduler                             {:enabled?   true
                                                :scheduling "0 00 04 ? * *"}
  :reminder-scheduler                          {:enabled? true}
- :payment-service-sftp                        {:enabled?                 true
-                                               :timeout                  60000
-                                               :port                     22
-                                               :strict-host-key-checking :yes
-                                               :local-path               "/tmp/"
-                                               :remote_path              "./to_handi/va/"
-                                               :remote_path_from         "./from_handi/va/"}
  :payments                                    {:enabled? true :delete-payments? true}
  :integration-healthcheck                     {:enabled?         true
                                                :timeout          5000
