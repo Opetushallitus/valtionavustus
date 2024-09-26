@@ -13,7 +13,7 @@ defaults:
 jobs:
   deploy:
     name: Deploy to ${{ inputs.env }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     environment: ${{ inputs.env }}
     env:
       AWS_ACCOUNT_ID_DEV: ${{ secrets.AWS_ACCOUNT_ID_DEV }}

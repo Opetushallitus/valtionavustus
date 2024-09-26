@@ -11,7 +11,7 @@ jobs:
 
   generate-playwright-report:
     name: Generate report from Playwright runs
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: build
     if: ${{ !cancelled() }}
     permissions:
