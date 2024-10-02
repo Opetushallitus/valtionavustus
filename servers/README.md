@@ -1,32 +1,10 @@
 # Valtionavustuksien palvelimet
 
-Kaikki tässä kuvatut komennot tulee ajaa samassa hakemistossa, jossa
-tämä README on.
 
 | Palvelin | web UI | Kuvaus |
 |---|---|---|
-| oph-va-lb-prod01 | | Kuormantasaaja, yhteinen palvelun testi- ja tuotantoympäristöille. |
-| oph-va-ci-test01 | [Jenkins](https://dev.valtionavustukset.oph.fi/) | CI. |
 | oph-va-app-test01 | [va-hakija](https://testi.valtionavustukset.oph.fi/avustushaku/1/), [va-hakija api](https://testi.valtionavustukset.oph.fi/doc), [va-virkailija](https://testi.virkailija.valtionavustukset.oph.fi/), [va-virkailija api](https://testi.virkailija.valtionavustukset.oph.fi/doc/) | Palvelun testiympäristö, ajaa sovelluksia ja tietokantaa. |
 | oph-va-app-prod01 | [va-hakija](https://valtionavustukset.oph.fi/avustushaku/1/), [va-hakija api](https://valtionavustukset.oph.fi/doc), [va-virkailija](https://testi.virkailija.valtionavustukset.oph.fi/), [va-virkailija api](https://virkailija.valtionavustukset.oph.fi/doc/), [avoimet avustushaut](http://oph.fi/rahoitus/valtionavustukset) | Palvelun tuotantoympäristö, ajaa sovelluksia ja tietokantaa. |
-
-### Sovelluksien hallinta
-
-Tarkista tila:
-
-``` bash
-sudo supervisorctl status
-```
-
-```
-va                        RUNNING   pid 924, uptime 0:23:43
-```
-
-va:n uudelleenkäynnistys:
-
-``` bash
-sudo supervisorctl restart va
-```
 
 
 # AWS configurointi

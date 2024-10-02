@@ -32,7 +32,7 @@
            :email-type :application-refused-presenter
            :lang :fi
            :from "no-reply@valtionavustukset.oph.fi"
-           :sender "no-reply@csc.fi"
+           :sender "no-reply@localhost"
            :subject "Automaattinen viesti: Avustuksen saajan ilmoitus"
            :to ["presenter@local"]
            :grant-name (get-in grant [:content :name :fi]))

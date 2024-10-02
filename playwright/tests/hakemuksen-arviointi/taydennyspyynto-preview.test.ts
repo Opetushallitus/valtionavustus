@@ -29,7 +29,7 @@ test('Virkailija can preview OPH täydennyspyyntö', async ({
     `Otsikko: Täydennyspyyntö avustushakemukseesi`
   )
   expect(await page.textContent("[data-test-id='change-request-preview-sender']")).toStrictEqual(
-    `Lähettäjä: no-reply@csc.fi`
+    `Lähettäjä: no-reply@localhost`
   )
   expect(await page.textContent("[data-test-id='change-request-preview-content']"))
     .toContain(`Valtionavustus: ${avustushakuName}

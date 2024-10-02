@@ -46,7 +46,7 @@
          :queue-size 1024
          :from {:fi "no-reply@valtionavustukset.oph.fi"
                 :sv "no-reply@statsunderstod.oph.fi"}
-         :sender "no-reply@csc.fi"
+         :sender "no-reply@localhost"
          :to-taloustarkastaja ["taloustarkastus@localhost"]
          :to-palkeet ["palkeet@localhost"]
          :to-palkeet-ja-talouspalvelut ["palkeet@localhost" "talouspalvelut@localhost"]
