@@ -1,4 +1,4 @@
-FROM node:22-bookworm@sha256:da53547a061beb7f11f58ee2231589b999acfca89bdf6dfd740627340c879f63
+FROM node:22-bookworm@sha256:7bb7ecec4688af18a20db29d138baa05f31cf45134329ee2f01c7993a273dacc
 
 COPY . /app
 WORKDIR /app
