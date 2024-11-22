@@ -72,7 +72,9 @@ muutoshakemusTest(
       await muutoshakemusTab.selectVakioperusteluInFinnish()
 
       const preview = await muutoshakemusTab.openPaatosPreview()
-      await expect(preview.jatkoaikaPaatos).toHaveText('Hylätään haetut muutokset käyttöaikaan')
+      await expect(preview.jatkoaikaPaatos).toHaveText(
+        'Hylätään haetut muutokset käyttöaikaan (avustuksen käyttöaika ei muutu)'
+      )
       await expect(preview.sisaltoPaatos).toHaveText(
         'Hylätään haetut muutokset sisältöön ja toteutustapaan'
       )

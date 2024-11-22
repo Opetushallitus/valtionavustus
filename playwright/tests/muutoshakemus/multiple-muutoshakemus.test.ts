@@ -256,10 +256,10 @@ test('multiple muutoshakemus', async ({ page, acceptedHakemus: { hakemusID }, av
     ).toHaveText(newAcceptedJatkoaika)
     await expect(
       hakemustenArviointiPage.page.locator('[data-test-id="muutoshakemus-new-end-date-title"]')
-    ).toHaveText('Hyväksytty uusi viimeinen käyttöpäivä')
+    ).toHaveText('Muutoshakemuksella haettu uusi viimeinen käyttöpäivä')
     await expect(
       hakemustenArviointiPage.page.locator('[data-test-id="muutoshakemus-current-end-date-title"]')
-    ).toHaveText('Vanha viimeinen käyttöpäivä')
+    ).toHaveText('Avustuksen viimeinen käyttöpäivä')
     await expect(
       hakemustenArviointiPage.page.locator('[data-test-id="muutoshakemus-reasoning-title"]')
     ).toHaveText('Hakijan perustelut')

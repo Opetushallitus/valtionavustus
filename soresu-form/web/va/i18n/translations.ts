@@ -52,9 +52,9 @@ export const translationsFi = {
   muutoshakemus: {
     title: 'Muutoshakemus',
     acceptedChanges: 'Hyväksytyt muutokset',
-    previousProjectEndDate: 'Vanha viimeinen käyttöpäivä',
+    previousProjectEndDate: 'Avustuksen viimeinen käyttöpäivä',
     currentProjectEndDate: 'Voimassaoleva viimeinen käyttöpäivä',
-    acceptedChange: 'Hyväksytty uusi viimeinen käyttöpäivä',
+    acceptedChange: 'Muutoshakemuksella haettu uusi viimeinen käyttöpäivä',
     appliedChange: 'Haettu uusi viimeinen käyttöpäivä',
     applicantReasoning: 'Hakijan perustelut',
     paatos: {
@@ -94,7 +94,7 @@ export const translationsFi = {
       'paatos-jatkoaika': {
         status: {
           accepted: 'Hyväksytään haetut muutokset käyttöaikaan',
-          rejected: 'Hylätään haetut muutokset käyttöaikaan',
+          rejected: 'Hylätään haetut muutokset käyttöaikaan (avustuksen käyttöaika ei muutu)',
           accepted_with_changes: 'Hyväksytään haetut muutokset käyttöaikaan muutettuna',
         },
       },
@@ -218,9 +218,9 @@ const translationsSv: Translations = {
   muutoshakemus: {
     title: 'Ändringsansökan',
     acceptedChanges: 'Godkända ändringar',
-    previousProjectEndDate: 'Den tidigare sista användningsdagen',
+    previousProjectEndDate: 'Sista användningsdag för understödet',
     currentProjectEndDate: 'Nuvarande sista användningdag',
-    acceptedChange: 'Godkänd ny sista användningsdag',
+    acceptedChange: 'Den nya sista användningsdagen enligt ändringansökan',
     appliedChange: 'Den ansökta nya sista användningsdagen',
     applicantReasoning: 'Den sökandes motiveringar',
     paatos: {
@@ -262,7 +262,7 @@ const translationsSv: Translations = {
         status: {
           accepted: 'De ändringar som ni ansökt om gällande understödets användningstid godkänns',
           rejected:
-            'De ändringar som ni ansökt om gällande understödets användningstid godkänns inte',
+            'De ansökta ändringarna i användningstiden avslås (användningstiden för understödet ändrar inte)',
           accepted_with_changes:
             'De ändringar som ni ansökt om gällande understödets användningstid godkänns med vissa ändringar',
         },
