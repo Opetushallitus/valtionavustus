@@ -87,6 +87,24 @@ notifyTest.describe(
   }
 )
 
+notifyTest(
+  'if hakemus has been refused notification is not send',
+  async ({ page, answers, acceptedHakemus, avustushakuID, loppuselvitysDateSet }) => {
+    expect(acceptedHakemus).toBeDefined()
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    await hakemustenArviointiPage.navigate(avustushakuID)
+    await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+
+    await hakemustenArviointiPage.tabs().seuranta.click()
+
+    await page.click('[data-test-id="keskeyta-aloittamatta"]')
+
+    await hakemustenArviointiPage.waitForSave()
+    expect(loppuselvitysDateSet)
+    await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
+  }
+)
+
 notifyTest.describe('when loppuselvitys deadline is in the past', () => {
   notifyTest.use({
     loppuselvitysDate: moment().subtract(1, 'day').format('DD.MM.YYYY'),

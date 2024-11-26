@@ -259,6 +259,7 @@
                     JOIN arviot arvio ON arvio.hakemus_id = h.id
                     WHERE h.avustushaku = a.id
                       AND h.version_closed IS NULL
+                      AND h.refused IS NOT TRUE
                       AND arvio.status = 'accepted'
                       AND h." status-field " NOT IN ('submitted', 'information_verified', 'accepted')
                       AND NOT EXISTS (
