@@ -188,10 +188,9 @@ export const muutoshakemusTest = submittedHakemusTest.extend<MuutoshakemusFixtur
     testInfo.setTimeout(testInfo.timeout + 25_000)
 
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
-
+    await hakemustenArviointiPage.navigate(avustushakuID)
     let hakemusID: number = 0
     await test.step('Accept hakemus', async () => {
-      await hakemustenArviointiPage.navigate(avustushakuID)
       hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
         avustushakuID,
         projectName: answers.projectName,
@@ -199,16 +198,15 @@ export const muutoshakemusTest = submittedHakemusTest.extend<MuutoshakemusFixtur
         codes,
       })
     })
+    await test.step('Add valmistelija for hakemus', async () => {
+      await hakemustenArviointiPage.closeHakemusDetails()
+      await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
+    })
 
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await test.step('Resolve avustushaku', async () => {
       const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
       await haunTiedotPage.resolveAvustushaku()
-    })
-
-    await test.step('Add valmistelija for hakemus', async () => {
-      await hakemustenArviointiPage.navigate(avustushakuID)
-      await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
     })
 
     await test.step('Send päätökset', async () => {
