@@ -39,6 +39,7 @@
     "npm",
     "github-actions",
     "leiningen",
+    "docker-compose",
     "dockerfile"
   ],
   "packageRules": [
