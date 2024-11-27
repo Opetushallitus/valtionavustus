@@ -73,7 +73,7 @@ services:
         mode: 'non-blocking'
 
   pagerduty:
-    image: mendhak/http-https-echo:33@sha256:17f45542b4442474f4b68bf6e97f9a321b2c0fe95c5126c429fe49d911b07eb3
+    image: mendhak/http-https-echo:35@sha256:440ca6b810bc04606aac700e461caca5543eaa882c4e0af96a33424d05a23592
     hostname: pagerduty
     environment:
       ECHO_BACK_TO_CLIENT: false
