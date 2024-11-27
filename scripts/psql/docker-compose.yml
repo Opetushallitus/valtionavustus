@@ -13,9 +13,8 @@ services:
       timeout: 2s
     volumes:
       - $HOME/.aws:/root/.aws
-      - $AWS_CONFIG_FILE:/aws_config:ro
     environment:
       - AWS_PROFILE
       - AWS_REGION
       - AWS_DEFAULT_REGION
-      - AWS_CONFIG_FILE=/aws_config
+      - AWS_CONFIG_FILE=/root/.aws/config

@@ -25,7 +25,7 @@ function main {
 
   parse_env_from_script_name "psql-va"
   configure_aws
-  require_federation_session
+  require_aws_session "$ENV"
   start_db_tunnel
 
   echo "Connecting to VA db on [${ENV}]"

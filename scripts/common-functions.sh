@@ -20,15 +20,6 @@ readonly VIRKAILIJA_HOSTNAME=${VIRKAILIJA_HOSTNAME:-"localhost"}
 
 readonly AWS_CLI_VERSION="2.15.1"
 
-function require_federation_session {
-  info "Verifying that oph-federation session has not expired"
-
-  aws sts get-caller-identity --profile=oph-federation 1>/dev/null || {
-    fatal "Could not check that AWS credentials are working. Please log in with cdk/scripts/refresh-oph-federation-session.sh"
-    exit 254
-  }
-}
-
 function require_cdk_context {
   if ! running_on_gh_actions; then
     source "$VA_SECRETS_REPO/cdk_context.sh"
@@ -39,8 +30,8 @@ function configure_aws {
   export AWS_REGION="eu-west-1"
   if ! running_on_gh_actions; then
     check_env
-    export AWS_PROFILE="oph-va-$ENV"
-    info "Using AWS config from secrets repo, with profile $AWS_PROFILE"
+    export AWS_PROFILE="oph-valtionavustukset-$ENV"
+    info "Using AWS config with profile $AWS_PROFILE"
   fi
 }
 
@@ -59,12 +50,23 @@ function aws {
       --env AWS_PROFILE \
       --env AWS_REGION \
       --env AWS_DEFAULT_REGION \
-      --env AWS_CONFIG_FILE="/aws_config" \
-      --mount "type=bind,source=$VA_SECRETS_REPO/aws_config,destination=/aws_config,readonly" \
       --volume "$HOME/.aws:/root/.aws" \
+      --env AWS_CONFIG_FILE="/root/.aws/config" \
       "public.ecr.aws/aws-cli/aws-cli:$AWS_CLI_VERSION" \
       "$@"
   fi
+}
+
+function require_aws_session {
+    info "Verifying that AWS session has not expired for oph-valtionavustukset-$1"
+    aws sts get-caller-identity --profile "oph-valtionavustukset-$1" 1>/dev/null || {
+      info "Session is expired"
+      aws --profile "oph-valtionavustukset-$1" sso login
+    }
+    export AWS_PROFILE="oph-valtionavustukset-$1"
+    export AWS_REGION="eu-west-1"
+    export AWS_DEFAULT_REGION="$AWS_REGION"
+    info "Using AWS profile $AWS_PROFILE"
 }
 
 function check_env {

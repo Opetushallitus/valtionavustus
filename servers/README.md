@@ -12,18 +12,27 @@
 Lisää `~/.aws/config` tiedostoon seuraavat profiilit:
 
 ```
-[profile oph-va-dev]
-source_profile = oph-federation
-role_arn = arn:aws:iam::744751949839:role/CustomerCloudAdmin
-region = eu-west-1
+[sso-session oph-federation]
+sso_session=oph-federation
+sso_region=eu-west-1
+sso_start_url = https://oph-aws-sso.awsapps.com/start
+sso_registration_scopes = sso:account:access
 
-[profile oph-va-qa]
-source_profile = oph-federation
-role_arn = arn:aws:iam::596991599170:role/CustomerCloudAdmin
+[profile oph-valtionavustukset-dev]
 region = eu-west-1
+sso_session = oph-federation
+sso_account_id = 744751949839
+sso_role_name = AdministratorAccess
 
-[profile oph-va-prod]
-source_profile = oph-federation
-role_arn = arn:aws:iam::250854697970:role/CustomerCloudAdmin
+[profile oph-valtionavustukset-qa]
 region = eu-west-1
+sso_session = oph-federation
+sso_account_id = 596991599170
+sso_role_name = AdministratorAccess
+
+[profile oph-valtionavustukset-prod]
+region = eu-west-1
+sso_session = oph-federation
+sso_account_id = 250854697970
+sso_role_name = AdministratorAccess
 ```

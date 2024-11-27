@@ -53,7 +53,7 @@ function bootstrap_cdk {
   cd "$repo/cdk"
   info "Bootstrapping CDK"
 
-  require_federation_session
+  require_aws_session "$ENV"
   require_cdk_context
 
   readonly context_variable_name="AWS_ACCOUNT_ID_$env_upper"
@@ -62,9 +62,6 @@ function bootstrap_cdk {
   readonly us_east_1="us-east-1"
 
   info "Running cdk bootstrap in account $aws_account_id in region $aws_region and $us_east_1"
-  export AWS_PROFILE="oph-va-$ENV"
-  export AWS_CONFIG_FILE="$VA_SECRETS_REPO/aws_config"
-
   REVISION=${revision} \
   npm run cdk -- bootstrap "$aws_account_id/$aws_region" "$aws_account_id/$us_east_1"
 }
