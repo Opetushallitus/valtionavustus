@@ -41,7 +41,7 @@ services:
         mode: 'non-blocking'
 
   db:
-    image: postgres:12.2
+    image: postgres:12.2@sha256:d96835c9032988c8a899cb8a3c54467dae81daaa99485de70e8c9bddd5432d92
     volumes:
       - ./scripts/postgres-docker/init-db.sql:/docker-entrypoint-initdb.d/init.sql
     hostname: va-postgres
@@ -73,13 +73,13 @@ services:
         mode: 'non-blocking'
 
   pagerduty:
-    image: mendhak/http-https-echo:33
+    image: mendhak/http-https-echo:33@sha256:17f45542b4442474f4b68bf6e97f9a321b2c0fe95c5126c429fe49d911b07eb3
     hostname: pagerduty
     environment:
       ECHO_BACK_TO_CLIENT: false
 
   maksatuspalvelu:
-    image: atmoz/sftp
+    image: atmoz/sftp@sha256:0960390462a4441dbb63698d7c185b76a41ffcee7b78ff4adf275f3e66f9c475
     hostname: maksatuspalvelu
     volumes:
       - ./maksatuspalvelu/initialize-maksatuspalvelu.sh:/etc/sftp.d/initialize-maksatuspalvelu.sh
