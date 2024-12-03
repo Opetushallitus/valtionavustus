@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import moment from 'moment'
 
 import { getProjectEndDate, getTalousarvio, isAcceptedWithChanges } from './Muutoshakemus'
 import { TalousarvioTable } from './muutoshakemus/MuutosTaloudenKayttosuunnitelmaan'
 import { useTranslations } from 'soresu-form/web/va/i18n/TranslationContext'
-import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'
+import { fiShortFormat } from '../va/i18n/dateformat'
 import {
   Muutoshakemus,
   Paatos,
@@ -16,6 +16,8 @@ import {
 import './MuutoshakemusPaatos.less'
 import { Role } from '../../../va-virkailija/web/va/types'
 import { OsioPaatos, PaatosOsio } from './OsioPaatos'
+import HttpUtil from '../HttpUtil'
+import { EnvironmentApiResponse } from './types/environment'
 
 type MuutoshakemusPaatosProps = Omit<PaatosState, 'paatos' | 'presenter'> & {
   paatos: Omit<Paatos, 'id' | 'user-key' | 'updated-at'>
@@ -222,6 +224,21 @@ const LisatietojaSection: React.FC<{ presenter: Role | undefined }> = ({ present
   )
 }
 
+function LiitteetSection() {
+  const { t, lang } = useTranslations()
+
+  const link = `liitteet/3a_oikaisuvaatimusosoitus_valtionavustuslaki_${lang}.pdf`
+  return (
+    <section className="muutoshakemus-paatos__section">
+      <div className="muutoshakemus-paatos__title">{t.muutoshakemus.paatos.liitteet}</div>
+
+      <div>
+        <a href={link}>{t.muutoshakemus.paatos.oikaisuvaatimusosoitus}</a>
+      </div>
+    </section>
+  )
+}
+
 export const MuutoshakemusPaatos = ({
   hakemus,
   muutoshakemus,
@@ -233,6 +250,19 @@ export const MuutoshakemusPaatos = ({
   muutoshakemusUrl,
 }: MuutoshakemusPaatosProps) => {
   const { t } = useTranslations()
+  const [showLiitteet, setShowLiitteet] = useState(false)
+
+  useEffect(() => {
+    async function getMuutospaatoksenLiiteFlag() {
+      const data = await HttpUtil.get<EnvironmentApiResponse>('/environment')
+      // VA-436
+      if (data['feature-flags'].includes('muutospaatoksen-liite')) {
+        setShowLiitteet(true)
+      }
+    }
+    void getMuutospaatoksenLiiteFlag()
+  }, [])
+
   const paattymispaiva = isAcceptedWithChanges(paatos['paatos-status-jatkoaika'])
     ? paatos.paattymispaiva
     : muutoshakemus['haettu-kayttoajan-paattymispaiva']
@@ -283,6 +313,7 @@ export const MuutoshakemusPaatos = ({
         presenter={presenter}
       />
       <LisatietojaSection presenter={presenter} />
+      {showLiitteet && <LiitteetSection />}
     </div>
   )
 }

@@ -3,5 +3,5 @@
  ; https://jira.eduuni.fi/browse/VA-400
 
  ; https://jira.eduuni.fi/browse/VA-436
- :muutospaatoksen-liite [:dev :test :aws-dev :aws-qa]
+ :muutospaatoksen-liite [:local :dev :test :aws-dev :aws-qa]
 }

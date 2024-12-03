@@ -4,7 +4,7 @@ type LegacyFeatureFlag = { 'enabled?': boolean }
   Add flags here
   Currently empty string as no active flags
  */
-export type FeatureFlag = ''
+export type FeatureFlag = 'muutospaatoksen-liite'
 
 export interface EnvironmentApiResponse {
   name: string

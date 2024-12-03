@@ -224,6 +224,12 @@ test('Hakija views muutoshakemus page', async ({ hakijaMuutoshakemusPaatosPage }
     const currentValues = await hakijaMuutoshakemusPaatosPage.changedBudgetTableCells()
     expect(sortedFormTable(currentValues)).toEqual(sortedFormTable(budgetExpectedItems))
   })
+  await test.step('Oikaisuvaatimus liite is shown', async () => {
+    expect(hakijaMuutoshakemusPaatosPage.page.getByText('Liitteet')).toBeVisible()
+    expect(
+      hakijaMuutoshakemusPaatosPage.page.getByRole('link', { name: 'Oikaisuvaatimusosoitus' })
+    ).toBeVisible()
+  })
 })
 
 export const svBudget: Budget = {
@@ -369,6 +375,12 @@ svTest(
         'Övriga kostnader',
       ]
       expect(swedishBudgetRowDescriptions.sort()).toEqual(swedishBudgetRowNames.sort())
+    })
+    await svTest.step('Oikaisuvaatimus liite in Swedish', async () => {
+      await expect(hakijaMuutoshakemusPaatosPage.page.getByText('Bilagor')).toBeVisible()
+      await expect(
+        hakijaMuutoshakemusPaatosPage.page.getByRole('link', { name: 'Rättelseyrkande' })
+      ).toBeVisible()
     })
 
     await svTest.step('päätös email', async () => {

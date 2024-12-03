@@ -78,6 +78,8 @@ export const translationsFi = {
       lisatietoja: 'Lisätietoja',
       phoneNumber: '029 533 1000 (vaihde)',
       paatosDokumentti: 'Päätösdokumentti',
+      liitteet: 'Liitteet',
+      oikaisuvaatimusosoitus: 'Oikaisuvaatimusosoitus',
       status: {
         accepted: 'Opetushallitus on hyväksynyt haetut muutokset.',
         rejected: 'Opetushallitus on hylännyt haetut muutokset.',
@@ -244,6 +246,8 @@ const translationsSv: Translations = {
       lisatietoja: 'Mer information',
       phoneNumber: '029 533 1000 (växel)',
       paatosDokumentti: 'Beslutshandling',
+      oikaisuvaatimusosoitus: 'Rättelseyrkande',
+      liitteet: 'Bilagor',
       status: {
         accepted: 'Utbildningsstyrelsen har godkänt ändringarna enligt ändringsansökan.',
         accepted_with_changes:
