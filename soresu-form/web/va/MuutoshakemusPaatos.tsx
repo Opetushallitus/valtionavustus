@@ -227,7 +227,7 @@ const LisatietojaSection: React.FC<{ presenter: Role | undefined }> = ({ present
 function LiitteetSection() {
   const { t, lang } = useTranslations()
 
-  const link = `liitteet/3a_oikaisuvaatimusosoitus_valtionavustuslaki_${lang}.pdf`
+  const link = `/liitteet/3a_oikaisuvaatimusosoitus_valtionavustuslaki_${lang}.pdf`
   return (
     <section className="muutoshakemus-paatos__section">
       <div className="muutoshakemus-paatos__title">{t.muutoshakemus.paatos.liitteet}</div>
