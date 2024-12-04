@@ -3,6 +3,8 @@ import { isEqual } from 'lodash'
 import * as Bacon from 'baconjs'
 import moment from 'moment'
 
+import * as styles from './SelvitysFormEditor.module.less'
+
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'
 import { Avustushaku, Form } from 'soresu-form/web/va/types'
@@ -158,7 +160,11 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
     setSending(false)
     fetchTapahtumaloki()
   }, [avustushaku.id, selvitysType])
-
+  const noSelvitysSent = (
+    <h4 data-test-id={'selvityspyynto-not-sent'} className={styles.selvityspyyntoNotSent}>
+      Selvityspyyntöjä ei ole lähetetty
+    </h4>
+  )
   const valiselvitysSection = (
     <div>
       <h4>Väliselvitysten lähettäminen</h4>
@@ -184,7 +190,7 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
         Lähetä väliselvityspyynnöt
       </button>
       {count !== undefined && <span> Lähetetty {count} viestiä</span>}
-      {!!lahetykset.length && <Tapahtumaloki lahetykset={lahetykset} />}
+      {!!lahetykset.length ? <Tapahtumaloki lahetykset={lahetykset} /> : noSelvitysSent}
       <h1>Väliselvityslomake</h1>
     </div>
   )
@@ -214,7 +220,7 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
         Lähetä loppuselvityspyynnöt
       </button>
       {count !== undefined && <span> Lähetetty {count} viestiä</span>}
-      {!!lahetykset.length && <Tapahtumaloki lahetykset={lahetykset} />}
+      {!!lahetykset.length ? <Tapahtumaloki lahetykset={lahetykset} /> : noSelvitysSent}
       <h1>Loppuselvityslomake</h1>
     </div>
   )
