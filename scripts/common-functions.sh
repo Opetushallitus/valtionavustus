@@ -18,7 +18,7 @@ readonly local_docker_namespace="va"
 readonly HAKIJA_HOSTNAME=${HAKIJA_HOSTNAME:-"localhost"}
 readonly VIRKAILIJA_HOSTNAME=${VIRKAILIJA_HOSTNAME:-"localhost"}
 
-readonly AWS_CLI_VERSION="2.22.6"
+readonly AWS_CLI_VERSION="2.15.1"
 
 function require_cdk_context {
   if ! running_on_gh_actions; then
