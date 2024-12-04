@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import moment from 'moment'
 
 import { getProjectEndDate, getTalousarvio, isAcceptedWithChanges } from './Muutoshakemus'
@@ -16,8 +16,6 @@ import {
 import './MuutoshakemusPaatos.less'
 import { Role } from '../../../va-virkailija/web/va/types'
 import { OsioPaatos, PaatosOsio } from './OsioPaatos'
-import HttpUtil from '../HttpUtil'
-import { EnvironmentApiResponse } from './types/environment'
 
 type MuutoshakemusPaatosProps = Omit<PaatosState, 'paatos' | 'presenter'> & {
   paatos: Omit<Paatos, 'id' | 'user-key' | 'updated-at'>
@@ -250,18 +248,6 @@ export const MuutoshakemusPaatos = ({
   muutoshakemusUrl,
 }: MuutoshakemusPaatosProps) => {
   const { t } = useTranslations()
-  const [showLiitteet, setShowLiitteet] = useState(false)
-
-  useEffect(() => {
-    async function getMuutospaatoksenLiiteFlag() {
-      const data = await HttpUtil.get<EnvironmentApiResponse>('/environment')
-      // VA-436
-      if (data['feature-flags'].includes('muutospaatoksen-liite')) {
-        setShowLiitteet(true)
-      }
-    }
-    void getMuutospaatoksenLiiteFlag()
-  }, [])
 
   const paattymispaiva = isAcceptedWithChanges(paatos['paatos-status-jatkoaika'])
     ? paatos.paattymispaiva
@@ -313,7 +299,7 @@ export const MuutoshakemusPaatos = ({
         presenter={presenter}
       />
       <LisatietojaSection presenter={presenter} />
-      {showLiitteet && <LiitteetSection />}
+      <LiitteetSection />
     </div>
   )
 }
