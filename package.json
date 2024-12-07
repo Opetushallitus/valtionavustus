@@ -42,7 +42,7 @@
   "devDependencies": {
     "@babel/core": "7.26.0",
     "@babel/preset-env": "7.26.0",
-    "@babel/preset-react": "7.25.9",
+    "@babel/preset-react": "7.26.3",
     "@playwright/test": "1.49.0",
     "@types/big.js": "6.2.2",
     "@types/chai": "5.0.1",
