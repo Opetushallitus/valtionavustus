@@ -1,13 +1,17 @@
 (ns oph.va.virkailija.tasmaytysraportti
   (:require
-   [clj-pdf.core :refer [pdf]]
-   [clojure.java.io :refer [output-stream]]
-   [clojure.java.jdbc :as jdbc]
-   [oph.soresu.common.db :refer [execute!]]
-   [clojure.tools.logging :as log]
-   [oph.common.email :as email]
-   [oph.soresu.common.db :refer [exec get-datasource]]
-   [oph.va.virkailija.db.queries :as virkailija-queries]))
+    [clj-pdf.core :refer [pdf]]
+    [clojure.java.io :refer [output-stream]]
+    [clojure.java.jdbc :as jdbc]
+    [oph.soresu.common.db :refer [execute!]]
+    [clojure.tools.logging :as log]
+    [oph.common.email :as email]
+    [oph.soresu.common.db :refer [exec get-datasource query]]
+    [dk.ative.docjure.spreadsheet :as spreadsheet]
+    [oph.va.virkailija.export :as export]
+    [oph.va.virkailija.db.queries :as virkailija-queries])
+  (:import (java.io ByteArrayOutputStream)
+           (org.apache.poi.ss.usermodel Cell CellStyle CellType Sheet Workbook)))
 
 (def fields-of-interest
   {:toimintayksikko_koodi {:title "Toimintayksikkö" :width 7}
@@ -36,6 +40,51 @@
   (with-open [out (java.io.ByteArrayOutputStream.)]
     (clojure.java.io/copy (clojure.java.io/input-stream x) out)
     (.toByteArray out)))
+
+(defn payments-to-excel-rows [payments]
+  (let [column-titles ["Haun nimi"
+                       "Toimittajan nimi"
+                       "TAKP-tili"
+                       "LKP-tili"
+                       "Projektikoodi"
+                       "Toimintayksikkö"
+                       "Pankkitili"
+                       "Pitkä viite"
+                       "Bruttosumma"
+                       "Asiatarkastaja"
+                       "Hyväksyjä"]]
+    (vec (cons column-titles
+          (map (fn [row] [(row :haun-nimi)
+                           (row :toimittajan-nimi)
+                           (row :takp-tili)
+                           (row :lkp-tili)
+                           (row :projektikoodi)
+                           (row :toimintayksikko)
+                           (row :pankkitili)
+                           (row :pitka-viite)
+                           (row :bruttosumma)
+                           (row :asiatarkastaja)
+                           (row :hyvaksyja)]) payments)))))
+
+(defn create-excel-tasmaytysraportti []
+  (let [main-sheet-name       "Täsmäytysraportti"
+        output                (ByteArrayOutputStream.)
+        last-month-payments   (query "SELECT *
+FROM virkailija.v_tasmaytysraportti_excel_data
+WHERE lahetetty_maksatuspalveluun >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
+  AND lahetetty_maksatuspalveluun < DATE_TRUNC('month', CURRENT_DATE)
+ORDER BY avustushaku DESC"
+                                     [])
+        sheet-data (payments-to-excel-rows last-month-payments)
+        wb                    (spreadsheet/create-workbook main-sheet-name sheet-data)
+        main-sheet            {:sheet              (spreadsheet/select-sheet main-sheet-name wb)
+                               :header-row-indexes #{0}}
+        safe-formula-style    (doto (.createCellStyle wb) (.setQuotePrefixed true))
+        header-style          (spreadsheet/create-cell-style! wb {:background :orange
+                                                                  :font {:bold true :color :white}})]
+    (export/adjust-cells-style! main-sheet header-style safe-formula-style)
+    (.write wb output)
+    (.toByteArray output)))
 
 (defn create-tasmaytysraportti [tasmaytysraportti_date data]
   (let [rows (map #(select-keys % (keys fields-of-interest)) data)

@@ -451,7 +451,7 @@
         (not-any? #(>= (count %) cell-value-no-fit-threshold-in-chars) str-rows))
       true)))
 
-(defn- adjust-cells-style! [{:keys [^Sheet sheet
+(defn adjust-cells-style! [{:keys [^Sheet sheet
                                     header-row-indexes
                                     header-column-indexes
                                     header-cell-coords]}

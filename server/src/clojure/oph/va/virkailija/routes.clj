@@ -41,6 +41,7 @@
             [oph.va.virkailija.talousarviotili-routes :as talousarviotili-routes]
             [oph.va.virkailija.va-users :as va-users]
             [oph.va.virkailija.virkailija-notifications :as virkailija-notifications]
+            [oph.va.virkailija.tasmaytysraportti :as tasmaytysraportti]
             [ring.swagger.json-schema-dirty]  ; for schema.core/conditional
             [ring.util.http-response :refer [ok internal-server-error not-found bad-request unauthorized]]
             [ring.util.response :as resp]
@@ -321,6 +322,19 @@
                             (get-in config [:server :payment-service-sftp]))]
         (ok {:maksatukset (get-all-maksatukset-from-maksatuspalvelu rondo-service)})
       )
+      (catch Exception e
+        (log/error e)
+        (internal-server-error {:message "error"}))))
+
+  (compojure-api/GET "/get-excel-tasmaytysraportti" []
+   :summary "Täsmäytysraportti Excel XLSX document for last months payments"
+    (log/info "Test API: Getting täsmäytysraportti Excel XLSX document for last months payments")
+    (try
+      (let [document (tasmaytysraportti/create-excel-tasmaytysraportti)]
+        (-> (ok document)
+            (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
+            (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"tasmaytysraportti.xlsx\"")))
+        )
       (catch Exception e
         (log/error e)
         (internal-server-error {:message "error"}))))
