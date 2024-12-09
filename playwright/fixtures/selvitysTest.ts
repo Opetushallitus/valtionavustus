@@ -89,6 +89,8 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     expectToBeDefined(acceptedHakemus)
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.navigateToLoppuselvitys(avustushakuID)
+    const notSentIndicator = page.getByTestId('selvityspyynto-not-sent')
+    await expect(notSentIndicator).toBeVisible()
     await Promise.all([
       page.waitForResponse(
         `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitys/loppuselvitys/send-notification`
@@ -100,6 +102,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
       await expect(tapahtumaloki.getByTestId('sender-0')).toHaveText(ukotettuValmistelija)
       await expect(tapahtumaloki.getByTestId('sent-0')).toHaveText('1')
     })
+    await expect(notSentIndicator).toBeHidden()
     await use({})
   },
   loppuselvitysSubmitted: async (
