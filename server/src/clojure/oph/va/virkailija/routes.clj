@@ -326,6 +326,26 @@
         (log/error e)
         (internal-server-error {:message "error"}))))
 
+  (compojure-api/POST "/set-excel-tasmaytysraportti-payment-date" []
+    :body  [body { :pitkaviite s/Str }]
+    (try
+      (let [result (first (query "
+        WITH updated AS (
+          UPDATE virkailija.payments
+          SET created_at = NOW() - INTERVAL '1 month'
+          WHERE pitkaviite = ?
+          AND paymentstatus_id = 'sent'
+          RETURNING 1
+        )
+        SELECT COUNT(*) AS amount
+        FROM updated", [(:pitkaviite body)]))]
+        (if (= 1 (:amount result))
+          (ok {:ok "ok"})
+          (bad-request (str "Timestamps updated: " (:amount result)))))
+    (catch Exception e
+      (log/error e)
+      (internal-server-error {:message "error"}))))
+
   (compojure-api/GET "/get-excel-tasmaytysraportti" []
    :summary "Täsmäytysraportti Excel XLSX document for last months payments"
     (log/info "Test API: Getting täsmäytysraportti Excel XLSX document for last months payments")
