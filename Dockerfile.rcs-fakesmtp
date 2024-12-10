@@ -1,4 +1,4 @@
-FROM openjdk:8@sha256:86e863cc57215cfb181bd319736d0baf625fe8f150577f9eb58bd937f5452cb8
+FROM eclipse-temurin:21.0.5_11-jdk-alpine
 
 ADD https://nilhcem.github.io/FakeSMTP/downloads/fakeSMTP-latest.zip /fakeSMTP-latest.zip
 RUN unzip /fakeSMTP-latest.zip
