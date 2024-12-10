@@ -28,7 +28,8 @@ RUN npm run build-production
 #
 # va-base with all the Clojure stuff
 #
-FROM eclipse-temurin:21.0.5_11-jdk AS va-base
+FROM eclipse-temurin:21.0.5_11-jdk-alpine AS va-base
+RUN apk add --no-cache bash
 
 WORKDIR /app
 
