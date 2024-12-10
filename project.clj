@@ -75,10 +75,7 @@
                          ;; other
                          [metosin/ring-swagger-ui "5.17.14"]
 
-                         [org.clojure/core.memoize "1.1.266"]
-
-                         [org.scala-lang.modules/scala-xml_2.11 "1.3.1"]
-                         [org.scala-lang/scala-library "2.11.12"]]
+                         [org.clojure/core.memoize "1.1.266"]]
 
   :dependencies [[org.clojure/clojure "1.12.0"]
                  [nrepl "1.3.0"]
