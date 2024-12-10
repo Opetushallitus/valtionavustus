@@ -2,6 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:best-practices",
+    "workarounds:javaLTSVersions",
     ":rebaseStalePrs",
     "npm:unpublishSafe"
   ],
@@ -71,24 +72,6 @@
         "mcr.microsoft.com/playwright"
       ],
       "groupName": "Playwright"
-    },
-    {
-      "matchManagers": [
-        "dockerfile"
-      ],
-      "matchPackageNames": [
-        "eclipse-temurin"
-      ],
-      "versioning": "regex:^(?<major>\\d+)(((\\.|u)(?<minor>\\d+))?(\\.(?<patch>\\d+))?((_|-b)(?<build>\\d+))?)-(?<compatibility>.*)$"
-    },
-    {
-      "matchPackageNames": [
-        "eclipse-temurin"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "enabled": false
     },
     {
       "matchPackageNames": [
