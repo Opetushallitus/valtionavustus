@@ -161,6 +161,7 @@ function lahetetytMaksueratTab(page: Page) {
       allekirjoitettuYhteenveto: tableTdLocator.nth(6),
       presenterEmail: tableTdLocator.nth(7),
       acceptorEmail: tableTdLocator.nth(8),
+      pitkaviite: page.locator('[data-test-id="pitkaviite"]').nth(tableRowIndex),
       lataaTasmaytysraportti: page.getByText('Lataa täsmäytysraportti'),
     }
   }

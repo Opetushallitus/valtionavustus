@@ -9,6 +9,10 @@ export async function downloadExcelExport(page: Page, avustushakuID: number) {
   return await downloadExcel(page, `/api/avustushaku/${avustushakuID}/export.xslx`)
 }
 
+export async function downloadExcelTasmaytysraportti(page: Page) {
+  return await downloadExcel(page, `/api/test/get-excel-tasmaytysraportti`)
+}
+
 export async function downloadHallinnoiAvustuksiaExcel(page: Page, avustushakuID: number) {
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   await hakemustenArviointiPage.navigate(avustushakuID)

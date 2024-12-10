@@ -5,6 +5,7 @@ import { VIRKAILIJA_URL } from '../../utils/constants'
 import { expectToBeDefined } from '../../utils/util'
 import { MaksatuksetPage } from '../../pages/virkailija/hakujen-hallinta/maksatuksetPage'
 import { getPdfFirstPageTextContent } from '../../utils/pdfUtil'
+import { downloadExcelTasmaytysraportti } from '../../utils/downloadExcel'
 
 export async function getTasmaytysraporit(
   avustushakuId: number,
@@ -56,8 +57,9 @@ test('tasmaytysraportti is sent when maksatuset are sent', async ({
   expect(tasmaytysraportitAfterMaksatukset).toHaveLength(1)
   const raportti = Buffer.from(tasmaytysraportitAfterMaksatukset[0].contents, 'base64')
   const tasmaytysraportti = await getPdfFirstPageTextContent(new Blob([raportti]))
+  const lkpTili = '82010000'
+
   await test.step('find certain fields in pdf', async () => {
-    const lkpTili = '82010000'
     const code = hakuProps.talousarviotili.code
     const codeFirstPart = code.slice(0, 10)
     const codeLastPart = code.slice(10)
@@ -81,5 +83,32 @@ test('tasmaytysraportti is sent when maksatuset are sent', async ({
     const tasmaytysRaporttiPdf = await downloadToBlob(download)
     const pdfText = await getPdfFirstPageTextContent(tasmaytysRaporttiPdf)
     expect(pdfText).toBe(tasmaytysraportti)
+
+    await test.step('tasmaytysraportti Excel file can be downloaded', async () => {
+      const pitkaviite = await lahetetytMaksatukset(1).pitkaviite.innerText()
+      async function setPaymentTimeToLastMonth() {
+        const url = `${VIRKAILIJA_URL}/api/test/set-excel-tasmaytysraportti-payment-date`
+        await page.request.post(url, {
+          data: { pitkaviite: pitkaviite },
+          failOnStatusCode: true,
+        })
+      }
+      await setPaymentTimeToLastMonth()
+      const workbook = await downloadExcelTasmaytysraportti(page)
+      expect(workbook.SheetNames).toMatchObject(['Täsmäytysraportti'])
+      const sheet = workbook.Sheets['Täsmäytysraportti']
+
+      expect(sheet.A2.v).toEqual(avustushakuName)
+      expect(sheet.B2.v).toEqual('Akaan kaupunki')
+      expect(sheet.C2.v).toEqual(hakuProps.talousarviotili.code)
+      expect(`${sheet.D2.v}`).toEqual(lkpTili)
+      expect(`${sheet.E2.v}`).toEqual(hakuProps.vaCodes.project[0])
+      expect(sheet.F2.v).toEqual(`Toimintayksikkö ${hakuProps.vaCodes.operationalUnit}`)
+      expect(sheet.G2.v).toEqual('FI95 6682 9530 0087 65')
+      expect(sheet.H2.v).toEqual(pitkaviite)
+      expect(sheet.I2.v).toEqual(99999)
+      expect(sheet.J2.v).toEqual(`essi.esittelija@example.com`)
+      expect(sheet.K2.v).toEqual(`hygge.hyvaksyja@example.com`)
+    })
   })
 })
