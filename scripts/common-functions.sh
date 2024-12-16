@@ -18,7 +18,7 @@ readonly local_docker_namespace="va"
 readonly HAKIJA_HOSTNAME=${HAKIJA_HOSTNAME:-"localhost"}
 readonly VIRKAILIJA_HOSTNAME=${VIRKAILIJA_HOSTNAME:-"localhost"}
 
-readonly AWS_CLI_VERSION="2.15.1"
+readonly AWS_CLI_VERSION="2.22.17"
 
 function require_cdk_context {
   if ! running_on_gh_actions; then
@@ -61,7 +61,7 @@ function require_aws_session {
     info "Verifying that AWS session has not expired for oph-valtionavustukset-$1"
     aws sts get-caller-identity --profile "oph-valtionavustukset-$1" 1>/dev/null || {
       info "Session is expired"
-      aws --profile "oph-valtionavustukset-$1" sso login
+      aws --profile "oph-valtionavustukset-$1" sso login --use-device-code
     }
     export AWS_PROFILE="oph-valtionavustukset-$1"
     export AWS_REGION="eu-west-1"
