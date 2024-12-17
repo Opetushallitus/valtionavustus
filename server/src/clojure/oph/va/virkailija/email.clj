@@ -145,7 +145,6 @@
   (let [baos (java.io.ByteArrayOutputStream.)]
     (copy is baos)
     (let [bytearray (.toByteArray baos)]
-      (log/info bytearray)
       bytearray)))
 
 (defn read-oikaisuvaatimusosoitus-into-byte-array [attachment-id lang]
