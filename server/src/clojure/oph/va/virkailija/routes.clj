@@ -213,13 +213,13 @@
 
 (defn get-emails-by-send-success [success?]
   (let [rows (query "SELECT * FROM (
-                       SELECT DISTINCT ON (e.id) e.formatted, e.to_address, e.bcc, e.cc, e.subject, ee.success
+                       SELECT DISTINCT ON (e.id) e.id, e.formatted, e.to_address, e.bcc, e.cc, e.subject, ee.success
                        FROM virkailija.email e
                        JOIN email_event ee ON (e.id = ee.email_id)
                        ORDER BY e.id, ee.created_at DESC
                      ) AS r
                      WHERE r.success = ?" [success?])]
-    (map (fn [row] (select-keys row [:formatted :to-address :bcc :cc :subject])) rows)))
+    (map (fn [row] (select-keys row [:id :formatted :to-address :bcc :cc :subject])) rows)))
 
 (defn get-emails-that-failed-to-be-sent []
   (get-emails-by-send-success false))
