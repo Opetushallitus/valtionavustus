@@ -256,7 +256,7 @@
       (email/message lang :hakuaika-paattymassa [to] mail-subject body)
       {:hakemus-id     (:id hakemus)
        :avustushaku-id (:id avustushaku)
-       :from           (-> email/smtp-config :from :fi)})))
+       :from           from})))
 
 (defn send-kuukausittainen-tasmaytysraportti [raportti]
   (let [email-type     :kuukausittainen-tasmaytysraportti
