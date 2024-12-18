@@ -11,7 +11,7 @@
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
 
-  :min-lein-version "2.7.1"
+  :exact-lein-version "2.11.2"
 
   :repositories [["public-github"  {:url "git://github.com"}]]
 
