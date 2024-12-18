@@ -20,6 +20,7 @@
             [oph.va.virkailija.avustushaku-routes :refer [avustushaku-routes]]
             [oph.va.virkailija.db :as virkailija-db]
             [oph.va.virkailija.decision :as decision]
+            [oph.va.virkailija.email :as email]
             [oph.va.virkailija.external :as external]
             [oph.va.virkailija.fake-authentication :as fake-authentication]
             [oph.va.virkailija.grant-routes :as grant-routes]
@@ -172,9 +173,29 @@
   (compojure-route/not-found "<p>Page not found.</p>")))
 
 
+(defn get-emails-for-email-type [email-type]
+  (log/info (str "Fetching emails for email type: " email-type))
+  (let [emails (query "SELECT email.id, formatted, to_address, bcc, cc, subject, reply_to, from_address FROM virkailija.email
+                       JOIN email_event ON (email.id = email_event.email_id)
+                       WHERE email_type = ?::email_type
+                       ORDER BY email.created_at DESC"
+                      [email-type])]
+    (log/info (str "Succesfully fetched emails for email type: " email-type))
+    emails))
+
+(defn get-email-attachment-for-email-id [id]
+  (log/info (str "Fetching email attachment for email id: " id))
+  (let [emails (query "SELECT attachment_contents, attachment_title, attachment_description FROM virkailija.email
+                       JOIN email_event ON (email.id = email_event.email_id)
+                       WHERE email.id = ?"
+                      [id])
+        email (first emails)]
+    (log/info (str "Succesfully fetched email attachment for email id: " id))
+    email))
+
 (defn get-emails [hakemus-id email-type]
   (log/info (str "Fetching emails for hakemus with id: " hakemus-id))
-  (let [emails (query "SELECT formatted, to_address, bcc, cc, subject, reply_to, from_address FROM virkailija.email
+  (let [emails (query "SELECT email.id, formatted, to_address, bcc, cc, subject, reply_to, from_address FROM virkailija.email
                        JOIN email_event ON (email.id = email_event.email_id)
                        WHERE hakemus_id = ? AND email_type = ?::email_type"
                       [hakemus-id email-type])]
@@ -183,7 +204,7 @@
 
 (defn get-avustushaku-emails [avustushaku-id email-type]
   (log/info (str "Fetching emails for avustushaku with id: " avustushaku-id))
-  (let [emails (query "SELECT formatted, from_address, to_address, bcc, cc, subject FROM virkailija.email
+  (let [emails (query "SELECT email.id, formatted, from_address, to_address, bcc, cc, subject FROM virkailija.email
                        JOIN email_event ON (email.id = email_event.email_id)
                        WHERE avustushaku_id = ? AND email_type = ?::virkailija.email_type"
                        [avustushaku-id email-type])]
@@ -346,14 +367,13 @@
       (log/error e)
       (internal-server-error {:message "error"}))))
 
-  (compojure-api/GET "/get-excel-tasmaytysraportti" []
+  (compojure-api/GET "/send-excel-tasmaytysraportti" []
    :summary "Täsmäytysraportti Excel XLSX document for last months payments"
-    (log/info "Test API: Getting täsmäytysraportti Excel XLSX document for last months payments")
+    (log/info "Test API: Send kuukausittainen tasmaytysraportti email")
     (try
-      (let [document (tasmaytysraportti/create-excel-tasmaytysraportti)]
-        (-> (ok document)
-            (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
-            (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"tasmaytysraportti.xlsx\"")))
+      (let [raportti (tasmaytysraportti/create-excel-tasmaytysraportti)]
+        (email/send-kuukausittainen-tasmaytysraportti raportti)
+        (ok {:ok "ok"})
         )
       (catch Exception e
         (log/error e)
@@ -432,6 +452,21 @@
     :summary "Juuh"
     (ok (virkailija-db/update-va-users-cache body)))
 
+  (compojure-api/GET "/email/:email-id/attachment/excel" []
+    :path-params [email-id :- s/Num]
+    (log/info "Test API: Getting email excel attachment")
+    (try
+      (let [attachment (get-email-attachment-for-email-id email-id)
+            document (:attachment-contents attachment)
+            title (:attachment-title attachment)]
+        (-> (ok document)
+            (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
+            (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" title "\"")))
+        )
+      (catch Exception e
+        (log/error e)
+        (internal-server-error {:message "error"}))))
+
   (compojure-api/GET "/email/sent/failed" []
     :return virkailija-schema/DbEmails
     :summary "Return emails that failed to be send"
@@ -466,7 +501,14 @@
     :path-params [avustushaku-id :- Long email-type :- s/Str]
     :return virkailija-schema/DbEmails
     :summary "Return emails related to the avustushaku"
-    (ok (get-avustushaku-emails avustushaku-id email-type))))
+    (ok (get-avustushaku-emails avustushaku-id email-type)))
+
+  (compojure-api/GET "/email/:email-type" []
+    :path-params [email-type :- s/Str]
+    :return virkailija-schema/DbEmails
+    :summary "Return emails related to the email type"
+    (log/info "Test API: Getting emails related to email type")
+    (ok (get-emails-for-email-type email-type))))
 
 
 

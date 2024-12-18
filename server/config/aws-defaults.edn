@@ -43,6 +43,7 @@
                                                :host                         "email-smtp.eu-west-1.amazonaws.com"
                                                :port                         587
                                                :queue-size                   1024
+                                               :to-kuukausittainen-tasmaytysraportti         ["talouspalvelut@localhost"]
                                                :to-taloustarkastaja          ["taloustarkastus@localhost"]
                                                :to-palkeet                   ["palkeet@localhost"]
                                                :to-palkeet-ja-talouspalvelut ["palkeet@localhost" "talouspalvelut@localhost"]

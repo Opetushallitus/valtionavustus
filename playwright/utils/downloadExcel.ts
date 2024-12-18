@@ -1,16 +1,16 @@
 import { Download } from 'playwright-core'
 import { navigate } from './navigate'
-import * as xlsx from 'xlsx'
-import { Page } from '@playwright/test'
 import type { WorkBook } from 'xlsx'
+import * as xlsx from 'xlsx'
+import { expect, Page } from '@playwright/test'
 import { HakemustenArviointiPage } from '../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 
 export async function downloadExcelExport(page: Page, avustushakuID: number) {
   return await downloadExcel(page, `/api/avustushaku/${avustushakuID}/export.xslx`)
 }
 
-export async function downloadExcelTasmaytysraportti(page: Page) {
-  return await downloadExcel(page, `/api/test/get-excel-tasmaytysraportti`)
+export async function downloadExcelForEmailId(page: Page, emailId: number, name: string) {
+  return await downloadExcel(page, `/api/test/email/${emailId}/attachment/excel`, name)
 }
 
 export async function downloadHallinnoiAvustuksiaExcel(page: Page, avustushakuID: number) {
@@ -22,12 +22,14 @@ export async function downloadHallinnoiAvustuksiaExcel(page: Page, avustushakuID
   return await getWorkbook(await downloadPromise)
 }
 
-async function downloadExcel(page: Page, url: string): Promise<WorkBook> {
+async function downloadExcel(page: Page, url: string, name?: string): Promise<WorkBook> {
   const [download]: [Download, any] = await Promise.all([
     page.waitForEvent('download'),
     navigate(page, url).catch((_) => undefined),
   ])
-
+  if (name) {
+    expect(download.suggestedFilename()).toEqual(name)
+  }
   return getWorkbook(download)
 }
 

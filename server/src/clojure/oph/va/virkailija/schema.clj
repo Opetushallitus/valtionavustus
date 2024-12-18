@@ -59,13 +59,17 @@
 
 (s/defschema DbEmail
   "Email stored in database"
-  {:formatted s/Str
+  {:id s/Num
+   :formatted s/Str
    :to-address [s/Str]
    (s/optional-key :subject) (s/maybe s/Str)
    (s/optional-key :reply-to) (s/maybe s/Str)
    :bcc (s/maybe s/Str)
    :cc [s/Str]
-   (s/optional-key :from-address) (s/maybe s/Str)})
+   (s/optional-key :from-address) (s/maybe s/Str)
+  (s/optional-key :attachment-title) (s/maybe s/Str)
+  (s/optional-key :attachment-contents) (s/maybe s/Str)
+  (s/optional-key :attachment-description) (s/maybe s/Str)})
 
 (s/defschema DbEmails
   "Emails stored in database"

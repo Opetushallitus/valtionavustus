@@ -4,6 +4,7 @@ import { VIRKAILIJA_URL } from './constants'
 import { log, expectToBeDefined } from './util'
 
 export interface Email {
+  id: number
   formatted: string
   'to-address': string[]
   bcc: string | null
@@ -11,6 +12,9 @@ export interface Email {
   subject?: string
   'reply-to'?: string | null
   'from-address'?: string
+  'attachment-title'?: string
+  'attachment-description'?: string
+  'attachment-contents'?: string
 }
 
 export const emailSchema = yup
@@ -19,6 +23,7 @@ export const emailSchema = yup
     yup
       .object()
       .shape<Email>({
+        id: yup.number(),
         formatted: yup.string().required(),
         'to-address': yup
           .array()
@@ -30,10 +35,22 @@ export const emailSchema = yup
         subject: yup.string().optional(),
         'from-address': yup.string().optional(),
         'reply-to': yup.string().optional().nullable(),
+        'attachment-contents': yup.string().optional(),
+        'attachment-title': yup.string().optional(),
+        'attachment-description': yup.string().optional(),
       })
       .required()
   )
   .defined()
+
+const getEmailsForEmailType = (emailType: string) => (): Promise<Email[]> =>
+  axios
+    .get(`${VIRKAILIJA_URL}/api/test/email/${emailType}`)
+    .then((r) => {
+      console.log(`getEmails(${emailType})`, r.data)
+      return r
+    })
+    .then((r) => emailSchema.validate(r.data))
 
 const getEmails =
   (emailType: string) =>
@@ -142,7 +159,7 @@ export const getLoppuselvitysAsiatarkastamattaEmails = getEmailsWithAvustushaku(
 export const getValiselvitysPalauttamattaEmails = getEmails('valiselvitys-palauttamatta')
 export const getYhteystiedotMuutettuEmails = getEmails('hakemus-edited-after-applicant-edit')
 export const getPaatoksetLahetettyEmails = getEmailsWithAvustushaku('paatokset-lahetetty')
-
+export const getTasmaytysraporttiEmails = getEmailsForEmailType('kuukausittainen-tasmaytysraportti')
 export const getAvustushakuRefusedEmails = getEmails('application-refused')
 export const getMuutoshakemuksetKasittelemattaEmails = async (
   ukotettuEmailAddress: string,

@@ -1,11 +1,13 @@
 import { Blob } from 'node:buffer'
-import { APIRequestContext, Download, expect } from '@playwright/test'
+import { APIRequestContext, Download, expect, Page } from '@playwright/test'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 import { VIRKAILIJA_URL } from '../../utils/constants'
 import { expectToBeDefined } from '../../utils/util'
 import { MaksatuksetPage } from '../../pages/virkailija/hakujen-hallinta/maksatuksetPage'
 import { getPdfFirstPageTextContent } from '../../utils/pdfUtil'
-import { downloadExcelTasmaytysraportti } from '../../utils/downloadExcel'
+import { downloadExcelForEmailId } from '../../utils/downloadExcel'
+import { getTasmaytysraporttiEmails } from '../../utils/emails'
+import { WorkSheet } from 'xlsx'
 
 export async function getTasmaytysraporit(
   avustushakuId: number,
@@ -35,6 +37,10 @@ async function downloadToBlob(download: Download): Promise<Blob> {
     downloadBufs.push(buf)
   }
   return new Blob(downloadBufs)
+}
+
+async function sendTasmaytysraporttiEmail(page: Page) {
+  return await page.request.get(`${VIRKAILIJA_URL}/api/test/send-excel-tasmaytysraportti`)
 }
 
 test('tasmaytysraportti is sent when maksatuset are sent', async ({
@@ -94,21 +100,34 @@ test('tasmaytysraportti is sent when maksatuset are sent', async ({
         })
       }
       await setPaymentTimeToLastMonth()
-      const workbook = await downloadExcelTasmaytysraportti(page)
-      expect(workbook.SheetNames).toMatchObject(['Täsmäytysraportti'])
-      const sheet = workbook.Sheets['Täsmäytysraportti']
+      await sendTasmaytysraporttiEmail(page)
+      let sheet: WorkSheet
+      await expect
+        .poll(async () => {
+          const emails = await getTasmaytysraporttiEmails()
+          const email = emails.at(0)
+          expectToBeDefined(email)
+          expect(email.subject).toEqual('Edellisen kuukauden VA-täsmäytysraportti')
+          expect(email.formatted).toEqual(`Hyvä vastaanottaja,
 
-      expect(sheet.A2.v).toEqual(avustushakuName)
-      expect(sheet.B2.v).toEqual('Akaan kaupunki')
-      expect(sheet.C2.v).toEqual(hakuProps.talousarviotili.code)
-      expect(`${sheet.D2.v}`).toEqual(lkpTili)
-      expect(`${sheet.E2.v}`).toEqual(hakuProps.vaCodes.project[0])
-      expect(sheet.F2.v).toEqual(`Toimintayksikkö ${hakuProps.vaCodes.operationalUnit}`)
-      expect(sheet.G2.v).toEqual('FI95 6682 9530 0087 65')
-      expect(sheet.H2.v).toEqual(pitkaviite)
-      expect(sheet.I2.v).toEqual(99999)
-      expect(sheet.J2.v).toEqual(`essi.esittelija@example.com`)
-      expect(sheet.K2.v).toEqual(`hygge.hyvaksyja@example.com`)
+ohessa VA-järjestelmän automaattisesti luoma VA-maksatusten täsmäytysraportti, joka sisältää kaikki edellisen kalenterikuukauden aikana VA-järjestelmästä tehdyt maksatukset.
+`)
+          const workbook = await downloadExcelForEmailId(page, email.id, 'tasmaytysraportti.xlsx')
+          expect(workbook.SheetNames).toMatchObject(['Täsmäytysraportti'])
+          sheet = workbook.Sheets['Täsmäytysraportti']
+          return sheet.A2.v
+        })
+        .toEqual(avustushakuName)
+      expect(sheet!.B2.v).toEqual('Akaan kaupunki')
+      expect(sheet!.C2.v).toEqual(hakuProps.talousarviotili.code)
+      expect(`${sheet!.D2.v}`).toEqual(lkpTili)
+      expect(`${sheet!.E2.v}`).toEqual(hakuProps.vaCodes.project[0])
+      expect(sheet!.F2.v).toEqual(`Toimintayksikkö ${hakuProps.vaCodes.operationalUnit}`)
+      expect(sheet!.G2.v).toEqual('FI95 6682 9530 0087 65')
+      expect(sheet!.H2.v).toEqual(pitkaviite)
+      expect(sheet!.I2.v).toEqual(99999)
+      expect(sheet!.J2.v).toEqual(`essi.esittelija@example.com`)
+      expect(sheet!.K2.v).toEqual(`hygge.hyvaksyja@example.com`)
     })
   })
 })

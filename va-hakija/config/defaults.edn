@@ -46,6 +46,7 @@
                                                                               :sv "no-reply@statsunderstod.oph.fi"}
                                                :jotpa-from                   {:fi "no-reply@jotpa.fi"}
                                                :sender                       "no-reply@localhost"
+                                               :to-kuukausittainen-tasmaytysraportti         ["talouspalvelut@localhost"]
                                                :to-taloustarkastaja          ["taloustarkastus@localhost"]
                                                :to-palkeet                   ["palkeet@localhost"]
                                                :to-palkeet-ja-talouspalvelut ["palkeet@localhost" "talouspalvelut@localhost"]

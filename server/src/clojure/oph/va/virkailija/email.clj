@@ -23,6 +23,7 @@
    :muutoshakemus-paatos {:fi "Automaattinen viesti: organisaationne muutoshakemus on käsitelty - Linkki päätösasiakirjaan"
             :sv "Automatiskt meddelande: Er ändringsansökan har behandlats - Länk till beslutet"}
    :raportointivelvoite-muistutus {:fi "Muistutus valtionavustuksen raportoinnista"}
+   :kuukausittainen-tasmaytysraportti {:fi "Edellisen kuukauden VA-täsmäytysraportti"}
    :selvitys {:fi "Väliselvitys käsitelty"
               :sv "Mellanredovisning behandlat"}
    :valiselvitys-notification {:fi "Väliselvitys täytettävissä haulle"
@@ -70,6 +71,7 @@
    :hakuaika-paattynyt {:fi (email/load-template "email-templates/hakuaika-paattynyt.fi")}
    :paatokset-lahetetty {:fi (email/load-template "email-templates/paatokset-lahetetty.fi")}
    :raportointivelvoite-muistutus {:fi (email/load-template "email-templates/raportointivelvoite-muistutus.fi")}
+   :kuukausittainen-tasmaytysraportti {:fi (email/load-template "email-templates/kuukausittainen-tasmaytysraportti.fi")}
    :valiselvitys-palauttamatta {:fi (email/load-template "email-templates/valiselvitys-palauttamatta.fi")
                                 :sv (email/load-template "email-templates/valiselvitys-palauttamatta.sv")}
    :loppuselvitys-palauttamatta {:fi (email/load-template "email-templates/loppuselvitys-palauttamatta.fi")
@@ -254,7 +256,23 @@
       (email/message lang :hakuaika-paattymassa [to] mail-subject body)
       {:hakemus-id     (:id hakemus)
        :avustushaku-id (:id avustushaku)
-       :from           from})))
+       :from           (-> email/smtp-config :from :fi)})))
+
+(defn send-kuukausittainen-tasmaytysraportti [raportti]
+  (let [email-type     :kuukausittainen-tasmaytysraportti
+        lang           :fi
+        mail-subject   (get-in mail-titles [email-type lang])
+        template       (get-in mail-templates [email-type lang])
+        to (-> email/smtp-config :to-kuukausittainen-tasmaytysraportti)
+        attachment     {
+                        :title "tasmaytysraportti.xlsx"
+                        :description "Edellisen kuukauden VA-täsmäytysraportti"
+                        :contents raportti
+                        }
+        body (render template)]
+  (log/info "Sending kuukausittainen tasmaytysraportti")
+  (email/try-send-email!
+    (email/message lang email-type to mail-subject body {:attachment attachment}))))
 
 (defn send-hakuaika-paattynyt [notification]
   (let [lang         :fi

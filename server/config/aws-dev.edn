@@ -9,6 +9,7 @@
                    :from                         {:fi "no-reply@dev.valtionavustukset.oph.fi"
                                                   :sv "no-reply@dev.statsunderstod.oph.fi"}
                    :sender                       "no-reply@dev.valtionavustukset.oph.fi"
+                   :to-kuukausittainen-tasmaytysraportti         ["talouspalvelut@localhost"]
                    :to-taloustarkastaja          ["taloustarkastus@localhost"]
                    :to-palkeet                   ["palkeet@localhost"]
                    :to-palkeet-ja-talouspalvelut ["palkeet@localhost" "talouspalvelut@localhost"]}
