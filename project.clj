@@ -151,12 +151,12 @@
                  ]
 
   :profiles {:uberjar {:aot [oph.va.hakija.main]}
-             :server-local {:env {:config "va-hakija/config/local.edn"
+             :server-local {:env {:config "server/config/local.edn"
                                 :configsecrets "../valtionavustus-secret/config/secret-dev.edn"
-                                :configdefaults "va-hakija/config/defaults.edn"}}
+                                :configdefaults "server/config/defaults.edn"}}
 
-             :server-test {:env {:config "va-hakija/config/docker-compose-test.edn"
-                                 :configdefaults "va-hakija/config/defaults.edn"}}
+             :server-test {:env {:config "server/config/docker-compose-test.edn"
+                                 :configdefaults "server/config/defaults.edn"}}
 
              :test {:env {:config "server/config/test.edn"
                           :configdefaults "server/config/test.edn"
