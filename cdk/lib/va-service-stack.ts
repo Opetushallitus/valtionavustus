@@ -147,6 +147,7 @@ export class VaServiceStack extends cdk.Stack {
           vaultSecrets,
           'EMAIL_TO_TALOUSPALVELUT'
         ),
+        EMAIL_TO_TUKI: EcsSecret.fromSecretsManager(vaultSecrets, 'EMAIL_TO_TUKI'),
       },
       logging: LogDriver.awsLogs({
         streamPrefix: 'fargate',
