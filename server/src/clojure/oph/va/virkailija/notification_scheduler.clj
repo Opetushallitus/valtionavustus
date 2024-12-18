@@ -47,6 +47,10 @@
   (log/info "Running muutoshakemuksia kasittelematta")
   (notifications/send-muutoshakemuksia-kasittelematta-notifications))
 
+(defjob KuukausittainenTasmaytysraportti [_ctx]
+  (log/info "Running kuukausittainen tasmaytysraportti")
+  (notifications/send-kuukausittainen-tasmaytysraportti))
+
 (defn- get-notification-jobs []
   (filter :enabled?
     [
@@ -117,6 +121,13 @@
         :schedule (schedule
                    (cron-schedule
                     (get-in config [:notifications :muutoshakemuksia-kasittelematta :schedule])))
+      }
+     { :enabled? (get-in config [:notifications :kuukausittainen-tasmaytysraportti :enabled?])
+       :key "KuukausittainenTasmaytysraportti"
+       :job KuukausittainenTasmaytysraportti
+       :schedule (schedule
+                  (cron-schedule
+                    (get-in config [:notifications :kuukausittainen-tasmaytysraportti :schedule])))
       }
     ]))
 

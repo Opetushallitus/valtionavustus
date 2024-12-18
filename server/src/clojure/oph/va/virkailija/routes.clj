@@ -41,9 +41,10 @@
             [oph.va.virkailija.va-code-values-routes :as va-code-values-routes]
             [oph.va.virkailija.talousarviotili-routes :as talousarviotili-routes]
             [oph.va.virkailija.va-users :as va-users]
+            [oph.va.virkailija.virkailija-notifications :as notifications]
             [oph.va.virkailija.virkailija-notifications :as virkailija-notifications]
             [oph.va.virkailija.tasmaytysraportti :as tasmaytysraportti]
-            [ring.swagger.json-schema-dirty]  ; for schema.core/conditional
+            [ring.swagger.json-schema-dirty]                ; for schema.core/conditional
             [ring.util.http-response :refer [ok internal-server-error not-found bad-request unauthorized]]
             [ring.util.response :as resp]
             [ring.util.codec :as codec]
@@ -371,10 +372,8 @@
    :summary "Täsmäytysraportti Excel XLSX document for last months payments"
     (log/info "Test API: Send kuukausittainen tasmaytysraportti email")
     (try
-      (let [raportti (tasmaytysraportti/create-excel-tasmaytysraportti)]
-        (email/send-kuukausittainen-tasmaytysraportti raportti)
-        (ok {:ok "ok"})
-        )
+      (notifications/send-kuukausittainen-tasmaytysraportti)
+      (ok {:ok "ok"})
       (catch Exception e
         (log/error e)
         (internal-server-error {:message "error"}))))

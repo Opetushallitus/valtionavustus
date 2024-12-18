@@ -3,7 +3,8 @@
             [oph.soresu.common.db :refer [query]]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
-            [oph.va.virkailija.email :as email]))
+            [oph.va.virkailija.email :as email]
+            [oph.va.virkailija.tasmaytysraportti :as tasmaytysraportti]))
 
 (defn- get-loppuselvitys-asiatarkastamatta []
   (query "SELECT h.avustushaku as avustushaku_id, count(h.id) as hakemus_count, r.email
@@ -147,7 +148,6 @@
   (let [notifications (get-muutoshakemuksia-kasittelematta)]
     (doseq [notification notifications]
       (email/send-muutoshakemuksia-kasittelematta notification))))
-
 
 (defn- get-loppuselvitys-palauttamatta []
   (query "SELECT
@@ -295,3 +295,7 @@
       (log/info "Sending" (count notifications) "laheta-loppuselvityspyynnot notifications")
       (doseq [notification notifications]
         (email/send-laheta-loppuselvityspyynnot notification)))))
+
+(defn send-kuukausittainen-tasmaytysraportti []
+  (let [raportti (tasmaytysraportti/create-excel-tasmaytysraportti)]
+    (email/send-kuukausittainen-tasmaytysraportti raportti)))
