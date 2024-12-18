@@ -180,17 +180,11 @@
   :source-paths ["server/src/clojure"]
   :resource-paths ["server/resources"]
 
-  :java-source-paths ["server/src/java"]
-
   :uberjar-exclusions [#"^\." #"public/test"]
-
-  :prep-tasks ["javac" "compile"]
 
   :target-path "target/%s"
 
   :auto-clean true
-
-  :javac-options ["-target" "1.8" "-source" "1.8" "-encoding" "UTF-8" "-deprecation"]
 
   :jvm-opts ["-Xmx1500m" "-Djava.awt.headless=true" "-Dfile.encoding=UTF-8"]
 )
