@@ -112,6 +112,7 @@ test('tasmaytysraportti is sent when maksatuset are sent', async ({
 
 ohessa VA-järjestelmän automaattisesti luoma VA-maksatusten täsmäytysraportti, joka sisältää kaikki edellisen kalenterikuukauden aikana VA-järjestelmästä tehdyt maksatukset.
 `)
+          expect(email['to-address']).toEqual(['talouspalvelut@localhost'])
           const workbook = await downloadExcelForEmailId(page, email.id, 'tasmaytysraportti.xlsx')
           expect(workbook.SheetNames).toMatchObject(['Täsmäytysraportti'])
           sheet = workbook.Sheets['Täsmäytysraportti']
