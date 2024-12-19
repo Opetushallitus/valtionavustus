@@ -296,6 +296,9 @@
       (doseq [notification notifications]
         (email/send-laheta-loppuselvityspyynnot notification)))))
 
-(defn send-kuukausittainen-tasmaytysraportti []
-  (let [raportti (tasmaytysraportti/create-excel-tasmaytysraportti)]
-    (email/send-kuukausittainen-tasmaytysraportti raportti)))
+(defn send-kuukausittainen-tasmaytysraportti [{:keys [force] :or {force false}}]
+  (if (and (not force) (tasmaytysraportti/is-last-month-tasmaytysraportti-already-added-to-email-queue?))
+    (log/info "Täsmäytysraportti Excel already sent for previous month, skipping")
+    (let [raportti (tasmaytysraportti/create-excel-tasmaytysraportti)]
+      (log/info "Sending täsmäytysraportti Excel for previous month")
+      (email/send-kuukausittainen-tasmaytysraportti raportti))))

@@ -66,6 +66,16 @@
                            (row :asiatarkastaja)
                            (row :hyvaksyja)]) payments)))))
 
+(defn is-last-month-tasmaytysraportti-already-added-to-email-queue? []
+  (let [res (first (query "
+  SELECT EXISTS
+    (SELECT 1
+       FROM virkailija.email_event
+       WHERE email_type = 'kuukausittainen-tasmaytysraportti'
+         AND created_at >= DATE_TRUNC('month', CURRENT_DATE)
+         AND created_at < DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month');" []))]
+    (:exists res)))
+
 (defn create-excel-tasmaytysraportti []
   (let [main-sheet-name       "Täsmäytysraportti"
         output                (ByteArrayOutputStream.)
