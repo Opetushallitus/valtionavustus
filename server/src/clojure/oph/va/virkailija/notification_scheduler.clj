@@ -49,7 +49,7 @@
 
 (defjob KuukausittainenTasmaytysraportti [_ctx]
   (log/info "Running kuukausittainen tasmaytysraportti")
-  (notifications/send-kuukausittainen-tasmaytysraportti))
+  (notifications/send-kuukausittainen-tasmaytysraportti {}))
 
 (defn- get-notification-jobs []
   (filter :enabled?

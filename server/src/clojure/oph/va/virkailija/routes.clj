@@ -372,7 +372,7 @@
    :summary "Täsmäytysraportti Excel XLSX document for last months payments"
     (log/info "Test API: Send kuukausittainen tasmaytysraportti email")
     (try
-      (notifications/send-kuukausittainen-tasmaytysraportti)
+      (notifications/send-kuukausittainen-tasmaytysraportti { :force true })
       (ok {:ok "ok"})
       (catch Exception e
         (log/error e)
