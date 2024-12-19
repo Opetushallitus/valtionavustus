@@ -1,11 +1,11 @@
-FROM mcr.microsoft.com/playwright:v1.48.2-focal@sha256:c37bcb50b237e975f3fe80013ab1b3958946db1b24aba39b52be8b3123b8a3df
+FROM mcr.microsoft.com/playwright:v1.49.0-noble
 
 COPY package.json package-lock.json .
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm npm ci
 
 COPY playwright playwright/
 COPY soresu-form soresu-form/
 COPY va-virkailija va-virkailija/
-COPY run_playwright_tests_in_container.sh run_playwright_tests_in_container.sh
 
-ENTRYPOINT ["./run_playwright_tests_in_container.sh"]
+ENTRYPOINT ["/usr/bin/npm", "run", "playwright:test"]
+
