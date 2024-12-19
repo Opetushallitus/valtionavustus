@@ -31,7 +31,7 @@
                                                      :schedule "0 0 14 ? * 1,2,3,4,5"}
                    :hakuaika-paattynyt              {:enabled? false
                                                      :schedule "0 0 7 ? * *"}
-                   :kuukausittainen-tasmaytysraportti {:enabled? false
+                   :kuukausittainen-tasmaytysraportti {:enabled? true
                                                        :schedule "0 0 * * * ?"}
                    :muutoshakemuksia-kasittelematta {:enabled? false
                                                      :schedule "0 0 14 ? * MON-FRI"}}
