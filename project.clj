@@ -68,7 +68,7 @@
                          [com.fasterxml.jackson.dataformat/jackson-dataformat-smile ~jackson-version]
 
                          ;; testing
-                         [speclj "3.5.0"]
+                         [speclj "3.5.0" :exclusions [org.clojure/tools.reader org.clojure/java.classpath]]
                          [speclj-junit "0.0.11"]
 
                          ;; other
