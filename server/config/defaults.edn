@@ -81,7 +81,7 @@
                                                :hakuaika-paattynyt              {:enabled? false
                                                                                  :schedule "0 0 7 ? * *"}
                                                :kuukausittainen-tasmaytysraportti {:enabled? false
-                                                                                   :schedule "0 0 8 5 * ?"}
+                                                                                   :schedule "0 0 * * * ?"}
                                                :muutoshakemuksia-kasittelematta {:enabled? false
                                                                                  :schedule "0 0 8 ? * MON *"}
                                                }

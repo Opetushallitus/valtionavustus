@@ -33,7 +33,7 @@
                    :hakuaika-paattynyt              {:enabled? true
                                                      :schedule "0 0 7 ? * *"}
                    :kuukausittainen-tasmaytysraportti {:enabled? true
-                                                       :schedule "0 0 8 5 * ?"}
+                                                       :schedule "0 0 * * * ?"}
                    :muutoshakemuksia-kasittelematta {:enabled? true
                                                      :schedule "0 0 8 ? * MON *"}}
  }
