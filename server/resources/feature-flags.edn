@@ -1,5 +1,3 @@
 {; available environments: [:local :test :aws-dev :aws-qa :aws-prod ]
 
- ; https://jira.eduuni.fi/browse/VA-443
- :excel-email-tasmaytys-liite [:local :test :aws-dev :aws-qa]
- }
+}
