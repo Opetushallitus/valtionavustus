@@ -35,7 +35,7 @@
                          ;; ... -> [clout "2.2.1"] ->
                          [instaparse "1.5.0"]
 
-                         ;; [clj-pdf "2.6.9"] ->
+                         ;; [clj-pdf "2.7.0"] ->
                          ;; [buddy/buddy-sign "3.6.1-359"] -> [buddy/buddy-core "1.12.0-430"] ->
                          [commons-codec "1.17.1"]
 
@@ -126,7 +126,7 @@
                  [org.apache.commons/commons-email "1.6.0"]
 
                  ;; täsmäytysraportti
-                 [clj-pdf "2.6.9" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
+                 [clj-pdf "2.7.0" :exclusions [org.apache.xmlgraphics/xmlgraphics-commons]]
 
                  ;; maksatuspalvelu
                  [org.clj-commons/clj-ssh "0.6.6"]
