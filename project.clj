@@ -82,7 +82,7 @@
                  [environ "1.2.0"]
 
                  ;; clojure libs
-                 [org.clojure/core.async "1.6.681"]
+                 [org.clojure/core.async "1.7.701"]
                  [org.clojure/data.xml "0.0.8"]
                  [org.clojure/tools.trace "0.8.0"]
                  [org.clojure/tools.logging "1.3.0"]
