@@ -37,7 +37,7 @@
 
                          ;; [clj-pdf "2.7.0"] ->
                          ;; [buddy/buddy-sign "3.6.1-359"] -> [buddy/buddy-core "1.12.0-430"] ->
-                         [commons-codec "1.17.1"]
+                         [commons-codec "1.17.2"]
 
                          ;; [ring/ring-core "1.13.0"] -> [commons-io "2.18.0"]
                          ;; [org.apache.tika/tika-core "3.0.0"] -> [commons-io "2.18.0"]
