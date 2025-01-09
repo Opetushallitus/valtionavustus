@@ -31,4 +31,5 @@
                                                :delete-payments? true}
  :applications-ui                             {:enabled? true}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
- :test-apis                                   {:enabled? true}}
+ :test-apis                                   {:enabled? true}
+ :officer-edit-jwt-secret                     "playwright-test-secret"}

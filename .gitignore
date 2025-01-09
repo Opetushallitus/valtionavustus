@@ -42,3 +42,5 @@ test-results
 tmp/
 deploy-scripts/dist/
 /tmp
+/.lsp
+/.clj-kondo

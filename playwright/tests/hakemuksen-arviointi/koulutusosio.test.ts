@@ -81,10 +81,20 @@ test.describe.parallel('avustushaku with koulutusosio happy path', () => {
         await osio.hyvaksyttyOsallistujaMaaraInput.fill('5')
       })
       await test.step('accept hakemus', async () => {
+        await expect(
+          hakemustenArviointiPage.page.locator(
+            "#arviointi-tab label[for='set-arvio-status-accepted']"
+          )
+        ).not.toBeChecked()
         await hakemustenArviointiPage.page.click(
           "#arviointi-tab label[for='set-arvio-status-accepted']"
         )
         await hakemustenArviointiPage.waitForSave()
+        await expect(
+          hakemustenArviointiPage.page.locator(
+            "#arviointi-tab label[for='set-arvio-status-accepted']"
+          )
+        ).toBeChecked()
       })
       await test.step('send paatos', async () => {
         const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()

@@ -21,6 +21,7 @@ const SeurantaTags = ({ hakemus }: Props) => {
   const hakemukset = useHakemustenArviointiSelector(
     (state) => getLoadedAvustushakuData(state.arviointi).hakuData.hakemukset
   )
+  const loadStatus = useHakemustenArviointiSelector((state) => state.arviointi.loadStatus)
   const [newTag, setNewTag] = useState('')
   const currentTags = hakemus.arvio?.tags?.value ?? []
 
@@ -82,7 +83,12 @@ const SeurantaTags = ({ hakemus }: Props) => {
         <button className="btn btn-simple btn-sm btn-tag-example">Ei käytössä</button>
       </h2>
       {allTags.map((tag, index) => (
-        <button key={index} className={classNames(tag)} onClick={_.partial(onToggleTag, tag)}>
+        <button
+          key={index}
+          className={classNames(tag)}
+          onClick={_.partial(onToggleTag, tag)}
+          disabled={loadStatus.loadingHakemusId != null || loadStatus.loadingAvustushaku}
+        >
           {tag}
         </button>
       ))}
