@@ -2,28 +2,22 @@
     (:require [speclj.core
                :refer [describe it should= should-throw should should-not
                        tags around-all run-specs after]]
-      [oph.common.testing.spec-plumbing :refer [with-test-server!]]
-      [oph.va.virkailija.server :refer [start-virkailija-server]]
-      [oph.va.virkailija.common-utils
-       :refer [test-server-port create-submission
-               create-application admin-authentication
-               valid-payment-values delete! add-mock-authentication
-               create-application-evaluation json->map create-payment
-               create-application-evaluation get! post!]]
-      [oph.va.virkailija.application-data :as application-data]
-      [oph.va.virkailija.payment-batches-data :as payment-batches-data]
-      [oph.va.virkailija.grant-data :as grant-data]
-      [clj-time.format :as f]
-      [clj-time.core :as t]
-      [clojure.data.xml :as xml]
-      [oph.va.virkailija.invoice :as invoice]
-      [oph.va.virkailija.payments-data :as payments-data]
-      [oph.va.virkailija.va-code-values-data :as va-code-values]
-      [oph.va.hakija.api :as hakija-api]
-      [oph.va.routes :as va-routes]
-      [clojure.data.xml :refer [parse]]
-      [oph.va.virkailija.virkailija-tools :as tools])
-      (:import (java.util Date)))
+              [oph.common.testing.spec-plumbing :refer [with-test-server!]]
+              [oph.va.virkailija.server :refer [start-virkailija-server]]
+              [oph.va.virkailija.common-utils
+               :refer [test-server-port create-submission
+                       create-application create-application-evaluation json->map create-payment
+                       create-application-evaluation post!]]
+              [oph.va.virkailija.application-data :as application-data]
+              [oph.va.virkailija.payment-batches-data :as payment-batches-data]
+              [oph.va.virkailija.grant-data :as grant-data]
+              [clj-time.format :as f]
+              [clojure.data.xml :as xml]
+              [oph.va.virkailija.invoice :as invoice]
+              [oph.va.virkailija.payments-data :as payments-data]
+              [clojure.data.xml :refer [parse]]
+              [oph.va.virkailija.virkailija-tools :as tools])
+     )
 
 
 (defn now-date []
