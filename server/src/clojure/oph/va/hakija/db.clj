@@ -57,10 +57,13 @@
          (get-project-name answers)
          (get-language answers)))
 
-(defn get-hakemus [user-key]
-  (->> {:user_key user-key}
+(defn get-hakemus
+  ([user-key]
+   (->> {:user_key user-key}
        (exec queries/get-hakemus-by-user-key)
        first))
+  ([tx user-key]
+   (first (queries/get-hakemus-by-user-key {:user_key user-key} {:connection tx}))))
 
 (defn get-locked-hakemus-version-for-update [tx id version]
   (first (query-original-identifiers tx "SELECT * FROM hakemukset WHERE user_key = ? AND version = ? FOR UPDATE NOWAIT" [id version])))
