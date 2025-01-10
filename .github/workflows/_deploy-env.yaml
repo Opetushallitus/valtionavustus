@@ -69,19 +69,6 @@ jobs:
           COMMIT_HASH: ${{ github.sha }}
         run: ./scripts/slack/post-github-deploy-status-to-slack.sh
 
-      - name: Send deploy status to radiator
-        if: always()
-        continue-on-error: true
-        env:
-          DEPLOY_STATUS: ${{ steps.deploy.outcome == 'success' && 'success' || 'failure' }}
-        run: |
-          curl \
-            -H "AUTH_TOKEN: ${{ secrets.RADIATOR_AUTH_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -X PUT \
-            https://radiator.continuous-services.services/api/v2/buildstatus/valtionavustus/valtionavustus-deploy-${{ inputs.env }} \
-            -d "{\"status\": \"${DEPLOY_STATUS}\"}"
-
       - name: set now timestamp
         id: now
         run: echo "timestamp=$(date -Iseconds | sed s/:/_/g )" >> $GITHUB_OUTPUT
@@ -98,3 +85,15 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Send deploy status to radiator
+        if: always()
+        continue-on-error: true
+        env:
+          DEPLOY_STATUS: ${{ steps.deploy.outcome == 'success' && 'success' || 'failure' }}
+        run: |
+          curl \
+            -H "AUTH_TOKEN: ${{ secrets.RADIATOR_AUTH_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -X PUT \
+            https://radiator.continuous-services.services/api/v2/buildstatus/valtionavustus/valtionavustus-deploy-${{ inputs.env }} \
+            -d "{\"status\": \"${DEPLOY_STATUS}\"}"
