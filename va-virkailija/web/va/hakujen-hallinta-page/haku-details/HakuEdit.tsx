@@ -464,7 +464,6 @@ const HakuEditor = () => {
                 >
                   <option value=""></option>
                   <option value="XE">XE</option>
-                  <option value="XB">XB</option>
                 </select>
               </label>
             </div>
