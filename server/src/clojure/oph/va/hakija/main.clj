@@ -14,7 +14,7 @@
   (require 'cider.nrepl)
   (let [nrepl-port 7999
         nrepl-handler (ns-resolve 'cider.nrepl 'cider-nrepl-handler)]
-    (nrepl-server/start-server :port nrepl-port :handler nrepl-handler)
+    (nrepl-server/start-server :port nrepl-port :handler nrepl-handler :bind "0.0.0.0")
     (write-nrepl-port-file nrepl-port)
     (log/info "nrepl running on port " nrepl-port)))
 
