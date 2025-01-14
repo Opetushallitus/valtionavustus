@@ -193,9 +193,9 @@
       (and (= status "officer_edit")
            officer-edit-authorized?))))
 
-(defn on-hakemus-update [haku-id hakemus-id base-version answers]
+(defn on-hakemus-update [haku-id user-key base-version answers]
   (with-tx (fn [tx]
-     (let [hakemus (va-db/get-locked-hakemus-version-for-update tx hakemus-id base-version)
+     (let [hakemus (va-db/get-locked-hakemus-version-for-update tx user-key base-version)
            avustushaku (get-open-avustushaku-tx tx haku-id hakemus)
            form-id (:form avustushaku)
            form-submission-id (:form_submission_id hakemus)
@@ -208,9 +208,9 @@
                  validation (merge (validation/validate-form form answers attachments)
                                    (va-budget/validate-budget-hakija answers budget-totals form))
                  updated-submission (:body (update-form-submission-tx tx form-id form-submission-id answers))
-                 updated-hakemus (va-db/update-submission-tx tx
+                 updated-hakemus (va-db/update-hakemus-tx tx
                                                           haku-id
-                                                          hakemus-id
+                                                          user-key
                                                           (:form_submission_id hakemus)
                                                           (:version updated-submission)
                                                           (:register_number hakemus)

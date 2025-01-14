@@ -101,7 +101,7 @@
                 validation (merge (validation/validate-form form answers attachments)
                                   (va-budget/validate-budget-hakija answers budget-totals form))
                 updated-submission (:body (update-form-submission form-id (:form_submission_id hakemus) answers))
-                updated-hakemus (va-db/update-submission-tx
+                updated-hakemus (va-db/update-hakemus-tx
                                                          tx
                                                          haku-id
                                                          user-key

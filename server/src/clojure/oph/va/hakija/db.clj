@@ -413,12 +413,12 @@
      (when (contains? muutoshakemus :varayhteyshenkilo)
       (change-normalized-hakemus-trusted-contact-person-details tx user-key hakemus-id (get muutoshakemus :varayhteyshenkilo))))))
 
-(defn update-submission-tx [tx avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
+(defn update-hakemus-tx [tx avustushaku-id user-key submission-id submission-version register-number answers budget-totals]
   (let [register-number (or register-number
-                            (generate-register-number avustushaku-id hakemus-id))
-        new-hakemus (hakemus-copy/create-new-hakemus-version-from-user-key-form-submission-id tx hakemus-id submission-id)
+                            (generate-register-number avustushaku-id user-key))
+        new-hakemus (hakemus-copy/create-new-hakemus-version-from-user-key-form-submission-id tx user-key submission-id)
         params (-> {:avustushaku_id avustushaku-id
-                    :user_key hakemus-id
+                    :user_key user-key
                     :version (:version new-hakemus)
                     :user_oid nil
                     :user_first_name nil
@@ -432,16 +432,16 @@
 
     (queries/update-hakemus-submission<! params {:connection tx})))
 
-(defn update-submission [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
+(defn update-submission [avustushaku-id user-key submission-id submission-version register-number answers budget-totals]
   (with-tx (fn [tx]
-             (update-submission-tx tx avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals ))))
+             (update-hakemus-tx tx avustushaku-id user-key submission-id submission-version register-number answers budget-totals ))))
 
-(defn- update-status [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals status status-change-comment]
+(defn- update-status [avustushaku-id user-key submission-id submission-version register-number answers budget-totals status status-change-comment]
   (with-tx (fn [tx]
-     (let [new-hakemus (hakemus-copy/create-new-hakemus-version-from-user-key-form-submission-id tx hakemus-id submission-id)
+     (let [new-hakemus (hakemus-copy/create-new-hakemus-version-from-user-key-form-submission-id tx user-key submission-id)
            params (-> {:avustushaku_id avustushaku-id
                        :version (:version new-hakemus)
-                       :user_key hakemus-id
+                       :user_key user-key
                        :user_oid nil
                        :user_first_name nil
                        :user_last_name nil
