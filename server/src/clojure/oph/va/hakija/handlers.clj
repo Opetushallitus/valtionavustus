@@ -269,7 +269,7 @@
     (let [avustushaku (get-open-avustushaku-tx tx haku-id {})
           form-id (:form avustushaku)
           form (form-db/get-form-tx tx form-id)
-          hakemus (va-db/get-hakemus hakemus-id)
+          hakemus (va-db/get-hakemus tx hakemus-id)
           attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
           budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
           validation (merge (validation/validate-form form answers attachments)
