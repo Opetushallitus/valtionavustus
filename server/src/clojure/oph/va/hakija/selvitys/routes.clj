@@ -163,13 +163,15 @@
       (if (= base-version (:version hakemus))
         (let [submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
-              submitted-hakemus (va-db/submit-hakemus avustushaku-id
+              submitted-hakemus (with-tx #(va-db/submit-hakemus
+                                                      %
+                                                      avustushaku-id
                                                       selvitys-user-key
                                                       submission-id
                                                       (:version saved-submission)
                                                       (:register_number hakemus)
                                                       answers
-                                                      budget-totals)
+                                                      budget-totals))
               lang (keyword (:language hakemus))
               parent-hakemus-id (:parent_id hakemus)
               id (:id hakemus)
@@ -232,13 +234,15 @@
       (if (= base-version (:version hakemus))
         (let [submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
-              submitted-hakemus (va-db/submit-hakemus haku-id
+              submitted-hakemus (with-tx #(va-db/submit-hakemus
+                                                      %
+                                                      haku-id
                                                       selvitys-user-key
                                                       submission-id
                                                       (:version saved-submission)
                                                       (:register_number hakemus)
                                                       answers
-                                                      budget-totals)
+                                                      budget-totals))
               lang (keyword (:language hakemus))
               parent_id (:parent_id hakemus)
               contact-email (get-hakemus-contact-email parent_id)

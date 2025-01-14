@@ -171,13 +171,13 @@
   (let [{:keys [hakemus submission validation parent-hakemus]} (get-current-answers haku-id hakemus-id form-key)]
     (hakemus-ok-response hakemus submission validation parent-hakemus)))
 
-(defn try-store-normalized-hakemus [hakemus-id hakemus answers haku-id]
+(defn try-store-normalized-hakemus [tx hakemus-id hakemus answers haku-id]
   (try
-    (va-db/store-normalized-hakemus hakemus-id hakemus answers)
+    (va-db/store-normalized-hakemus tx hakemus-id hakemus answers)
     true
     (catch Exception e
       (log/info "Could not normalize necessary hakemus fields for hakemus: " hakemus-id " Error: " (.getMessage e))
-      false)))
+      false)) )
 
 (defn can-update-hakemus [haku-id user-key answers identity]
   (let [hakemus (va-db/get-hakemus user-key)
@@ -215,8 +215,8 @@
                                                           (:version updated-submission)
                                                           (:register_number hakemus)
                                                           answers
-                                                          budget-totals)
-                 normalized-hakemus-success (try-store-normalized-hakemus (:id hakemus) hakemus answers haku-id)]
+                                                          budget-totals)]
+             (try-store-normalized-hakemus tx (:id hakemus) hakemus answers haku-id)
              (hakemus-ok-response updated-hakemus updated-submission validation nil))
            (hakemus-conflict-response hakemus))
          (bad-request! security-validation))))
@@ -265,31 +265,33 @@
       :else (hakemus-conflict-response hakemus))))
 
 (defn on-hakemus-submit [haku-id hakemus-id base-version answers]
-  (let [avustushaku (get-open-avustushaku haku-id {})
-        form-id (:form avustushaku)
-        form (form-db/get-form form-id)
-        hakemus (va-db/get-hakemus hakemus-id)
-        attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
-        budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
-        validation (merge (validation/validate-form form answers attachments)
-                          (va-budget/validate-budget-hakija answers budget-totals form))]
+  (with-tx (fn [tx]
+    (let [avustushaku (get-open-avustushaku-tx tx haku-id {})
+          form-id (:form avustushaku)
+          form (form-db/get-form-tx tx form-id)
+          hakemus (va-db/get-hakemus hakemus-id)
+          attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
+          budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
+          validation (merge (validation/validate-form form answers attachments)
+                            (va-budget/validate-budget-hakija answers budget-totals form))]
     (if (every? empty? (vals validation))
       (if (= base-version (:version hakemus))
         (let [submission-id (:form_submission_id hakemus)
-              saved-submission (:body (update-form-submission form-id submission-id answers))
+              saved-submission (:body (update-form-submission-tx tx form-id submission-id answers))
               submission-version (:version saved-submission)
-              submitted-hakemus (va-db/submit-hakemus haku-id
+              submitted-hakemus (va-db/submit-hakemus tx
+                                                      haku-id
                                                       hakemus-id
                                                       submission-id
                                                       submission-version
                                                       (:register_number hakemus)
                                                       answers
-                                                      budget-totals)
-              normalized-hakemus-success (try-store-normalized-hakemus (:id hakemus) hakemus answers haku-id)]
+                                                      budget-totals)]
+          (try-store-normalized-hakemus tx (:id hakemus) hakemus answers haku-id)
           (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! false answers submitted-hakemus avustushaku (:id hakemus))
           (hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (hakemus-conflict-response hakemus))
-      (bad-request! validation))))
+      (bad-request! validation))))))
 
 (defn on-hakemus-change-request-response [haku-id user-key base-version answers]
   (let [hakemus (va-db/get-hakemus user-key)
@@ -305,13 +307,14 @@
         (let [submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
               submission-version (:version saved-submission)
-              submitted-hakemus (va-db/submit-hakemus haku-id
+              submitted-hakemus (with-tx #(va-db/submit-hakemus %
+                                                      haku-id
                                                       user-key
                                                       submission-id
                                                       submission-version
                                                       (:register_number hakemus)
                                                       answers
-                                                      budget-totals)
+                                                      budget-totals))
               change-requests (va-db/list-hakemus-change-requests user-key)
               email-of-virkailija (:user_email (last change-requests))]
           (if email-of-virkailija
@@ -337,13 +340,15 @@
               submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
               submission-version (:version saved-submission)
-              submitted-hakemus (va-db/submit-hakemus haku-id
+              submitted-hakemus (with-tx #(va-db/submit-hakemus
+                                                      %
+                                                      haku-id
                                                       hakemus-id
                                                       submission-id
                                                       submission-version
                                                       (:register_number hakemus)
                                                       answers
-                                                      budget-totals)
+                                                      budget-totals))
               submission (:body (get-form-submission
                                  (:form avustushaku)
                                  (:form_submission_id hakemus)))]

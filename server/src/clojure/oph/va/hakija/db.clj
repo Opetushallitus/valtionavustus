@@ -338,9 +338,8 @@
        VALUES ((SELECT id FROM menoluokka WHERE avustushaku_id = ? AND type = ?), ?, ?)"
       [avustushaku-id (name type) muutoshakemus-id amount])))
 
-(defn store-normalized-hakemus [id hakemus answers]
+(defn store-normalized-hakemus [tx id hakemus answers]
   (log/info (str "Storing normalized fields for hakemus: " id))
-  (with-tx (fn [tx]
     (execute! tx
       "INSERT INTO virkailija.normalized_hakemus (
           hakemus_id,
@@ -375,7 +374,7 @@
          (form-util/find-answer-value answers "trusted-contact-name")
          (form-util/find-answer-value answers "trusted-contact-email")
          (form-util/find-answer-value answers "trusted-contact-phone")
-         ])))
+         ])
   (log/info (str "Succesfully stored normalized fields for hakemus with id: " id)))
 
 (defn- change-normalized-hakemus-contact-person-details [tx user-key hakemus-id contact-person-details]
@@ -436,8 +435,8 @@
   (with-tx (fn [tx]
              (update-hakemus-tx tx avustushaku-id user-key submission-id submission-version register-number answers budget-totals ))))
 
-(defn- update-status [avustushaku-id user-key submission-id submission-version register-number answers budget-totals status status-change-comment]
-  (with-tx (fn [tx]
+(defn- update-status
+  [tx avustushaku-id user-key submission-id submission-version register-number answers budget-totals status status-change-comment]
      (let [new-hakemus (hakemus-copy/create-new-hakemus-version-from-user-key-form-submission-id tx user-key submission-id)
            params (-> {:avustushaku_id avustushaku-id
                        :version (:version new-hakemus)
@@ -453,30 +452,32 @@
                        :status_change_comment status-change-comment}
                       (merge (convert-budget-totals budget-totals))
                       (merge-calculated-params avustushaku-id answers))]
-
-       (queries/update-hakemus-status<! params {:connection tx})))))
+       (queries/update-hakemus-status<! params {:connection tx})))
 
 (defn open-hakemus-applicant-edit [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
-  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :applicant_edit nil))
+  (with-tx #(update-status % avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :applicant_edit nil)))
 
-(defn set-submitted-version [user-key form-submission-id]
-  (with-tx (fn [tx]
-  (let [new-hakemus (hakemus-copy/create-new-hakemus-version-from-user-key-form-submission-id tx user-key form-submission-id)
-        params {:user_key user-key
-                :form_submission_id form-submission-id
-                :version (:version new-hakemus) }]
+(defn set-submitted-version
+  ([user-key form-submission-id]
+    (with-tx (fn [tx]
+        (set-submitted-version tx user-key form-submission-id))))
+  ([tx user-key form-submission-id]
+    (let [new-hakemus (hakemus-copy/create-new-hakemus-version-from-user-key-form-submission-id tx user-key form-submission-id)
+            params {:user_key user-key
+                    :form_submission_id form-submission-id
+                    :version (:version new-hakemus) }]
 
-        (queries/set-application-submitted-version<! params {:connection tx})))))
+            (queries/set-application-submitted-version<! params {:connection tx}))))
 
 (defn verify-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
-  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :draft nil))
+  (with-tx #(update-status % avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :draft nil)))
 
-(defn submit-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
-  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :submitted nil)
-  (set-submitted-version hakemus-id submission-id))
+(defn submit-hakemus [tx avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
+    (update-status tx avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :submitted nil)
+    (set-submitted-version tx hakemus-id submission-id))
 
 (defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals comment]
-  (update-status avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :cancelled comment))
+  (with-tx #(update-status % avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :cancelled comment)))
 
 (defn unrefuse-application [tx id]
   (let [new-hakemus (hakemus-copy/create-new-hakemus-version tx id)]
