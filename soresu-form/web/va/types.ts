@@ -413,7 +413,6 @@ export type Avustushaku = {
   valiselvitysdate?: string
   loppuselvitysdate?: string
   muutoshakukelpoinen: boolean
-  'operation-id'?: unknown
   'operational-unit-id'?: unknown
   phase: AvustushakuPhase
   'register-number': string | null

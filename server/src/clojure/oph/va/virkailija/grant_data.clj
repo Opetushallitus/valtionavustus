@@ -34,8 +34,7 @@
     (merge grant
            {:operational-unit
             (va-code-values/get-va-code-value (:operational-unit-id grant))
-            :operation
-            (va-code-values/get-va-code-value (:operation-id grant))})))
+            })))
 
 (defn- set-lkp-account [application]
   (assoc application :lkp-account (lkp/get-lkp-account (:answers application))))

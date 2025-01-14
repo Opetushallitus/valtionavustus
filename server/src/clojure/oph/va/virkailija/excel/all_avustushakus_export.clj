@@ -152,9 +152,6 @@ SELECT
   toimintayksikko.code AS toimintayksikko_code,
   toimintayksikko.code_value AS toimintayksikko_code_value,
   toimintayksikko.year AS toimintayksikko_year,
-  toiminto.code AS toiminto_code,
-  toiminto.code_value AS toiminto_code_value,
-  toiminto.year AS toiminto_year,
   avustushaku.content->'rahoitusalueet' AS rahoitusalueet
 FROM avustushakus_to_export avustushaku
 LEFT JOIN paatos_counts USING (avustushaku_id)
@@ -168,7 +165,6 @@ LEFT JOIN grouped_raportointivelvoitteet USING (avustushaku_id)
 LEFT JOIN lainsaadanto_str USING (avustushaku_id)
 LEFT JOIN projektikoodi USING (avustushaku_id)
 LEFT JOIN virkailija.va_code_values toimintayksikko ON toimintayksikko.id = avustushaku.operational_unit_id
-LEFT JOIN virkailija.va_code_values toiminto ON toiminto.id = avustushaku.operation_id
 LEFT JOIN talousarviotili USING (avustushaku_id)
 ORDER BY avustushaku.id DESC
 ")
@@ -224,7 +220,6 @@ ORDER BY avustushaku.id DESC
      (or (:avustushaku-maararaha row) "")
      (or (:toimintayksikko-code-value row) "")
      (clojure.string/join ", " (:projects row))
-     (or (:toiminto-code-value row) "")
      (if (:maksatukset-lahetetty row) (format-sql-timestamp-as-date (:maksatukset-lahetetty row)) "")
      (or (:maksatukset-summa row) "")
      (or (:jakamaton-maararaha row) "")
@@ -275,7 +270,6 @@ ORDER BY avustushaku.id DESC
       "Määräraha (€)"
       "Toimintayksikkö"
       "Projektit"
-      "Toiminto"
       "Maksettu pvm"
       "Maksettu €"
       "Jakamaton (määräraha miinus maksettu)"

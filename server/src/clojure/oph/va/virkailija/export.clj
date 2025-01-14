@@ -97,7 +97,6 @@
    "TaKp-tili"
    "Valtuus-numero"
    "Projekti"
-   "Toiminto"
    "Suorite"
    "Alue / Kunta"
    "Kumppani"
@@ -131,7 +130,6 @@
         :takp
         (constantly "")
         (constantly "")
-        (constantly "6600151502")
         (constantly "")
         (constantly "")
         (constantly "")

@@ -4,7 +4,7 @@ import { randomString } from '../../utils/random'
 import { NoProjectCodeProvided, VaCodeValues } from '../../utils/types'
 import { HakujenHallintaPage } from './hakujen-hallinta/hakujenHallintaPage'
 
-type KoodienhallintaTab = 'operational-unit' | 'project' | 'operation'
+type KoodienhallintaTab = 'operational-unit' | 'project'
 
 export const KoodienhallintaPage = (page: Page) => {
   const locators = {
@@ -75,8 +75,6 @@ export const KoodienhallintaPage = (page: Page) => {
       }
     }
 
-    await clickKoodienhallintaTab('operation')
-    await createCode('Toiminto', codeValues.operation)
     return codeValues
   }
   return {
@@ -115,7 +113,6 @@ export const KoodienhallintaPage = (page: Page) => {
       const codeValues = {
         operationalUnit: uniqueCode(),
         project: [uniqueCode()],
-        operation: uniqueCode(),
       }
       return createCodeValues(codeValues)
     },

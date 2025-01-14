@@ -633,8 +633,6 @@ export const updateField = createAsyncThunk<
     _.set(avustushaku.decision!, fieldName, update.newValue)
   } else if (fieldId.startsWith('operational-unit-id')) {
     avustushaku['operational-unit-id'] = update.newValue
-  } else if (fieldId.startsWith('operation-id')) {
-    avustushaku['operation-id'] = update.newValue
   } else if (fieldId.startsWith('allow_visibility_in_external_system')) {
     avustushaku.allow_visibility_in_external_system = update.newValue === 'true'
   } else if (fieldId === 'arvioitu_maksupaiva') {

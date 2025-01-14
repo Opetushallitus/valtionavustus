@@ -20,7 +20,6 @@ export async function alustaAvustushaunTaytto(page: Page, hakuProps: HakuProps) 
 
   if (hakuProps.vaCodes) {
     await haunTiedotPage.selectCode('operational-unit', hakuProps.vaCodes.operationalUnit)
-    await haunTiedotPage.selectCode('operation', hakuProps.vaCodes.operation)
   }
   return haunTiedotPage
 }

@@ -140,10 +140,6 @@ const AvustushakuInfo = ({
           <div>{codeValues.find((c) => c.id === avustushaku['operational-unit-id'])?.code}</div>
         </div>
         <div>
-          <label>Toiminto</label>
-          <div>{codeValues.find((c) => c.id === avustushaku['operation-id'])?.code}</div>
-        </div>
-        <div>
           <label>Maksuliikemenotili</label>
           <div>{avustushaku.content['transaction-account']}</div>
         </div>

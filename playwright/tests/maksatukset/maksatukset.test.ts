@@ -26,7 +26,6 @@ const correctOVTTest = test.extend({
   codes: async ({ page }, use) => {
     const codes = {
       operationalUnit: '6600105300',
-      operation: '3425324634',
       project: [NoProjectCodeProvided.code, '523452346'],
     }
     const koodienHallintaPage = KoodienhallintaPage(page)
@@ -39,7 +38,6 @@ const showProjectCodeTest = test.extend({
   codes: async ({ page }, use) => {
     const codes = {
       operationalUnit: '6600105300',
-      operation: '3425324634',
       project: [
         NoProjectCodeProvided.code,
         randomString().substring(0, 13),
@@ -229,7 +227,6 @@ correctOVTTest(
     expect(maksatukset).toContainEqual(
       maksatuksetPage.getExpectedPaymentXML({
         projekti: codeValues.project[1],
-        toiminto: codeValues.operation,
         toimintayksikko: codeValues.operationalUnit,
         pitkaviite,
         invoiceNumber: `${registerNumber}_1`,
@@ -286,7 +283,7 @@ showProjectCodeTest(
     acceptedHakemus,
     avustushakuName,
     talousarviotili,
-    codes: { operation, operationalUnit },
+    codes: { operationalUnit },
     projektikoodi,
   }) => {
     expectToBeDefined(acceptedHakemus)
@@ -320,7 +317,6 @@ showProjectCodeTest(
 
     const expectedXML = maksatusPage.getExpectedPaymentXML({
       projekti: projektikoodi,
-      toiminto: operation,
       toimintayksikko: operationalUnit,
       pitkaviite,
       invoiceNumber: `${registerNumber}_1`,
@@ -365,9 +361,6 @@ test('sending maksatukset disables changing code values for haku', async ({
   await hakujenHallintaPage.navigate(avustushakuID)
   await expect(
     hakujenHallintaPage.page.locator('.code-value-dropdown-operational-unit-id--is-disabled')
-  ).toBeVisible()
-  await expect(
-    hakujenHallintaPage.page.locator('.code-value-dropdown-operation-id--is-disabled')
   ).toBeVisible()
 
   const projects = await hakujenHallintaPage.page.locator(

@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from 'react'
 import Select, { SingleValueProps, components, OptionProps, GroupBase } from 'react-select'
 import { VaCodeValue } from '../types'
 
-export type CodeType = 'operational-unit-id' | 'project-id' | 'operation-id'
+export type CodeType = 'operational-unit-id' | 'project-id'
 
 export interface AutoCompleteCodeValueProps {
   codeType: CodeType

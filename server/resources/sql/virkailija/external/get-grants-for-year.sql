@@ -3,7 +3,7 @@ SELECT
   h.valiselvitysdate, h.loppuselvitysdate, h.form_loppuselvitys,
   h.form_valiselvitys, h.is_academysize, h.haku_type, h.operational_unit_id,
   h.hankkeen_alkamispaiva, h.hankkeen_paattymispaiva,
-  null as project_id, h.operation_id, (h.decision->>'valmistelija')::jsonb as valmistelija
+  null as project_id, (h.decision->>'valmistelija')::jsonb as valmistelija
 FROM
   hakija.avustushaut h
 WHERE

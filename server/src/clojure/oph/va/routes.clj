@@ -68,7 +68,6 @@
    :form        (:form avustushaku)
    :form_loppuselvitys        (:form_loppuselvitys avustushaku)
    :form_valiselvitys         (:form_valiselvitys avustushaku)
-   :operation-id (:operation_id avustushaku)
    :operational-unit-id (:operational_unit_id avustushaku)
    :operational-unit-code (:operational_unit_code avustushaku)
    :muutoshakukelpoinen (:muutoshakukelpoinen avustushaku)

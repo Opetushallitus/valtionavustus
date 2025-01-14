@@ -34,16 +34,16 @@
       first
       convert-to-dash-keys))
 
-(defn- operation-or-operation-unit-code-used? [code-id]
-       (let [sql "SELECT count(a.id) > 0 AS used FROM hakija.avustushaut a WHERE a.operational_unit_id = ? OR a.operation_id = ?"]
-            (-> (query sql [code-id code-id]) first :used)))
+(defn- operation-unit-code-used? [code-id]
+       (let [sql "SELECT count(a.id) > 0 AS used FROM hakija.avustushaut a WHERE a.operational_unit_id = ?"]
+            (-> (query sql [code-id]) first :used)))
 
 (defn- project-code-used? [code-id]
        (let [sql "SELECT count(avustushaku_id) > 0 AS used FROM virkailija.avustushaku_project_code WHERE project_id = ?"]
             (-> (query sql [code-id]) first :used)))
 
 (defn code-used? [id]
-      (or (operation-or-operation-unit-code-used? id)
+      (or (operation-unit-code-used? id)
           (project-code-used? id)))
 
 (defn delete-va-code-value! [id]
@@ -59,5 +59,4 @@
   (merge
     grant
     {:operational-unit (find-code-by-id
-                         (:operational-unit-id grant) va-code-values)
-     :operation (find-code-by-id (:operation-id grant) va-code-values)}))
+                         (:operational-unit-id grant) va-code-values) }))

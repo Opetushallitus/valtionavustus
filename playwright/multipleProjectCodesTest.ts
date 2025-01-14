@@ -10,7 +10,6 @@ export const multipleProjectCodesTest = muutoshakemusTest.extend({
     const codes = await koodienhallintaPage.createCodeValues({
       operationalUnit: uniqueCode(),
       project: [uniqueCode(), uniqueCode(), uniqueCode()],
-      operation: uniqueCode(),
     })
     await use(codes)
   },

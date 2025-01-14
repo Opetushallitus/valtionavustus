@@ -1,24 +1,26 @@
 (ns oph.va.hakija.api
-  (:use [clojure.tools.trace :only [trace]]
-        [clojure.data :as data]
-        [clojure.pprint :only [pprint]])
-  (:require [clojure.java.io :as io]
-            [oph.soresu.common.db :refer [exec exec-all execute! query with-transaction with-tx get-next-exception-or-original escape-like-pattern]]
-            [oph.soresu.form.db :refer [update-form!]]
-            [oph.soresu.form.formhandler :as formhandler]
-            [oph.va.jdbc.enums]
-            [oph.va.menoluokka.db :refer [upsert-menoluokka-rows]]
-            [oph.va.hakija.api.queries :as hakija-queries]
-            [oph.va.hakemus.db :as hakemus-copy]
-            [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
-            [oph.va.hakija.domain :as hakija-domain]
-            [oph.va.environment :as environment]
-            [oph.va.routes :refer :all]
-            [clj-time.core :as clj-time]
-            [oph.va.virkailija.authorization :as authorization]
-            [oph.va.virkailija.email :as email]
-            [oph.common.datetime :as datetime])
-  (:import (oph.va.jdbc.enums HakuStatus HakuRole HakuType)))
+  (:use [clojure.data :as data])
+  (:require
+   [clj-time.core :as clj-time]
+   [clojure.java.io :as io]
+   [oph.common.datetime :as datetime]
+   [oph.soresu.common.db :refer [escape-like-pattern exec execute!
+                                 get-next-exception-or-original
+                                 with-transaction with-tx]]
+   [oph.soresu.form.db :refer [update-form!]]
+   [oph.soresu.form.formhandler :as formhandler]
+   [oph.va.environment :as environment]
+   [oph.va.hakemus.db :as hakemus-copy]
+   [oph.va.hakija.api.queries :as hakija-queries]
+   [oph.va.hakija.domain :as hakija-domain]
+   [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
+   [oph.va.jdbc.enums]
+   [oph.va.menoluokka.db :refer [upsert-menoluokka-rows]]
+   [oph.va.routes :refer :all]
+   [oph.va.virkailija.authorization :as authorization]
+   [oph.va.virkailija.email :as email])
+  (:import
+   (oph.va.jdbc.enums HakuRole HakuStatus HakuType)))
 
 (defn convert-attachment [attachment]
   {:id (:id attachment)
@@ -40,7 +42,7 @@
 (defn- copy-form [tx id created-at]
   (:id (hakija-queries/copy-form<! {:id id :created_at created-at} {:connection tx})))
 
-(defn create-avustushaku [tx avustushaku-content template-form-id loppuselvitys-id valiselvitys-id decision haku-type operation-id operational-unit-id muutoshakukelpoinen created-at]
+(defn create-avustushaku [tx avustushaku-content template-form-id loppuselvitys-id valiselvitys-id decision haku-type operational-unit-id muutoshakukelpoinen created-at]
   (let [created-timestamp    (datetime/datetime->str created-at)
         form-id              (copy-form tx template-form-id created-timestamp)
         new-loppuselvitys-id (when loppuselvitys-id
@@ -53,7 +55,6 @@
                                :haku_type (new HakuType haku-type)
                                :register_number nil
                                :decision decision
-                               :operation_id operation-id
                                :operational_unit_id operational-unit-id
                                :form_loppuselvitys new-loppuselvitys-id
                                :form_valiselvitys new-valiselvitys-id
@@ -93,7 +94,6 @@
                                    :haku_type (new HakuType (:haku-type avustushaku))
                                    :hankkeen_alkamispaiva (:hankkeen-alkamispaiva avustushaku)
                                    :hankkeen_paattymispaiva (:hankkeen-paattymispaiva avustushaku)
-                                   :operation_id (:operation-id avustushaku)
                                    :operational_unit_id (:operational-unit-id avustushaku))]
 
     (with-transaction connection

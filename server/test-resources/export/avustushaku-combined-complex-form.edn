@@ -8,8 +8,7 @@
    :name {:fi "OPHY-68 complex form", :sv "SV: OPHY-68 complex form"},
    :focus-areas
    {:items [{:fi "paino 1", :sv "SV: paino 1"} {:fi "paino 2", :sv "SV: paino 2"} {:fi "paino 3", :sv "SV: paino 3"}],
-    :label {:fi "Painopistealueet", :sv "Fokusområden"}},
-   :operation "o1",
+    :label {:fi "Painopistealueet", :sv "Fokusområden"}}
    :duration
    {:end "2018-03-28T17:32:00.000Z", :label {:fi "Hakuaika", :sv "Ansökningstid"}, :start "2018-02-01T12:32:00.000Z"},
    :rahoitusalueet [],
@@ -19,8 +18,7 @@
    :selection-criteria
    {:items [{:fi "valpe 1", :sv "SV: valpe 1"} {:fi "valpe 2", :sv "SV: valpe 2"}],
     :label {:fi "Valintaperusteet", :sv "Urvalsgrunder"}}},
-  :valiselvitysdate nil,
-  :operation-id nil,
+  :valiselvitysdate nil
   :phase "ended",
   :is_academysize false,
   :form_valiselvitys 62,

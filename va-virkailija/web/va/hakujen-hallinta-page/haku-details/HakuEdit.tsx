@@ -61,7 +61,6 @@ const HakuEditor = () => {
     userHasEditPrivilege &&
     (allowAllHakuEdits || avustushaku.phase === 'current' || avustushaku.phase === 'upcoming')
   const userHasEditMyHakuRolePrivilege = !!avustushaku.privileges?.['edit-my-haku-role']
-  const selectedValueOperation = codeOptions.find((k) => k.id === avustushaku['operation-id'])
   const selectedValueOperationalUnit = codeOptions.find(
     (k) => k.id === avustushaku['operational-unit-id']
   )
@@ -215,22 +214,6 @@ const HakuEditor = () => {
             avustushaku={avustushaku}
             codeOptions={codeOptions.filter((k) => k['value-type'] === 'project')}
             disabled={isAllPaymentsPaid || loadingAvustushaku}
-          />
-        </div>
-        <div className="koodien-valinta-elementti" data-test-id="code-value-dropdown__operation">
-          <h3 className="koodien-valinta-otsikko required">
-            Toiminto
-            <CustomHelpTooltip
-              content={helpTexts['hakujen_hallinta__haun_tiedot___toiminto']}
-              direction="left"
-            />
-          </h3>
-          <AutoCompleteCodeValue
-            codeType="operation-id"
-            codeOptions={codeOptions.filter((k) => k['value-type'] === 'operation')}
-            selectedValue={selectedValueOperation}
-            disabled={isAllPaymentsPaid || loadingAvustushaku}
-            updateValue={updateCodeValue('operation-id', avustushaku)}
           />
         </div>
       </div>

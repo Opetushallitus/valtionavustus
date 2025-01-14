@@ -81,7 +81,7 @@ test.describe('maksatukset pitkaviite', async () => {
     page,
     avustushakuName,
     acceptedHakemus: { hakemusID },
-    codes: { operation, operationalUnit },
+    codes: { operationalUnit },
     projektikoodi,
     talousarviotili,
   }) => {
@@ -128,7 +128,6 @@ test.describe('maksatukset pitkaviite', async () => {
     expect(maksatukset).toContainEqual(
       maksatuksetPage.getExpectedPaymentXML({
         projekti: projektikoodi,
-        toiminto: operation,
         toimintayksikko: operationalUnit,
         pitkaviite,
         invoiceNumber: `${registerNumber}_1`,

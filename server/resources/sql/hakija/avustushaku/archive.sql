@@ -11,7 +11,6 @@ insert into archived_avustushaut (
     operational_unit_id,
     hankkeen_alkamispaiva,
     hankkeen_paattymispaiva,
-    operation_id,
     muutoshakukelpoinen)
   select
     id,
@@ -26,7 +25,6 @@ insert into archived_avustushaut (
     operational_unit_id,
     hankkeen_alkamispaiva,
     hankkeen_paattymispaiva,
-    operation_id,
     muutoshakukelpoinen
   from avustushaut
   where id = :id

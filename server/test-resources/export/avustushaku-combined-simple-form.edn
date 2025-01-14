@@ -5,8 +5,7 @@
   {:self-financing-percentage 10,
    :operational-unit "toimintayks1",
    :name {:fi "test 1", :sv "SV: test 1"},
-   :focus-areas {:items [{:fi "Piste 1", :sv "s"}], :label {:fi "Painopistealueet", :sv "Fokusområden"}},
-   :operation "toiminto1",
+   :focus-areas {:items [{:fi "Piste 1", :sv "s"}], :label {:fi "Painopistealueet", :sv "Fokusområden"}}
    :duration
    {:end "2018-02-04T13:31:00.000Z", :label {:fi "Hakuaika", :sv "Ansökningstid"}, :start "2018-01-15T13:31:00.000Z"},
    :rahoitusalueet [],

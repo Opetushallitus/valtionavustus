@@ -35,7 +35,6 @@ export interface VaCodeValues {
   operationalUnit: string
   operationalUnitName?: string
   project: string[]
-  operation: string
 }
 
 export const NoProjectCodeProvided = {

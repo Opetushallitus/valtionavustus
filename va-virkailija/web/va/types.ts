@@ -54,7 +54,6 @@ export interface HakuData {
   'budget-total-sum': number
   'budget-oph-share-sum': number
   'budget-granted-sum': number
-  'operation-id'?: number
   'operational-unit-id'?: number
   toimintayksikko?: VaCodeValue
   talousarvio?: Menoluokka[]

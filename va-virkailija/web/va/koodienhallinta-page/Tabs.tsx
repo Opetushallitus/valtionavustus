@@ -5,7 +5,6 @@ import { NavLink } from 'react-router-dom'
 const tabName = {
   'operational-unit': 'Toimintayksikkö',
   project: 'Projekti',
-  operation: 'Toiminto',
   'ta-tilit': 'TA-tilit',
 } as const
 
@@ -32,7 +31,6 @@ export const Tabs = () => {
     <div className="oph-tabs oph-typography">
       <OphTab to="operational-unit" />
       <OphTab to="project" />
-      <OphTab to="operation" />
       <OphTab to="ta-tilit" />
     </div>
   )

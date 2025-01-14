@@ -6,7 +6,6 @@
             [oph.va.virkailija.va-code-values-data :as va-code-values]
             [oph.va.routes :as va-routes]
             [oph.va.hakija.api :as hakija-api]
-            [clojure.tools.logging :as log]
             [oph.va.virkailija.authorization :as authorization]
             [clj-time.core :as clj-time]))
 
@@ -197,31 +196,29 @@
         haku-type (:haku-type base-haku)
         form-id (:form base-haku)
         decision (merge (:decision base-haku) { :updatedAt created-at })
-        operation-id (:operation-id base-haku)
         operational-unit-id (:operational-unit-id base-haku)
         avustushaku (hakija-api/get-avustushaku base-haku-id)
         loppuselvitys-id (:form_loppuselvitys avustushaku)
         valiselvitys-id (:form_valiselvitys avustushaku)
         muutoshakukelpoinen true
         new-haku (hakija-api/create-avustushaku
-                   tx
-                   {:name (add-copy-suffixes name)
-                    :duration {:start (clj-time/plus created-at (clj-time/months 1))
-                               :end (clj-time/plus created-at (clj-time/months 2))
-                               :label {:fi "Hakuaika"
-                                       :sv "Ansökningstid"}}
-                    :selection-criteria selection-criteria
-                    :self-financing-percentage self-financing-percentage
-                    :focus-areas focus-areas}
-                   form-id
-                   loppuselvitys-id
-                   valiselvitys-id
-                   decision
-                   haku-type
-                   operation-id
-                   operational-unit-id
-                   muutoshakukelpoinen
-                   created-at)]
+                  tx
+                  {:name (add-copy-suffixes name)
+                   :duration {:start (clj-time/plus created-at (clj-time/months 1))
+                              :end (clj-time/plus created-at (clj-time/months 2))
+                              :label {:fi "Hakuaika"
+                                      :sv "Ansökningstid"}}
+                   :selection-criteria selection-criteria
+                   :self-financing-percentage self-financing-percentage
+                   :focus-areas focus-areas}
+                  form-id
+                  loppuselvitys-id
+                  valiselvitys-id
+                  decision
+                  haku-type
+                  operational-unit-id
+                  muutoshakukelpoinen
+                  created-at)]
     (hakija-api/create-avustushaku-role tx
                                         {:avustushaku (:id new-haku)
                                          :role "vastuuvalmistelija"

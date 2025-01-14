@@ -115,10 +115,7 @@ export const HaunTiedotPage = (page: Page) => {
     await setEndDate(`1.1.${previousYear} 0.00`)
   }
 
-  async function selectCode(
-    codeType: 'operational-unit' | 'project' | 'operation',
-    code: string
-  ): Promise<void> {
+  async function selectCode(codeType: 'operational-unit' | 'project', code: string): Promise<void> {
     const selectLocators = createReactSelectLocators(
       locators.dropdownForCode(codeType),
       `code-value-dropdown-${codeType}-id`
@@ -158,8 +155,6 @@ export const HaunTiedotPage = (page: Page) => {
         await page.getByTestId(projectCode).click()
       }
     }
-
-    await selectCode('operation', codes.operation)
   }
 
   async function addValmistelija(name: string, waitForSave = true) {
@@ -197,7 +192,7 @@ export const HaunTiedotPage = (page: Page) => {
   }
 
   async function getInputPlaceholderCodeStyles(
-    codeType: 'operational-unit' | 'project' | 'operation'
+    codeType: 'operational-unit' | 'project'
   ): Promise<CSSStyleDeclaration> {
     const locator = page.getByTestId(`singlevalue-${codeType}`)
     await expect(locator).toBeVisible()

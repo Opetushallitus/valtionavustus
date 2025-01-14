@@ -29,7 +29,6 @@ const KoodienhallintaApp = () => {
           <Route index element={<Navigate to="operational-unit" replace />} />
           <Route path="operational-unit" element={<VaCode valueType="operational-unit" />} />
           <Route path="project" element={<VaCode valueType="project" />} />
-          <Route path="operation" element={<VaCode valueType="operation" />} />
           <Route path="ta-tilit" element={<TalousarviotilienHallinta />} />
         </Route>
       </Routes>

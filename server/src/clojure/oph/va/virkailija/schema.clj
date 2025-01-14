@@ -272,7 +272,6 @@
    :budget-total-sum s/Int
    :budget-oph-share-sum s/Int
    :budget-granted-sum s/Int
-   (s/optional-key :operation-id) (s/maybe s/Int)
    (s/optional-key :operational-unit-id) (s/maybe s/Int)
    (s/optional-key :toimintayksikko) (s/maybe VACodeValue)
    (s/optional-key :talousarvio) (s/maybe [Menoluokka])})
@@ -374,9 +373,7 @@
    :allow-visibility-in-external-system s/Bool
    (s/optional-key :arvioitu-maksupaiva) (s/maybe LocalDate)
    (s/optional-key :operational-unit-id) (s/maybe s/Int)
-   (s/optional-key :operational-unit) (s/maybe s/Str)
-   (s/optional-key :operation-id) (s/maybe s/Int)
-   (s/optional-key :operation) (s/maybe s/Str)})
+   (s/optional-key :operational-unit) (s/maybe s/Str)})
 
 (s/defschema Grants
   "List of grants"
@@ -454,10 +451,6 @@
                    :valid s/Bool}]
    :current-timestamp s/Str})
 
-(s/defschema YearlyReport
-  "Grants report"
-  [{:year s/Int
-    :count s/Int}])
 
 (s/defschema IncompleteLocalizedString
   "Localized string that might be missing a key"
@@ -471,7 +464,6 @@
    :form-loppuselvitys (describe s/Int "Loppuselvityslomakkeen ID")
    :content s/Any
    :valiselvitysdate (s/maybe LocalDate)
-   :operation-id (describe s/Any "Toiminnont ID")
    :is-academysize s/Bool
    :haku-type (describe s/Any "Avustushaun tyyppi")
    :form-valiselvitys (describe s/Int "Väliselvityslomakkeen ID")
