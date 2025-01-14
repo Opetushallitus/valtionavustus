@@ -3,7 +3,7 @@
             [oph.soresu.common.db :refer [query with-tx]]
             [oph.soresu.form.db :as form-db]
             [oph.soresu.form.routes
-             :refer [update-form-submission]]
+             :refer [update-form-submission-tx]]
             [oph.soresu.form.schema :as soresu-schema]
             [oph.soresu.form.validation :as validation]
             [oph.va.budget :as va-budget]
@@ -100,7 +100,7 @@
                 budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
                 validation (merge (validation/validate-form form answers attachments)
                                   (va-budget/validate-budget-hakija answers budget-totals form))
-                updated-submission (:body (update-form-submission form-id (:form_submission_id hakemus) answers))
+                updated-submission (:body (update-form-submission-tx tx form-id (:form_submission_id hakemus) answers))
                 updated-hakemus (va-db/update-hakemus-tx
                                                          tx
                                                          haku-id
