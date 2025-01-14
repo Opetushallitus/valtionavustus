@@ -457,17 +457,13 @@
 (defn open-hakemus-applicant-edit [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
   (with-tx #(update-status % avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :applicant_edit nil)))
 
-(defn set-submitted-version
-  ([user-key form-submission-id]
-    (with-tx (fn [tx]
-        (set-submitted-version tx user-key form-submission-id))))
-  ([tx user-key form-submission-id]
+(defn set-submitted-version [tx user-key form-submission-id]
     (let [new-hakemus (hakemus-copy/create-new-hakemus-version-from-user-key-form-submission-id tx user-key form-submission-id)
             params {:user_key user-key
                     :form_submission_id form-submission-id
                     :version (:version new-hakemus) }]
 
-            (queries/set-application-submitted-version<! params {:connection tx}))))
+            (queries/set-application-submitted-version<! params {:connection tx})))
 
 (defn verify-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
   (with-tx #(update-status % avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :draft nil)))
