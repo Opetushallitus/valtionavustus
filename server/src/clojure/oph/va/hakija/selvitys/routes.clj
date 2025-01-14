@@ -3,7 +3,7 @@
             [oph.soresu.common.db :refer [query with-tx]]
             [oph.soresu.form.db :as form-db]
             [oph.soresu.form.routes
-             :refer [update-form-submission-tx]]
+             :refer [update-form-submission update-form-submission-tx]]
             [oph.soresu.form.schema :as soresu-schema]
             [oph.soresu.form.validation :as validation]
             [oph.va.budget :as va-budget]
