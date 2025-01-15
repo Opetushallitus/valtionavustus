@@ -171,7 +171,7 @@
   (let [{:keys [hakemus submission validation parent-hakemus]} (get-current-answers haku-id hakemus-id form-key)]
     (hakemus-ok-response hakemus submission validation parent-hakemus)))
 
-(defn try-store-normalized-hakemus [tx hakemus-id hakemus answers haku-id]
+(defn try-store-normalized-hakemus [tx hakemus-id hakemus answers]
   (try
     (va-db/store-normalized-hakemus tx hakemus-id hakemus answers)
     true
@@ -286,7 +286,7 @@
                                                       (:register_number hakemus)
                                                       answers
                                                       budget-totals)]
-          (try-store-normalized-hakemus tx (:id hakemus) hakemus answers haku-id)
+          (with-tx (fn [tx] (try-store-normalized-hakemus tx (:id hakemus) hakemus answers)))
           (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! false answers submitted-hakemus avustushaku (:id hakemus))
           (hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (hakemus-conflict-response hakemus))
