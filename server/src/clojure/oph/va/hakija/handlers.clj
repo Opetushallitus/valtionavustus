@@ -194,8 +194,8 @@
            officer-edit-authorized?))))
 
 (defn on-hakemus-update [haku-id user-key base-version answers]
-  (with-tx (fn [tx]
-     (let [hakemus (va-db/get-locked-hakemus-version-for-update tx user-key base-version)
+     (with-tx
+       (fn [tx] (let [hakemus (va-db/get-locked-hakemus-version-for-update tx user-key base-version)
            avustushaku (get-open-avustushaku-tx tx haku-id hakemus)
            form-id (:form avustushaku)
            form-submission-id (:form_submission_id hakemus)
@@ -216,11 +216,10 @@
                                                           (:register_number hakemus)
                                                           answers
                                                           budget-totals)]
-             (try-store-normalized-hakemus tx (:id hakemus) hakemus answers haku-id)
+             (with-tx (fn [tx] (try-store-normalized-hakemus tx (:id hakemus) hakemus answers haku-id)))
              (hakemus-ok-response updated-hakemus updated-submission validation nil))
            (hakemus-conflict-response hakemus))
-         (bad-request! security-validation))))
-  ))
+         (bad-request! security-validation))))))
 
 (defn- is-valmistelija? [role]
   (or
@@ -265,8 +264,8 @@
       :else (hakemus-conflict-response hakemus))))
 
 (defn on-hakemus-submit [haku-id hakemus-id base-version answers]
-  (with-tx (fn [tx]
-    (let [avustushaku (get-open-avustushaku-tx tx haku-id {})
+    (with-tx
+      (fn [tx] (let [avustushaku (get-open-avustushaku-tx tx haku-id {})
           form-id (:form avustushaku)
           form (form-db/get-form-tx tx form-id)
           hakemus (va-db/get-hakemus tx hakemus-id)
@@ -287,7 +286,7 @@
                                                       (:register_number hakemus)
                                                       answers
                                                       budget-totals)]
-          (try-store-normalized-hakemus tx (:id hakemus) hakemus answers haku-id)
+          (with-tx (fn [tx] (try-store-normalized-hakemus tx (:id hakemus) hakemus answers haku-id)))
           (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! false answers submitted-hakemus avustushaku (:id hakemus))
           (hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (hakemus-conflict-response hakemus))
