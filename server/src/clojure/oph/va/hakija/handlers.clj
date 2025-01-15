@@ -216,7 +216,7 @@
                                                           (:register_number hakemus)
                                                           answers
                                                           budget-totals)]
-             (with-tx (fn [tx] (try-store-normalized-hakemus tx (:id hakemus) hakemus answers haku-id)))
+             (with-tx (fn [tx] (try-store-normalized-hakemus tx (:id hakemus) hakemus answers)))
              (hakemus-ok-response updated-hakemus updated-submission validation nil))
            (hakemus-conflict-response hakemus))
          (bad-request! security-validation))))))
