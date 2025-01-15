@@ -286,7 +286,7 @@
                                                       (:register_number hakemus)
                                                       answers
                                                       budget-totals)]
-          (with-tx (fn [tx] (try-store-normalized-hakemus tx (:id hakemus) hakemus answers haku-id)))
+          (try-store-normalized-hakemus tx (:id hakemus) hakemus answers haku-id)
           (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! false answers submitted-hakemus avustushaku (:id hakemus))
           (hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (hakemus-conflict-response hakemus))

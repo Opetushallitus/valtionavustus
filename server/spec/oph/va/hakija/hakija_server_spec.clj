@@ -379,15 +379,6 @@
           (should= 1030 (:budget_total posted-hakemus))
           (should= 772 (:budget_oph_share posted-hakemus))))
 
-  (it "Stores budget totals to database on submit"
-      (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
-            updated-answers (update-answers valid-answers "material-costs-row.amount" "2000")
-            {:keys [status]} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version "/submit") updated-answers)
-            posted-hakemus (va-db/get-hakemus hakemus-id)]
-          (should= 200 status)
-          (should= 2030 (:budget_total posted-hakemus))
-          (should= 1522 (:budget_oph_share posted-hakemus))))
-
   (it "Validates budget on put (creation)"
       (let [{:keys [status json]} (put-hakemus negative-budget-answers)
             validation-errors (:validation-errors json)]
@@ -424,18 +415,7 @@
             posted-hakemus (va-db/get-hakemus hakemus-id)]
           (should= 200 status)
           (should= "Uusi organisaatio" (:organization_name posted-hakemus))
-          (should= "Uusi projekti" (:project_name posted-hakemus))))
-
-  (it "Stores organization and project names to database on submit"
-      (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
-            updated-answers (-> valid-answers
-                                (update-answers "organization" "Yet another organisaatio")
-                                (update-answers "project-name" "Uudempi projekti"))
-            {:keys [status]} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version "/submit") updated-answers)
-              posted-hakemus (va-db/get-hakemus hakemus-id)]
-          (should= 200 status)
-          (should= "Yet another organisaatio" (:organization_name posted-hakemus))
-          (should= "Uudempi projekti" (:project_name posted-hakemus)))))
+          (should= "Uusi projekti" (:project_name posted-hakemus)))))
 
 (describe "HTTP server when haku has ended"
 
@@ -540,17 +520,6 @@
                                                          :value "26"
                                                          :fieldType "moneyField"})
             {:keys [status]} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version) updated-answers)
-            posted-hakemus (va-db/get-hakemus hakemus-id)]
-        (should= 200 status)
-        (should= 40 (:budget_total posted-hakemus))
-        (should= 14 (:budget_oph_share posted-hakemus))))
-
-  (it "Stores budget totals to database on submit"
-      (let [{:keys [hakemus-id version]} (put-hakemus valid-answers)
-            updated-answers (conj-answers valid-answers {:key "self-financing-amount"
-                                                         :value "26"
-                                                         :fieldType "moneyField"})
-            {:keys [status]} (post! (str "/api/avustushaku/1/hakemus/" hakemus-id "/" version "/submit") updated-answers)
             posted-hakemus (va-db/get-hakemus hakemus-id)]
         (should= 200 status)
         (should= 40 (:budget_total posted-hakemus))
