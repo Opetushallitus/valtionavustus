@@ -153,7 +153,7 @@
     (let [paatos-data (export/add-paatos-data nil {:answers [{:key       "radioButton-0"
                                                               :value     "yliopisto"
                                                               :fieldType "radioButton"}]})]
-      (should= 82930000 (:lkp paatos-data))))
+      (should= 82921000 (:lkp paatos-data))))
 
   (it "removes dots from talousarviotili to be used as TAKP"
     (let [paatos-data (export/add-paatos-data nil {:arvio {:talousarviotili "1.2.3.4"}})]

@@ -498,7 +498,7 @@
 
               :eu-maat                              82820000
 
-              :yliopisto                            82930000
+              :yliopisto                            82921000
 
               :valtio                               82980000})
 
