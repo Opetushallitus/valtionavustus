@@ -101,7 +101,7 @@
                  [ring/ring-codec "1.2.0"]
                  [ring/ring-core "1.13.0"]
                  [ring/ring-devel "1.13.0" :exclusions [org.clojure/tools.reader]]
-                 [ring/ring-defaults "0.5.0"]
+                 [ring/ring-defaults "0.6.0"]
                  [ring/ring-session-timeout "0.3.0"]
                  [ring/ring-ssl "0.4.0"]
                  [prismatic/schema "1.4.1"]
