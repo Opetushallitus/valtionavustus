@@ -9,7 +9,7 @@ import {
 } from './maksatuspalvelu'
 
 test.setTimeout(400000)
-58
+
 const withoutDots = (tatili: string) => tatili.replaceAll('.', '')
 
 async function removeStoredPitkäviiteFromAllAvustushakuPayments(
