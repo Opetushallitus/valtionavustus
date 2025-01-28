@@ -74,7 +74,7 @@ export function MaksatuksetPage(page: Page) {
   }
 
   async function reloadPaymentPage() {
-    await page.reload({ waitUntil: 'networkidle' })
+    await page.reload()
   }
 
   function getExpectedPaymentXML({

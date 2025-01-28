@@ -91,8 +91,7 @@ export class HakemustenArviointiPage {
   async navigateToLatestMuutoshakemus(avustushakuID: number, hakemusID: number) {
     await navigate(
       this.page,
-      `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/`,
-      true
+      `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/`
     )
     await this.page.waitForSelector('#tab-content')
 
@@ -141,7 +140,6 @@ export class HakemustenArviointiPage {
       .getByTestId(`hakemus-${hakemusID}`)
       .locator(`[aria-label="Lisää valmistelija hakemukselle"]`)
       .click()
-    await this.page.waitForLoadState('networkidle')
   }
 
   async closeUkotusModal() {

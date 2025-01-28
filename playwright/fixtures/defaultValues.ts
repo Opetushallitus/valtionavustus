@@ -56,7 +56,7 @@ const workerScopedDefaultValues = test.extend<{}, WorkerScopedDefaultValueFixtur
       let createdCode: Talousarviotili
       await test.step('create talousarviotili', async () => {
         await koodienHallintaPage.switchToTatilitTab()
-        const row = await koodienHallintaPage.page.locator(`[data-test-id="${tatili.name}"]`)
+        const row = koodienHallintaPage.page.locator(`[data-test-id="${tatili.name}"]`)
         const taForm = koodienHallintaPage.taTilit.form
         await taForm.year.input.fill(String(tatili.year))
         await taForm.code.input.fill(tatili.code)

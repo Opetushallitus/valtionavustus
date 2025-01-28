@@ -83,7 +83,7 @@ export class HakujenHallintaPage {
   }
 
   async navigateTo(path: string) {
-    await navigate(this.page, path, true)
+    await navigate(this.page, path)
   }
 
   async navigate(avustushakuID: number) {
@@ -134,22 +134,16 @@ export class HakujenHallintaPage {
 
   async copyCurrentHaku(): Promise<number> {
     return await test.step('Copy current avustushaku', async () => {
-      const waitForHakuCopyToBeCompleted = async (currentURL: string): Promise<void> => {
-        await this.page.waitForFunction((url) => window.location.href !== url, currentURL)
-        await this.page.waitForLoadState('networkidle')
-        await expect(hakuNameFi).toHaveText(`${currentHakuTitle} (kopio)`)
-        await expect(hakuNameFi).toBeEnabled()
-      }
       const haunTiedotPage = HaunTiedotPage(this.page)
       const hakuNameFi = haunTiedotPage.locators.hakuName.fi
       const currentHakuTitle = await hakuNameFi.textContent()
-      const currentURL = this.page.url()
 
-      await Promise.all([
-        waitForHakuCopyToBeCompleted(currentURL),
-        this.page.locator('a', { hasText: 'Kopioi uuden pohjaksi' }).click(),
-      ])
+      await this.page.locator('a', { hasText: 'Kopioi uuden pohjaksi' }).click()
+      const loading = this.page.getByTestId(saveStatusTestId).locator('text=Ladataan tietoja')
+      await expect(loading).toBeVisible()
+      await expect(hakuNameFi).toHaveText(`${currentHakuTitle} (kopio)`)
       await expect(hakuNameFi).toBeEnabled()
+      await expect(loading).not.toBeVisible()
       const avustushakuID = parseInt(await expectQueryParameter(this.page, 'avustushaku'))
       console.log(`Avustushaku ID: ${avustushakuID}`)
       return avustushakuID
