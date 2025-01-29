@@ -178,24 +178,6 @@ function getNotificationContent(saveStatus?: HeaderSaveStatus): NotificationProp
       notificationIcon: saveInProgressIcon,
       status: 'ok',
     }
-  } else if (saveStatus?.serverError) {
-    const notification =
-      saveStatus?.serverError === 'validation-error'
-        ? 'Jossain kentässä puutteita. Tarkasta arvot.'
-        : 'Virhe tallennuksessa. Lataa sivu uudelleen.'
-    return { notification, notificationIcon: errorIcon, status: 'error' }
-  } else if (saveStatus?.loadError) {
-    return {
-      notification: 'Virhe tietojen lataamisessa. Yritä uudelleen.',
-      notificationIcon: errorIcon,
-      status: 'error',
-    }
-  } else if (saveStatus?.saveTime) {
-    return {
-      notification: 'Kaikki tiedot tallennettu',
-      notificationIcon: okIcon,
-      status: 'ok',
-    }
   } else if (saveStatus?.loading) {
     return {
       notification: 'Ladataan tietoja',
@@ -213,6 +195,25 @@ function getNotificationContent(saveStatus?: HeaderSaveStatus): NotificationProp
       notification: 'Maksatuksien ja täsmäytysraportin lähetys epäonnistui',
       notificationIcon: errorIcon,
       status: 'error',
+    }
+  } else if (saveStatus?.serverError) {
+    console.log('yhyy', saveStatus)
+    const notification =
+      saveStatus?.serverError === 'validation-error'
+        ? 'Jossain kentässä puutteita. Tarkasta arvot.'
+        : 'Virhe tallennuksessa. Lataa sivu uudelleen.'
+    return { notification, notificationIcon: errorIcon, status: 'error' }
+  } else if (saveStatus?.loadError) {
+    return {
+      notification: 'Virhe tietojen lataamisessa. Yritä uudelleen.',
+      notificationIcon: errorIcon,
+      status: 'error',
+    }
+  } else if (saveStatus?.saveTime) {
+    return {
+      notification: 'Kaikki tiedot tallennettu',
+      notificationIcon: okIcon,
+      status: 'ok',
     }
   } else {
     return undefined

@@ -84,6 +84,7 @@ const muutosTest = budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixture
     })
     await hakemustenArviointiPage.navigate(avustushakuID)
     await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+    await hakemustenArviointiPage.waitForSave()
     const hakemusID = await hakemustenArviointiPage.getHakemusID()
     expectToBeDefined(hakemusID)
     await hakemustenArviointiPage.closeHakemusDetails()
@@ -98,6 +99,7 @@ const muutosTest = budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixture
       await hakemustenArviointiPage.page.click(
         "#arviointi-tab label[for='set-arvio-status-plausible']"
       )
+      await hakemustenArviointiPage.waitForSave()
     })
     await test.step('budget is prefilled correctly', async () => {
       await hakemustenArviointiPage.page.click('label[for="useDetailedCosts-true"]')
@@ -147,10 +149,13 @@ muutosTest(
     })
     await test.step('validate submitted values after sending it', async () => {
       const hakijaMuutoshakemusPaatosPage = new HakijaMuutoshakemusPaatosPage(page)
-      const currentBudget = await getCurrentBudget(hakijaMuutoshakemusPaatosPage.page)
-      expect(currentBudget).toMatchObject(budget.amount)
-      const muutoshakemusBudget = await getMuutoshakemusBudget(hakijaMuutoshakemusPaatosPage.page)
-      expect(muutoshakemusBudget).toMatchObject(muutoshakemus1Budget)
+      await expect
+        .poll(() => getCurrentBudget(hakijaMuutoshakemusPaatosPage.page))
+        .toMatchObject(budget.amount)
+
+      await expect
+        .poll(() => getMuutoshakemusBudget(hakijaMuutoshakemusPaatosPage.page))
+        .toMatchObject(muutoshakemus1Budget)
       const locators = hakijaMuutoshakemusPaatosPage.locators()
       await expect(locators.reasoning).toHaveText('Hakijan perustelut')
       await expect(locators.currentBudgetTitle).toHaveText('Haettu uusi budjetti')
