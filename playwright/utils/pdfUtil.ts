@@ -1,4 +1,4 @@
-import { getDocument } from 'pdfjs-dist'
+import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs'
 import type { Blob } from 'node:buffer'
 
 export const getPdfFirstPageTextContent = async (pdfBlob: Blob) => {
