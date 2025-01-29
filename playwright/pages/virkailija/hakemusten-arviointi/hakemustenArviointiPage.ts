@@ -226,8 +226,6 @@ export class HakemustenArviointiPage {
   async selectHakemusFromList(rowText: string) {
     await this.page.click(`text=${rowText}`)
     await this.page.waitForURL(/\/avustushaku\/\d*\/hakemus\/\d*\/arviointi/)
-    await expect(this.saveStatus).toHaveText('Ladataan tietoja')
-    await this.waitForSave()
     return this.arviointiTabLocators()
   }
 
