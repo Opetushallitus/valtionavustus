@@ -1,4 +1,4 @@
-FROM amazonlinux:2023@sha256:8217eec04f21ec88f5fd0ce57641a9fa9a586af5c4d2a68c7fcd50f2146ddb03
+FROM amazonlinux:2023@sha256:f8ca68a32b41290acdc8db52f950650f020ec7e42585e7b139a869822767152b
 
 RUN yum install -y \
     procps \
