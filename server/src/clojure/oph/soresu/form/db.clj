@@ -42,7 +42,7 @@
 (defn update-submission-tx! [tx form-id submission-id answers]
   (let [params {:form_id form-id :submission_id submission-id :answers answers}]
     (do
-        (queries/lock-submission params {:connection tx})
+
         (queries/close-existing-submission! params {:connection tx})
         (queries/update-submission<! params {:connection tx})
       )))

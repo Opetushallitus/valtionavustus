@@ -5,7 +5,7 @@
   (execute! tx "UPDATE hakemukset SET version_closed = now() WHERE id = ? AND version_closed IS NULL" [id]))
 
 (defn get-hakemus-by-id-locking [tx id]
-  (first (query tx "SELECT * FROM hakemukset WHERE id = ? AND version_closed IS NULL FOR UPDATE NOWAIT" [id])))
+  (first (query tx "SELECT * FROM hakemukset WHERE id = ? AND version_closed IS NULL" [id])))
 
 (defn create-new-hakemus-version [tx id]
   (let [hakemus (get-hakemus-by-id-locking tx id)]

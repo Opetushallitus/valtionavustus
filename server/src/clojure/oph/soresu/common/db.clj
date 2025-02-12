@@ -74,23 +74,22 @@
                                      "Current config name is " (config-name))))))
 
 (defmacro exec [query params]
-  `(jdbc/with-db-transaction [connection# {:datasource (get-datasource)}]
+  `(jdbc/with-db-transaction [connection# {:datasource (get-datasource)} {:isolation :serializable}]
      (~query ~params {:connection connection#})))
 
 (defmacro exec-all [query-list]
-  `(jdbc/with-db-transaction [connection# {:datasource (get-datasource)}]
+  `(jdbc/with-db-transaction [connection# {:datasource (get-datasource)} {:isolation :serializable}]
      (last (for [[query# params#] (partition 2 ~query-list)]
              (query# params# {:connection connection#})))))
 
 (defmacro with-transaction [connection & body]
   `(let [~connection {:datasource (get-datasource)}]
-     (jdbc/with-db-transaction [conn# ~connection]
+     (jdbc/with-db-transaction [conn# ~connection {:isolation :serializable}]
        ~@body)))
 
 (defn with-tx [func]
-  (jdbc/with-db-transaction [connection {:datasource (get-datasource)}]
+  (jdbc/with-db-transaction [connection {:datasource (get-datasource)} {:isolation :serializable}]
                             (func connection)))
-
 (defn query
   "Execute SQL query and convert underscores to dashes in returned identifiers"
   ([sql params] (with-tx (fn [tx] (query tx sql params))))
