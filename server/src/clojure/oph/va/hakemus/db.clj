@@ -2,7 +2,7 @@
   (:require [oph.soresu.common.db :refer [query]]))
 
 (defn close-hakemus-by-id-and-get-version [tx id]
-  (query tx "UPDATE hakemukset SET version_closed = now() WHERE id = ? AND version_closed IS NULL RETURNING version;" [id]))
+  (first (query tx "UPDATE hakemukset SET version_closed = now() WHERE id = ? AND version_closed IS NULL RETURNING version" [id])))
 
 
 (defn create-new-hakemus-version [tx id]
