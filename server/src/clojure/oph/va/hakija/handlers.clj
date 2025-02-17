@@ -339,24 +339,24 @@
                          submission-id (:form_submission_id hakemus)
                          saved-submission (:body (form-db/update-submission-tx! tx form-id submission-id answers))
                          submission-version (:version saved-submission)
+                         submitted-hakemus (va-db/submit-hakemus
+                                                   tx
+                                                   haku-id
+                                                   hakemus-id
+                                                   submission-id
+                                                   submission-version
+                                                   (:register_number hakemus)
+                                                   answers
+                                                   budget-totals)
                          submission (:body (get-form-submission
                                             (:form avustushaku)
                                             (:form_submission_id hakemus)))]
-                    (va-db/submit-hakemus
-                          tx
-                          haku-id
-                          hakemus-id
-                          submission-id
-                          submission-version
-                          (:register_number hakemus)
-                          answers
-                          budget-totals)
+
                      (when (= edit-type :applicant-edit)
                        (when-let [email (find-answer-value
                                          (:answers submission) "primary-email")]
                          (va-email/send-applicant-edit-message!
                           lang [email] (get-in avustushaku [:content :name lang]) hakemus is-jotpa-hakemus)))
-
                      (method-not-allowed! {edit-type "saved"}))
                    (hakemus-conflict-response hakemus))
                  (bad-request! validation))))))
