@@ -3,7 +3,7 @@
             [oph.soresu.common.db :refer [query with-tx]]
             [oph.soresu.form.db :as form-db]
             [oph.soresu.form.routes
-             :refer [update-form-submission update-form-submission-tx]]
+             :refer [update-form-submission]]
             [oph.soresu.form.schema :as soresu-schema]
             [oph.soresu.form.validation :as validation]
             [oph.va.budget :as va-budget]
@@ -100,16 +100,14 @@
                 budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
                 validation (merge (validation/validate-form form answers attachments)
                                   (va-budget/validate-budget-hakija answers budget-totals form))
-                updated-submission (:body (update-form-submission-tx tx form-id (:form_submission_id hakemus) answers))
-                updated-hakemus (va-db/update-hakemus-tx
-                                                         tx
+                updated-submission (:body (form-db/update-submission-tx! tx form-id (:form_submission_id hakemus) answers))
+                updated-hakemus (va-db/update-hakemus-tx tx
                                                          haku-id
                                                          user-key
-                                                         (:form_submission_id hakemus)
                                                          (:version updated-submission)
-                                                         (:register_number hakemus)
                                                          answers
-                                                         budget-totals)]
+                                                         budget-totals
+                                                         hakemus)]
             (http/ok (selvitys-response {:hakemus updated-hakemus :submission updated-submission :validation validation :parent-hakemus parent-hakemus} updatable))))))))))
 
 (defn post-selvitys []

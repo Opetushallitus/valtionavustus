@@ -2,7 +2,8 @@
   (:use [oph.soresu.common.db]
         [oph.va.hakija.api.queries :as hakija-queries]
         [clojure.tools.trace :only [trace]])
-  (:require [oph.soresu.form.db.queries :as queries]))
+  (:require [oph.soresu.form.db.queries :as queries]
+            [ring.util.http-response :as http]))
 
 (defn list-forms []
   (->> {}
@@ -41,11 +42,11 @@
 
 (defn update-submission-tx! [tx form-id submission-id answers]
   (let [params {:form_id form-id :submission_id submission-id :answers answers}]
-    (do
-
-        (queries/close-existing-submission! params {:connection tx})
-        (queries/update-submission<! params {:connection tx})
-      )))
+       (if (zero? (queries/close-existing-submission! params {:connection tx}))
+        (http/not-found!)
+        (if-let [submission (queries/update-submission<! params {:connection tx})]
+          (http/ok submission)
+          (http/internal-server-error)))))
 
 (defn create-submission! [form-id answers]
   (->> {:form_id form-id :answers answers}

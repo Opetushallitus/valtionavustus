@@ -412,10 +412,10 @@
      (when (contains? muutoshakemus :varayhteyshenkilo)
       (change-normalized-hakemus-trusted-contact-person-details tx user-key hakemus-id (get muutoshakemus :varayhteyshenkilo))))))
 
-(defn update-hakemus-tx [tx avustushaku-id user-key submission-id submission-version register-number answers budget-totals]
-  (let [register-number (or register-number
+(defn update-hakemus-tx [tx avustushaku-id user-key submission-version answers budget-totals hakemus]
+  (let [register-number (or (:register_number hakemus)
                             (generate-register-number avustushaku-id user-key))
-        new-hakemus (hakemus-copy/create-new-hakemus-version-from-user-key-form-submission-id tx user-key submission-id)
+        new-hakemus (hakemus-copy/create-new-hakemus-version tx (:id hakemus))
         params (-> {:avustushaku_id avustushaku-id
                     :user_key user-key
                     :version (:version new-hakemus)
@@ -424,16 +424,11 @@
                     :user_last_name nil
                     :user_email nil
                     :register_number register-number
-                    :form_submission_id submission-id
+                    :form_submission_id (:form_submission_id hakemus)
                     :form_submission_version submission-version}
                    (merge (convert-budget-totals budget-totals))
                    (merge-calculated-params avustushaku-id answers))]
-
     (queries/update-hakemus-submission<! params {:connection tx})))
-
-(defn update-submission [avustushaku-id user-key submission-id submission-version register-number answers budget-totals]
-  (with-tx (fn [tx]
-             (update-hakemus-tx tx avustushaku-id user-key submission-id submission-version register-number answers budget-totals ))))
 
 (defn- update-status
   [tx avustushaku-id user-key submission-id submission-version register-number answers budget-totals status status-change-comment]
