@@ -1,15 +1,12 @@
 (ns oph.va.hakemus.db
-  (:require [oph.soresu.common.db :refer [query execute!]]))
+  (:require [oph.soresu.common.db :refer [query]]))
 
-(defn close-hakemus-by-id [tx id]
-  (execute! tx "UPDATE hakemukset SET version_closed = now() WHERE id = ? AND version_closed IS NULL" [id]))
+(defn close-hakemus-by-id-and-get-version [tx id]
+  (query tx "UPDATE hakemukset SET version_closed = now() WHERE id = ? AND version_closed IS NULL RETURNING version;" [id]))
 
-(defn get-hakemus-by-id-locking [tx id]
-  (first (query tx "SELECT * FROM hakemukset WHERE id = ? AND version_closed IS NULL" [id])))
 
 (defn create-new-hakemus-version [tx id]
-  (let [hakemus (get-hakemus-by-id-locking tx id)]
-    (close-hakemus-by-id tx id)
+  (let [old-hakemus-version (:version (close-hakemus-by-id-and-get-version tx id))]
     (first (query tx "INSERT INTO hakemukset
               SELECT (copy).*
               FROM  (
@@ -18,7 +15,7 @@
                 WHERE  id = ? AND version = ?
                 ) sub
 
-                RETURNING *;" [id (:version hakemus)]))))
+                RETURNING *;" [id old-hakemus-version]))))
 
 (defn get-hakemus-id-by-user-key-and-form-submission-id [tx user-key submission-id]
   (let [hakemus-id-rows (query tx "SELECT id FROM hakemukset WHERE user_key = ? AND form_submission_id = ? LIMIT 1" [user-key submission-id])]
