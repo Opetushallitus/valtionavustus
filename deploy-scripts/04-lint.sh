@@ -20,7 +20,7 @@ function main {
     end_gh_actions_group
 
     start_gh_actions_group "cljfmt"
-    lein cljfmt check
+    ./lein cljfmt check
     end_gh_actions_group
 }
 
