@@ -55,11 +55,7 @@ test('excel contains at least one row after submitting loppuselvitys', async ({
       A: `1/${hakuProps.registerNumber}`,
       B: hakuProps.avustushakuName,
       C: 'Akaan kaupunki',
-      D: '2050864-5',
-      E: 'kunta_kirkko',
-      F: 'Kainuu',
-      G: '',
-      H: 99999,
+      D: 99999,
     })
   })
 })
@@ -98,11 +94,7 @@ test('at least one loppuselvitys is not asiatarkastettu', async ({
       A: `1/${hakuProps.registerNumber}`,
       B: hakuProps.avustushakuName,
       C: 'Akaan kaupunki',
-      D: '2050864-5',
-      E: 'kunta_kirkko',
-      F: 'Kainuu',
-      G: '',
-      H: 99999,
+      D: 99999,
     })
   })
 })
@@ -111,15 +103,11 @@ function expectHakemusSheetHeaders(sheet: xlsx.WorkSheet) {
   expect(sheet['A1'].v).toEqual('Hakemuksen asiatunnus')
   expect(sheet['B1'].v).toEqual('Avustushaun nimi')
   expect(sheet['C1'].v).toEqual('Hakijaorganisaatio')
-  expect(sheet['D1'].v).toEqual('Y-tunnus')
-  expect(sheet['E1'].v).toEqual('Omistajatyyppi')
-  expect(sheet['F1'].v).toEqual('Maakunta')
-  expect(sheet['G1'].v).toEqual('Hakijan ensisijainen kotikunta')
-  expect(sheet['H1'].v).toEqual('Myönnetty avustus')
+  expect(sheet['D1'].v).toEqual('Myönnetty avustus')
 }
 
 type AsiatarkastamatonRow = { A: number; B: number; C: string }
-type HakemuksetRow = { A: string; B: string; C: string; D: string; E: string; F: string; G: string; H: number; }
+type HakemuksetRow = { A: string; B: string; C: string; D: number }
 type Row = AsiatarkastamatonRow | HakemuksetRow
 
 function expectToFindRowInSheet(sheet: xlsx.WorkSheet, expectedRow: Row) {
@@ -134,10 +122,6 @@ function expectToFindRowInSheet(sheet: xlsx.WorkSheet, expectedRow: Row) {
       return {
         ...row,
         D: sheet[`D${index}`].v,
-        E: sheet[`E${index}`].v,
-        F: sheet[`F${index}`].v,
-        G: sheet[`G${index}`].v,
-        H: sheet[`H${index}`].v,
       }
     }
     return row
