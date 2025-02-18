@@ -449,23 +449,41 @@
                       (merge-calculated-params avustushaku-id answers))]
        (queries/update-hakemus-status<! params {:connection tx})))
 
+(defn- new-update-status
+  [tx avustushaku-id hakemus submission-version answers budget-totals status status-change-comment user-key]
+     (let [new-hakemus (hakemus-copy/create-new-hakemus-version tx (:id hakemus))
+           params (-> {:avustushaku_id avustushaku-id
+                       :version (:version new-hakemus)
+                       :user_key user-key
+                       :user_oid nil
+                       :user_first_name nil
+                       :user_last_name nil
+                       :user_email nil
+                       :form_submission_id (:form_submission_id hakemus)
+                       :form_submission_version submission-version
+                       :register_number (:register_number hakemus)
+                       :status status
+                       :status_change_comment status-change-comment}
+                      (merge (convert-budget-totals budget-totals))
+                      (merge-calculated-params avustushaku-id answers))]
+       (queries/update-hakemus-status<! params {:connection tx})
+       new-hakemus))
+
 (defn open-hakemus-applicant-edit [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
   (with-tx #(update-status % avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :applicant_edit nil)))
 
-(defn set-submitted-version [tx user-key form-submission-id]
-    (let [new-hakemus (hakemus-copy/create-new-hakemus-version-from-user-key-form-submission-id tx user-key form-submission-id)
-            params {:user_key user-key
-                    :form_submission_id form-submission-id
-                    :version (:version new-hakemus) }]
-
-            (queries/set-application-submitted-version<! params {:connection tx})))
+(defn set-submitted-version [tx params]
+    (queries/set-application-submitted-version<! params {:connection tx}))
 
 (defn verify-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
   (with-tx #(update-status % avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :draft nil)))
 
-(defn submit-hakemus [tx avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
-    (update-status tx avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :submitted nil)
-    (set-submitted-version tx hakemus-id submission-id))
+
+(defn submit-hakemus [tx avustushaku-id hakemus submission-version  answers budget-totals user-key]
+    (->> (new-update-status tx avustushaku-id hakemus submission-version answers budget-totals :submitted nil user-key)
+         :version
+         (assoc {:user_key user-key :form_submission_id (:form_submission_id hakemus)} :version)
+         (set-submitted-version tx)))
 
 (defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals comment]
   (with-tx #(update-status % avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :cancelled comment)))

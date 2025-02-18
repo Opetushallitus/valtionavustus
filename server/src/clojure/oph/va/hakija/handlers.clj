@@ -262,12 +262,12 @@
         (hakemus-ok-response (va-db/get-hakemus hakemus-id) submission {} nil))
       :else (hakemus-conflict-response hakemus))))
 
-(defn on-hakemus-submit [haku-id hakemus-id base-version answers]
+(defn on-hakemus-submit [haku-id user-key base-version answers]
   (with-tx
     (fn [tx] (let [avustushaku (get-open-avustushaku-tx tx haku-id {})
                    form-id (:form avustushaku)
                    form (form-db/get-form-tx tx form-id)
-                   hakemus (va-db/get-hakemus tx hakemus-id)
+                   hakemus (va-db/get-hakemus tx user-key)
                    attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
                    budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
                    validation (merge (validation/validate-form form answers attachments)
@@ -279,12 +279,11 @@
                          submission-version (:version saved-submission)
                          submitted-hakemus (va-db/submit-hakemus tx
                                                                  haku-id
-                                                                 hakemus-id
-                                                                 submission-id
+                                                                 hakemus
                                                                  submission-version
-                                                                 (:register_number hakemus)
                                                                  answers
-                                                                 budget-totals)]
+                                                                 budget-totals
+                                                                 user-key)]
                      (with-tx (fn [tx] (try-store-normalized-hakemus tx (:id hakemus) hakemus answers)))
                      (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! false answers submitted-hakemus avustushaku (:id hakemus))
                      (hakemus-ok-response submitted-hakemus saved-submission validation nil))
@@ -307,27 +306,26 @@
               submission-version (:version saved-submission)
               submitted-hakemus (with-tx #(va-db/submit-hakemus %
                                                       haku-id
-                                                      user-key
-                                                      submission-id
+                                                      hakemus
                                                       submission-version
-                                                      (:register_number hakemus)
                                                       answers
-                                                      budget-totals))
+                                                      budget-totals
+                                                      user-key))
               change-requests (va-db/list-hakemus-change-requests user-key)
               email-of-virkailija (:user_email (last change-requests))]
           (if email-of-virkailija
             (va-email/send-change-request-responded-message-to-virkailija! [email-of-virkailija] (:id avustushaku) (-> avustushaku :content :name :fi) (:id submitted-hakemus)))
           (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! true answers submitted-hakemus avustushaku (:id hakemus))
-          (http/ok {:change-request-response "saved"}))
+          (method-not-allowed! {:change-request-response "saved"}))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
 
-(defn on-hakemus-edit-submit [haku-id hakemus-id base-version answers edit-type]
-  (let [hakemus (va-db/get-hakemus hakemus-id)
+(defn on-hakemus-edit-submit [haku-id user-key base-version answers edit-type]
+    (let [hakemus (va-db/get-hakemus user-key)
         avustushaku (va-db/get-avustushaku (:avustushaku hakemus))
         form-id (:form avustushaku)
         form (form-db/get-form form-id)
-        attachments (va-db/get-attachments hakemus-id (:id hakemus))
+        attachments (va-db/get-attachments user-key (:id hakemus))
         budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
         validation (merge (validation/validate-form form answers attachments)
                           (va-budget/validate-budget-hakija answers budget-totals form))
@@ -338,15 +336,15 @@
               submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
               submission-version (:version saved-submission)
-              submitted-hakemus (with-tx #(va-db/submit-hakemus
-                                                      %
+              submitted-hakemus (with-tx (fn [tx]
+                                           (va-db/submit-hakemus
+                                                      tx
                                                       haku-id
-                                                      hakemus-id
-                                                      submission-id
+                                                      hakemus
                                                       submission-version
-                                                      (:register_number hakemus)
                                                       answers
-                                                      budget-totals))
+                                                      budget-totals
+                                                      user-key)))
               submission (:body (get-form-submission
                                  (:form avustushaku)
                                  (:form_submission_id hakemus)))]
@@ -355,7 +353,7 @@
                               (:answers submission) "primary-email")]
               (va-email/send-applicant-edit-message!
                lang [email] (get-in avustushaku [:content :name lang]) hakemus is-jotpa-hakemus)))
-          (http/ok {edit-type "saved"}))
+          (method-not-allowed! {edit-type "saved"}))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
 

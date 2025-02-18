@@ -164,12 +164,11 @@
               submitted-hakemus (with-tx #(va-db/submit-hakemus
                                                       %
                                                       avustushaku-id
-                                                      selvitys-user-key
-                                                      submission-id
+                                                      hakemus
                                                       (:version saved-submission)
-                                                      (:register_number hakemus)
                                                       answers
-                                                      budget-totals))
+                                                      budget-totals
+                                                      selvitys-user-key))
               lang (keyword (:language hakemus))
               parent-hakemus-id (:parent_id hakemus)
               id (:id hakemus)
@@ -235,12 +234,11 @@
               submitted-hakemus (with-tx #(va-db/submit-hakemus
                                                       %
                                                       haku-id
-                                                      selvitys-user-key
-                                                      submission-id
+                                                      hakemus
                                                       (:version saved-submission)
-                                                      (:register_number hakemus)
                                                       answers
-                                                      budget-totals))
+                                                      budget-totals
+                                                      selvitys-user-key))
               lang (keyword (:language hakemus))
               parent_id (:parent_id hakemus)
               contact-email (get-hakemus-contact-email parent_id)

@@ -128,13 +128,13 @@
       (bad-request! { :error "can not update hakemus"}))))
 
 (defn- post-hakemus-submit []
-  (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version/submit" [haku-id hakemus-id base-version :as request]
-    :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
+  (compojure-api/POST "/:haku-id/hakemus/:user-key/:base-version/submit" [haku-id user-key base-version :as request]
+    :path-params [haku-id :- Long, user-key :- s/Str, base-version :- Long]
     :body    [answers (compojure-api/describe Answers "New answers")]
     :return  Hakemus
     :summary "Submit hakemus"
-    (if (can-update-hakemus haku-id hakemus-id answers nil)
-      (on-hakemus-submit haku-id hakemus-id base-version answers)
+    (if (can-update-hakemus haku-id user-key answers nil)
+      (on-hakemus-submit haku-id user-key base-version answers)
       (bad-request! { :error "can not update hakemus"}))))
 
 (defn- post-change-request-response []
@@ -148,23 +148,23 @@
       (bad-request! { :error "can not update hakemus"}))))
 
 (defn- officer-edit-submit []
-  (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version/officer-edit-submit" [haku-id hakemus-id base-version :as request]
-    :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
+  (compojure-api/POST "/:haku-id/hakemus/:user-key/:base-version/officer-edit-submit" [haku-id hakemus-id base-version :as request]
+    :path-params [haku-id :- Long, user-key :- s/Str, base-version :- Long]
     :body    [answers (compojure-api/describe Answers "New answers")]
     :return  nil
     :summary "Submit officer edit changes"
-    (if (can-update-hakemus haku-id hakemus-id answers (:identity request))
-      (on-hakemus-edit-submit haku-id hakemus-id base-version answers :officer-edit)
+    (if (can-update-hakemus haku-id user-key answers (:identity request))
+      (on-hakemus-edit-submit haku-id user-key base-version answers :officer-edit)
       (bad-request! { :error "can not update hakemus"}))))
 
 (defn- applicant-edit-submit []
-  (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version/applicant-edit-submit" [haku-id hakemus-id base-version :as request]
-    :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
+  (compojure-api/POST "/:haku-id/hakemus/:user-key/:base-version/applicant-edit-submit" [haku-id hakemus-id base-version :as request]
+    :path-params [haku-id :- Long, user-key :- s/Str, base-version :- Long]
     :body    [answers (compojure-api/describe Answers "New answers")]
     :return  nil
     :summary "Submit applicant edit changes"
-    (if (can-update-hakemus haku-id hakemus-id answers nil)
-      (on-hakemus-edit-submit haku-id hakemus-id base-version answers :applicant-edit)
+    (if (can-update-hakemus haku-id user-key answers nil)
+      (on-hakemus-edit-submit haku-id user-key base-version answers :applicant-edit)
       (bad-request! { :error "can not update hakemus"}))))
 
 (defn- applicant-edit-open []
