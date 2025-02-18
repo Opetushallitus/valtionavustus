@@ -119,16 +119,7 @@ function expectHakemusSheetHeaders(sheet: xlsx.WorkSheet) {
 }
 
 type AsiatarkastamatonRow = { A: number; B: number; C: string }
-type HakemuksetRow = {
-  A: string
-  B: string
-  C: string
-  D: string
-  E: string
-  F: string
-  G: string
-  H: number
-}
+type HakemuksetRow = { A: string; B: string; C: string; D: string; E: string; F: string; G: string; H: number; }
 type Row = AsiatarkastamatonRow | HakemuksetRow
 
 function expectToFindRowInSheet(sheet: xlsx.WorkSheet, expectedRow: Row) {
