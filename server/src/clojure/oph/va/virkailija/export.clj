@@ -73,7 +73,6 @@
    ["fixed-budget-total" "Toteutunut budjetti" :budget-total {:fieldType "numberField"}]
    ["fixed-budget-oph-share" "OPH:n avustuksen osuus" :budget-oph-share {:fieldType "numberField"}]])
 
-
 (def maksu-sheet-name "Tiliöinti")
 
 (def maksu-sheet-columns
@@ -450,11 +449,11 @@
       true)))
 
 (defn adjust-cells-style! [{:keys [^Sheet sheet
-                                    header-row-indexes
-                                    header-column-indexes
-                                    header-cell-coords]}
-                            ^CellStyle header-style
-                            ^CellStyle safe-formula-style]
+                                   header-row-indexes
+                                   header-column-indexes
+                                   header-cell-coords]}
+                           ^CellStyle header-style
+                           ^CellStyle safe-formula-style]
   (.setDefaultColumnWidth sheet column-default-width-in-chars)
   (let [cols-not-to-fit (reduce-kv
                          (fn [cols-not-to-fit row-idx row]
@@ -695,7 +694,6 @@
 
     (.write wb output)
     (.toByteArray output)))
-
 
 (def main-sheet-name-hallinnoiavustuksia "VA")
 (def hallinnoiavustuksia-column-labels

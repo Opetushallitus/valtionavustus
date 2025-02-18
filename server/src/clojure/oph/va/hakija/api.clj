@@ -59,8 +59,7 @@
                                :form_loppuselvitys new-loppuselvitys-id
                                :form_valiselvitys new-valiselvitys-id
                                :muutoshakukelpoinen muutoshakukelpoinen
-                               :created_at (datetime/datetime->str created-at)
-                               }
+                               :created_at (datetime/datetime->str created-at)}
                               {:connection tx})]
     (->> (hakija-queries/get-avustushaku avustushaku-id {:connection tx})
          (map avustushaku-response-content)
@@ -155,7 +154,7 @@
          first)))
 
 (defn delete-avustushaku-role [avustushaku-id role-id]
- (exec hakija-queries/delete-avustushaku-role! {:avustushaku avustushaku-id :id role-id}))
+  (exec hakija-queries/delete-avustushaku-role! {:avustushaku avustushaku-id :id role-id}))
 
 (defn update-avustushaku-role [tx avustushaku-id role]
   (let [role-enum (new HakuRole (:role role))
@@ -167,7 +166,7 @@
                WHERE id = ?"
               [avustushaku-id role-enum (:name role) (:email role) (:id role)])
     (->> role-to-save
-       (exec hakija-queries/get-avustushaku-role)
+         (exec hakija-queries/get-avustushaku-role)
          (map role->json)
          first)))
 
@@ -186,7 +185,7 @@
 (defn form->json [form]
   (let [form-for-rendering (formhandler/add-koodisto-values form)]
     {:content (:content form-for-rendering)
-       :rules (:rules form-for-rendering)}))
+     :rules (:rules form-for-rendering)}))
 
 (defn- hakemus->json [hakemus]
   {:id (:id hakemus)
@@ -220,8 +219,7 @@
    :keskeytetty-aloittamatta (:keskeytetty_aloittamatta hakemus)
    :submitted-version (:submitted_version hakemus)
    :loppuselvitys-change-request-pending (:loppuselvitys_change_request_pending hakemus)
-   :loppuselvitys-change-request-sent (:loppuselvitys_change_request_sent hakemus)
-   })
+   :loppuselvitys-change-request-sent (:loppuselvitys_change_request_sent hakemus)})
 
 (defn- paatos-sent-emails->json [paatos]
   {:id (:id paatos)
@@ -255,22 +253,22 @@
 
 (defn add-paatos-sent-emails [hakemus emails decision]
   (exec hakija-queries/add-hakemus-paatos! {:hakemus_id (:id hakemus)
-                                                         :hakemus_version (:version hakemus)
-                                                         :decision decision
-                                                         :sent_emails {:addresses emails}}))
+                                            :hakemus_version (:version hakemus)
+                                            :decision decision
+                                            :sent_emails {:addresses emails}}))
 
 (defn update-paatos-sent-emails [hakemus emails decision]
   (exec hakija-queries/update-hakemus-paatos! {:hakemus_id (:id hakemus)
-                                                        :hakemus_version (:version hakemus)
-                                                        :decision decision
-                                                        :sent_emails {:addresses emails}}))
+                                               :hakemus_version (:version hakemus)
+                                               :decision decision
+                                               :sent_emails {:addresses emails}}))
 
 (defn find-regenerate-hakemus-paatos-ids [avustushaku-id]
   (exec hakija-queries/regenerate-hakemus-paatos-ids {:avustushaku_id avustushaku-id}))
 
 (defn update-paatos-decision [hakemus-id decision]
   (exec hakija-queries/update-hakemus-paatos-decision! {:hakemus_id hakemus-id
-                                                     :decision decision}))
+                                                        :decision decision}))
 
 (defn get-hakudata [avustushaku-id]
   (when-let [avustushaku (get-avustushaku avustushaku-id)]
@@ -308,8 +306,7 @@
         valiselvitys-form (get-form-by-id valiselvitys-form-id)
         valiselvitys (first (exec hakija-queries/get-by-type-and-parent-id {:parent_id hakemus-id :hakemus_type "valiselvitys"}))
         attachments (exec hakija-queries/list-attachments-by-avustushaku {:avustushaku_id avustushaku-id})]
-    {
-     :loppuselvitysForm (form->json loppuselvitys-form)
+    {:loppuselvitysForm (form->json loppuselvitys-form)
      :valiselvitysForm (form->json valiselvitys-form)
      :loppuselvitys (if loppuselvitys (hakemus->json loppuselvitys) {})
      :loppuselvitysChangeRequests loppuselvitys-change-requests
@@ -317,12 +314,10 @@
      :attachments (->> attachments
                        (partition-by (fn [attachment] (:hakemus_id attachment)))
                        (mapv convert-attachment-group)
-                       (into {}))
-     }))
+                       (into {}))}))
 
 (defn update-selvitys-message [selvitys-email]
-  (let [
-        hakemus-id (:selvitys-hakemus-id selvitys-email)
+  (let [hakemus-id (:selvitys-hakemus-id selvitys-email)
         message (:message selvitys-email)
         to (:to selvitys-email)
         subject (:subject selvitys-email)
@@ -330,18 +325,17 @@
         email {:message message
                :subject subject
                :send today-date
-               :to to
-               }
-        ]
+               :to to}]
+
     (exec hakija-queries/update-hakemus-selvitys-email! {:selvitys_email email :id hakemus-id})))
 
 (defn update-loppuselvitys-status [hakemus-id status]
   (->> {:id hakemus-id :status status}
-       (exec hakija-queries/update-loppuselvitys-status<! )))
+       (exec hakija-queries/update-loppuselvitys-status<!)))
 
 (defn update-valiselvitys-status [hakemus-id status]
   (->> {:id hakemus-id :status status}
-       (exec hakija-queries/update-valiselvitys-status<! )))
+       (exec hakija-queries/update-valiselvitys-status<!)))
 
 (defn set-selvitys-accepted [selvitys-type selvitys-email identity]
   (let [validated-email         (assoc selvitys-email :to (distinct (:to selvitys-email)))
@@ -358,19 +352,19 @@
         can-set-selvitys        (or (not is-loppuselvitys) is-verified)]
     (if can-set-selvitys
       (do
-        (email/send-selvitys! (:to validated-email) hakemus (:subject validated-email) (:message validated-email) is-jotpa-hakemus )
+        (email/send-selvitys! (:to validated-email) hakemus (:subject validated-email) (:message validated-email) is-jotpa-hakemus)
         (update-selvitys-message validated-email)
         (if is-loppuselvitys
           (do
             (update-loppuselvitys-status parent-id "accepted")
             (execute!
-              "UPDATE hakemukset
+             "UPDATE hakemukset
                SET
                  loppuselvitys_taloustarkastanut_oid = ?,
                  loppuselvitys_taloustarkastanut_name = ?,
                  loppuselvitys_taloustarkastettu_at = now()
                WHERE id = ? and version_closed is null"
-              [verifier-oid verifier parent-id]))
+             [verifier-oid verifier parent-id]))
           (update-valiselvitys-status parent-id "accepted"))
         true)
       false)))
@@ -385,14 +379,14 @@
     (if (and (= status "submitted") allowed-to-verify)
       (do
         (execute!
-          "UPDATE hakemukset
+         "UPDATE hakemukset
            SET
              status_loppuselvitys = 'information_verified',
              loppuselvitys_information_verification = ?,
              loppuselvitys_information_verified_by = ?,
              loppuselvitys_information_verified_at = now()
            WHERE id = ? and version_closed is null"
-          [message verifier hakemus-id])
+         [message verifier hakemus-id])
         {:loppuselvitys-information-verified-by verifier
          :loppuselvitys-information-verification message}))))
 
@@ -452,14 +446,13 @@
                 :created_at (datetime/datetime->str created-at)}]
     (exec hakija-queries/create-form<! params)))
 
-
 (defn update-form-by-avustushaku [avustushaku-id form]
   (let [form-id (-> avustushaku-id
                     (get-form-by-avustushaku)
                     :id)
         form-to-save (assoc form :id form-id)]
     (try (with-tx (fn [tx] (update-form! tx form-to-save)
-                           (upsert-menoluokka-rows tx avustushaku-id form-to-save)))
+                    (upsert-menoluokka-rows tx avustushaku-id form-to-save)))
          (catch Exception e (throw (get-next-exception-or-original e))))
     (get-form-by-avustushaku avustushaku-id)))
 
@@ -494,7 +487,6 @@
 
                (hakija-queries/update-hakemus-status<! updated-hakemus {:connection tx})))))
 
-
 (defn find-matching-hakemukset-by-organization-name [organization-name]
   (let [org-pattern (str "%" (escape-like-pattern organization-name) "%")]
     (exec hakija-queries/find-matching-hakemukset-by-organization-name
@@ -513,8 +505,7 @@
            :loppuselvitykset-lahetetty (:loppuselvitykset_lahetetty avustushakudata)
            :arvioitu_maksupaiva (:arvioitu_maksupaiva avustushakudata)
            :maksatukset-summa (:maksatukset_summa avustushakudata)
-           :use-overridden-detailed-costs (:use_overridden_detailed_costs avustushakudata)
-    )))
+           :use-overridden-detailed-costs (:use_overridden_detailed_costs avustushakudata))))
 
 (defn get-avustushaut-for-haku-listing []
   (let [data (exec hakija-queries/get-avustushakus-for-listing {})]

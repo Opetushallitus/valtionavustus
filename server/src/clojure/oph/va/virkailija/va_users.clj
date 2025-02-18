@@ -35,11 +35,11 @@
                                                     {:with-info [] :without-info []}
                                                     people-info)
         {:keys [with-email without-email]} (reduce (fn [acc user]
-                                                    (if (nil? (:email user))
-                                                      (merge-with conj acc {:without-email user})
-                                                      (merge-with conj acc {:with-email user})))
-                                                  {:with-email [] :without-email []}
-                                                  with-info)]
+                                                     (if (nil? (:email user))
+                                                       (merge-with conj acc {:without-email user})
+                                                       (merge-with conj acc {:with-email user})))
+                                                   {:with-email [] :without-email []}
+                                                   with-info)]
     (when (seq without-info)
       (log/warn "Fetching all VA users, skipping users without person info:" without-info))
     (when (seq without-email)
@@ -63,7 +63,6 @@
                      (double (/ (:refresh-interval-ms updated-values) 1000)))
            updated-values))))
 
-
 (defn- start-loop-update-va-users-cache []
   (go
     (log/info "Starting background job: update VA users cache...")
@@ -72,8 +71,8 @@
             [value _] (alts! [va-users-update-chan (timeout (:refresh-interval-ms next-iter-values))])]
         (when (nil? value)
           (recur
-            (:failures next-iter-values)
-            (min va-users-cache-max-refresh-interval-in-ms (:refresh-interval-ms next-iter-values))))))
+           (:failures next-iter-values)
+           (min va-users-cache-max-refresh-interval-in-ms (:refresh-interval-ms next-iter-values))))))
     (log/info "Stopped background job: update VA users cache.")))
 
 (defn start-background-job-update-va-users-cache []

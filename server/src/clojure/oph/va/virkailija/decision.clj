@@ -29,7 +29,7 @@
 (defn section [title-key content translate create-paragraph]
   (let [content-p  (if create-paragraph (content-with-paragraphs content) content)
         title (translate title-key)]
-      (html [:section {:class "section"} [:h2 title] [:div {:class "content"} content-p]])))
+    (html [:section {:class "section"} [:h2 title] [:div {:class "content"} content-p]])))
 
 (defn optional-section-content [title content translate]
   (if (seq content)
@@ -45,7 +45,7 @@
 
 (defn asia-section [avustushaku-name translate]
   (let [content [:span [:p (str (translate :asia-title))] [:p avustushaku-name]]]
-  (section :asia content translate false)))
+    (section :asia content translate false)))
 
 (defn generate-payment-decision [{:keys [grant application translate]}]
   (let [answers-value {:value (:answers application)}
@@ -62,7 +62,7 @@
       (translate "maksuerat-ja-ajat") ": "
       (ks/format-number payment-sum) " "
       (decision-field
-        (:decision grant) :maksu (keyword (:language application)))
+       (:decision grant) :maksu (keyword (:language application)))
       (if (not= payment-sum (get-in application [:arvio :budget-granted]))
         (str " " (translate :ja-loppuera-viimeistaan)
              " " (get-in grant [:decision :maksudate]))
@@ -73,14 +73,13 @@
 
 (defn avustuksen-maksu [avustushaku hakemus translate]
   (section
-    :avustuksen-maksu
-    (generate-payment-decision
-      {:grant avustushaku
-       :application hakemus
-       :translate translate})
-    translate
-    false))
-
+   :avustuksen-maksu
+   (generate-payment-decision
+    {:grant avustushaku
+     :application hakemus
+     :translate translate})
+   translate
+   false))
 
 (defn myonteinen-lisateksti [avustushaku hakemus lang]
   (let [rahoitusalue (-> hakemus :arvio :rahoitusalue)
@@ -88,12 +87,10 @@
         rahoitusalue-key (keyword (str "myonteinenlisateksti-" (if rahoitusalue (str/replace rahoitusalue #"[\s\.]" "_") "")))
         content-rahoitusalue (-> decision rahoitusalue-key lang)
         content-default (decision-field decision :myonteinenlisateksti lang)
-        content (if (str/blank? content-rahoitusalue) content-default content-rahoitusalue)
-        ]
+        content (if (str/blank? content-rahoitusalue) content-default content-rahoitusalue)]
     (if content
       (content-with-paragraphs content)
       "")))
-
 
 (defn find-liite [attachments group-name]
   (let [row (first (filter #(= (:group %) group-name) attachments))
@@ -108,16 +105,15 @@
   (let [attachment decision-liitteet/PakoteOhjeLiitteet]
     {:id      (:id attachment)
      :langs   (:langs attachment)
-     :version ""
-     }))
+     :version ""}))
 
 (defn liite-row [liite lang]
- (if-some [liite-id (:id liite)]
-   (let [liite-version (:version liite)
-         lang-str (name lang)
-         link (str "/liitteet/" liite-id liite-version "_" lang-str ".pdf")
-         liite-name (get-in liite [:langs lang])]
-     (html
+  (if-some [liite-id (:id liite)]
+    (let [liite-version (:version liite)
+          lang-str (name lang)
+          link (str "/liitteet/" liite-id liite-version "_" lang-str ".pdf")
+          liite-name (get-in liite [:langs lang])]
+      (html
        [:div [:a {:href link} liite-name]]))))
 
 (defn non-localized-liite-row [liite lang]
@@ -150,9 +146,9 @@
                     (str row-kayttosuunnitelma row-oikaisuvaatimus row-ehdot row-yleisohje row-pakoteohje)
                     (str row-oikaisuvaatimus row-ehdot row-yleisohje row-pakoteohje)))
         content-length (count content)]
-        (if (pos? content-length)
-          (section :liitteet content translate false)
-          "")))
+    (if (pos? content-length)
+      (section :liitteet content translate false)
+      "")))
 
 (defn- format-date [date]
   (.format date (DateTimeFormatter/ofPattern "dd.MM.yyyy")))
@@ -169,8 +165,8 @@
         formatted-loppuselvitysdate (formatted-date-or-empty loppuselvitysdate :loppuselvitys-viimeistaan)
         selvitysvelvollisuus-freeform-text (get-in decision [:selvitysvelvollisuus language])
         content [:span formatted-valiselvitysdate formatted-loppuselvitysdate
-                  (when (not (empty? selvitysvelvollisuus-freeform-text))
-                    [:p selvitysvelvollisuus-freeform-text])]]
+                 (when (not (empty? selvitysvelvollisuus-freeform-text))
+                   [:p selvitysvelvollisuus-freeform-text])]]
     (if (or valiselvitysdate loppuselvitysdate (not (empty? selvitysvelvollisuus-freeform-text)))
       (section :selvitysvelvollisuus content translate false)
       "")))
@@ -218,16 +214,15 @@
                      (optional-section decision :valtionavustuksen-kayttoaika :kayttoaika translate language)
                      (kayttoaika-section avustushaku translate))
         selvitysvelvollisuus (selvitysvelvollisuus-section
-                               {:valiselvitysdate  (:valiselvitysdate avustushaku)
-                                :loppuselvitysdate (:loppuselvitysdate avustushaku)
-                                :decision          decision
-                                :translate         translate
-                                :language          language})
+                              {:valiselvitysdate  (:valiselvitysdate avustushaku)
+                               :loppuselvitysdate (:loppuselvitysdate avustushaku)
+                               :decision          decision
+                               :translate         translate
+                               :language          language})
         logo-oph {:fi "/img/logo.png"
-                  :sv "/img/logo.png" }
+                  :sv "/img/logo.png"}
         logo-jotpa {:fi "/img/jotpa/jotpa-logo-fi.png"
-                    :sv "/img/jotpa/jotpa-logo-sv.png" }
-
+                    :sv "/img/jotpa/jotpa-logo-sv.png"}
 
         params {:avustushaku                   avustushaku
                 :is-yleisavustus               is-yleisavustus
@@ -246,12 +241,12 @@
                                                  (optional-section-content :paatoksen-perustelut-jotpa (:perustelut arvio) translate)
                                                  (optional-section-content :paatoksen-perustelut (:perustelut arvio) translate))
                 :section-tarkastusoikeus       (section-translated
-                                                   :tarkastusoikeus-title
-                                                   (if is-jotpa-paatos
-                                                     (keyword "tarkastusoikeus-text-jotpa")
-                                                     (keyword "tarkastusoikeus-text"))
-                                                   translate
-                                                   false)
+                                                :tarkastusoikeus-title
+                                                (if is-jotpa-paatos
+                                                  (keyword "tarkastusoikeus-text-jotpa")
+                                                  (keyword "tarkastusoikeus-text"))
+                                                translate
+                                                false)
                 :section-avustuksen-maksu      avustuksen-maksu
                 :total-granted                 (ks/format-number total-granted)
                 :total-nettomenot              (ks/format-number (:nettomenot-yhteensa kayttosuunnitelma))
@@ -275,30 +270,29 @@
                                                  (get logo-jotpa language)
                                                  (get logo-oph language))
                 :logo-alt                   (if is-jotpa-paatos
-                                                 "Jatkuvan oppimisen ja työllisyyden palvelukeskus / Servicecentret för kontinuerligt lärande och sysselsättning"
-                                                 "Opetushallitus / Utbildningsstyrelsen")
+                                              "Jatkuvan oppimisen ja työllisyyden palvelukeskus / Servicecentret för kontinuerligt lärande och sysselsättning"
+                                              "Opetushallitus / Utbildningsstyrelsen")
                 :jotpa-customization-class  (if is-jotpa-paatos
-                                                 "jotpa-customizations"
-                                                 "")
+                                              "jotpa-customizations"
+                                              "")
                 :favicon-path  (if is-jotpa-paatos
-                                                 "/img/jotpa/jotpa-favicon.ico"
-                                                 "/favicon.ico")
+                                 "/img/jotpa/jotpa-favicon.ico"
+                                 "/favicon.ico")
                 :erityisavustus-hylatty-title (if is-jotpa-paatos
-                                                 (translate "erityisavustus-hylatty-title-jotpa")
-                                                 (translate "erityisavustus-hylatty-title"))
+                                                (translate "erityisavustus-hylatty-title-jotpa")
+                                                (translate "erityisavustus-hylatty-title"))
                 :yleisavustus-hylatty-title (if is-jotpa-paatos
-                                                 (translate "yleisavustus-hylatty-title-jotpa")
-                                                 (translate "yleisavustus-hylatty-title"))
+                                              (translate "yleisavustus-hylatty-title-jotpa")
+                                              (translate "yleisavustus-hylatty-title"))
                 :erityisavustus-myonnetty-title (if is-jotpa-paatos
-                                                 (translate "erityisavustus-myonnetty-title-jotpa")
-                                                 (translate "erityisavustus-myonnetty-title"))
+                                                  (translate "erityisavustus-myonnetty-title-jotpa")
+                                                  (translate "erityisavustus-myonnetty-title"))
                 :yleisavustus-myonnetty-title (if is-jotpa-paatos
-                                                 (translate "yleisavustus-myonnetty-title-jotpa")
-                                                 (translate "yleisavustus-myonnetty-title"))
+                                                (translate "yleisavustus-myonnetty-title-jotpa")
+                                                (translate "yleisavustus-myonnetty-title"))
                 :paatos-erityisavustus-myonnetty-1 (if is-jotpa-paatos
-                                                 (translate "paatos-erityisavustus-myonnetty-1-jotpa")
-                                                 (translate "paatos-erityisavustus-myonnetty-1"))
-                }]
+                                                     (translate "paatos-erityisavustus-myonnetty-1-jotpa")
+                                                     (translate "paatos-erityisavustus-myonnetty-1"))}]
     (render template params)))
 
 (compojure-api/defroutes decision-routes

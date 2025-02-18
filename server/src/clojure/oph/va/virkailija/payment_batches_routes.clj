@@ -30,7 +30,7 @@
     :return schema/PaymentBatch
     :summary "Create new payment batch"
     (if (seq (data/find-batches
-               (:receipt-date batch-values) (:grant-id batch-values)))
+              (:receipt-date batch-values) (:grant-id batch-values)))
       (conflict {:error "Payment batch already exists"})
       (ok (data/create-batch batch-values)))))
 
@@ -43,8 +43,8 @@
     (if (= (:paymentstatus-id data) "paid")
       (let [batch (data/get-batch id)]
         (data/set-payments-paid
-          {:identity (authentication/get-request-identity request)
-           :grant-id (:grant-id batch)})
+         {:identity (authentication/get-request-identity request)
+          :grant-id (:grant-id batch)})
         (ok ""))
       (bad-request "Only updating paymentstatus to paid is allowed"))))
 
@@ -75,8 +75,8 @@
     :return schema/BatchDocument
     :summary "Create new payment batch document"
     (if (some
-          #(when (= (:phase %) (:phase document)) %)
-          (data/get-batch-documents id))
+         #(when (= (:phase %) (:phase document)) %)
+         (data/get-batch-documents id))
       (conflict {:error "No multiple documents per phase is allowed"})
       (ok (data/create-batch-document id document)))))
 

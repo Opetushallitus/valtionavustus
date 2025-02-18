@@ -76,7 +76,7 @@
   (compojure-api/POST
     "/" [:as request]
     :body [talousarviotili (compojure-api/describe schema/CreateTalousarviotili
-                       "Create talousarviotili")]
+                                                   "Create talousarviotili")]
     :return schema/Talousarviotili
     :summary "Create new talousarviotili"
     (with-admin request
@@ -99,11 +99,11 @@
         (ok (update-existing-talousarviotili talousarviotili))
         (catch java.sql.SQLException e
           (case (.getSQLState e)
-             "23505" (unprocessable-entity!)
-             "23514" (bad-request!)
-             (do
-               (log/error e "Unexpected error when updating talousarviotili")
-               (internal-server-error!)))))
+            "23505" (unprocessable-entity!)
+            "23514" (bad-request!)
+            (do
+              (log/error e "Unexpected error when updating talousarviotili")
+              (internal-server-error!)))))
       (unauthorized ""))))
 
 (defn- delete-talousarviotili []

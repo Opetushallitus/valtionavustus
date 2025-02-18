@@ -32,7 +32,6 @@
    :should-pay (:should_pay arvio)
    :should-pay-comments (:should_pay_comments arvio)})
 
-
 (defn- add-arvio [arvio hakemus]
   (if arvio
     (assoc hakemus :arvio arvio)
@@ -70,7 +69,7 @@
 
 (defn- paatosdata-with-arvio [paatosdata]
   (let [hakemus (:hakemus paatosdata)
-        arvio (virkailija-db/get-arvio (:id hakemus) )]
+        arvio (virkailija-db/get-arvio (:id hakemus))]
     (assoc paatosdata :hakemus (add-arvio (arvio-json arvio) hakemus))))
 
 (defn- add-scores-to-hakemus [scores hakemus]
@@ -153,8 +152,7 @@
         avustushaku-simple {:nimi (-> avustushaku :content :name :fi)
                             :nimi_sv (-> avustushaku :content :name :sv)
                             :alkoi (-> avustushaku :content :duration :start)
-                            :loppui (-> avustushaku :content :duration :end)
-                            }
+                            :loppui (-> avustushaku :content :duration :end)}
         hakemukset (:hakemukset avustushaku-combined)
         hakemukset-submitted (filter #(= "submitted" (:status %)) hakemukset)
         hakemukset-simple (mapv hakemus->hakemus-simple hakemukset-submitted)]
@@ -168,13 +166,12 @@
   (let [combined (get-combined-paatos-data hakemus-id)
         status (-> combined :avustushaku :status)]
     (when (= status "resolved") (->
-                                  combined
-                                  (assoc :ispublic true)
-                                  ))))
+                                 combined
+                                 (assoc :ispublic true)))))
 
 (defn get-toimintayksikko [id]
-      (when (some? id)
-        (va-code-values/get-va-code-value id)))
+  (when (some? id)
+    (va-code-values/get-va-code-value id)))
 
 (defn get-combined-avustushaku-data-with-privileges [avustushaku-id identity]
   (when-let [haku-data (get-combined-avustushaku-data avustushaku-id)]
@@ -184,8 +181,8 @@
       (assoc with-privileges :toimintayksikko toimintayksikko))))
 
 (defn- add-copy-suffixes [nameField]
-  { :fi (str (:fi nameField) " (kopio)" )
-    :sv (str (:sv nameField) " (kopia)")})
+  {:fi (str (:fi nameField) " (kopio)")
+   :sv (str (:sv nameField) " (kopia)")})
 
 (defn create-new-avustushaku [tx base-haku-id identity]
   (let [created-at (clj-time/now)
@@ -195,7 +192,7 @@
         {:keys [name selection-criteria self-financing-percentage focus-areas]} (:content base-haku)
         haku-type (:haku-type base-haku)
         form-id (:form base-haku)
-        decision (merge (:decision base-haku) { :updatedAt created-at })
+        decision (merge (:decision base-haku) {:updatedAt created-at})
         operational-unit-id (:operational-unit-id base-haku)
         avustushaku (hakija-api/get-avustushaku base-haku-id)
         loppuselvitys-id (:form_loppuselvitys avustushaku)

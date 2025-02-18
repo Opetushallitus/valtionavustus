@@ -1,15 +1,15 @@
 (ns oph.va.virkailija.tasmaytysraportti
   (:require
-    [clj-pdf.core :refer [pdf]]
-    [clojure.java.io :refer [output-stream]]
-    [clojure.java.jdbc :as jdbc]
-    [oph.soresu.common.db :refer [execute!]]
-    [clojure.tools.logging :as log]
-    [oph.common.email :as email]
-    [oph.soresu.common.db :refer [exec get-datasource query]]
-    [dk.ative.docjure.spreadsheet :as spreadsheet]
-    [oph.va.virkailija.export :as export]
-    [oph.va.virkailija.db.queries :as virkailija-queries])
+   [clj-pdf.core :refer [pdf]]
+   [clojure.java.io :refer [output-stream]]
+   [clojure.java.jdbc :as jdbc]
+   [oph.soresu.common.db :refer [execute!]]
+   [clojure.tools.logging :as log]
+   [oph.common.email :as email]
+   [oph.soresu.common.db :refer [exec get-datasource query]]
+   [dk.ative.docjure.spreadsheet :as spreadsheet]
+   [oph.va.virkailija.export :as export]
+   [oph.va.virkailija.db.queries :as virkailija-queries])
   (:import (java.io ByteArrayOutputStream)
            (org.apache.poi.ss.usermodel Cell CellStyle CellType Sheet Workbook)))
 
@@ -54,17 +54,17 @@
                        "Asiatarkastaja"
                        "Hyväksyjä"]]
     (vec (cons column-titles
-          (map (fn [row] [(row :haun-nimi)
-                           (row :toimittajan-nimi)
-                           (row :takp-tili)
-                           (row :lkp-tili)
-                           (row :projektikoodi)
-                           (row :toimintayksikko)
-                           (row :pankkitili)
-                           (row :pitka-viite)
-                           (row :bruttosumma)
-                           (row :asiatarkastaja)
-                           (row :hyvaksyja)]) payments)))))
+               (map (fn [row] [(row :haun-nimi)
+                               (row :toimittajan-nimi)
+                               (row :takp-tili)
+                               (row :lkp-tili)
+                               (row :projektikoodi)
+                               (row :toimintayksikko)
+                               (row :pankkitili)
+                               (row :pitka-viite)
+                               (row :bruttosumma)
+                               (row :asiatarkastaja)
+                               (row :hyvaksyja)]) payments)))))
 
 (defn is-last-month-tasmaytysraportti-already-added-to-email-queue? []
   (let [res (first (query "
@@ -137,9 +137,9 @@ ORDER BY avustushaku DESC"
                                 :email-type "tasmaytysraportti"
                                 :lang "fi"
                                 :attachment {:title filename
-                                              :description subject
-                                              :contents tasmaytysraportti}}
-                                (fn [_] "Täsmäytysraportti liitteenä."))
+                                             :description subject
+                                             :contents tasmaytysraportti}}
+                               (fn [_] "Täsmäytysraportti liitteenä."))
       (store-successfully-sent-tasmaytysraportti avustushaku-id to tasmaytysraportti)
       (log/info (str "Successfully send tasmaytysraportti for avustushaku " avustushaku-id))
       (catch Exception e

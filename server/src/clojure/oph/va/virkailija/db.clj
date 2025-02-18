@@ -16,9 +16,9 @@
 (defn- add-paatos-menoluokkas [tx paatos-id avustushaku-id talousarvio]
   (doseq [[type amount] (seq talousarvio)]
     (execute! tx
-      "INSERT INTO menoluokka_paatos (menoluokka_id, paatos_id, amount)
+              "INSERT INTO menoluokka_paatos (menoluokka_id, paatos_id, amount)
        VALUES ((SELECT id FROM menoluokka WHERE avustushaku_id = ? AND type = ?), ?, ?)"
-      [avustushaku-id (name type) paatos-id amount])))
+              [avustushaku-id (name type) paatos-id amount])))
 
 (defn- get-talousarvio [id entity]
   (query (str "SELECT mh.amount, m.type, m.translation_fi, m.translation_sv
@@ -62,13 +62,13 @@
                          SET paatos_id = ?
                          WHERE id = ?" [paatos-id muutoshakemus-id])
                (when (:haen-kayttoajan-pidennysta muutoshakemus)
-                     (store-paatos-jatkoaika tx paatos-id (get-in paatos [:haen-kayttoajan-pidennysta :status]) (get-in paatos [:haen-kayttoajan-pidennysta :paattymispaiva])))
+                 (store-paatos-jatkoaika tx paatos-id (get-in paatos [:haen-kayttoajan-pidennysta :status]) (get-in paatos [:haen-kayttoajan-pidennysta :paattymispaiva])))
                (when (muutoshakemus-has-talousarvio? tx muutoshakemus-id)
-                     (store-paatos-talousarvio tx paatos-id (get-in paatos [:talousarvio :status])))
+                 (store-paatos-talousarvio tx paatos-id (get-in paatos [:talousarvio :status])))
                (when (:talousarvio paatos)
-                     (add-paatos-menoluokkas tx paatos-id avustushaku-id (get-in paatos [:talousarvio :talousarvio])))
+                 (add-paatos-menoluokkas tx paatos-id avustushaku-id (get-in paatos [:talousarvio :talousarvio])))
                (when (some? (:haen-sisaltomuutosta paatos))
-                     (store-paatos-sisaltomuutos tx paatos-id (get-in paatos [:haen-sisaltomuutosta :status])))
+                 (store-paatos-sisaltomuutos tx paatos-id (get-in paatos [:haen-sisaltomuutosta :status])))
                created-paatos))))
 
 (defn get-hyvaksytty-paattymispaiva [paatos-id]
@@ -85,7 +85,7 @@
                FROM paatos_talousarvio pt
                JOIN paatos ON paatos.id = pt.paatos_id
                where paatos.id = ?"
-         [paatos-id])
+             [paatos-id])
       first
       :status))
 
@@ -102,7 +102,7 @@
   (let [new-hakemus (hakemus-copy/create-new-hakemus-version tx id)]
     (execute! tx "UPDATE hakemukset SET
                 keskeytetty_aloittamatta = ?
-              WHERE id = ? AND version = ?" [ keskeyta (:id new-hakemus) (:version new-hakemus)])))
+              WHERE id = ? AND version = ?" [keskeyta (:id new-hakemus) (:version new-hakemus)])))
 
 (defn create-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
   (if-let [created-paatos (store-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)]
@@ -199,7 +199,7 @@
 (defn get-muutoshakemukset [hakemus-id]
   (log/info (str "Get muutoshakemus with hakemus id: " hakemus-id))
   (let [basic-muutoshakemukset (query
-                            "SELECT
+                                "SELECT
                                 m.id,
                                 m.hakemus_id,
                                 (CASE
@@ -415,7 +415,7 @@
     (if use-detailed-costs
       (store-menoluokka-hakemus-rows (:id avustushaku) hakemus-id overridden-answers)
       (delete-menoluokka-hakemus-rows hakemus-id))
-      (exec queries/upsert-arvio<! arvio-with-changelog)))
+    (exec queries/upsert-arvio<! arvio-with-changelog)))
 
 (defn health-check []
   (->> {}
@@ -472,7 +472,7 @@
                 :email                    (:email identity)
                 :selection_criteria_index selection-criteria-index
                 :score                    score}]
-      (exec queries/upsert-score<! params)))
+    (exec queries/upsert-score<! params)))
 
 (defn delete-score [arvio-id selection-criteria-index identity]
   (exec queries/delete-score!
@@ -490,9 +490,9 @@
 
 (defn create-search! [avustushaku-id query name person-oid]
   (exec queries/create-search<! {:avustushaku_id avustushaku-id
-                                                :query query
-                                                :name name
-                                                :oid person-oid}))
+                                 :query query
+                                 :name name
+                                 :oid person-oid}))
 
 (defn get-search [avustushaku-id saved-search-id]
   (->> {:avustushaku_id avustushaku-id :id saved-search-id}
@@ -533,17 +533,17 @@
 
 (defn update-va-users-cache [va-users]
   (with-transaction connection
-                    (let [db-options {:connection connection}]
-                      (queries/lock-va-users-cache-exclusively! {} db-options)
-                      (doseq [user va-users]
-                        (let [db-user     (va-user->db user)
-                              num-updated (queries/update-va-user-cache! db-user db-options)]
-                          (when (< num-updated 1)
-                            (queries/create-va-user-cache<! db-user db-options))))
-                      (let [person-oids (into [] (map :person-oid va-users))]
-                        (if (seq person-oids)
-                          (queries/delete-va-user-cache-by-not-in! {:person_oids person-oids} db-options)
-                          (queries/delete-va-user-cache! {} db-options))))))
+    (let [db-options {:connection connection}]
+      (queries/lock-va-users-cache-exclusively! {} db-options)
+      (doseq [user va-users]
+        (let [db-user     (va-user->db user)
+              num-updated (queries/update-va-user-cache! db-user db-options)]
+          (when (< num-updated 1)
+            (queries/create-va-user-cache<! db-user db-options))))
+      (let [person-oids (into [] (map :person-oid va-users))]
+        (if (seq person-oids)
+          (queries/delete-va-user-cache-by-not-in! {:person_oids person-oids} db-options)
+          (queries/delete-va-user-cache! {} db-options))))))
 
 (defn get-va-user-cache-by-person-oid [person-oid]
   (->> {:person_oid person-oid}
@@ -563,14 +563,14 @@
         num-columns-to-search        (count va-users-cache-columns-to-search)
         escaped-terms-for-like-exprs (mapcat #(repeat num-columns-to-search %) escaped-terms)]
     (with-transaction connection
-                      (jdbc/query connection
-                                  (cons (string/join " "
-                                                     ["select person_oid, first_name, surname, email, content"
-                                                      "from va_users_cache"
-                                                      "where" like-exprs-for-all-terms
-                                                      "order by first_name, surname, email"])
-                                        escaped-terms-for-like-exprs)
-                                  {:row-fn db->va-user}))))
+      (jdbc/query connection
+                  (cons (string/join " "
+                                     ["select person_oid, first_name, surname, email, content"
+                                      "from va_users_cache"
+                                      "where" like-exprs-for-all-terms
+                                      "order by first_name, surname, email"])
+                        escaped-terms-for-like-exprs)
+                  {:row-fn db->va-user}))))
 
 (defn create-application-token [application-id]
   (let [existing-token
@@ -633,7 +633,7 @@
   (let [id (query "INSERT INTO raportointivelvoite (avustushaku_id, raportointilaji, asha_tunnus, maaraaika, lisatiedot)
                    VALUES (?, ?, ?, ?, ?)
                    RETURNING id"
-                   [avustushaku-id (:raportointilaji velvoite) (:asha-tunnus velvoite) (:maaraaika velvoite) (:lisatiedot velvoite)])]
+                  [avustushaku-id (:raportointilaji velvoite) (:asha-tunnus velvoite) (:maaraaika velvoite) (:lisatiedot velvoite)])]
     (assoc velvoite :id (:id (first id)))))
 
 (defn update-raportointivelvoite [avustushaku-id velvoite]
@@ -643,12 +643,12 @@
                  maaraaika = ?,
                  lisatiedot = ?
              WHERE avustushaku_id = ? AND id = ?"
-             [(:raportointilaji velvoite) (:asha-tunnus velvoite) (:maaraaika velvoite) (:lisatiedot velvoite) avustushaku-id (:id velvoite)]))
+            [(:raportointilaji velvoite) (:asha-tunnus velvoite) (:maaraaika velvoite) (:lisatiedot velvoite) avustushaku-id (:id velvoite)]))
 
 (defn delete-raportointivelvoite [avustushaku-id raportointivelvoite-id]
   (execute! "DELETE FROM raportointivelvoite
              WHERE avustushaku_id = ? AND id = ?"
-             [avustushaku-id raportointivelvoite-id]))
+            [avustushaku-id raportointivelvoite-id]))
 
 (defn get-lainsaadanto-options []
   (query "SELECT id, name
@@ -666,14 +666,14 @@
                         ON CONFLICT (avustushaku_id, lainsaadanto_id) DO UPDATE SET
                           lainsaadanto_id = EXCLUDED.lainsaadanto_id
                         RETURNING lainsaadanto_id"
-                        [avustushaku-id lainsaadanto-id])]
+                       [avustushaku-id lainsaadanto-id])]
     (:lainsaadanto-id (first id-rows))))
 
 (defn- remove-old-lainsaadanto [avustushaku-id current-lainsaadanto-ids]
   (execute!
-    (str "DELETE FROM avustushaku_lainsaadanto
+   (str "DELETE FROM avustushaku_lainsaadanto
           WHERE avustushaku_id = ? AND lainsaadanto_id NOT IN (" (parameter-list current-lainsaadanto-ids) ")")
-    (conj current-lainsaadanto-ids avustushaku-id)))
+   (conj current-lainsaadanto-ids avustushaku-id)))
 
 (defn upsert-avustushaku-lainsaadanto [avustushaku-id lainsaadanto-ids]
   (if (> (count lainsaadanto-ids) 0)

@@ -9,17 +9,16 @@
 ; clj-ssh with-connection does not accept timeout
 ; https://github.com/clj-commons/clj-ssh/issues/12#issuecomment-726409579
 (defmacro with-connection-timeout
-    "Creates a context in which the session is connected. Ensures the session is
+  "Creates a context in which the session is connected. Ensures the session is
   disconnected on exit. Will timeout after the provided number of milliseconds if not succesfully connected."
-    [session timeout & body]
-    `(let [session# ~session timeout# ~timeout]
-       (try
-         (when-not (ssh/connected? session#)
-           (ssh/connect session# timeout#))
-         ~@body
-         (finally
-           (ssh/disconnect session#)))))
-
+  [session timeout & body]
+  `(let [session# ~session timeout# ~timeout]
+     (try
+       (when-not (ssh/connected? session#)
+         (ssh/connect session# timeout#))
+       ~@body
+       (finally
+         (ssh/disconnect session#)))))
 
 (defn create-session
   [config]
@@ -31,13 +30,12 @@
                   :strict-host-key-checking (:strict-host-key-checking config)})))
 
 (defn put-maksupalaute-to-maksatuspalvelu [file config]
-    (let [session (create-session config)
-          remote (:remote_path_from config)]
-      (with-connection-timeout session (:timeout config)
-        (let [channel (ssh/ssh-sftp session)]
-          (ssh/with-channel-connection channel
-             (ssh/sftp channel {} :put file remote)))))
-)
+  (let [session (create-session config)
+        remote (:remote_path_from config)]
+    (with-connection-timeout session (:timeout config)
+      (let [channel (ssh/ssh-sftp session)]
+        (ssh/with-channel-connection channel
+          (ssh/sftp channel {} :put file remote))))))
 
 (defn do-sftp! [& {:keys [file method path config]}]
   (let [session (create-session config)
@@ -51,7 +49,7 @@
             (ssh/sftp channel {} method
                       (format "%s/%s" path (.getName (clojure.java.io/file file)))
                       file)
-            (= method :rm )(ssh/sftp channel {} method (format "%s/%s" path file))
+            (= method :rm) (ssh/sftp channel {} method (format "%s/%s" path file))
             (= method :cdls)
             (ssh/with-channel-connection channel
               (ssh/sftp channel {} :cd path)
@@ -94,8 +92,7 @@
                     :path (:remote_path (:configuration service))
                     :config (:configuration service))
 
-          (slurp (get-local-file service filename)))
-        )))
+          (slurp (get-local-file service filename))))))
   (get-remote-file-list [service]
     (let [result (do-sftp! :method :cdls
                            :path (:remote_path_from (:configuration service))

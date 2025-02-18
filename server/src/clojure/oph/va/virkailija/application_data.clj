@@ -7,17 +7,17 @@
 
 (defn get-application-evaluation [application-id]
   (convert-to-dash-keys
-    (first (exec virkailija-queries/get-application-evaluation
-                 {:application_id application-id}))))
+   (first (exec virkailija-queries/get-application-evaluation
+                {:application_id application-id}))))
 
 (defn get-application-full-evaluation [application-id]
   (convert-to-dash-keys
-    (first (exec virkailija-queries/get-application-full-evaluation
-                 {:application_id application-id}))))
+   (first (exec virkailija-queries/get-application-full-evaluation
+                {:application_id application-id}))))
 
 (defn get-application-contact-person-name [hakemus-id]
   (:contact-person (first (query
-    "SELECT
+                           "SELECT
        coalesce(
          normalized_hakemus.contact_person,
          answer->>'value'
@@ -30,14 +30,14 @@
        )
        JOIN jsonb_array_elements(answers->'value') answer ON (answer.value->>'key' = 'applicant-name')
      WHERE hakemukset.id = ? AND hakemukset.version_closed IS NULL"
-    [hakemus-id]))))
+                           [hakemus-id]))))
 
 (defn get-application [id]
   (convert-to-dash-keys
-    (merge
-      (first (exec hakija-queries/get-application
-                   {:application_id id}))
-      (get-application-evaluation id))))
+   (merge
+    (first (exec hakija-queries/get-application
+                 {:application_id id}))
+    (get-application-evaluation id))))
 
 (defn find-application-by-register-number [register-number]
   (convert-to-dash-keys
@@ -63,18 +63,16 @@
 
 (defn find-applications [search-term order]
   (map
-    #(assoc (convert-to-dash-keys %)
-            :evaluation (get-application-full-evaluation (:id %)))
-    (exec (if (.endsWith order "-desc")
-            hakija-queries/find-applications
-            hakija-queries/find-applications-asc)
-          {:search_term
-           (str "%" (clojure.string/lower-case search-term) "%")})))
+   #(assoc (convert-to-dash-keys %)
+           :evaluation (get-application-full-evaluation (:id %)))
+   (exec (if (.endsWith order "-desc")
+           hakija-queries/find-applications
+           hakija-queries/find-applications-asc)
+         {:search_term
+          (str "%" (clojure.string/lower-case search-term) "%")})))
 
-
- (defn create-application-token [application-id]
-     (:token (va-db/create-application-token application-id)))
-
+(defn create-application-token [application-id]
+  (:token (va-db/create-application-token application-id)))
 
 (defn get-application-token [application-id]
   (:token
@@ -95,15 +93,15 @@
 
 (defn accepted? [application]
   (true?
-    (get
-      (first (exec virkailija-queries/is-application-accepted
-                   {:hakemus_id (:id application)}))
-      :accepted)))
+   (get
+    (first (exec virkailija-queries/is-application-accepted
+                 {:hakemus_id (:id application)}))
+    :accepted)))
 
 (defn get-open-applications []
   (map
-    convert-to-dash-keys
-    (filter
-      accepted?
-      (exec hakija-queries/list-open-applications
-            {}))))
+   convert-to-dash-keys
+   (filter
+    accepted?
+    (exec hakija-queries/list-open-applications
+          {}))))

@@ -16,16 +16,15 @@
 
 (defn handle-payment-response-xml [xml-string]
   (payments-data/update-paymentstatus-by-response
-    (invoice/read-xml-string xml-string)))
+   (invoice/read-xml-string xml-string)))
 
 (defn put-maksupalaute-to-maksatuspalvelu [filename xml-string]
   (let [file (format "%s/%s" (rondo-service/get-local-file-path config) filename)
         rondo-service (rondo-service/create-service
-                        (get-in config [:server :payment-service-sftp]))]
+                       (get-in config [:server :payment-service-sftp]))]
 
     (spit file xml-string)
-    (rondo-service/put-maksupalaute-to-maksatuspalvelu file (:configuration rondo-service)))
-)
+    (rondo-service/put-maksupalaute-to-maksatuspalvelu file (:configuration rondo-service))))
 
 (defn pop-remote-files [list-of-files remote-service]
   (log/info "Will fetch the following files from Rondo: " list-of-files)
@@ -75,7 +74,7 @@
 (defn processMaksupalaute []
   (log/info "Running scheduled fetch of payments now from rondo!")
   (let [remote-service (rondo-service/create-service
-                         (get-in config [:server :payment-service-sftp]))]
+                        (get-in config [:server :payment-service-sftp]))]
     (get-statuses-of-payments remote-service)))
 
 (defn calculate-exponential-backoff [retries]
@@ -98,15 +97,15 @@
 (defn schedule-fetch-from-rondo []
   (let [s (qs/start (qs/initialize))
         job (j/build
-              (j/of-type RondoJob)
-              (j/with-identity (j/key "jobs.RondoJob3")))
+             (j/of-type RondoJob)
+             (j/with-identity (j/key "jobs.RondoJob3")))
         trigger (t/build
-                  (t/with-identity (t/key "triggers.Rondo"))
-                  (t/start-now)
-                  (t/with-schedule
-                    (schedule
-                      (cron-schedule
-                        (:scheduling (:rondo-scheduler config))))))]
+                 (t/with-identity (t/key "triggers.Rondo"))
+                 (t/start-now)
+                 (t/with-schedule
+                   (schedule
+                    (cron-schedule
+                     (:scheduling (:rondo-scheduler config))))))]
     (qs/schedule s job trigger)))
 
 (defn stop-schedule-from-rondo []

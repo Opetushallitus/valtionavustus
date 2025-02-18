@@ -4,7 +4,6 @@
 (defn close-hakemus-by-id-and-get-version [tx id]
   (first (query tx "UPDATE hakemukset SET version_closed = now() WHERE id = ? AND version_closed IS NULL RETURNING version" [id])))
 
-
 (defn create-new-hakemus-version [tx id]
   (let [old-hakemus-version (:version (close-hakemus-by-id-and-get-version tx id))]
     (first (query tx "INSERT INTO hakemukset

@@ -80,9 +80,9 @@
     :path-params [haku-id :- Long user-key :- s/Str]
     :return  NormalizedHakemus
     :summary "Get normalized answers"
-      (if-let [hakemus (hakija-db/get-normalized-hakemus user-key)]
-        (ok hakemus)
-        (not-found))))
+    (if-let [hakemus (hakija-db/get-normalized-hakemus user-key)]
+      (ok hakemus)
+      (not-found))))
 
 (defn- get-hakemus []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id" [haku-id hakemus-id]
@@ -104,7 +104,7 @@
 
 (defn- put-refuse-hakemus []
   (compojure-api/PUT "/:grant-id/hakemus/:application-id/:base-version/refuse/"
-                     [grant-id application-id base-version :as request]
+    [grant-id application-id base-version :as request]
     :path-params
     [grant-id :- Long, application-id :- s/Str, base-version :- Long]
     :query-params [{token :- String nil}]
@@ -112,7 +112,7 @@
     :body [refuse-data (compojure-api/describe RefuseData "Refuse data")]
     :summary "Update application status to refused"
     (on-refuse-application
-      grant-id application-id base-version (:comment refuse-data) token)))
+     grant-id application-id base-version (:comment refuse-data) token)))
 
 (defn- post-hakemus []
   (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version" [haku-id hakemus-id base-version :as request]
@@ -125,7 +125,7 @@
         (on-hakemus-update haku-id hakemus-id base-version answers)
         (catch PSQLException e (do (log/warn e "Could not update hakemus")
                                    (bad-request! {:error "can not update hakemus"}))))
-      (bad-request! { :error "can not update hakemus"}))))
+      (bad-request! {:error "can not update hakemus"}))))
 
 (defn- post-hakemus-submit []
   (compojure-api/POST "/:haku-id/hakemus/:user-key/:base-version/submit" [haku-id user-key base-version :as request]
@@ -135,7 +135,7 @@
     :summary "Submit hakemus"
     (if (can-update-hakemus haku-id user-key answers nil)
       (on-hakemus-submit haku-id user-key base-version answers)
-      (bad-request! { :error "can not update hakemus"}))))
+      (bad-request! {:error "can not update hakemus"}))))
 
 (defn- post-change-request-response []
   (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version/change-request-response" [haku-id hakemus-id base-version :as request]
@@ -145,7 +145,7 @@
     :summary "Submit response for hakemus change request"
     (if (can-update-hakemus haku-id hakemus-id answers nil)
       (on-hakemus-change-request-response haku-id hakemus-id base-version answers)
-      (bad-request! { :error "can not update hakemus"}))))
+      (bad-request! {:error "can not update hakemus"}))))
 
 (defn- officer-edit-submit []
   (compojure-api/POST "/:haku-id/hakemus/:user-key/:base-version/officer-edit-submit" [haku-id hakemus-id base-version :as request]
@@ -155,7 +155,7 @@
     :summary "Submit officer edit changes"
     (if (can-update-hakemus haku-id user-key answers (:identity request))
       (on-hakemus-edit-submit haku-id user-key base-version answers :officer-edit)
-      (bad-request! { :error "can not update hakemus"}))))
+      (bad-request! {:error "can not update hakemus"}))))
 
 (defn- applicant-edit-submit []
   (compojure-api/POST "/:haku-id/hakemus/:user-key/:base-version/applicant-edit-submit" [haku-id hakemus-id base-version :as request]
@@ -165,7 +165,7 @@
     :summary "Submit applicant edit changes"
     (if (can-update-hakemus haku-id user-key answers nil)
       (on-hakemus-edit-submit haku-id user-key base-version answers :applicant-edit)
-      (bad-request! { :error "can not update hakemus"}))))
+      (bad-request! {:error "can not update hakemus"}))))
 
 (defn- applicant-edit-open []
   (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/applicant-edit-open" [haku-id hakemus-id :as request]
@@ -177,7 +177,7 @@
 
 (defn- get-applicant-edit-open []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/applicant-edit-open"
-  [haku-id hakemus-id :as request]
+    [haku-id hakemus-id :as request]
     :path-params [haku-id :- Long, hakemus-id :- s/Str]
     :return  nil
     :summary "Open application for applicant edit"
@@ -185,13 +185,13 @@
 
 (defn- get-muutoshakemukset []
   (compojure-api/GET "/:avustushaku-id/hakemus/:user-key/muutoshakemus" [user-key]
-                     :path-params [user-key :- s/Str]
-                     :return MuutoshakemusList
-                     :summary "Get muutoshakemukset"
-                     (ok (hakija-db/get-muutoshakemukset-by-user-key user-key))))
+    :path-params [user-key :- s/Str]
+    :return MuutoshakemusList
+    :summary "Get muutoshakemukset"
+    (ok (hakija-db/get-muutoshakemukset-by-user-key user-key))))
 
 (defn- get-attachments []
-  (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id ]
+  (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id]
     :path-params [haku-id :- Long, hakemus-id :- s/Str]
     :return s/Any
     :summary "List current attachments"
@@ -389,7 +389,6 @@
   (compojure-api/context "/api/v2/applications" [] :tags ["applications"] applications-routes)
 
   (compojure-api/context "/api/muutoshakemus" [] :tags ["muutoshakemukset"] muutoshakemus-routes)
-
 
   va-routes/config-routes
   resource-routes)

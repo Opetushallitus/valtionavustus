@@ -11,7 +11,6 @@
                               :fi)]
     (str avustushaku-name ": " number-of-applications " hakemusta")))
 
-
 (defn- resolve-search [avustushaku-id search-query identity]
   (if-let [existing-search (db/find-search avustushaku-id search-query)]
     existing-search

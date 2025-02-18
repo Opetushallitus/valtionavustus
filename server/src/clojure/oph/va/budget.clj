@@ -65,7 +65,7 @@
     (let [hakemus-oph-share (:budget_oph_share hakemus)
           hakemus-total (:budget_total hakemus)
           user-self-financing-ratio (if (> hakemus-total 0) (/ (- hakemus-total hakemus-oph-share) hakemus-total) 0)]
-        (share-rounded-up-of user-self-financing-ratio total-sum))
+      (share-rounded-up-of user-self-financing-ratio total-sum))
     (percentage-share-rounded-up-of self-financing-percentage total-sum)))
 
 (defn- select-self-financing-amount-hakija [self-financing-percentage total-sum budget-field-children answers]

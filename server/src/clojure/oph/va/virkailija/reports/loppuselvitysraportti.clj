@@ -58,7 +58,7 @@ left join taloustarkastetut_loppuselvitykset tl on tl.year = l.year
 
 (defn- get-hakemukset-rows []
   (query
-    "
+   "
     with ha as (
       select h.register_number as register_number,
             a.content->'name'->'fi' as avustushaun_nimi,
@@ -98,7 +98,7 @@ FROM ha
     LEFT JOIN o ON o.id = b.id AND o.version = b.version
     LEFT JOIN m ON m.id = b.id AND m.version = b.version
     LEFT JOIN k ON k.id = b.id AND k.version = b.version
-    "{}))
+    " {}))
 
 (defn- get-koodisto-name-for-maakunta-code [maakunta-code]
   (if (not (string? maakunta-code))
@@ -113,16 +113,14 @@ FROM ha
 (defn- kunta-codes-into-readable-names [row]
   (let [kotikunta-name (get-koodisto-name-for-kotikunta-code (:kotikunta-code row))
         maakunta-name (get-koodisto-name-for-maakunta-code (:maakunta-code row))]
-    {
-     :register_number (:register-number row)
+    {:register_number (:register-number row)
      :avustushaun_nimi (:avustushaun-nimi row)
      :organization_name (:organization-name row)
      :business_id (:business-id row)
      :owner_type (:owner-type row)
      :maakunta maakunta-name
      :kotikunta kotikunta-name
-     :budget_granted (:budget-granted row)
-     }))
+     :budget_granted (:budget-granted row)}))
 
 (defn export-loppuselvitysraportti []
   (let [asiatarkastettu-rows (get-loppuselvitys-tarkastetut-rows)

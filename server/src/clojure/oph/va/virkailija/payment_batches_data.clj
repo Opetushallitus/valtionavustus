@@ -27,8 +27,8 @@
 (defn find-batches [date grant-id]
   (->> (exec queries/find-batches
              {:batch_date date :grant_id grant-id})
-      (map convert-to-dash-keys)
-      (map payments-data/convert-timestamps-from-sql)))
+       (map convert-to-dash-keys)
+       (map payments-data/convert-timestamps-from-sql)))
 
 (defn create-batch [values]
   (->> values
@@ -50,32 +50,31 @@
 
 (defn send-to-rondo! [payment application grant filename batch]
   (let [rondo-service (rondo-service/create-service
-                        (get-in config [:server :payment-service-sftp]))]
-  (with-timeout
-    #(try
-       (send-payment-to-rondo! rondo-service
-         {:payment (payments-data/get-payment (:id payment))
-          :application application
-          :grant grant
-          :filename filename
-          :batch batch})
-       (catch Exception e
-         {:success false :error {:error-type :exception :exception e}}))
-    timeout-limit {:success false :error {:error-type :timeout}})))
+                       (get-in config [:server :payment-service-sftp]))]
+    (with-timeout
+      #(try
+         (send-payment-to-rondo! rondo-service
+                                 {:payment (payments-data/get-payment (:id payment))
+                                  :application application
+                                  :grant grant
+                                  :filename filename
+                                  :batch batch})
+         (catch Exception e
+           {:success false :error {:error-type :exception :exception e}}))
+      timeout-limit {:success false :error {:error-type :timeout}})))
 
 (defn send-payment [payment application data]
   (let [filename (create-filename payment)
         projectCode (or (:project-code payment) (:project-code application))
         updated-payment (payments-data/update-payment
-                          (assoc payment :batch-id (get-in data [:batch :id])
-                                         :project-code projectCode)
-                          (:identity data))]
+                         (assoc payment :batch-id (get-in data [:batch :id])
+                                :project-code projectCode)
+                         (:identity data))]
     (-> updated-payment
         (send-to-rondo! application (:grant data) filename (:batch data))
         (assoc
-              :filename filename
-              :payment (payments-data/get-payment (:id updated-payment) (:version updated-payment)))
-)))
+         :filename filename
+         :payment (payments-data/get-payment (:id updated-payment) (:version updated-payment))))))
 
 (defn send-payments [data]
   (let [{:keys [identity grant]} data
@@ -83,21 +82,21 @@
     (a/go
       (doseq [application
               (filter
-                payments-data/valid-for-send-payment?
-                (grant-data/get-grant-applications-with-evaluation
-                  (:id grant)))]
+               payments-data/valid-for-send-payment?
+               (grant-data/get-grant-applications-with-evaluation
+                (:id grant)))]
         (let [payments (application-data/get-application-unsent-payments
-                         (:id application))]
+                        (:id application))]
           (if (empty? payments)
             {:success false :error {:error-type :no-payments}}
             (doseq [payment payments]
               (let [result (send-payment payment application data)]
                 (when (:success result)
                   (payments-data/update-payment
-                    (assoc (:payment result)
-                           :paymentstatus-id "sent" :filename (:filename result)) identity)
+                   (assoc (:payment result)
+                          :paymentstatus-id "sent" :filename (:filename result)) identity)
                   (application-data/revoke-application-tokens
-                    (:id application)))
+                   (:id application)))
                 (a/>! c result))))))
       (a/close! c))
     c))
@@ -105,20 +104,20 @@
 (defn set-payments-paid [{:keys [identity grant-id]}]
   (doseq [application
           (filter
-            payments-data/valid-for-send-payment?
-            (grant-data/get-grant-applications-with-evaluation grant-id))]
+           payments-data/valid-for-send-payment?
+           (grant-data/get-grant-applications-with-evaluation grant-id))]
     (doseq [payment
             (application-data/get-application-unsent-payments
-              (:id application))]
+             (:id application))]
       (payments-data/update-payment
-        (assoc payment :paymentstatus-id "paid" :filename "") identity)
+       (assoc payment :paymentstatus-id "paid" :filename "") identity)
       (application-data/revoke-application-tokens
-        (:id application)))))
+       (:id application)))))
 
 (defn get-batch-documents [batch-id]
   (->> (exec queries/get-batch-documents {:batch_id batch-id})
-      (map convert-to-dash-keys)
-      (map payments-data/convert-timestamps-from-sql)))
+       (map convert-to-dash-keys)
+       (map payments-data/convert-timestamps-from-sql)))
 
 (defn create-batch-document [batch-id document]
   (->> (assoc document :batch-id batch-id)
@@ -142,13 +141,13 @@
         payments (payments-data/get-batch-payments batch-id)]
     (doseq [document (get-batch-documents batch-id)]
       (email/send-payments-info!
-        (create-batch-document-email
-          {:grant grant
-           :batch batch
-           :document document
-           :payments (filter
-                       #(= (:phase %) (:phase document))
-                       payments)})))))
+       (create-batch-document-email
+        {:grant grant
+         :batch batch
+         :document document
+         :payments (filter
+                    #(= (:phase %) (:phase document))
+                    payments)})))))
 
 (defn- set-batch-documents [batch]
   (assoc batch :documents (get-batch-documents (:id batch))))
@@ -161,27 +160,27 @@
 
 (defn send-payments-with-id [batch-id request]
   (let [batch (assoc
-                (get-batch batch-id)
-                :documents (get-batch-documents batch-id))
+               (get-batch batch-id)
+               :documents (get-batch-documents batch-id))
         c (send-payments
-            {:batch batch
-              :grant (grant-data/get-grant (:grant-id batch))
-              :identity (authentication/get-request-identity request)})]
+           {:batch batch
+            :grant (grant-data/get-grant (:grant-id batch))
+            :identity (authentication/get-request-identity request)})]
     (let [result
           (loop [total-result {:count 0 :error-count 0 :errors '()}]
             (if-let [r (<!! c)]
               (if (or (:success r)
                       (either? (get-in r [:error :error-type])
-                                #{:already-paid :no-payments}))
+                               #{:already-paid :no-payments}))
                 (recur (update total-result :count inc))
                 (do (when (= (get-in r [:error :error-type]) :exception)
                       (log/error (get-in r [:error :exception])))
                     (recur (-> total-result
-                                (update :count inc)
-                                (update :error-count inc)
-                                (update :errors conj (:error r))))))
+                               (update :count inc)
+                               (update :error-count inc)
+                               (update :errors conj (:error r))))))
               total-result))]
       {:success
-            (and (= (:error-count result) 0) (> (:count result) 0))
-            :errors (map :error-type (:errors result))})))
+       (and (= (:error-count result) 0) (> (:count result) 0))
+       :errors (map :error-type (:errors result))})))
 

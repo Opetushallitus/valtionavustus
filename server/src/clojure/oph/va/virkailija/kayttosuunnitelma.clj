@@ -33,26 +33,23 @@
         overridden-item (if use-detailed-costs (-> (:overridden item) format-number))
         rows
         (str "<tr>"
-             "<td>"(-> item :label language) "</td>"
+             "<td>" (-> item :label language) "</td>"
              "<td class='amount budgetAmount'>" original-item "</td>"
              "<td class='amount budgetAmount'>" overridden-item "</td>"
-             "</tr>")
-        ]
+             "</tr>")]
     rows))
 
 (defn tbody [table language use-detailed-costs]
   (let [children (:children table)
         rows (mapv (partial budget-row language use-detailed-costs)  children)
-        rows-s (str/join " " rows)
-        ]
+        rows-s (str/join " " rows)]
     (str "<tbody>" rows-s "</tbody>")))
 
 (defn find-table [children index answers overridden-answers]
   (let [table (nth children index {})
         map-children (fn [x] (assoc x :original (va-budget/read-amount x answers) :overridden (va-budget/read-amount x overridden-answers)))
         new-children (map map-children (:children table))
-        new-table (assoc table :children new-children)
-        ]
+        new-table (assoc table :children new-children)]
     new-table))
 
 (defn- sum-by-field [table field]
@@ -73,9 +70,9 @@
         use-detailed-costs (:useDetailedCosts arvio)
         cost-granted (:costsGranted arvio)
         budget-children (-> form-content
-                          va-budget/find-budget-fields
-                          first
-                          :children)
+                            va-budget/find-budget-fields
+                            first
+                            :children)
         summing-fields (va-budget/find-summing-fields budget-children)
         uses-floating-self-financing (-> budget-children
                                          va-budget/find-self-financing-field
@@ -143,9 +140,8 @@
                 :table-muu-label             table-muu-label
                 :show-table-muu              show-table-muu
                 :myonnetty-avustus           (if is-jotpa
-                                                 (translate "myonnetty-avustus-jotpa")
-                                                 (translate "myonnetty-avustus"))
-                }
+                                               (translate "myonnetty-avustus-jotpa")
+                                               (translate "myonnetty-avustus"))}
 
         body (render template params)]
     {:body                      body

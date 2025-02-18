@@ -21,7 +21,7 @@
    :paatos {:fi "Automaattinen viesti: organisaationne avustushakemus on käsitelty - Linkki päätösasiakirjaan"
             :sv "Automatiskt meddelande: Er ansökan om understöd har behandlats – Länk till beslutet"}
    :muutoshakemus-paatos {:fi "Automaattinen viesti: organisaationne muutoshakemus on käsitelty - Linkki päätösasiakirjaan"
-            :sv "Automatiskt meddelande: Er ändringsansökan har behandlats - Länk till beslutet"}
+                          :sv "Automatiskt meddelande: Er ändringsansökan har behandlats - Länk till beslutet"}
    :raportointivelvoite-muistutus {:fi "Muistutus valtionavustuksen raportoinnista"}
    :kuukausittainen-tasmaytysraportti {:fi "Edellisen kuukauden VA-täsmäytysraportti"}
    :selvitys {:fi "Väliselvitys käsitelty"
@@ -47,7 +47,7 @@
    :paatos {:fi (email/load-template "email-templates/paatos.plain.fi")
             :sv (email/load-template "email-templates/paatos.plain.sv")}
    :muutoshakemus-paatos {:fi (email/load-template "email-templates/muutoshakemus-paatos.plain.fi")
-            :sv (email/load-template "email-templates/muutoshakemus-paatos.plain.sv")}
+                          :sv (email/load-template "email-templates/muutoshakemus-paatos.plain.sv")}
    :paatos-refuse
    {:fi (email/load-template "email-templates/paatos-refuse.plain.fi")
     :sv (email/load-template "email-templates/paatos-refuse.plain.sv")}
@@ -77,8 +77,7 @@
    :loppuselvitys-palauttamatta {:fi (email/load-template "email-templates/loppuselvitys-palauttamatta.fi")
                                  :sv (email/load-template "email-templates/loppuselvitys-palauttamatta.sv")}
    :email-signature {:fi (email/load-template "email-templates/email-signature.plain.fi")
-                                 :sv (email/load-template "email-templates/email-signature.plain.sv")}
-   })
+                     :sv (email/load-template "email-templates/email-signature.plain.sv")}})
 
 (defn email-signature-block [lang]
   (let [sig-template (get-in mail-templates [:email-signature lang])]
@@ -96,14 +95,13 @@
 
 (defn- render-body
   ([msg]
-  (let [{:keys [email-type lang]} msg
-        template (get-in mail-templates [email-type lang])]
-    (render template msg)))
+   (let [{:keys [email-type lang]} msg
+         template (get-in mail-templates [email-type lang])]
+     (render template msg)))
   ([msg partials]
    (let [{:keys [email-type lang]} msg
          template (get-in mail-templates [email-type lang])]
      (render template msg partials))))
-
 
 (defn send-taydennyspyynto-message! [lang to cc avustushaku hakemus-id avustushaku-name user-key taydennyspyynto presenting-officer-email]
   (let [avustushaku-id (:id avustushaku)
@@ -113,29 +111,28 @@
         mail-template (get-in mail-templates [:taydennyspyynto lang])
         mail-subject (get-in mail-titles [:taydennyspyynto lang])
         signature (email-signature-block lang)
-        msg {
-             :avustushaku avustushaku-name
+        msg {:avustushaku avustushaku-name
              :taydennyspyynto taydennyspyynto
              :url url
              :yhteyshenkilo presenting-officer-email
-             :is-jotpa-hakemus is-jotpa-avustushaku }
+             :is-jotpa-hakemus is-jotpa-avustushaku}
         body (render mail-template msg signature)]
     (log/info "Url would be: " url)
 
     (email/try-send-email!
-      (email/message lang :taydennyspyynto [to] mail-subject body {:cc cc :bcc presenting-officer-email })
-      {:hakemus-id hakemus-id
-       :avustushaku-id avustushaku-id
-       :from           from })))
+     (email/message lang :taydennyspyynto [to] mail-subject body {:cc cc :bcc presenting-officer-email})
+     {:hakemus-id hakemus-id
+      :avustushaku-id avustushaku-id
+      :from           from})))
 
 (defn paatos-url [avustushaku-id user-key lang]
   (let [va-url (-> config :server :url lang)]
-  (str va-url "paatos/avustushaku/" avustushaku-id "/hakemus/" user-key)))
+    (str va-url "paatos/avustushaku/" avustushaku-id "/hakemus/" user-key)))
 
 (defn selvitys-url [avustushaku-id user-key lang selvitys-type]
   (let [va-url (-> config :server :url lang)
         lang-str (or (clojure.core/name lang) "fi")]
-  (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?hakemus=" user-key "&lang=" lang-str)))
+    (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?hakemus=" user-key "&lang=" lang-str)))
 
 (defn valiselvitys-url [avustushaku-id user-key lang]
   (selvitys-url avustushaku-id user-key lang "valiselvitys"))
@@ -155,7 +152,7 @@
       (stream-to-bytearray in))))
 
 (defn find-oikaisuvaatimusosoitus-attachments []
-(:attachments (first (filter (fn [x] (= (:group x) "Oikaisuvaatimusosoitus")) Liitteet))))
+  (:attachments (first (filter (fn [x] (= (:group x) "Oikaisuvaatimusosoitus")) Liitteet))))
 
 (defn find-3a-oikaisuvaatimusosoitus-attachment []
   (first (filter #(= (:id %1) "3a_oikaisuvaatimusosoitus_valtionavustuslaki") (find-oikaisuvaatimusosoitus-attachments))))
@@ -163,7 +160,7 @@
 (defn muutoshakemus-paatos-url [user-key lang]
   (let [va-url (-> config :server :url lang)
         lang-str (or (clojure.core/name lang) "fi")]
-  (str va-url "muutoshakemus/paatos?user-key=" user-key "&lang=" lang-str)))
+    (str va-url "muutoshakemus/paatos?user-key=" user-key "&lang=" lang-str)))
 
 (defn send-muutoshakemus-paatos [to avustushaku hakemus arvio roles token muutoshakemus-id paatos]
   (let [lang-str (:language hakemus)
@@ -184,7 +181,7 @@
         presenter (if (nil? selected-presenter) (first roles) selected-presenter)
         attachment {:title attachment-title
                     :description attachment-title
-                    :contents attachment-contents }
+                    :contents attachment-contents}
         msg {:register-number (:register_number hakemus)
              :project-name (:project_name hakemus)
              :paatos-url muutoshakemus-paatos-url
@@ -195,11 +192,11 @@
         body (render mail-template msg signature)]
 
     (email/try-send-email!
-      (email/message lang :muutoshakemus-paatos to mail-subject body { :attachment attachment })
-      {:hakemus-id hakemus-id
-       :muutoshakemus-id muutoshakemus-id
-       :avustushaku-id (:id avustushaku)
-       :from           from})))
+     (email/message lang :muutoshakemus-paatos to mail-subject body {:attachment attachment})
+     {:hakemus-id hakemus-id
+      :muutoshakemus-id muutoshakemus-id
+      :avustushaku-id (:id avustushaku)
+      :from           from})))
 
 (defn- generate-avustushaku-url [avustushaku-id]
   (str (-> config :server :virkailija-url)
@@ -253,10 +250,10 @@
 
     (log/info "sending to" to)
     (email/try-send-email!
-      (email/message lang :hakuaika-paattymassa [to] mail-subject body)
-      {:hakemus-id     (:id hakemus)
-       :avustushaku-id (:id avustushaku)
-       :from           from})))
+     (email/message lang :hakuaika-paattymassa [to] mail-subject body)
+     {:hakemus-id     (:id hakemus)
+      :avustushaku-id (:id avustushaku)
+      :from           from})))
 
 (defn send-kuukausittainen-tasmaytysraportti [raportti]
   (let [email-type     :kuukausittainen-tasmaytysraportti
@@ -264,15 +261,13 @@
         mail-subject   (get-in mail-titles [email-type lang])
         template       (get-in mail-templates [email-type lang])
         to (-> email/smtp-config :to-kuukausittainen-tasmaytysraportti)
-        attachment     {
-                        :title "tasmaytysraportti.xlsx"
+        attachment     {:title "tasmaytysraportti.xlsx"
                         :description "Edellisen kuukauden VA-täsmäytysraportti"
-                        :contents raportti
-                        }
+                        :contents raportti}
         body (render template)]
-  (log/info "Sending kuukausittainen tasmaytysraportti")
-  (email/try-send-email!
-    (email/message lang email-type to mail-subject body {:attachment attachment}))))
+    (log/info "Sending kuukausittainen tasmaytysraportti")
+    (email/try-send-email!
+     (email/message lang email-type to mail-subject body {:attachment attachment}))))
 
 (defn send-hakuaika-paattynyt [notification]
   (let [lang         :fi
@@ -345,7 +340,7 @@
                              (partial render template))))
 
 (defn send-valiselvitys-palauttamatta [notification is-jotpa-avustushaku]
- (let [lang           (keyword (:language notification))
+  (let [lang           (keyword (:language notification))
         mail-subject   (get-in mail-titles [:valiselvitys-palauttamatta lang])
         signature      (email-signature-block lang)
         template       (get-in mail-templates [:valiselvitys-palauttamatta lang])
@@ -395,17 +390,17 @@
         signature      (email-signature-block lang)
         template       (get-in mail-templates [:loppuselvitys-palauttamatta lang])
         from           (if is-jotpa-avustushaku (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
-        msg            { :avustushaku-name (:avustushaku-name notification)
-                         :loppuselvitys-deadline (datetime/java8-date-string (:loppuselvitys-deadline notification))
-                         :url (loppuselvitys-url (:avustushaku-id notification) (:user-key notification) lang)
-                         :is-jotpa-hakemus is-jotpa-avustushaku}
+        msg            {:avustushaku-name (:avustushaku-name notification)
+                        :loppuselvitys-deadline (datetime/java8-date-string (:loppuselvitys-deadline notification))
+                        :url (loppuselvitys-url (:avustushaku-id notification) (:user-key notification) lang)
+                        :is-jotpa-hakemus is-jotpa-avustushaku}
         body            (render template msg signature)]
 
     (email/try-send-email!
-      (email/message lang :loppuselvitys-palauttamatta [(:contact-email notification)] mail-subject body)
-      {:hakemus-id     (:hakemus-id notification)
-       :avustushaku-id (:avustushaku-id notification)
-       :from           from})))
+     (email/message lang :loppuselvitys-palauttamatta [(:contact-email notification)] mail-subject body)
+     {:hakemus-id     (:hakemus-id notification)
+      :avustushaku-id (:avustushaku-id notification)
+      :from           from})))
 
 (defn send-paatos! [to avustushaku hakemus]
   (let [lang-str (:language hakemus)
@@ -421,29 +416,27 @@
              :project-name (:project_name hakemus)
              :avustushaku-name avustushaku-name
              :url url
-             :is-jotpa-hakemus is-jotpa-hakemus? }
+             :is-jotpa-hakemus is-jotpa-hakemus?}
         body            (render template msg signature)]
     (log/info "Url would be: " url)
     (email/try-send-email!
-      (email/message lang :paatos to mail-subject body)
-      {:hakemus-id     (:id hakemus)
-       :avustushaku-id (:id avustushaku)
-       :from           from})))
+     (email/message lang :paatos to mail-subject body)
+     {:hakemus-id     (:id hakemus)
+      :avustushaku-id (:id avustushaku)
+      :from           from})))
 
 (defn send-paatokset-lahetetty [yhteenveto-url avustushaku-id avustushaku-name to]
   (let [lang (keyword "fi")]
-  (email/try-send-msg-once {
-                            :email-type :paatokset-lahetetty
-                            :from (-> email/smtp-config :from lang)
-                            :sender (-> email/smtp-config :sender)
-                            :to to
-                            :subject "Avustuspäätökset on lähetetty"
-                            :lang lang
-                            :avustushaku-name avustushaku-name
-                            :yhteenveto-url yhteenveto-url
-                            :avustushaku-id avustushaku-id
-                            }
-                           (partial render (get-in mail-templates [:paatokset-lahetetty lang])))))
+    (email/try-send-msg-once {:email-type :paatokset-lahetetty
+                              :from (-> email/smtp-config :from lang)
+                              :sender (-> email/smtp-config :sender)
+                              :to to
+                              :subject "Avustuspäätökset on lähetetty"
+                              :lang lang
+                              :avustushaku-name avustushaku-name
+                              :yhteenveto-url yhteenveto-url
+                              :avustushaku-id avustushaku-id}
+                             (partial render (get-in mail-templates [:paatokset-lahetetty lang])))))
 
 (defn- has-multiple-menoluokka-rows [hakemus-id]
   (let [result (first (query "SELECT COUNT(id) FROM menoluokka_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
@@ -455,8 +448,8 @@
 
 (defn should-include-muutoshaku-link-in-paatos-email? [avustushaku hakemus-id]
   (and
-    (:muutoshakukelpoinen avustushaku)
-    (has-normalized-hakemus hakemus-id)))
+   (:muutoshakukelpoinen avustushaku)
+   (has-normalized-hakemus hakemus-id)))
 
 (defn send-paatos-refuse! [to avustushaku hakemus token]
   (let [lang-str (:language hakemus)
@@ -471,8 +464,7 @@
         is-jotpa-hakemus? (is-jotpa-avustushaku avustushaku)
         from (if is-jotpa-hakemus? (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
         email-signature (email-signature-block lang)
-        msg {
-             :email-type :paatos-refuse
+        msg {:email-type :paatos-refuse
              :lang lang
              :from from
              :sender (-> email/smtp-config :sender)
@@ -492,11 +484,10 @@
     (log/info "Sending decision email with refuse link")
     (log/info "Urls would be: " url "\n" paatos-refuse-url)
     (email/try-send-email!
-      (email/message lang :paatos-refuse to mail-subject body)
-      {:hakemus-id     (:id hakemus)
-       :avustushaku-id (:id avustushaku)
-       :from           from})
-))
+     (email/message lang :paatos-refuse to mail-subject body)
+     {:hakemus-id     (:id hakemus)
+      :avustushaku-id (:id avustushaku)
+      :from           from})))
 
 (defn send-selvitys! [to hakemus mail-subject mail-message is-jotpa-hakemus]
   (let [lang (keyword (:language hakemus))
@@ -506,20 +497,17 @@
         signature (email-signature-block lang)
         body (render mail-template msg signature)]
 
-(email/try-send-email!
-  (email/message lang :selvitys to mail-subject body)
-  {:hakemus-id (:id hakemus)
-   :avustushaku-id (:avustushaku hakemus)
-   :from           from})))
-
-
+    (email/try-send-email!
+     (email/message lang :selvitys to mail-subject body)
+     {:hakemus-id (:id hakemus)
+      :avustushaku-id (:avustushaku hakemus)
+      :from           from})))
 
 (defn send-raportointivelvoite-muistutus [to avustushaku-id avustushaku-name-fi maaraaika type]
   (let [lang (keyword "fi")
         email-template-type (keyword "raportointivelvoite-muistutus")
         linkki (str (-> config :server :virkailija-url) "/admin/haku-editor/?avustushaku=" avustushaku-id)
-        msg {
-             :operation :send
+        msg {:operation :send
              :avustushaku-id avustushaku-id
              :email-type email-template-type
              :lang lang
@@ -529,8 +517,7 @@
              :to to
              :linkki linkki
              :maaraaika maaraaika
-             :avustushaku-name-fi avustushaku-name-fi
-             }
+             :avustushaku-name-fi avustushaku-name-fi}
         template (get-in mail-templates [email-template-type lang])
         body (render template msg)]
     (email/enqueue-message-to-be-send (merge msg {:email-type type}) body)))
@@ -596,16 +583,16 @@
 
 (defn start-persistent-retry-job []
   (qs/schedule
-    (qs/start (qs/initialize))
-    (j/build
-      (j/of-type EmailRetryJob)
-      (j/with-identity (j/key (str "jobs." "EmailRetry"))))
-    (t/build
-      (t/with-identity (t/key (str "triggers." "EmailRetry")))
-      (t/start-now)
-      (t/with-schedule (schedule
-                        (cron-schedule
-                         (get-in config [:email :persistent-retry :schedule])))))))
+   (qs/start (qs/initialize))
+   (j/build
+    (j/of-type EmailRetryJob)
+    (j/with-identity (j/key (str "jobs." "EmailRetry"))))
+   (t/build
+    (t/with-identity (t/key (str "triggers." "EmailRetry")))
+    (t/start-now)
+    (t/with-schedule (schedule
+                      (cron-schedule
+                       (get-in config [:email :persistent-retry :schedule])))))))
 
 (defn stop-persistent-retry-job []
   (qs/delete-trigger (qs/start (qs/initialize)) (t/key (str "triggers." "EmailRetry"))))

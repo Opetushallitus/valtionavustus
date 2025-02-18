@@ -58,13 +58,13 @@
 
 (defn- valid-message? [{:keys [to sender from subject email-type lang]}]
   (and (coll? to)
-   (not (empty? to))
-   (not-any? empty? to)
-   (not-empty sender)
-   (not-empty from)
-   (not-empty subject)
-   (not-empty (name email-type))
-   (not-empty (name lang))))
+       (not (empty? to))
+       (not-any? empty? to)
+       (not-empty sender)
+       (not-empty from)
+       (not-empty subject)
+       (not-empty (name email-type))
+       (not-empty (name lang))))
 
 (defn store-email [email-fields body]
   (if (not (and (valid-message? email-fields)
@@ -163,8 +163,8 @@
       (log/error (str "Failed to store email event for email: " email-id)))))
 
 (defn- try-send-msg [{:keys [to from sender subject bcc cc email-type reply-to attachment hakemus-id avustushaku-id muutoshakemus-id lang]}
-                    body
-                    email-id]
+                     body
+                     email-id]
   (let [email-event {:email-type       email-type
                      :hakemus-id       hakemus-id
                      :avustushaku-id   avustushaku-id
@@ -198,10 +198,10 @@
          email-id (store-email msg body)]
      (try-send-msg-once msg body email-id)))
   ([msg body email-id]
-    (try (try-send-msg msg body email-id)
+   (try (try-send-msg msg body email-id)
       ;; just log info here as the retry mechanism will alert if sending fails enough times
-      (catch Exception e
-        (log/info e "Tried to send email:" email-id)))))
+        (catch Exception e
+          (log/info e "Tried to send email:" email-id)))))
 
 (defn- start-loop-send-mails []
   (go
@@ -213,8 +213,8 @@
                     :send (do
                             (try
                               (try-send-msg-once (:msg msg) (:body msg) (:email-id msg))
-                            (catch Exception e
-                              (log/error e "Failed to send email")))
+                              (catch Exception e
+                                (log/error e "Failed to send email")))
                             false))]
         (if (not stop?)
           (recur))))

@@ -73,8 +73,8 @@
 
 (defn flatten-elements [node-list]
   (->> node-list
-     (map unwrap-node)
-     flatten))
+       (map unwrap-node)
+       flatten))
 
 (defn find-fields* [predicate node-list]
   (->> node-list

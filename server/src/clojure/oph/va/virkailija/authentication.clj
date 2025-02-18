@@ -75,8 +75,8 @@
 
 (defn- get-identity [session]
   (if (without-authentication?)
-      (fake-authentication/get-fake-identity session)
-      (get-in @session-store [(:cas-ticket session) :identity])))
+    (fake-authentication/get-fake-identity session)
+    (get-in @session-store [(:cas-ticket session) :identity])))
 
 (defn get-request-identity [request]
   (get-identity (:session request)))

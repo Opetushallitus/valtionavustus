@@ -54,7 +54,7 @@
   (let [hakemukset-list (get-hakuaika-paattymassa-haut)
         hakemukset-paattymassa-count (count hakemukset-list)]
     (when (>= hakemukset-paattymassa-count 1)
-      (log/info "sending email to" hakemukset-paattymassa-count" contacts")
+      (log/info "sending email to" hakemukset-paattymassa-count " contacts")
       (doseq [hakemus hakemukset-list]
         (email/send-hakuaika-paattymassa hakemus (hakija-api/get-avustushaku (:avustushaku-id hakemus)))))))
 
@@ -96,10 +96,10 @@
 
 (defn send-hakuaika-paattynyt-notifications []
   (let [notifications (get-avustushaut-ended-yesterday)]
-        (when (>= (count notifications) 1)
-          (log/info "Sending" (count notifications) "hakuaika-päättynyt notifications")
-          (doseq [n notifications]
-            (email/send-hakuaika-paattynyt n)))))
+    (when (>= (count notifications) 1)
+      (log/info "Sending" (count notifications) "hakuaika-päättynyt notifications")
+      (doseq [n notifications]
+        (email/send-hakuaika-paattynyt n)))))
 
 (defn- get-valiselvitys-tarkastamatta []
   (query "SELECT h.avustushaku, count(h.id) as hakemus_count, r.email

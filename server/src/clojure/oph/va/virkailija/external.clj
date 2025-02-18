@@ -21,7 +21,7 @@
     :summary ""
     (try
       (if (or (without-authentication?) (and (some? ticket)
-               (cas/validate-service-ticket external-api-service-url ticket)))
+                                             (cas/validate-service-ticket external-api-service-url ticket)))
         (response/ok (external-data/get-grants-for-year year))
         (response/unauthorized {:error "Unauthorized"}))
       (catch Exception e
@@ -38,7 +38,7 @@
     :summary ""
     (try
       (if (or (without-authentication?) (and (some? ticket)
-               (cas/validate-service-ticket external-api-service-url ticket)))
+                                             (cas/validate-service-ticket external-api-service-url ticket)))
         (response/ok (external-data/get-applications-by-grant-id avustushaku-id))
         (response/unauthorized {:error "Unauthorized"}))
       (catch Exception e

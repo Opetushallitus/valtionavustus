@@ -5,7 +5,6 @@
   (:import (org.postgresql.util PGobject)
            (oph.va.jdbc.enums HakuStatus HakuRole HakuType)))
 
-
 (defn is-status-enum? [value] (some #(= value %) [:new :draft :submitted :pending_change_request :officer_edit :cancelled :applicant_edit]))
 (defn is-arviostatus-enum? [value] (some #(= value %) [:unhandled :processing :plausible :rejected :accepted]))
 

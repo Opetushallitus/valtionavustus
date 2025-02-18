@@ -60,11 +60,10 @@
                                                                         :to-taloustarkastaja          (not-empty (filter some? [(System/getenv "EMAIL_TO_TALOUSPALVELUT")]))
                                                                         :to-palkeet                   (not-empty (filter some? [(System/getenv "EMAIL_TO_PALKEET")]))
                                                                         :to-palkeet-ja-talouspalvelut (not-empty (filter some? [(System/getenv "EMAIL_TO_PALKEET")
-                                                                                                                                (System/getenv "EMAIL_TO_TALOUSPALVELUT")]))
+                                                                                                                                (System/getenv "EMAIL_TO_TALOUSPALVELUT")]))})
 
-                                                     })
-                           :opintopolku (filter val {:cas-service-username (System/getenv "CAS_SERVICE_USERNAME")
-                                                     :cas-service-password (System/getenv "CAS_SERVICE_PASSWORD")})}))]
+                                                   :opintopolku (filter val {:cas-service-username (System/getenv "CAS_SERVICE_USERNAME")
+                                                                             :cas-service-password (System/getenv "CAS_SERVICE_PASSWORD")})}))]
 
     (if (some? (System/getenv "OFFICER_EDIT_JWT_SECRET"))
       (assoc merged-with-environment :officer-edit-jwt-secret (System/getenv "OFFICER_EDIT_JWT_SECRET"))

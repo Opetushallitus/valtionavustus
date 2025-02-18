@@ -44,18 +44,18 @@
                          to (:to raportointivelvoite)
                          name (:name raportointivelvoite)
                          type (case (:raportointilaji raportointivelvoite)
-                                    "Avustuspäätökset" "raportointivelvoite-muistutus-avustuspaatokset"
-                                    "Väliraportti" "raportointivelvoite-muistutus-valiraportti"
-                                    "Loppuraportti" "raportointivelvoite-muistutus-loppuraportti"
-                                    "Muu raportti" "raportointivelvoite-muistutus-muu-raportti")
+                                "Avustuspäätökset" "raportointivelvoite-muistutus-avustuspaatokset"
+                                "Väliraportti" "raportointivelvoite-muistutus-valiraportti"
+                                "Loppuraportti" "raportointivelvoite-muistutus-loppuraportti"
+                                "Muu raportti" "raportointivelvoite-muistutus-muu-raportti")
                          maaraika (format-date (:maaraaika raportointivelvoite))]
                      (email/send-raportointivelvoite-muistutus to avustushaku-id name maaraika type))))))
     (catch Exception e
       (log/error e "Failed to send muistutusviestit for raportointivelvoitteet"))))
 
 (j/defjob MuistutusJob
-          [ctx]
-          (send-muistutusviestit))
+  [ctx]
+  (send-muistutusviestit))
 
 (def muistutus-scheduler (delay (qs/initialize)))
 
@@ -63,15 +63,15 @@
   (log/info "Starting background job: raportointivelvoite muistutusviestit...")
   (let [s (qs/start @muistutus-scheduler)
         job (j/build
-              (j/of-type MuistutusJob)
-              (j/with-identity (j/key "jobs.raportointivelvoite.1")))
+             (j/of-type MuistutusJob)
+             (j/with-identity (j/key "jobs.raportointivelvoite.1")))
         trigger (t/build
-                  (t/with-identity (t/key "triggers.raportointivelvoite"))
-                  (t/start-now)
-                  (t/with-schedule
-                    (schedule
-                      (repeat-forever)
-                      (with-interval-in-minutes 60))))]
+                 (t/with-identity (t/key "triggers.raportointivelvoite"))
+                 (t/start-now)
+                 (t/with-schedule
+                   (schedule
+                    (repeat-forever)
+                    (with-interval-in-minutes 60))))]
     (qs/schedule s job trigger)))
 
 (defn stop-schedule-raportointivelvoite-muistutusviestit []

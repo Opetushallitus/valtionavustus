@@ -44,7 +44,7 @@
     (healthcheck/start-schedule-status-update!))
   (when (get-in config [:reminder-scheduler :enabled?])
     (muistutus-scheduling/schedule-raportointivelvoite-muistutusviestit))
-  (when (get-in config [:email :persistent-retry :enabled? ])
+  (when (get-in config [:email :persistent-retry :enabled?])
     (email/start-persistent-retry-job)))
 
 (defn- shutdown []
@@ -60,7 +60,7 @@
     (healthcheck/stop-schedule-status-update!))
   (when (get-in config [:reminder-scheduler :enabled?])
     (muistutus-scheduling/stop-schedule-raportointivelvoite-muistutusviestit))
-  (when (get-in config [:email :persistent-retry :enabled? ])
+  (when (get-in config [:email :persistent-retry :enabled?])
     (email/stop-persistent-retry-job))
   (db/close-datasource!))
 
@@ -118,7 +118,7 @@
 (defn- without-authentication [site]
   (when (not (or (= environment "local") (= environment "test")))
     (throw (Exception.
-             "Authentication is allowed only in local or test environments")))
+            "Authentication is allowed only in local or test environments")))
   (-> site
       (buddy-middleware/wrap-authentication (buddy-session/session-backend))
       (buddy-accessrules/wrap-access-rules
@@ -128,41 +128,41 @@
                              (redirect-to-login request))}]})))
 
 (defn start-virkailija-server [{:keys [host port auto-reload? without-authentication?]}]
-   (let [defaults (-> site-defaults
-                      (assoc-in [:security :anti-forgery] false)
-                      (assoc-in [:session :store]
-                                (cookie-store
-                                  {:key (-> config :server :cookie-key)}))
-                      (assoc-in [:session :cookie-name] "va")
-                      (assoc-in [:session :cookie-attrs :max-age]
-                                (-> config :server :session-timeout-in-s))
-                      (assoc-in [:session :cookie-attrs :same-site] :lax) ; required for CAS initiated redirection
-                      (assoc-in [:session :cookie-attrs :secure]
-                                (-> config :server :require-https?)))
-         authenticator (if without-authentication?
-                         without-authentication
-                         with-authentication)
-         hakija-url (clojure.string/join "" (drop-last (-> config :server :url :fi)))
-         handler (as-> #'all-routes h
-                   (authenticator h)
-                   (ring-session-timeout/wrap-absolute-session-timeout
-                     h {:timeout (-> config :server :session-timeout-in-s)
-                        :timeout-handler redirect-to-login})
-                   (wrap-defaults h defaults)
-                   (server/wrap-logger h)
-                   (server/wrap-cache-control h)
-                   (server/wrap-csp-when-enabled h (-> config :server :virkailija-url) hakija-url)
-                   (server/wrap-hsts-when-enabled h)
-                   (wrap-not-modified h)
-                   (if auto-reload?
-                     (wrap-reload h {:dirs ["server/src"]})
-                     h))
-         threads (or (-> config :server :threads) 16)
-         attachment-max-size (or (-> config :server :attachment-max-size) 50)]
-     (server/start-server {:host host
-                           :port port
-                           :routes handler
-                           :on-startup (partial startup config)
-                           :on-shutdown shutdown
-                           :threads threads
-                           :attachment-max-size attachment-max-size})))
+  (let [defaults (-> site-defaults
+                     (assoc-in [:security :anti-forgery] false)
+                     (assoc-in [:session :store]
+                               (cookie-store
+                                {:key (-> config :server :cookie-key)}))
+                     (assoc-in [:session :cookie-name] "va")
+                     (assoc-in [:session :cookie-attrs :max-age]
+                               (-> config :server :session-timeout-in-s))
+                     (assoc-in [:session :cookie-attrs :same-site] :lax) ; required for CAS initiated redirection
+                     (assoc-in [:session :cookie-attrs :secure]
+                               (-> config :server :require-https?)))
+        authenticator (if without-authentication?
+                        without-authentication
+                        with-authentication)
+        hakija-url (clojure.string/join "" (drop-last (-> config :server :url :fi)))
+        handler (as-> #'all-routes h
+                  (authenticator h)
+                  (ring-session-timeout/wrap-absolute-session-timeout
+                   h {:timeout (-> config :server :session-timeout-in-s)
+                      :timeout-handler redirect-to-login})
+                  (wrap-defaults h defaults)
+                  (server/wrap-logger h)
+                  (server/wrap-cache-control h)
+                  (server/wrap-csp-when-enabled h (-> config :server :virkailija-url) hakija-url)
+                  (server/wrap-hsts-when-enabled h)
+                  (wrap-not-modified h)
+                  (if auto-reload?
+                    (wrap-reload h {:dirs ["server/src"]})
+                    h))
+        threads (or (-> config :server :threads) 16)
+        attachment-max-size (or (-> config :server :attachment-max-size) 50)]
+    (server/start-server {:host host
+                          :port port
+                          :routes handler
+                          :on-startup (partial startup config)
+                          :on-shutdown shutdown
+                          :threads threads
+                          :attachment-max-size attachment-max-size})))

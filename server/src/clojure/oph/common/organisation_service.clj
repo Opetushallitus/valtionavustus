@@ -32,7 +32,7 @@
   (let [url
         (str service-url "organisaatio/" organisation-id "?includeImage=false")
         {:keys [status body error headers]}
-         @(http/get url {:headers caller-id/headers})]
+        @(http/get url {:headers caller-id/headers})]
     (case status
       200 (json->map body)
       404 nil

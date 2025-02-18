@@ -1,6 +1,6 @@
 (ns oph.va.schema
   (:require [schema.core :as s]
-              [oph.soresu.form.schema :refer :all]))
+            [oph.soresu.form.schema :refer :all]))
 
 (create-form-schema ["vaBudget"
                      "vaSummingBudgetElement"
@@ -64,7 +64,6 @@
    (s/maybe {(s/optional-key :refuse-enabled?) s/Bool})
    (s/optional-key :dont-send-loppuselvityspyynto-to-virkailija) (s/maybe {:enabled? s/Bool})})
 
-
 (s/defschema HakuType
   (s/enum "yleisavustus" "erityisavustus"))
 
@@ -74,22 +73,19 @@
 (s/defschema HakuPhase
   (s/enum "unpublished" "upcoming" "current" "ended"))
 
-(s/defschema LocalizedStringOptional {
-                                      (s/optional-key :fi) s/Str
+(s/defschema LocalizedStringOptional {(s/optional-key :fi) s/Str
                                       (s/optional-key :sv)  s/Str})
 
 (s/defschema Liite {:group s/Str
                     :id s/Str
-                    :version s/Str}
-)
+                    :version s/Str})
 
 (defn myonteinen-lisateksti-schema-key [rahoitusalue]
   (s/optional-key (keyword (str "myonteinenlisateksti-" rahoitusalue))))
 
 (s/defschema Decision
   "Decision fields"
-  {
-   (s/optional-key :date) s/Str
+  {(s/optional-key :date) s/Str
    (s/optional-key :taustaa) LocalizedStringOptional
    (myonteinen-lisateksti-schema-key "Varhaiskasvatus") LocalizedStringOptional
    (myonteinen-lisateksti-schema-key "Yleissivistävä_koulutus,_ml__varhaiskasvatus") LocalizedStringOptional
@@ -128,9 +124,7 @@
    (s/optional-key :hyvaksyminen) LocalizedStringOptional
    (s/optional-key :liitteet) [Liite]
    (s/optional-key :dont-include-pakote-ohje) s/Bool
-   (s/optional-key :updatedAt) s/Str
-  }
-)
+   (s/optional-key :updatedAt) s/Str})
 (s/defschema AvustusHaku {:id Long
                           :status HakuStatus
                           :phase HakuPhase
@@ -155,19 +149,17 @@
 
 (s/defschema ListingAvustushaku
   "Avustushaku with extra details for avustushaku listing"
-    (assoc AvustusHaku
-           :vastuuvalmistelija (s/maybe s/Str)
-           :paatokset-lahetetty (s/maybe java.sql.Timestamp)
-           :maksatukset-lahetetty (s/maybe java.sql.Timestamp)
-           :valiselvitykset-lahetetty (s/maybe java.sql.Timestamp)
-           :loppuselvitykset-lahetetty (s/maybe java.sql.Timestamp)
-           :maksatukset-summa (s/maybe s/Int)
-           :use-overridden-detailed-costs (s/maybe s/Bool)
-    ))
+  (assoc AvustusHaku
+         :vastuuvalmistelija (s/maybe s/Str)
+         :paatokset-lahetetty (s/maybe java.sql.Timestamp)
+         :maksatukset-lahetetty (s/maybe java.sql.Timestamp)
+         :valiselvitykset-lahetetty (s/maybe java.sql.Timestamp)
+         :loppuselvitykset-lahetetty (s/maybe java.sql.Timestamp)
+         :maksatukset-summa (s/maybe s/Int)
+         :use-overridden-detailed-costs (s/maybe s/Bool)))
 
 (s/defschema ArviointiDropdownAvustushaut {:id Long
-                                           :name s/Str
-})
+                                           :name s/Str})
 
 (s/defschema HakemusStatus
   "Status from the applicant point of view"
@@ -189,17 +181,14 @@
 
 (s/defschema Meno
   "Meno contains a single menoluokka from talousarvio"
-  {
-   :type s/Str
+  {:type s/Str
    :amount Long
    :translation-fi s/Str
-   :translation-sv (s/maybe  s/Str)
-   })
+   :translation-sv (s/maybe  s/Str)})
 
 (s/defschema NormalizedHakemus
   "NormalizedHakemus contains hakemus answers in normalized format"
-  {
-   :id Long
+  {:id Long
    :hakemus-id Long
    :updated-at s/Inst
    :created-at s/Inst
@@ -212,8 +201,7 @@
    (s/optional-key :trusted-contact-name) s/Str
    (s/optional-key :trusted-contact-email) s/Str
    (s/optional-key :trusted-contact-phone) s/Str
-   (s/optional-key :talousarvio) [Meno]
-   })
+   (s/optional-key :talousarvio) [Meno]})
 
 (s/defschema MuutoshakemusStatus
   "Muutoshakemus status"
@@ -221,28 +209,26 @@
 
 (s/defschema Muutoshakemus
   "Muutoshakemus for a specific hakemus"
-  {
-    :id Long
-    :hakemus-id Long
-    :haen-kayttoajan-pidennysta s/Bool
-    :kayttoajan-pidennys-perustelut (s/maybe s/Str)
-    :haettu-kayttoajan-paattymispaiva (s/maybe java.time.LocalDate)
-    :haen-sisaltomuutosta s/Bool
-    :sisaltomuutos-perustelut (s/maybe s/Str)
-    :talousarvio [Meno]
-    :talousarvio-perustelut (s/maybe s/Str)
-    :status MuutoshakemusStatus
-    :paatos-user-key (s/maybe s/Str)
-    (s/optional-key :paatos-hyvaksytty-paattymispaiva) (s/maybe java.time.LocalDate)
-    (s/optional-key :paatos-talousarvio) (s/maybe [Meno])
-    (s/optional-key :paatos-status-jatkoaika) (s/maybe s/Str)
-    (s/optional-key :paatos-status-talousarvio) (s/maybe s/Str)
-    (s/optional-key :paatos-status-sisaltomuutos) (s/maybe s/Str)
-    (s/optional-key :paatos-reason) (s/maybe s/Str)
-    :paatos-created-at (s/maybe s/Inst)
-    :paatos-sent-at (s/maybe s/Inst)
-    :created-at s/Inst
-    })
+  {:id Long
+   :hakemus-id Long
+   :haen-kayttoajan-pidennysta s/Bool
+   :kayttoajan-pidennys-perustelut (s/maybe s/Str)
+   :haettu-kayttoajan-paattymispaiva (s/maybe java.time.LocalDate)
+   :haen-sisaltomuutosta s/Bool
+   :sisaltomuutos-perustelut (s/maybe s/Str)
+   :talousarvio [Meno]
+   :talousarvio-perustelut (s/maybe s/Str)
+   :status MuutoshakemusStatus
+   :paatos-user-key (s/maybe s/Str)
+   (s/optional-key :paatos-hyvaksytty-paattymispaiva) (s/maybe java.time.LocalDate)
+   (s/optional-key :paatos-talousarvio) (s/maybe [Meno])
+   (s/optional-key :paatos-status-jatkoaika) (s/maybe s/Str)
+   (s/optional-key :paatos-status-talousarvio) (s/maybe s/Str)
+   (s/optional-key :paatos-status-sisaltomuutos) (s/maybe s/Str)
+   (s/optional-key :paatos-reason) (s/maybe s/Str)
+   :paatos-created-at (s/maybe s/Inst)
+   :paatos-sent-at (s/maybe s/Inst)
+   :created-at s/Inst})
 
 (s/defschema HakemusIdList
   "List of hakemus IDs"

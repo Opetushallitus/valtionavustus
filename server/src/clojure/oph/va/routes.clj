@@ -16,8 +16,8 @@
 (def logo-route
   (compojure-api/GET "/img/logo.png" []
     :summary "Permanent url for logo. The url allows changing the logo later. The "
-             "image height must be an integer multiple of 50px so that the result "
-             "of image downscaling made by the browser is crisp."
+    "image height must be an integer multiple of 50px so that the result "
+    "of image downscaling made by the browser is crisp."
     (-> (resource-response "public/img/logo-176x50@2x.png")
         (content-type "image/png"))))
 

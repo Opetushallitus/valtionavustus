@@ -1,13 +1,13 @@
 (ns oph.va.hakija.notification-formatter
-   (:require [oph.common.datetime :as datetime]
-             [oph.common.email :refer [legacy-email-field-ids]]
-             [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
-             [oph.soresu.form.formutil :refer :all]))
+  (:require [oph.common.datetime :as datetime]
+            [oph.common.email :refer [legacy-email-field-ids]]
+            [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
+            [oph.soresu.form.formutil :refer :all]))
 
 (defn is-notification-email-field [field]
   (or
-    (some #(= (:key field) %) legacy-email-field-ids)
-    (has-attribute? :fieldType "vaEmailNotification" field)))
+   (some #(= (:key field) %) legacy-email-field-ids)
+   (has-attribute? :fieldType "vaEmailNotification" field)))
 
 (defn- find-emails-to-notify [answers]
   (->> (flatten-answers answers [])
@@ -41,5 +41,4 @@
              user-key
              avustushaku-start-date
              avustushaku-end-date
-             hakemus-id
-             ))))
+             hakemus-id))))

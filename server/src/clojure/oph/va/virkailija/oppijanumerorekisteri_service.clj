@@ -39,7 +39,6 @@
    :lang       (find-person-lang person)
    :email      (find-person-email person)})
 
-
 (defn get-person-req [person-oid st]
   (let [res @(hk-client/get (make-person-url person-oid) {:query-params {:ticket st}
                                                           :headers {"caller-id" caller-id/caller-id}})]
@@ -66,7 +65,6 @@
                            :else (throw (Exception. (str "Fetching person from oppijanumerorekisteri failed" r)))))))
          (try-response->va-user-info first-response)))
 
-
 (defn get-all-people [person-oids]
   (let [first-oid (first person-oids)
         tgt (get-tgt)
@@ -77,7 +75,6 @@
         rest-oids (rest person-oids)
         futures (doall (map (fn [x] (get-person-req-with-cookie-promise x jsession-id)) rest-oids))]
     (handle-first-and-futures first-person-response futures)))
-
 
 (defn get-person [person-oid]
   (let [tgt (get-tgt)

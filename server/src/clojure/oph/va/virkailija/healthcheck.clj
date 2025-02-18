@@ -16,32 +16,32 @@
   (t/before? (:timestamp check) limit))
 
 (defn validate-checks [coll limit-minutes]
-   (let [limit
-         (t/minus
-           (t/now)
-           (t/minutes limit-minutes))]
-     (map #(assoc % :valid (not (is-expired? % limit))) coll)))
+  (let [limit
+        (t/minus
+         (t/now)
+         (t/minutes limit-minutes))]
+    (map #(assoc % :valid (not (is-expired? % limit))) coll)))
 
 (defn set-timestamps [coll]
   (map
-    #(assoc %
-            :timestamp
-            (f/unparse (:basic-date-time f/formatters) (:timestamp %)))
-    coll))
+   #(assoc %
+           :timestamp
+           (f/unparse (:basic-date-time f/formatters) (:timestamp %)))
+   coll))
 
 (defn get-last-status []
   {:integrations (-> @status
                      (validate-checks
-                       (+
-                         (get-in
-                           config [:integration-healthcheck :interval-minutes])
-                         5))
+                      (+
+                       (get-in
+                        config [:integration-healthcheck :interval-minutes])
+                       5))
                      set-timestamps)
    :current-timestamp (f/unparse (:basic-date-time f/formatters) (t/now))})
 
 (defn check-rondo-status []
   (let [rondo-service (rondo-service/create-service
-                        (get-in config [:server :payment-service-sftp]))
+                       (get-in config [:server :payment-service-sftp]))
         result (with-timeout
                  #(try
                     (get-remote-file-list rondo-service)
@@ -58,14 +58,13 @@
   (reset! status
           [(check-rondo-status)]))
 
-
 (defn start-schedule-status-update! []
   (when (nil? @scheduler)
     (reset! scheduler
             (s/after
-              (get-in config [:integration-healthcheck :interval-minutes])
-              :minute
-              update-status!))))
+             (get-in config [:integration-healthcheck :interval-minutes])
+             :minute
+             update-status!))))
 
 (defn stop-schedule-status-update! []
   (when (some? @scheduler)

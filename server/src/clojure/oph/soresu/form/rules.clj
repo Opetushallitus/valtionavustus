@@ -9,10 +9,10 @@
     (if (= trigger-value answers-value)
       form-state
       (assoc form-state :form (transform-form-content (:form form-state)
-        (fn [node]
-          (if (some #{(:id node)} target-ids)
-            {}
-            node)))))))
+                                                      (fn [node]
+                                                        (if (some #{(:id node)} target-ids)
+                                                          {}
+                                                          node)))))))
 
 (defn apply-rule [form-state rule]
   (case (:type rule)

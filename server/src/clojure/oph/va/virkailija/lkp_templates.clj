@@ -26,10 +26,10 @@
 (defn create-account-matcher [templates]
   (fn [{:keys [key value]}]
     (some
-      (fn [t]
-        (when (= (:key t) key)
-          (get-in t [:accounts value])))
-      templates)))
+     (fn [t]
+       (when (= (:key t) key)
+         (get-in t [:accounts value])))
+     templates)))
 
 (defn get-lkp-account
   ([templates answers] (some (create-account-matcher templates) answers))

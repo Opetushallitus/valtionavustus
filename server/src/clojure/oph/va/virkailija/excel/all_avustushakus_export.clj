@@ -201,90 +201,89 @@ ORDER BY avustushaku.id DESC
 
 (defn- db-row->excel-row [row max-koulutusaste-count max-raportointivelvoitteet-count]
   (concat
-    [(:avustushaku-id row)
-     (or (:avustushaku-name row) "")
-     (or (:avustuslaji row) "")]
-    (expand-koulutusasteet max-koulutusaste-count row)
-    (expand-raportointivelvoitteet max-raportointivelvoitteet-count row)
-    [(format-sql-timestamp (:avustushaku-duration-start row))
-     (format-sql-timestamp (:avustushaku-duration-end row))
-     (cond
-       (:valiselvitykset-lahetetty row) (format-sql-timestamp (:valiselvitykset-lahetetty row))
-       (:valiselvitys-deadline row) (str (java8-date-string (:valiselvitys-deadline row)) " DL")
-       :else "")
-     (cond
-       (:loppuselvitykset-lahetetty row) (format-sql-timestamp (:loppuselvitykset-lahetetty row))
-       (:loppuselvitys-deadline row) (str (java8-date-string (:loppuselvitys-deadline row)) " DL")
-       :else "")
-     (or (:asiatunnus row) "")
-     (or (:avustushaku-maararaha row) "")
-     (or (:toimintayksikko-code-value row) "")
-     (clojure.string/join ", " (:projects row))
-     (if (:maksatukset-lahetetty row) (format-sql-timestamp-as-date (:maksatukset-lahetetty row)) "")
-     (or (:maksatukset-summa row) "")
-     (or (:jakamaton-maararaha row) "")
-     (if (:paatokset-lahetetty row) (format-sql-timestamp-as-date (:paatokset-lahetetty row)) "")
-     (str (:paatokset-total-count row) "/" (:hyvaksytty-count row) "/" (:hylatty-count row))
-     (if (:ensimmainen-kayttopaiva row) (java8-date-string (:ensimmainen-kayttopaiva row)) "")
-     (if (:viimeinen-kayttopaiva row) (java8-date-string (:viimeinen-kayttopaiva row)) "")
-     (if (:vastuuvalmistelija-name row)
-       (str (:vastuuvalmistelija-name row) ", " (:vastuuvalmistelija-email row))
-       "")
-     (if (:lainsaadanto row)
-       (join ", " (:lainsaadanto row))
-       "")
-     ""
-     (if (:arvioitu-maksupaiva row) (java8-date-string (:arvioitu-maksupaiva row)) "")]))
-
+   [(:avustushaku-id row)
+    (or (:avustushaku-name row) "")
+    (or (:avustuslaji row) "")]
+   (expand-koulutusasteet max-koulutusaste-count row)
+   (expand-raportointivelvoitteet max-raportointivelvoitteet-count row)
+   [(format-sql-timestamp (:avustushaku-duration-start row))
+    (format-sql-timestamp (:avustushaku-duration-end row))
+    (cond
+      (:valiselvitykset-lahetetty row) (format-sql-timestamp (:valiselvitykset-lahetetty row))
+      (:valiselvitys-deadline row) (str (java8-date-string (:valiselvitys-deadline row)) " DL")
+      :else "")
+    (cond
+      (:loppuselvitykset-lahetetty row) (format-sql-timestamp (:loppuselvitykset-lahetetty row))
+      (:loppuselvitys-deadline row) (str (java8-date-string (:loppuselvitys-deadline row)) " DL")
+      :else "")
+    (or (:asiatunnus row) "")
+    (or (:avustushaku-maararaha row) "")
+    (or (:toimintayksikko-code-value row) "")
+    (clojure.string/join ", " (:projects row))
+    (if (:maksatukset-lahetetty row) (format-sql-timestamp-as-date (:maksatukset-lahetetty row)) "")
+    (or (:maksatukset-summa row) "")
+    (or (:jakamaton-maararaha row) "")
+    (if (:paatokset-lahetetty row) (format-sql-timestamp-as-date (:paatokset-lahetetty row)) "")
+    (str (:paatokset-total-count row) "/" (:hyvaksytty-count row) "/" (:hylatty-count row))
+    (if (:ensimmainen-kayttopaiva row) (java8-date-string (:ensimmainen-kayttopaiva row)) "")
+    (if (:viimeinen-kayttopaiva row) (java8-date-string (:viimeinen-kayttopaiva row)) "")
+    (if (:vastuuvalmistelija-name row)
+      (str (:vastuuvalmistelija-name row) ", " (:vastuuvalmistelija-email row))
+      "")
+    (if (:lainsaadanto row)
+      (join ", " (:lainsaadanto row))
+      "")
+    ""
+    (if (:arvioitu-maksupaiva row) (java8-date-string (:arvioitu-maksupaiva row)) "")]))
 
 (defn- koulutusaste-headers [n]
   (let [header-pairs (map-indexed
-                       (fn [idx _] [(str "Koulutusaste " (+ idx 1))
-                                    (str "TA-tilit " (+ idx 1))])
-                       (repeat n nil))]
+                      (fn [idx _] [(str "Koulutusaste " (+ idx 1))
+                                   (str "TA-tilit " (+ idx 1))])
+                      (repeat n nil))]
     (apply concat header-pairs)))
 
 (defn- raportointivelvoite-headers [n]
   (let [headers (map-indexed
-                  (fn [idx _] [(str "Raportointivelvoite " (+ idx 1))])
-                  (repeat n nil))]
+                 (fn [idx _] [(str "Raportointivelvoite " (+ idx 1))])
+                 (repeat n nil))]
     (apply concat headers)))
 
 (defn- headers [max-koulutusaste-count max-raportointivelvoite-count]
   [(concat
-     ["" "" ""]
-     (repeat (* 2 max-koulutusaste-count) "")
-     (repeat max-raportointivelvoite-count "")
-     ["" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "Manuaalisesti täydennettävät"])
+    ["" "" ""]
+    (repeat (* 2 max-koulutusaste-count) "")
+    (repeat max-raportointivelvoite-count "")
+    ["" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "Manuaalisesti täydennettävät"])
    (concat
-     ["Haun ID"
-      "Avustuksen nimi"
-      "Avustuslaji"]
-     (koulutusaste-headers max-koulutusaste-count)
-     (raportointivelvoite-headers max-raportointivelvoite-count)
-     ["Haku auki"
-      "Haku kiinni"
-      "Väliselvitys lähetetty/DL"
-      "Loppuselvitys lähetetty/DL"
-      "Asiatunnus"
-      "Määräraha (€)"
-      "Toimintayksikkö"
-      "Projektit"
-      "Maksettu pvm"
-      "Maksettu €"
-      "Jakamaton (määräraha miinus maksettu)"
-      "Päätös pvm"
-      "Päätösten lkm, yht/myönteinen/kielteinen"
-      "1. käyttöpäivä"
-      "viimeinen käyttöpäivä"
-      "Vastuuvalmistelija"
-      "Lainsäädäntö"
+    ["Haun ID"
+     "Avustuksen nimi"
+     "Avustuslaji"]
+    (koulutusaste-headers max-koulutusaste-count)
+    (raportointivelvoite-headers max-raportointivelvoite-count)
+    ["Haku auki"
+     "Haku kiinni"
+     "Väliselvitys lähetetty/DL"
+     "Loppuselvitys lähetetty/DL"
+     "Asiatunnus"
+     "Määräraha (€)"
+     "Toimintayksikkö"
+     "Projektit"
+     "Maksettu pvm"
+     "Maksettu €"
+     "Jakamaton (määräraha miinus maksettu)"
+     "Päätös pvm"
+     "Päätösten lkm, yht/myönteinen/kielteinen"
+     "1. käyttöpäivä"
+     "viimeinen käyttöpäivä"
+     "Vastuuvalmistelija"
+     "Lainsäädäntö"
       ; Manuaalisesti täydennettävät
-      "Määrärahan nimi talousarviossa"
-      "Arvioitu maksu pvm"
-      "Käytettävä määräraha sidottu/purettu kirjanpidossa pvm"
-      "Noudatettava lainsäädäntö"
-      "OKM raportointivaatimukset"])])
+     "Määrärahan nimi talousarviossa"
+     "Arvioitu maksu pvm"
+     "Käytettävä määräraha sidottu/purettu kirjanpidossa pvm"
+     "Noudatettava lainsäädäntö"
+     "OKM raportointivaatimukset"])])
 
 (defn export-avustushakus []
   (let [data (query export-data-query [])
@@ -292,9 +291,9 @@ ORDER BY avustushaku.id DESC
         max-koulutusaste-count (apply max (map (comp count :koulutusasteet) data))
         max-raportointivelvoite-count (apply max (map (comp count :raportointivelvoitteet) data))
         wb (spreadsheet/create-workbook
-             "Avustushaut"
-             (concat
-               (headers max-koulutusaste-count max-raportointivelvoite-count)
-               (vec (map #(db-row->excel-row % max-koulutusaste-count max-raportointivelvoite-count) data))))]
+            "Avustushaut"
+            (concat
+             (headers max-koulutusaste-count max-raportointivelvoite-count)
+             (vec (map #(db-row->excel-row % max-koulutusaste-count max-raportointivelvoite-count) data))))]
     (.write wb output)
     (.toByteArray output)))

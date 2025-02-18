@@ -1,7 +1,6 @@
 (ns oph.soresu.common.validation
   (:require [clojure.string :as string]
-            [clojure.tools.logging :as log]
-            ))
+            [clojure.tools.logging :as log]))
 
 (defn contains-escaped-unicode-null [s]
   (string/includes? s "\u0000"))

@@ -39,5 +39,5 @@
 (defn get-fake-identity [session]
   (let [identity-name (:fake-identity session)]
     (if (nil? identity-name)
-        default-fake-admin-identity
-        (fake-identities identity-name))))
+      default-fake-admin-identity
+      (fake-identities identity-name))))

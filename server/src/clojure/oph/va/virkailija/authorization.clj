@@ -5,8 +5,8 @@
 
 (defn is-valmistelija? [role]
   (or
-    (= (:role role) "presenting_officer")
-    (= (:role role) "vastuuvalmistelija")))
+   (= (:role role) "presenting_officer")
+   (= (:role role) "vastuuvalmistelija")))
 
 (defn resolve-user-privileges [user-identity user-haku-role]
   (let [is-presenter      (is-valmistelija? user-haku-role)

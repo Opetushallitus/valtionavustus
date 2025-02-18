@@ -7,11 +7,11 @@
 
 (defn has-privilege? [identity privilege]
   (true?
-    (some #(= % privilege) (:privileges identity))))
+   (some #(= % privilege) (:privileges identity))))
 
 (defmacro with-admin [request form unauthorized]
   `(if (has-privilege?
-         (authentication/get-request-identity ~request) "va-admin")
+        (authentication/get-request-identity ~request) "va-admin")
      ~form
      ~unauthorized))
 

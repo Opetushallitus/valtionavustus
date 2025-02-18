@@ -7,11 +7,11 @@
 
 (defn- replace-in-key [k s d]
   (keyword
-    (.replace (name k) s d)))
+   (.replace (name k) s d)))
 
 (defn- map-filter-keys [c f m]
   (reduce
-    #(merge %1 {%2 (c %2)}) {} (filter f (keys m))))
+   #(merge %1 {%2 (c %2)}) {} (filter f (keys m))))
 
 (defn- contains-underscore? [k]
   (key-contains? k "_"))

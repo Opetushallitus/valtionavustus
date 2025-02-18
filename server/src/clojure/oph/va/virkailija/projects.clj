@@ -5,10 +5,10 @@
 
 (defn update-project [hakemus-id project]
   (execute!
-              "UPDATE hakija.hakemukset h
+   "UPDATE hakija.hakemukset h
                SET project_id = ?
                WHERE h.id = ?"
-              [(:id project) hakemus-id]))
+   [(:id project) hakemus-id]))
 
 (defn get-project [hakemus-id]
   (let [projects (query "WITH newest_hakemus AS
@@ -47,14 +47,14 @@
 
 (defn insert-project [avustushaku-id project tx]
   (execute! tx
-              "INSERT INTO virkailija.avustushaku_project_code (avustushaku_id, project_id)
+            "INSERT INTO virkailija.avustushaku_project_code (avustushaku_id, project_id)
                 VALUES (?, ?)"
-              [avustushaku-id (:id project)]))
+            [avustushaku-id (:id project)]))
 
 (defn update-projects [avustushaku-id projects]
   (with-tx (fn [tx]
-    (execute! tx
-              "DELETE FROM virkailija.avustushaku_project_code
+             (execute! tx
+                       "DELETE FROM virkailija.avustushaku_project_code
                 WHERE avustushaku_id = ?"
-              [avustushaku-id])
-    (run! (fn [project] (insert-project avustushaku-id project tx)) projects))))
+                       [avustushaku-id])
+             (run! (fn [project] (insert-project avustushaku-id project tx)) projects))))

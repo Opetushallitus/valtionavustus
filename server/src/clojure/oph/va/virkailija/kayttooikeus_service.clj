@@ -31,7 +31,6 @@
                                                             :headers {"caller-id" caller-id/caller-id}})]
     (cheshire/parse-string (:body res) true)))
 
-
 (defn- validate-response-body-count [matches username]
   (let [num-matches (count matches)]
     (cond

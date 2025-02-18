@@ -90,19 +90,19 @@
                 user-key (-> new-hakemus :hakemus :user_key)]
             (if (is-jotpa-avustushaku avustushaku)
               (va-email/send-new-jotpa-hakemus-message! language
-                                                [email]
-                                                haku-id
-                                                avustushaku-title
-                                                user-key
-                                                avustushaku-start-date
-                                                avustushaku-end-date)
+                                                        [email]
+                                                        haku-id
+                                                        avustushaku-title
+                                                        user-key
+                                                        avustushaku-start-date
+                                                        avustushaku-end-date)
               (va-email/send-new-hakemus-message! language
-                                                [email]
-                                                haku-id
-                                                avustushaku-title
-                                                user-key
-                                                avustushaku-start-date
-                                                avustushaku-end-date))
+                                                  [email]
+                                                  haku-id
+                                                  avustushaku-title
+                                                  user-key
+                                                  avustushaku-start-date
+                                                  avustushaku-end-date))
             (hakemus-ok-response (:hakemus new-hakemus) (without-id (:submission new-hakemus)) validation nil))
           (internal-server-error!)))
       (bad-request! security-validation))))
@@ -177,7 +177,7 @@
     true
     (catch Exception e
       (log/info "Could not normalize necessary hakemus fields for hakemus: " hakemus-id " Error: " (.getMessage e))
-      false)) )
+      false)))
 
 (defn can-update-hakemus [haku-id user-key answers identity]
   (let [hakemus (va-db/get-hakemus user-key)
@@ -243,15 +243,13 @@
            (not (:refused hakemus)))
       (do
         (with-tx (fn [tx] (va-db/refuse-application tx (:id hakemus) comment)))
-        (let [
-              virkailija-roles (get-valmistelijas-for-avustushaku (:id avustushaku))
+        (let [virkailija-roles (get-valmistelijas-for-avustushaku (:id avustushaku))
               normalized-hakemus (va-db/get-normalized-hakemus hakemus-id)
               contact-email (:contact-email normalized-hakemus)
               trusted-contact-email (:trusted-contact-email normalized-hakemus)
               answer-email (find-answer-value (:answers submission) "primary-email")
               primary-contact-email (or contact-email answer-email)
-              to (remove nil? (concat [primary-contact-email trusted-contact-email]))
-              ]
+              to (remove nil? (concat [primary-contact-email trusted-contact-email]))]
           (when (some #(when (some? (:email %)) true) virkailija-roles)
             (va-email/send-refused-message-to-presenter!
              (map :email (filter #(some? (:email %)) virkailija-roles))
@@ -305,12 +303,12 @@
               saved-submission (:body (update-form-submission form-id submission-id answers))
               submission-version (:version saved-submission)
               submitted-hakemus (with-tx #(va-db/submit-hakemus %
-                                                      haku-id
-                                                      hakemus
-                                                      submission-version
-                                                      answers
-                                                      budget-totals
-                                                      user-key))
+                                                                haku-id
+                                                                hakemus
+                                                                submission-version
+                                                                answers
+                                                                budget-totals
+                                                                user-key))
               change-requests (va-db/list-hakemus-change-requests user-key)
               email-of-virkailija (:user_email (last change-requests))]
           (if email-of-virkailija
@@ -321,7 +319,7 @@
       (bad-request! validation))))
 
 (defn on-hakemus-edit-submit [haku-id user-key base-version answers edit-type]
-    (let [hakemus (va-db/get-hakemus user-key)
+  (let [hakemus (va-db/get-hakemus user-key)
         avustushaku (va-db/get-avustushaku (:avustushaku hakemus))
         form-id (:form avustushaku)
         form (form-db/get-form form-id)
@@ -336,15 +334,16 @@
               submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
               submission-version (:version saved-submission)
-              submitted-hakemus (with-tx (fn [tx]
-                                           (va-db/submit-hakemus
-                                                      tx
-                                                      haku-id
-                                                      hakemus
-                                                      submission-version
-                                                      answers
-                                                      budget-totals
-                                                      user-key)))
+              submitted-hakemus (with-tx
+                                  (fn [tx]
+                                    (va-db/submit-hakemus
+                                     tx
+                                     haku-id
+                                     hakemus
+                                     submission-version
+                                     answers
+                                     budget-totals
+                                     user-key)))
               submission (:body (get-form-submission
                                  (:form avustushaku)
                                  (:form_submission_id hakemus)))]

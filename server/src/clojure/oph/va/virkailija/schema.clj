@@ -41,21 +41,14 @@
    :ok-fields [MuutoshakemuksenVaatimaKentta]
    :erroneous-fields [MuutoshakemuksenVaatimaKentta]})
 
- (s/defschema MuutoshakemusPaatosRequest
-   "Muutoshakemus paatos"
-   {:reason s/Str
-    (s/optional-key :haen-sisaltomuutosta) (s/maybe {
-      :status s/Str
-    })
-    (s/optional-key :haen-kayttoajan-pidennysta) (s/maybe {
-      (s/optional-key :paattymispaiva) (s/maybe java.time.LocalDate)
-      :status s/Str
-    })
-    (s/optional-key :talousarvio) (s/maybe {
-      :talousarvio TalousarvioMuutos
-      :status s/Str
-    })
-    })
+(s/defschema MuutoshakemusPaatosRequest
+  "Muutoshakemus paatos"
+  {:reason s/Str
+   (s/optional-key :haen-sisaltomuutosta) (s/maybe {:status s/Str})
+   (s/optional-key :haen-kayttoajan-pidennysta) (s/maybe {(s/optional-key :paattymispaiva) (s/maybe java.time.LocalDate)
+                                                          :status s/Str})
+   (s/optional-key :talousarvio) (s/maybe {:talousarvio TalousarvioMuutos
+                                           :status s/Str})})
 
 (s/defschema DbEmail
   "Email stored in database"
@@ -67,13 +60,13 @@
    :bcc (s/maybe s/Str)
    :cc [s/Str]
    (s/optional-key :from-address) (s/maybe s/Str)
-  (s/optional-key :attachment-title) (s/maybe s/Str)
-  (s/optional-key :attachment-contents) (s/maybe s/Str)
-  (s/optional-key :attachment-description) (s/maybe s/Str)})
+   (s/optional-key :attachment-title) (s/maybe s/Str)
+   (s/optional-key :attachment-contents) (s/maybe s/Str)
+   (s/optional-key :attachment-description) (s/maybe s/Str)})
 
 (s/defschema DbEmails
   "Emails stored in database"
-   [DbEmail])
+  [DbEmail])
 
 (s/defschema PersonScoreAverage
   "Averga score by person"
@@ -308,8 +301,7 @@
    :surname (s/maybe s/Str)
    :email (s/maybe s/Str)
    :lang s/Str
-   :privileges [s/Str]
-   })
+   :privileges [s/Str]})
 
 (s/defschema PopulateUserCachePayload
   [UserInUserCache])
@@ -402,7 +394,7 @@
    (s/optional-key :project-code) (s/maybe s/Str)
    (s/optional-key :answers) [soresu-schema/Answer]
    (s/optional-key :payment-decisions) (s/maybe [{:id s/Int :payment-sum s/Int
-                                         :takp-account s/Str}])
+                                                  :takp-account s/Str}])
    (s/optional-key :refused) (s/maybe s/Bool)
    (s/optional-key :refused-comment) (s/maybe s/Str)
    (s/optional-key :refused-at) (s/maybe s/Inst)
@@ -427,16 +419,14 @@
    :document-id (describe s/Str "can contain old ASHA-tunniste that are different from the validation rule in NewBatchDocument")
    :phase s/Int
    :presenter-email s/Str
-   :acceptor-email s/Str
-})
+   :acceptor-email s/Str})
 
 (s/defschema NewBatchDocument
   "New payment batch document with validated ASHA-tunniste"
   {:document-id (describe #"^ID\d{1,10}$" "ASHA-tunniste")
    :phase s/Int
    :presenter-email s/Str
-   :acceptor-email s/Str
-   })
+   :acceptor-email s/Str})
 
 (s/defschema PaymentsCreateResult
   "Payment create result"
@@ -451,12 +441,10 @@
                    :valid s/Bool}]
    :current-timestamp s/Str})
 
-
 (s/defschema IncompleteLocalizedString
   "Localized string that might be missing a key"
   {(s/optional-key :fi) s/Str
    (s/optional-key :sv) s/Str})
-
 
 (s/defschema ExternalGrant
   "Avustushaun tiedot ulkopuolisia järjestelmiä varten"
@@ -510,12 +498,10 @@
    :name s/Str})
 
 (s/defschema CreateTalousarviotili
-  {
-  :name s/Str
-  :code s/Str
-  :year s/Int
-  :amount s/Int
- })
+  {:name s/Str
+   :code s/Str
+   :year s/Int
+   :amount s/Int})
 
 (s/defschema UpdateTalousarviotili
   {:id s/Int
@@ -525,25 +511,21 @@
    :amount s/Int})
 
 (s/defschema TalousarvioAvustushaku
-  {
-    :id s/Int
-    :name s/Str})
+  {:id s/Int
+   :name s/Str})
 
 (s/defschema Talousarviotili
-             {
-              :id s/Int
-              :name (s/maybe s/Str)
-              :code s/Str
-              :year (s/maybe s/Int)
-              :amount (s/maybe s/Int)
-              :migrated-from-not-normalized-ta-tili s/Bool
-              :deleted (s/maybe s/Inst)
-              })
+  {:id s/Int
+   :name (s/maybe s/Str)
+   :code s/Str
+   :year (s/maybe s/Int)
+   :amount (s/maybe s/Int)
+   :migrated-from-not-normalized-ta-tili s/Bool
+   :deleted (s/maybe s/Inst)})
 
 (s/defschema VaCodesTalousarviotili
   (assoc Talousarviotili
-         :avustushaut [TalousarvioAvustushaku]
-         ))
+         :avustushaut [TalousarvioAvustushaku]))
 
 (s/defschema AvustushakuTalousarviotili
   (assoc Talousarviotili
@@ -551,17 +533,14 @@
 
 (s/defschema EmailContent
   "Email"
-  {
-    :id s/Int
-    :sender s/Str
-    :formatted s/Str
-    :created_at s/Inst
-    :to_address [s/Str]
-    :from_address s/Str
-    :reply_to (s/maybe s/Str)
-    :subject s/Str
-  }
-)
+  {:id s/Int
+   :sender s/Str
+   :formatted s/Str
+   :created_at s/Inst
+   :to_address [s/Str]
+   :from_address s/Str
+   :reply_to (s/maybe s/Str)
+   :subject s/Str})
 
 (s/defschema HakemusTapahtumaloki
   "Hakemus Tapahtumaloki"
@@ -576,5 +555,4 @@
     :emails {:addresses (s/either [s/Str] {})}
     :hakemus_id s/Int
     :email_id (s/maybe s/Int)
-    :email_content (s/maybe EmailContent)
-    }])
+    :email_content (s/maybe EmailContent)}])

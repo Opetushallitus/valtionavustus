@@ -5,26 +5,20 @@
 
 (s/defschema JatkoaikaHakemus
   "JatkoaikaHakemus contains fields for applying for deadline extension"
-  {
-    :haenKayttoajanPidennysta s/Bool
-    :kayttoajanPidennysPerustelut s/Str
-    :haettuKayttoajanPaattymispaiva java.time.LocalDate
-    })
+  {:haenKayttoajanPidennysta s/Bool
+   :kayttoajanPidennysPerustelut s/Str
+   :haettuKayttoajanPaattymispaiva java.time.LocalDate})
 
 (s/defschema Sisaltomuutos
   "JatkoaikaHakemus contains fields for applying for deadline extension"
-  {
-    :haenSisaltomuutosta s/Bool
-    :sisaltomuutosPerustelut s/Str
-    })
+  {:haenSisaltomuutosta s/Bool
+   :sisaltomuutosPerustelut s/Str})
 
 (s/defschema ContactPersonDetails
   "ContactPersonDetails contains contact person details in normalized format"
-  {
-   :name s/Str
+  {:name s/Str
    :email s/Str
-   :phone s/Str
-   })
+   :phone s/Str})
 
 (s/defschema TalousarvioMuutos
   "TalousarvioMuutos contains a list of menoluokka amounts"
@@ -32,14 +26,12 @@
 
 (s/defschema MuutoshakemusRequest
   "MuutoshakemusRequest is the payload for applying for changes to application"
-  {
-    (s/optional-key :jatkoaika) JatkoaikaHakemus
-    (s/optional-key :talousarvio) TalousarvioMuutos
-    (s/optional-key :talousarvioPerustelut) s/Str
-    (s/optional-key :yhteyshenkilo) ContactPersonDetails
-    (s/optional-key :varayhteyshenkilo) ContactPersonDetails
-    (s/optional-key :sisaltomuutos) Sisaltomuutos
-  })
+  {(s/optional-key :jatkoaika) JatkoaikaHakemus
+   (s/optional-key :talousarvio) TalousarvioMuutos
+   (s/optional-key :talousarvioPerustelut) s/Str
+   (s/optional-key :yhteyshenkilo) ContactPersonDetails
+   (s/optional-key :varayhteyshenkilo) ContactPersonDetails
+   (s/optional-key :sisaltomuutos) Sisaltomuutos})
 
 (s/defschema PaatosStatus
   "Status of individual muutoshakemus section paatos"
@@ -47,47 +39,39 @@
 
 (s/defschema Paatos
   "Paatos"
-  {
-    :id Long
-    :status s/Str
-    :user-key s/Str
-    :reason s/Str
-    :created-at s/Inst
-    :updated-at s/Inst
-    (s/optional-key :paattymispaiva) (s/maybe java.time.LocalDate)
-    (s/optional-key :talousarvio) (s/maybe [Meno])
-    (s/optional-key :paatos-status-jatkoaika) (s/maybe PaatosStatus)
-    (s/optional-key :paatos-status-talousarvio) (s/maybe PaatosStatus)
-    (s/optional-key :paatos-status-sisaltomuutos) (s/maybe PaatosStatus)
-    :decider s/Str
-  })
+  {:id Long
+   :status s/Str
+   :user-key s/Str
+   :reason s/Str
+   :created-at s/Inst
+   :updated-at s/Inst
+   (s/optional-key :paattymispaiva) (s/maybe java.time.LocalDate)
+   (s/optional-key :talousarvio) (s/maybe [Meno])
+   (s/optional-key :paatos-status-jatkoaika) (s/maybe PaatosStatus)
+   (s/optional-key :paatos-status-talousarvio) (s/maybe PaatosStatus)
+   (s/optional-key :paatos-status-sisaltomuutos) (s/maybe PaatosStatus)
+   :decider s/Str})
 
 (s/defschema Presenter
   "Presenter"
-  {
-    :name s/Str
-    :email s/Str
-  })
+  {:name s/Str
+   :email s/Str})
 
 (s/defschema Avustushaku
-             "Avustushaku"
-             {
-              :hankkeen-alkamispaiva (s/maybe java.time.LocalDate)
-              :hankkeen-paattymispaiva (s/maybe java.time.LocalDate)
-              })
+  "Avustushaku"
+  {:hankkeen-alkamispaiva (s/maybe java.time.LocalDate)
+   :hankkeen-paattymispaiva (s/maybe java.time.LocalDate)})
 
 (s/defschema MuutoshakemusPaatosDocument
   "Data for rendering a muutoshakemus paatos document"
-  {
-    :paatos Paatos
-    :muutoshakemus Muutoshakemus
-    :muutoshakemusUrl s/Str
-    :presenter Presenter
-    :isDecidedByUkotettuValmistelija s/Bool
-    :hakemus NormalizedHakemus
-    :avustushaku Avustushaku
-    :muutoshakemukset MuutoshakemusList
-  })
+  {:paatos Paatos
+   :muutoshakemus Muutoshakemus
+   :muutoshakemusUrl s/Str
+   :presenter Presenter
+   :isDecidedByUkotettuValmistelija s/Bool
+   :hakemus NormalizedHakemus
+   :avustushaku Avustushaku
+   :muutoshakemukset MuutoshakemusList})
 
 (s/defschema Hakemus
   "Hakemus contains hakemus, last submission and server validation error info about it"

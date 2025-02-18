@@ -60,8 +60,8 @@
 (defn get-hakemus
   ([user-key]
    (->> {:user_key user-key}
-       (exec queries/get-hakemus-by-user-key)
-       first))
+        (exec queries/get-hakemus-by-user-key)
+        first))
   ([tx user-key]
    (first (queries/get-hakemus-by-user-key {:user_key user-key} {:connection tx}))))
 
@@ -76,8 +76,8 @@
 
 (defn get-hakemus-version [user-key version]
   (first
-    (exec queries/get-hakemus-version-by-user-id
-          {:user_key user-key :version version})))
+   (exec queries/get-hakemus-version-by-user-id
+         {:user_key user-key :version version})))
 
 (defn get-hakemus-paatos [hakemus-id]
   (->> {:hakemus_id hakemus-id}
@@ -110,7 +110,6 @@
 (defn- convert-budget-totals [budget-totals]
   {:budget_total (or (:total-needed budget-totals) 0)
    :budget_oph_share (or (:oph-share budget-totals) 0)})
-
 
 (defn create-hakemus! [avustushaku-id form-id answers hakemus-type register-number budget-totals parent-id]
   (let [submission (form-db/create-submission! form-id answers)
@@ -158,34 +157,32 @@
         talousarvio (when hakemus (get-talousarvio (:hakemus-id hakemus) "hakemus"))]
     (log/info (str "Succesfully fetched hakemus with user-key: " user-key))
     (if hakemus
-      (into {} (filter (comp some? val) {
-        :id (:id hakemus)
-        :hakemus-id (:hakemus-id hakemus)
-        :updated-at (:updated-at hakemus)
-        :created-at (:created-at hakemus)
-        :project-name (:project-name hakemus)
-        :contact-person (:contact-person hakemus)
-        :contact-email (:contact-email hakemus)
-        :contact-phone (:contact-phone hakemus)
-        :organization-name (:organization-name hakemus)
-        :register-number (:register-number hakemus)
-        :talousarvio talousarvio
-        :trusted-contact-name (get-in hakemus [:trusted-contact-name])
-        :trusted-contact-email (get-in hakemus [:trusted-contact-email])
-        :trusted-contact-phone (get-in hakemus [:trusted-contact-phone])
-       }))
+      (into {} (filter (comp some? val) {:id (:id hakemus)
+                                         :hakemus-id (:hakemus-id hakemus)
+                                         :updated-at (:updated-at hakemus)
+                                         :created-at (:created-at hakemus)
+                                         :project-name (:project-name hakemus)
+                                         :contact-person (:contact-person hakemus)
+                                         :contact-email (:contact-email hakemus)
+                                         :contact-phone (:contact-phone hakemus)
+                                         :organization-name (:organization-name hakemus)
+                                         :register-number (:register-number hakemus)
+                                         :talousarvio talousarvio
+                                         :trusted-contact-name (get-in hakemus [:trusted-contact-name])
+                                         :trusted-contact-email (get-in hakemus [:trusted-contact-email])
+                                         :trusted-contact-phone (get-in hakemus [:trusted-contact-phone])}))
       nil)))
 
 (defn create-muutoshakemus-url [va-url avustushaku-id user-key]
-  (let [ url-parameters  (form-encode { :user-key user-key :avustushaku-id avustushaku-id})]
-(str va-url "muutoshakemus?" url-parameters)))
+  (let [url-parameters  (form-encode {:user-key user-key :avustushaku-id avustushaku-id})]
+    (str va-url "muutoshakemus?" url-parameters)))
 
 (defn get-muutoshakemus-url-by-hakemus-id [id]
   (let [hakemukset (query "SELECT user_key, avustushaku from hakija.hakemukset WHERE id = ?" [id])
         hakemus (first hakemukset)
         va-url (get-in config [:server :url :fi])
         muutoshakemus-url (create-muutoshakemus-url va-url (:avustushaku hakemus) (:user-key hakemus))]
-      muutoshakemus-url))
+    muutoshakemus-url))
 
 (defn get-normalized-hakemus-by-id [id]
   (log/info (str "Get normalized hakemus with id: " id))
@@ -296,14 +293,14 @@
     (get-muutoshakemukset hakemus-id)))
 
 (defn get-avustushaku-by-paatos-user-key [user-key]
-      (let [avustushaut (query "SELECT a.id, a.hankkeen_alkamispaiva, a.hankkeen_paattymispaiva
+  (let [avustushaut (query "SELECT a.id, a.hankkeen_alkamispaiva, a.hankkeen_paattymispaiva
                                 FROM virkailija.muutoshakemus mh
                                 LEFT JOIN virkailija.paatos p on mh.paatos_id = p.id
                                 LEFT JOIN hakija.hakemukset h on mh.hakemus_id = h.id
                                 LEFT JOIN hakija.avustushaut a on h.avustushaku = a.id
                                 WHERE h.version_closed IS NULL
                                 AND p.user_key = ?" [user-key])]
-           (first avustushaut)))
+    (first avustushaut)))
 
 (defn get-valmistelija-assigned-to-hakemus [hakemus-id]
   (let [sql "SELECT ahr.name, ahr.email, ahr.oid
@@ -324,24 +321,24 @@
         haettu-kayttoajan-paattymispaiva (get-in muutoshakemus [:jatkoaika :haettuKayttoajanPaattymispaiva])
         talousarvio-perustelut (:talousarvioPerustelut muutoshakemus)
         id-rows (query tx
-                      "INSERT INTO virkailija.muutoshakemus
+                       "INSERT INTO virkailija.muutoshakemus
                             (hakemus_id, haen_kayttoajan_pidennysta, kayttoajan_pidennys_perustelut, haettu_kayttoajan_paattymispaiva, talousarvio_perustelut, haen_sisaltomuutosta, sisaltomuutos_perustelut)
                         VALUES (?, ?, ?, ?, ?, ?, ?)
                         RETURNING id"
-                      [hakemus-id haen-kayttoajan-pidennysta kayttoajan-pidennys-perustelut haettu-kayttoajan-paattymispaiva talousarvio-perustelut, haen-sisaltomuutosta, sisaltomuutos-perustelut])]
+                       [hakemus-id haen-kayttoajan-pidennysta kayttoajan-pidennys-perustelut haettu-kayttoajan-paattymispaiva talousarvio-perustelut, haen-sisaltomuutosta, sisaltomuutos-perustelut])]
     (:id (first id-rows))))
 
 (defn- add-muutoshakemus-menoluokkas [tx muutoshakemus-id avustushaku-id talousarvio]
   (doseq [[type amount] (seq talousarvio)]
     (execute! tx
-      "INSERT INTO menoluokka_muutoshakemus (menoluokka_id, muutoshakemus_id, amount)
+              "INSERT INTO menoluokka_muutoshakemus (menoluokka_id, muutoshakemus_id, amount)
        VALUES ((SELECT id FROM menoluokka WHERE avustushaku_id = ? AND type = ?), ?, ?)"
-      [avustushaku-id (name type) muutoshakemus-id amount])))
+              [avustushaku-id (name type) muutoshakemus-id amount])))
 
 (defn store-normalized-hakemus [tx id hakemus answers]
   (log/info (str "Storing normalized fields for hakemus: " id))
-    (execute! tx
-      "INSERT INTO virkailija.normalized_hakemus (
+  (execute! tx
+            "INSERT INTO virkailija.normalized_hakemus (
           hakemus_id,
           project_name,
           contact_person,
@@ -364,30 +361,28 @@
           trusted_contact_name = EXCLUDED.trusted_contact_name,
           trusted_contact_email = EXCLUDED.trusted_contact_email,
           trusted_contact_phone = EXCLUDED.trusted_contact_phone"
-        [id,
-         (form-util/find-answer-value answers "project-name"),
-         (form-util/find-answer-value answers "applicant-name"),
-         (form-util/find-answer-value answers "primary-email"),
-         (form-util/find-answer-value answers "textField-0"),
-         (:organization_name hakemus),
-         (:register_number hakemus)
-         (form-util/find-answer-value answers "trusted-contact-name")
-         (form-util/find-answer-value answers "trusted-contact-email")
-         (form-util/find-answer-value answers "trusted-contact-phone")
-         ])
+            [id,
+             (form-util/find-answer-value answers "project-name"),
+             (form-util/find-answer-value answers "applicant-name"),
+             (form-util/find-answer-value answers "primary-email"),
+             (form-util/find-answer-value answers "textField-0"),
+             (:organization_name hakemus),
+             (:register_number hakemus)
+             (form-util/find-answer-value answers "trusted-contact-name")
+             (form-util/find-answer-value answers "trusted-contact-email")
+             (form-util/find-answer-value answers "trusted-contact-phone")])
   (log/info (str "Succesfully stored normalized fields for hakemus with id: " id)))
 
 (defn- change-normalized-hakemus-contact-person-details [tx user-key hakemus-id contact-person-details]
   (log/info (str "Change normalized contact person details with user-key: " user-key))
-  (let [ contact-person (:name contact-person-details)
-         contact-phone (:phone contact-person-details)
-         contact-email (:email contact-person-details)]
+  (let [contact-person (:name contact-person-details)
+        contact-phone (:phone contact-person-details)
+        contact-email (:email contact-person-details)]
     (execute! tx
-     "UPDATE virkailija.normalized_hakemus SET
+              "UPDATE virkailija.normalized_hakemus SET
       contact_person = ?, contact_email = ?, contact_phone = ? WHERE hakemus_id = ?"
-      [contact-person contact-email contact-phone hakemus-id]
-     ))
-    (log/info (str "Succesfully changed contact person details with user-key: " user-key)))
+              [contact-person contact-email contact-phone hakemus-id]))
+  (log/info (str "Succesfully changed contact person details with user-key: " user-key)))
 
 (defn- change-normalized-hakemus-trusted-contact-person-details [tx user-key hakemus-id contact]
   (log/info (str "Change normalized trusted contact person details with user-key: " user-key))
@@ -397,20 +392,19 @@
     (execute! tx
               "UPDATE virkailija.normalized_hakemus SET
                trusted_contact_name = ?, trusted_contact_email = ?, trusted_contact_phone = ? WHERE hakemus_id = ?"
-              [contact-name contact-email contact-phone hakemus-id]
-              ))
+              [contact-name contact-email contact-phone hakemus-id]))
   (log/info (str "Successfully changed trusted contact person details with user-key: " user-key)))
 
 (defn on-muutoshakemus [user-key hakemus-id avustushaku-id muutoshakemus]
   (with-tx (fn [tx]
-    (when (or (:talousarvio muutoshakemus) (get-in muutoshakemus [:jatkoaika :haenKayttoajanPidennysta]) (get-in muutoshakemus [:sisaltomuutos :haenSisaltomuutosta]))
-      (let [muutoshakemus-id (add-muutoshakemus tx user-key hakemus-id muutoshakemus)]
-        (when (:talousarvio muutoshakemus)
-          (add-muutoshakemus-menoluokkas tx muutoshakemus-id avustushaku-id (:talousarvio muutoshakemus)))))
-    (when (contains? muutoshakemus :yhteyshenkilo)
-      (change-normalized-hakemus-contact-person-details tx user-key hakemus-id (get muutoshakemus :yhteyshenkilo)))
-     (when (contains? muutoshakemus :varayhteyshenkilo)
-      (change-normalized-hakemus-trusted-contact-person-details tx user-key hakemus-id (get muutoshakemus :varayhteyshenkilo))))))
+             (when (or (:talousarvio muutoshakemus) (get-in muutoshakemus [:jatkoaika :haenKayttoajanPidennysta]) (get-in muutoshakemus [:sisaltomuutos :haenSisaltomuutosta]))
+               (let [muutoshakemus-id (add-muutoshakemus tx user-key hakemus-id muutoshakemus)]
+                 (when (:talousarvio muutoshakemus)
+                   (add-muutoshakemus-menoluokkas tx muutoshakemus-id avustushaku-id (:talousarvio muutoshakemus)))))
+             (when (contains? muutoshakemus :yhteyshenkilo)
+               (change-normalized-hakemus-contact-person-details tx user-key hakemus-id (get muutoshakemus :yhteyshenkilo)))
+             (when (contains? muutoshakemus :varayhteyshenkilo)
+               (change-normalized-hakemus-trusted-contact-person-details tx user-key hakemus-id (get muutoshakemus :varayhteyshenkilo))))))
 
 (defn update-hakemus-tx [tx avustushaku-id user-key submission-version answers budget-totals hakemus]
   (let [register-number (or (:register_number hakemus)
@@ -432,58 +426,57 @@
 
 (defn- update-status
   [tx avustushaku-id user-key submission-id submission-version register-number answers budget-totals status status-change-comment]
-     (let [new-hakemus (hakemus-copy/create-new-hakemus-version-from-user-key-form-submission-id tx user-key submission-id)
-           params (-> {:avustushaku_id avustushaku-id
-                       :version (:version new-hakemus)
-                       :user_key user-key
-                       :user_oid nil
-                       :user_first_name nil
-                       :user_last_name nil
-                       :user_email nil
-                       :form_submission_id submission-id
-                       :form_submission_version submission-version
-                       :register_number register-number
-                       :status status
-                       :status_change_comment status-change-comment}
-                      (merge (convert-budget-totals budget-totals))
-                      (merge-calculated-params avustushaku-id answers))]
-       (queries/update-hakemus-status<! params {:connection tx})))
+  (let [new-hakemus (hakemus-copy/create-new-hakemus-version-from-user-key-form-submission-id tx user-key submission-id)
+        params (-> {:avustushaku_id avustushaku-id
+                    :version (:version new-hakemus)
+                    :user_key user-key
+                    :user_oid nil
+                    :user_first_name nil
+                    :user_last_name nil
+                    :user_email nil
+                    :form_submission_id submission-id
+                    :form_submission_version submission-version
+                    :register_number register-number
+                    :status status
+                    :status_change_comment status-change-comment}
+                   (merge (convert-budget-totals budget-totals))
+                   (merge-calculated-params avustushaku-id answers))]
+    (queries/update-hakemus-status<! params {:connection tx})))
 
 (defn- new-update-status
   [tx avustushaku-id hakemus submission-version answers budget-totals status status-change-comment user-key]
-     (let [new-hakemus (hakemus-copy/create-new-hakemus-version tx (:id hakemus))
-           params (-> {:avustushaku_id avustushaku-id
-                       :version (:version new-hakemus)
-                       :user_key user-key
-                       :user_oid nil
-                       :user_first_name nil
-                       :user_last_name nil
-                       :user_email nil
-                       :form_submission_id (:form_submission_id hakemus)
-                       :form_submission_version submission-version
-                       :register_number (:register_number hakemus)
-                       :status status
-                       :status_change_comment status-change-comment}
-                      (merge (convert-budget-totals budget-totals))
-                      (merge-calculated-params avustushaku-id answers))]
-       (queries/update-hakemus-status<! params {:connection tx})
-       new-hakemus))
+  (let [new-hakemus (hakemus-copy/create-new-hakemus-version tx (:id hakemus))
+        params (-> {:avustushaku_id avustushaku-id
+                    :version (:version new-hakemus)
+                    :user_key user-key
+                    :user_oid nil
+                    :user_first_name nil
+                    :user_last_name nil
+                    :user_email nil
+                    :form_submission_id (:form_submission_id hakemus)
+                    :form_submission_version submission-version
+                    :register_number (:register_number hakemus)
+                    :status status
+                    :status_change_comment status-change-comment}
+                   (merge (convert-budget-totals budget-totals))
+                   (merge-calculated-params avustushaku-id answers))]
+    (queries/update-hakemus-status<! params {:connection tx})
+    new-hakemus))
 
 (defn open-hakemus-applicant-edit [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
   (with-tx #(update-status % avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :applicant_edit nil)))
 
 (defn set-submitted-version [tx params]
-    (queries/set-application-submitted-version<! params {:connection tx}))
+  (queries/set-application-submitted-version<! params {:connection tx}))
 
 (defn verify-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
   (with-tx #(update-status % avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :draft nil)))
 
-
 (defn submit-hakemus [tx avustushaku-id hakemus submission-version  answers budget-totals user-key]
-    (->> (new-update-status tx avustushaku-id hakemus submission-version answers budget-totals :submitted nil user-key)
-         :version
-         (assoc {:user_key user-key :form_submission_id (:form_submission_id hakemus)} :version)
-         (set-submitted-version tx)))
+  (->> (new-update-status tx avustushaku-id hakemus submission-version answers budget-totals :submitted nil user-key)
+       :version
+       (assoc {:user_key user-key :form_submission_id (:form_submission_id hakemus)} :version)
+       (set-submitted-version tx)))
 
 (defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals comment]
   (with-tx #(update-status % avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :cancelled comment)))
@@ -546,7 +539,7 @@
                     :file_data blob})]
     (if (attachment-exists? hakemus-id field-id)
       (exec-all [queries/close-existing-attachment! params
-                     queries/update-attachment<! params])
+                 queries/update-attachment<! params])
       (exec queries/create-attachment<! params))))
 
 (defn close-existing-attachment! [hakemus-id field-id]
@@ -576,17 +569,17 @@
 
 (defn valid-token? [token application-id]
   (and
-    (some? token)
-    (not
-      (empty?
-        (exec queries/get-application-token
-              {:token token :application_id application-id})))))
+   (some? token)
+   (not
+    (empty?
+     (exec queries/get-application-token
+           {:token token :application_id application-id})))))
 
 (defn valid-user-key-token? [token user-key]
   (let [application (get-hakemus user-key)]
     (and
-      (some? application)
-      (valid-token? token (:id application)))))
+     (some? application)
+     (valid-token? token (:id application)))))
 
 (defn revoke-token [token]
   (exec queries/revoke-application-token!
@@ -599,4 +592,4 @@
                             parent_id = ? AND
                             version_closed IS NULL
                     " [parent-hakemus-id])]
-(:id (first result))))
+    (:id (first result))))

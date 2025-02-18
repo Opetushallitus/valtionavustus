@@ -8,7 +8,7 @@
 
 (defn return-from-classpath [filename-under-public contenttype]
   (-> (resp/resource-response filename-under-public {:root "public"})
-        (content-type contenttype)))
+      (content-type contenttype)))
 
 (defn return-html [filename]
   (-> (return-from-classpath filename "text/html")
@@ -17,11 +17,11 @@
 (defn stringify-error [^Exception ex data]
   (cond
     (schema/error? data)
-      (compojure-ex/stringify-error (schema/error-val data))
+    (compojure-ex/stringify-error (schema/error-val data))
     (some? (.getCause ex))
-      (str (.getCause ex))
+    (str (.getCause ex))
     :else
-      (compojure-ex/stringify-error data)))
+    (compojure-ex/stringify-error data)))
 
 (defn exception-handler [^Exception ex data request]
   (log/error ex "Unknown 500 Internal Server Error" " Method" (:request-method request) " Url" (req/request-url request))

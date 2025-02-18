@@ -60,18 +60,18 @@
          original-exception)))
 
 (defn clear-db-and-grant! [schema-name grant-user]
-    (if (:allow-db-clear? (:server config))
-      (try (apply (partial jdbc/db-do-commands {:datasource (get-datasource)} true)
-                  (concat [(if (= schema-name "virkailija") "delete from hakija.hakemukset" "")
-                           (str "drop schema if exists " schema-name " cascade")
-                           (str "create schema " schema-name)]
-                          (if grant-user
-                            [(str "grant usage on schema " schema-name " to " grant-user)
-                             (str "alter default privileges in schema " schema-name " grant select on tables to " grant-user)])))
-           (catch Exception e (log/error (get-next-exception-or-original e) (.toString e))))
-      (throw (RuntimeException. (str "Clearing database is not allowed! "
-                                     "check that you run with correct mode. "
-                                     "Current config name is " (config-name))))))
+  (if (:allow-db-clear? (:server config))
+    (try (apply (partial jdbc/db-do-commands {:datasource (get-datasource)} true)
+                (concat [(if (= schema-name "virkailija") "delete from hakija.hakemukset" "")
+                         (str "drop schema if exists " schema-name " cascade")
+                         (str "create schema " schema-name)]
+                        (if grant-user
+                          [(str "grant usage on schema " schema-name " to " grant-user)
+                           (str "alter default privileges in schema " schema-name " grant select on tables to " grant-user)])))
+         (catch Exception e (log/error (get-next-exception-or-original e) (.toString e))))
+    (throw (RuntimeException. (str "Clearing database is not allowed! "
+                                   "check that you run with correct mode. "
+                                   "Current config name is " (config-name))))))
 
 (defmacro exec [query params]
   `(jdbc/with-db-transaction [connection# {:datasource (get-datasource)} {:isolation :repeatable-read}]
@@ -89,7 +89,7 @@
 
 (defn with-tx [func]
   (jdbc/with-db-transaction [connection {:datasource (get-datasource)} {:isolation :repeatable-read}]
-                            (func connection)))
+    (func connection)))
 (defn query
   "Execute SQL query and convert underscores to dashes in returned identifiers"
   ([sql params] (with-tx (fn [tx] (query tx sql params))))

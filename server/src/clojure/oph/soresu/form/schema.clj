@@ -67,7 +67,7 @@
                                     "tableField"
                                     "ownershipType"]
         form-element-types (into custom-form-element-types default-form-element-types)
-        default-wrapper-element-types ["theme" "fieldset" "growingFieldset" "growingFieldsetChild" ]
+        default-wrapper-element-types ["theme" "fieldset" "growingFieldset" "growingFieldsetChild"]
         wrapper-element-types (into custom-wrapper-element-types default-wrapper-element-types)
         all-answer-element-types (into form-element-types wrapper-element-types)
         default-info-element-types ["h1"
@@ -103,7 +103,7 @@
 
     (s/defschema WrapperElement {:fieldClass                (s/eq "wrapperElement")
                                  :id                        s/Str
-                                 :fieldType                 (apply s/enum wrapper-element-types )
+                                 :fieldType                 (apply s/enum wrapper-element-types)
                                  :children                  [(s/if (partial field-class-type-of? "wrapperElement")
                                                                (s/recursive #'WrapperElement)
                                                                BasicElement)]
@@ -130,12 +130,11 @@
 
   (s/defschema Answers
     "Answers consists of a key (String) value pairs, where value may be String or an array of more answers"
-    { :value [Answer] })
+    {:value [Answer]})
 
   (s/defschema Submission {:id Long
                            :created_at s/Inst
                            :form Long
                            :version Long
                            :version_closed (s/maybe s/Inst)
-                           :answers Answers})
-)
+                           :answers Answers}))

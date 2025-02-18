@@ -10,7 +10,7 @@
   ([content?]
    (let [va-code-values (va-code-values/get-va-code-values)]
      (mapv #(va-code-values/find-grant-code-values
-              (convert-to-dash-keys %) va-code-values)
+             (convert-to-dash-keys %) va-code-values)
            (exec (if content?
                    virkailija-queries/get-resolved-grants-with-content
                    virkailija-queries/get-grants) {}))))
@@ -29,20 +29,19 @@
 
 (defn get-grant [grant-id]
   (let [grant (convert-to-dash-keys
-                (first (exec virkailija-queries/get-grant
-                             {:grant_id grant-id})))]
+               (first (exec virkailija-queries/get-grant
+                            {:grant_id grant-id})))]
     (merge grant
            {:operational-unit
-            (va-code-values/get-va-code-value (:operational-unit-id grant))
-            })))
+            (va-code-values/get-va-code-value (:operational-unit-id grant))})))
 
 (defn- set-lkp-account [application]
   (assoc application :lkp-account (lkp/get-lkp-account (:answers application))))
 
 (defn get-grant-applications-with-evaluation [grant-id]
   (mapv
-    set-lkp-account
-    (application-data/get-applications-with-evaluation-by-grant grant-id)))
+   set-lkp-account
+   (application-data/get-applications-with-evaluation-by-grant grant-id)))
 
 (defn get-grant-applications [grant-id]
   (application-data/get-applications-with-evaluation-by-grant grant-id))

@@ -21,10 +21,10 @@
     (if (= 200 status)
       (json->map body)
       (throw (ex-info "Error when fetching doing HTTP GET" {:status status
-                                                             :url url
-                                                             :body body
-                                                             :error error
-                                                             :headers headers})))))
+                                                            :url url
+                                                            :body body
+                                                            :error error
+                                                            :headers headers})))))
 
 (defn- fetch-all-koodisto-groups []
   (do-get (str koodisto-base-url all-koodisto-groups-path)))
@@ -87,7 +87,7 @@
                        buddy-hash/sha256
                        buddy-codecs/bytes->hex)]
       (db/exec queries/create-koodisto<! {:koodisto_uri koodisto-uri
-                                                 :version version
-                                                 :checksum checksum
-                                                 :content [koodisto]})
+                                          :version version
+                                          :checksum checksum
+                                          :content [koodisto]})
       (get-cached-koodisto koodisto-uri version))))

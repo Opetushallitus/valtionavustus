@@ -29,13 +29,13 @@
 
 (defn- upsert-menoluokka [tx application-id menoluokka]
   (let [id-rows (query tx
-              "INSERT INTO virkailija.menoluokka (avustushaku_id, type, translation_fi, translation_sv)
+                       "INSERT INTO virkailija.menoluokka (avustushaku_id, type, translation_fi, translation_sv)
               VALUES (?, ?, ?, ?)
               ON CONFLICT (avustushaku_id, type) DO UPDATE SET
                 translation_fi = EXCLUDED.translation_fi,
                 translation_sv = EXCLUDED.translation_sv
               RETURNING id"
-              [application-id (:type menoluokka) (:translation_fi menoluokka) (:translation_sv menoluokka)])]
+                       [application-id (:type menoluokka) (:translation_fi menoluokka) (:translation_sv menoluokka)])]
     (:id (first id-rows))))
 
 (defn- budget->menoluokka [budget-elem]
@@ -56,8 +56,8 @@
 
 (defn- remove-old-menoluokka-rows [tx application-id current-menoluokka-ids]
   (execute! tx
-    (str "DELETE FROM virkailija.menoluokka WHERE avustushaku_id = ? AND id NOT IN (" (parameter-list current-menoluokka-ids) ")")
-    (conj current-menoluokka-ids application-id)))
+            (str "DELETE FROM virkailija.menoluokka WHERE avustushaku_id = ? AND id NOT IN (" (parameter-list current-menoluokka-ids) ")")
+            (conj current-menoluokka-ids application-id)))
 
 (defn- remove-menoluokka-rows [tx application-id]
   (execute! tx
@@ -67,6 +67,6 @@
 (defn upsert-menoluokka-rows [tx application-id form]
   (if-let [menoluokka-rows (form->menoluokka form)]
     (let [current-menoluokka-ids (map (partial upsert-menoluokka tx application-id) menoluokka-rows)]
-        (remove-old-menoluokka-rows tx application-id current-menoluokka-ids))
+      (remove-old-menoluokka-rows tx application-id current-menoluokka-ids))
     (remove-menoluokka-rows tx application-id)))
 

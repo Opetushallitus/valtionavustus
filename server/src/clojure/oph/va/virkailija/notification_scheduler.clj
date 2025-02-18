@@ -53,95 +53,82 @@
 
 (defn- get-notification-jobs []
   (filter :enabled?
-    [
-      {
-        :enabled? (get-in config [:notifications :asiatarkastus :enabled?])
-        :key "LoppuselvitysAsiatarkastamatta"
-        :job LoppuselvitysAsiatarkastamattaNotification
-        :schedule (schedule
-                    (cron-schedule
-                      (get-in config [:notifications :asiatarkastus :schedule])))
-      }
-      { :enabled? (get-in config [:notifications :taloustarkastus :enabled?])
-        :key "LoppuselvitysTaloustarkastamatta"
-        :job LoppuselvitysTaloustarkastamattaNotification
-        :schedule (schedule
-                    (cron-schedule
-                      (get-in config [:notifications :taloustarkastus :schedule])))
-      }
-      { :enabled? (get-in config [:notifications :valiselvitys :enabled?])
-        :key "ValiselvitysTarkastamatta"
-        :job ValiselvitysTarkastamattaNotification
-        :schedule (schedule
-                    (cron-schedule
-                      (get-in config [:notifications :valiselvitys :schedule])))
-      }
-      { :enabled? (get-in config [:notifications :laheta-valiselvityspyynnot :enabled?])
-        :key "LahetaValiselvityspyynnot"
-        :job LahetaValiselvityspyynnotNotification
-        :schedule (schedule
-                    (cron-schedule
-                      (get-in config [:notifications :laheta-valiselvityspyynnot :schedule])))
-      }
-      { :enabled? (get-in config [:notifications :laheta-loppuselvityspyynnot :enabled?])
-        :key "LahetaLoppuselvityspyynnot"
-        :job LahetaLoppuselvityspyynnotNotification
-        :schedule (schedule
-                   (cron-schedule
-                    (get-in config [:notifications :laheta-loppuselvityspyynnot :schedule])))
-        }
-      { :enabled? (get-in config [:notifications :hakuaika-paattymassa :enabled?])
-        :key "HakuaikaPaattymassa"
-        :job HakuaikaPaattymassaNotification
-        :schedule (schedule
-                   (cron-schedule
-                    (get-in config [:notifications :hakuaika-paattymassa :schedule])))
-      }
-      { :enabled? (get-in config [:notifications :hakuaika-paattynyt :enabled?])
-        :key "HakuaikaPaattynyt"
-        :job HakuaikaPaattynytNotification
-        :schedule (schedule (cron-schedule (get-in config [:notifications :hakuaika-paattynyt :schedule])))}
-      { :enabled? (get-in config [:notifications :loppuselvitys-palauttamatta :enabled?])
-        :key "LoppuselvitysPalauttamatta"
-        :job LoppuselvitysPalauttamattaNotification
-        :schedule (schedule
-                   (cron-schedule
-                    (get-in config [:notifications :loppuselvitys-palauttamatta :schedule])))
-      }
-      { :enabled? (get-in config [:notifications :valiselvitys-palauttamatta :enabled?])
-        :key "ValiselvitysPalauttamatta"
-        :job ValiselvitysPalauttamattaNotification
-        :schedule (schedule
-                   (cron-schedule
-                    (get-in config [:notifications :valiselvitys-palauttamatta :schedule])))
-      }
-      { :enabled? (get-in config [:notifications :muutoshakemuksia-kasittelematta :enabled?])
-        :key "MuutoshakemuksiaKasittelematta"
-        :job MuutoshakemuksiaKasittelemattaNotification
-        :schedule (schedule
-                   (cron-schedule
-                    (get-in config [:notifications :muutoshakemuksia-kasittelematta :schedule])))
-      }
-     { :enabled? (get-in config [:notifications :kuukausittainen-tasmaytysraportti :enabled?])
-       :key "KuukausittainenTasmaytysraportti"
-       :job KuukausittainenTasmaytysraportti
-       :schedule (schedule
-                  (cron-schedule
-                    (get-in config [:notifications :kuukausittainen-tasmaytysraportti :schedule])))
-      }
-    ]))
+          [{:enabled? (get-in config [:notifications :asiatarkastus :enabled?])
+            :key "LoppuselvitysAsiatarkastamatta"
+            :job LoppuselvitysAsiatarkastamattaNotification
+            :schedule (schedule
+                       (cron-schedule
+                        (get-in config [:notifications :asiatarkastus :schedule])))}
+           {:enabled? (get-in config [:notifications :taloustarkastus :enabled?])
+            :key "LoppuselvitysTaloustarkastamatta"
+            :job LoppuselvitysTaloustarkastamattaNotification
+            :schedule (schedule
+                       (cron-schedule
+                        (get-in config [:notifications :taloustarkastus :schedule])))}
+           {:enabled? (get-in config [:notifications :valiselvitys :enabled?])
+            :key "ValiselvitysTarkastamatta"
+            :job ValiselvitysTarkastamattaNotification
+            :schedule (schedule
+                       (cron-schedule
+                        (get-in config [:notifications :valiselvitys :schedule])))}
+           {:enabled? (get-in config [:notifications :laheta-valiselvityspyynnot :enabled?])
+            :key "LahetaValiselvityspyynnot"
+            :job LahetaValiselvityspyynnotNotification
+            :schedule (schedule
+                       (cron-schedule
+                        (get-in config [:notifications :laheta-valiselvityspyynnot :schedule])))}
+           {:enabled? (get-in config [:notifications :laheta-loppuselvityspyynnot :enabled?])
+            :key "LahetaLoppuselvityspyynnot"
+            :job LahetaLoppuselvityspyynnotNotification
+            :schedule (schedule
+                       (cron-schedule
+                        (get-in config [:notifications :laheta-loppuselvityspyynnot :schedule])))}
+           {:enabled? (get-in config [:notifications :hakuaika-paattymassa :enabled?])
+            :key "HakuaikaPaattymassa"
+            :job HakuaikaPaattymassaNotification
+            :schedule (schedule
+                       (cron-schedule
+                        (get-in config [:notifications :hakuaika-paattymassa :schedule])))}
+           {:enabled? (get-in config [:notifications :hakuaika-paattynyt :enabled?])
+            :key "HakuaikaPaattynyt"
+            :job HakuaikaPaattynytNotification
+            :schedule (schedule (cron-schedule (get-in config [:notifications :hakuaika-paattynyt :schedule])))}
+           {:enabled? (get-in config [:notifications :loppuselvitys-palauttamatta :enabled?])
+            :key "LoppuselvitysPalauttamatta"
+            :job LoppuselvitysPalauttamattaNotification
+            :schedule (schedule
+                       (cron-schedule
+                        (get-in config [:notifications :loppuselvitys-palauttamatta :schedule])))}
+           {:enabled? (get-in config [:notifications :valiselvitys-palauttamatta :enabled?])
+            :key "ValiselvitysPalauttamatta"
+            :job ValiselvitysPalauttamattaNotification
+            :schedule (schedule
+                       (cron-schedule
+                        (get-in config [:notifications :valiselvitys-palauttamatta :schedule])))}
+           {:enabled? (get-in config [:notifications :muutoshakemuksia-kasittelematta :enabled?])
+            :key "MuutoshakemuksiaKasittelematta"
+            :job MuutoshakemuksiaKasittelemattaNotification
+            :schedule (schedule
+                       (cron-schedule
+                        (get-in config [:notifications :muutoshakemuksia-kasittelematta :schedule])))}
+           {:enabled? (get-in config [:notifications :kuukausittainen-tasmaytysraportti :enabled?])
+            :key "KuukausittainenTasmaytysraportti"
+            :job KuukausittainenTasmaytysraportti
+            :schedule (schedule
+                       (cron-schedule
+                        (get-in config [:notifications :kuukausittainen-tasmaytysraportti :schedule])))}]))
 
 (defn- start-job [job]
   (log/info (str "Starting job with key: " (:key job)))
   (qs/schedule
-    (qs/start (qs/initialize))
-    (j/build
-      (j/of-type (:job job))
-      (j/with-identity (j/key (str "jobs." (:key job)))))
-    (t/build
-      (t/with-identity (t/key (str "triggers." (:key job))))
-      (t/start-now)
-      (t/with-schedule (:schedule job)))))
+   (qs/start (qs/initialize))
+   (j/build
+    (j/of-type (:job job))
+    (j/with-identity (j/key (str "jobs." (:key job)))))
+   (t/build
+    (t/with-identity (t/key (str "triggers." (:key job))))
+    (t/start-now)
+    (t/with-schedule (:schedule job)))))
 
 (defn start-notification-scheduler []
   (let [jobs (get-notification-jobs)]

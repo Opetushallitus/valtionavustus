@@ -11,7 +11,7 @@
 
 (def officer-edit-scope "officer-edit")
 
-(defn generate-token [hakemus-id] 
+(defn generate-token [hakemus-id]
   (sign {:scope officer-edit-scope
          :hakemus-id hakemus-id
          :iat (time/now)

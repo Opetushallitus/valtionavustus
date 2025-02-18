@@ -53,13 +53,10 @@
                    :langs    {:fi "JOTPA: Valtionavustusten vakioehdot"
                               :sv "Skols: Standardvillkor för statsunderstöd"}
                    :versions [{:id          "_2024-03-01"
-                               :description "Voimassa 21.3.2024"}]}]}
-   ])
+                               :description "Voimassa 21.3.2024"}]}]}])
 
 (def PakoteOhjeLiitteet
   {:id    "va_pakoteohje"
    :langs
    {:fi "Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen valtionavustustoiminnassa"
-    :sv "Beaktande av sanktioner i anslutning till Rysslands attack mot Ukraina"
-    }
-   })
+    :sv "Beaktande av sanktioner i anslutning till Rysslands attack mot Ukraina"}})

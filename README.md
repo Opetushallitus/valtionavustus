@@ -174,6 +174,12 @@ cd va-hakija
 ../lein populate 400
 ```
 
+Clojuren formatterin käyttö
+``` shell
+lein cljfmt check 
+lein cljfmt fix
+```
+
 ### Interaktiivinen kehitys
 
 Leiningen tunnistaa nyt `soresu` ja `common` -kirjastot ns. [checkout

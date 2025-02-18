@@ -19,12 +19,12 @@
     :return virkailija-schema/Grants
     :summary "Return list of grants"
     (ok
-      (cond
-        (= template "with-content")
-        (grant-data/get-resolved-grants-with-content)
-        (seq search)
-        (grant-data/find-grants search order)
-        :else (grant-data/get-grants)))))
+     (cond
+       (= template "with-content")
+       (grant-data/get-resolved-grants-with-content)
+       (seq search)
+       (grant-data/find-grants search order)
+       :else (grant-data/get-grants)))))
 
 (defn- get-grant-applications []
   (compojure-api/GET
@@ -74,8 +74,8 @@
     :summary "Create grant payments"
     (with-admin request
       (ok (payments-data/create-grant-payments
-            id (:phase grant-payments-data)
-            (authentication/get-request-identity request)))
+           id (:phase grant-payments-data)
+           (authentication/get-request-identity request)))
       (unauthorized ""))))
 
 (compojure-api/defroutes routes

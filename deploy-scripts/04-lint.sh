@@ -18,6 +18,10 @@ function main {
     start_gh_actions_group "prettier"
     npm run prettier-check-project
     end_gh_actions_group
+
+    start_gh_actions_group "cljfmt"
+    lein cljfmt check
+    end_gh_actions_group
 }
 
 main "$@"

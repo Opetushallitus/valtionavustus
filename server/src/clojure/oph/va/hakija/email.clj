@@ -95,9 +95,8 @@
              :preview-url preview-url
              :register-number register-number
              :is-jotpa-hakemus is-jotpa}
-        email-signature ( email-signature-block lang)
-        body (render template msg email-signature)
-        ]
+        email-signature (email-signature-block lang)
+        body (render template msg email-signature)]
     (email/try-send-email!
      (email/message lang type to subject body)
      {:hakemus-id     hakemus-id
@@ -212,7 +211,7 @@
   (let [msg (generate-applicant-edit-email lang recipients grant-name hakemus is-jotpa-hakemus)
         signature (email-signature-block lang)
         body (render-body msg signature)]
-  (email/enqueue-message-to-be-send msg body)))
+    (email/enqueue-message-to-be-send msg body)))
 
 (defn notify-valmistelija-of-new-muutoshakemus [to avustushaku-id register-number hanke hakemus-id]
   (let [lang :fi

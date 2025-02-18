@@ -4,7 +4,7 @@
 
 (defmacro wrap-exception [& form]
   `(try ~@form
-    (catch Throwable e# (.printStackTrace e# ))))
+        (catch Throwable e# (.printStackTrace e#))))
 
 (defmacro with-test-server! [schema-name server-starter & form]
   `(do

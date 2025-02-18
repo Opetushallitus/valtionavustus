@@ -101,75 +101,74 @@
     (resp/redirect preview-url)))
 
 (compojure-api/defroutes healthcheck-routes
-                         "Healthcheck routes"
+  "Healthcheck routes"
 
-                         (compojure-api/GET "/" [] (on-healthcheck))
+  (compojure-api/GET "/" [] (on-healthcheck))
 
-                         (compojure-api/HEAD "/" [] (on-healthcheck))
+  (compojure-api/HEAD "/" [] (on-healthcheck))
 
-                         (compojure-api/POST "/csp-report" request
-                           (log/info "CSP:" (slurp (:body request)))
-                           (ok {:ok "ok"}))
+  (compojure-api/POST "/csp-report" request
+    (log/info "CSP:" (slurp (:body request)))
+    (ok {:ok "ok"}))
 
-                         (compojure-api/GET
-                          "/integrations/" []
-                          :summary "Integrations healthcheck"
-                          :return virkailija-schema/HealthCheckResult
-                          (on-integration-healthcheck)))
+  (compojure-api/GET
+    "/integrations/" []
+    :summary "Integrations healthcheck"
+    :return virkailija-schema/HealthCheckResult
+    (on-integration-healthcheck)))
 
 (compojure-api/defroutes resource-routes
   (compojure-api/GET "/translations.json" []
-                    :summary "Translated messages (localization)"
-                    (va-routes/get-translations))
+    :summary "Translated messages (localization)"
+    (va-routes/get-translations))
 
   (compojure-api/undocumented
-  (compojure/GET "/" [] (return-html "virkailija/index.html"))
-  (middleware/wrap-canonical-redirect (compojure/GET "/avustushaku" [id] (return-html "virkailija/index.html")))
-  (compojure/GET "/avustushaku/:id" [id] (return-html "virkailija/index.html"))
-  (compojure/GET "/avustushaku/:id/*" [id] (return-html "virkailija/index.html"))
+   (compojure/GET "/" [] (return-html "virkailija/index.html"))
+   (middleware/wrap-canonical-redirect (compojure/GET "/avustushaku" [id] (return-html "virkailija/index.html")))
+   (compojure/GET "/avustushaku/:id" [id] (return-html "virkailija/index.html"))
+   (compojure/GET "/avustushaku/:id/*" [id] (return-html "virkailija/index.html"))
 
-  (middleware/wrap-canonical-redirect (compojure/GET "/admin" [id] (return-html "virkailija/admin.html")))
-  (compojure/GET "/admin/*" [] (return-html "virkailija/admin.html"))
+   (middleware/wrap-canonical-redirect (compojure/GET "/admin" [id] (return-html "virkailija/admin.html")))
+   (compojure/GET "/admin/*" [] (return-html "virkailija/admin.html"))
 
-  (compojure/GET "/yhteenveto/*" [] (return-html "virkailija/summary.html"))
+   (compojure/GET "/yhteenveto/*" [] (return-html "virkailija/summary.html"))
 
-  (compojure/GET "/haku/*" [] (return-html "virkailija/search.html"))
+   (compojure/GET "/haku/*" [] (return-html "virkailija/search.html"))
 
-  (compojure-api/GET "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
-                      :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
-                      :query-params [{decision-version :- s/Bool false}]
-                      (on-hakemus-preview avustushaku-id hakemus-user-key decision-version))
+   (compojure-api/GET "/hakemus-preview/:avustushaku-id/:hakemus-user-key" []
+     :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
+     :query-params [{decision-version :- s/Bool false}]
+     (on-hakemus-preview avustushaku-id hakemus-user-key decision-version))
 
-  (compojure-api/GET "/hakemus-edit/:avustushaku-id/:hakemus-user-key" request
-                      :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
-                      (on-hakemus-edit avustushaku-id hakemus-user-key))
+   (compojure-api/GET "/hakemus-edit/:avustushaku-id/:hakemus-user-key" request
+     :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
+     (on-hakemus-edit avustushaku-id hakemus-user-key))
 
-  (compojure-api/GET "/public/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" []
-                      :path-params [avustushaku-id :- Long, user-key :- s/Str]
-                      (on-paatos-preview avustushaku-id user-key))
+   (compojure-api/GET "/public/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" []
+     :path-params [avustushaku-id :- Long, user-key :- s/Str]
+     (on-paatos-preview avustushaku-id user-key))
 
-  (compojure-api/GET "/selvitys/avustushaku/:avustushaku-id/:selvitys-type" []
-                      :path-params [avustushaku-id :- Long, selvitys-type :- s/Str]
-                      :query-params [{hakemus :- s/Str nil},{preview :- s/Str "false"}]
-                      (on-selvitys avustushaku-id hakemus selvitys-type preview))
+   (compojure-api/GET "/selvitys/avustushaku/:avustushaku-id/:selvitys-type" []
+     :path-params [avustushaku-id :- Long, selvitys-type :- s/Str]
+     :query-params [{hakemus :- s/Str nil},{preview :- s/Str "false"}]
+     (on-selvitys avustushaku-id hakemus selvitys-type preview))
 
-  (compojure-api/context "/admin-ui/va-code-values" []
-    (compojure-api/GET "*" request
-        (va-code-values-routes/with-admin request
-          (return-html "virkailija/codevalues.html")
-          (resp/status (return-html "virkailija/unauthorized.html") 401))))
+   (compojure-api/context "/admin-ui/va-code-values" []
+     (compojure-api/GET "*" request
+       (va-code-values-routes/with-admin request
+         (return-html "virkailija/codevalues.html")
+         (resp/status (return-html "virkailija/unauthorized.html") 401))))
 
-  (compojure-api/GET "/admin-ui/search/" [search order]
-    (if (:and search order)
-      (resp/redirect (str "/haku/" "?" (codec/form-encode { :search search :order order })))
-      (resp/redirect "/haku/")))
+   (compojure-api/GET "/admin-ui/search/" [search order]
+     (if (:and search order)
+       (resp/redirect (str "/haku/" "?" (codec/form-encode {:search search :order order})))
+       (resp/redirect "/haku/")))
 
-  va-routes/logo-route
+   va-routes/logo-route
 
-  (compojure-route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
+   (compojure-route/resources "/" {:mime-types {"html" "text/html; charset=utf-8"}})
 
-  (compojure-route/not-found "<p>Page not found.</p>")))
-
+   (compojure-route/not-found "<p>Page not found.</p>")))
 
 (defn get-emails-for-email-type [email-type]
   (log/info (str "Fetching emails for email type: " email-type))
@@ -205,7 +204,7 @@
   (let [emails (query "SELECT email.id, formatted, from_address, to_address, bcc, cc, subject FROM virkailija.email
                        JOIN email_event ON (email.id = email_event.email_id)
                        WHERE avustushaku_id = ? AND email_type = ?::virkailija.email_type"
-                       [avustushaku-id email-type])]
+                      [avustushaku-id email-type])]
     (log/info (str "Succesfully fetched emails for avustushaku with id: " avustushaku-id))
     emails))
 
@@ -313,7 +312,7 @@
     (ok {:ok "ok"}))
 
   (compojure-api/POST "/process-maksupalaute" []
-    :body  [body { :xml s/Str :filename s/Str }]
+    :body  [body {:xml s/Str :filename s/Str}]
     :return {:message s/Str}
     (log/info "test-api: put maksupalaute xml to maksatuspalvelu and process it")
     (try
@@ -325,7 +324,7 @@
         (internal-server-error {:message "error"}))))
 
   (compojure-api/POST "/get-sent-invoice-from-db" []
-    :body  [body { :pitkaviite s/Str }]
+    :body  [body {:pitkaviite s/Str}]
     (let [sql "SELECT outgoing_invoice::text AS invoice FROM virkailija.payments
                WHERE paymentstatus_id = 'sent' AND pitkaviite = ?"]
       (if-some [row (first (query sql [(:pitkaviite body)]))]
@@ -338,15 +337,14 @@
     (log/info "test-api: get all maksatukset we have sent to maksatuspalvelu")
     (try
       (let [rondo-service (rondo-service/create-service
-                            (get-in config [:server :payment-service-sftp]))]
-        (ok {:maksatukset (get-all-maksatukset-from-maksatuspalvelu rondo-service)})
-      )
+                           (get-in config [:server :payment-service-sftp]))]
+        (ok {:maksatukset (get-all-maksatukset-from-maksatuspalvelu rondo-service)}))
       (catch Exception e
         (log/error e)
         (internal-server-error {:message "error"}))))
 
   (compojure-api/POST "/set-excel-tasmaytysraportti-payment-date" []
-    :body  [body { :pitkaviite s/Str }]
+    :body  [body {:pitkaviite s/Str}]
     (try
       (let [result (first (query "
         WITH updated AS (
@@ -361,15 +359,15 @@
         (if (= 1 (:amount result))
           (ok {:ok "ok"})
           (bad-request (str "Timestamps updated: " (:amount result)))))
-    (catch Exception e
-      (log/error e)
-      (internal-server-error {:message "error"}))))
+      (catch Exception e
+        (log/error e)
+        (internal-server-error {:message "error"}))))
 
   (compojure-api/GET "/send-excel-tasmaytysraportti" []
-   :summary "Täsmäytysraportti Excel XLSX document for last months payments"
+    :summary "Täsmäytysraportti Excel XLSX document for last months payments"
     (log/info "Test API: Send kuukausittainen tasmaytysraportti email")
     (try
-      (virkailija-notifications/send-kuukausittainen-tasmaytysraportti { :force true })
+      (virkailija-notifications/send-kuukausittainen-tasmaytysraportti {:force true})
       (ok {:ok "ok"})
       (catch Exception e
         (log/error e)
@@ -380,7 +378,7 @@
     :return [{:id s/Num :avustushaku-id s/Num :type s/Str :translation-fi s/Str :translation-sv s/Str :created-at java.sql.Timestamp}]
     (log/info "test-api: get menoluokat for avustushaku-id")
     (try
-        (ok (query "SELECT * FROM menoluokka WHERE avustushaku_id = ?" [avustushaku-id]))
+      (ok (query "SELECT * FROM menoluokka WHERE avustushaku_id = ?" [avustushaku-id]))
       (catch Exception e
         (log/error e)
         (internal-server-error {:message "error"}))))
@@ -390,13 +388,13 @@
     :return [{:avustushaku-id s/Num :contents s/Any :mailed-at java.sql.Timestamp :mailed-to s/Str}]
     (log/info "test-api: get tasmaytysraporti for avustushaku-id")
     (try
-        (ok (query "SELECT avustushaku_id, contents, mailed_at, mailed_to FROM tasmaytysraportti WHERE avustushaku_id = ?" [avustushaku-id]))
+      (ok (query "SELECT avustushaku_id, contents, mailed_at, mailed_to FROM tasmaytysraportti WHERE avustushaku_id = ?" [avustushaku-id]))
       (catch Exception e
         (log/error e)
         (internal-server-error {:message "error"}))))
 
   (compojure-api/POST "/remove-stored-pitkaviite-from-all-avustushaku-payments" []
-    :body  [body { :avustushakuId s/Num }]
+    :body  [body {:avustushakuId s/Num}]
     :return {:message s/Str}
     (log/info "test-api: Removing stored pitkäviite from all payments on avustushaku " (:avustushakuId body))
     (try
@@ -415,7 +413,7 @@
 
   (compojure-api/POST "/avustushaku/:avustushaku-id/set-muutoshakukelpoisuus" []
     :path-params [avustushaku-id :- Long]
-    :body  [body (compojure-api/describe { :muutoshakukelpoinen s/Bool } "Juuh")]
+    :body  [body (compojure-api/describe {:muutoshakukelpoinen s/Bool} "Juuh")]
     :return va-schema/AvustusHaku
     (log/info "Setting avustushaku" avustushaku-id "muutoshakukelpoisuus to" (:muutoshakukelpoinen body))
     (if-let [avustushaku (hakija-api/get-avustushaku avustushaku-id)]
@@ -426,8 +424,8 @@
       (not-found)))
 
   (compojure-api/POST "/add-migrated-talousarviotili" []
-    :body [body (compojure-api/describe { :talousarviotili s/Str } "Talousarviotili")]
-    :return { :ok s/Str }
+    :body [body (compojure-api/describe {:talousarviotili s/Str} "Talousarviotili")]
+    :return {:ok s/Str}
     (log/info "Adding migrated talousarviotili %s" (:talousarviotili body))
     (let [sql "INSERT INTO virkailija.talousarviotilit (code, migrated_from_not_normalized_ta_tili) VALUES (?, true)"]
       (execute! sql [(:talousarviotili body)])
@@ -435,7 +433,7 @@
 
   (compojure-api/GET "/hakemus/:hakemus-id/token-and-register-number" []
     :path-params [hakemus-id :- Long]
-    :return { :token s/Str :register-number s/Str }
+    :return {:token s/Str :register-number s/Str}
     (let [sql "SELECT (SELECT register_number FROM hakemukset WHERE version_closed IS null AND id = ?),
                       (SELECT token FROM application_tokens WHERE application_id = ?)"]
       (if-some [row (first (query sql [hakemus-id hakemus-id]))]
@@ -457,8 +455,7 @@
             title (:attachment-title attachment)]
         (-> (ok document)
             (assoc-in [:headers "Content-Type"] "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
-            (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" title "\"")))
-        )
+            (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" title "\""))))
       (catch Exception e
         (log/error e)
         (internal-server-error {:message "error"}))))
@@ -474,7 +471,7 @@
     (ok (get-emails-that-succeeded-to-be-sent)))
 
   (compojure-api/POST "/email/generate-emails-that-failed-to-be-sent" []
-    :body [body { :count s/Num }]
+    :body [body {:count s/Num}]
     :return [s/Num]
     :summary "Generate emails that failed to be sent and return ids"
     (ok (generate-emails-that-failed-to-be-sent (:count body))))
@@ -506,71 +503,69 @@
     (log/info "Test API: Getting emails related to email type")
     (ok (get-emails-for-email-type email-type))))
 
-
-
 (compojure-api/defroutes public-routes
-                         "Public API"
+  "Public API"
 
-                         (compojure-api/GET "/avustushaku/:avustushaku-id/paatokset" []
-                                            :path-params [avustushaku-id :- Long]
-                                            :return s/Any
-                                            :summary "Get paatokset"
-                                            :description "Get paatokset public info"
-                                            (ok (hakudata/get-avustushaku-and-paatokset avustushaku-id)))
+  (compojure-api/GET "/avustushaku/:avustushaku-id/paatokset" []
+    :path-params [avustushaku-id :- Long]
+    :return s/Any
+    :summary "Get paatokset"
+    :description "Get paatokset public info"
+    (ok (hakudata/get-avustushaku-and-paatokset avustushaku-id)))
 
-                         (compojure-api/GET "/avustushaku/paatos/:user-key" []
-                                            :path-params [user-key :- String]
-                                            :return virkailija-schema/PaatosData
-                                            :summary "Return relevant information for decision"
-                                            (let [hakemus (hakija-api/get-hakemus-by-user-key user-key)
-                                                  hakemus-id (:id hakemus)]
-                                              (if-let [response (hakudata/get-final-combined-paatos-data hakemus-id)]
-                                                (-> (ok response)
-                                                    (assoc-in [:headers "Access-Control-Allow-Origin"] "*"))
-                                                (not-found)))))
+  (compojure-api/GET "/avustushaku/paatos/:user-key" []
+    :path-params [user-key :- String]
+    :return virkailija-schema/PaatosData
+    :summary "Return relevant information for decision"
+    (let [hakemus (hakija-api/get-hakemus-by-user-key user-key)
+          hakemus-id (:id hakemus)]
+      (if-let [response (hakudata/get-final-combined-paatos-data hakemus-id)]
+        (-> (ok response)
+            (assoc-in [:headers "Access-Control-Allow-Origin"] "*"))
+        (not-found)))))
 
 (compojure-api/defroutes userinfo-routes
-                         "User information"
+  "User information"
 
-                         (compojure-api/GET "/" request
-                                            (ok (authentication/get-request-identity request))))
+  (compojure-api/GET "/" request
+    (ok (authentication/get-request-identity request))))
 
 (compojure-api/defroutes va-user-routes
-                         "VA users"
+  "VA users"
 
-                         (compojure-api/POST "/search" []
-                                             :body [body (compojure-api/describe {:searchInput s/Str} "User input of VA user search box")]
-                                             :return virkailija-schema/VaUserSearchResults
-                                             :summary "Search VA users"
-                                             :description "Each search term must be found as part of user name or email, case insensitive."
-                                             (let [search-input   (:searchInput body)
-                                                   search-results (va-users/search-va-users search-input)]
-                                               (ok {:results search-results}))))
+  (compojure-api/POST "/search" []
+    :body [body (compojure-api/describe {:searchInput s/Str} "User input of VA user search box")]
+    :return virkailija-schema/VaUserSearchResults
+    :summary "Search VA users"
+    :description "Each search term must be found as part of user name or email, case insensitive."
+    (let [search-input   (:searchInput body)
+          search-results (va-users/search-va-users search-input)]
+      (ok {:results search-results}))))
 
 (compojure-api/defroutes koodisto-routes
-                         "Koodisto-service access"
+  "Koodisto-service access"
 
-                         (compojure-api/GET "/" []
-                                            :return s/Any
-                                            :summary "List the available koodisto items"
-                                            :description "One of these can be selected for a Koodisto based input form field."
-                                            (let [koodisto-list (koodisto/list-koodistos)]
-                                              (ok koodisto-list)))
+  (compojure-api/GET "/" []
+    :return s/Any
+    :summary "List the available koodisto items"
+    :description "One of these can be selected for a Koodisto based input form field."
+    (let [koodisto-list (koodisto/list-koodistos)]
+      (ok koodisto-list)))
 
-                         (compojure-api/GET "/:koodisto-uri/:version" []
-                                            :path-params [koodisto-uri :- s/Str version :- Long]
-                                            :return s/Any
-                                            :summary "List contents of certain version of certain koodisto"
-                                            :description "Choice values and labels for each value"
-                                            (let [koodi-options (koodisto/get-cached-koodi-options koodisto-uri version)]
-                                              (ok (:content koodi-options)))))
+  (compojure-api/GET "/:koodisto-uri/:version" []
+    :path-params [koodisto-uri :- s/Str version :- Long]
+    :return s/Any
+    :summary "List contents of certain version of certain koodisto"
+    :description "Choice values and labels for each value"
+    (let [koodi-options (koodisto/get-cached-koodi-options koodisto-uri version)]
+      (ok (:content koodi-options)))))
 
 (compojure-api/defroutes help-texts-routes
-                         "Help texts"
-                         (compojure-api/GET "/all" []
-                                            :return (s/pred map?)
-                                            :summary "Get help texts"
-                                            (ok (help-texts/find-all))))
+  "Help texts"
+  (compojure-api/GET "/all" []
+    :return (s/pred map?)
+    :summary "Get help texts"
+    (ok (help-texts/find-all))))
 
 (defn- query-string-for-login [original-query-params params-to-add keys-to-remove]
   (let [payload-params (apply dissoc original-query-params keys-to-remove)
@@ -586,49 +581,49 @@
   (resp/redirect (str "/login/logged-out" (query-string-for-login (:query-params request) extra-query-params []))))
 
 (compojure-api/defroutes login-routes
-                         "Authentication"
+  "Authentication"
 
-                         (compojure-api/GET "/cas" request
-                                            :query-params [{ticket :- s/Str nil}]
-                                            :return s/Any
-                                            :summary "Handle login CAS ticket and logout callback from cas"
-                                            (try
-                                              (if ticket
-                                                (if (authentication/authenticate ticket virkailija-login-url)
-                                                  (-> (resp/redirect (url-after-login request))
-                                                      (assoc :session {:cas-ticket ticket}))
-                                                  (redirect-to-loggged-out-page request {"not-permitted" "true"}))
-                                                (redirect-to-loggged-out-page request {}))
-                                              (catch Exception e
-                                                (if (and (.getMessage e) (.contains (.getMessage e) "INVALID_TICKET"))
-                                                  (log/warn "Invalid ticket: " (.toString e))
-                                                  (log/error "Error in login ticket handling" e))
-                                                (redirect-to-loggged-out-page request {"error" "true"}))))
+  (compojure-api/GET "/cas" request
+    :query-params [{ticket :- s/Str nil}]
+    :return s/Any
+    :summary "Handle login CAS ticket and logout callback from cas"
+    (try
+      (if ticket
+        (if (authentication/authenticate ticket virkailija-login-url)
+          (-> (resp/redirect (url-after-login request))
+              (assoc :session {:cas-ticket ticket}))
+          (redirect-to-loggged-out-page request {"not-permitted" "true"}))
+        (redirect-to-loggged-out-page request {}))
+      (catch Exception e
+        (if (and (.getMessage e) (.contains (.getMessage e) "INVALID_TICKET"))
+          (log/warn "Invalid ticket: " (.toString e))
+          (log/error "Error in login ticket handling" e))
+        (redirect-to-loggged-out-page request {"error" "true"}))))
 
-                         (compojure-api/POST "/cas" []
-                                             :form-params [logoutRequest :- s/Str]
-                                             :return s/Any
-                                             :summary "Handle logout request from cas"
-                                             (authentication/cas-initiated-logout logoutRequest)
-                                             (-> (ok)
-                                                 (assoc :session nil)))
+  (compojure-api/POST "/cas" []
+    :form-params [logoutRequest :- s/Str]
+    :return s/Any
+    :summary "Handle logout request from cas"
+    (authentication/cas-initiated-logout logoutRequest)
+    (-> (ok)
+        (assoc :session nil)))
 
-                         (compojure-api/undocumented
-                          (compojure/GET "/logout" request
-                                         (if-let [cas-ticket (get-in request [:session :cas-ticket])]
-                                           (authentication/user-initiated-logout cas-ticket))
-                                         (-> (resp/redirect (str opintopolku-logout-url virkailija-login-url))
-                                             (assoc :session nil)))
+  (compojure-api/undocumented
+   (compojure/GET "/logout" request
+     (if-let [cas-ticket (get-in request [:session :cas-ticket])]
+       (authentication/user-initiated-logout cas-ticket))
+     (-> (resp/redirect (str opintopolku-logout-url virkailija-login-url))
+         (assoc :session nil)))
 
-                          (compojure/GET "/logged-out" [] (return-html "virkailija/login.html")))
+   (compojure/GET "/logged-out" [] (return-html "virkailija/login.html")))
 
-                         (compojure-api/GET
-                          "/sessions/" [:as request]
-                          :return (s/maybe s/Str)
-                          :summary "Enpoint for checking if session is valid"
-                          (if-let [identity (authentication/get-request-identity request)]
-                            (ok "ok")
-                            (unauthorized))))
+  (compojure-api/GET
+    "/sessions/" [:as request]
+    :return (s/maybe s/Str)
+    :summary "Enpoint for checking if session is valid"
+    (if-let [identity (authentication/get-request-identity request)]
+      (ok "ok")
+      (unauthorized))))
 
 (def api-config
   {:formats [:json-kw]
@@ -661,8 +656,8 @@
     (compojure-api/context "/api/test" [] :tags ["test"] test-api-routes))
   (compojure-api/context "/api/avustushaku" [] :tags ["avustushaku"] avustushaku-routes)
   (compojure-api/context "/api/avustushaku/:avustushaku-id/hakemus/:hakemus-id" []
-                         :tags ["hakemus"]
-                         hakemus-routes/hakemus-routes)
+    :tags ["hakemus"]
+    hakemus-routes/hakemus-routes)
   (compojure-api/context "/api/healthcheck" [] :tags ["healthcheck"] healthcheck-routes)
   (compojure-api/context "/api/help-texts" [] :tags ["help-texts"] help-texts-routes)
   (compojure-api/context "/api/koodisto" [] :tags ["koodisto"] koodisto-routes)
