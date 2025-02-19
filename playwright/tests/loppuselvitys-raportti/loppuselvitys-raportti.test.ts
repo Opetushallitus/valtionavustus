@@ -130,8 +130,6 @@ function expectToFindRowInSheet(sheet: xlsx.WorkSheet, expectedRow: Row) {
         D: sheet[`D${index}`].v,
         E: sheet[`E${index}`].v,
         F: sheet[`F${index}`].v,
-        G: sheet[`G${index}`].v,
-        H: sheet[`H${index}`].v,
       }
     }
     return row
