@@ -1,5 +1,6 @@
 (ns oph.va.virkailija.reports.loppuselvitysraportti
   (:require [dk.ative.docjure.spreadsheet :as spreadsheet]
+            [oph.soresu.form.formhandler :as formhandler]
             [oph.soresu.common.db :refer [query]])
   (:import (java.io ByteArrayOutputStream)))
 
@@ -56,14 +57,70 @@ left join taloustarkastetut_loppuselvitykset tl on tl.year = l.year
   (mapv vals rows))
 
 (defn- get-hakemukset-rows []
-  (query "
-  select ha.register_number, a.content->'name'->'fi', organization_name, va.budget_granted
-  from hakija.hakemukset ha
-           join virkailija.arviot va on va.hakemus_id = ha.id
-           join hakija.avustushaut a on ha.avustushaku = a.id
-           where version_closed is null
-           and ha.status in ('submitted', 'pending_change_request', 'officer_edit')
+  (query
+   "
+    with ha as (
+      select h.register_number as register_number,
+            a.content->'name'->'fi' as avustushaun_nimi,
+            h.organization_name as organization_name,
+            va.budget_granted as budget_granted,
+            form_submission_id,
+            form_submission_version
+      from hakija.hakemukset h
+              join virkailija.arviot va on va.hakemus_id = h.id
+              join hakija.avustushaut a on h.avustushaku = a.id
+      where version_closed is null
+        and h.status in ('submitted', 'pending_change_request', 'officer_edit')
+     ),
+     b as (
+         SELECT id, version, elem->>'value' as business_id
+         FROM hakija.form_submissions, jsonb_array_elements(answers->'value') elem
+         WHERE elem->>'key' = 'business-id'
+     ),
+     o as (
+         SELECT id, version, elem->>'value' as owner_type
+         FROM hakija.form_submissions, jsonb_array_elements(answers->'value') elem
+         WHERE elem->>'key' = 'radioButton-0'
+     ),
+     m as (
+         SELECT id, version, elem->>'value' as maakunta_code
+         FROM hakija.form_submissions, jsonb_array_elements(answers->'value') elem
+         WHERE elem->>'key' = 'koodistoField-1'
+     ),
+     k as (
+         SELECT id, version, elem->>'value' as kotikunta_code
+         FROM hakija.form_submissions, jsonb_array_elements(answers->'value') elem
+         WHERE elem->>'key' = 'avustushakemusAlueKunnat'
+     )
+select register_number, avustushaun_nimi, organization_name, business_id, owner_type, maakunta_code, kotikunta_code, budget_granted
+FROM ha
+    LEFT JOIN b ON b.id = ha.form_submission_id AND  b.version = ha.form_submission_version
+    LEFT JOIN o ON o.id = b.id AND o.version = b.version
+    LEFT JOIN m ON m.id = b.id AND m.version = b.version
+    LEFT JOIN k ON k.id = b.id AND k.version = b.version
     " {}))
+
+(defn- get-koodisto-name-for-maakunta-code [maakunta-code]
+  (if (not (string? maakunta-code))
+    ""
+    (formhandler/find-koodisto-value-name maakunta-code {:uri "maakunta" :version 1})))
+
+(defn- get-koodisto-name-for-kotikunta-code [kotikunta-code]
+  (if (not (string? kotikunta-code))
+    ""
+    (formhandler/find-koodisto-value-name kotikunta-code {:uri "kotikunnat" :version 1})))
+
+(defn- kunta-codes-into-readable-names [row]
+  (let [kotikunta-name (get-koodisto-name-for-kotikunta-code (:kotikunta-code row))
+        maakunta-name (get-koodisto-name-for-maakunta-code (:maakunta-code row))]
+    {:register_number (:register-number row)
+     :avustushaun_nimi (:avustushaun-nimi row)
+     :organization_name (:organization-name row)
+     :business_id (:business-id row)
+     :owner_type (:owner-type row)
+     :maakunta maakunta-name
+     :kotikunta kotikunta-name
+     :budget_granted (:budget-granted row)}))
 
 (defn export-loppuselvitysraportti []
   (let [asiatarkastettu-rows (get-loppuselvitys-tarkastetut-rows)
@@ -81,7 +138,7 @@ left join taloustarkastetut_loppuselvitykset tl on tl.year = l.year
              (make-loppuselvitysraportti-rows asiatarkastamatta-rows))
             "Hakemukset"
             (concat
-             [["Hakemuksen asiatunnus" "Avustushaun nimi" "Hakijaorganisaatio" "Myönnetty avustus"]]
-             (make-loppuselvitysraportti-rows hakemukset-rows)))]
+             [["Hakemuksen asiatunnus" "Avustushaun nimi" "Hakijaorganisaatio" "Y-tunnus" "Omistajatyyppi" "Maakunta" "Hakijan ensisijainen kotikunta" "Myönnetty avustus"]]
+             (make-loppuselvitysraportti-rows (mapv kunta-codes-into-readable-names hakemukset-rows))))]
     (.write wb output)
     (.toByteArray output)))
