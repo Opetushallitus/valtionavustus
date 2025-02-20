@@ -72,15 +72,23 @@ left join taloustarkastetut_loppuselvitykset tl on tl.year = l.year
       where version_closed is null
         and h.status in ('submitted', 'pending_change_request', 'officer_edit')
      ),
+     a as (
+         SELECT id, version, elem->>'key' as key, elem->>'value' as value
+         FROM ha
+         JOIN hakija.form_submissions fs
+           ON fs.id = ha.form_submission_id AND fs.version = ha.form_submission_version
+            AND fs.version_closed is null
+         CROSS JOIN jsonb_path_query(fs.answers, '$.value[*] ? (@.key == "business-id" || @.key == "radioButton-0")') as elem
+     ),
      b as (
-         SELECT id, version, elem->>'value' as business_id
-         FROM hakija.form_submissions, jsonb_array_elements(answers->'value') elem
-         WHERE elem->>'key' = 'business-id'
+         SELECT id, version, value as business_id
+         FROM a
+         WHERE key = 'business-id'
      ),
      o as (
-         SELECT id, version, elem->>'value' as owner_type
-         FROM hakija.form_submissions, jsonb_array_elements(answers->'value') elem
-         WHERE elem->>'key' = 'radioButton-0'
+         SELECT id, version, value as owner_type
+         FROM a
+         WHERE key = 'radioButton-0'
      )
 select register_number, avustushaun_nimi, organization_name, business_id, owner_type, budget_granted
 FROM ha
