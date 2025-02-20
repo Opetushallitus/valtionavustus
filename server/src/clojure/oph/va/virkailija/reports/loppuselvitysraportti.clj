@@ -78,7 +78,7 @@ left join taloustarkastetut_loppuselvitykset tl on tl.year = l.year
          JOIN hakija.form_submissions fs
            ON fs.id = ha.form_submission_id AND fs.version = ha.form_submission_version
             AND fs.version_closed is null
-         CROSS JOIN jsonb_path_query(fs.answers, '$.value[*] ? (@.key == "business-id" || @.key == "radioButton-0")') as elem
+         CROSS JOIN jsonb_path_query(fs.answers, '$.value[*] ? (@.key == \"business-id\" || @.key == \"radioButton-0\")') as elem
      ),
      b as (
          SELECT id, version, value as business_id
