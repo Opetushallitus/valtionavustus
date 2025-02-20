@@ -78,7 +78,7 @@ left join taloustarkastetut_loppuselvitykset tl on tl.year = l.year
          JOIN hakija.form_submissions fs
            ON fs.id = ha.form_submission_id AND fs.version = ha.form_submission_version
             AND fs.version_closed is null
-         CROSS JOIN jsonb_path_query(fs.answers, '$.value[*] ? (@.key == \"business-id\" || @.key == \"radioButton-0\" || @.key == \"koodistoField-1\" || @.key == \"avustushakemusAlueKunnat\")') as elem
+         CROSS JOIN jsonb_path_query(fs.answers, '$.value[*] ? (@.key == \"business-id\" || @.key == \"radioButton-0\")') as elem
      ),
      b as (
          SELECT id, version, value as business_id
@@ -89,46 +89,12 @@ left join taloustarkastetut_loppuselvitykset tl on tl.year = l.year
          SELECT id, version, value as owner_type
          FROM a
          WHERE key = 'radioButton-0'
-     ),
-     m as (
-         SELECT id, version, value as maakunta_code
-         FROM a
-         WHERE key = 'koodistoField-1'
-     ),
-     k as (
-         SELECT id, version, value as kotikunta_code
-         FROM a
-         WHERE key = 'avustushakemusAlueKunnat'
      )
-select register_number, avustushaun_nimi, organization_name, business_id, owner_type, maakunta_code, kotikunta_code, budget_granted
+select register_number, avustushaun_nimi, organization_name, business_id, owner_type, budget_granted
 FROM ha
-    LEFT JOIN b ON b.id = ha.form_submission_id AND b.version = ha.form_submission_version
+    LEFT JOIN b ON b.id = ha.form_submission_id AND  b.version = ha.form_submission_version
     LEFT JOIN o ON o.id = b.id AND o.version = b.version
-    LEFT JOIN m ON m.id = b.id AND m.version = b.version
-    LEFT JOIN k ON k.id = b.id AND k.version = b.version
     " {}))
-
-(defn- get-koodisto-name-for-maakunta-code [maakunta-code]
-  (if (not (string? maakunta-code))
-    ""
-    (formhandler/find-koodisto-value-name maakunta-code {:uri "maakunta" :version 1})))
-
-(defn- get-koodisto-name-for-kotikunta-code [kotikunta-code]
-  (if (not (string? kotikunta-code))
-    ""
-    (formhandler/find-koodisto-value-name kotikunta-code {:uri "kotikunnat" :version 1})))
-
-(defn- kunta-codes-into-readable-names [row]
-  (let [kotikunta-name (get-koodisto-name-for-kotikunta-code (:kotikunta-code row))
-        maakunta-name (get-koodisto-name-for-maakunta-code (:maakunta-code row))]
-    {:register_number (:register-number row)
-     :avustushaun_nimi (:avustushaun-nimi row)
-     :organization_name (:organization-name row)
-     :business_id (:business-id row)
-     :owner_type (:owner-type row)
-     :maakunta maakunta-name
-     :kotikunta kotikunta-name
-     :budget_granted (:budget-granted row)}))
 
 (defn export-loppuselvitysraportti []
   (let [asiatarkastettu-rows (get-loppuselvitys-tarkastetut-rows)
@@ -146,7 +112,7 @@ FROM ha
              (make-loppuselvitysraportti-rows asiatarkastamatta-rows))
             "Hakemukset"
             (concat
-             [["Hakemuksen asiatunnus" "Avustushaun nimi" "Hakijaorganisaatio" "Y-tunnus" "Omistajatyyppi" "Maakunta" "Hakijan ensisijainen kotikunta" "Myönnetty avustus"]]
-             (make-loppuselvitysraportti-rows (mapv kunta-codes-into-readable-names hakemukset-rows))))]
+             [["Hakemuksen asiatunnus" "Avustushaun nimi" "Hakijaorganisaatio" "Y-tunnus" "Omistajatyyppi" "Myönnetty avustus"]]
+             (make-loppuselvitysraportti-rows hakemukset-rows)))]
     (.write wb output)
     (.toByteArray output)))
