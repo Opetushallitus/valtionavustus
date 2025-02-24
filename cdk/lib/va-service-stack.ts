@@ -91,7 +91,7 @@ export class VaServiceStack extends cdk.Stack {
       },
       taskRole: vaTaskRole,
       executionRole: vaTaskExecRole,
-      cpu: 1024,
+      cpu: 2048,
       memoryLimitMiB: 4096,
     })
 
