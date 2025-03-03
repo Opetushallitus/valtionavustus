@@ -1,24 +1,24 @@
 (ns oph.va.hakija.handlers
-  (:require [clojure.tools.logging :as log]
-            [ring.util.http-response :as http]
-            [ring.util.http-response :refer :all]
-            [oph.soresu.common.config :refer [config]]
-            [oph.soresu.common.db :refer [with-tx query]]
-            [oph.common.datetime :as datetime]
-            [oph.soresu.form.db :as form-db]
-            [oph.soresu.form.validation :as validation]
-            [oph.soresu.form.routes
-             :refer [get-form-submission without-id update-form-submission]]
-            [oph.soresu.form.formutil :refer :all]
-            [oph.va.routes :refer :all]
-            [oph.soresu.form.schema :refer :all]
-            [oph.va.budget :as va-budget]
-            [oph.va.hakija.db :as va-db]
-            [oph.va.hakija.notification-formatter :as va-submit-notification]
-            [oph.va.hakija.attachment-validator :as attachment-validator]
-            [oph.va.hakija.email :as va-email]
-            [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
-            [oph.va.hakija.officer-edit-auth :as officer-edit-auth]))
+  (:require
+   [clojure.tools.logging :as log]
+   [oph.common.datetime :as datetime]
+   [oph.soresu.common.config :refer [config]]
+   [oph.soresu.common.db :refer [with-tx]]
+   [oph.soresu.form.db :as form-db]
+   [oph.soresu.form.formutil :refer :all]
+   [oph.soresu.form.routes
+    :refer [get-form-submission update-form-submission without-id]]
+   [oph.soresu.form.schema :refer :all]
+   [oph.soresu.form.validation :as validation]
+   [oph.va.budget :as va-budget]
+   [oph.va.hakija.attachment-validator :as attachment-validator]
+   [oph.va.hakija.db :as va-db]
+   [oph.va.hakija.email :as va-email]
+   [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
+   [oph.va.hakija.notification-formatter :as va-submit-notification]
+   [oph.va.hakija.officer-edit-auth :as officer-edit-auth]
+   [oph.va.routes :refer :all]
+   [ring.util.http-response :refer :all]))
 
 (defn hakemus-conflict-response [hakemus]
   (conflict! {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
@@ -194,31 +194,34 @@
           officer-edit-authorized?))))
 
 (defn on-hakemus-update [haku-id user-key base-version answers]
-  (with-tx
-    (fn [tx] (let [hakemus (va-db/get-locked-hakemus-version-for-update tx user-key base-version)
-                   avustushaku (get-open-avustushaku-tx tx haku-id hakemus)
-                   form-id (:form avustushaku)
-                   form-submission-id (:form_submission_id hakemus)
-                   form (form-db/get-form-tx tx form-id)
-                   security-validation (validation/validate-form-security form answers)]
-               (if (every? empty? (vals security-validation))
-                 (if (nil? (:version_closed hakemus))
-                   (let [attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
-                         budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
-                         validation (merge (validation/validate-form form answers attachments)
-                                           (va-budget/validate-budget-hakija answers budget-totals form))
-                         updated-submission (:body (form-db/update-submission-tx! tx form-id form-submission-id answers))
-                         updated-hakemus (va-db/update-hakemus-tx tx
-                                                                  haku-id
-                                                                  user-key
-                                                                  (:version updated-submission)
-                                                                  answers
-                                                                  budget-totals
-                                                                  hakemus)]
-                     (with-tx (fn [tx] (try-store-normalized-hakemus tx (:id hakemus) hakemus answers)))
-                     (hakemus-ok-response updated-hakemus updated-submission validation nil))
-                   (hakemus-conflict-response hakemus))
-                 (bad-request! security-validation))))))
+  (try (with-tx
+         (fn [tx] (let [hakemus (va-db/get-locked-hakemus-version-for-update tx user-key base-version)
+                        avustushaku (get-open-avustushaku-tx tx haku-id hakemus)
+                        form-id (:form avustushaku)
+                        form-submission-id (:form_submission_id hakemus)
+                        form (form-db/get-form-tx tx form-id)
+                        security-validation (validation/validate-form-security form answers)]
+                    (if (every? empty? (vals security-validation))
+                      (if (nil? (:version_closed hakemus))
+                        (let [attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
+                              budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
+                              validation (merge (validation/validate-form form answers attachments)
+                                                (va-budget/validate-budget-hakija answers budget-totals form))
+                              updated-submission (:body (form-db/update-submission-tx! tx form-id form-submission-id answers))
+                              updated-hakemus (va-db/update-hakemus-tx tx
+                                                                       haku-id
+                                                                       user-key
+                                                                       (:version updated-submission)
+                                                                       answers
+                                                                       budget-totals
+                                                                       hakemus)]
+                          (with-tx (fn [tx] (try-store-normalized-hakemus tx (:id hakemus) hakemus answers)))
+                          (hakemus-ok-response updated-hakemus updated-submission validation nil))
+                        (hakemus-conflict-response hakemus))
+                      (bad-request! security-validation)))))
+       (catch java.sql.BatchUpdateException e
+         (log/warn {:error (ex-message (ex-cause e)) :in "on-hakemus-update" :user-key user-key})
+         (conflict!))))
 
 (defn- is-valmistelija? [role]
   (or

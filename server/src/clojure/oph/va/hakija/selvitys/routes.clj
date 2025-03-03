@@ -1,5 +1,6 @@
 (ns oph.va.hakija.selvitys.routes
-  (:require [compojure.api.sweet :as compojure-api]
+  (:require [clojure.tools.logging :as log]
+            [compojure.api.sweet :as compojure-api]
             [oph.soresu.common.db :refer [query with-tx]]
             [oph.soresu.form.db :as form-db]
             [oph.soresu.form.routes
@@ -82,33 +83,36 @@
       (http/not-found))))
 
 (defn- on-selvitys-update [haku-id user-key base-version answers selvitys-type]
-  (with-tx
-    (fn [tx] (let [hakemus (va-db/get-hakemus tx user-key)
-                   parent-hakemus (va-db/get-hakemus-by-id-tx tx (:parent_id hakemus))
-                   avustushaku (va-db/get-avustushaku-tx tx haku-id)
-                   form-id (get avustushaku (selvitys-form-keyword selvitys-type))
-                   form (form-db/get-form-tx tx form-id)
-                   security-validation (validation/validate-form-security form answers)
-                   updatable (selvitys-updateable? selvitys-type parent-hakemus hakemus)]
-               (if (not updatable)
-                 (http/forbidden)
-                 (if (not= base-version (:version hakemus))
-                   (handlers/hakemus-conflict-response hakemus)
-                   (if (not (every? empty? (vals security-validation)))
-                     (http/bad-request! security-validation)
-                     (let [attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
-                           budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
-                           validation (merge (validation/validate-form form answers attachments)
-                                             (va-budget/validate-budget-hakija answers budget-totals form))
-                           updated-submission (:body (form-db/update-submission-tx! tx form-id (:form_submission_id hakemus) answers))
-                           updated-hakemus (va-db/update-hakemus-tx tx
-                                                                    haku-id
-                                                                    user-key
-                                                                    (:version updated-submission)
-                                                                    answers
-                                                                    budget-totals
-                                                                    hakemus)]
-                       (http/ok (selvitys-response {:hakemus updated-hakemus :submission updated-submission :validation validation :parent-hakemus parent-hakemus} updatable))))))))))
+  (try (with-tx
+         (fn [tx] (let [hakemus (va-db/get-hakemus tx user-key)
+                        parent-hakemus (va-db/get-hakemus-by-id-tx tx (:parent_id hakemus))
+                        avustushaku (va-db/get-avustushaku-tx tx haku-id)
+                        form-id (get avustushaku (selvitys-form-keyword selvitys-type))
+                        form (form-db/get-form-tx tx form-id)
+                        security-validation (validation/validate-form-security form answers)
+                        updatable (selvitys-updateable? selvitys-type parent-hakemus hakemus)]
+                    (if (not updatable)
+                      (http/forbidden)
+                      (if (not= base-version (:version hakemus))
+                        (handlers/hakemus-conflict-response hakemus)
+                        (if (not (every? empty? (vals security-validation)))
+                          (http/bad-request! security-validation)
+                          (let [attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
+                                budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
+                                validation (merge (validation/validate-form form answers attachments)
+                                                  (va-budget/validate-budget-hakija answers budget-totals form))
+                                updated-submission (:body (form-db/update-submission-tx! tx form-id (:form_submission_id hakemus) answers))
+                                updated-hakemus (va-db/update-hakemus-tx tx
+                                                                         haku-id
+                                                                         user-key
+                                                                         (:version updated-submission)
+                                                                         answers
+                                                                         budget-totals
+                                                                         hakemus)]
+                            (http/ok (selvitys-response {:hakemus updated-hakemus :submission updated-submission :validation validation :parent-hakemus parent-hakemus} updatable)))))))))
+       (catch java.sql.BatchUpdateException e
+         (log/warn {:error (ex-message (ex-cause e)) :in "on-selvitys-update" :user-key user-key})
+         (http/conflict!))))
 
 (defn post-selvitys []
   (compojure-api/POST "/:haku-id/selvitys/:selvitys-type/:hakemus-key/:base-version" [haku-id hakemus-key base-version selvitys-type :as request]
