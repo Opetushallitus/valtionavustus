@@ -13,8 +13,9 @@ SET
   organization_name = :organization_name,
   project_name = :project_name,
   language = :language,
-  register_number = :register_number
-
+  register_number = :register_number,
+  business_id = :business_id,
+  owner_type = :owner_type
 WHERE
   user_key = :user_key AND
   form_submission_id = :form_submission_id AND

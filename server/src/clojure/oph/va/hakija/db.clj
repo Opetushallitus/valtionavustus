@@ -50,12 +50,16 @@
 (defn- get-organization-name [answers] (pluck-key answers "organization" :organization_name ""))
 (defn- get-project-name [answers] (pluck-key answers "project-name" :project_name ""))
 (defn- get-language [answers] (pluck-key answers "language" :language "fi"))
+(defn- get-owner-type [answers] (pluck-key answers "radioButton-0" :owner_type ""))
+(defn- get-business-id [answers] (pluck-key answers "business-id" :business_id ""))
 
 (defn- merge-calculated-params [params avustushaku-id answers]
   (merge params
          (get-organization-name answers)
          (get-project-name answers)
-         (get-language answers)))
+         (get-language answers)
+         (get-owner-type answers)
+         (get-business-id answers)))
 
 (defn get-hakemus
   ([user-key]

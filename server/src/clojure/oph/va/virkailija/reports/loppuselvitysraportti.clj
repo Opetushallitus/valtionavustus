@@ -58,43 +58,17 @@ left join taloustarkastetut_loppuselvitykset tl on tl.year = l.year
 
 (defn- get-hakemukset-rows []
   (query
-   "
-    with ha as (
-      select h.register_number as register_number,
+   "select h.register_number as register_number,
             a.content->'name'->'fi' as avustushaun_nimi,
             h.organization_name as organization_name,
-            va.budget_granted as budget_granted,
-            form_submission_id,
-            form_submission_version
+            h.business_id as business_id,
+            h.owner_type as owner_type,
+            va.budget_granted as budget_granted
       from hakija.hakemukset h
               join virkailija.arviot va on va.hakemus_id = h.id
               join hakija.avustushaut a on h.avustushaku = a.id
       where version_closed is null
-        and h.status in ('submitted', 'pending_change_request', 'officer_edit')
-     ),
-     a as (
-         SELECT id, version, elem->>'key' as key, elem->>'value' as value
-         FROM ha
-         JOIN hakija.form_submissions fs
-           ON fs.id = ha.form_submission_id AND fs.version = ha.form_submission_version
-            AND fs.version_closed is null
-         CROSS JOIN jsonb_path_query(fs.answers, '$.value[*] ? (@.key == \"business-id\" || @.key == \"radioButton-0\")') as elem
-     ),
-     b as (
-         SELECT id, version, value as business_id
-         FROM a
-         WHERE key = 'business-id'
-     ),
-     o as (
-         SELECT id, version, value as owner_type
-         FROM a
-         WHERE key = 'radioButton-0'
-     )
-select register_number, avustushaun_nimi, organization_name, business_id, owner_type, budget_granted
-FROM ha
-    LEFT JOIN b ON b.id = ha.form_submission_id AND  b.version = ha.form_submission_version
-    LEFT JOIN o ON o.id = b.id AND o.version = b.version
-    " {}))
+        and h.status in ('submitted', 'pending_change_request', 'officer_edit')" {}))
 
 (defn export-loppuselvitysraportti []
   (let [asiatarkastettu-rows (get-loppuselvitys-tarkastetut-rows)
