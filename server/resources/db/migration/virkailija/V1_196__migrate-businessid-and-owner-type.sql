@@ -6,8 +6,10 @@ FROM
 (SELECT
     id,
     jsonb_path_query(answers, '$.value[*] ? (@.key == "business-id")')->>'value' as business_id,
-    jsonb_path_query(answers, '$.value[*] ? (@.key == "radioButton-0")')->>'value' as owner_type
+    jsonb_path_query(answers, '$.value[*] ? (@.key == "radioButton-0")')->>'value' as owner_type,
+    version_closed
     FROM hakija.form_submissions)
  fs
-WHERE fs.id = ha.form_submission_id
-AND ha.version_closed is null;
+WHERE ha.version_closed is null
+AND fs.id = ha.form_submission_id
+AND fs.version_closed is null;
