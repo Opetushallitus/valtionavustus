@@ -22,7 +22,7 @@ jobs:
             -H "AUTH_TOKEN: ${{ secrets.RADIATOR_AUTH_TOKEN }}" \
             -H "Content-Type: application/json" \
             -X PUT \
-            https://radiator.continuous-services.services/api/v2/buildstatus/valtionavustus/valtionavustus-deploy-dev \
+            https://radiator.continuous-services.services/api/v2/buildstatus/valtionavustus/deploy-dev \
             -d '{"status": "inProgress"}'
 
   build:
@@ -98,5 +98,5 @@ jobs:
             -H "AUTH_TOKEN: ${{ secrets.RADIATOR_AUTH_TOKEN }}" \
             -H "Content-Type: application/json" \
             -X PUT \
-            https://radiator.continuous-services.services/api/v2/buildstatus/valtionavustus/valtionavustus-deploy-dev \
+            https://radiator.continuous-services.services/api/v2/buildstatus/valtionavustus/deploy-dev \
             -d '{"status": "failure"}'

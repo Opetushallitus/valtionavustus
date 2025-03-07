@@ -33,7 +33,7 @@ jobs:
             -H "AUTH_TOKEN: ${{ secrets.RADIATOR_AUTH_TOKEN }}" \
             -H "Content-Type: application/json" \
             -X PUT \
-            https://radiator.continuous-services.services/api/v2/buildstatus/valtionavustus/valtionavustus-deploy-${{ inputs.env }} \
+            https://radiator.continuous-services.services/api/v2/buildstatus/valtionavustus/deploy-${{ inputs.env }} \
             -d '{"status": "inProgress"}'
 
       - name: Check commit deployment status
@@ -95,5 +95,5 @@ jobs:
             -H "AUTH_TOKEN: ${{ secrets.RADIATOR_AUTH_TOKEN }}" \
             -H "Content-Type: application/json" \
             -X PUT \
-            https://radiator.continuous-services.services/api/v2/buildstatus/valtionavustus/valtionavustus-deploy-${{ inputs.env }} \
+            https://radiator.continuous-services.services/api/v2/buildstatus/valtionavustus/deploy-${{ inputs.env }} \
             -d "{\"status\": \"${DEPLOY_STATUS}\"}"
