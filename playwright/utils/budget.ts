@@ -64,7 +64,7 @@ export const fillBudget = async (page: Page, budget: Budget, type: 'hakija' | 'v
     const budgetKey = key as keyof BudgetAmount
     const amountLocators = getBudgetSelectorsForType(page, type, 'amount')
     await amountLocators[budgetKey].fill('')
-    await amountLocators[budgetKey].type(budget.amount[budgetKey])
+    await amountLocators[budgetKey].pressSequentially(budget.amount[budgetKey])
     const descriptionLocators = getBudgetSelectorsForType(page, type, 'description')
     await descriptionLocators[budgetKey].fill(budget.description[budgetKey])
   }
