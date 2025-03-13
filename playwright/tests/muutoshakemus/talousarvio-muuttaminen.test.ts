@@ -95,9 +95,14 @@ const muutosTest = budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixture
       await expect(hakemustenArviointiPage.arviointiTabLocators().taTili.value).toContainText(
         'Ammatillinen koulutus'
       )
+      const urlPattern = /^http:\/\/127\.0\.0\.1:8081\/api\/avustushaku\/\d+\/hakemus\/\d+\/arvio$/
+      const responsePromise = page.waitForResponse(urlPattern)
       await hakemustenArviointiPage.page.click(
         "#arviointi-tab label[for='set-arvio-status-plausible']"
       )
+      const response = await responsePromise
+      const body = await response.json()
+      expect(body.status).toBe('plausible')
     })
     await test.step('budget is prefilled correctly', async () => {
       await hakemustenArviointiPage.page.click('label[for="useDetailedCosts-true"]')
