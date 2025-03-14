@@ -95,8 +95,7 @@ const muutosTest = budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixture
       await expect(hakemustenArviointiPage.arviointiTabLocators().taTili.value).toContainText(
         'Ammatillinen koulutus'
       )
-      const urlPattern =
-        /^http:\/\/127\.0\.0\.1:8081\/api\/avustushaku\/[0-9]+\/hakemus\/[0-9]+\/arvio$/
+      const urlPattern = /^.*\/api\/avustushaku\/[0-9]+\/hakemus\/[0-9]+\/arvio$/
       const responsePromise = page.waitForResponse(urlPattern)
       await hakemustenArviointiPage.page.click(
         "#arviointi-tab label[for='set-arvio-status-plausible']"
