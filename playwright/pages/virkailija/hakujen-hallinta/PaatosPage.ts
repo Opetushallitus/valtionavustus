@@ -21,6 +21,7 @@ export function PaatosPage(page: Page) {
     hankkeenPaattymisPaivaLabel: paattymisPaiva.locator(label),
     taustaa: page.locator('[id="decision.taustaa.fi"]'),
     kayttotarkoitus: page.locator('[id="decision.kayttotarkoitus.fi"]'),
+    selvitysvelvollisuus: page.locator('[id="decision.selvitysvelvollisuus.fi"]'),
     decisionEditor: page.locator('.decision-editor'),
     confirmSending: page.locator('text="Vahvista lähetys"'),
     paatosSendError: page.locator('#päätös-send-error'),

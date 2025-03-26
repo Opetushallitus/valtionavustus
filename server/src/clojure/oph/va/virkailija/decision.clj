@@ -19,8 +19,8 @@
   (get-in translations [:paatos (keyword translation-key) lang]))
 
 (defn content-with-paragraphs [content]
-  (let [rows (str/split content #"\n")
-        rows-list (html [:span (for [row rows] [:p row])])]
+  (let [rows (str/split-lines content)
+        rows-list (html [:span (map #(vec [:p %]) rows)])]
     rows-list))
 
 (defn decision-field [decision str-key lang]
@@ -166,7 +166,7 @@
         selvitysvelvollisuus-freeform-text (get-in decision [:selvitysvelvollisuus language])
         content [:span formatted-valiselvitysdate formatted-loppuselvitysdate
                  (when (not (empty? selvitysvelvollisuus-freeform-text))
-                   [:p selvitysvelvollisuus-freeform-text])]]
+                   (content-with-paragraphs selvitysvelvollisuus-freeform-text))]]
     (if (or valiselvitysdate loppuselvitysdate (not (empty? selvitysvelvollisuus-freeform-text)))
       (section :selvitysvelvollisuus content translate false)
       "")))
