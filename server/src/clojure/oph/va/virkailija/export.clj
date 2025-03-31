@@ -726,7 +726,11 @@
    "avustuspaatosKayttoaikaPaattyyPvm"
    "avustuspaatosMaksettuAvustus"
    "piilotaKayttotarkoitus"
-   "piilotaVireillepanija"])
+   "piilotaVireillepanija"
+   "poistaTiedot"
+   "euVarat"
+   "saajanSektoriluokitus"
+   "ulkomainenSaaja"])
 
 (defn get-valtionapuviranomainen [data]
   (if (= (:toimintayksikko data) "6600105300") "JOTPA" "OPH"))

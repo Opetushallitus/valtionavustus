@@ -23,6 +23,43 @@ ophTest.use({
 
 const SheetName = 'VA'
 
+const headerRow = {
+  A1: 'valtionapuviranomainen',
+  B1: 'avustushakuAsianumero',
+  C1: 'avustushakuNimi',
+  D1: 'avustushakuAvustuslaji',
+  E1: 'avustushakuAlkaaPvm',
+  F1: 'avustushakuPaattyyPvm',
+  G1: 'avustushakuURL',
+  H1: 'avustusasiaAsianumero',
+  I1: 'avustusasiaVireilletuloPvm',
+  J1: 'avustusasiaKieli',
+  K1: 'avustusasiaVireillepanijaHenkiloTunnus',
+  L1: 'avustusasiaVireillepanijaHenkiloNimi',
+  M1: 'avustusasiaVireillepanijaYhteisoTunnus',
+  N1: 'avustusasiaVireillepanijaYhteisoNimi',
+  O1: 'avustushakemusHaettuKayttotarkoitus',
+  P1: 'avustushakemusHaettuAvustus',
+  Q1: 'avustushakemusAlueKunnat',
+  R1: 'avustushakemusAlueMaakunnat',
+  S1: 'avustushakemusAlueHyvinvointialueet',
+  T1: 'avustushakemusAlueValtiot',
+  U1: 'avustuspaatosPvm',
+  V1: 'avustuspaatosPerustelu',
+  W1: 'avustuspaatosTyyppi',
+  X1: 'avustuspaatosMyonnettyAvustus',
+  Y1: 'avustuspaatosHyvaksyttyKayttotarkoitus',
+  Z1: 'avustuspaatosKayttoaikaAlkaaPvm',
+  AA1: 'avustuspaatosKayttoaikaPaattyyPvm',
+  AB1: 'avustuspaatosMaksettuAvustus',
+  AC1: 'piilotaKayttotarkoitus',
+  AD1: 'piilotaVireillepanija',
+  AE1: 'poistaTiedot',
+  AF1: 'euVarat',
+  AG1: 'saajanSektoriluokitus',
+  AH1: 'ulkomainenSaaja',
+}
+
 ophTest.describe('OPH', () => {
   ophTest(
     'Hallinnoiavustuksia.fi Excel export',
@@ -34,38 +71,7 @@ ophTest.describe('OPH', () => {
       const sheet = workbook.Sheets[SheetName]
       const vireilletuloPvm = moment().format('DD.MM.YYYY')
       const expectedRows: SheetRow[] = [
-        {
-          A1: 'valtionapuviranomainen',
-          B1: 'avustushakuAsianumero',
-          C1: 'avustushakuNimi',
-          D1: 'avustushakuAvustuslaji',
-          E1: 'avustushakuAlkaaPvm',
-          F1: 'avustushakuPaattyyPvm',
-          G1: 'avustushakuURL',
-          H1: 'avustusasiaAsianumero',
-          I1: 'avustusasiaVireilletuloPvm',
-          J1: 'avustusasiaKieli',
-          K1: 'avustusasiaVireillepanijaHenkiloTunnus',
-          L1: 'avustusasiaVireillepanijaHenkiloNimi',
-          M1: 'avustusasiaVireillepanijaYhteisoTunnus',
-          N1: 'avustusasiaVireillepanijaYhteisoNimi',
-          O1: 'avustushakemusHaettuKayttotarkoitus',
-          P1: 'avustushakemusHaettuAvustus',
-          Q1: 'avustushakemusAlueKunnat',
-          R1: 'avustushakemusAlueMaakunnat',
-          S1: 'avustushakemusAlueHyvinvointialueet',
-          T1: 'avustushakemusAlueValtiot',
-          U1: 'avustuspaatosPvm',
-          V1: 'avustuspaatosPerustelu',
-          W1: 'avustuspaatosTyyppi',
-          X1: 'avustuspaatosMyonnettyAvustus',
-          Y1: 'avustuspaatosHyvaksyttyKayttotarkoitus',
-          Z1: 'avustuspaatosKayttoaikaAlkaaPvm',
-          AA1: 'avustuspaatosKayttoaikaPaattyyPvm',
-          AB1: 'avustuspaatosMaksettuAvustus',
-          AC1: 'piilotaKayttotarkoitus',
-          AD1: 'piilotaVireillepanija',
-        },
+        headerRow,
         {
           A2: 'OPH',
           B2: 'va-oph-2023-6',
@@ -116,6 +122,7 @@ Jotpa.describe('JOTPA', () => {
       const workbook = await downloadHallinnoiAvustuksiaExcel(page, avustushakuID)
       const vireilletuloPvm = moment().format('DD.MM.YYYY')
       const expectedRows: SheetRow[] = [
+        headerRow,
         {
           A2: `OPH`,
           B2: 'va-oph-2023-7',
