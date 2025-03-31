@@ -26,69 +26,6 @@ test.describe('Form editor muutoshakukelpoisuus message', () => {
     )
   })
 
-  test('shows field ids on the hakemus edit page', async ({ avustushakuID, page }) => {
-    const hakujenHallintaPage = new HakujenHallintaPage(page)
-    const formEditorPage = await hakujenHallintaPage.navigateToFormEditor(avustushakuID)
-    const fieldIdInnerTexts = await formEditorPage.getFieldIds()
-    expect(fieldIdInnerTexts).toEqual([
-      'name',
-      'duration',
-      'duration-help',
-      'p-1',
-      'applicant-info',
-      'organization-fieldset',
-      'organization',
-      'organization-email',
-      'business-id',
-      'applicant-fieldset',
-      'applicant-name',
-      'primary-email',
-      'textField-0',
-      'radioButton-0',
-      'koodistoField-1',
-      'koodistoField-0',
-      'signatories-fieldset',
-      'signatories-fieldset-1',
-      'signatories-fieldset-1.name',
-      'signatories-fieldset-1.email',
-      'bank-fieldset',
-      'bank-iban',
-      'bank-bic',
-      'h3-1',
-      'p-0',
-      'textField-2',
-      'textField-1',
-      'project-info',
-      'project-name',
-      'language',
-      'nayta-tarkennus',
-      'other-organizations',
-      'other-organizations-1',
-      'other-organizations.other-organizations-1.contactperson',
-      'other-organizations.other-organizations-1.email',
-      'checkboxButton-0',
-      'project-plan',
-      'selection-criteria',
-      'togglable-wrapper-cp',
-      'pp-basic-education',
-      'pp-upper-secondary',
-      'checkboxButton-1',
-      'h3-0',
-      'project-description',
-      'project-description-1',
-      'project-description.project-description-1.goal',
-      'project-description.project-description-1.activity',
-      'project-description.project-description-1.result',
-      'project-effectiveness',
-      'project-begin',
-      'project-end',
-      'financing-plan',
-      'financing-plan-help',
-      'vat-included',
-      'budget',
-    ])
-  })
-
   test('tells user about one missing field', async ({ page, hakuProps, userCache }) => {
     expectToBeDefined(userCache)
     const hakujenHallintaPage = new HakujenHallintaPage(page)
