@@ -753,6 +753,11 @@
     "accepted" "Myönteinen"
     ""))
 
+(defn get-nutshell [data]
+  (or (formutil/find-answer-value (:answers data) "project-nutshell")
+      (formutil/find-answer-value (:answers data) "project-goals")
+      ""))
+
 (def avustushaku->hallinoi-sheet-rows
   (juxt
    (constantly "OPH") ;(comp get-valtionapuviranomainen) ;"valtionapuviranomainen"
@@ -769,8 +774,8 @@
    (constantly "") ;"avustusasiaVireillepanijaHenkiloNimi"
    (comp get-y-tunnus) ;"avustusasiaVireillepanijaYhteisoTunnus"
    (constantly "") ;"avustusasiaVireillepanijaYhteisoNimi"
-   (constantly "") ;"avustushakemusHaettuKayttotarkoitus"
-   (constantly "") ;"avustushakemusHaettuAvustus"
+   (comp get-nutshell) ;"avustushakemusHaettuKayttotarkoitus"
+   :budget-total ;"avustushakemusHaettuAvustus"
    (comp get-kotikunta) ;"avustushakemusAlueKunnat"
    (constantly "") ;"avustushakemusAlueMaakunnat"
    (constantly "") ;"avustushakemusAlueHyvinvointialueet"
@@ -805,6 +810,7 @@
                         avustushaku.hallinnoiavustuksia_register_number AS avustushaku_asianumero,
                         koodi.code as toimintayksikko,
                         hakemukset.language,
+                        hakemukset.budget_total,
                         to_char(hakemus_submitted.first_time_submitted, 'DD.MM.YYYY') AS vireille_tulo_pvm,
                         forms.content,
                         form_submissions.answers,

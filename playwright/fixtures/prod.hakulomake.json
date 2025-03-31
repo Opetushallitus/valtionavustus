@@ -491,6 +491,24 @@
           "children": []
         },
         {
+          "label": {
+            "fi": "Hanke pähkinänkuoressa",
+            "sv": "Projektet i ett nötskal"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Kuvaa lyhyesti mistä hankkeessa on kyse: mitä tavoitellaan, mitä tehdään, miten tehdään ja ketkä ovat hyödynsaajat. Opetushallitus voi julkaista kuvauksen verkkosivuillaan.",
+            "sv": "Beskriv i korthet vad projektet handlar om: vad som eftersträvas, vad som görs, hur man gör det och vilka nyttotagarna är. Utbildningsstyrelsen kan publicera beskrivningen på sin webbsida."
+          },
+          "id": "project-nutshell",
+          "params": {
+            "size": "small",
+            "maxlength": 1000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
           "fieldClass": "wrapperElement",
           "id": "other-organizations",
           "fieldType": "growingFieldset",

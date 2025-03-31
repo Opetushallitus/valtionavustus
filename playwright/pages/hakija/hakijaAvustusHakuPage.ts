@@ -169,6 +169,7 @@ export function HakijaAvustusHakuPage(page: Page) {
     await locators.form.bank.bic.fill('OKOYFIHH')
     await page.fill('#textField-2', '2')
     await page.fill('#textField-1', '20')
+    await page.fill('#project-nutshell', 'Projekti pähkinänkuoressa')
     await page.fill('#project-name', answers.projectName)
     await page.click(`[for='language.radio.${lang === 'sv' ? 1 : 0}']`)
     await page.click("[for='checkboxButton-0.checkbox.0']")
