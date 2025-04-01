@@ -40,7 +40,7 @@
     "yup": "^0.29.3"
   },
   "devDependencies": {
-    "@babel/core": "7.26.9",
+    "@babel/core": "7.26.10",
     "@babel/preset-env": "7.26.9",
     "@babel/preset-react": "7.26.3",
     "@playwright/test": "1.50.1",
