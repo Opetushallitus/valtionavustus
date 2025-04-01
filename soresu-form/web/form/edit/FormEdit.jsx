@@ -6,7 +6,6 @@ import {
   AppendableEditWrapper,
   InfoElementEditWrapper,
 } from './EditComponent.jsx'
-import CSSTransitionGroup from '../component/wrapper/CSSTransitionGroup.jsx'
 import FormEditComponent from './FormEditComponent'
 
 import FormPreview from '../FormPreview.jsx'
@@ -157,9 +156,7 @@ export default class FormEdit extends React.Component {
     return (
       <div className="soresu-form-edit soresu-edit">
         {readOnlyNotification}
-        <CSSTransitionGroup transitionName="soresu-dynamic-children-transition">
-          {fields.map(renderField)}
-        </CSSTransitionGroup>
+        <div>{fields.map(renderField)}</div>
       </div>
     )
   }

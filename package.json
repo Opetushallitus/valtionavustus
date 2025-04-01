@@ -31,7 +31,6 @@
     "react-redux": "^9.0.0",
     "react-router-dom": "^7.0.0",
     "react-select": "^5.10.1",
-    "react-transition-group": "^4.4.2",
     "react-widgets": "^5.8.4",
     "react-widgets-moment": "^5.0.20",
     "route-parser": "^0.0.5",
