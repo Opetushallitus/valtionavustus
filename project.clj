@@ -49,7 +49,7 @@
                          [org.quartz-scheduler/quartz "2.5.0"]
 
                          ;; logging API
-                         [org.slf4j/slf4j-api "2.0.16"]
+                         [org.slf4j/slf4j-api "2.0.17"]
 
                          ; dependencies under compojure-api -> explicitly updated for security patches
                          [ring-middleware-format "0.7.5"]
