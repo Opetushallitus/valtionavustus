@@ -1,7 +1,6 @@
 import React from 'react'
 import ClassNames from 'classnames'
 import _ from 'lodash'
-import CSSTransitionGroup from './CSSTransitionGroup.jsx'
 import BasicFieldComponent from 'soresu-form/web/form/component/BasicFieldComponent'
 
 export default class GrowingFieldset extends BasicFieldComponent {
@@ -21,12 +20,7 @@ export default class GrowingFieldset extends BasicFieldComponent {
       <fieldset id={htmlId} className={this.className('soresu-growing-fieldset')}>
         {!!labelText && <legend>{labelText}</legend>}
         <ol>
-          <CSSTransitionGroup
-            component="span"
-            transitionName="soresu-growing-fieldset-child-transition"
-          >
-            {children}
-          </CSSTransitionGroup>
+          <span>{children}</span>
         </ol>
       </fieldset>
     )

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import ClassNames from 'classnames'
 import { isEqual } from 'lodash'
 
-import CSSTransitionGroup from 'soresu-form/web/form/component/wrapper/CSSTransitionGroup.jsx'
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
 import { HelpTexts } from 'soresu-form/web/va/types'
 
@@ -63,7 +62,7 @@ export const HakuRoles = ({
             </th>
           </tr>
         </thead>
-        <CSSTransitionGroup transitionName="haku-roles-transition" component="tbody">
+        <tbody>
           {roles.map((role) => (
             <RoleRow
               key={role.id}
@@ -74,7 +73,7 @@ export const HakuRoles = ({
               userHasEditMyHakuRolePrivilege={userHasEditMyHakuRolePrivilege}
             />
           ))}
-        </CSSTransitionGroup>
+        </tbody>
       </table>
 
       <div id="roles-list" className="va-user-search-add-role">
