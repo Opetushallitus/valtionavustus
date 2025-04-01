@@ -1,6 +1,6 @@
 import type { SetStateAction, Dispatch } from 'react'
 import { debounce } from 'lodash'
-import React, { PropsWithChildren, useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Select, { components, OptionProps, GroupBase } from 'react-select'
 
 import { HelpTexts, Raportointivelvoite } from 'soresu-form/web/va/types'
@@ -62,10 +62,11 @@ const options = [
 export function Option({
   children,
   ...props
-}: PropsWithChildren<OptionProps<OptionType, false, GroupBase<OptionType>>>) {
+}: React.PropsWithChildren<OptionProps<OptionType, false, GroupBase<OptionType>>>) {
   const { data, innerProps } = props
   const propsWithDataTestId = { ...innerProps, 'data-test-id': data.value }
   return (
+    // @ts-expect-error type error with react 19 types, seems to work otherwise
     <components.Option {...props} innerProps={propsWithDataTestId}>
       {children}
     </components.Option>

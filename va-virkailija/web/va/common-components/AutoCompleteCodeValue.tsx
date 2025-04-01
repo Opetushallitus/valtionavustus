@@ -63,6 +63,7 @@ export function Option({
     'data-test-id': data.code,
   })
   return (
+    // @ts-expect-error type error with react 19 types, seems to work otherwise
     <components.Option {...props} innerProps={propsWithDataTestId}>
       {children}
     </components.Option>
@@ -79,6 +80,7 @@ function SingleValue({
     'data-test-id': `singlevalue-${data['value-type']}`,
   })
   return (
+    // @ts-expect-error type error with react 19 types, seems to work otherwise
     <components.SingleValue {...props} innerProps={propsWithDataTestId}>
       {children}
     </components.SingleValue>

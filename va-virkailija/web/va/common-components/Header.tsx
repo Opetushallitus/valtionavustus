@@ -21,7 +21,7 @@ type NotificationStatus = 'ok' | 'error' | 'warning' | 'info'
 
 type NotificationProps = {
   notification: string
-  notificationIcon: () => JSX.Element
+  notificationIcon: () => React.JSX.Element
   status: NotificationStatus
 }
 
