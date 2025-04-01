@@ -4,8 +4,8 @@ import ClassNames from 'classnames'
 import './MuutoshakemusSection.less'
 
 interface Props {
-  blueMiddleComponent?: JSX.Element
-  bottomComponent?: JSX.Element
+  blueMiddleComponent?: React.JSX.Element
+  bottomComponent?: React.JSX.Element
   datepickerFix?: boolean
   children: React.ReactNode
 }

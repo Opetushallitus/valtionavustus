@@ -454,7 +454,7 @@ const KayttoajanPidennysAcceptWithChangesForm = ({
   f,
   muutoshakemus,
   projectEndDate,
-}: KayttoajanPidennysAcceptWithChangesFormProps): JSX.Element => {
+}: KayttoajanPidennysAcceptWithChangesFormProps): React.JSX.Element => {
   const haettuPaiva = dateStringToMoment(muutoshakemus['haettu-kayttoajan-paattymispaiva'])
   const errorInPaattymispaiva =
     f.touched['haen-kayttoajan-pidennysta'] &&

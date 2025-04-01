@@ -1,5 +1,5 @@
 import moment from 'moment'
-import React, { MouseEvent, RefObject, useRef, useState } from 'react'
+import React, { MouseEvent, useRef, useState } from 'react'
 
 import { HelpTexts } from 'soresu-form/web/va/types'
 import HttpUtil from 'soresu-form/web/HttpUtil'
@@ -383,7 +383,7 @@ type SelectEmailProps = {
   userSearch: VaUserSearch
   setSearch: (s: string) => void
   setEmail: (s: string) => void
-  inputRef: RefObject<HTMLInputElement>
+  inputRef: React.RefObject<HTMLInputElement | null>
 }
 
 const SelectEmail = ({ userSearch, setSearch, setEmail, inputRef }: SelectEmailProps) => {

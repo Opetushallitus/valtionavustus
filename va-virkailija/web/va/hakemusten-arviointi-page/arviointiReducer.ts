@@ -395,7 +395,7 @@ export interface ArviointiState {
     loadingAvustushaku: boolean
     loadError: boolean
   }
-  modal: JSX.Element | undefined
+  modal: React.JSX.Element | undefined
   showOthersScores?: boolean
 }
 

@@ -20,7 +20,7 @@ interface Props {
 export const OsioPaatos: React.FC<Props> = ({ osio, paatosStatus }) => {
   const { t } = useTranslations()
   const text = t.muutoshakemus.paatos[osio].status[paatosStatus]
-  const icon: JSX.Element = isAccepted(paatosStatus) ? (
+  const icon: React.JSX.Element = isAccepted(paatosStatus) ? (
     <IconAccepted fill={black} />
   ) : isRejected(paatosStatus) ? (
     <IconRejected fill={black} />
