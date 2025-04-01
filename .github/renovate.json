@@ -16,6 +16,7 @@
   "forkProcessing": "disabled",
   "ignoreTests": false,
   "automergeType": "pr",
+  "lockFileMaintenance": { "enabled": true },
   "schedule": [
     "every weekend",
     "after 5pm",
