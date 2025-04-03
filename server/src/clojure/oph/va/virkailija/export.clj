@@ -755,7 +755,7 @@
 
 (defn get-nutshell [data]
   (or (formutil/find-answer-value (:answers data) "project-nutshell")
-      (formutil/find-answer-value (:answers data) "project-goals")
+      (:kayttotarkoitus data)
       ""))
 
 (def avustushaku->hallinoi-sheet-rows
@@ -774,7 +774,7 @@
    (constantly "") ;"avustusasiaVireillepanijaHenkiloNimi"
    (comp get-y-tunnus) ;"avustusasiaVireillepanijaYhteisoTunnus"
    (constantly "") ;"avustusasiaVireillepanijaYhteisoNimi"
-   (comp get-nutshell) ;"avustushakemusHaettuKayttotarkoitus"
+   (constantly "") ;"avustushakemusHaettuKayttotarkoitus"
    :budget-total ;"avustushakemusHaettuAvustus"
    (comp get-kotikunta) ;"avustushakemusAlueKunnat"
    (constantly "") ;"avustushakemusAlueMaakunnat"
@@ -784,7 +784,7 @@
    (constantly "") ;"avustuspaatosPerustelu"
    (comp get-avustuspaatos-tyyppi) ;"avustuspaatosTyyppi"
    :myonnetty ;"avustuspaatosMyonnettyAvustus"
-   :kayttotarkoitus ;"avustuspaatosHyvaksyttyKayttotarkoitus"
+   (comp get-nutshell) ;"avustuspaatosHyvaksyttyKayttotarkoitus"
    (constantly "") ;"avustuspaatosKayttoaikaAlkaaPvm"
    (constantly "") ;"avustuspaatosKayttoaikaPaattyyPvm"
    (constantly "") ;"avustuspaatosMaksettuAvustus"
