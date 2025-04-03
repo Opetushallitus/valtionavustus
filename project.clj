@@ -39,7 +39,7 @@
                          ;; [buddy/buddy-sign "3.6.1-359"] -> [buddy/buddy-core "1.12.0-430"] ->
                          [commons-codec "1.18.0"]
 
-                         ;; [ring/ring-core "1.13.0"] -> [commons-io "2.18.0"]
+                         ;; [ring/ring-core "1.14.1"] -> [commons-io "2.18.0"]
                          ;; [org.apache.tika/tika-core "3.1.0"] -> [commons-io "2.18.0"]
                          [commons-io "2.18.0"]
 
