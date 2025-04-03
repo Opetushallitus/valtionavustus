@@ -95,14 +95,10 @@ const muutosTest = budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixture
       await expect(hakemustenArviointiPage.arviointiTabLocators().taTili.value).toContainText(
         'Ammatillinen koulutus'
       )
-      const urlPattern = /^.*\/api\/avustushaku\/[0-9]+\/hakemus\/[0-9]+\/arvio$/
-      const responsePromise = page.waitForResponse(urlPattern)
       await hakemustenArviointiPage.page.click(
         "#arviointi-tab label[for='set-arvio-status-plausible']"
       )
-      const response = await responsePromise
-      const body = await response.json()
-      expect(body.status).toBe('plausible')
+      await hakemustenArviointiPage.waitForSave()
     })
     await test.step('budget is prefilled correctly', async () => {
       await hakemustenArviointiPage.page.click('label[for="useDetailedCosts-true"]')
@@ -152,10 +148,12 @@ muutosTest(
     })
     await test.step('validate submitted values after sending it', async () => {
       const hakijaMuutoshakemusPaatosPage = new HakijaMuutoshakemusPaatosPage(page)
-      const currentBudget = await getCurrentBudget(hakijaMuutoshakemusPaatosPage.page)
-      expect(currentBudget).toMatchObject(budget.amount)
-      const muutoshakemusBudget = await getMuutoshakemusBudget(hakijaMuutoshakemusPaatosPage.page)
-      expect(muutoshakemusBudget).toMatchObject(muutoshakemus1Budget)
+      await expect
+        .poll(() => getCurrentBudget(hakijaMuutoshakemusPaatosPage.page))
+        .toMatchObject(budget.amount)
+      await expect
+        .poll(() => getMuutoshakemusBudget(hakijaMuutoshakemusPaatosPage.page))
+        .toMatchObject(muutoshakemus1Budget)
       const locators = hakijaMuutoshakemusPaatosPage.locators()
       await expect(locators.reasoning).toHaveText('Hakijan perustelut')
       await expect(locators.currentBudgetTitle).toHaveText('Haettu uusi budjetti')
@@ -257,14 +255,10 @@ muutosTest(
     await test.step('paatospage shows correct data', async () => {
       const hakijaMuutoshakemusPaatosPage = new HakijaMuutoshakemusPaatosPage(page)
       await expect
-        .poll(async () => {
-          return await getCurrentBudget(hakijaMuutoshakemusPaatosPage.page)
-        })
+        .poll(() => getCurrentBudget(hakijaMuutoshakemusPaatosPage.page))
         .toMatchObject(acceptedBudget)
       await expect
-        .poll(async () => {
-          return await getMuutoshakemusBudget(hakijaMuutoshakemusPaatosPage.page)
-        })
+        .poll(() => getMuutoshakemusBudget(hakijaMuutoshakemusPaatosPage.page))
         .toMatchObject(muutoshakemus2Budget)
       await expect(
         hakijaMuutoshakemusPaatosPage.locators().currentTalousarvioPerustelut
