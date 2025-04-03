@@ -790,6 +790,10 @@
    (constantly "") ;"avustuspaatosMaksettuAvustus"
    (constantly "") ;"piilotaKayttotarkoitus"
    (constantly "") ;"piilotaVireillepanija"
+   (constantly "") ;"poistaTiedot"
+   (constantly "") ;"euVarat"
+   (constantly "") ;"saajanSektoriluokitus"
+   (constantly "Ei") ;"ulkomainenSaaja"
    ))
 
 (defn export-avustushaku-for-hallinnoiavustuksia [avustushaku-id]
