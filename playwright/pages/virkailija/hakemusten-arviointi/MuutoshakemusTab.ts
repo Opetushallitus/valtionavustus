@@ -125,10 +125,9 @@ export function createMuutoshakemusTab(page: Page) {
     paatos?: PaatosValues
   ) {
     await expect(locators.jatkoaika).toHaveText(muutoshakemus.jatkoaika!.format('DD.MM.YYYY'))
-    const jatkoaikaPerustelu = await page.textContent(
-      '[data-test-id=muutoshakemus-jatkoaika-perustelu]'
+    await expect(page.getByTestId('muutoshakemus-jatkoaika-perustelu')).toHaveText(
+      muutoshakemus.jatkoaikaPerustelu
     )
-    expect(jatkoaikaPerustelu).toEqual(muutoshakemus.jatkoaikaPerustelu)
 
     if (paatos) {
       await expect(page.getByTestId('muutoshakemus-paatos')).toBeVisible()

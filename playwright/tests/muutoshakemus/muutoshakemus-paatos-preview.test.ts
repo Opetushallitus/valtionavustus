@@ -41,9 +41,7 @@ muutoshakemusTest(
       const preview = await muutoshakemusTab.openPaatosPreview()
       await expect(preview.muutoshakemusPaatosTitle).toHaveText('Päätös')
       await expect(preview.projectName).toHaveText('Rahassa kylpijät Ky Ay Oy')
-      expect(await preview.registerNumber.textContent()).toMatch(
-        /[0-9]{1,3}\/[0-9]{1,5}\/[0-9]{2,6}/
-      )
+      await expect(preview.registerNumber).toHaveText(/[0-9]{1,3}\/[0-9]{1,5}\/[0-9]{2,6}/)
       await expect(preview.org).toHaveText('Akaan kaupunki')
       await expect(preview.hyvaksyja).toHaveText('_ valtionavustus')
       await expect(preview.lisatietoja).toHaveText(

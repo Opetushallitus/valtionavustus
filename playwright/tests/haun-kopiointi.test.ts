@@ -37,12 +37,12 @@ defaultValues('Copying haku', async ({ page }) => {
 
 async function expectLoppuselvitysTitleToBe(page: HakujenHallintaPage, title: string) {
   const tab = await page.commonHakujenHallinta.switchToLoppuselvitysTab()
-  expect(await tab.getSelvitysTitleFi()).toEqual(title)
+  await expect(tab.getSelvitysTitleFi()).toHaveText(title)
 }
 
 async function expectValiselvitysTitleToBe(page: HakujenHallintaPage, title: string) {
   const tab = await page.commonHakujenHallinta.switchToValiselvitysTab()
-  expect(await tab.getSelvitysTitleFi()).toEqual(title)
+  await expect(tab.getSelvitysTitleFi()).toHaveText(title)
 }
 
 async function setValiselvitysTitleTo(page: HakujenHallintaPage, title: string) {

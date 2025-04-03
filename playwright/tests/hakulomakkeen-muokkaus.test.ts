@@ -68,8 +68,7 @@ defaultValues('Editing hakulomake', async ({ page, hakuProps }) => {
     await formEditorPage.saveForm()
     await formEditorPage.locators.saveFormButton.isDisabled()
 
-    const savedTextArea = await page.textContent('[name="p-1-text-fi"]')
-    expect(savedTextArea).toEqual(textToSave)
+    await expect(page.locator('[name="p-1-text-fi"]')).toHaveText(textToSave)
   })
 
   await test.step('(nested) field can be added into a fieldset', async () => {

@@ -39,8 +39,8 @@ export default function SelvitysTab(page: Page, type: SelvitysType) {
     await save()
   }
 
-  async function getSelvitysTitleFi() {
-    return await locators.title.textContent()
+  function getSelvitysTitleFi() {
+    return locators.title
   }
 
   async function openFormPreview(testId: string) {
