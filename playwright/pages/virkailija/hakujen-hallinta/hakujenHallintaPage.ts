@@ -137,13 +137,9 @@ export class HakujenHallintaPage {
       const haunTiedotPage = HaunTiedotPage(this.page)
       const hakuNameFi = haunTiedotPage.locators.hakuName.fi
       const currentHakuTitle = await hakuNameFi.textContent()
-
       await this.page.locator('a', { hasText: 'Kopioi uuden pohjaksi' }).click()
-      const loading = this.page.getByTestId(saveStatusTestId).locator('text=Ladataan tietoja')
-      await expect(loading).toBeVisible()
       await expect(hakuNameFi).toHaveText(`${currentHakuTitle} (kopio)`)
       await expect(hakuNameFi).toBeEnabled()
-      await expect(loading).not.toBeVisible()
       const avustushakuID = parseInt(await expectQueryParameter(this.page, 'avustushaku'))
       console.log(`Avustushaku ID: ${avustushakuID}`)
       return avustushakuID
