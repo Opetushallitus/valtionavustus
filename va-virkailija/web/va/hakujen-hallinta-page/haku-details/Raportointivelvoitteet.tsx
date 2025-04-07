@@ -66,7 +66,6 @@ export function Option({
   const { data, innerProps } = props
   const propsWithDataTestId = { ...innerProps, 'data-test-id': data.value }
   return (
-    // @ts-expect-error type error with react 19 types, seems to work otherwise
     <components.Option {...props} innerProps={propsWithDataTestId}>
       {children}
     </components.Option>
