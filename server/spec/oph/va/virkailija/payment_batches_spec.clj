@@ -5,13 +5,10 @@
             [oph.common.testing.spec-plumbing :refer [with-test-server!]]
             [oph.va.virkailija.server :refer [start-virkailija-server]]
             [oph.va.virkailija.common-utils
-             :refer [test-server-port get! post! json->map create-submission
-                     create-application create-application-evaluation
-                     create-payment]]
+             :refer [test-server-port get! post! json->map create-payment]]
             [oph.va.virkailija.payment-batches-data
              :refer [create-batch-document-email get-batch-documents
                      get-batch]]
-            [oph.va.virkailija.payments-data :as payments-data]
             [oph.va.virkailija.grant-data :as grant-data]
             [oph.va.virkailija.virkailija-tools :as tools]))
 
