@@ -25,6 +25,7 @@
      (migrate [this connection]
        ~@body)
 
+     (canExecuteInTransaction [this] true)
      (getChecksum [this] nil)
      (getDescription [this] ~description)
      (getVersion [this] (MigrationVersion/fromVersion ~version))))
