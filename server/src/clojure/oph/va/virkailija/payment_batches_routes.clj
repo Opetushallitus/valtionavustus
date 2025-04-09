@@ -17,7 +17,7 @@
     :query-params [date :- LocalDate grant-id :- Long]
     :return [schema/PaymentBatch]
     :summary "Find payment batches by date and grant id"
-    (if-let [batches (data/find-batches date grant-id)]
+    (if-let [batches (data/find-batches grant-id)]
       (ok batches)
       (no-content))))
 
@@ -29,8 +29,7 @@
                                    "Create payment batch")]
     :return schema/PaymentBatch
     :summary "Create new payment batch"
-    (if (seq (data/find-batches
-              (:receipt-date batch-values) (:grant-id batch-values)))
+    (if (seq (data/find-batches (:grant-id batch-values)))
       (conflict {:error "Payment batch already exists"})
       (ok (data/create-batch batch-values)))))
 

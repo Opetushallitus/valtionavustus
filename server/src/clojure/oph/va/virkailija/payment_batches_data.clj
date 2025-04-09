@@ -24,9 +24,8 @@
 
 (def timeout-limit 10000)
 
-(defn find-batches [date grant-id]
-  (->> (exec queries/find-batches
-             {:batch_date date :grant_id grant-id})
+(defn find-batches [grant-id]
+  (->> (exec queries/find-batches {:grant_id grant-id})
        (map convert-to-dash-keys)
        (map payments-data/convert-timestamps-from-sql)))
 
