@@ -21,7 +21,7 @@
 
 (defmacro defmigration [name version description & body]
   `(deftype ~name []
-    JavaMigration
+     JavaMigration
      (migrate [this connection]
        ~@body)
 
