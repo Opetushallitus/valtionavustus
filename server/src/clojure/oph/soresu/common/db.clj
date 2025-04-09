@@ -72,7 +72,7 @@
               (if grant-user
                 [(str "grant usage on schema " schema-name " to " grant-user)
                  (str "alter default privileges in schema " schema-name " grant select on tables to " grant-user)]))))
-         (catch Exception e (log/error (get-next-exception-or-original e) (.toString e))))
+      (catch Exception e (log/error (get-next-exception-or-original e) (.toString e))))
     (throw (RuntimeException. (str "Clearing database is not allowed! "
                                    "check that you run with correct mode. "
                                    "Current config name is " (config-name))))))
