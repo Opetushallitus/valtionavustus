@@ -1,7 +1,7 @@
 (ns oph.va.virkailija.invoice-spec
     (:require [speclj.core
                :refer [describe it should= should-throw should should-not
-                       tags around-all run-specs after]]
+                       tags around-all run-specs after before]]
               [oph.common.testing.spec-plumbing :refer [with-test-server!]]
               [oph.va.virkailija.server :refer [start-virkailija-server]]
               [oph.va.virkailija.common-utils
@@ -300,6 +300,8 @@
   "Payment batch payment invoice"
 
   (tags :server :paymentinvoice)
+
+  (before (tools/delete-payment-batches))
 
   (after
     (tools/delete-payment-batches))
