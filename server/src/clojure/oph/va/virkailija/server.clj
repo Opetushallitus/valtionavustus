@@ -26,11 +26,9 @@
 
 (defn- startup [config]
   (log/info "Startup, with configuration: " config)
-  (hakija-dbmigrations/migrate "hakija"
-                               "db/migration/hakija"
+  (hakija-dbmigrations/migrate "db/migration/hakija"
                                "oph/va/hakija/db/migrations")
-  (dbmigrations/migrate "virkailija"
-                        "db/migration/virkailija"
+  (dbmigrations/migrate "db/migration/virkailija"
                         "oph/va/virkailija/db/migrations")
   (common-email/start-background-job-send-mails)
   (auth/start-background-job-timeout-sessions)
