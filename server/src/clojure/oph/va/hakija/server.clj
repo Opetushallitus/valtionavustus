@@ -16,10 +16,10 @@
 
 (defn- startup [config]
   (log/info "Startup, with configuration:" config)
-  (dbmigrations/migrate "db.migration.hakija"
-                        "oph.va.hakija.db.migrations")
-  (virkailija-dbmigrations/migrate "db.migration.virkailija"
-                                   "oph.va.virkailija.db.migrations")
+  (dbmigrations/migrate "db/migration/hakija"
+                        "oph/va/hakija/db/migrations")
+  (virkailija-dbmigrations/migrate "db/migration/virkailija"
+                                   "oph/va/virkailija/db/migrations")
   (email/start-background-job-send-mails))
 
 (defn- shutdown []

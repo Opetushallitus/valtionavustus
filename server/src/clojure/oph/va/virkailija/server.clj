@@ -27,11 +27,11 @@
 (defn- startup [config]
   (log/info "Startup, with configuration: " config)
   (hakija-dbmigrations/migrate "hakija"
-                               "db.migration.hakija"
-                               "oph.va.hakija.db.migrations")
+                               "db/migration/hakija"
+                               "oph/va/hakija/db/migrations")
   (dbmigrations/migrate "virkailija"
-                        "db.migration.virkailija"
-                        "oph.va.virkailija.db.migrations")
+                        "db/migration/virkailija"
+                        "oph/va/virkailija/db/migrations")
   (common-email/start-background-job-send-mails)
   (auth/start-background-job-timeout-sessions)
   (when (get-in config [:va-users :use-cache?])
