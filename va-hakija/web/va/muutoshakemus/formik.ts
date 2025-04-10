@@ -1,8 +1,6 @@
-import * as yup from 'yup'
 import { useFormik } from 'formik'
 
-import { FormValues, TalousarvioValues } from 'soresu-form/web/va/types/muutoshakemus'
-import { getTalousarvioSchema } from 'soresu-form/web/va/Muutoshakemus'
+import { FormValues, getMuutoshakemusSchema } from 'soresu-form/web/va/types/muutoshakemus'
 import { postMuutoshakemus } from './client'
 import { Language } from 'soresu-form/web/va/i18n/translations'
 
