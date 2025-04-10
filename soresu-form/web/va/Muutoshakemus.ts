@@ -1,5 +1,4 @@
 import moment, { Moment } from 'moment'
-import * as yup from 'yup'
 
 import {
   Meno,
@@ -10,29 +9,6 @@ import {
 } from './types/muutoshakemus'
 import { isoFormat, fiLongFormat } from 'soresu-form/web/va/i18n/dateformat'
 import { Avustushaku } from './types'
-
-export const getTalousarvioSchema = (talousarvio: TalousarvioValues, e: any) => {
-  const menos = Object.keys(talousarvio).reduce((acc, key) => {
-    if (key !== 'originalSum' && key !== 'currentSum') {
-      return { ...acc, [key]: yup.number().min(0).required(e.required) }
-    } else {
-      return acc
-    }
-  }, {})
-
-  return {
-    ...menos,
-    originalSum: yup.number().required(e.required),
-    currentSum: yup
-      .number()
-      .test(
-        'current-sum',
-        e.talousarvioSum(talousarvio.originalSum),
-        (s) => s === talousarvio.originalSum
-      )
-      .required(e.required),
-  }
-}
 
 export const getTalousarvioValues = (talousarvio: Meno[]): TalousarvioValues => {
   const menos = talousarvio.reduce(

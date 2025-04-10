@@ -2,6 +2,8 @@ import { FormikProps } from 'formik'
 import { EnvironmentApiResponse } from './environment'
 import { Avustushaku, NormalizedHakemusData } from '../types'
 import { Role } from '../../../../va-virkailija/web/va/types'
+import * as yup from 'yup'
+import { Language, translations } from 'soresu-form/web/va/i18n/translations'
 
 export type MuutoshakemusProps = {
   status: 'LOADED' | 'LOADING'
@@ -88,22 +90,93 @@ export type TalousarvioValues = {
   currentSum: number
 }
 
-export type FormValues = {
-  name: string
-  email: string
-  phone: string
-  hasTrustedContact: boolean
-  trustedContactName?: string
-  trustedContactEmail?: string
-  trustedContactPhone?: string
-  haenKayttoajanPidennysta: boolean
-  haenSisaltomuutosta: boolean
-  sisaltomuutosPerustelut?: string
-  haenMuutostaTaloudenKayttosuunnitelmaan: boolean
-  haettuKayttoajanPaattymispaiva?: Date
-  kayttoajanPidennysPerustelut?: string
-  taloudenKayttosuunnitelmanPerustelut?: string
-  talousarvio?: TalousarvioValues
+export const getTalousarvioSchema = (talousarvio: TalousarvioValues, e: any) => {
+  const menos = Object.keys(talousarvio).reduce((acc, key) => {
+    if (key !== 'originalSum' && key !== 'currentSum') {
+      return { ...acc, [key]: yup.number().min(0).required(e.required) }
+    } else {
+      return acc
+    }
+  }, {})
+
+  return {
+    ...menos,
+    originalSum: yup.number().required(e.required),
+    currentSum: yup
+      .number()
+      .test(
+        'current-sum',
+        e.talousarvioSum(talousarvio.originalSum),
+        (s) => s === talousarvio.originalSum
+      )
+      .required(e.required),
+  }
 }
+
+const emailRegex =
+  /^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+
+export const getMuutoshakemusSchema = (lang: Language) => {
+  const t = translations[lang]
+  const e = t.formErrors
+  return yup
+    .object({
+      name: yup.string().required(e.required),
+      email: yup.string().matches(emailRegex, e.email).required(e.required),
+      phone: yup.string().required(e.required),
+      hasTrustedContact: yup.boolean().required(),
+      trustedContactName: yup.string().when('hasTrustedContact', {
+        is: true,
+        then: (schema) => schema.required(e.required),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+      trustedContactEmail: yup.string().when('hasTrustedContact', {
+        is: true,
+        then: (schema) => schema.matches(emailRegex).required(e.required),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+      trustedContactPhone: yup.string().when('hasTrustedContact', {
+        is: true,
+        then: (schema) => schema.required(e.required),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+      haenKayttoajanPidennysta: yup.boolean().required(e.required),
+      haettuKayttoajanPaattymispaiva: yup.date().when('haenKayttoajanPidennysta', {
+        is: true,
+        then: (schema) =>
+          schema.min(new Date(), e.haettuKayttoajanPaattymispaiva).required(e.required),
+        otherwise: (schema) => schema,
+      }),
+      kayttoajanPidennysPerustelut: yup.string().when('haenKayttoajanPidennysta', {
+        is: true,
+        then: (schema) => schema.required(e.required),
+        otherwise: (schema) => schema,
+      }),
+      haenSisaltomuutosta: yup.boolean().required(e.required),
+      sisaltomuutosPerustelut: yup.string().when('haenSisaltomuutosta', {
+        is: true,
+        then: (schema) => schema.required(e.required),
+        otherwise: (schema) => schema,
+      }),
+      taloudenKayttosuunnitelmanPerustelut: yup
+        .string()
+        .when('haenMuutostaTaloudenKayttosuunnitelmaan', {
+          is: true,
+          then: (schema) => schema.required(e.required),
+          otherwise: (schema) => schema,
+        }),
+      haenMuutostaTaloudenKayttosuunnitelmaan: yup.boolean().required(e.required),
+      talousarvio: yup
+        .mixed()
+        .when(['haenMuutostaTaloudenKayttosuunnitelmaan'], ([shouldValidate], _schema) => {
+          return shouldValidate
+            ? yup.lazy((val) => yup.object(getTalousarvioSchema(val, e)).required(e.required))
+            : yup.object()
+        }) as yup.Schema<TalousarvioValues | undefined>,
+    })
+    .required()
+}
+
+export type FormValues = yup.InferType<ReturnType<typeof getMuutoshakemusSchema>>
 
 export type FormikHook = FormikProps<FormValues>

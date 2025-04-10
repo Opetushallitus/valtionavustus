@@ -13,6 +13,7 @@ import Localization from 'react-widgets/Localization'
 
 import { Avustushaku, Hakemus, NormalizedHakemusData } from 'soresu-form/web/va/types'
 import {
+  getTalousarvioSchema,
   Meno,
   Muutoshakemus,
   Talousarvio,
@@ -28,7 +29,6 @@ import {
 import {
   dateStringToMoment,
   getTalousarvio,
-  getTalousarvioSchema,
   getTalousarvioValues,
   isAccepted,
   isAcceptedWithChanges,
