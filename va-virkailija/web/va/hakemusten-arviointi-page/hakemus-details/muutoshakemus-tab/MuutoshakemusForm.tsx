@@ -130,7 +130,7 @@ const errors = {
 const getPaatosSchema = (muutoshakemus: Muutoshakemus) =>
   Yup.object().shape({
     reason: Yup.string().required('Perustelu on pakollinen kenttä'),
-    talousarvio: Yup.lazy<any>((talousarvio) =>
+    talousarvio: Yup.lazy((talousarvio) =>
       talousarvio?.talousarvio
         ? Yup.object().shape({
             status: Yup.string(),
@@ -138,7 +138,7 @@ const getPaatosSchema = (muutoshakemus: Muutoshakemus) =>
           })
         : Yup.object()
     ),
-    'haen-kayttoajan-pidennysta': Yup.lazy<any>((paattymispaiva) => {
+    'haen-kayttoajan-pidennysta': Yup.lazy((paattymispaiva) => {
       return muutoshakemus['haen-kayttoajan-pidennysta'] &&
         paattymispaiva?.status === 'accepted_with_changes'
         ? Yup.object({
@@ -147,7 +147,7 @@ const getPaatosSchema = (muutoshakemus: Muutoshakemus) =>
           })
         : Yup.object()
     }),
-    'haen-sisaltomuutosta': Yup.lazy<any>((haenSisaltomuutosta) => {
+    'haen-sisaltomuutosta': Yup.lazy((haenSisaltomuutosta) => {
       const sisaltomuutosStatus = haenSisaltomuutosta?.status
       return isAcceptedWithOrWithoutChanges(sisaltomuutosStatus)
         ? Yup.object({
