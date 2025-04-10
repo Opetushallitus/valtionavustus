@@ -36,7 +36,7 @@
     "route-parser": "^0.0.5",
     "seamless-immutable": "^7.1.4",
     "speakingurl": "^14.0.0",
-    "yup": "^0.29.3"
+    "yup": "^0.32.0"
   },
   "devDependencies": {
     "@babel/core": "7.26.10",
@@ -50,7 +50,7 @@
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.1",
     "@types/seamless-immutable": "7.1.19",
-    "@types/yup": "0.29.14",
+    "@types/yup": "0.32.0",
     "babel-loader": "10.0.0",
     "babel-plugin-webpack-alias-7": "0.1.1",
     "css-loader": "7.1.2",
