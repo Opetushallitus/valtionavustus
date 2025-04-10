@@ -113,16 +113,13 @@ export const getTalousarvioSchema = (talousarvio: TalousarvioValues, e: any) => 
   }
 }
 
-const emailRegex =
-  /^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
-
 export const getMuutoshakemusSchema = (lang: Language) => {
   const t = translations[lang]
   const e = t.formErrors
   return yup
     .object({
       name: yup.string().required(e.required),
-      email: yup.string().matches(emailRegex, e.email).required(e.required),
+      email: yup.string().email(e.email).required(e.required),
       phone: yup.string().required(e.required),
       hasTrustedContact: yup.boolean().required(),
       trustedContactName: yup.string().when('hasTrustedContact', {
@@ -132,7 +129,7 @@ export const getMuutoshakemusSchema = (lang: Language) => {
       }),
       trustedContactEmail: yup.string().when('hasTrustedContact', {
         is: true,
-        then: (schema) => schema.matches(emailRegex).required(e.required),
+        then: (schema) => schema.email(e.email).required(e.required),
         otherwise: (schema) => schema.notRequired(),
       }),
       trustedContactPhone: yup.string().when('hasTrustedContact', {
