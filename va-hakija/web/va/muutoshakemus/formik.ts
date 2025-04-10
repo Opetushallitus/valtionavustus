@@ -59,11 +59,6 @@ const getMuutoshakemusSchema = (lang: Language) => {
           otherwise: (schema) => schema,
         }),
       haenMuutostaTaloudenKayttosuunnitelmaan: yup.boolean().required(e.required),
-      /*talousarvio: yup.mixed().when('haenMuutostaTaloudenKayttosuunnitelmaan', {
-        is: true,
-        then: yup.lazy((val) => yup.object(getTalousarvioSchema(val, e)).required(e.required)),
-        otherwise: yup.object(),
-      }),*/
       talousarvio: yup
         .mixed()
         .when(['haenMuutostaTaloudenKayttosuunnitelmaan'], ([shouldValidate], _schema) => {
