@@ -14,6 +14,7 @@
     (.schemas config (into-array String [schema-name]))
     (.dataSource config (db/get-datasource))
     (.locations config (into-array String migration-paths))
+    (.failOnMissingLocations config true)
     (.table config "schema_version")
     (try (.migrate (Flyway. config))
          (catch Throwable e
