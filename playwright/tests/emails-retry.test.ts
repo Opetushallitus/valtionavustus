@@ -1,6 +1,6 @@
 import { APIRequestContext, test, expect } from '@playwright/test'
 import { VIRKAILIJA_URL } from '../utils/constants'
-import { emailSchema } from '../utils/emails'
+import { emailsSchema } from '../utils/emails'
 
 test.describe('Email sending retry mechanism', () => {
   test('retries to send email failed to be sent', async ({ request }) => {
@@ -26,7 +26,7 @@ async function deleteEmailsAndEmailEvents(request: APIRequestContext) {
 
 async function getGeneratedEmails(value: unknown) {
   const generatedEmailSubject = 's'
-  const emails = await emailSchema.validate(value)
+  const emails = await emailsSchema.validate(value)
   return emails.filter((email) => email.subject === generatedEmailSubject)
 }
 
