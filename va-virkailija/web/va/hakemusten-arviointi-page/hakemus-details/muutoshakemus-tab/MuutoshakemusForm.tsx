@@ -16,6 +16,7 @@ import {
   getTalousarvioSchema,
   Meno,
   Muutoshakemus,
+  PAATOS_STATUSES,
   Talousarvio,
   TalousarvioValues,
 } from 'soresu-form/web/va/types/muutoshakemus'
@@ -149,9 +150,9 @@ const getPaatosSchema = (muutoshakemus: Muutoshakemus) =>
     }),
     'haen-sisaltomuutosta': Yup.lazy((haenSisaltomuutosta) => {
       const sisaltomuutosStatus = haenSisaltomuutosta?.status
-      return isAcceptedWithOrWithoutChanges(sisaltomuutosStatus)
+      return isAcceptedWithOrWithoutChanges(sisaltomuutosStatus) || isRejected(sisaltomuutosStatus)
         ? Yup.object({
-            status: Yup.string().required(),
+            status: Yup.string().oneOf(PAATOS_STATUSES).required(),
           })
         : Yup.string()
     }),
