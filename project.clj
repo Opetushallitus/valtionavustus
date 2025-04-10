@@ -118,7 +118,9 @@
 
                  ;; database
                  [hikari-cp "3.2.0"]
-                 [org.flywaydb/flyway-core "10.0.0"]
+                 [org.flywaydb/flyway-core "10.22.0"]
+                 [org.flywaydb/flyway-database-postgresql "10.22.0"]
+
                  [org.postgresql/postgresql "42.7.5"]
                  [yesql "0.5.4"]
 
