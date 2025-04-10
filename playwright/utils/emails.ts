@@ -2,6 +2,7 @@ import axios from 'axios'
 import * as yup from 'yup'
 import { VIRKAILIJA_URL } from './constants'
 import { log, expectToBeDefined } from './util'
+import { ObjectSchema } from 'yup'
 
 export interface Email {
   id: number
@@ -21,9 +22,9 @@ export const emailSchema = yup
   .array()
   .of(
     yup
-      .object()
-      .shape<Email>({
-        id: yup.number(),
+      .object<ObjectSchema<Email>>()
+      .shape({
+        id: yup.number().required(),
         formatted: yup.string().required(),
         'to-address': yup
           .array()
@@ -322,9 +323,9 @@ export async function getHakemusTokenAndRegisterNumber(
   hakemusId: number
 ): Promise<HakemusTokenAndRegisterNumber> {
   const applicationGeneratedValuesSchema = yup
-    .object()
+    .object<ObjectSchema<HakemusTokenAndRegisterNumber>>()
     .required()
-    .shape<HakemusTokenAndRegisterNumber>({
+    .shape({
       token: yup.string().required(),
       'register-number': yup.string().required(),
     })

@@ -5,68 +5,75 @@ import { FormValues, TalousarvioValues } from 'soresu-form/web/va/types/muutosha
 import { getTalousarvioSchema } from 'soresu-form/web/va/Muutoshakemus'
 import { postMuutoshakemus } from './client'
 import { Language, translations } from 'soresu-form/web/va/i18n/translations'
+import { ObjectSchema } from 'yup'
 
 const emailRegex =
   /^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 const getMuutoshakemusSchema = (lang: Language) => {
   const t = translations[lang]
   const e = t.formErrors
-  return yup
-    .object()
-    .shape<FormValues>({
+  const schema: ObjectSchema<FormValues> = yup
+    .object({
       name: yup.string().required(e.required),
       email: yup.string().matches(emailRegex, e.email).required(e.required),
       phone: yup.string().required(e.required),
-      hasTrustedContact: yup.boolean(),
+      hasTrustedContact: yup.boolean().required(),
       trustedContactName: yup.string().when('hasTrustedContact', {
         is: true,
-        then: yup.string().required(e.required),
-        otherwise: yup.string().notRequired(),
+        then: (schema) => schema.required(e.required),
+        otherwise: (schema) => schema.notRequired(),
       }),
       trustedContactEmail: yup.string().when('hasTrustedContact', {
         is: true,
-        then: yup.string().matches(emailRegex).required(e.required),
-        otherwise: yup.string().notRequired(),
+        then: (schema) => schema.matches(emailRegex).required(e.required),
+        otherwise: (schema) => schema.notRequired(),
       }),
       trustedContactPhone: yup.string().when('hasTrustedContact', {
         is: true,
-        then: yup.string().required(e.required),
-        otherwise: yup.string().notRequired(),
+        then: (schema) => schema.required(e.required),
+        otherwise: (schema) => schema.notRequired(),
       }),
       haenKayttoajanPidennysta: yup.boolean().required(e.required),
       haettuKayttoajanPaattymispaiva: yup.date().when('haenKayttoajanPidennysta', {
         is: true,
-        then: yup.date().min(new Date(), e.haettuKayttoajanPaattymispaiva).required(e.required),
-        otherwise: yup.date(),
+        then: (schema) =>
+          schema.min(new Date(), e.haettuKayttoajanPaattymispaiva).required(e.required),
+        otherwise: (schema) => schema,
       }),
       kayttoajanPidennysPerustelut: yup.string().when('haenKayttoajanPidennysta', {
         is: true,
-        then: yup.string().required(e.required),
-        otherwise: yup.string(),
+        then: (schema) => schema.required(e.required),
+        otherwise: (schema) => schema,
       }),
-      haenMuutostaTaloudenKayttosuunnitelmaan: yup.boolean().required(e.required),
       haenSisaltomuutosta: yup.boolean().required(e.required),
       sisaltomuutosPerustelut: yup.string().when('haenSisaltomuutosta', {
         is: true,
-        then: yup.string().required(e.required),
-        otherwise: yup.string(),
+        then: (schema) => schema.required(e.required),
+        otherwise: (schema) => schema,
       }),
       taloudenKayttosuunnitelmanPerustelut: yup
         .string()
         .when('haenMuutostaTaloudenKayttosuunnitelmaan', {
           is: true,
-          then: yup.string().required(e.required),
-          otherwise: yup.string(),
+          then: (schema) => schema.required(e.required),
+          otherwise: (schema) => schema,
         }),
-      talousarvio: yup.object<TalousarvioValues>().when('haenMuutostaTaloudenKayttosuunnitelmaan', {
+      haenMuutostaTaloudenKayttosuunnitelmaan: yup.boolean().required(e.required),
+      /*talousarvio: yup.mixed().when('haenMuutostaTaloudenKayttosuunnitelmaan', {
         is: true,
-        then: yup.lazy((talousarvio: TalousarvioValues) =>
-          yup.object<TalousarvioValues>(getTalousarvioSchema(talousarvio, e)).required()
-        ),
+        then: yup.lazy((val) => yup.object(getTalousarvioSchema(val, e)).required(e.required)),
         otherwise: yup.object(),
-      }),
+      }),*/
+      talousarvio: yup
+        .mixed()
+        .when(['haenMuutostaTaloudenKayttosuunnitelmaan'], ([shouldValidate], _schema) => {
+          return shouldValidate
+            ? yup.lazy((val) => yup.object(getTalousarvioSchema(val, e)).required(e.required))
+            : yup.object()
+        }) as yup.Schema<TalousarvioValues | undefined>,
     })
     .required()
+  return schema
 }
 
 const initialValues: FormValues = {
