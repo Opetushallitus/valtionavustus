@@ -1,6 +1,7 @@
 (def log4j-version "2.24.3")
 (def jackson-version "2.18.3")
 (def http4s-version "0.16.6")
+(def flyway-version "10.22.0")
 
 (defproject oph-va/valtionavustus "0.1.0-SNAPSHOT"
 
@@ -118,8 +119,8 @@
 
                  ;; database
                  [hikari-cp "3.2.0"]
-                 [org.flywaydb/flyway-core "10.22.0"]
-                 [org.flywaydb/flyway-database-postgresql "10.22.0"]
+                 [org.flywaydb/flyway-core ~flyway-version]
+                 [org.flywaydb/flyway-database-postgresql ~flyway-version]
 
                  [org.postgresql/postgresql "42.7.5"]
                  [yesql "0.5.4"]
