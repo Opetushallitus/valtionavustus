@@ -4,45 +4,23 @@ import { VIRKAILIJA_URL } from './constants'
 import { log, expectToBeDefined } from './util'
 import { ObjectSchema } from 'yup'
 
-export interface Email {
-  id: number
-  formatted: string
-  'to-address': string[]
-  bcc: string | null
-  cc?: string[]
-  subject?: string
-  'reply-to'?: string | null
-  'from-address'?: string
-  'attachment-title'?: string
-  'attachment-description'?: string
-  'attachment-contents'?: string
-}
+export type Email = yup.InferType<typeof emailSchema>
 
-export const emailSchema = yup
-  .array()
-  .of(
-    yup
-      .object<ObjectSchema<Email>>()
-      .shape({
-        id: yup.number().required(),
-        formatted: yup.string().required(),
-        'to-address': yup
-          .array()
-          .of(yup.string().required())
-          .min(1, 'Empty to-address array')
-          .defined(),
-        bcc: yup.string().defined().nullable(),
-        cc: yup.array().of(yup.string().required()).optional(),
-        subject: yup.string().optional(),
-        'from-address': yup.string().optional(),
-        'reply-to': yup.string().optional().nullable(),
-        'attachment-contents': yup.string().optional(),
-        'attachment-title': yup.string().optional(),
-        'attachment-description': yup.string().optional(),
-      })
-      .required()
-  )
-  .defined()
+const emailSchema = yup.object().shape({
+  id: yup.number().required(),
+  formatted: yup.string().required(),
+  'to-address': yup.array().of(yup.string().required()).min(1, 'Empty to-address array').defined(),
+  bcc: yup.string().defined().nullable(),
+  cc: yup.array().of(yup.string().required()).optional(),
+  subject: yup.string().optional(),
+  'from-address': yup.string().optional(),
+  'reply-to': yup.string().optional().nullable(),
+  'attachment-contents': yup.string().optional(),
+  'attachment-title': yup.string().optional(),
+  'attachment-description': yup.string().optional(),
+})
+
+export const emailsSchema = yup.array().of(emailSchema.required()).defined()
 
 const getEmailsForEmailType = (emailType: string) => (): Promise<Email[]> =>
   axios
@@ -51,7 +29,7 @@ const getEmailsForEmailType = (emailType: string) => (): Promise<Email[]> =>
       console.log(`getEmails(${emailType})`, r.data)
       return r
     })
-    .then((r) => emailSchema.validate(r.data))
+    .then((r) => emailsSchema.validate(r.data))
 
 const getEmails =
   (emailType: string) =>
@@ -62,7 +40,7 @@ const getEmails =
         console.log(`getEmails(${emailType})`, r.data)
         return r
       })
-      .then((r) => emailSchema.validate(r.data))
+      .then((r) => emailsSchema.validate(r.data))
 
 const getEmailsWithAvustushaku =
   (emailType: string) =>
@@ -73,7 +51,7 @@ const getEmailsWithAvustushaku =
         console.log(`getEmails(${emailType})`, r.data)
         return r
       })
-      .then((r) => emailSchema.validate(r.data))
+      .then((r) => emailsSchema.validate(r.data))
 
 // Emails sent to hakija
 export const getLoppuselvitysMuistutusviestiEmails = getEmails('loppuselvitys-muistutus')
@@ -217,7 +195,7 @@ export async function getAvustushakuEmails(
 ): Promise<Email[]> {
   return await axios
     .get(`${VIRKAILIJA_URL}/api/test/avustushaku/${avustushakuID}/email/${emailType}`)
-    .then((r) => emailSchema.validate(r.data))
+    .then((r) => emailsSchema.validate(r.data))
 }
 
 export async function pollUntilNewHakemusEmailArrives(
