@@ -20,6 +20,7 @@ jobs:
 
   deploy-prod:
     needs: deploy-qa
+    if: false
     # No concurrency because it only allows one waiting and one pending job
     # Prod deployments will wait for approval
     uses: ./.github/workflows/_deploy-env.yaml
