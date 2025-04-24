@@ -29,7 +29,7 @@
     "react-dropzone": "^14.2.1",
     "react-focus-lock": "^2.9.1",
     "react-redux": "^9.0.0",
-    "react-router-dom": "^7.0.0",
+    "react-router-dom": "^7.5.2",
     "react-select": "^5.10.1",
     "react-widgets": "^5.8.4",
     "react-widgets-moment": "^5.0.20",
