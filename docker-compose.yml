@@ -41,7 +41,7 @@ services:
         mode: 'non-blocking'
 
   db:
-    image: postgres:17.4@sha256:f57cfa8e5c1b89d07c9cee525849772027c1d05b6668b1ee2ce64a4890ecb1ef
+    image: postgres:17.4@sha256:304ab813518754228f9f792f79d6da36359b82d8ecf418096c636725f8c930ad
     volumes:
       - ./scripts/postgres-docker/init-db.sql:/docker-entrypoint-initdb.d/init.sql
     hostname: va-postgres
