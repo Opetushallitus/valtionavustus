@@ -41,7 +41,7 @@
                          [commons-codec "1.18.0"]
 
                          ;; [ring/ring-core "1.14.1"] -> [commons-io "2.19.0"]
-                         ;; [org.apache.tika/tika-core "3.1.0"] -> [commons-io "2.19.0"]
+                         ;; [org.apache.tika/tika-core "3.2.0"] -> [commons-io "2.19.0"]
                          [commons-io "2.19.0"]
 
                          ;; [clojurewerkz/quartzite "2.2.0"] ->
@@ -106,7 +106,7 @@
                  [ring/ring-session-timeout "0.3.0"]
                  [ring/ring-ssl "0.4.0"]
                  [prismatic/schema "1.4.1"]
-                 [org.apache.tika/tika-core "3.1.0"] ; attachment handling
+                 [org.apache.tika/tika-core "3.2.0"] ; attachment handling
 
                  ;; auth
                  [buddy/buddy-auth "3.0.323"]
