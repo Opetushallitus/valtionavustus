@@ -1,0 +1,20 @@
+version: '3.9'
+
+services:
+  tunnel:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.ssh-tunnel
+    ports:
+      - '127.0.0.1:40077:5432/tcp'
+    healthcheck:
+      test: ['CMD', 'nc', '-z', '-v', 'localhost', '5432']
+      interval: 5s
+      timeout: 2s
+    volumes:
+      - $HOME/.aws:/root/.aws
+    environment:
+      - AWS_PROFILE
+      - AWS_REGION
+      - AWS_DEFAULT_REGION
+      - AWS_CONFIG_FILE=/root/.aws/config
