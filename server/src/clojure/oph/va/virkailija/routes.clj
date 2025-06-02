@@ -43,6 +43,7 @@
             [oph.va.virkailija.virkailija-notifications :as virkailija-notifications]
             [ring.swagger.json-schema-dirty]                ; for schema.core/conditional
             [ring.util.http-response :refer [ok internal-server-error not-found bad-request unauthorized]]
+            [ring.util.response :as response]
             [ring.util.response :as resp]
             [ring.util.codec :as codec]
             [schema.core :as s]))
@@ -93,6 +94,13 @@
         preview-url (str hakija-app-url "paatos/avustushaku/" avustushaku-id "/hakemus/" user-key "?nolog=true")]
     (resp/redirect preview-url)))
 
+(defn wait-handler
+  "Blocks for `ms` milliseconds and then returns a response."
+  [request]
+  (let [ms (or (some-> (:query-params request) (get "ms") Integer/parseInt) 1000)]
+    (Thread/sleep ms)
+    (response/response {:status "ok" :waited-ms ms})))
+
 (defn- on-selvitys [avustushaku-id hakemus-user-key selvitys-type showPreview]
   (let [hakemus (hakija-api/get-hakemus-by-user-key hakemus-user-key)
         language (keyword (:language hakemus))
@@ -110,6 +118,8 @@
   (compojure-api/POST "/csp-report" request
     (log/info "CSP:" (slurp (:body request)))
     (ok {:ok "ok"}))
+
+  (compojure-api/GET "/wait" [] wait-handler)
 
   (compojure-api/GET
     "/integrations/" []
