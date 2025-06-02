@@ -30,7 +30,7 @@
 
                          ;; [org.postgresql/postgresql "42.7.6"] ->
                          ;; ... -> [com.google.guava/guava "33.4.8-android"] ->
-                         [org.checkerframework/checker-qual "3.49.3"]
+                         [org.checkerframework/checker-qual "3.49.4"]
 
                          ;; [yesql "0.5.4"] ->
                          ;; ... -> [clout "2.2.1"] ->
