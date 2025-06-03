@@ -18,6 +18,7 @@ import { ARecord, PublicHostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets'
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager'
 import { Duration } from 'aws-cdk-lib'
+import { cloudFrontOriginReadTimeout } from './timeouts'
 
 export interface Domains {
   hakijaDomain: string
@@ -72,7 +73,7 @@ export class CdnStack extends cdk.Stack {
       defaultBehavior: {
         origin: new origins.HttpOrigin(loadBalancerARecord.domainName, {
           protocolPolicy: OriginProtocolPolicy.HTTPS_ONLY,
-          readTimeout: Duration.seconds(45),
+          readTimeout: cloudFrontOriginReadTimeout,
         }),
         allowedMethods: AllowedMethods.ALLOW_ALL,
         originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,

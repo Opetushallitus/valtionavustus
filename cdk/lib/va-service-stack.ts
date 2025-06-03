@@ -32,6 +32,7 @@ import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatem
 import { LoadBalancerTarget } from 'aws-cdk-lib/aws-route53-targets'
 import { ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53'
 import { Bucket } from 'aws-cdk-lib/aws-s3'
+import { albIdleTimeoutValue } from './timeouts'
 
 const CONTAINER_NAME = 'valtionavustukset'
 export const VIRKAILIJA_PORT = 8081 // = virkailija port
@@ -203,6 +204,7 @@ export class VaServiceStack extends cdk.Stack {
       preserveHostHeader: true,
     })
     loadBalancer.logAccessLogs(props.loadBalancerAccessLogBucket)
+    loadBalancer.setAttribute('idle_timeout.timeout_seconds', albIdleTimeoutValue.toString())
 
     const ALB_FQDN = `alb.${hakijaDomain}`
     this.loadbalancerARecord = new ARecord(this, 'alb-a-alias-record', {
