@@ -69,7 +69,7 @@
                          [com.fasterxml.jackson.dataformat/jackson-dataformat-smile ~jackson-version]
 
                          ;; testing
-                         [speclj "3.9.0" :exclusions [org.clojure/tools.reader org.clojure/java.classpath]]
+                         [speclj "3.10.0" :exclusions [org.clojure/tools.reader org.clojure/java.classpath]]
                          [speclj-junit "0.0.11"]
 
                          ;; other
@@ -165,7 +165,7 @@
                           :environment "test"}
                     :test-paths ["server/spec"]
                     :resource-paths ["server/test-resources"]
-                    :plugins [[speclj "3.9.0"]]
+                    :plugins [[speclj "3.10.0"]]
                     :dependencies [[speclj]
                                    [speclj-junit]]}
 
@@ -174,7 +174,7 @@
                                  :environment "test"}
                            :test-paths ["server/spec"]
                            :resource-paths ["server/test-resources"]
-                           :plugins [[speclj "3.9.0"]]
+                           :plugins [[speclj "3.10.0"]]
                            :dependencies [[speclj]
                                           [speclj-junit]]}}
 
