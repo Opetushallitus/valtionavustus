@@ -111,7 +111,7 @@
                  ;; auth
                  [buddy/buddy-auth "3.0.323"]
                  [buddy/buddy-sign "3.6.1-359" :exclusions [org.bouncycastle/bcprov-jdk18on]]
-                 [org.bouncycastle/bcprov-jdk18on "1.80"] ;; CVE-2024-29857, CVE-2024-30171, CVE-2024-30172
+                 [org.bouncycastle/bcprov-jdk18on "1.81"] ;; CVE-2024-29857, CVE-2024-30171, CVE-2024-30172
 
                  ;; json
                  [cheshire "6.0.0"]
