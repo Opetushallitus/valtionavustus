@@ -28,7 +28,7 @@
                          ;; fixes https://nvd.nist.gov/vuln/detail/cve-2020-8908
                          [com.google.guava/guava "33.4.8-android"]
 
-                         ;; [org.postgresql/postgresql "42.7.6"] ->
+                         ;; [org.postgresql/postgresql "42.7.7"] ->
                          ;; ... -> [com.google.guava/guava "33.4.8-android"] ->
                          [org.checkerframework/checker-qual "3.49.4"]
 
@@ -122,7 +122,7 @@
                  [org.flywaydb/flyway-core ~flyway-version]
                  [org.flywaydb/flyway-database-postgresql ~flyway-version]
 
-                 [org.postgresql/postgresql "42.7.6"]
+                 [org.postgresql/postgresql "42.7.7"]
                  [yesql "0.5.4"]
 
                  ;; emails
