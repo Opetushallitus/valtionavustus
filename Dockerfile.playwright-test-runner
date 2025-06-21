@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.52.0-noble@sha256:a021500a801bab0611049217ffad6b9697d827205c15babb86a53bc1a61c02d5
+FROM mcr.microsoft.com/playwright:v1.53.1-noble@sha256:cf7c341e04c9cf6c4c11a57ad5bcd295ebad2d35abda08c0687e28fe0a62ce49
 
 COPY package.json package-lock.json .
 RUN --mount=type=cache,target=/root/.npm npm ci
