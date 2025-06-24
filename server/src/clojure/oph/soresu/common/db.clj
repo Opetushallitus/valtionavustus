@@ -94,6 +94,7 @@
 (defn with-tx [func]
   (jdbc/with-db-transaction [connection {:datasource (get-datasource)} {:isolation :repeatable-read}]
     (func connection)))
+
 (defn query
   "Execute SQL query and convert underscores to dashes in returned identifiers"
   ([sql params] (with-tx (fn [tx] (query tx sql params))))

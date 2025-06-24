@@ -97,9 +97,9 @@
     :summary "Set loppuselvitys information verified"
     (let [identity (authentication/get-request-identity request)
           response (hakija-api/verify-loppuselvitys-information hakemus-id verify-information identity)]
-      (if response
-        (http/ok response)
-        (http/bad-request!))))
+      (if (nil? response)
+        (http/bad-request!)
+        response)))
 
   (compojure-api/GET "/tapahtumaloki/:tyyppi" []
     :path-params [avustushaku-id :- Long, hakemus-id :- Long, tyyppi :- s/Str]

@@ -20,7 +20,7 @@
    [oph.va.routes :refer :all]
    [oph.va.virkailija.authorization :as authorization]
    [oph.va.virkailija.email :as email]
-   [ring.util.http-response :refer [conflict!]])
+   [ring.util.http-response :refer [conflict! ok]])
   (:import
    (oph.va.jdbc.enums HakuRole HakuStatus HakuType)))
 
@@ -381,9 +381,9 @@
   (try (with-tx
          (fn [tx]
            (let [hakemus  (get-hakemus-by-id-tx tx hakemus-id)
-                 role     (get-avustushaku-role-by-avustushaku-id-and-person-oid-tx tx (:avustushaku hakemus) (:person-oid identity))
+                 role     (get-avustushaku-role-by-avustushaku-id-and-person-oid-tx tx  (:avustushaku hakemus) (:person-oid identity))
                  allowed-to-verify (or (authorization/is-pääkäyttäjä? identity) (authorization/is-valmistelija? role))
-                 status   (:status_loppuselvitys hakemus)
+                 status   (:status-loppuselvitys hakemus)
                  message  (:message verify-information)
                  verifier (str (:first-name identity) " " (:surname identity))]
              (when (and (= status "submitted") allowed-to-verify)
@@ -397,8 +397,9 @@
              loppuselvitys_information_verified_at = now()
            WHERE id = ? and version_closed is null"
                 [message verifier hakemus-id])
-               {:loppuselvitys-information-verified-by verifier
-                :loppuselvitys-information-verification message}))))
+               (ok
+                {:loppuselvitys-information-verified-by verifier
+                 :loppuselvitys-information-verification message})))))
        (catch java.sql.BatchUpdateException e
          (log/warn {:error (ex-message (ex-cause e))
                     :in "verify-loppuselvitys-information"
