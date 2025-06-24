@@ -19,7 +19,8 @@
    [oph.va.menoluokka.db :refer [upsert-menoluokka-rows]]
    [oph.va.routes :refer :all]
    [oph.va.virkailija.authorization :as authorization]
-   [oph.va.virkailija.email :as email])
+   [oph.va.virkailija.email :as email]
+   [ring.util.http-response :refer [conflict!]])
   (:import
    (oph.va.jdbc.enums HakuRole HakuStatus HakuType)))
 
@@ -401,7 +402,8 @@
        (catch java.sql.BatchUpdateException e
          (log/warn {:error (ex-message (ex-cause e))
                     :in "verify-loppuselvitys-information"
-                    :hakemus-id hakemus-id}))))
+                    :hakemus-id hakemus-id})
+         (conflict!))))
 
 (defn get-hakemusdata [hakemus-id]
   (let [hakemus (first (exec hakija-queries/get-hakemus-with-answers {:id hakemus-id}))
