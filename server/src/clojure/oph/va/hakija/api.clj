@@ -3,15 +3,16 @@
   (:require
    [clj-time.core :as clj-time]
    [clojure.java.io :as io]
+   [clojure.tools.logging :as log]
    [oph.common.datetime :as datetime]
    [oph.soresu.common.db :refer [escape-like-pattern exec execute!
-                                 get-next-exception-or-original
-                                 with-transaction with-tx]]
+                                 get-next-exception-or-original with-transaction with-tx]]
    [oph.soresu.form.db :refer [update-form!]]
    [oph.soresu.form.formhandler :as formhandler]
    [oph.va.environment :as environment]
    [oph.va.hakemus.db :as hakemus-copy]
    [oph.va.hakija.api.queries :as hakija-queries]
+   [oph.va.hakija.db :refer [get-hakemus-by-id-tx]]
    [oph.va.hakija.domain :as hakija-domain]
    [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
    [oph.va.jdbc.enums]
@@ -179,6 +180,12 @@
   (->> {:avustushaku_id avustushaku-id
         :oid            person-oid}
        (exec hakija-queries/get-avustushaku-role-by-avustushaku-id-and-person-oid)
+       (map role->json)
+       first))
+
+(defn get-avustushaku-role-by-avustushaku-id-and-person-oid-tx [tx avustushaku-id person-oid]
+  (->> [avustushaku-id person-oid]
+       (execute! tx "select * from avustushaku_roles where avustushaku = ? and oid = ?")
        (map role->json)
        first))
 
@@ -370,25 +377,31 @@
       false)))
 
 (defn verify-loppuselvitys-information [hakemus-id verify-information identity]
-  (let [hakemus  (get-hakemus hakemus-id)
-        role     (get-avustushaku-role-by-avustushaku-id-and-person-oid (:avustushaku hakemus) (:person-oid identity))
-        allowed-to-verify (or (authorization/is-pääkäyttäjä? identity) (authorization/is-valmistelija? role))
-        status   (:status_loppuselvitys hakemus)
-        message  (:message verify-information)
-        verifier (str (:first-name identity) " " (:surname identity))]
-    (if (and (= status "submitted") allowed-to-verify)
-      (do
-        (execute!
-         "UPDATE hakemukset
+  (try (with-tx
+         (fn [tx]
+           (let [hakemus  (get-hakemus-by-id-tx tx hakemus-id)
+                 role     (get-avustushaku-role-by-avustushaku-id-and-person-oid-tx tx (:avustushaku hakemus) (:person-oid identity))
+                 allowed-to-verify (or (authorization/is-pääkäyttäjä? identity) (authorization/is-valmistelija? role))
+                 status   (:status_loppuselvitys hakemus)
+                 message  (:message verify-information)
+                 verifier (str (:first-name identity) " " (:surname identity))]
+             (when (and (= status "submitted") allowed-to-verify)
+               (execute!
+                tx
+                "UPDATE hakemukset
            SET
              status_loppuselvitys = 'information_verified',
              loppuselvitys_information_verification = ?,
              loppuselvitys_information_verified_by = ?,
              loppuselvitys_information_verified_at = now()
            WHERE id = ? and version_closed is null"
-         [message verifier hakemus-id])
-        {:loppuselvitys-information-verified-by verifier
-         :loppuselvitys-information-verification message}))))
+                [message verifier hakemus-id])
+               {:loppuselvitys-information-verified-by verifier
+                :loppuselvitys-information-verification message}))))
+       (catch java.sql.BatchUpdateException e
+         (log/warn {:error (ex-message (ex-cause e))
+                    :in "verify-loppuselvitys-information"
+                    :hakemus-id hakemus-id}))))
 
 (defn get-hakemusdata [hakemus-id]
   (let [hakemus (first (exec hakija-queries/get-hakemus-with-answers {:id hakemus-id}))
