@@ -307,7 +307,7 @@ const DocumentEditor = ({
               }
               setAshaTunniste(e.target.value)
             }}
-            placeholder="ID1234567891"
+            placeholder="Esim. ID1234567891"
             disabled={!!currentDocument}
             pattern={'^ID\\d{1,10}$'}
           />
