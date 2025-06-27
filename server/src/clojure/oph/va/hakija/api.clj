@@ -381,7 +381,7 @@
   (try (with-tx
          (fn [tx]
            (let [hakemus  (get-hakemus-by-id-tx tx hakemus-id)
-                 role     (get-avustushaku-role-by-avustushaku-id-and-person-oid-tx tx  (:avustushaku hakemus) (:person-oid identity))
+                 role     (get-avustushaku-role-by-avustushaku-id-and-person-oid (:avustushaku hakemus) (:person-oid identity))
                  allowed-to-verify (or (authorization/is-pääkäyttäjä? identity) (authorization/is-valmistelija? role))
                  status   (:status-loppuselvitys hakemus)
                  message  (:message verify-information)
