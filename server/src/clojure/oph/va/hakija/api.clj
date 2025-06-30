@@ -6,7 +6,8 @@
    [clojure.tools.logging :as log]
    [oph.common.datetime :as datetime]
    [oph.soresu.common.db :refer [escape-like-pattern exec execute!
-                                 get-next-exception-or-original with-transaction with-tx]]
+                                 get-next-exception-or-original query with-transaction
+                                 with-tx]]
    [oph.soresu.form.db :refer [update-form!]]
    [oph.soresu.form.formhandler :as formhandler]
    [oph.va.environment :as environment]
@@ -186,7 +187,7 @@
 
 (defn get-avustushaku-role-by-avustushaku-id-and-person-oid-tx [tx avustushaku-id person-oid]
   (->> [avustushaku-id person-oid]
-       (execute! tx "select * from avustushaku_roles where avustushaku = ? and oid = ?")
+       (query tx "SELECT * FROM avustushaku_roles WHERE avustushaku = ? AND oid = ?")
        (map role->json)
        first))
 
@@ -381,25 +382,36 @@
   (try (with-tx
          (fn [tx]
            (let [hakemus  (get-hakemus-by-id-tx tx hakemus-id)
-                 role     (get-avustushaku-role-by-avustushaku-id-and-person-oid (:avustushaku hakemus) (:person-oid identity))
+                 role     (get-avustushaku-role-by-avustushaku-id-and-person-oid-tx tx  (:avustushaku hakemus) (:person-oid identity))
                  allowed-to-verify (or (authorization/is-pääkäyttäjä? identity) (authorization/is-valmistelija? role))
                  status   (:status-loppuselvitys hakemus)
+                 haku (:avustushaku-id hakemus)
                  message  (:message verify-information)
                  verifier (str (:first-name identity) " " (:surname identity))]
-             (when (and (= status "submitted") allowed-to-verify)
-               (execute!
-                tx
-                "UPDATE hakemukset
+             (cond
+               (not (= status "submitted"))
+               (log/warn {:error "Status is not submitted"
+                          :in "verify-loppuselvitys-information"
+                          :hakemus-id hakemus-id
+                          :haku-id haku})
+               (not allowed-to-verify)
+               (log/warn {:error "User not allowed to verify"
+                          :in "verify-loppuselvitys-information"
+                          :hakemus-id hakemus-id
+                          :haku-id haku})
+               :else (do (execute!
+                          tx
+                          "UPDATE hakemukset
            SET
              status_loppuselvitys = 'information_verified',
              loppuselvitys_information_verification = ?,
              loppuselvitys_information_verified_by = ?,
              loppuselvitys_information_verified_at = now()
            WHERE id = ? and version_closed is null"
-                [message verifier hakemus-id])
-               (ok
-                {:loppuselvitys-information-verified-by verifier
-                 :loppuselvitys-information-verification message})))))
+                          [message verifier hakemus-id])
+                         (ok
+                          {:loppuselvitys-information-verified-by verifier
+                           :loppuselvitys-information-verification message}))))))
        (catch java.sql.BatchUpdateException e
          (log/warn {:error (ex-message (ex-cause e))
                     :in "verify-loppuselvitys-information"

@@ -82,10 +82,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     expectToBeDefined(userKey)
     await use({ userKey })
   },
-  loppuselvityspyyntöSent: async (
-    { page, avustushakuID, acceptedHakemus, ukotettuValmistelija },
-    use
-  ) => {
+  loppuselvityspyyntöSent: async ({ page, avustushakuID, acceptedHakemus }, use) => {
     expectToBeDefined(acceptedHakemus)
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     await hakujenHallintaPage.navigateToLoppuselvitys(avustushakuID)
@@ -99,7 +96,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     ])
     const tapahtumaloki = page.locator('div.tapahtumaloki')
     await test.step('updates tapahtumaloki', async () => {
-      await expect(tapahtumaloki.getByTestId('sender-0')).toHaveText(ukotettuValmistelija)
+      await expect(tapahtumaloki.getByTestId('sender-0')).toHaveText('_ valtionavustus')
       await expect(tapahtumaloki.getByTestId('sent-0')).toHaveText('1')
     })
     await expect(notSentIndicator).toBeHidden()

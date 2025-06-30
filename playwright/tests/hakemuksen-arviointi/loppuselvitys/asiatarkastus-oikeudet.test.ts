@@ -4,6 +4,7 @@ import { switchUserIdentityTo } from '../../../utils/util'
 
 import { selvitysTest as test } from '../../../fixtures/selvitysTest'
 import { LoppuselvitysPage } from '../../../pages/virkailija/hakujen-hallinta/LoppuselvitysPage'
+import { DefaultValueFixtures } from '../../../fixtures/defaultValues'
 
 test('loppuselvitys asiatarkastus oikeudet käyttäjille', async ({
   page,
@@ -60,3 +61,38 @@ test('loppuselvitys asiatarkastus oikeudet käyttäjille', async ({
     await expectAsiastarkastusTextIsShown()
   })
 })
+
+test.extend<Pick<DefaultValueFixtures, 'ukotettuValmistelija'>>({
+  ukotettuValmistelija: 'Viivi Virkailija',
+})(
+  'loppuselvitys asiatarkastus  valmistelijalla happy path',
+  async ({
+    page,
+    avustushakuID,
+    loppuselvitysSubmitted: { loppuselvitysFormFilled },
+    acceptedHakemus: { hakemusID },
+  }) => {
+    expect(loppuselvitysFormFilled)
+    const loppuselvitysPage = LoppuselvitysPage(page)
+    await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
+    const va = page.getByText('_ valtionavustus')
+    const paiviPaakayttaja = page.getByText('Päivi Pääkäyttäjä')
+    const viiviVirkailija = page.getByText('Viivi Virkailija')
+    const acceptText = 'Ei huomioita'
+    await test.step('valmistelija voi asiatarkastaa', async () => {
+      await switchUserIdentityTo(page, 'viivivirkailija')
+      await expect(va).toBeHidden()
+      await expect(paiviPaakayttaja).toBeHidden()
+      await expect(viiviVirkailija).toBeVisible()
+
+      await loppuselvitysPage.locators.asiatarkastus.acceptMessage.fill(acceptText)
+      await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeEnabled()
+      await loppuselvitysPage.locators.asiatarkastus.confirmAcceptance.click()
+
+      const asiatarkastusText = page.getByText(acceptText)
+      await expect(asiatarkastusText).toBeHidden()
+      await loppuselvitysPage.locators.asiatarkastettu.click()
+      await expect(asiatarkastusText).toBeVisible()
+    })
+  }
+)
