@@ -132,16 +132,11 @@ test('multiple muutoshakemus', async ({ page, acceptedHakemus: { hakemusID }, av
 
   await test.step('in hakijaMuutoshakemusPage has correct values', async () => {
     await hakijaMuutoshakemusPage.navigate(hakemusID)
-    expect(await hakijaMuutoshakemusPage.existingMuutoshakemusLocator.allInnerTexts()).toHaveLength(
-      4
+    await expect(hakijaMuutoshakemusPage.existingMuutoshakemusLocator).toHaveCount(4)
+    await expect(hakijaMuutoshakemusPage.existingMuutoshakemusLocator.first()).toContainText(
+      '- Odottaa käsittelyä'
     )
-    const titles = await hakijaMuutoshakemusPage.existingMuutoshakemusLocator
-      .locator('[data-test-id="existing-muutoshakemus-title"]')
-      .allInnerTexts()
-    expect(titles[0]).toContain('- Odottaa käsittelyä')
-    expect(
-      await hakijaMuutoshakemusPage.page.locator('[data-test-id="icon-rejected"]').elementHandles()
-    ).toHaveLength(2)
+    await expect(hakijaMuutoshakemusPage.page.getByTestId('icon-rejected')).toHaveCount(2)
   })
 
   await test.step('check muutoshakemus #4', async () => {
