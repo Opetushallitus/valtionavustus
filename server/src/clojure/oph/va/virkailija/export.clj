@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.export
   (:require [clj-time.format :as clj-time-format]
             [clojure.set :as clj-set]
+            [clojure.string :as str]
             [clojure.string :as string]
             [clojure.tools.logging :as log]
             [oph.soresu.common.db :refer [query]]
@@ -536,6 +537,46 @@
          [main-sheet-columns]
          (mapv hakemus->main-sheet-rows hakemukset)))
 
+(defn get-normalized-hakemus [hakemus-id]
+  (first
+    (query
+      "SELECT
+         n.contact_person,
+         n.contact_email,
+         n.contact_phone,
+         n.trusted_contact_name,
+         n.trusted_contact_email,
+         n.trusted_contact_phone
+       FROM virkailija.normalized_hakemus n
+       JOIN hakija.hakemukset  h ON h.id = n.hakemus_id
+       JOIN hakija.avustushaut a ON a.id = h.avustushaku
+       WHERE h.version_closed IS NULL
+         AND a.muutoshakukelpoinen = true
+         AND n.hakemus_id = ?"
+      [hakemus-id])))
+
+(def patch-answer-key-map
+  {:contact-person        'applicant-name
+   :contact-email         'primary-email
+   :contact-phone         'textField-0
+   :trusted-contact-name  'trusted-contact-name
+   :trusted-contact-email 'trusted-contact-email
+   :trusted-contact-phone 'trusted-contact-phone})
+
+(defn patch-answer-map
+  [answers db-row]
+  (reduce
+    (fn [row [db-k sym-k]]
+      (let [v (get db-row db-k)]
+        (if (or (nil? v)
+                (and (string? v) (clojure.string/blank? v)))
+          row
+          (-> row
+              (assoc (name sym-k) v)))))
+    answers
+    patch-answer-key-map))
+
+
 (defn- make-answers-sheet-rows [form hakemukset va-focus-areas-label va-focus-areas-items fixed-fields]
   (let [growing-fieldset-lut          (generate-growing-fieldset-lut hakemukset)
 
@@ -551,9 +592,14 @@
         answer-types                  (apply conj
                                              (mapv fourth fixed-fields)
                                              (mapv third answer-key-label-type-triples))
-        answer-sets                   (map (partial hakemus->answers-sheet-map fixed-fields)
+        original-answer-sets          (map (partial hakemus->answers-sheet-map fixed-fields)
                                            hakemukset)
-
+        answer-sets (map (fn [hakemus answers]
+                           (if-let [db-row (get-normalized-hakemus (:id hakemus))]
+                             (patch-answer-map answers db-row)
+                             answers))
+                          hakemukset
+                          original-answer-sets)
         all-answers-data-rows         (mapv (partial answers->strs answer-keys answer-types va-focus-areas-items)
                                             answer-sets)
         all-answers-rows              (into [answer-labels] all-answers-data-rows)

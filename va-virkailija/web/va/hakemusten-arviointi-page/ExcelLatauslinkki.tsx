@@ -6,11 +6,7 @@ export const ExcelLatauslinkki = ({ avustushaku }: { avustushaku: Avustushaku | 
 
   return (
     <div className="excel-download-link">
-      <a
-        className="excel-export"
-        href={`/api/avustushaku/${avustushaku.id}/export.xslx`}
-        target="_"
-      >
+      <a className="excel-export" href={`/api/avustushaku/${avustushaku.id}/export.xslx`}>
         Lataa Excel
       </a>
     </div>

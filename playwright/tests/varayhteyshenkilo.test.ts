@@ -25,6 +25,7 @@ import { LoppuselvitysPage } from '../pages/virkailija/hakujen-hallinta/Loppusel
 import { ValiselvitysPage } from '../pages/virkailija/hakujen-hallinta/ValiselvitysPage'
 import { RefusePage } from '../pages/hakija/refuse-page'
 import { Answers } from '../utils/types'
+import * as xlsx from 'xlsx'
 
 type VarayhteyshenkiloAnswers = Answers & {
   trustedContact: {
@@ -193,6 +194,27 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
   },
 })
 
+const expectVarayhteyshenkiloColumns = (
+  workbook: xlsx.WorkBook,
+  {
+    name,
+    email,
+    phone,
+  }: {
+    name: string
+    email: string
+    phone: string
+  }
+) => {
+  const sheet = workbook.Sheets['Hakemuksien vastaukset']
+  expect(sheet.O1.v).toEqual('Varayhteyshenkilö')
+  expect(sheet.O2.v).toEqual(name)
+  expect(sheet.P1.v).toEqual('Sähköposti')
+  expect(sheet.P2.v).toEqual(email)
+  expect(sheet.Q1.v).toEqual('Puhelinumero')
+  expect(sheet.Q2.v).toEqual(phone)
+}
+
 test('varayhteyshenkilo flow', async ({
   page,
   avustushakuID,
@@ -200,11 +222,20 @@ test('varayhteyshenkilo flow', async ({
   ukotettuValmistelija,
   acceptedHakemusId,
 }) => {
+  const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+  await test.step('expect excel to contain original info', async () => {
+    await hakemustenArviointiPage.navigate(avustushakuID)
+    const workbook = await hakemustenArviointiPage.getLataaExcel()
+    expectVarayhteyshenkiloColumns(workbook, {
+      name: answers.trustedContact.name,
+      email: answers.trustedContact.email,
+      phone: answers.trustedContact.phoneNumber,
+    })
+  })
   const hakujenHallinta = new HakujenHallintaPage(page)
   const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
   const muutoshakemusUrl = await getLinkToMuutoshakemusFromSentEmails(acceptedHakemusId)
   const newEmail = 'ville.korjattu@example.com'
-  const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   await test.step('varayhteyshenkilö email can be updated with muutoshakemus', async () => {
     await hakijaMuutoshakemusPage.navigateWithLink(muutoshakemusUrl)
     const { trustedContact } = hakijaMuutoshakemusPage.locators()
@@ -215,6 +246,16 @@ test('varayhteyshenkilo flow', async ({
     await hakijaMuutoshakemusPage.clickSaveContacts()
     await hakijaMuutoshakemusPage.expectMuutoshakemusToBeSubmittedSuccessfully(false)
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
+    await test.step('expect excel to new email', async () => {
+      await hakemustenArviointiPage.closeHakemusDetails()
+      const workbook = await hakemustenArviointiPage.getLataaExcel()
+      expectVarayhteyshenkiloColumns(workbook, {
+        name: answers.trustedContact.name,
+        email: newEmail,
+        phone: answers.trustedContact.phoneNumber,
+      })
+    })
+    await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
     const sidebar = hakemustenArviointiPage.sidebarLocators()
     await expect(sidebar.oldAnswers.trustedContactName).toBeHidden()
     await expect(sidebar.oldAnswers.trustedContactEmail).toHaveText(answers.trustedContact.email)
@@ -225,6 +266,7 @@ test('varayhteyshenkilo flow', async ({
     await expect(sidebar.newAnswers.trustedContactEmail).toHaveText(newEmail)
     await expect(sidebar.newAnswers.trustedContactPhone).toBeHidden()
   })
+
   await test.step('name and phone can also be changed with muutoshakemus', async () => {
     const newName = 'Ville Varahenkilö'
     const newPhone = '04059559599'
@@ -238,6 +280,16 @@ test('varayhteyshenkilo flow', async ({
     await hakijaMuutoshakemusPage.clickSaveContacts()
     await hakijaMuutoshakemusPage.expectMuutoshakemusToBeSubmittedSuccessfully(false)
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
+    await test.step('expect excel to contain new name and phone', async () => {
+      await hakemustenArviointiPage.closeHakemusDetails()
+      const workbook = await hakemustenArviointiPage.getLataaExcel()
+      expectVarayhteyshenkiloColumns(workbook, {
+        name: newName,
+        email: newEmail,
+        phone: newPhone,
+      })
+    })
+    await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
     const sidebar = hakemustenArviointiPage.sidebarLocators()
     await expect(sidebar.oldAnswers.trustedContactName).toHaveText(answers.trustedContact.name)
     await expect(sidebar.oldAnswers.trustedContactEmail).toHaveText(answers.trustedContact.email)

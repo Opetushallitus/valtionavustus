@@ -16,6 +16,7 @@ import { Header } from '../Header'
 import { LoppuselvitysPage } from '../hakujen-hallinta/LoppuselvitysPage'
 import { createMuutoshakemusTab } from './MuutoshakemusTab'
 import { createViestiHankkeelleTab, ViestiHankkeelleTab } from './ViestiHankkeelleTab'
+import * as xlsx from 'xlsx'
 
 const jatkoaikaTestId = 'muutoshakemus-jatkoaika'
 
@@ -639,6 +640,25 @@ export class HakemustenArviointiPage {
         .locator('[data-test-id=tags-container]')
         .locator('button:text-is("budjettimuutos")'),
     }
+  }
+
+  async getLataaExcel() {
+    const downloadPromise = this.page.waitForEvent('download')
+    await this.page.click('text=Lataa excel')
+    const download = await downloadPromise
+    const path = await download.path()
+    if (!path) {
+      throw new Error('no download path? wat?')
+    }
+    const workbook = xlsx.readFile(path)
+    expect(workbook.SheetNames).toMatchObject([
+      'Hakemukset',
+      'Hakemuksien vastaukset',
+      'Väliselvityksien vastaukset',
+      'Loppuselvityksien vastaukset',
+      'Tiliöinti',
+    ])
+    return workbook
   }
 
   async getArkistointitunnus() {

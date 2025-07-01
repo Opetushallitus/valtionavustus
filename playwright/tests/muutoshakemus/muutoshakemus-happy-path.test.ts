@@ -18,6 +18,7 @@ import { MuutoshakemusValues } from '../../utils/types'
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusPage'
 import { randomString } from '../../utils/random'
+import * as xlsx from 'xlsx'
 
 const sendMuutoshakemuksiaKasittelemattaNotifications = (request: APIRequestContext) =>
   request.post(`${VIRKAILIJA_URL}/api/test/send-muutoshakemuksia-kasittelematta-notifications`)
@@ -30,6 +31,27 @@ const muutoshakemus1: MuutoshakemusValues = {
 
 test.setTimeout(180000)
 
+const expectYhteyshenkiloColumns = (
+  workbook: xlsx.WorkBook,
+  {
+    name,
+    email,
+    phone,
+  }: {
+    name: string
+    email: string
+    phone: string
+  }
+) => {
+  const sheet = workbook.Sheets['Hakemuksien vastaukset']
+  expect(sheet.L1.v).toEqual('Yhteyshenkilö')
+  expect(sheet.L2.v).toEqual(name)
+  expect(sheet.M1.v).toEqual('Sähköposti')
+  expect(sheet.M2.v).toEqual(email)
+  expect(sheet.N1.v).toEqual('Puhelinumero')
+  expect(sheet.N2.v).toEqual(phone)
+}
+
 test('When muutoshakemus enabled haku has been published, a hakemus has been submitted, and päätös has been sent', async ({
   page,
   avustushakuID,
@@ -39,6 +61,15 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
   answers,
 }) => {
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+  await test.step('expect excel to contain original info', async () => {
+    await hakemustenArviointiPage.navigate(avustushakuID)
+    const workbook = await hakemustenArviointiPage.getLataaExcel()
+    expectYhteyshenkiloColumns(workbook, {
+      name: answers.contactPersonName,
+      email: answers.contactPersonEmail,
+      phone: answers.contactPersonPhoneNumber,
+    })
+  })
   let hakemusRegisterNumber: string | undefined
   let linkToMuutoshakemus = ''
   await test.step('hakija gets an email with a link to muutoshakemus', async () => {
@@ -152,6 +183,15 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
     const expectedArviointiLink = `${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/`
     expect(email.formatted).toContain(`- Muutoshakemuksia 1 kpl: ${expectedArviointiLink}`)
     await page.goto(expectedArviointiLink)
+  })
+
+  await test.step('expect excel to new info', async () => {
+    const workbook = await hakemustenArviointiPage.getLataaExcel()
+    expectYhteyshenkiloColumns(workbook, {
+      name: newName,
+      email: newEmail,
+      phone: newPhone,
+    })
   })
 
   await test.step('Muutoshakemus status is Uusi', async () => {
