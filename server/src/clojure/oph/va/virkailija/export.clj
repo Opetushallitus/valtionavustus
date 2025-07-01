@@ -539,8 +539,8 @@
 
 (defn get-normalized-hakemus [hakemus-id]
   (first
-    (query
-      "SELECT
+   (query
+    "SELECT
          n.contact_person,
          n.contact_email,
          n.contact_phone,
@@ -553,7 +553,7 @@
        WHERE h.version_closed IS NULL
          AND a.muutoshakukelpoinen = true
          AND n.hakemus_id = ?"
-      [hakemus-id])))
+    [hakemus-id])))
 
 (def patch-answer-key-map
   {:contact-person        'applicant-name
@@ -566,16 +566,15 @@
 (defn patch-answer-map
   [answers db-row]
   (reduce
-    (fn [row [db-k sym-k]]
-      (let [v (get db-row db-k)]
-        (if (or (nil? v)
-                (and (string? v) (clojure.string/blank? v)))
-          row
-          (-> row
-              (assoc (name sym-k) v)))))
-    answers
-    patch-answer-key-map))
-
+   (fn [row [db-k sym-k]]
+     (let [v (get db-row db-k)]
+       (if (or (nil? v)
+               (and (string? v) (clojure.string/blank? v)))
+         row
+         (-> row
+             (assoc (name sym-k) v)))))
+   answers
+   patch-answer-key-map))
 
 (defn- make-answers-sheet-rows [form hakemukset va-focus-areas-label va-focus-areas-items fixed-fields]
   (let [growing-fieldset-lut          (generate-growing-fieldset-lut hakemukset)
@@ -598,8 +597,8 @@
                            (if-let [db-row (get-normalized-hakemus (:id hakemus))]
                              (patch-answer-map answers db-row)
                              answers))
-                          hakemukset
-                          original-answer-sets)
+                         hakemukset
+                         original-answer-sets)
         all-answers-data-rows         (mapv (partial answers->strs answer-keys answer-types va-focus-areas-items)
                                             answer-sets)
         all-answers-rows              (into [answer-labels] all-answers-data-rows)
