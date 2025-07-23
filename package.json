@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.0",
-    "axios": "^1.0.0",
+    "axios": "^1.11.0",
     "baconjs": "3.0.23",
     "big.js": "^7.0.0",
     "classnames": "^2.1.3",
