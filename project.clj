@@ -142,7 +142,7 @@
 
                  ;; excel spreadsheets
                  [dk.ative/docjure "1.21.0" :exclusions [org.apache.commons/commons-compress]]
-                 [org.apache.commons/commons-compress "1.27.1"] ; Fix CVE-2024-25710, CVE-2024-26308
+                 [org.apache.commons/commons-compress "1.28.0"] ; Fix CVE-2024-25710, CVE-2024-26308
 
 
                  ;; job scheduling
