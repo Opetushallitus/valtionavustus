@@ -17,6 +17,8 @@
   "ignoreTests": false,
   "automergeType": "pr",
   "lockFileMaintenance": { "enabled": true },
+  "minimumReleaseAge": "3 days",
+  "internalChecksFilter": "strict",
   "schedule": [
     "every weekend",
     "after 5pm",
