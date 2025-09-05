@@ -55,7 +55,7 @@ tmux select-pane -t 1
 tmux send-keys "$repo/scripts/run_frontend.sh" C-m
 
 tmux select-pane -t 2
-tmux send-keys "NODE_VERSION=${NODE_VERSION}  $up_cmd va" C-m
+tmux send-keys "NODE_VERSION=${NODE_VERSION} REVISION=${REVISION}  $up_cmd va" C-m
 
 tmux select-pane -t 3
 tmux send-keys "$up_cmd fakesmtp" C-m
