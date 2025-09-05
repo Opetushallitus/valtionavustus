@@ -29,6 +29,40 @@
 
   #preview-container,
   #preview-container-loppuselvitys {
+    container-type: inline-size;
+
+    @container (max-width: @preview-width) {
+      table,
+      thead,
+      tbody,
+      th,
+      td,
+      tr,
+      tfoot {
+        display: block;
+        width: 100%;
+        text-align: start;
+        padding: 0;
+      }
+
+      tr {
+        margin-bottom: 0;
+        border: 0;
+        padding-inline-start: 0;
+        padding-block-start: 0;
+        padding-inline-end: 0;
+        padding-block-end: 8px;
+      }
+
+      td {
+        display: flex;
+        justify-content: start;
+      }
+
+      td:empty {
+        display: none;
+      }
+    }
     background-color: @off-white;
     padding: 20px;
     overflow-y: scroll;
