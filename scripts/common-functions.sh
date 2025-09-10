@@ -204,4 +204,19 @@ function end_gh_actions_group {
   info "$CURRENT_GROUP took $(( END_TIME - GROUP_START_TIME )) seconds"
 }
 
+function build_and_refresh_pom_and_bom {
+  echo "Building artifacts stage to refresh pom.xml and bom.json…"
+  ARTIFACTS_DIR="${ARTIFACTS_DIR:-.}"
 
+  docker build \
+    --build-arg "NODE_VERSION=${node_version}" \
+    --build-arg "REVISION=${revision}" \
+    --file Dockerfile.va-app \
+    --target artifacts \
+    --output type=local,dest=. \
+    .
+
+  # Sanity check
+  test -s "$repo/pom.xml" || { echo "ERROR: pom.xml not produced or missing"; exit 1; }
+  test -s "$repo/bom.json" || { echo "ERROR: bom.json not produced or missing"; exit 1; }
+}

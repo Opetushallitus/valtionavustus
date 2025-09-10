@@ -7,6 +7,19 @@
     "npm:unpublishSafe"
   ],
   "onboarding": false,
+  "postUpgradeTasks": {
+    "matchFileNames": ["project.clj"],
+    "executionMode": "branch",
+    "commands": [
+      "./scripts/build_and_refresh_pom_and_bom.sh",
+      "git add pom.xml bom.json"
+    ],
+    "fileFilters": [
+      "pom.xml",
+      "bom.json",
+      "project.clj"
+    ]
+  },
   "dependencyDashboard": true,
   "dependencyDashboardTitle": "Dependency Dashboard self-hosted",
   "gitAuthor": "Self-hosted Renovate Bot <130737409+valtionavustus-renovate[bot]@users.noreply.github.com>",

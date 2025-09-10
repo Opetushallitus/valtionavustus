@@ -28,7 +28,7 @@ RUN npm run build-production
 #
 # va-base with all the Clojure stuff
 #
-FROM eclipse-temurin:21.0.8_9-jdk@sha256:4d8eddfd7ce6ce35c6a42115d73ef7e92a3e112fddbae21a6e273d2e05fc9fff AS va-base
+FROM maven:3.9.9-eclipse-temurin-21 AS va-base
 
 WORKDIR /app
 
@@ -45,6 +45,8 @@ COPY server/src/ ./server/src/
 COPY server/resources/ ./server/resources/
 
 RUN ./lein compile :all
+RUN ./lein pom
+RUN mvn -q org.cyclonedx:cyclonedx-maven-plugin:makeBom -DskipTests
 
 COPY entrypoint.sh .
 COPY server/config/ ./server/config/
@@ -69,9 +71,16 @@ COPY --from=uberjar-builder \
   /app/target/uberjar/valtionavustus-0.1.0-SNAPSHOT-standalone.jar \
   /${UBERJAR_NAME}
 
+FROM scratch AS artifacts
+COPY --from=va-base /app/pom.xml /pom.xml
+COPY --from=va-base /app/target/bom.json /bom.json
+
 #
 # va-server
 #
-FROM va-base
+FROM eclipse-temurin:21.0.8_9-jdk as va-server
+WORKDIR /app
 LABEL org.opencontainers.image.source=https://github.com/opetushallitus/valtionavustus
+COPY --from=va-base /app/ /app/
+COPY --from=va-base /root/.m2 /root/.m2
 ENTRYPOINT ["./entrypoint.sh"]

@@ -17,6 +17,8 @@ function main {
 
   local tags_to_push=()
 
+  build_and_refresh_pom_and_bom
+
   start_gh_actions_group "Building $image_tag"
   export VA_SERVER_TAG="$image_tag"
   docker build \
