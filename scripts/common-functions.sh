@@ -208,7 +208,7 @@ function build_and_refresh_pom_and_bom {
   echo "Building artifacts stage to refresh pom.xml and bom.json…"
   ARTIFACTS_DIR="${ARTIFACTS_DIR:-.}"
 
-  DOCKER_BUILDKIT=1 docker build \
+  DOCKER_BUILDKIT=1 docker buildx build  \
     --build-arg "NODE_VERSION=${node_version}" \
     --build-arg "REVISION=${revision}" \
     --file Dockerfile.va-app \
