@@ -40,3 +40,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: "chore(bom): refresh pom.xml & bom.json after Renovate updates"
+          file_pattern: "pom.xml bom.json"
