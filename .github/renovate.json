@@ -10,13 +10,11 @@
   "postUpgradeTasks": {
     "executionMode": "branch",
     "commands": [
-      "./scripts/build_and_refresh_pom_and_bom.sh",
-      "git add pom.xml bom.json"
+      "./scripts/build_and_refresh_pom_and_bom.sh"
     ],
     "fileFilters": [
       "pom.xml",
-      "bom.json",
-      "project.clj"
+      "bom.json"
     ]
   },
   "dependencyDashboard": true,
