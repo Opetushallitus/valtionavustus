@@ -8,7 +8,6 @@
   ],
   "onboarding": false,
   "postUpgradeTasks": {
-    "matchFileNames": ["project.clj"],
     "executionMode": "branch",
     "commands": [
       "./scripts/build_and_refresh_pom_and_bom.sh",
