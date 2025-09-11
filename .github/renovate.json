@@ -7,6 +7,9 @@
     "npm:unpublishSafe"
   ],
   "onboarding": false,
+  "allowedCommands": [
+    "./scripts/build_and_refresh_pom_and_bom.sh"
+  ],
   "postUpgradeTasks": {
     "executionMode": "branch",
     "commands": [
