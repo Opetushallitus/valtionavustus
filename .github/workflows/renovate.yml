@@ -22,6 +22,8 @@ jobs:
           app-id: ${{ secrets.APP_ID }}
           repositories: |
             valtionavustus
+      - name: Set up Docker Buildx for running pom and sbom refresh script
+        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3
       - name: Self-hosted Renovate
         uses: renovatebot/github-action@6927a58a017ee9ac468a34a5b0d2a9a9bd45cac3 # v43.0.11
         with:
