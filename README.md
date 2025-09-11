@@ -59,6 +59,10 @@ Haun roolista huolimatta kuka tahansa VA-käyttäjä voi kommentoida hakemuksia.
 * [Java SE Development Kit](http://www.oracle.com/technetwork/java/javase/index.html), versio 8
 * [PostgreSQL](https://www.postgresql.org/), vähintään versio 12.2
 
+## Trivy
+
+https://trivy.util.yleiskayttoiset.opintopolku.fi/muut.html
+
 ## Kehitysympäristö
 
 Kehitystyössä hyödyllisiä työkaluja:
