@@ -76,6 +76,7 @@ export const CommonHakujenHallintaPage = (page: Page) => {
     hakuListingTable: hakuListingTableLocators(),
     tabs: tabLocators,
     loadingAvustushaku: page.getByTestId(saveStatusTestId).locator('text=Ladataan tietoja'),
+    savingToast: page.getByTestId(saveStatusTestId),
   }
   async function switchToMaksatuksetTab() {
     await tabLocators.maksatukset.click()

@@ -1,6 +1,6 @@
 import { expect, Page } from '@playwright/test'
 import { createReactSelectLocators } from '../../../utils/react-select'
-import { CommonHakujenHallintaPage } from './CommonHakujenHallintaPage'
+import { CommonHakujenHallintaPage, saveStatusTestId } from './CommonHakujenHallintaPage'
 import moment from 'moment/moment'
 import { NoProjectCodeProvided, VaCodeValues } from '../../../utils/types'
 
@@ -80,6 +80,9 @@ export const HaunTiedotPage = (page: Page) => {
 
   async function publishAvustushaku() {
     await locators.status.published.click()
+    await expect(common.locators.savingToast.locator('text="Tallennetaan"')).toBeVisible({
+      timeout: 10000,
+    })
     await common.waitForSave()
   }
 
