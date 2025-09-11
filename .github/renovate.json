@@ -7,19 +7,6 @@
     "npm:unpublishSafe"
   ],
   "onboarding": false,
-  "allowedCommands": [
-    "./scripts/build_and_refresh_pom_and_bom.sh"
-  ],
-  "postUpgradeTasks": {
-    "executionMode": "branch",
-    "commands": [
-      "./scripts/build_and_refresh_pom_and_bom.sh"
-    ],
-    "fileFilters": [
-      "pom.xml",
-      "bom.json"
-    ]
-  },
   "dependencyDashboard": true,
   "dependencyDashboardTitle": "Dependency Dashboard self-hosted",
   "gitAuthor": "Self-hosted Renovate Bot <130737409+valtionavustus-renovate[bot]@users.noreply.github.com>",

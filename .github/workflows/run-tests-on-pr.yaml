@@ -7,3 +7,6 @@ jobs:
   build:
     uses: ./.github/workflows/_build.yaml
     secrets: inherit
+  refresh-bom:
+    uses: ./.github/workflows/_refresh-bom.yml
+    secrets: inherit

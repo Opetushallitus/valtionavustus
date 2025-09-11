@@ -1,0 +1,38 @@
+name: Refresh BOM and POM on Renovate PR
+
+on:
+  workflow_call:
+
+concurrency:
+  group: renovate-bom-${{ github.event.pull_request.head.ref }}
+  cancel-in-progress: false
+
+jobs:
+  refresh-bom:
+    if: github.actor == 'valtionavustus-renovate[bot]' &&
+        github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run BOM refresh script
+        run: ./scripts/build_and_refresh_pom_and_bom.sh
+
+      - name: Commit refreshed artifacts (if changed)
+        uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: "chore(bom): refresh pom.xml & bom.json after Renovate updates"
+          branch: ${{ github.event.pull_request.head.ref }}
+          file_pattern: |
+            pom.xml
+            bom.json
