@@ -7,6 +7,7 @@ ARG REVISION
 
 WORKDIR /app
 COPY package.json package-lock.json ./
+RUN npm sbom --sbom-format=cyclonedx --package-lock-only=true > bom-node.json
 RUN --mount=type=cache,target=/root/.npm npm ci
 
 RUN mkdir -p server/resources/public/hakija/
@@ -23,7 +24,6 @@ RUN test -n "${REVISION}"
 RUN echo ${REVISION} > server/resources/public/version.txt
 
 RUN npm run build-production
-
 
 #
 # va-base with all the Clojure stuff
@@ -47,6 +47,7 @@ COPY server/resources/ ./server/resources/
 RUN ./lein compile :all
 RUN ./lein pom
 RUN mvn -q org.cyclonedx:cyclonedx-maven-plugin:makeBom -DskipTests
+RUN mv /app/target/bom.json /app/target/bom-java.json
 
 COPY entrypoint.sh .
 COPY server/config/ ./server/config/
@@ -71,9 +72,19 @@ COPY --from=uberjar-builder \
   /app/target/uberjar/valtionavustus-0.1.0-SNAPSHOT-standalone.jar \
   /${UBERJAR_NAME}
 
+FROM --platform=linux/amd64 cyclonedx/cyclonedx-cli:0.29.1 as sbom-merger
+WORKDIR /sbom
+
+COPY --from=va-base /app/target/bom-java.json bom-java.json
+COPY --from=web-builder /app/bom-node.json bom-node.json
+
+RUN cyclonedx merge \
+    --input-files bom-java.json bom-node.json \
+    --output-file bom.json
+
 FROM scratch AS artifacts
 COPY --from=va-base /app/pom.xml /pom.xml
-COPY --from=va-base /app/target/bom.json /bom.json
+COPY --from=sbom-merger /sbom/bom.json /bom.json
 
 #
 # va-server
