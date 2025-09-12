@@ -28,14 +28,6 @@ jobs:
       - name: Run BOM refresh script
         run: ./scripts/build_and_refresh_pom_and_bom.sh
 
-      - name: Debug changed files
-        run: |
-          git status --porcelain
-          echo "----"
-          git diff --name-only
-          echo "----"
-          ls -l pom.xml bom.json || true
-
       - name: Commit refreshed artifacts (if changed)
         uses: stefanzweifel/git-auto-commit-action@778341af668090896ca464160c2def5d1d1a3eb0 # v6
         with:
