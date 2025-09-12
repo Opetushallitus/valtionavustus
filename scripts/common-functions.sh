@@ -205,12 +205,7 @@ function end_gh_actions_group {
 }
 
 function refresh_pom_xml {
-
-  if [ -n "${RENOVATE_VERSION:-}" ]; then
-    echo "Using lein to refresh pom.xml…"
-    "$repo/lein" pom
-  else
-    require_command docker
+  if docker buildx version >/dev/null 2>&1; then
     echo "Building artifacts stage to refresh pom.xml…"
     DOCKER_BUILDKIT=1 docker build \
       --build-arg "NODE_VERSION=${node_version}" \
@@ -219,6 +214,9 @@ function refresh_pom_xml {
       --target artifacts \
       --output type=local,dest=. \
       .
+  else
+    echo "Using lein to refresh pom.xml…"
+    "$repo/lein" pom
   fi
 
   # normalize by removing <scm> fields which we dont care about
