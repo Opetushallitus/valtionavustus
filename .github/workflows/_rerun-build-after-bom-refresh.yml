@@ -2,7 +2,7 @@ name: Run tests after BOM refresh
 
 on:
   workflow_run:
-    workflows: ["Refresh BOM on Renovate PR"]
+    workflows: ["Refresh BOM and POM on Renovate PR"]
     types: [completed]
 
 jobs:
