@@ -204,16 +204,30 @@ function end_gh_actions_group {
   info "$CURRENT_GROUP took $(( END_TIME - GROUP_START_TIME )) seconds"
 }
 
-function build_and_refresh_pom {
-  require_command docker
-  echo "Building artifacts stage to refresh pom.xml and bom.json…"
-  DOCKER_BUILDKIT=1 docker build \
-    --build-arg "NODE_VERSION=${node_version}" \
-    --build-arg "REVISION=${revision}" \
-    --file Dockerfile.va-app \
-    --target artifacts \
-    --output type=local,dest=. \
-    .
+function refresh_pom_xml {
+
+  if [ -n "${RENOVATE_VERSION:-}" ]; then
+    echo "Using lein to refresh pom.xml…"
+    "$repo/lein" pom
+  else
+    require_command docker
+    echo "Building artifacts stage to refresh pom.xml…"
+    DOCKER_BUILDKIT=1 docker build \
+      --build-arg "NODE_VERSION=${node_version}" \
+      --build-arg "REVISION=${revision}" \
+      --file Dockerfile.va-app \
+      --target artifacts \
+      --output type=local,dest=. \
+      .
+  fi
+
+  # normalize by removing <scm> fields which we dont care about
+  awk '
+    /<scm>/ {inside=1; next}
+    /<\/scm>/ {if (inside) {print "  <scm/>"}; inside=0; next}
+    /<scm\/>/ {print "  <scm/>"; next}
+    !inside
+  ' pom.xml > pom.norm.xml && mv pom.norm.xml pom.xml
 
   # Sanity check
   test -s "$repo/pom.xml" || { echo "ERROR: pom.xml not produced or missing"; exit 1; }

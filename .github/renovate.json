@@ -8,12 +8,12 @@
   ],
   "onboarding": false,
   "allowedCommands": [
-    "./lein pom"
+    "./scripts/refresh_pom_xml.sh"
   ],
   "postUpgradeTasks": {
     "executionMode": "branch",
     "commands": [
-      "./lein pom"
+      "./scripts/refresh_pom_xml.sh"
     ],
     "fileFilters": [
       "pom.xml"

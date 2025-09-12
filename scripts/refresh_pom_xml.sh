@@ -4,7 +4,7 @@ source "$( dirname "${BASH_SOURCE[0]}" )/common-functions.sh"
 
 function main {
   cd "$repo"
-  build_and_refresh_pom
+  refresh_pom_xml
 }
 
 main "$@"
