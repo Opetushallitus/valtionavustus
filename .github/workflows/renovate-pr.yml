@@ -1,0 +1,77 @@
+name: Refresh BOM and POM and run tests on renovate pr
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: renovate-bom-${{ github.event.pull_request.head.ref }}
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    if: >
+      github.actor == 'valtionavustus-renovate[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      ref: ${{ steps.final-ref.outputs.ref }}
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3
+
+      - name: Run BOM refresh script
+        id: norm
+        run: ./scripts/build_and_refresh_pom_and_bom.sh
+
+      - name: Commit refreshed artifacts (only if changed)
+        if: steps.norm.outputs.changed == '1'
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pom.xml bom.json
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+            exit 0
+          fi
+          git commit -m "chore(bom): refresh pom.xml & bom.json after Renovate updates"
+          git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
+
+      - name: Sync workspace to latest PR head (after push)
+        if: steps.norm.outputs.changed == '1'
+        run: |
+          set -euo pipefail
+          git fetch origin "${{ github.event.pull_request.head.ref }}" --prune
+          git reset --hard "origin/${{ github.event.pull_request.head.ref }}"
+          git rev-parse --short HEAD
+          git status --porcelain
+
+      - name: Determine final ref for build
+        id: final-ref
+        run: |
+          set -euo pipefail
+          # If we pushed, use the latest remote HEAD of the PR branch; otherwise use the PR head SHA
+          if [[ "${{ steps.norm.outputs.changed || '0' }}" == "1" ]]; then
+            git fetch origin "${{ github.event.pull_request.head.ref }}" --prune
+            FINAL_REF="$(git rev-parse origin/${{ github.event.pull_request.head.ref }})"
+          else
+            FINAL_REF="${{ github.event.pull_request.head.sha }}"
+          fi
+          echo "ref=$FINAL_REF" >> "$GITHUB_OUTPUT"
+
+  build-and-test:
+    needs: refresh
+    uses: ./.github/workflows/_build.yaml
+    secrets: inherit
+    with:
+      checkout-ref: ${{ needs.refresh.outputs.ref }}

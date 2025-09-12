@@ -237,9 +237,15 @@ function build_and_refresh_pom_and_bom {
 
   if cmp -s bom.old.norm.json bom.new.norm.json; then
     echo "BOM unchanged (ignoring serialNumber/timestamp). Restoring previous bom.json to avoid noisy commit."
+    if running_on_gh_actions; then
+      echo "changed=0" >> "$GITHUB_OUTPUT"
+    fi
     git show HEAD:bom.json > bom.json || true
   else
     echo "BOM changed materially. Keeping refreshed bom.json."
+    if running_on_gh_actions; then
+      echo "changed=1" >> "$GITHUB_OUTPUT"
+    fi
   fi
   # Cleanup comparison files
   rm -f bom.old.json bom.old.norm.json bom.new.norm.json
