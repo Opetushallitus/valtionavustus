@@ -5,8 +5,15 @@ on:
 
 jobs:
   build:
+    if: >
+      github.event_name == 'merge_group' ||
+      (github.event_name == 'pull_request' && github.actor != 'valtionavustus-renovate[bot]')
     uses: ./.github/workflows/_build.yaml
     secrets: inherit
   refresh-bom:
+    if: >
+      github.event_name == 'pull_request' &&
+      github.actor == 'valtionavustus-renovate[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     uses: ./.github/workflows/_refresh-bom.yml
     secrets: inherit
