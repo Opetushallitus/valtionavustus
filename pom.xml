@@ -14,7 +14,12 @@
       <url>http://opensource.org/licenses/EUPL-1.1</url>
     </license>
   </licenses>
-  <scm/>
+  <scm>
+    <url>https://github.com/Opetushallitus/valtionavustus</url>
+    <connection>scm:git:git://github.com/Opetushallitus/valtionavustus.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/Opetushallitus/valtionavustus.git</developerConnection>
+    <tag>428e1c8aab82e6a3d3e725fa6a322f53874f8afd</tag>
+  </scm>
   <build>
     <sourceDirectory>server/src/clojure</sourceDirectory>
     <testSourceDirectory>server/spec</testSourceDirectory>

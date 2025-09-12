@@ -5,8 +5,6 @@ on:
 
 jobs:
   build:
-    if: >
-      github.event_name == 'merge_group' ||
-      (github.event_name == 'pull_request' && github.actor != 'valtionavustus-renovate[bot]')
     uses: ./.github/workflows/_build.yaml
     secrets: inherit
+
