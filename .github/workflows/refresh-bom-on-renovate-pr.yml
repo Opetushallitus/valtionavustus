@@ -1,7 +1,8 @@
 name: Refresh BOM and POM on Renovate PR
 
 on:
-  workflow_call:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
 
 concurrency:
   group: renovate-bom-${{ github.event.pull_request.head.ref }}
@@ -12,6 +13,9 @@ jobs:
     if: github.actor == 'valtionavustus-renovate[bot]' &&
         github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout PR head branch
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
