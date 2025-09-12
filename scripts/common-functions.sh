@@ -204,9 +204,8 @@ function end_gh_actions_group {
   info "$CURRENT_GROUP took $(( END_TIME - GROUP_START_TIME )) seconds"
 }
 
-function build_and_refresh_pom_and_bom {
+function build_and_refresh_pom {
   require_command docker
-  require_command jq
   echo "Building artifacts stage to refresh pom.xml and bom.json…"
   DOCKER_BUILDKIT=1 docker build \
     --build-arg "NODE_VERSION=${node_version}" \
@@ -218,35 +217,4 @@ function build_and_refresh_pom_and_bom {
 
   # Sanity check
   test -s "$repo/pom.xml" || { echo "ERROR: pom.xml not produced or missing"; exit 1; }
-  test -s "$repo/bom.json" || { echo "ERROR: bom.json not produced or missing"; exit 1; }
-
-  # Create the file to be compared against
-  if git show HEAD:bom.json >/dev/null 2>&1; then
-    git show HEAD:bom.json > bom.old.json
-  else
-    printf '{}' > bom.old.json
-  fi
-
-  # drop fields that change on every bom generation for comparison
-  normalize() {
-    jq 'del(.serialNumber, .metadata.timestamp)'
-  }
-
-  normalize < bom.old.json > bom.old.norm.json
-  normalize < bom.json     > bom.new.norm.json
-
-  if cmp -s bom.old.norm.json bom.new.norm.json; then
-    echo "BOM unchanged (ignoring serialNumber/timestamp). Restoring previous bom.json to avoid noisy commit."
-    if running_on_gh_actions; then
-      echo "changed=0" >> "$GITHUB_OUTPUT"
-    fi
-    git show HEAD:bom.json > bom.json || true
-  else
-    echo "BOM changed materially. Keeping refreshed bom.json."
-    if running_on_gh_actions; then
-      echo "changed=1" >> "$GITHUB_OUTPUT"
-    fi
-  fi
-  # Cleanup comparison files
-  rm -f bom.old.json bom.old.norm.json bom.new.norm.json
 }

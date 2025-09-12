@@ -7,7 +7,6 @@ ARG REVISION
 
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm sbom --sbom-format=cyclonedx --package-lock-only=true > bom-node.json
 RUN --mount=type=cache,target=/root/.npm npm ci
 
 RUN mkdir -p server/resources/public/hakija/
@@ -75,16 +74,8 @@ COPY --from=uberjar-builder \
 FROM --platform=linux/amd64 cyclonedx/cyclonedx-cli:0.29.1@sha256:f025573a1dcc12971d711badf32bff1e030192a051a3a4987204fc6b79f91b6c as sbom-merger
 WORKDIR /sbom
 
-COPY --from=va-base /app/target/bom-java.json bom-java.json
-COPY --from=web-builder /app/bom-node.json bom-node.json
-
-RUN cyclonedx merge \
-    --input-files bom-java.json bom-node.json \
-    --output-file bom.json
-
 FROM scratch AS artifacts
 COPY --from=va-base /app/pom.xml /pom.xml
-COPY --from=sbom-merger /sbom/bom.json /bom.json
 
 #
 # va-server

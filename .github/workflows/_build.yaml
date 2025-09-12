@@ -1,13 +1,8 @@
 name: Build
 on:
   workflow_call:
-    inputs:
-      checkout-ref:
-        description: "Commit SHA or ref to checkout (optional)"
-        required: false
-        type: string
 
-concurrency: build-${{ inputs.checkout-ref || github.ref }}
+concurrency: build-${{ github.ref }}
 
 env:
   DOCKER_BUILDKIT: "1" # BuildKit is enabled by default starting in Docker v23, Ubuntu 22.04 has an older version
@@ -35,8 +30,6 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-        with:
-          ref: ${{ inputs.checkout-ref || '' }}
       - name: Login to GitHub Container Registry
         uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
         with:
@@ -52,8 +45,6 @@ jobs:
     needs: build
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-        with:
-          ref: ${{ inputs.checkout-ref || '' }}
       - name: Login to GitHub Container Registry
         uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
         with:
@@ -74,8 +65,6 @@ jobs:
         total_shards: [6]
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-        with:
-          ref: ${{ inputs.checkout-ref || '' }}
       - name: Run 03-playwright-tests.sh
         run: ./deploy-scripts/03-playwright-tests.sh
         env:
@@ -95,8 +84,6 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-        with:
-          ref: ${{ inputs.checkout-ref || '' }}
       - name: Run 04-lint.sh
         run: ./deploy-scripts/04-lint.sh
 
