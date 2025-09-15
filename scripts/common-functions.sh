@@ -219,14 +219,6 @@ function refresh_pom_xml {
     "$repo/lein" pom
   fi
 
-  # normalize by removing <scm> fields which we dont care about
-  awk '
-    /<scm>/ {inside=1; next}
-    /<\/scm>/ {if (inside) {print "  <scm/>"}; inside=0; next}
-    /<scm\/>/ {print "  <scm/>"; next}
-    !inside
-  ' pom.xml > pom.norm.xml && mv pom.norm.xml pom.xml
-
   # Sanity check
   test -s "$repo/pom.xml" || { echo "ERROR: pom.xml not produced or missing"; exit 1; }
 }

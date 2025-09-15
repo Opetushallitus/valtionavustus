@@ -11,6 +11,7 @@
 
   :license {:name "EUPL licence"
             :url "http://opensource.org/licenses/EUPL-1.1"}
+   :scm {:name "" }
 
   :exact-lein-version "2.11.2"
 
