@@ -45,7 +45,6 @@ COPY server/resources/ ./server/resources/
 
 RUN ./lein compile :all
 RUN ./lein pom
-RUN mvn -q org.cyclonedx:cyclonedx-maven-plugin:makeBom -DskipTests
 RUN mv /app/target/bom.json /app/target/bom-java.json
 
 COPY entrypoint.sh .
@@ -70,9 +69,6 @@ ARG UBERJAR_NAME
 COPY --from=uberjar-builder \
   /app/target/uberjar/valtionavustus-0.1.0-SNAPSHOT-standalone.jar \
   /${UBERJAR_NAME}
-
-FROM --platform=linux/amd64 cyclonedx/cyclonedx-cli:0.29.1@sha256:f025573a1dcc12971d711badf32bff1e030192a051a3a4987204fc6b79f91b6c as sbom-merger
-WORKDIR /sbom
 
 FROM scratch AS artifacts
 COPY --from=va-base /app/pom.xml /pom.xml
