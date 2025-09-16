@@ -45,7 +45,6 @@ COPY server/resources/ ./server/resources/
 
 RUN ./lein compile :all
 RUN ./lein pom
-RUN mv /app/target/bom.json /app/target/bom-java.json
 
 COPY entrypoint.sh .
 COPY server/config/ ./server/config/
