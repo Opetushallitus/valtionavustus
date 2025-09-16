@@ -10,7 +10,6 @@ fi
 mkdir -p tmp
 echo "${revision}" > "${repo}/tmp/version.txt"
 
-build_and_refresh_pom
 
 compose="$compose -f docker-compose.local-dev.yml"
 readonly compose
