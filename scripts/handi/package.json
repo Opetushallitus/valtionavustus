@@ -7,8 +7,8 @@
   },
   "license": "EUPL-1.1",
   "dependencies": {
-    "@aws-sdk/client-ecs": "^3.542.0",
-    "typescript": "^5.4.3"
+    "@aws-sdk/client-ecs": "3.888.0",
+    "typescript": "5.9.2"
   },
   "devDependencies": {
     "tsx": "4.20.5"
