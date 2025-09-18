@@ -5,7 +5,8 @@ const isOrganizationEmail = ({ key }: Answer) => key === 'organization-email'
 
 export function initialRecipientEmails(
   answers: Answer[],
-  normalizedData: NormalizedHakemusData | undefined
+  normalizedData: NormalizedHakemusData | undefined,
+  valiselvitysAnswers?: Answer[]
 ) {
   const normalizedVarayhteyshenkiloEmail = normalizedData?.['trusted-contact-email']
   const isVarayhteyshenkiloEmailField = (answer: Answer) =>
@@ -13,8 +14,15 @@ export function initialRecipientEmails(
   const emailsFromAnswers = answers
     .filter((a) => isPrimaryEmail(a) || isOrganizationEmail(a) || isVarayhteyshenkiloEmailField(a))
     .map((a) => a.value)
-  const emails = normalizedVarayhteyshenkiloEmail
-    ? [...emailsFromAnswers, normalizedVarayhteyshenkiloEmail]
-    : emailsFromAnswers
+
+  const valiselvitysEmails = getPrimaryOrOrganizationEmailFromAnswers(valiselvitysAnswers || [])
+  const emails = [...emailsFromAnswers, ...valiselvitysEmails].concat(
+    normalizedVarayhteyshenkiloEmail ? [normalizedVarayhteyshenkiloEmail] : []
+  )
+
   return [...new Set(emails)]
+}
+
+function getPrimaryOrOrganizationEmailFromAnswers(answers: Answer[]) {
+  return answers.filter((a) => isPrimaryEmail(a) || isOrganizationEmail(a)).map((a) => a.value)
 }

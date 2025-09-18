@@ -25,9 +25,15 @@ interface SelvitysFixtures {
     taloustarkastettu: boolean
   }
   valiAndLoppuselvitysSubmitted: {}
+  valiselvitysYhteyshenkilo?: {
+    email: string
+    name: string
+  }
 }
 
 export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
+  valiselvitysYhteyshenkilo: [undefined, { option: false }],
+
   väliselvityspyyntöSent: async (
     { page, avustushakuID, acceptedHakemus, ukotettuValmistelija },
     use,
@@ -53,7 +59,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     await use({})
   },
   väliselvitysSubmitted: async (
-    { page, avustushakuID, acceptedHakemus, väliselvityspyyntöSent },
+    { page, avustushakuID, acceptedHakemus, väliselvityspyyntöSent, valiselvitysYhteyshenkilo },
     use,
     testInfo
   ) => {
@@ -67,7 +73,12 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
       if (!väliselvitysFormUrl) throw Error('valiselvitys form url not found')
       await navigate(page, väliselvitysFormUrl)
       const hakijaSelvitysPage = HakijaSelvitysPage(page)
+
       await hakijaSelvitysPage.fillCommonValiselvitysForm()
+      if (valiselvitysYhteyshenkilo) {
+        await hakijaSelvitysPage.yheyshenkiloName.fill(valiselvitysYhteyshenkilo.name)
+        await hakijaSelvitysPage.yheyshenkiloEmail.fill(valiselvitysYhteyshenkilo.email)
+      }
       await expect(hakijaSelvitysPage.valiselvitysWarning).toBeHidden()
       const submitButtonText = /Lähetä käsiteltäväksi|Sänd för behandling/
       await expect(hakijaSelvitysPage.submitButton).toHaveText(submitButtonText)

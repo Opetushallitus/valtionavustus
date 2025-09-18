@@ -24,10 +24,12 @@ interface ValiselvitysEmailProps {
 
 type Email = { value: string; isValid: boolean }
 
-const makeFormRecipientEmail = (value = '') => ({
-  value,
-  isValid: isValidEmail(value),
-})
+const makeFormRecipientEmail = (value = '') => {
+  return {
+    value,
+    isValid: isValidEmail(value),
+  }
+}
 const makeEmptyRecipientEmail = () => ({ value: '', isValid: true })
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
@@ -60,7 +62,9 @@ export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
   const [message, setMessage] = useState<string>(initialMessage(props))
   const [subject, setSubject] = useState<string>(initialSubject(props))
   const [recipientEmails, setRecipientEmails] = useState<Email[]>(
-    initialRecipientEmails(hakemus.answers, hakemus.normalizedData).map(makeFormRecipientEmail)
+    initialRecipientEmails(hakemus.answers, hakemus.normalizedData, valiselvitys.answers).map(
+      makeFormRecipientEmail
+    )
   )
 
   function onRecipientEmailChange(index: number, event: React.ChangeEvent<HTMLInputElement>) {

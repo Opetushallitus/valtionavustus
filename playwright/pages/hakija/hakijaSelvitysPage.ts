@@ -40,6 +40,8 @@ export const HakijaSelvitysPage = (page: Page, lang: 'fi' | 'sv' = 'fi') => {
     loppuselvitysWarning: page.locator(
       'text="Loppuselvityksen jättämisen määräaika on umpeutunut"'
     ),
+    yheyshenkiloName: page.getByLabel('Hankkeen yhteyshenkilön nimi'),
+    yheyshenkiloEmail: page.locator('#primary-email'),
   }
   const fillCommonValiselvitysForm = async () => {
     await locators.organization.fill('Avustuksen saajan nimi')

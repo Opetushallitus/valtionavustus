@@ -16,6 +16,36 @@ import { selvitysTest } from '../../fixtures/selvitysTest'
 import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { ValiselvitysPage } from '../../pages/virkailija/hakujen-hallinta/ValiselvitysPage'
 import { expectIsFinnishOphEmail } from '../../utils/email-signature'
+import valiselvitysWithEmail from './selvitysForms/valiselvitys-with-email.json'
+
+const emailFieldTest = selvitysTest.extend({
+  valiselvitysForm: JSON.stringify(valiselvitysWithEmail),
+  valiselvitysYhteyshenkilo: { name: 'VLyhteyshenkilo', email: 'VSyhteyshenkilo@example.com' },
+})
+
+emailFieldTest(
+  'Väliselvityksen email kenttä autotäydennetään hyväksymis sähköpostiin',
+  async ({ page, avustushakuID, väliselvitysSubmitted, acceptedHakemus }) => {
+    expectToBeDefined(väliselvitysSubmitted)
+    const valiselvitysPage = ValiselvitysPage(page)
+    await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, acceptedHakemus.hakemusID)
+
+    await valiselvitysPage.acceptSelvitys()
+    const emails = await waitUntilMinEmails(
+      getSelvitysEmailsWithValiselvitysSubject,
+      1,
+      avustushakuID
+    )
+    const email = emails[0]
+    expect(email['to-address']).toEqual(
+      expect.arrayContaining([
+        'erkki.esimerkki@example.com',
+        'akaan.kaupunki@akaa.fi',
+        'VSyhteyshenkilo@example.com',
+      ])
+    )
+  }
+)
 
 selvitysTest.describe('Väliselvitys', () => {
   selvitysTest(
@@ -198,7 +228,7 @@ selvitysTest(
       const valiselvitysPage = await hakujenHallintaPage.navigateToValiselvitys(avustushakuID)
       await valiselvitysPage.sendValiselvitys()
     })
-    await test.step('warhing is hidden, link and lomake work', async () => {
+    await test.step('warning is hidden, link and lomake work', async () => {
       await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, hakemusID)
       await expect(valiselvitysPage.warning).toBeHidden()
       const [valiselvitysFormPage] = await Promise.all([
