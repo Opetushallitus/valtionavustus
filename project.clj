@@ -95,7 +95,7 @@
                  [org.apache.logging.log4j/log4j-layout-template-json ~log4j-version]
 
                  ;; http
-                 [compojure "1.7.1"]
+                 [compojure "1.7.2"]
                  [http-kit "2.8.1"]
                  [metosin/compojure-api "1.1.14"]
                  [ring.middleware.conditional "0.2.0" :exclusions [ring]]
