@@ -29,10 +29,15 @@ interface SelvitysFixtures {
     email: string
     name: string
   }
+  loppuselvitysYhteyshenkilo?: {
+    email: string
+    name: string
+  }
 }
 
 export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
   valiselvitysYhteyshenkilo: [undefined, { option: false }],
+  loppuselvitysYhteyshenkilo: [undefined, { option: false }],
 
   väliselvityspyyntöSent: async (
     { page, avustushakuID, acceptedHakemus, ukotettuValmistelija },
@@ -114,7 +119,14 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     await use({})
   },
   loppuselvitysSubmitted: async (
-    { page, loppuselvityspyyntöSent, avustushakuID, acceptedHakemus: { hakemusID }, answers },
+    {
+      page,
+      loppuselvityspyyntöSent,
+      avustushakuID,
+      acceptedHakemus: { hakemusID },
+      answers,
+      loppuselvitysYhteyshenkilo,
+    },
     use,
     testInfo
   ) => {
@@ -126,6 +138,11 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
 
     await navigate(page, loppuselvitysFormUrl)
     const hakijaSelvitysPage = HakijaSelvitysPage(page)
+
+    if (loppuselvitysYhteyshenkilo) {
+      await hakijaSelvitysPage.yheyshenkiloName.fill(loppuselvitysYhteyshenkilo.name)
+      await hakijaSelvitysPage.yheyshenkiloEmail.fill(loppuselvitysYhteyshenkilo.email)
+    }
 
     await hakijaSelvitysPage.textArea(0).fill('Yhteenveto')
     await hakijaSelvitysPage.textArea(2).fill('Työn jako')

@@ -3,6 +3,43 @@ import { expect } from '@playwright/test'
 import { HakemustenArviointiPage } from '../../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { selvitysTest as test } from '../../../fixtures/selvitysTest'
 import { LoppuselvitysPage } from '../../../pages/virkailija/hakujen-hallinta/LoppuselvitysPage'
+import loppuselvitysWithEmail from '../selvitysForms/loppuselvitys-with-email.json'
+
+const emailFieldTest = test.extend({
+  loppuselvitysForm: JSON.stringify(loppuselvitysWithEmail),
+  loppuselvitysYhteyshenkilo: { name: 'VLyhteyshenkilo', email: 'LSyhteyshenkilo@example.com' },
+})
+
+emailFieldTest(
+  'Loppuselvityksen hyväksymis sähköposti autotäydentää sähköpostin vastaanottajan loppuselvitys formista',
+  async ({ page, asiatarkastus: { asiatarkastettu } }) => {
+    expect(asiatarkastettu)
+    let emailSendApiCalled = 0
+    const loppuselvitysPage = LoppuselvitysPage(page)
+
+    await page.route('**/loppuselvitys/send', (route) => {
+      emailSendApiCalled++
+      route.continue()
+    })
+    await loppuselvitysPage.locators.taloustarkastus.accept.click()
+    await loppuselvitysPage.locators.taloustarkastus.confirmAcceptance.click()
+    await expect(loppuselvitysPage.locators.taloustarkastus.confirmAcceptance).toBeHidden()
+    await expect(loppuselvitysPage.locators.taloustarkastettu).toBeVisible()
+    await expect(loppuselvitysPage.locators.taloustarkastus.accept).toBeDisabled()
+    await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeHidden()
+    expect(emailSendApiCalled).toEqual(1)
+    await loppuselvitysPage.locators.taloustarkastettu.click()
+    const lahettaja = page.getByTestId('viesti-details-email-sender')
+    await expect(lahettaja).toContainText('no-reply@valtionavustukset.oph.fi')
+    const replyTo = page.getByTestId('viesti-details-email-reply-to')
+    await expect(replyTo).toContainText('santeri.horttanainen@reaktor.com')
+    await expect(
+      page.getByText(
+        `LSyhteyshenkilo@example.com, erkki.esimerkki@example.com, akaan.kaupunki@akaa.fi`
+      )
+    ).toBeVisible()
+  }
+)
 
 test('virkailija can accept loppuselvitys', async ({
   page,
