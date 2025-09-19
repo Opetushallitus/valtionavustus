@@ -242,10 +242,6 @@
       "fi": "Hyvä vastaanottaja,\n\nHankkeen \"{{project-name}}\" (\"{{avustushaku-name}}\") {{selvitys-type-lowercase}} on käsitelty.\n\nTerveisin,\n  {{sender-name}}\n  {{sender-email}}\n",
       "sv": "Bästa mottagare,\n\n{{selvitys-type-capitalized}} för projektet \"{{project-name}}\" (\"{{avustushaku-name}}\") är behandlad.\n\nHälsningar,\n  {{sender-name}}\n  {{sender-email}}\n"
     },
-    "loppuselvitys-default-message": {
-      "fi": "Hyvä vastaanottaja,\n\nOpetushallitus on tarkastanut hankkeen \"{{project-name}}\" (\"{{avustushaku-name}}\") valtionavustusta koskevan loppuselvityksen ja toteaa avustusta koskevan asian käsittelyn päättyneeksi.\n\nOpetushallitus voi asian käsittelyn päättämisestä huolimatta periä avustuksen tai osan siitä takaisin, jos sen tietoon tulee uusi seikka, joka valtionavustuslain 21 tai 22 §:n mukaisesti velvoittaa tai oikeuttaa takaisinperintään.\n\nTerveisin,\n{{sender-name}}\n{{sender-email}}",
-      "sv": "Bästa mottagare\n\nUtbildningsstyrelsen har granskat slutredovisningen för projektet \"{{project-name}}\" (\"{{avustushaku-name}}\") och bekräftar att ärendet nu är slutbehandlat.\n\nUtbildningsstyrelsen kan trots beslut om att ärendet är slutbehandlat kräva tillbaka understödet eller en del av det, om Utbildningsstyrelsen får ny information om ärendet som enligt 21 § eller 22 § i statsunderstödslagen förpliktar eller ger rätt till återkrav.\n\nMed vänlig hälsning,\n{{sender-name}}\n{{sender-email}}"
-    },
     "default-subject": {
       "fi": "{{selvitys-type-capitalized}} {{register-number}} käsitelty",
       "sv": "{{selvitys-type-capitalized}} {{register-number}} är behandlad"
