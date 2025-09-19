@@ -103,7 +103,7 @@
                  [ring/ring-codec "1.3.0"]
                  [ring/ring-core "1.15.2"]
                  [ring/ring-devel "1.14.2"]
-                 [ring/ring-defaults "0.6.0"]
+                 [ring/ring-defaults "0.7.0"]
                  [ring/ring-session-timeout "0.3.0"]
                  [ring/ring-ssl "0.4.0"]
                  [prismatic/schema "1.4.1"]
