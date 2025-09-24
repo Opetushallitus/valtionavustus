@@ -36,7 +36,7 @@
     "route-parser": "0.0.5",
     "seamless-immutable": "7.1.4",
     "speakingurl": "14.0.1",
-    "yup": "1.7.0"
+    "yup": "1.7.1"
   },
   "devDependencies": {
     "@babel/core": "7.28.4",
