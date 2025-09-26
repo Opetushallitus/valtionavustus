@@ -81,9 +81,6 @@ export function PaatosPage(page: Page) {
       page.waitForResponse(new RegExp('/api/paatos/sendall/\\d+$')),
       locators.confirmSending.click(),
     ])
-    //const tapahtumaloki = await page.waitForSelector('.tapahtumaloki')
-    //const logEntryCount = await tapahtumaloki.evaluate((e) => e.querySelectorAll('.entry').length)
-    //expect(logEntryCount).toEqual(1)
     await expect(page.locator('.tapahtumaloki .entry')).toHaveCount(1)
   }
 
