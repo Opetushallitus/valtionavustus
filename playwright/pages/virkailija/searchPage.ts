@@ -1,18 +1,23 @@
-import { Page } from '@playwright/test'
+import { expect, Page } from '@playwright/test'
 
 import { navigate } from '../../utils/navigate'
 
 export default function SearchPage(page: Page) {
+  const locators = {
+    searchInput: page.getByRole('textbox', {
+      name: 'Hakusanan pituus tulee olla yli kolme merkkiä',
+    }),
+  }
   async function navigateToSearchPage() {
     await navigate(page, '/haku/')
-    await page.waitForSelector('[name="search"]', { state: 'visible' })
+    await expect(locators.searchInput).toBeVisible()
   }
 
   async function search(input: string) {
-    await page.fill('input[name="search"]', input)
-    await page.press('input[name="search"]', 'Enter')
+    await locators.searchInput.fill(input)
+    await locators.searchInput.press('Enter')
     await page.waitForURL((url: URL) => url.search.includes(`search=${encodeURIComponent(input)}`))
-    await page.waitForSelector('[data-test-class="results"]')
+    await expect(page.locator('[data-test-class="results"]').nth(0)).toBeVisible()
   }
 
   async function setOrder(order: 'asc' | 'desc') {

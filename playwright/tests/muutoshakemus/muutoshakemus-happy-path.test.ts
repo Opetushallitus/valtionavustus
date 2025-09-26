@@ -204,13 +204,9 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
   })
 
   await test.step('shows the number of pending muutoshakemus in red', async () => {
-    const numOfMuutosHakemuksetElement = await page.waitForSelector(
-      '[data-test-id=number-of-pending-muutoshakemukset]:has-text("(1)")'
-    )
-    const color = await page.evaluate(
-      (e) => getComputedStyle(e).color,
-      numOfMuutosHakemuksetElement
-    )
+    const numOfMuutosHakemuksetElement = page.getByTestId('number-of-pending-muutoshakemukset')
+    await expect(numOfMuutosHakemuksetElement).toHaveText('1')
+    const color = await numOfMuutosHakemuksetElement.evaluate((e) => getComputedStyle(e).color)
     expect(color).toBe('rgb(255, 0, 0)') // red
   })
 

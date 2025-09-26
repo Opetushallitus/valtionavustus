@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test'
+import { expect, Page } from '@playwright/test'
 
 import { navigateHakija } from '../../utils/navigate'
 import { dummyExcelPath, TEST_Y_TUNNUS } from '../../utils/constants'
@@ -104,16 +104,17 @@ export function HakijaAvustusHakuPage(page: Page) {
 
   async function submitApplication() {
     await locators.sendHakemusButton.click()
-    await page.waitForSelector(
-      'button:has-text("Hakemus lähetetty"), button:has-text("Ansökan sänd")'
-    )
+    const button = page
+      .getByRole('button', { name: 'Hakemus lähetetty' })
+      .or(page.getByRole('button', { name: 'Ansökan sänd' }))
+    await expect(button).toBeVisible()
     return { userKey: await getUserKey() }
   }
 
   async function startApplication(avustushakuID: number, contactPersonEmail: string) {
-    await page.waitForSelector('#haku-not-open', { state: 'hidden' })
+    await expect(page.locator('#haku-not-open')).toBeHidden()
     await locators.form.muutoshakuEnabledFields.primaryEmail.fill(contactPersonEmail)
-    await page.click('#submit:not([disabled])')
+    await page.click('#submit')
 
     const receivedEmail = await pollUntilNewHakemusEmailArrives(avustushakuID, contactPersonEmail)
     const hakemusUrl = getHakemusUrlFromEmail(receivedEmail[0])
@@ -215,7 +216,9 @@ export function HakijaAvustusHakuPage(page: Page) {
       await beforeSubmitFn()
     }
 
-    await page.waitForSelector('#submit:not([disabled])')
+    const submit = page.locator('#submit')
+    await expect(submit).toBeVisible()
+    await expect(submit).toBeEnabled()
   }
 
   async function fillApplication(answers: Answers, businessId: string | null) {

@@ -139,7 +139,7 @@ Ongelmatilanteissa saat apua osoitteesta: va-tuki@oph.fi
 `)
     await test.step('navigates to päätöslista', async () => {
       await yhteenvetoPage.navigate(searchUrl)
-      await yhteenvetoPage.page.waitForSelector('text="Päätöslista"')
+      await expect(yhteenvetoPage.page.getByText('Päätöslista')).toBeVisible()
     })
   })
   await test.step('displays title', async () => {

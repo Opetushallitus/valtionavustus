@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test'
+import { expect, Page } from '@playwright/test'
 import { HakulomakePage } from './HakulomakePage'
 import SelvitysTab from './CommonSelvitysPage'
 
@@ -20,8 +20,8 @@ export const ValiselvitysPage = (page: Page) => {
   }
 
   async function sendValiselvitys(expectedAmount = 1) {
-    await page.click('text="Lähetä väliselvityspyynnöt"')
-    await page.waitForSelector(`text="Lähetetty ${expectedAmount} viestiä"`)
+    await page.getByRole('button', { name: 'Lähetä väliselvityspyynnöt', exact: true }).click()
+    await expect(page.getByText(`Lähetetty ${expectedAmount} viestiä`)).toBeVisible()
   }
   return {
     locators,

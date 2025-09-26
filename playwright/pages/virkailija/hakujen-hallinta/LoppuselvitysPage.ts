@@ -82,7 +82,7 @@ export const LoppuselvitysPage = (page: Page) => {
   }
   async function sendLoppuselvitys(expectedAmount = 1) {
     await page.click('text="Lähetä loppuselvityspyynnöt"')
-    await page.waitForSelector(`text="Lähetetty ${expectedAmount} viestiä"`)
+    await expect(page.getByText(`Lähetetty ${expectedAmount} viestiä`)).toBeVisible()
   }
 
   async function teeLoppuselvityksenTäydennyspyyntö({

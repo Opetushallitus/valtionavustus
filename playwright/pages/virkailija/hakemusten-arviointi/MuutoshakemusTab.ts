@@ -18,22 +18,20 @@ export function createMuutoshakemusTab(page: Page) {
     multipleMuutoshakemus: {
       tabN: (n: number) => page.getByTestId(`muutoshakemus-tab-${n}`),
     },
+    submit: page.getByText('Tee päätös ja lähetä hakijalle'),
+    muutoshakemusContent: page.locator('.muutoshakemus-paatos__content'),
   }
 
   async function openPaatosPreview() {
-    await Promise.all([
-      locators.esikatselePaatos.click(),
-      page.waitForSelector('.muutoshakemus-paatos__content'),
-    ])
+    await expect(locators.muutoshakemusContent).not.toBeVisible()
+    await locators.esikatselePaatos.click()
+    await expect(locators.muutoshakemusContent).toBeVisible()
 
     return {
       close: async () => {
-        await Promise.all([
-          page.waitForSelector('.muutoshakemus-paatos__content', {
-            state: 'detached',
-          }),
-          page.click('text=Sulje'),
-        ])
+        await expect(locators.muutoshakemusContent).toBeVisible()
+        await page.getByText('Sulje').click()
+        await expect(locators.muutoshakemusContent).not.toBeVisible()
       },
       title: page.locator('.hakemus-details-modal__title-row > span'),
       muutoshakemusPaatosTitle: page.getByTestId('muutoshakemus-paatos-title'),
@@ -150,10 +148,9 @@ export function createMuutoshakemusTab(page: Page) {
   }
 
   async function saveMuutoshakemus() {
-    await page.click('[data-test-id="muutoshakemus-submit"]') // TODO: replace test id with button text
-    await page.waitForSelector('[data-test-id="muutoshakemus-paatos"]')
-    const statusText = await page.textContent('[data-test-id="paatos-status-text"]')
-    expect(statusText).toEqual('Käsitelty')
+    await locators.submit.click()
+    await expect(page.getByTestId('muutoshakemus-paatos')).toBeVisible()
+    await expect(page.getByTestId('paatos-status-text')).toHaveText('Käsitelty')
   }
 
   return {

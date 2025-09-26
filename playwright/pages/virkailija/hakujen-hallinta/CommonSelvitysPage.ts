@@ -96,7 +96,7 @@ export default function SelvitysTab(page: Page, type: SelvitysType) {
 
   async function sendSelvitysPyynnot(expectedAmount = 1) {
     await page.getByText(`Lähetä ${umlautType}selvityspyynnöt`).click()
-    await page.waitForSelector(`text="Lähetetty ${expectedAmount} viestiä"`)
+    await expect(page.getByText(`Lähetetty ${expectedAmount} viestiä`)).toBeVisible()
   }
 
   /*

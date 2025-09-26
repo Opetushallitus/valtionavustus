@@ -33,6 +33,10 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
   const isValiSelvitys = selvitysType === 'valiselvitys'
   const { environment, helpTexts } = useHakujenHallintaSelector(selectLoadedInitialData)
   const { koodistos } = useHakujenHallintaSelector(selectHakuState)
+  const loading = useHakujenHallintaSelector(
+    (state) =>
+      state.haku.loadStatus.loadingAvustushaku === true || state.haku.loadingProjects === true
+  )
   const valiselvitysFormDraft = useHakujenHallintaSelector(
     (state) => state.haku.valiselvitysFormDrafts[avustushaku.id]
   )
@@ -186,7 +190,11 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
           __html: helpTexts['hakujen_hallinta__väliselvitys___ohje'],
         }}
       />
-      <button data-test-id="send-valiselvitys" disabled={sending} onClick={onSendSelvitys}>
+      <button
+        data-test-id="send-valiselvitys"
+        disabled={loading || sending}
+        onClick={onSendSelvitys}
+      >
         Lähetä väliselvityspyynnöt
       </button>
       {count !== undefined && <span> Lähetetty {count} viestiä</span>}
@@ -216,7 +224,11 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
           __html: helpTexts['hakujen_hallinta__loppuselvitys___ohje'],
         }}
       />
-      <button data-test-id="send-loppuselvitys" disabled={sending} onClick={onSendSelvitys}>
+      <button
+        data-test-id="send-loppuselvitys"
+        disabled={loading || sending}
+        onClick={onSendSelvitys}
+      >
         Lähetä loppuselvityspyynnöt
       </button>
       {count !== undefined && <span> Lähetetty {count} viestiä</span>}

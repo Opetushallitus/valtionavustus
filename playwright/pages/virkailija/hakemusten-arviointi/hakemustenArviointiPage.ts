@@ -94,8 +94,7 @@ export class HakemustenArviointiPage {
       this.page,
       `/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/`
     )
-    await this.page.waitForSelector('#tab-content')
-
+    await expect(this.page.locator('#tab-content')).toBeVisible()
     return createMuutoshakemusTab(this.page)
   }
 
@@ -111,7 +110,9 @@ export class HakemustenArviointiPage {
   async navigateToHakemus(avustushakuId: number, hanke: string, options?: { showAll?: boolean }) {
     await this.navigate(avustushakuId, options)
     await this.page.click(`span:text-matches("${hanke}")`)
-    await this.page.waitForSelector(`#project-name div:text-matches("${hanke}")`)
+    await expect(
+      this.page.locator('#project-name').getByText(hanke, { exact: false })
+    ).toBeVisible()
   }
 
   async navigateToViestiHankkeelleTab(
