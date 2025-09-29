@@ -5,6 +5,7 @@ import moment from 'moment'
 
 import { defaultValues } from '../fixtures/defaultValues'
 import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { HakulomakePage } from '../pages/virkailija/hakujen-hallinta/HakulomakePage'
 
 defaultValues('Editing hakulomake', async ({ page, hakuProps }) => {
   const puuttuvaYhteyshenkilonNimiJson = await readFile(
@@ -130,12 +131,13 @@ defaultValues('Editing hakulomake', async ({ page, hakuProps }) => {
 
 defaultValues('Editing väliselvitys lomake', async ({ page, hakuProps }) => {
   const hakujenHallinta = new HakujenHallintaPage(page)
-  const avustushakuID = await hakujenHallinta.copyEsimerkkihaku()
+  await hakujenHallinta.copyEsimerkkihaku()
   const haunTiedotPage = await hakujenHallinta.commonHakujenHallinta.switchToHaunTiedotTab()
   await haunTiedotPage.selectVaCodes(hakuProps.vaCodes)
   await haunTiedotPage.setStartDate(moment().subtract(1, 'day'))
-  const formEditorPage = await hakujenHallinta.navigateToFormEditor(avustushakuID)
+  await hakujenHallinta.waitForSave()
   await hakujenHallinta.commonHakujenHallinta.switchToValiselvitysTab()
+  const formEditorPage = HakulomakePage(page)
 
   await test.step('save button is disabled without changes', async () => {
     await formEditorPage.locators.saveFormButton.isDisabled()
@@ -154,12 +156,13 @@ defaultValues('Editing väliselvitys lomake', async ({ page, hakuProps }) => {
 
 defaultValues('Editing loppuselvitys lomake', async ({ page, hakuProps }) => {
   const hakujenHallinta = new HakujenHallintaPage(page)
-  const avustushakuID = await hakujenHallinta.copyEsimerkkihaku()
+  await hakujenHallinta.copyEsimerkkihaku()
   const haunTiedotPage = await hakujenHallinta.commonHakujenHallinta.switchToHaunTiedotTab()
   await haunTiedotPage.selectVaCodes(hakuProps.vaCodes)
   await haunTiedotPage.setStartDate(moment().subtract(1, 'day'))
-  const formEditorPage = await hakujenHallinta.navigateToFormEditor(avustushakuID)
+  await hakujenHallinta.waitForSave()
   await hakujenHallinta.switchToLoppuselvitysTab()
+  const formEditorPage = HakulomakePage(page)
 
   await test.step('save button is disabled without changes', async () => {
     await formEditorPage.locators.saveFormButton.isDisabled()

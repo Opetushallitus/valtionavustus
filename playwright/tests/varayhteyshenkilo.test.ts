@@ -26,6 +26,7 @@ import { ValiselvitysPage } from '../pages/virkailija/hakujen-hallinta/Valiselvi
 import { RefusePage } from '../pages/hakija/refuse-page'
 import { Answers } from '../utils/types'
 import * as xlsx from 'xlsx'
+import { HakulomakePage } from '../pages/virkailija/hakujen-hallinta/HakulomakePage'
 
 type VarayhteyshenkiloAnswers = Answers & {
   trustedContact: {
@@ -67,7 +68,8 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
     )
     const avustushakuID = await hakujenHallintaPage.copyEsimerkkihaku()
     await hakujenHallintaPage.fillAvustushaku(hakuProps)
-    const formEditorPage = await hakujenHallintaPage.navigateToFormEditor(avustushakuID)
+    await hakujenHallintaPage.switchToHakulomakeTab()
+    const formEditorPage = HakulomakePage(page)
     await test.step('lomake warning is shown before changing lomake to have required fields', async () => {
       await expect(formEditorPage.locators.lomakeWarning).toHaveCount(2)
       await expect(formEditorPage.locators.lomakeWarning.first()).toHaveText(
