@@ -35,6 +35,8 @@ export class HakemustenArviointiPage {
   readonly sendTaydennyspyynto: Locator
   readonly saveStatus: Locator
   readonly saveStatusSuccess: Locator
+  readonly saveStatusLoading: Locator
+  readonly saveStatusSaving: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -51,6 +53,8 @@ export class HakemustenArviointiPage {
     })
     this.sendTaydennyspyynto = this.page.getByRole('button', { name: 'Lähetä' })
     this.saveStatus = this.page.getByTestId('save-status')
+    this.saveStatusLoading = this.saveStatus.getByText('Ladataan tietoja')
+    this.saveStatusSaving = this.saveStatus.getByText('Tallennetaan')
     this.saveStatusSuccess = this.saveStatus.getByText('Kaikki tiedot tallennettu')
   }
 
@@ -175,6 +179,7 @@ export class HakemustenArviointiPage {
 
   async selectValmistelijaForHakemus(hakemusID: number, valmistelijaName: string) {
     await this.openUkotusModal(hakemusID)
+    await expect(this.saveStatusSaving.or(this.saveStatusLoading)).not.toBeVisible()
     await this.page.click(`[aria-label="Lisää ${valmistelijaName} valmistelijaksi"]`)
     await expect(
       this.page.locator(`[aria-label="Poista ${valmistelijaName} valmistelijan roolista"]`)
@@ -227,7 +232,7 @@ export class HakemustenArviointiPage {
 
   async selectHakemusFromList(rowText: string) {
     await this.page.click(`text=${rowText}`)
-    await this.page.waitForURL(/\/avustushaku\/\d*\/hakemus\/\d*\/arviointi/)
+    await expect(this.saveStatusLoading).not.toBeVisible()
     return this.arviointiTabLocators()
   }
 
