@@ -178,9 +178,10 @@ export class HakemustenArviointiPage {
   }
 
   async selectValmistelijaForHakemus(hakemusID: number, valmistelijaName: string) {
-    await this.openUkotusModal(hakemusID)
     await expect(this.saveStatusSaving.or(this.saveStatusLoading)).not.toBeVisible()
+    await this.openUkotusModal(hakemusID)
     await this.page.click(`[aria-label="Lisää ${valmistelijaName} valmistelijaksi"]`)
+    await expect(this.saveStatusSaving).toBeVisible()
     await expect(
       this.page.locator(`[aria-label="Poista ${valmistelijaName} valmistelijan roolista"]`)
     ).toBeVisible()
