@@ -153,7 +153,7 @@ test.describe.parallel('talousarvio select', () => {
       await Promise.all([
         expect(firstTili.input).toBeDisabled(),
         expect(firstTiliFirstKoulutusaste.input).toBeDisabled(),
-        haunTiedotPage.locators.hakuName.fi.type('trigger auto save'),
+        haunTiedotPage.locators.hakuName.fi.pressSequentially('trigger auto save'),
       ])
       await expect(haunTiedotPage.locators.puutteita).toBeVisible()
       await expect(firstTili.input).toBeEnabled()

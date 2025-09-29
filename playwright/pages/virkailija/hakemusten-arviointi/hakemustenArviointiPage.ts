@@ -156,7 +156,7 @@ export class HakemustenArviointiPage {
     reason: string = 'Kunhan editoin'
   ): Promise<ReturnType<typeof HakijaAvustusHakuPage>> {
     await this.page.getByTestId('virkailija-edit-hakemus').click()
-    await this.page.getByTestId('virkailija-edit-comment').type(reason)
+    await this.page.getByTestId('virkailija-edit-comment').pressSequentially(reason)
     const [newPage] = await Promise.all([
       this.page.context().waitForEvent('page'),
       this.page.getByTestId('virkailija-edit-submit').click(),
@@ -167,7 +167,7 @@ export class HakemustenArviointiPage {
 
   async createChangeRequest(reason: string = 'Täydennäppä') {
     await this.page.getByTestId('request-change-button').click()
-    await this.taydennyspyynto.type(reason)
+    await this.taydennyspyynto.pressSequentially(reason)
     await this.sendTaydennyspyynto.click()
     await this.waitForSave()
   }

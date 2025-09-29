@@ -144,7 +144,7 @@ export function HakulomakePage(page: Page) {
     )
     const newJson = { ...json, content: [...content, ...fieldsJson] }
     await replaceLomakeJson(JSON.stringify(newJson))
-    await locators.form.type(' ')
+    await locators.form.pressSequentially(' ')
     await saveForm()
   }
 

@@ -137,7 +137,7 @@ export const HaunTiedotPage = (page: Page) => {
 
   async function selectProject(code: string) {
     await locators.selectProject.click()
-    await locators.selectProject.type(code)
+    await locators.selectProject.pressSequentially(code)
     await page.getByTestId(code).click()
   }
 

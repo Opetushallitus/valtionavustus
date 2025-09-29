@@ -14,7 +14,7 @@ export function RefusePage(page: Page) {
 
   const defaultComment = 'Tilille ei mahdu enempää pätäkkää'
   async function refuseGrant(comment = defaultComment) {
-    await locators.refuseComment.type(comment)
+    await locators.refuseComment.pressSequentially(comment)
     await locators.agreeCheckbox.check()
     await expect(locators.submittedNotice).toBeHidden()
     await locators.agreeButton.click()

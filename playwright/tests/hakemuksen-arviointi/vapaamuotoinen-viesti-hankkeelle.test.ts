@@ -89,7 +89,7 @@ muutoshakemusTest(
       await expect(addressInputs).toHaveValue(answers.contactPersonEmail)
 
       await form.recipients.addButton.click()
-      await form.recipients.addressInputs.last().type(extraRecipient)
+      await form.recipients.addressInputs.last().pressSequentially(extraRecipient)
 
       await form.subject.fill(message2.subject)
       await form.body.fill(message2.body)
