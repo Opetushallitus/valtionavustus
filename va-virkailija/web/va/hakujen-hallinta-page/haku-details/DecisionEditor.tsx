@@ -158,7 +158,6 @@ const LiiteGroup = ({
   liite,
   helpTexts,
   selectedLiitteet,
-  selectedVersions,
   onChangeLiite,
   onChangeLiiteVersions,
   disabled,
@@ -166,7 +165,6 @@ const LiiteGroup = ({
   liite: Liite
   helpTexts: HelpTexts
   selectedLiitteet: Record<string, string>
-  selectedVersions: Record<string, string | undefined>
   onChangeLiite: (e: React.ChangeEvent<HTMLInputElement>) => void
   onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void
   disabled: boolean
@@ -188,7 +186,6 @@ const LiiteGroup = ({
           attachment={attachment}
           groupId={liite.group}
           selectedLiitteet={selectedLiitteet}
-          selectedVersions={selectedVersions}
           onChangeLiite={onChangeLiite}
           onChangeLiiteVersions={onChangeLiiteVersions}
           disabled={disabled}
@@ -258,14 +255,12 @@ const PakoteLiite = () => {
 const AttachmentLiite = ({
   attachment,
   isSelected,
-  selectedVersions,
   onChangeLiiteVersions,
   disabled,
 }: {
   attachment: LiiteAttachment
   isSelected: boolean
   selectedLiitteet: Record<string, string>
-  selectedVersions: Record<string, string | undefined>
   onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void
   disabled?: boolean
 }) => {
@@ -284,7 +279,6 @@ const AttachmentLiite = ({
             isDisabled={disabled || (disableOldVersions ? index + 1 < amountOfVersions : undefined)}
             versionSpec={v}
             environment={environment}
-            selectedVersions={selectedVersions}
             onChangeLiiteVersions={onChangeLiiteVersions}
           />
         ))}
@@ -304,7 +298,6 @@ const LiiteComponent = ({
   attachment,
   groupId,
   selectedLiitteet,
-  selectedVersions,
   onChangeLiite,
   onChangeLiiteVersions,
   disabled,
@@ -312,7 +305,6 @@ const LiiteComponent = ({
   attachment: LiiteAttachment
   groupId: string
   selectedLiitteet: Record<string, string>
-  selectedVersions: Record<string, string | undefined>
   onChangeLiite: (e: React.ChangeEvent<HTMLInputElement>) => void
   onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void
   disabled: boolean
@@ -339,7 +331,6 @@ const LiiteComponent = ({
         attachment={attachment}
         isSelected={isSelected}
         selectedLiitteet={selectedLiitteet}
-        selectedVersions={selectedVersions}
         disabled={disabledGroup}
         onChangeLiiteVersions={onChangeLiiteVersions}
       />
@@ -352,7 +343,6 @@ const LiiteVersion = ({
   isLiiteSelected,
   versionSpec,
   environment,
-  selectedVersions,
   isDisabled,
   onChangeLiiteVersions,
 }: {
@@ -361,10 +351,8 @@ const LiiteVersion = ({
   versionSpec: LiiteAttachmentVersion
   environment: EnvironmentApiResponse
   isDisabled?: boolean
-  selectedVersions: Record<string, string | undefined>
   onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void
 }) => {
-  const isSelected = selectedVersions[attachment.id] === versionSpec.id
   const disabled = isDisabled || !isLiiteSelected
   return (
     <div className="decision-liite-selection__liite-version">
@@ -375,7 +363,7 @@ const LiiteVersion = ({
           data-liite={attachment.id}
           name={'decision-liite-version--' + attachment.id}
           value={versionSpec.id}
-          checked={isSelected}
+          checked={isLiiteSelected}
           onChange={onChangeLiiteVersions}
           disabled={disabled}
         />
@@ -552,7 +540,6 @@ const LiitteetSelection = ({
             key={`Liitegroup-${liite.group}`}
             liite={liite}
             selectedLiitteet={selectedLiitteet}
-            selectedVersions={selectedVersions}
             helpTexts={helpTexts}
             onChangeLiite={onChangeLiite}
             onChangeLiiteVersions={onChangeLiiteVersion}

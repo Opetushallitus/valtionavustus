@@ -67,15 +67,13 @@ test.extend({
       await expect(yleisavustusEhdotCheckbox).not.toBeChecked()
     })
 
+    const yleisohjeCount = 5
     await test.step('newest ohje is preselected and all are disabled', async () => {
-      for (let i = 0; i <= yleisohjeAmountStartingFromZero; i++) {
+      await expect(yleisOhjeLiite).toHaveCount(yleisohjeCount + 1)
+      for (let i = 0; i <= yleisohjeCount; i++) {
         const nthYleisohje = yleisOhjeLiite.nth(i)
         await expect(nthYleisohje).toBeDisabled()
-        if (i === yleisohjeAmountStartingFromZero) {
-          await expect(nthYleisohje).toBeChecked()
-        } else {
-          await expect(nthYleisohje).not.toBeChecked()
-        }
+        await expect(nthYleisohje).not.toBeChecked()
       }
     })
     await test.step('add yleisohje to paatos', async () => {
@@ -83,6 +81,7 @@ test.extend({
       await yleisOhjeCheckbox.click()
       await expect(yleisOhjeCheckbox).toBeChecked()
       await hakemustenArviointiPage.waitForSave()
+      await expect(yleisOhjeLiite.nth(yleisohjeCount)).toBeChecked()
     })
     await test.step('after selecting to add yleisohje only the newest ohje is enabled and checked', async () => {
       for (let i = 0; i <= yleisohjeAmountStartingFromZero; i++) {
