@@ -144,7 +144,7 @@ const akuTest = defaultValues.extend<{
       await hakijaAvustusHakuPage.page.fill("[id='textField-3']", '00313') // postinumero
       await hakijaAvustusHakuPage.page.fill("[id='textField-4']", 'Ankkalinna') // postitoimipaikka
       await hakijaAvustusHakuPage.page.click('[id="koodistoField-1_input"]') // maakunta
-      await hakijaAvustusHakuPage.page.keyboard.pressSequentially('Kainuu')
+      await hakijaAvustusHakuPage.page.keyboard.type('Kainuu')
       await hakijaAvustusHakuPage.page.keyboard.press('ArrowDown')
       await hakijaAvustusHakuPage.page.keyboard.press('Enter')
       await hakijaAvustusHakuPage.page.click('label[for="radioButton-0.radio.0"]') // Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko
