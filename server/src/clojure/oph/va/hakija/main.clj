@@ -25,7 +25,7 @@
         hakija-host (:virkailija-host server-config)
         virkailija-host (:virkailija-host server-config)
         virkailija-port (-> server-config :virkailija-port)]
-    (if (:nrepl-enabled? config) (run-nrepl))
+    (when (:nrepl-enabled? config) (run-nrepl))
     (let [stop-hakija-server (start-hakija-server hakija-host hakija-port auto-reload?)
           stop-virkailija-server (start-virkailija-server {:host                    virkailija-host
                                                            :port                    virkailija-port
