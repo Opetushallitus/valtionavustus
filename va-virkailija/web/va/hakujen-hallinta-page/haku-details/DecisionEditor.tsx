@@ -317,7 +317,6 @@ const LiiteComponent = ({
   disabled: boolean
 }) => {
   const isSelected = selectedLiitteet[groupId] === attachment.id
-  const disabledGroup = groupId === 'Ehdot' || disabled
   return (
     <div key={attachment.id} className="decision-liite-selection__liite">
       <label>
@@ -329,7 +328,7 @@ const LiiteComponent = ({
           value={attachment.id}
           checked={isSelected}
           onChange={onChangeLiite}
-          disabled={disabledGroup}
+          disabled={disabled}
         />
         {attachment.langs.fi}{' '}
         <span className="decision-liite-selection__liite-id">{attachment.id}</span>
@@ -339,7 +338,7 @@ const LiiteComponent = ({
         isSelected={isSelected}
         selectedLiitteet={selectedLiitteet}
         selectedVersions={selectedVersions}
-        disabled={disabledGroup}
+        disabled={disabled}
         onChangeLiiteVersions={onChangeLiiteVersions}
       />
     </div>
