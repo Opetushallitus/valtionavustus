@@ -48,24 +48,11 @@ test.extend({
     const paatosPage = PaatosPage(page)
     await paatosPage.navigateTo(avustushakuID)
 
-    const {
-      erityisavustusEhdotCheckbox,
-      yleisavustusEhdotCheckbox,
-      yleisOhjeCheckbox,
-      yleisOhjeLiite,
-      pakoteOhjeCheckbox,
-      jotpaOhjeCheckbox,
-    } = paatosPage.locators
+    const { yleisOhjeCheckbox, yleisOhjeLiite, pakoteOhjeCheckbox, jotpaOhjeCheckbox } =
+      paatosPage.locators
     const amountOfYleisohjeet = 6
     const yleisohjeAmountStartingFromZero = amountOfYleisohjeet - 1
     await expect(yleisOhjeLiite).toHaveCount(amountOfYleisohjeet)
-
-    await test.step('ehdot liitteet are disabled and unchecked', async () => {
-      await expect(erityisavustusEhdotCheckbox).toBeDisabled()
-      await expect(erityisavustusEhdotCheckbox).not.toBeChecked()
-      await expect(yleisavustusEhdotCheckbox).toBeDisabled()
-      await expect(yleisavustusEhdotCheckbox).not.toBeChecked()
-    })
 
     const yleisohjeCount = 5
     await test.step('newest ohje is preselected and all are disabled', async () => {

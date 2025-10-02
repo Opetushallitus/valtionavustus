@@ -26,12 +26,6 @@ export function PaatosPage(page: Page) {
     confirmSending: page.locator('text="Vahvista lähetys"'),
     paatosSendError: page.locator('#päätös-send-error'),
     paatosSentToEmails: page.getByTestId('sent-emails'),
-    erityisavustusEhdotCheckbox: page
-      .locator('label')
-      .locator('text=Eritysavustukseen liittyvät ehdot ja rajoitukset'),
-    yleisavustusEhdotCheckbox: page
-      .locator('label')
-      .locator('text=Yleisavustukseen liittyvät ehdot ja rajoitukset'),
     yleisOhjeCheckbox: page.locator('label').locator('text="Valtionavustusten yleisohje"'),
     jotpaOhjeCheckbox: page.locator('input[value="jotpa_vakioehdot"]'),
     yleisOhjeLiite: page.locator('[data-liite=va_yleisohje]'),
