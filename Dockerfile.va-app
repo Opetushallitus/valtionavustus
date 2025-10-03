@@ -75,7 +75,7 @@ COPY --from=va-base /app/pom.xml /pom.xml
 #
 # va-server
 #
-FROM eclipse-temurin:21.0.8_9-jdk@sha256:40f9bb2bba5571ed0bb8d16f089afd2dbabb0d5fd727767c311330b8c604f4b0 as va-server
+FROM eclipse-temurin:21.0.8_9-jdk@sha256:87d61a86790fefc189cce54931e65f647bc89c5de687d0df91fa5fca72870b5d as va-server
 WORKDIR /app
 LABEL org.opencontainers.image.source=https://github.com/opetushallitus/valtionavustus
 COPY --from=va-base /app/ /app/
