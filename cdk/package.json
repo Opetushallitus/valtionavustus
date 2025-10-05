@@ -13,7 +13,7 @@
     "@types/node": "22.18.8",
     "aws-cdk": "2.1029.4",
     "tsx": "4.20.6",
-    "typescript": "5.9.2"
+    "typescript": "5.9.3"
   },
   "dependencies": {
     "aws-cdk-lib": "2.219.0",
