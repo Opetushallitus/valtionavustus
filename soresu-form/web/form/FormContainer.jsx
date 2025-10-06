@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
-import BusinessIdSearch from './component/BusinessIdSearch.jsx'
+import BusinessIdSearch from './component/BusinessIdSearch'
 
 export default class FormContainer extends React.Component {
   render() {
