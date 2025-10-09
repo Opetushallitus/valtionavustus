@@ -45,6 +45,8 @@ services:
     volumes:
       - ./scripts/postgres-docker/init-db.sql:/docker-entrypoint-initdb.d/init.sql
     hostname: va-postgres
+    ports:
+      - '5432:5432'
     command: ["postgres", "-c", "log_statement=all", "-c", "log_line_prefix='%m [%p] {%x} '"]
     environment:
       POSTGRES_USER: 'va'
