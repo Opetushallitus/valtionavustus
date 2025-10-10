@@ -55,7 +55,7 @@
 
                          ; dependencies under compojure-api -> explicitly updated for security patches
                          [ring-middleware-format "0.7.5"]
-                         [org.yaml/snakeyaml "1.33"]
+                         [org.yaml/snakeyaml "2.5"]
 
                          ;; [metosin/compojure-api "1.1.14"] ->
                          ;;   ... -> [com.fasterxml.jackson.core/jackson-databind ~jackson-version] ->
