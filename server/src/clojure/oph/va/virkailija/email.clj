@@ -224,7 +224,7 @@
                               :from (-> email/smtp-config :from lang)
                               :avustushaku-id avustushaku-id
                               :sender (-> email/smtp-config :sender)
-                              :to (-> email/smtp-config :to-taloustarkastaja)
+                              :to (-> email/smtp-config :to-kuukausittainen-tasmaytysraportti)
                               :subject "Taloustarkastamattomia loppuselvityksiä"
                               :total-hakemus-count total-hakemus-count
                               :list list}

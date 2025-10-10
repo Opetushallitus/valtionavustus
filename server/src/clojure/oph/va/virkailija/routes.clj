@@ -265,6 +265,11 @@
     (virkailija-notifications/send-loppuselvitys-asiatarkastamatta-notifications)
     (ok {:ok "ok"}))
 
+  (compojure-api/POST "/send-loppuselvitys-taloustarkastamatta-notifications" []
+    :return {:ok s/Str}
+    (virkailija-notifications/send-loppuselvitys-taloustarkastamatta-notifications)
+    (ok {:ok "ok"}))
+
   (compojure-api/POST "/send-hakuaika-paattymassa-notifications" []
     :return {:ok s/Str}
     (log/info "test-api: send hakuaika paattymassa notifications")

@@ -135,6 +135,9 @@ export const getLahetaLoppuselvityspyynnotEmails = getEmailsWithAvustushaku(
 export const getLoppuselvitysAsiatarkastamattaEmails = getEmailsWithAvustushaku(
   'loppuselvitys-asiatarkastamatta'
 )
+export const getLoppuselvitysTaloustarkastamattaEmails = getEmailsWithAvustushaku(
+  'loppuselvitys-taloustarkastamatta'
+)
 export const getValiselvitysPalauttamattaEmails = getEmails('valiselvitys-palauttamatta')
 export const getYhteystiedotMuutettuEmails = getEmails('hakemus-edited-after-applicant-edit')
 export const getPaatoksetLahetettyEmails = getEmailsWithAvustushaku('paatokset-lahetetty')
