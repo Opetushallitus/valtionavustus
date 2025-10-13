@@ -7,12 +7,17 @@ import Translator from '../Translator'
 import HttpUtil from '../../HttpUtil'
 import SyntaxValidator from '../SyntaxValidator'
 
-const organizationToFormFieldIds: Record<string, string> = {
+import * as styles from './BusinessIdSearch.module.css'
+
+const organizationToFormFieldIds = {
   name: 'organization',
   email: 'organization-email',
   'organisation-id': 'business-id',
   contact: 'organization-postal-address',
-}
+} as const
+
+type FieldID = string
+type ConfirmationValues = Record<FieldID, { label: string; value: string }>
 
 const findFieldAnswerValue = (answers: Array<{ key: string; value: string }>, fieldId: string) => {
   const value = _.find(answers, (x) => x.key === fieldId)
@@ -46,7 +51,7 @@ interface Props {
 }
 
 export default function BusinessIdSearch({ state, controller }: Props) {
-  const lang = state.configuration.lang
+  const lang = state.configuration.lang as 'fi' | 'sv'
   const translations = state.configuration.translations.misc
   const translator = new Translator(state.configuration.translations.misc)
   const formContent = state.form.content
@@ -61,8 +66,8 @@ export default function BusinessIdSearch({ state, controller }: Props) {
   const [incorrectBusinessId, setIncorrectBusinessId] = useState(false)
   const [otherErrorOnBusinessId, setOtherErrorOnBusinessId] = useState(false)
   const [businessId, setBusinessId] = useState('')
+  const [confirmValues, setConfirmValues] = useState<ConfirmationValues | undefined>()
 
-  const openModal = useCallback(() => setModalIsOpen(true), [])
   const closeModal = useCallback(() => setModalIsOpen(false), [])
 
   useEffect(() => {
@@ -75,26 +80,35 @@ export default function BusinessIdSearch({ state, controller }: Props) {
     }
   }, [modalIsOpen])
 
-  const changeFieldValue = (data: any, fieldId: string, organizationFieldName: string) => {
+  const getNewFieldValue = (data: any, fieldId: string, organizationFieldName: string) => {
     const field = FormUtil.findField(formContent, fieldId)
-    if (!field) return // nothing to change
-
-    const fieldValue =
-      organizationFieldName === 'contact'
-        ? _.trim(
-            `${data.contact?.address || ''} ${data.contact?.['postal-number'] || ''} ${
-              data.contact?.city || ''
-            }`
-          )
-        : data[organizationFieldName]
-
-    if (!_.isEmpty(fieldValue)) {
-      controller.componentOnChangeListener(field, fieldValue)
+    // nothing to change
+    if (!field) {
+      return
     }
+    return organizationFieldName === 'contact'
+      ? _.trim(
+          `${data.contact?.address || ''} ${data.contact?.['postal-number'] || ''} ${
+            data.contact?.city || ''
+          }`
+        )
+      : data[organizationFieldName]
+  }
+
+  const onConfirm = (confirmValues: ConfirmationValues) => {
+    for (const [fieldId, { value }] of Object.entries(confirmValues)) {
+      const field = FormUtil.findField(formContent, fieldId)
+      if (!field) {
+        return // nothing to change
+      }
+      controller.componentOnChangeListener(field, value)
+    }
+    closeModal()
   }
 
   const handleOnSubmit: React.FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault()
+    setConfirmValues(undefined)
     await fetchOrganizationData(businessId)
   }
 
@@ -110,27 +124,32 @@ export default function BusinessIdSearch({ state, controller }: Props) {
       const response = await HttpUtil.get(
         `/api/organisations/?organisation-id=${id}&lang=${language}`
       )
-      _.each(organizationToFormFieldIds, (formFieldId, organizationFieldName) => {
-        if (!_.isEmpty((response as any)[organizationFieldName])) {
-          changeFieldValue(response, formFieldId, organizationFieldName)
-        }
-      })
+      const confirmValues = Object.entries(organizationToFormFieldIds).reduce(
+        (acc, [fieldName, fieldId]) => {
+          const field = FormUtil.findField(formContent, fieldId)
+          if (field) {
+            acc[field.id] = {
+              label: field?.label?.[lang] ?? field.id,
+              value: getNewFieldValue(response, fieldId, fieldName),
+            }
+          }
+          return acc
+        },
+        {} as ConfirmationValues
+      )
+      setConfirmValues(confirmValues)
       setIncorrectBusinessId(false)
       setOtherErrorOnBusinessId(false)
-      closeModal()
     } catch (error: any) {
       if (error?.response?.status === 404) {
         setIncorrectBusinessId(true)
         setOtherErrorOnBusinessId(false)
-        openModal()
       } else {
         setOtherErrorOnBusinessId(true)
         setIncorrectBusinessId(false)
-        openModal()
       }
     }
   }
-
   return (
     <div>
       <dialog ref={dialogRef} className="modal">
@@ -167,23 +186,23 @@ export default function BusinessIdSearch({ state, controller }: Props) {
               />
             )}
           </p>
-          <form onSubmit={handleOnSubmit}>
-            <label className="modal-label">
+          <form onSubmit={handleOnSubmit} className={styles.formGrid}>
+            <label>
               <LocalizedString
                 translations={translations}
                 translationKey="business-id"
                 lang={lang}
               />
               :
-              <input
-                id="finnish-business-id"
-                className={error}
-                type="text"
-                value={businessId}
-                onChange={handleOnChange}
-                autoFocus
-              />
             </label>
+            <input
+              id="finnish-business-id"
+              className={error}
+              type="text"
+              value={businessId}
+              onChange={handleOnChange}
+              autoFocus
+            />
             <input
               className={'get-business-id' + ' ' + 'soresu-text-button'}
               type="submit"
@@ -191,6 +210,36 @@ export default function BusinessIdSearch({ state, controller }: Props) {
               disabled={isDisabled}
             />
           </form>
+          {confirmValues && (
+            <>
+              <p>Tarkista alla olevat tiedot oikeiksi ennenkuin jatkat hakemuksen täyttöä</p>
+              <form
+                className={styles.formGrid}
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  onConfirm(confirmValues)
+                }}
+              >
+                {Object.entries(confirmValues).map(([key, { label, value }], index) => {
+                  return (
+                    <React.Fragment key={key}>
+                      <span className={styles.label}>{label}:</span>
+                      <span className={styles.input}>{value}</span>
+                      {index + 1 === Object.entries(confirmValues).length ? (
+                        <input
+                          className={'get-business-id' + ' ' + 'soresu-text-button'}
+                          type="submit"
+                          value={'Vahvista'}
+                        />
+                      ) : (
+                        <div />
+                      )}
+                    </React.Fragment>
+                  )
+                })}
+              </form>
+            </>
+          )}
           <p>
             <a role="button" onClick={closeModal}>
               <LocalizedString translations={translations} translationKey="cancel" lang={lang} />

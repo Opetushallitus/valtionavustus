@@ -1,0 +1,23 @@
+.formGrid {
+  display: grid;
+  grid-template-columns: 150px 1fr 100px;
+  align-items: center;
+  column-gap: 16px;
+  max-width: 700px;
+  justify-self: center;
+
+  .label {
+    justify-self: end;
+  }
+
+  .input {
+    justify-self: start;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
