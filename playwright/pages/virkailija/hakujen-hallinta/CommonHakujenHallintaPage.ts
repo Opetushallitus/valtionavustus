@@ -101,10 +101,12 @@ export const CommonHakujenHallintaPage = (page: Page) => {
   }
   async function switchToValiselvitysTab() {
     await tabLocators.valiselvitys.click()
+    await expect(page.getByRole('heading', { name: 'Väliselvityslomake' })).toBeVisible()
     return ValiselvitysPage(page)
   }
   async function switchToLoppuselvitysTab() {
     await tabLocators.loppuselvitys.click()
+    await expect(page.getByRole('heading', { name: 'Loppuselvityslomake' })).toBeVisible()
     return LoppuselvitysPage(page)
   }
   async function waitForSave() {
