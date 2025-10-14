@@ -54,7 +54,7 @@
     "babel-plugin-webpack-alias-7": "0.1.1",
     "css-loader": "7.1.2",
     "fork-ts-checker-webpack-plugin": "9.1.0",
-    "less": "4.4.1",
+    "less": "4.4.2",
     "less-loader": "12.3.0",
     "pdfjs-dist": "4.10.38",
     "prettier": "3.6.2",
