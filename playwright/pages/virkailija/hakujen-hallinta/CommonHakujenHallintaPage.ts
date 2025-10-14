@@ -10,7 +10,12 @@ export const saveStatusTestId = 'save-status'
 
 export async function waitForSave(page: Page) {
   await expect(
-    page.getByTestId(saveStatusTestId).locator('text="Kaikki tiedot tallennettu"')
+    page.getByTestId(saveStatusTestId).getByText('Kaikki tiedot tallennettu')
+  ).toBeVisible({ timeout: 10000 })
+}
+export async function waitForSaveWithError(page: Page) {
+  await expect(
+    page.getByTestId(saveStatusTestId).getByText('Jossain kentässä puutteita. Tarkasta arvot.')
   ).toBeVisible({ timeout: 10000 })
 }
 

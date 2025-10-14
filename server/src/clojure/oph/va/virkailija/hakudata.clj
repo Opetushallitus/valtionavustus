@@ -192,7 +192,7 @@
         {:keys [name selection-criteria self-financing-percentage focus-areas]} (:content base-haku)
         haku-type (:haku-type base-haku)
         form-id (:form base-haku)
-        decision (merge (:decision base-haku) {:updatedAt created-at})
+        decision (merge (dissoc (:decision base-haku) :liitteet) {:updatedAt created-at})
         operational-unit-id (:operational-unit-id base-haku)
         avustushaku (hakija-api/get-avustushaku base-haku-id)
         loppuselvitys-id (:form_loppuselvitys avustushaku)
