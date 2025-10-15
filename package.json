@@ -48,7 +48,7 @@
     "@types/lodash": "4.17.20",
     "@types/node": "22.18.10",
     "@types/react": "19.2.2",
-    "@types/react-dom": "19.2.1",
+    "@types/react-dom": "19.2.2",
     "@types/seamless-immutable": "7.1.19",
     "babel-loader": "10.0.0",
     "babel-plugin-webpack-alias-7": "0.1.1",
