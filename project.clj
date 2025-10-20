@@ -75,9 +75,7 @@
 
                          [org.clojure/core.memoize "1.1.266"]]
 
-  :dependencies [[org.clojure/clojure "1.12.4"]
-                 [nrepl "1.5.2"]
-                 [cider/cider-nrepl "0.58.0"]
+  :dependencies [[org.clojure/clojure "1.12.3"]
                  [environ "1.2.0"]
 
                  ;; clojure libs
@@ -150,7 +148,10 @@
                  [com.cemerick/url "0.1.1" :exclusions [com.cemerick/clojurescript.test]] ; this is basically useless, we only use one function that would be trivial to implement
                  ]
 
-  :profiles {:uberjar {:aot [oph.va.hakija.main]}
+  :profiles {:dev {:dependencies [[nrepl "1.5.2"]
+                                   [cider/cider-nrepl "0.58.0"]]}
+             :uberjar {:aot [oph.va.hakija.main]
+                        :main oph.va.hakija.main}
              :server-local {:env {:config "server/config/local.edn"
                                 :configsecrets "../valtionavustus-secret/config/secret-dev.edn"
                                 :configdefaults "server/config/defaults.edn"}}
