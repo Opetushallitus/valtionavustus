@@ -3,25 +3,18 @@ services:
   va:
     build:
       context: .
-      target: va-base
+      target: va-server
       args:
         - NODE_VERSION
-    # run lein for local development to get hot reload
-    command: ./lein with-profile +server-local run -m oph.va.hakija.main
+    environment:
+      - PAYMENT_SERVICE_HOST=maksatuspalvelu
+      - PAYMENT_SERVICE_HOST_KEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDummyKeyForLocalDev
+      - config=/app/server/config/local.edn
+      - configdefaults=/app/server/config/defaults.edn
     ports:
       - '127.0.0.1:8080:8080'
       - '127.0.0.1:8081:8081'
       - '127.0.0.1:7999:7999'
-    volumes:
-      - type: bind
-        source: ./server/
-        target: /app/server/
-      - type: bind
-        source: ./tmp/
-        target: /tmp/
-      - type: bind
-        source: ./tmp/version.txt
-        target: /app/server/resources/public/version.txt
 
   db:
     ports:
