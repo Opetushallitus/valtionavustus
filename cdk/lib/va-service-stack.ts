@@ -102,7 +102,6 @@ export class VaServiceStack extends cdk.Stack {
 
     taskDefinition.addContainer('valtionavustukset-container', {
       image: valtionavustuksetImage,
-      command: ['run', '-m', 'oph.va.hakija.main'],
       healthCheck: {
         command: ['CMD-SHELL', 'curl -f http://localhost:8081/api/healthcheck || exit 1'],
         startPeriod: Duration.minutes(5),

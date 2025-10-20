@@ -11,7 +11,7 @@ function setup_known_hosts() {
 }
 
 function start_valtionavustukset_server() {
-  ./lein "$@"
+  exec java -jar /app/valtionavustus.jar "$@"
 }
 
 function main() {

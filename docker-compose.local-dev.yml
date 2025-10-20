@@ -3,8 +3,11 @@ services:
   va:
     build:
       context: .
+      target: va-base
       args:
         - NODE_VERSION
+    # run lein for local development to get hot reload
+    command: ./lein with-profile +server-local run -m oph.va.hakija.main
     ports:
       - '127.0.0.1:8080:8080'
       - '127.0.0.1:8081:8081'
