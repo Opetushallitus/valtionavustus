@@ -27,7 +27,7 @@ RUN npm run build-production
 #
 # va-base with all the Clojure stuff
 #
-FROM maven:3.9.12-eclipse-temurin-21@sha256:7d8cf78b43f2733e53bcf19fbe8c57d9831c7b303dfb72ee3b60a3b9fda6c251 AS va-base
+FROM eclipse-temurin:21-jdk AS va-base
 
 WORKDIR /app
 
@@ -75,9 +75,14 @@ COPY --from=va-base /app/pom.xml /pom.xml
 #
 # va-server
 #
-FROM eclipse-temurin:21.0.9_10-jdk@sha256:e8d57b6c5c73d93212a4384f588309b44bc75fd15b38f78e6a6db1b350dc4ef3 as va-server
+FROM eclipse-temurin:21-jre as va-server
 WORKDIR /app
 LABEL org.opencontainers.image.source=https://github.com/opetushallitus/valtionavustus
-COPY --from=va-base /app/ /app/
-COPY --from=va-base /root/.m2 /root/.m2
+COPY --from=uberjar-builder \
+    /app/target/uberjar/valtionavustus-0.1.0-SNAPSHOT-standalone.jar \
+    /app/valtionavustus.jar
+COPY --from=va-base /app/server/config/ \
+  /app/server/config/
+COPY entrypoint.sh /app/
+
 ENTRYPOINT ["./entrypoint.sh"]

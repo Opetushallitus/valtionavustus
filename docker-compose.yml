@@ -4,7 +4,6 @@ services:
   va:
     extends:
       service: va-server
-    command: with-profile server-local run -m oph.va.hakija.main
     hostname: va
     depends_on:
       db:
@@ -17,6 +16,8 @@ services:
         condition: service_started
     environment:
       JAVA_TOOL_OPTIONS: '-Duser.timezone="Europe/Helsinki"'
+      config: '/app/server/config/local.edn'
+      configdefaults: '/app/server/config/defaults.edn'
       PAGERDUTY_API_ENDPOINT: 'http://pagerduty:8080/v2/enqueue'
       PAGERDUTY_ROUTING_KEY: '_not_used_on_local_dev_'
       PAYMENT_SERVICE_HOST: 'maksatuspalvelu'
