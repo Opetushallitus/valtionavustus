@@ -142,7 +142,7 @@
                  [de.ubercode.clostache/clostache "1.4.0"] ; email templates and some html templating somewhere
 
                  ;; excel spreadsheets
-                 [dk.ative/docjure "1.21.0" :exclusions [org.apache.commons/commons-compress]]
+                 [dk.ative/docjure "1.22.0" :exclusions [org.apache.commons/commons-compress]]
                  [org.apache.commons/commons-compress "1.28.0"] ; Fix CVE-2024-25710, CVE-2024-26308
 
 
