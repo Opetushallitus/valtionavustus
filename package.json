@@ -44,7 +44,7 @@
     "@babel/preset-react": "7.27.1",
     "@playwright/test": "1.56.1",
     "@types/big.js": "6.2.2",
-    "@types/chai": "5.2.2",
+    "@types/chai": "5.2.3",
     "@types/lodash": "4.17.20",
     "@types/node": "22.18.12",
     "@types/react": "19.2.2",
