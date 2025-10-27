@@ -48,7 +48,7 @@
                          ;; [clojurewerkz/quartzite "2.2.0"] ->
                          ;; fixes https://nvd.nist.gov/vuln/detail/cve-2019-13990,
                          ;; https://nvd.nist.gov/vuln/detail/CVE-2019-5427
-                         [org.quartz-scheduler/quartz "2.5.0"]
+                         [org.quartz-scheduler/quartz "2.5.1"]
 
                          ;; logging API
                          [org.slf4j/slf4j-api "2.0.17"]
