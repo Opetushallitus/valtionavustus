@@ -46,7 +46,7 @@
     "@types/big.js": "6.2.2",
     "@types/chai": "5.2.3",
     "@types/lodash": "4.17.20",
-    "@types/node": "22.18.12",
+    "@types/node": "24.9.1",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "@types/seamless-immutable": "7.1.19",
