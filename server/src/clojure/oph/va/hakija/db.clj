@@ -467,8 +467,8 @@
     (queries/update-hakemus-status<! params {:connection tx})
     new-hakemus))
 
-(defn open-hakemus-applicant-edit [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
-  (with-tx #(update-status % avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :applicant_edit nil)))
+(defn open-hakemus-applicant-edit [avustushaku-id hakemus submission-version answers budget-totals hakemus-id]
+  (with-tx (fn [tx] (new-update-status tx avustushaku-id hakemus submission-version answers budget-totals :applicant_edit nil hakemus-id))))
 
 (defn set-submitted-version [tx params]
   (queries/set-application-submitted-version<! params {:connection tx}))

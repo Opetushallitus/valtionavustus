@@ -138,10 +138,9 @@
                     form-id submission-id
                     (:form_submission_version hakemus))
         submission-version (:version submission)
-        register-number (:register_number hakemus)
         answers (:answers submission)
         budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)]
-    (va-db/open-hakemus-applicant-edit haku-id hakemus-id submission-id submission-version register-number answers budget-totals)))
+    (va-db/open-hakemus-applicant-edit haku-id hakemus submission-version answers budget-totals hakemus-id)))
 
 (defn get-current-answers [haku-id hakemus-key form-key]
   (let [avustushaku (va-db/get-avustushaku haku-id)
