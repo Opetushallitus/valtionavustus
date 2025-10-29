@@ -197,7 +197,7 @@ function initVaFormController() {
 
 const app = initVaFormController()
 const container = document.getElementById('app')!
-const root = createRoot(container!)
+const root = createRoot(container)
 
 app.stateProperty.onValue((state) => {
   root.render(app.getReactComponent(state))

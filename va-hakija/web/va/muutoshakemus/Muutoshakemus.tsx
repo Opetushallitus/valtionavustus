@@ -29,7 +29,7 @@ import '../style/main.less'
 import { getInputErrorClass } from 'soresu-form/web/va/formikHelpers'
 import { ErrorMessage } from './ErrorMessage'
 
-let initialState: MuutoshakemusProps = {
+const initialState: MuutoshakemusProps = {
   status: 'LOADING',
   environment: undefined,
   avustushaku: undefined,
