@@ -261,6 +261,10 @@ function HenkilotietoForm({
 
       // Reload the page after successful save to show updated data
     } catch (error) {
+      if (currentHakemusIframeRef?.current) {
+        currentHakemusIframeRef.current.src = currentHakemusIframeRef.current.src
+        f.resetForm({ values: f.values })
+      }
       console.error('Error saving contact details:', error)
     }
   }

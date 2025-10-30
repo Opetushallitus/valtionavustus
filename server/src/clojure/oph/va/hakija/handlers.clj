@@ -354,7 +354,7 @@
                               (:answers submission) "primary-email")]
               (va-email/send-applicant-edit-message!
                lang [email] (get-in avustushaku [:content :name lang]) hakemus is-jotpa-hakemus)))
-            (ok {edit-type "saved"}))
+          (method-not-allowed! {edit-type "saved"}))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
 
