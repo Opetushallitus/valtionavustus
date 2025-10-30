@@ -167,12 +167,12 @@
       (on-hakemus-edit-submit haku-id user-key base-version answers :applicant-edit)
       (bad-request! {:error "can not update hakemus"}))))
 
- (defn- applicant-edit-open []
-   (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/applicant-edit-open" [haku-id hakemus-id :as request]
-     :path-params [haku-id :- Long, hakemus-id :- s/Str]
-     :return  s/Num
-     :summary "Open application for applicant edit"
-     (ok (:version (on-hakemus-applicant-edit-open haku-id hakemus-id)))))
+(defn- applicant-edit-open []
+  (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/applicant-edit-open" [haku-id hakemus-id :as request]
+    :path-params [haku-id :- Long, hakemus-id :- s/Str]
+    :return  s/Num
+    :summary "Open application for applicant edit"
+    (ok (:version (on-hakemus-applicant-edit-open haku-id hakemus-id)))))
 
 (defn- get-applicant-edit-open []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/applicant-edit-open"
