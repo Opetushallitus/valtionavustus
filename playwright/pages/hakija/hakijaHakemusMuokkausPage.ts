@@ -30,7 +30,6 @@ export function HakijaHakemusMuokkausPage(page: Page, lang: 'fi' | 'sv') {
   }
 
   return {
-    aloitaMuokkaus,
     lopetaMuokkaus,
     changeHakijaName,
     changeHakijaNameToEtunimiTakanimi,
