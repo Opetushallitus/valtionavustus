@@ -19,6 +19,7 @@ JotpaTest(
       token
     )
     await hakemusEditPage.changeHakijaNameToEtunimiTakanimi()
+    await expect(page.getByText('Muutokset tallennettu')).toBeVisible()
 
     const emails = await waitUntilMinEmails(getYhteystiedotMuutettuEmails, 1, hakemusID)
     expect(emails).toHaveLength(1)
@@ -50,6 +51,7 @@ SwedishJotpaTest(
       'sv'
     )
     await hakemusEditPage.changeHakijaNameToEtunimiTakanimi()
+    await expect(page.getByText('Ändringarna har sparats')).toBeVisible()
 
     const emails = await waitUntilMinEmails(getYhteystiedotMuutettuEmails, 1, hakemusID)
     expect(emails).toHaveLength(1)
