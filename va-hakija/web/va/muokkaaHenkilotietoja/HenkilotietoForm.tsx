@@ -103,16 +103,6 @@ export function HenkilotietoForm({
         f.resetForm({ values: f.values })
       }
     } catch (error) {
-      const errorCode = getHttpResponseErrorStatus(error)
-
-      if (errorCode === 405) {
-        if (currentHakemusIframeRef?.current) {
-          currentHakemusIframeRef.current.src = currentHakemusIframeRef.current.src
-        }
-        f.resetForm({ values: f.values })
-        setSaveStatus('success')
-        return
-      }
       setSaveStatus('error')
     }
   }
