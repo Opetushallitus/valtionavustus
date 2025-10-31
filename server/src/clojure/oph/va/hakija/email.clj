@@ -28,9 +28,7 @@
    :application-refused-presenter
    {:fi "Automaattinen viesti: Avustuksen saajan ilmoitus"}
    :application-refused {:fi "Ilmoitus avustuksenne vastaanottamatta jättämisestä on lähetetty"
-                         :sv "Er anmälan om att ni inte tar emot understödet har lämnats in till"}
-   :hakemus-edited-after-applicant-edit {:fi "Automaattinen viesti: hankkeen yhteystietoja on muokattu"
-                                         :sv "Automatisk meddelande: projektets kontaktuppgifterna har ändrats"}})
+                         :sv "Er anmälan om att ni inte tar emot understödet har lämnats in till"}})
 
 (def mail-templates
   {:new-hakemus {:fi (email/load-template "email-templates/new-hakemus.plain.fi")
@@ -54,11 +52,7 @@
    :application-refused {:fi (email/load-template
                               "email-templates/application-refused.plain.fi")
                          :sv (email/load-template
-                              "email-templates/application-refused.plain.sv")}
-   :hakemus-edited-after-applicant-edit {:fi (email/load-template
-                                              "email-templates/hakemus-edited-after-applicant-edit.plain.fi")
-                                         :sv (email/load-template
-                                              "email-templates/hakemus-edited-after-applicant-edit.plain.sv")}})
+                              "email-templates/application-refused.plain.sv")}})
 
 (defn- render-body
   ([msg]
@@ -190,29 +184,6 @@
   (let [msg (generate-presenter-refused-email recipients grant application-id)
         body (render-body msg)]
     (email/enqueue-message-to-be-send msg body)))
-
-(defn generate-applicant-edit-email [lang recipients grant-name hakemus is-jotpa-hakemus]
-  {:operation :send
-   :email-type :hakemus-edited-after-applicant-edit
-   :lang lang
-   :from (if is-jotpa-hakemus (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
-   :sender (:sender email/smtp-config)
-   :subject (get-in mail-titles [:hakemus-edited-after-applicant-edit lang])
-   :to recipients
-   :grant-name grant-name
-   :register-number (:register_number hakemus)
-   :project-name (:project_name hakemus)
-   :organization-name (:organization_name hakemus)
-   :hakemus-id (:id hakemus)
-   :is-jotpa-hakemus is-jotpa-hakemus
-   :avustushaku-id (:avustushaku hakemus)})
-
-(defn send-applicant-edit-message! [lang recipients grant-name hakemus is-jotpa-hakemus]
-  (let [msg (generate-applicant-edit-email lang recipients grant-name hakemus is-jotpa-hakemus)
-        signature (email-signature-block lang)
-        body (render-body msg signature)]
-    (email/enqueue-message-to-be-send msg body)))
-
 (defn notify-valmistelija-of-new-muutoshakemus [to avustushaku-id register-number hanke hakemus-id]
   (let [lang :fi
         url (generate-virkailija-url avustushaku-id hakemus-id)

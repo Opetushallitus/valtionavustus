@@ -1,7 +1,0 @@
-Avustushakemus: {{ grant-name }}
-Hanke: {{ register-number }} "{{ project-name }}"
-Hakija: {{ organization-name }}
-
-Ilmoitus yhteystietojen muutoksesta on lähetetty {{^is-jotpa-hakemus}}Opetushallitukseen{{/is-jotpa-hakemus}}{{#is-jotpa-hakemus}}Jatkuvan oppimisen ja työllisyyden palvelukeskukselle{{/is-jotpa-hakemus}}.
-
-{{>signature}}

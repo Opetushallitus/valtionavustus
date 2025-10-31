@@ -96,7 +96,7 @@ export default function VaForm<T extends BaseStateLoopState<T>>(props: VaFormPro
   const showNewMuutos =
     (!embedForMuutoshakemus && !!modifyApplication && !showGrantRefuse) || isInApplicantEditMode
 
-  const form = readOnly || showNewMuutos ? FormPreview : Form
+  const form = readOnly ? FormPreview : Form
 
   if (showNewMuutos && !!saveStatus.savedObject && state.avustushaku) {
     return (

@@ -332,8 +332,7 @@
         lang (keyword (get hakemus :language "fi"))]
     (if (every? empty? (vals validation))
       (if (= base-version (:version hakemus))
-        (let [is-jotpa-hakemus (is-jotpa-avustushaku avustushaku)
-              submission-id (:form_submission_id hakemus)
+        (let [submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
               submission-version (:version saved-submission)
               submitted-hakemus (with-tx
@@ -345,20 +344,12 @@
                                      submission-version
                                      answers
                                      budget-totals
-                                     user-key)))
-              submission (:body (get-form-submission
-                                 (:form avustushaku)
-                                 (:form_submission_id hakemus)))]
-          (when (= edit-type :applicant-edit)
-            (when-let [email (find-answer-value
-                              (:answers submission) "primary-email")]
-              (va-email/send-applicant-edit-message!
-               lang [email] (get-in avustushaku [:content :name lang]) hakemus is-jotpa-hakemus)))
+                                     user-key)))]
           (method-not-allowed! {edit-type "saved"}))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
 
-(defn on-applicant-hakija-edit-submit [haku-id user-key base-version answers edit-type]
+(defn on-applicant-edit-submit [haku-id user-key base-version answers edit-type]
   (let [hakemus (va-db/get-hakemus user-key)
         avustushaku (va-db/get-avustushaku (:avustushaku hakemus))
         form-id (:form avustushaku)
@@ -366,12 +357,10 @@
         attachments (va-db/get-attachments user-key (:id hakemus))
         budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
         validation (merge (validation/validate-form form answers attachments)
-                          (va-budget/validate-budget-hakija answers budget-totals form))
-        lang (keyword (get hakemus :language "fi"))]
+                          (va-budget/validate-budget-hakija answers budget-totals form))]
     (if (every? empty? (vals validation))
       (if (= base-version (:version hakemus))
-        (let [is-jotpa-hakemus (is-jotpa-avustushaku avustushaku)
-              submission-id (:form_submission_id hakemus)
+        (let [submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
               submission-version (:version saved-submission)
               submitted-hakemus (with-tx
@@ -383,15 +372,7 @@
                                      submission-version
                                      answers
                                      budget-totals
-                                     user-key)))
-              submission (:body (get-form-submission
-                                 (:form avustushaku)
-                                 (:form_submission_id hakemus)))]
-          (when (= edit-type :applicant-edit)
-            (when-let [email (find-answer-value
-                              (:answers submission) "primary-email")]
-              (va-email/send-applicant-edit-message!
-               lang [email] (get-in avustushaku [:content :name lang]) hakemus is-jotpa-hakemus)))
+                                     user-key)))]
           (ok {edit-type "saved"}))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))

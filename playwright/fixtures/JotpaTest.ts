@@ -89,7 +89,6 @@ export async function createJotpaCodes(page: Page) {
     operationalUnit: jotpaToimintayksikkö.code,
     operationalUnitName: jotpaToimintayksikkö.name,
     project: [uniqueCode()],
-    operation: uniqueCode(),
   })
 
   return codes

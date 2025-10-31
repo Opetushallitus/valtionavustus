@@ -9,12 +9,10 @@ import { HAKIJA_URL } from '../../utils/constants'
 import {
   getAcceptedPäätösEmails,
   getHakemusTokenAndRegisterNumber,
-  getYhteystiedotMuutettuEmails,
   lastOrFail,
   waitUntilMinEmails,
 } from '../../utils/emails'
 import { waitForNewTab } from '../../utils/util'
-import { expectIsFinnishOphEmail } from '../../utils/email-signature'
 
 test.describe.parallel('Avustushaku that was marked as muutoshakukelvoton', () => {
   test('turns into muutoshakukelpoinen when copied', async ({ avustushakuID, page }) => {
@@ -113,22 +111,5 @@ test.describe.parallel('Avustushaku that was marked as muutoshakukelvoton', () =
       token
     )
     await hakemusEditPage.changeHakijaNameToEtunimiTakanimi()
-
-    const emails = await waitUntilMinEmails(getYhteystiedotMuutettuEmails, 1, hakemusID)
-
-    expect(emails).toHaveLength(1)
-    const email = emails[0]
-
-    await test.step('the email has correct sender', async () => {
-      expect(email['from-address']).toBe('no-reply@valtionavustukset.oph.fi')
-    })
-
-    await test.step('the email has correct body', async () => {
-      expect(email.formatted).toContain(
-        'Ilmoitus yhteystietojen muutoksesta on lähetetty Opetushallitukseen.'
-      )
-
-      await expectIsFinnishOphEmail(email)
-    })
   })
 })

@@ -164,7 +164,7 @@
     :return  nil
     :summary "Submit applicant edit changes"
     (if (can-update-hakemus haku-id user-key answers nil)
-      (on-hakemus-edit-submit haku-id user-key base-version answers :applicant-edit)
+      (on-applicant-edit-submit haku-id user-key base-version answers :applicant-edit)
       (bad-request! {:error "can not update hakemus"}))))
 
 (defn- applicant-edit-open []
