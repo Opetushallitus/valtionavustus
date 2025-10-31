@@ -10,7 +10,6 @@ import { navigate } from '../../utils/navigate'
 import { HakijaSelvitysPage } from '../../pages/hakija/hakijaSelvitysPage'
 import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
 import { LoppuselvitysPage } from '../../pages/virkailija/hakujen-hallinta/LoppuselvitysPage'
-import muutoshakemusEnabledHakuLomakeJson from '../../fixtures/asd.hakulomake.json'
 
 const sendLahetaLoppuselvityspyynnotNotifications = (page: Page) =>
   page.request.post(`${VIRKAILIJA_URL}/api/test/send-laheta-loppuselvityspyynnot-notifications`, {
@@ -170,57 +169,6 @@ Ongelmatilanteissa saat apua osoitteesta: va-tuki@oph.fi
 selvitysTest.describe('when sending päätös', async () => {
   selvitysTest(
     'send the notification only after sending päätös',
-    async ({
-      closedAvustushaku,
-      page,
-      avustushakuID,
-      answers,
-      ukotettuValmistelija,
-      projektikoodi,
-    }) => {
-      expectToBeDefined(closedAvustushaku)
-      await test.step('set loppuselvitys date', async () => {
-        const paatosPage = PaatosPage(page)
-        await paatosPage.navigateTo(avustushakuID)
-        await paatosPage.setLoppuselvitysDate(moment().add(3, 'months').format('DD.MM.YYYY'))
-        await paatosPage.waitForSave()
-      })
-
-      await test.step('make sure notifications are not send before päätös', async () => {
-        await expectNotificationsNotSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
-      })
-
-      await test.step('send päätös', async () => {
-        const hakemustenArviointiPage = new HakemustenArviointiPage(page)
-        await hakemustenArviointiPage.navigate(avustushakuID)
-        const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
-          avustushakuID,
-          projectName: answers.projectName,
-          projektikoodi,
-        })
-
-        const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
-        await haunTiedotPage.resolveAvustushaku()
-
-        await hakemustenArviointiPage.navigate(avustushakuID)
-        await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
-
-        const paatosPage = PaatosPage(page)
-        await paatosPage.navigateTo(avustushakuID)
-        await paatosPage.sendPaatos()
-      })
-
-      await expectNotificationsSentAfterLahetaLoppuselvityspyynnot(page, avustushakuID)
-    }
-  )
-})
-
-const koiraTEsti = selvitysTest.extend({
-  hakulomake: async ({}, use) => await use(JSON.stringify(muutoshakemusEnabledHakuLomakeJson)),
-})
-koiraTEsti.describe('when sending päätös without project name', async () => {
-  selvitysTest(
-    'Päätös without project name',
     async ({
       closedAvustushaku,
       page,
