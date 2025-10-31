@@ -1,7 +1,7 @@
 import { useFormik } from 'formik'
 import React, { useRef, useState } from 'react'
 import { SavedObject, HakijaAvustusHaku } from 'soresu-form/web/form/types/Form'
-import HttpUtil, { getHttpResponseErrorStatus } from 'soresu-form/web/HttpUtil'
+import HttpUtil from 'soresu-form/web/HttpUtil'
 import { translations } from 'soresu-form/web/va/i18n/translations'
 import { Answer } from 'soresu-form/web/va/types'
 import * as Yup from 'yup'
