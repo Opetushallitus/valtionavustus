@@ -98,7 +98,7 @@ test.describe.parallel('Avustushaku that was marked as muutoshakukelvoton', () =
     )
   })
 
-  test('sends a notification to hakija when yhteyshenkilö is changed', async ({
+  test('hakija can change yhteyshenkilö', async ({
     avustushakuID,
     acceptedHakemus: { hakemusID, userKey },
     page,
@@ -110,6 +110,7 @@ test.describe.parallel('Avustushaku that was marked as muutoshakukelvoton', () =
       userKey,
       token
     )
+    await expect(page.getByRole('heading', { name: 'Haettavat muutokset' })).not.toBeVisible()
     await hakemusEditPage.changeHakijaNameToEtunimiTakanimi()
   })
 })

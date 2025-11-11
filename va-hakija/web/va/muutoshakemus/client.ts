@@ -14,7 +14,7 @@ type MuutoshakemusProps = {
 
 export async function postMuutoshakemus(props: MuutoshakemusProps) {
   const { userKey, values } = props
-  const url = `api/muutoshakemus/${userKey}`
+  const url = `/api/muutoshakemus/${userKey}`
 
   const jatkoaika = values.haenKayttoajanPidennysta && {
     jatkoaika: {

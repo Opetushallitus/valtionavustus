@@ -233,7 +233,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
               </div>
             </div>
           )}
-          {!existingNewMuutoshakemus && (
+          {!existingNewMuutoshakemus && state.avustushaku?.muutoshakukelpoinen && (
             <>
               <h2 className="muutoshakemus__sub-title">{t.applicationEdit.title}</h2>
               <div>

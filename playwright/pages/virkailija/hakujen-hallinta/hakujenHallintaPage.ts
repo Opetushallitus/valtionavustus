@@ -120,6 +120,7 @@ export class HakujenHallintaPage {
 
   async switchToLoppuselvitysTab() {
     await this.page.getByTestId('loppuselvitys-välilehti').click()
+    await expect(this.page.getByRole('heading', { name: 'Loppuselvityslomake' })).toBeVisible()
     return LoppuselvitysPage(this.page)
   }
 

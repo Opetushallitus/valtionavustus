@@ -17,7 +17,11 @@ import './style/main.less'
 import { isJotpaAvustushaku } from './jotpa'
 import { changeFaviconIconTo } from './favicon'
 
-import { HenkilotietoForm } from './muokkaaHenkilotietoja/HenkilotietoForm'
+import { MuutoshakemusComponent } from './muutoshakemus/Muutoshakemus'
+import {
+  getTranslationContext,
+  TranslationContext,
+} from 'soresu-form/web/va/i18n/TranslationContext'
 
 const allowedStatuses = ['officer_edit', 'submitted', 'pending_change_request', 'applicant_edit']
 
@@ -37,6 +41,7 @@ export default function VaForm<T extends BaseStateLoopState<T>>(props: VaFormPro
     props
   const { saveStatus, configuration } = state
   const { embedForMuutoshakemus } = configuration
+  const translationContext = getTranslationContext(configuration.lang)
 
   const isJotpaHakemus =
     hakemusType === 'hakemus' && isJotpaAvustushaku(state.avustushaku?.['operational-unit-code'])
@@ -103,14 +108,15 @@ export default function VaForm<T extends BaseStateLoopState<T>>(props: VaFormPro
   if (showNewMuutos && !!saveStatus.savedObject && state.avustushaku) {
     return (
       <div className={isJotpaHakemus ? 'jotpa-customizations' : ''}>
-        <HenkilotietoForm
-          hakemus={saveStatus.savedObject}
-          avustushaku={state.avustushaku}
-          userKey={saveStatus.hakemusId}
-          lang={configuration.lang}
-          isInApplicantEditMode={isInApplicantEditMode}
-          showJotpaLogo={isJotpaHakemus}
-        />
+        <TranslationContext.Provider value={translationContext}>
+          <MuutoshakemusComponent
+            query={{
+              lang: configuration.lang,
+              'user-key': saveStatus.hakemusId,
+              'avustushaku-id': state.avustushaku.id.toString(),
+            }}
+          />
+        </TranslationContext.Provider>
       </div>
     )
   }

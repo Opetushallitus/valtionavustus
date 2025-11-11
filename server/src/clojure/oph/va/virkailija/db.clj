@@ -136,7 +136,6 @@
                           JOIN hakija.hakemukset h ON h.id = n.hakemus_id
                           JOIN hakija.avustushaut a ON a.id = h.avustushaku
                           WHERE h.version_closed IS NULL
-                          AND a.muutoshakukelpoinen = true
                           AND n.hakemus_id = ?" [hakemus-id])
         hakemus (first hakemukset)
         talousarvio (get-talousarvio hakemus-id "hakemus")]
