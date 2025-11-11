@@ -80,7 +80,7 @@ const VaFormTopbar = <T extends BaseStateLoopState<T>>(props: Props<T>) => {
   // selvitys-updatable can be undefined, we only care if its false
   const selvitysNotUpdateable = (isValiselvitys || isLoppuselvitys) && selvitysUpdateable === false
   const previewOrSelvitysNotUpdateable = preview || selvitysNotUpdateable
-  const showJotpaLogo = isHakemus && isJotpaAvustushaku(avustushaku)
+  const showJotpaLogo = isHakemus && isJotpaAvustushaku(avustushaku['operational-unit-code'])
   const helpText = formTranslator.translate(
     `savehelp-${hakemusType}${showJotpaLogo ? '-jotpa' : ''}`,
     lang
