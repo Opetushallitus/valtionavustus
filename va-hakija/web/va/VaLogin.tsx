@@ -43,7 +43,7 @@ export default function VaLogin(props: VaLoginProps) {
   const translations = model.translations
   const avustushaku = model.avustushaku
   const environment = model.environment
-  const isJotpaHakemus = isJotpaAvustushaku(avustushaku)
+  const isJotpaHakemus = isJotpaAvustushaku(avustushaku['operational-unit-code'])
 
   useEffect(() => {
     setCorrectFavicon()

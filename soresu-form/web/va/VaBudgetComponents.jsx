@@ -6,7 +6,7 @@ import HelpTooltip from 'soresu-form/web/form/component/HelpTooltip'
 import { percentageOf, roundDecimal, formatDecimal } from '../MathUtil'
 import Translator from 'soresu-form/web/form/Translator'
 
-export function isJotpaAvustushaku(avustushaku) {
+function isJotpaAvustushaku(avustushaku) {
   if (!avustushaku) return false
 
   return avustushaku['operational-unit-code'] === '6600105300'

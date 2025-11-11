@@ -4,13 +4,16 @@ import { FormikHook } from 'soresu-form/web/va/types/muutoshakemus'
 
 import { useTranslations } from 'soresu-form/web/va/i18n/TranslationContext'
 import { TopBarNotification } from './TopBarNotification'
+import { Logo } from '../../Logo'
 
 type TopBarProps = {
   env: string
   f: FormikHook
+  lang: 'fi' | 'sv'
+  isJotpaHakemus?: boolean
 }
 
-export function TopBar({ env, f }: TopBarProps) {
+export function TopBar({ env, f, isJotpaHakemus, lang }: TopBarProps) {
   const { t } = useTranslations()
   const isMuutoshakemus =
     f.values.haenKayttoajanPidennysta ||
@@ -21,13 +24,7 @@ export function TopBar({ env, f }: TopBarProps) {
   return (
     <section id="topbar">
       <div id="top-container">
-        <img
-          id="logo"
-          src="/img/logo-240x68@2x.png"
-          width="240"
-          height="68"
-          alt="Opetushallitus / Utbildningsstyrelsen"
-        />
+        <Logo showJotpaLogo={!!isJotpaHakemus} lang={lang} />
         <div className="topbar-right">
           <div className="topbar-title-and-save-status">
             <h1 id="topic">{t.hakemus}</h1>

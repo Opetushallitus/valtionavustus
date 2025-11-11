@@ -28,6 +28,7 @@ import 'soresu-form/web/form/style/main.less'
 import '../style/main.less'
 import { getInputErrorClass } from 'soresu-form/web/va/formikHelpers'
 import { ErrorMessage } from './ErrorMessage'
+import { isJotpaAvustushaku } from '../jotpa'
 
 const initialState: MuutoshakemusProps = {
   status: 'LOADING',
@@ -160,10 +161,16 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
   if (state.status === 'LOADING') {
     return <p>{t.loading}</p>
   }
-
+  const isJotpaHakemus =
+    state.avustushaku && isJotpaAvustushaku(state.avustushaku['operational-unit-code'])
   return (
     <form className="muutoshakemus__form" onSubmit={f.handleSubmit}>
-      <TopBar env={state.environment?.name || ''} f={f} />
+      <TopBar
+        env={state.environment?.name || ''}
+        f={f}
+        isJotpaHakemus={isJotpaHakemus}
+        lang={lang}
+      />
       <ErrorBoundary>
         <MuutoshakemusSection className="muutoshakemus__top-form">
           {state.avustushaku && (

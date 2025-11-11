@@ -414,6 +414,7 @@ export type Avustushaku = {
   loppuselvitysdate?: string
   muutoshakukelpoinen: boolean
   'operational-unit-id'?: unknown
+  'operational-unit-code'?: string
   phase: AvustushakuPhase
   'register-number': string | null
   'hallinnoiavustuksia-register-number': string | null

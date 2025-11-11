@@ -37,7 +37,9 @@ export default function VaForm<T extends BaseStateLoopState<T>>(props: VaFormPro
     props
   const { saveStatus, configuration } = state
   const { embedForMuutoshakemus } = configuration
-  const isJotpaHakemus = hakemusType === 'hakemus' && isJotpaAvustushaku(state.avustushaku)
+
+  const isJotpaHakemus =
+    hakemusType === 'hakemus' && isJotpaAvustushaku(state.avustushaku?.['operational-unit-code'])
   const setCorrectFavicon = () => {
     if (isJotpaHakemus) {
       changeFaviconIconTo('jotpa')
