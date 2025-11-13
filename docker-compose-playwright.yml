@@ -1,5 +1,7 @@
 name: valtionavustus-playwright
 services:
   va:
-    command: with-profile server-test run -m oph.va.hakija.main
+    environment:
+      config: '/app/server/config/docker-compose-test.edn'
+      configdefaults: '/app/server/config/defaults.edn'
 
