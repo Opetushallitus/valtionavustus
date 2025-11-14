@@ -635,6 +635,8 @@ export const updateField = createAsyncThunk<
     avustushaku['operational-unit-id'] = update.newValue
   } else if (fieldId.startsWith('allow_visibility_in_external_system')) {
     avustushaku.allow_visibility_in_external_system = update.newValue === 'true'
+  } else if (fieldId.startsWith('muutoshakukelpoinen')) {
+    avustushaku.muutoshakukelpoinen = update.newValue === 'true'
   } else if (fieldId === 'arvioitu_maksupaiva') {
     avustushaku.arvioitu_maksupaiva = update.newValue
   } else if (update.field.name === 'payment-size-limit') {

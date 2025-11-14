@@ -96,7 +96,8 @@
                                    :haku_type (new HakuType (:haku-type avustushaku))
                                    :hankkeen_alkamispaiva (:hankkeen-alkamispaiva avustushaku)
                                    :hankkeen_paattymispaiva (:hankkeen-paattymispaiva avustushaku)
-                                   :operational_unit_id (:operational-unit-id avustushaku))]
+                                   :operational_unit_id (:operational-unit-id avustushaku)
+                                   :muutoshakukelpoinen (:muutoshakukelpoinen avustushaku))]
 
     (with-transaction connection
       (let [db-options {:connection connection}

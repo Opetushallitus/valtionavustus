@@ -293,6 +293,35 @@ const HakuEditor = () => {
               </span>
             </fieldset>
           </div>
+          <div>
+            <h3>Muutoshakukelpoinen</h3>
+            <fieldset className="soresu-radiobutton-group">
+              <span>
+                <input
+                  id="muutoshakukelpoinen_true"
+                  type="radio"
+                  name="muutoshakukelpoinen"
+                  value="true"
+                  onChange={onChange}
+                  checked={avustushaku.muutoshakukelpoinen}
+                  disabled={!allowAllHakuEdits}
+                />
+                <label htmlFor="muutoshakukelpoinen_true">Kyllä</label>
+              </span>
+              <span>
+                <input
+                  id="muutoshakukelpoinen_false"
+                  type="radio"
+                  name="muutoshakukelpoinen"
+                  value="false"
+                  onChange={onChange}
+                  checked={!avustushaku.muutoshakukelpoinen}
+                  disabled={!allowAllHakuEdits}
+                />
+                <label htmlFor="muutoshakukelpoinen_false">Ei</label>
+              </span>
+            </fieldset>
+          </div>
         </div>
       </div>
       <Lainsaadanto
