@@ -344,7 +344,7 @@ export class HakujenHallintaPage {
     const muutoshakemusEnabledHakuLomakeJson = await fs.readFile(
       path.join(
         __dirname,
-        '../../../fixtures/muutoshakukelvoton-project-name-missing.hakulomake.hakulomake.json'
+        '../../../fixtures/muutoshakukelvoton-project-name-missing.hakulomake.json'
       ),
       'utf8'
     )
