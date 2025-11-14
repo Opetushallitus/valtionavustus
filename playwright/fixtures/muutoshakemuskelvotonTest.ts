@@ -33,6 +33,7 @@ export const muutoshakemuskelvotonTest = defaultValues.extend<MuutoshakemusFixtu
     const avustushakuID = await test.step('Create muutoshakukelvoton haku', async () => {
       const hakujenHallintaPage = new HakujenHallintaPage(page)
       const avustushakuID = await hakujenHallintaPage.createMuutoshakemusDisabledHaku(hakuProps)
+      await hakujenHallintaPage.navigate(avustushakuID)
       return avustushakuID
     })
     await use(avustushakuID)

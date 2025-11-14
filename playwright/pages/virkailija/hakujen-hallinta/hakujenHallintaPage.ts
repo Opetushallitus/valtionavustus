@@ -321,13 +321,11 @@ export class HakujenHallintaPage {
     await haunTiedotPage.publishAvustushaku()
     return avustushakuID
   }
-  async createMuutoshakemusDisabledHaku(hakuProps: HakuProps) {
-    const avustushakuID = await this.createUnpublishedMuutoshakemusDisabledHaku(hakuProps)
-    const haunTiedotPage = await this.commonHakujenHallinta.switchToHaunTiedotTab()
-    await haunTiedotPage.publishAvustushaku()
-    return avustushakuID
+  async toggleMuutoshakukelpoisuus(value: boolean) {
+    const radioId = value ? 'muutoshakukelpoinen_true' : 'muutoshakukelpoinen_false'
+    await this.page.click(`label[for="${radioId}"]`)
+    await this.waitForSave()
   }
-
   async createUnpublishedMuutoshakemusEnabledHaku(hakuProps: HakuProps) {
     const muutoshakemusEnabledHakuLomakeJson = await fs.readFile(
       path.join(__dirname, '../../../fixtures/prod.hakulomake.json'),
@@ -338,6 +336,14 @@ export class HakujenHallintaPage {
       hakuProps
     )
     await this.commonHakujenHallinta.switchToHaunTiedotTab()
+    return avustushakuID
+  }
+
+  async createMuutoshakemusDisabledHaku(hakuProps: HakuProps) {
+    const avustushakuID = await this.createUnpublishedMuutoshakemusDisabledHaku(hakuProps)
+    const haunTiedotPage = await this.commonHakujenHallinta.switchToHaunTiedotTab()
+    await this.toggleMuutoshakukelpoisuus(false)
+    await haunTiedotPage.publishAvustushaku()
     return avustushakuID
   }
   async createUnpublishedMuutoshakemusDisabledHaku(hakuProps: HakuProps) {
@@ -352,7 +358,6 @@ export class HakujenHallintaPage {
       muutoshakemusEnabledHakuLomakeJson,
       hakuProps
     )
-    await this.commonHakujenHallinta.switchToHaunTiedotTab()
     return avustushakuID
   }
 

@@ -110,6 +110,7 @@ test.describe.parallel('Avustushaku that was marked as muutoshakukelvoton', () =
       userKey,
       token
     )
+    await expect(page.getByRole('heading', { name: 'Hakemus', exact: true })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Haettavat muutokset' })).not.toBeVisible()
     await hakemusEditPage.changeHakijaNameToEtunimiTakanimi()
   })
