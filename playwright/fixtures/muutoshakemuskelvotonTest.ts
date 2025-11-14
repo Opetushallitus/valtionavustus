@@ -4,7 +4,6 @@ import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakuje
 import moment from 'moment'
 import { HakijaAvustusHakuPage } from '../pages/hakija/hakijaAvustusHakuPage'
 import { defaultValues } from './defaultValues'
-import { markAvustushakuAsMuutoshakukelvoton } from '../utils/avustushaku'
 import { PaatosPage } from '../pages/virkailija/hakujen-hallinta/PaatosPage'
 
 export interface MuutoshakemusFixtures {
@@ -15,6 +14,7 @@ export interface MuutoshakemusFixtures {
   }
   submittedHakemus: {
     userKey: string
+    arkistointitunnus: string
   }
   acceptedHakemus: {
     hakemusID: number
@@ -32,8 +32,7 @@ export const muutoshakemuskelvotonTest = defaultValues.extend<MuutoshakemusFixtu
     testInfo.setTimeout(testInfo.timeout + 40_000)
     const avustushakuID = await test.step('Create muutoshakukelvoton haku', async () => {
       const hakujenHallintaPage = new HakujenHallintaPage(page)
-      const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
-      await markAvustushakuAsMuutoshakukelvoton(page, avustushakuID)
+      const avustushakuID = await hakujenHallintaPage.createMuutoshakemusDisabledHaku(hakuProps)
       return avustushakuID
     })
     await use(avustushakuID)
@@ -50,7 +49,8 @@ export const muutoshakemuskelvotonTest = defaultValues.extend<MuutoshakemusFixtu
       )
       return userKey
     })
-    use({ userKey })
+    const arkistointitunnus = await page.getByTestId('hakemus-arkistointitunnus').innerText()
+    use({ userKey, arkistointitunnus })
   },
   closedAvustushaku: async (
     { page, avustushakuID, submittedHakemus, finalAvustushakuEndDate },
@@ -70,7 +70,7 @@ export const muutoshakemuskelvotonTest = defaultValues.extend<MuutoshakemusFixtu
       page,
       ukotettuValmistelija,
       answers,
-      submittedHakemus: { userKey },
+      submittedHakemus: { userKey, arkistointitunnus },
       projektikoodi,
     },
     use,
@@ -85,7 +85,7 @@ export const muutoshakemuskelvotonTest = defaultValues.extend<MuutoshakemusFixtu
       await hakemustenArviointiPage.navigate(avustushakuID)
       const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
         avustushakuID,
-        projectName: answers.projectName,
+        projectName: arkistointitunnus,
         projektikoodi,
       })
       return hakemusID

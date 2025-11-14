@@ -321,10 +321,31 @@ export class HakujenHallintaPage {
     await haunTiedotPage.publishAvustushaku()
     return avustushakuID
   }
+  async createMuutoshakemusDisabledHaku(hakuProps: HakuProps) {
+    const avustushakuID = await this.createUnpublishedMuutoshakemusDisabledHaku(hakuProps)
+    const haunTiedotPage = await this.commonHakujenHallinta.switchToHaunTiedotTab()
+    await haunTiedotPage.publishAvustushaku()
+    return avustushakuID
+  }
 
   async createUnpublishedMuutoshakemusEnabledHaku(hakuProps: HakuProps) {
     const muutoshakemusEnabledHakuLomakeJson = await fs.readFile(
       path.join(__dirname, '../../../fixtures/prod.hakulomake.json'),
+      'utf8'
+    )
+    const { avustushakuID } = await this.createHakuWithLomakeJson(
+      muutoshakemusEnabledHakuLomakeJson,
+      hakuProps
+    )
+    await this.commonHakujenHallinta.switchToHaunTiedotTab()
+    return avustushakuID
+  }
+  async createUnpublishedMuutoshakemusDisabledHaku(hakuProps: HakuProps) {
+    const muutoshakemusEnabledHakuLomakeJson = await fs.readFile(
+      path.join(
+        __dirname,
+        '../../../fixtures/muutoshakukelvoton-project-name-missing.hakulomake.hakulomake.json'
+      ),
       'utf8'
     )
     const { avustushakuID } = await this.createHakuWithLomakeJson(
