@@ -5,7 +5,7 @@
   (:require [clojure.java.io :as io]
             [clojure.tools.logging :as log]
             [ring.util.codec :refer [form-encode]]
-            [oph.soresu.common.db :refer [exec with-tx query execute!]]
+            [oph.soresu.common.db :refer [exec with-tx query query-original-identifiers execute!]]
             [oph.soresu.common.jdbc.extensions :refer :all]
             [oph.soresu.form.formutil :as form-util]
             [oph.va.hakemus.db :as hakemus-copy]
@@ -377,8 +377,18 @@
              (form-util/find-answer-value answers "trusted-contact-phone")])
   (log/info (str "Succesfully stored normalized fields for hakemus with id: " id)))
 
+(defn- ensure-normalized-hakemus-exists [tx hakemus-id]
+  (let [exists? (first (query tx "SELECT 1 FROM virkailija.normalized_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
+    (when-not exists?
+      (log/info (str "Creating missing normalized_hakemus row for hakemus: " hakemus-id))
+      (let [hakemus (first (query-original-identifiers tx "SELECT * FROM hakemukset WHERE id = ? AND version_closed IS NULL" [hakemus-id]))
+            submission (first (query-original-identifiers tx "SELECT answers FROM form_submissions WHERE id = ? AND version_closed IS NULL" [(:form_submission_id hakemus)]))
+            answers (:answers submission)]
+        (store-normalized-hakemus tx hakemus-id hakemus answers)))))
+
 (defn- change-normalized-hakemus-contact-person-details [tx user-key hakemus-id contact-person-details]
   (log/info (str "Change normalized contact person details with user-key: " user-key))
+  (ensure-normalized-hakemus-exists tx hakemus-id)
   (let [contact-person (:name contact-person-details)
         contact-phone (:phone contact-person-details)
         contact-email (:email contact-person-details)]
@@ -390,6 +400,7 @@
 
 (defn- change-normalized-hakemus-trusted-contact-person-details [tx user-key hakemus-id contact]
   (log/info (str "Change normalized trusted contact person details with user-key: " user-key))
+  (ensure-normalized-hakemus-exists tx hakemus-id)
   (let [contact-name (:name contact)
         contact-phone (:phone contact)
         contact-email (:email contact)]

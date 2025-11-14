@@ -70,12 +70,20 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
       const muutoshakemuksetP = HttpUtil.get(
         `/api/avustushaku/${avustushakuId}/hakemus/${userKey}/muutoshakemus`
       )
-      const [environment, avustushaku, hakemus, muutoshakemukset] = await Promise.all([
+      const results = await Promise.allSettled([
         environmentP,
         avustushakuP,
         hakemusP,
         muutoshakemuksetP,
       ])
+
+      const [environment, avustushaku, hakemus, muutoshakemukset] = results.map((result) => {
+        if (result.status === 'fulfilled') {
+          return result.value
+        }
+        return {}
+      })
+
       const currentProjectEnd = getProjectEndMoment(avustushaku, muutoshakemukset)
       const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
       const hasTrustedContact =
@@ -84,9 +92,9 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
         hakemus?.['trusted-contact-name']
       f.resetForm({
         values: {
-          name: hakemus['contact-person'],
-          email: hakemus['contact-email'],
-          phone: hakemus['contact-phone'],
+          name: hakemus['contact-person'] || '',
+          email: hakemus['contact-email'] || '',
+          phone: hakemus['contact-phone'] || '',
           hasTrustedContact: hasTrustedContact !== undefined,
           trustedContactName: hakemus['trusted-contact-name'],
           trustedContactEmail: hakemus['trusted-contact-email'],

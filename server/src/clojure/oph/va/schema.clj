@@ -192,7 +192,7 @@
    :hakemus-id Long
    :updated-at s/Inst
    :created-at s/Inst
-   :project-name s/Str
+   (s/optional-key :project-name) s/Str
    :contact-person s/Str
    :contact-email s/Str
    :contact-phone s/Str
