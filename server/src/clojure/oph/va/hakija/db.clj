@@ -135,6 +135,54 @@
                WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
          [id]))
 
+(defn store-normalized-hakemus [tx id hakemus answers]
+  (log/info (str "Storing normalized fields for hakemus: " id))
+  (execute! tx
+            "INSERT INTO virkailija.normalized_hakemus (
+          hakemus_id,
+          project_name,
+          contact_person,
+          contact_email,
+          contact_phone,
+          organization_name,
+          register_number,
+          trusted_contact_name,
+          trusted_contact_email,
+          trusted_contact_phone
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT (hakemus_id) DO UPDATE SET
+          project_name = EXCLUDED.project_name,
+          contact_person = EXCLUDED.contact_person,
+          contact_email = EXCLUDED.contact_email,
+          contact_phone = EXCLUDED.contact_phone,
+          organization_name = EXCLUDED.organization_name,
+          register_number = EXCLUDED.register_number,
+          trusted_contact_name = EXCLUDED.trusted_contact_name,
+          trusted_contact_email = EXCLUDED.trusted_contact_email,
+          trusted_contact_phone = EXCLUDED.trusted_contact_phone"
+            [id,
+             (form-util/find-answer-value answers "project-name"),
+             (form-util/find-answer-value answers "applicant-name"),
+             (form-util/find-answer-value answers "primary-email"),
+             (form-util/find-answer-value answers "textField-0"),
+             (:organization_name hakemus),
+             (:register_number hakemus)
+             (form-util/find-answer-value answers "trusted-contact-name")
+             (form-util/find-answer-value answers "trusted-contact-email")
+             (form-util/find-answer-value answers "trusted-contact-phone")])
+  (log/info (str "Succesfully stored normalized fields for hakemus with id: " id)))
+
+
+(defn- ensure-normalized-hakemus-exists [tx hakemus-id]
+  (let [exists? (first (query tx "SELECT 1 FROM virkailija.normalized_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
+    (when-not exists?
+      (log/info (str "Creating missing normalized_hakemus row for hakemus: " hakemus-id))
+      (let [hakemus (first (query-original-identifiers tx "SELECT * FROM hakemukset WHERE id = ? AND version_closed IS NULL" [hakemus-id]))
+            submission (first (query-original-identifiers tx "SELECT answers FROM form_submissions WHERE id = ? AND version_closed IS NULL" [(:form_submission_id hakemus)]))
+            answers (:answers submission)]
+        (store-normalized-hakemus tx hakemus-id hakemus answers)))))
+
 (defn get-normalized-hakemus [user-key]
   (log/info (str "Get normalized hakemus with user-key: " user-key))
   (let [hakemus (first
@@ -339,52 +387,6 @@
        VALUES ((SELECT id FROM menoluokka WHERE avustushaku_id = ? AND type = ?), ?, ?)"
               [avustushaku-id (name type) muutoshakemus-id amount])))
 
-(defn store-normalized-hakemus [tx id hakemus answers]
-  (log/info (str "Storing normalized fields for hakemus: " id))
-  (execute! tx
-            "INSERT INTO virkailija.normalized_hakemus (
-          hakemus_id,
-          project_name,
-          contact_person,
-          contact_email,
-          contact_phone,
-          organization_name,
-          register_number,
-          trusted_contact_name,
-          trusted_contact_email,
-          trusted_contact_phone
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ON CONFLICT (hakemus_id) DO UPDATE SET
-          project_name = EXCLUDED.project_name,
-          contact_person = EXCLUDED.contact_person,
-          contact_email = EXCLUDED.contact_email,
-          contact_phone = EXCLUDED.contact_phone,
-          organization_name = EXCLUDED.organization_name,
-          register_number = EXCLUDED.register_number,
-          trusted_contact_name = EXCLUDED.trusted_contact_name,
-          trusted_contact_email = EXCLUDED.trusted_contact_email,
-          trusted_contact_phone = EXCLUDED.trusted_contact_phone"
-            [id,
-             (form-util/find-answer-value answers "project-name"),
-             (form-util/find-answer-value answers "applicant-name"),
-             (form-util/find-answer-value answers "primary-email"),
-             (form-util/find-answer-value answers "textField-0"),
-             (:organization_name hakemus),
-             (:register_number hakemus)
-             (form-util/find-answer-value answers "trusted-contact-name")
-             (form-util/find-answer-value answers "trusted-contact-email")
-             (form-util/find-answer-value answers "trusted-contact-phone")])
-  (log/info (str "Succesfully stored normalized fields for hakemus with id: " id)))
-
-(defn- ensure-normalized-hakemus-exists [tx hakemus-id]
-  (let [exists? (first (query tx "SELECT 1 FROM virkailija.normalized_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
-    (when-not exists?
-      (log/info (str "Creating missing normalized_hakemus row for hakemus: " hakemus-id))
-      (let [hakemus (first (query-original-identifiers tx "SELECT * FROM hakemukset WHERE id = ? AND version_closed IS NULL" [hakemus-id]))
-            submission (first (query-original-identifiers tx "SELECT answers FROM form_submissions WHERE id = ? AND version_closed IS NULL" [(:form_submission_id hakemus)]))
-            answers (:answers submission)]
-        (store-normalized-hakemus tx hakemus-id hakemus answers)))))
 
 (defn- change-normalized-hakemus-contact-person-details [tx user-key hakemus-id contact-person-details]
   (log/info (str "Change normalized contact person details with user-key: " user-key))
