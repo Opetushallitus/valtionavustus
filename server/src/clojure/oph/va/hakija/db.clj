@@ -185,45 +185,45 @@
 
 (defn get-normalized-hakemus [user-key]
   (log/info (str "Get normalized hakemus with user-key: " user-key))
-  (let [hakemus (first
-                 (query " SELECT
-                            h.id,
-                            h.hakemus_id,
-                            h.contact_person,
-                            h.contact_email,
-                            h.contact_phone,
-                            h.project_name,
-                            h.created_at,
-                            h.updated_at,
-                            h.organization_name,
-                            h.register_number,
-                            h.trusted_contact_name,
-                            h.trusted_contact_email,
-                            h.trusted_contact_phone
-                          FROM virkailija.normalized_hakemus as h
-                          WHERE h.hakemus_id = (SELECT id
-                                                FROM hakija.hakemukset
-                                                WHERE user_key = ?
-                                                LIMIT 1)"
-                        [user-key]))
-        talousarvio (when hakemus (get-talousarvio (:hakemus-id hakemus) "hakemus"))]
-    (log/info (str "Succesfully fetched hakemus with user-key: " user-key))
-    (if hakemus
-      (into {} (filter (comp some? val) {:id (:id hakemus)
-                                         :hakemus-id (:hakemus-id hakemus)
-                                         :updated-at (:updated-at hakemus)
-                                         :created-at (:created-at hakemus)
-                                         :project-name (:project-name hakemus)
-                                         :contact-person (:contact-person hakemus)
-                                         :contact-email (:contact-email hakemus)
-                                         :contact-phone (:contact-phone hakemus)
-                                         :organization-name (:organization-name hakemus)
-                                         :register-number (:register-number hakemus)
-                                         :talousarvio talousarvio
-                                         :trusted-contact-name (get-in hakemus [:trusted-contact-name])
-                                         :trusted-contact-email (get-in hakemus [:trusted-contact-email])
-                                         :trusted-contact-phone (get-in hakemus [:trusted-contact-phone])}))
-      nil)))
+  (let [hakemus-id (-> (first (query "SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1" [user-key]))
+                       :id)]
+    (when hakemus-id
+      (with-tx (fn [tx] (ensure-normalized-hakemus-exists tx hakemus-id)))
+      (let [hakemus (first
+                     (query " SELECT
+                                h.id,
+                                h.hakemus_id,
+                                h.contact_person,
+                                h.contact_email,
+                                h.contact_phone,
+                                h.project_name,
+                                h.created_at,
+                                h.updated_at,
+                                h.organization_name,
+                                h.register_number,
+                                h.trusted_contact_name,
+                                h.trusted_contact_email,
+                                h.trusted_contact_phone
+                              FROM virkailija.normalized_hakemus as h
+                              WHERE h.hakemus_id = ?"
+                            [hakemus-id]))
+            talousarvio (when hakemus (get-talousarvio (:hakemus-id hakemus) "hakemus"))]
+        (log/info (str "Succesfully fetched hakemus with user-key: " user-key))
+        (when hakemus
+          (into {} (filter (comp some? val) {:id (:id hakemus)
+                                             :hakemus-id (:hakemus-id hakemus)
+                                             :updated-at (:updated-at hakemus)
+                                             :created-at (:created-at hakemus)
+                                             :project-name (:project-name hakemus)
+                                             :contact-person (:contact-person hakemus)
+                                             :contact-email (:contact-email hakemus)
+                                             :contact-phone (:contact-phone hakemus)
+                                             :organization-name (:organization-name hakemus)
+                                             :register-number (:register-number hakemus)
+                                             :talousarvio talousarvio
+                                             :trusted-contact-name (get-in hakemus [:trusted-contact-name])
+                                             :trusted-contact-email (get-in hakemus [:trusted-contact-email])
+                                             :trusted-contact-phone (get-in hakemus [:trusted-contact-phone])})))))))
 
 (defn create-muutoshakemus-url [va-url avustushaku-id user-key]
   (let [url-parameters  (form-encode {:user-key user-key :avustushaku-id avustushaku-id})]
