@@ -173,7 +173,6 @@
              (form-util/find-answer-value answers "trusted-contact-phone")])
   (log/info (str "Succesfully stored normalized fields for hakemus with id: " id)))
 
-
 (defn- ensure-normalized-hakemus-exists [tx hakemus-id]
   (let [exists? (first (query tx "SELECT 1 FROM virkailija.normalized_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
     (when-not exists?
@@ -386,7 +385,6 @@
               "INSERT INTO menoluokka_muutoshakemus (menoluokka_id, muutoshakemus_id, amount)
        VALUES ((SELECT id FROM menoluokka WHERE avustushaku_id = ? AND type = ?), ?, ?)"
               [avustushaku-id (name type) muutoshakemus-id amount])))
-
 
 (defn- change-normalized-hakemus-contact-person-details [tx user-key hakemus-id contact-person-details]
   (log/info (str "Change normalized contact person details with user-key: " user-key))
