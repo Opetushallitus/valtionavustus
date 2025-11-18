@@ -36,8 +36,7 @@ const test = selvitysTest.extend<{
       hankkeenAlkamispaiva: moment().add(1, 'month').format('DD.MM.YY'),
       hankkeenPaattymispaiva: moment().add(7, 'month').format('DD.MM.YY'),
     }
-    const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(secondHakuProps)
-    await markAvustushakuAsMuutoshakukelvoton(page, avustushakuID)
+    await hakujenHallintaPage.createMuutoshakemusDisabledHaku(secondHakuProps)
     await use(secondHakuProps)
   },
   haunTiedotPage: async ({ secondHakuProps, avustushakuID, avustushakuName, page }, use) => {

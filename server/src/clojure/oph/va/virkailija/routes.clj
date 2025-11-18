@@ -417,18 +417,6 @@
         (log/error e)
         (internal-server-error {:message "error"}))))
 
-  (compojure-api/POST "/avustushaku/:avustushaku-id/set-muutoshakukelpoisuus" []
-    :path-params [avustushaku-id :- Long]
-    :body  [body (compojure-api/describe {:muutoshakukelpoinen s/Bool} "Juuh")]
-    :return va-schema/AvustusHaku
-    (log/info "Setting avustushaku" avustushaku-id "muutoshakukelpoisuus to" (:muutoshakukelpoinen body))
-    (if-let [avustushaku (hakija-api/get-avustushaku avustushaku-id)]
-      (ok (-> avustushaku
-              (va-routes/avustushaku-response-content)
-              (assoc :muutoshakukelpoinen (:muutoshakukelpoinen body))
-              (hakija-api/update-avustushaku)))
-      (not-found)))
-
   (compojure-api/POST "/add-migrated-talousarviotili" []
     :body [body (compojure-api/describe {:talousarviotili s/Str} "Talousarviotili")]
     :return {:ok s/Str}
