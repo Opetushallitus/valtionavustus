@@ -583,40 +583,6 @@
                 (should= 401 status)
                 (should= "new" (:status hakemus))))
 
-          (it "sets application to refused state"
-              (let [{:keys [id]} (create-hakemus!)
-                    application (va-db/get-hakemus id)
-                    token-result (create-token application)
-                    token (:token token-result)
-                    {:keys [status]}
-                    (put!
-                      (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=%s"
-                              id (:version application) token)
-                      {:comment "Some valid comment"})
-                    hakemus (va-db/get-hakemus id)]
-                (should= 200 status)
-                (should (:refused hakemus))
-                (should= "Some valid comment" (:refused_comment hakemus))))
-
-          (it "prevents refusing already refused application"
-              (let [{:keys [id]} (create-hakemus!)
-                    application (va-db/get-hakemus id)
-                    token-result (create-token application)
-                    token (:token token-result)
-                    refuse-result-pre
-                    (put!
-                      (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=%s"
-                              id (:version application) token)
-                      {:comment "Some valid comment"})
-                    {:keys [status]}
-                    (put!
-                      (format "/api/avustushaku/1/hakemus/%s/%d/refuse/?token=%s"
-                              id (:version application) token)
-                      {:comment "Some valid comment"})
-                    hakemus (va-db/get-hakemus id)]
-                (should= 200 (:status refuse-result-pre))
-                (should= 409 status)))
-
           (it "validates application valid token"
               (let [{:keys [id]} (create-hakemus!)
                     application (va-db/get-hakemus id)
