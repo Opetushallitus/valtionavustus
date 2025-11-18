@@ -183,7 +183,7 @@
         (store-normalized-hakemus tx hakemus-id hakemus answers)))))
 
 (defn get-normalized-hakemus [user-key]
-  (log/info (str "Get normalized hakemus with user-key: " user-key))
+  (log/info (str "hakija/db Get normalized hakemus with user-key: " user-key))
   (let [hakemus-id (-> (first (query "SELECT id FROM hakija.hakemukset WHERE user_key = ? LIMIT 1" [user-key]))
                        :id)]
     (when hakemus-id
