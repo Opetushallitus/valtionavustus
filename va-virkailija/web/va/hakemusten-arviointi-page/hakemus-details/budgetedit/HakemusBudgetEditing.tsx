@@ -2,7 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 
 import FormUtil from 'soresu-form/web/form/FormUtil'
-import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
+import FormContainer from 'soresu-form/web/form/FormContainer'
 import Form from 'soresu-form/web/form/Form.jsx'
 import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
 import SyntaxValidator from 'soresu-form/web/form/SyntaxValidator'

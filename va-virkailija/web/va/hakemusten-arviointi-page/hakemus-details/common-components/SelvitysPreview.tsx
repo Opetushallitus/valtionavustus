@@ -1,16 +1,25 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
 
-import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
+import FormContainer from 'soresu-form/web/form/FormContainer'
 import FormRules from 'soresu-form/web/form/FormRules'
 import FormBranchGrower from 'soresu-form/web/form/FormBranchGrower'
 import VaComponentFactory from 'soresu-form/web/va/VaComponentFactory'
 import VaPreviewComponentFactory from 'soresu-form/web/va/VaPreviewComponentFactory'
+import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 import EditsDisplayingFormView from './EditsDisplayingFormView'
 import FakeFormController from '../../../form/FakeFormController'
 import FakeFormState from '../../../form/FakeFormState'
 
-export default class SelvitysPreview extends Component {
+type SelvitysPreviewProps = {
+  hakemus: Hakemus
+  selvitysType: 'valiselvitys' | 'loppuselvitys'
+  avustushaku: Avustushaku
+  selvitysHakemus: any
+  form: any
+}
+
+export default class SelvitysPreview extends Component<SelvitysPreviewProps> {
   render() {
     const {
       hakemus,
@@ -42,7 +51,7 @@ export default class SelvitysPreview extends Component {
         avustushaku,
         formContent: form.content,
         hakemus: selvitysHakemus,
-        attachments: selvitys.attachments,
+        attachments: selvitys?.attachments,
       })
 
       const effectiveForm = hakemusFormState.form
@@ -69,8 +78,8 @@ export default class SelvitysPreview extends Component {
         (a, b) => {
           return _.isArray(a) ? uniqueUnion(a, b) : undefined
 
-          function uniqueUnion(firstAnswerArray, secondAnswerArray) {
-            return _.uniqBy(_.union(firstAnswerArray, secondAnswerArray), (answer) => {
+          function uniqueUnion(firstAnswerArray: any[], secondAnswerArray: any[]) {
+            return _.uniqBy(_.union(firstAnswerArray, secondAnswerArray), (answer: any) => {
               return answer.key
             })
           }

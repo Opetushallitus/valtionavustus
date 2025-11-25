@@ -3,7 +3,7 @@ import './traineeday.less'
 import _ from 'lodash'
 import React from 'react'
 
-import FormContainer from 'soresu-form/web/form/FormContainer.jsx'
+import FormContainer from 'soresu-form/web/form/FormContainer'
 import Form from 'soresu-form/web/form/Form.jsx'
 
 import VaTraineeDayUtil from 'soresu-form/web/va/VaTraineeDayUtil'
