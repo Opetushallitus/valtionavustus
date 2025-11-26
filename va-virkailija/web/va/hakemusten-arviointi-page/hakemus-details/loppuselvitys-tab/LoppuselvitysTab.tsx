@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { LoppuselvitysForm } from './LoppuselvitysForm'
-import SelvitysPreview from '../common-components/SelvitysPreview'
+import { SelvitysPreview } from '../common-components/SelvitysPreview'
 import SelvitysNotFilled from '../common-components/SelvitysNotFilled'
 import SelvitysLink from '../common-components/SelvitysLink'
 import PresenterComment from '../common-components/PresenterComment'
