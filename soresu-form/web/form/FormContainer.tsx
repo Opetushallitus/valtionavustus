@@ -14,14 +14,9 @@ type FormContainerProps = {
   hakemusType?: string
 }
 
-export default function FormContainer({
-  state,
-  controller,
-  form,
-  useBusinessIdSearch,
-  infoElementValues,
-  modifyApplication,
-}: FormContainerProps) {
+export default function FormContainer(props: FormContainerProps) {
+  const { state, controller, form, useBusinessIdSearch, infoElementValues, modifyApplication } =
+    props
   const headerElements = props.headerElements || ''
   const containerId = props.containerId || 'container'
 
