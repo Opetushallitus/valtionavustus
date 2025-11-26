@@ -1,26 +1,70 @@
 import React from 'react'
 import _ from 'lodash'
 
-import ModalDialog from './ModalDialog.jsx'
+import ModalDialog from './ModalDialog'
 import FormUtil from '../FormUtil'
-import LocalizedString from './LocalizedString.tsx'
+import LocalizedString from './LocalizedString'
 import Translator from '../Translator'
 import HttpUtil from '../../HttpUtil'
 import SyntaxValidator from '../SyntaxValidator'
+import { Field, Language, LegacyTranslations } from 'soresu-form/web/va/types'
+import { BaseStateLoopState } from 'soresu-form/web/form/types/Form'
+
+interface OrganizationContact {
+  address?: string
+  'postal-number'?: string
+  city?: string
+}
+
+interface OrganizationResponse {
+  name: string
+  email: string
+  'organisation-id': string
+  contact: OrganizationContact
+  county: string | null
+}
+
+type OrganizationFieldName = keyof typeof organizationToFormFieldIds
 
 const organizationToFormFieldIds = {
   name: 'organization',
   email: 'organization-email',
   'organisation-id': 'business-id',
   contact: 'organization-postal-address',
+} as const
+
+interface FormController {
+  componentOnChangeListener: (field: Field, value: string) => void
 }
 
-const findFieldAnswerValue = (answers, fieldId) => {
+interface BusinessIdSearchProps {
+  state: BaseStateLoopState<BaseStateLoopState<unknown>>
+  controller: FormController
+}
+
+interface BusinessIdSearchState {
+  modalIsOpen: boolean
+  isDisabled: boolean
+  error: string
+  incorrectBusinessId: boolean
+  otherErrorOnBusinessId: boolean
+  businessId: string
+}
+
+interface ValidationResult {
+  isDisabled: boolean
+  error: string
+}
+
+const findFieldAnswerValue = (answers: Array<{ key: string; value: string }>, fieldId: string) => {
   const value = _.find(answers, (x) => x.key === fieldId)
   return value !== undefined ? value.value : undefined
 }
 
-const findBusinessIdRelatedFieldIdWithEmptyValue = (formContent, savedAnswers) =>
+const findBusinessIdRelatedFieldIdWithEmptyValue = (
+  formContent: Field[],
+  savedAnswers: Array<{ key: string; value: string }>
+) =>
   _.find(
     _.values(organizationToFormFieldIds),
     (fieldId) =>
@@ -28,18 +72,28 @@ const findBusinessIdRelatedFieldIdWithEmptyValue = (formContent, savedAnswers) =
       _.isEmpty(findFieldAnswerValue(savedAnswers, fieldId))
   )
 
-const shouldShowBusinessIdSearch = (state) =>
+const shouldShowBusinessIdSearch = (
+  state: BaseStateLoopState<BaseStateLoopState<unknown>>
+): boolean =>
   !state.configuration.preview &&
   state.saveStatus.savedObject !== null &&
-  findBusinessIdRelatedFieldIdWithEmptyValue(state.form.content, state.saveStatus.values.value)
+  !!findBusinessIdRelatedFieldIdWithEmptyValue(state.form.content, state.saveStatus.values.value)
 
-const validateBusinessId = (str) =>
+const validateBusinessId = (str: string): ValidationResult =>
   SyntaxValidator.validateBusinessId(str) === undefined
     ? { isDisabled: false, error: '' }
     : { isDisabled: true, error: 'error' }
 
-export default class BusinessIdSearch extends React.Component {
-  constructor(props) {
+export default class BusinessIdSearch extends React.Component<
+  BusinessIdSearchProps,
+  BusinessIdSearchState
+> {
+  private lang: Language
+  private translations: LegacyTranslations['misc']
+  private translator: Translator
+  private formContent: Field[]
+
+  constructor(props: BusinessIdSearchProps) {
     super(props)
     this.fetchOrganizationData = this.fetchOrganizationData.bind(this)
     this.changeFieldValue = this.changeFieldValue.bind(this)
@@ -69,7 +123,7 @@ export default class BusinessIdSearch extends React.Component {
     this.setState({ modalIsOpen: false })
   }
 
-  changeFieldValue(data, fieldId, organizationFieldName) {
+  changeFieldValue(data: OrganizationResponse, fieldId: string, organizationFieldName: string) {
     const field = FormUtil.findField(this.formContent, fieldId)
 
     if (!field) {
@@ -83,15 +137,15 @@ export default class BusinessIdSearch extends React.Component {
               data.contact.city || ''
             }`
           )
-        : data[organizationFieldName]
+        : data[organizationFieldName as keyof OrganizationResponse]
 
     if (!_.isEmpty(fieldValue)) {
-      this.props.controller.componentOnChangeListener(field, fieldValue)
+      this.props.controller.componentOnChangeListener(field, String(fieldValue))
     }
   }
 
   // events from inputting the organisational id (y-tunnus)
-  handleOnSubmit(event) {
+  handleOnSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
     this.setState((state) => {
@@ -100,23 +154,23 @@ export default class BusinessIdSearch extends React.Component {
     })
   }
 
-  handleOnChange(event) {
+  handleOnChange(event: React.ChangeEvent<HTMLInputElement>) {
     const inputted = event.target.value
     this.setState(Object.assign({ businessId: inputted }, validateBusinessId(inputted)))
   }
 
   // actions that happen after user has submitted their organisation-id, calls backend organisaton api
-  fetchOrganizationData(id) {
+  fetchOrganizationData(id: string) {
     const language = this.props.state.configuration.lang
-    HttpUtil.get(`/api/organisations/?organisation-id=${id}&lang=${language}`)
+    HttpUtil.get<OrganizationResponse>(`/api/organisations/?organisation-id=${id}&lang=${language}`)
       .then((response) => {
         _.each(organizationToFormFieldIds, (formFieldId, organizationFieldName) => {
-          if (!_.isEmpty(response[organizationFieldName])) {
+          if (!_.isEmpty(response[organizationFieldName as OrganizationFieldName])) {
             this.changeFieldValue(response, formFieldId, organizationFieldName)
           }
         })
       })
-      .catch((error) => {
+      .catch((error: { response: { status: number } }) => {
         if (error.response.status === 404) {
           this.setState({ incorrectBusinessId: true })
           this.openModal()
