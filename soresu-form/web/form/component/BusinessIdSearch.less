@@ -1,0 +1,81 @@
+@import "~soresu-form/web/form/style/variables.less";
+
+.organisation-selection {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  border-color: @lightest-gray;
+  padding: 8px;
+  min-width: 340px;
+}
+
+.organisation-selection:hover {
+  background-color: @lightest-gray;
+}
+
+.selected {
+  background-color: @lightest-gray;
+}
+
+.language-divider-wrapper {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.language-divider {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  gap: 2%;
+}
+
+.selection-field {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 5%;
+}
+
+.selection-field-label {
+  flex: 1;
+  display: flex;
+  justify-content: end;
+}
+
+.selection-field-value {
+  flex: 1;
+  display: flex;
+  justify-content: start;
+}
+
+.confirm-selection-button {
+  width: 15%;
+}
+
+.business-id-search-modal {
+  position: fixed;
+  top: 30%;
+  left: 30%;
+  right: 40%;
+  bottom: 30%;
+  background-color: @lighter-gray;
+  height: 460px;
+  width: 800px;
+  border-radius: 8px;
+}
+
+.business-id-search-modal-label {
+}
+
+.business-id-search-modal-label > input {
+  margin: 0 10px 0 10px;
+  padding: 8px;
+}
+
+.business-id-search-modal > div {
+  text-align: center;
+  vertical-align: middle;
+  margin-top: 60px;
+}
+
