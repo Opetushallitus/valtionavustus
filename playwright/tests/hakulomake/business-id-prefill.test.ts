@@ -30,7 +30,7 @@ const test = defaultValues.extend<{
   },
 })
 
-test('business ID prefill fills organization details correctly', async ({
+test('business ID prefill shows confirmation and fills organization details', async ({
   hakijaAvustusHakuPage,
 }) => {
   const { page } = hakijaAvustusHakuPage
@@ -40,20 +40,40 @@ test('business ID prefill fills organization details correctly', async ({
     await expect(page.locator('input.get-business-id')).toBeVisible()
   })
 
-  await test.step('submit button is disabled for invalid business ID', async () => {
+  await test.step('fetch button is disabled for invalid business ID', async () => {
     await page.fill('#finnish-business-id', 'invalid-id')
     await expect(page.locator('input.get-business-id')).toBeDisabled()
   })
 
-  await test.step('submit button is enabled for valid business ID format', async () => {
+  await test.step('fetch button is enabled for valid business ID format', async () => {
     await page.fill('#finnish-business-id', AKAAN_KAUPUNKI_BUSINESS_ID)
     await expect(page.locator('input.get-business-id')).toBeEnabled()
   })
 
-  await test.step('clicking submit closes modal and prefills organization fields', async () => {
+  await test.step('clicking fetch shows language selection with organization details', async () => {
     await page.click('input.get-business-id')
-    await expect(page.locator('#finnish-business-id')).not.toBeVisible()
     await page.waitForTimeout(500)
+
+    await expect(page.locator('[data-test-id="organisation-selection-fi"]')).toBeVisible()
+    await expect(page.locator('[data-test-id="organisation-selection-fi"]')).toContainText(
+      EXPECTED_ORGANIZATION_NAME
+    )
+    await expect(page.locator('[data-test-id="organisation-selection-fi"]')).toContainText(
+      EXPECTED_ORGANIZATION_EMAIL
+    )
+    await expect(page.locator('[data-test-id="organisation-selection-fi"]')).toContainText(
+      AKAAN_KAUPUNKI_BUSINESS_ID
+    )
+  })
+
+  await test.step('selecting Finnish organization and confirming closes modal and prefills fields', async () => {
+    await page.click('[data-test-id="organisation-selection-fi"]')
+    await expect(page.locator('[data-test-id="organisation-selection-fi"]')).toHaveClass(/selected/)
+
+    await expect(page.locator('[data-test-id="confirm-selection"]')).toBeEnabled()
+    await page.click('[data-test-id="confirm-selection"]')
+
+    await expect(page.locator('[data-test-id="organisation-selection-fi"]')).not.toBeVisible()
 
     await expect(page.locator('#organization')).toHaveValue(EXPECTED_ORGANIZATION_NAME)
     await expect(page.locator('#organization-email')).toHaveValue(EXPECTED_ORGANIZATION_EMAIL)

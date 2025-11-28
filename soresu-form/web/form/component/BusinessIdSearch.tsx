@@ -273,6 +273,7 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
             {(finnishOrganization || swedishOrganization) &&
               <button
                 className="confirm-selection-button soresu-text-button"
+                data-test-id="confirm-selection"
                 onClick={handleConfirm}
                 disabled={!selectedOrganisation}
                 type="button"
@@ -306,7 +307,7 @@ function Selection ({translations, lang, selectedOrganisation, organisation, set
   const isSelected = selectedOrganisation && selectedOrganisation.name === organisation.name && selectedOrganisation?.email === organisation.email && selectedOrganisation?.['organisation-id'] === organisation['organisation-id']
 
   return (
-            <button className={`organisation-selection${isSelected ? " selected" : ""}`} onClick={() => setSelectedOrganisation(organisation)}>
+            <button className={`organisation-selection${isSelected ? " selected" : ""}`} data-test-id={`organisation-selection-${lang}`} onClick={() => setSelectedOrganisation(organisation)}>
               <div className="selection-field">
                 <span className="selection-field-label">
                   <strong>
