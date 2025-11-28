@@ -307,6 +307,18 @@
     "error-with-business-id": {
       "fi": "Y-tunnusta haettaessa tapahtui virhe",
       "sv": "Nånting gick fel med FO numret"
+    },
+    "confirm-business-id-info": {
+      "fi": "Tarkista alla olevat tiedot oikeiksi ennen kuin jatkat hakemuksen täyttöä.",
+      "sv": "Kontrollera att uppgifterna nedan är korrekta innan du fortsätter att fylla i ansökan."
+    },
+    "organization-email": {
+      "fi": "Sähköposti",
+      "sv": "E-post"
+    },
+    "confirm": {
+      "fi": "Vahvista",
+      "sv": "Bekräfta"
     }
   },
   "errors": {

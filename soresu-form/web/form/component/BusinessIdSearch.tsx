@@ -5,10 +5,12 @@ import ModalDialog from './ModalDialog'
 import FormUtil from '../FormUtil'
 import LocalizedString from './LocalizedString'
 import Translator from '../Translator'
-import HttpUtil from '../../HttpUtil'
 import SyntaxValidator from '../SyntaxValidator'
-import { Field } from 'soresu-form/web/va/types'
+import { Field, Language, LegacyTranslationDict } from 'soresu-form/web/va/types'
 import { BaseStateLoopState } from 'soresu-form/web/form/types/Form'
+import HttpUtil from 'soresu-form/web/HttpUtil'
+
+import './BusinessIdSearch.less'
 
 interface OrganizationContact {
   address?: string
@@ -82,18 +84,22 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
   const [incorrectBusinessId, setIncorrectBusinessId] = useState(false)
   const [otherErrorOnBusinessId, setOtherErrorOnBusinessId] = useState(false)
   const [businessId, setBusinessId] = useState('')
+  const [finnishOrganization, setFinnishOrganization] = useState<OrganizationResponse | null>(null)
+  const [swedishOrganization, setSwedishOrganization] = useState<OrganizationResponse | null>(null)
+  const [selectedOrganisation, setSelectedOrganisation] = useState<OrganizationResponse | null>(null)
 
   const lang = state.configuration.lang
   const translations = state.configuration.translations.misc
   const translator = new Translator(state.configuration.translations.misc)
   const formContent = state.form.content
 
-  function openModal() {
-    setModalIsOpen(true)
-  }
-
   function closeModal() {
     setModalIsOpen(false)
+    setFinnishOrganization(null)
+    setSwedishOrganization(null)
+    setBusinessId('')
+    setIncorrectBusinessId(false)
+    setOtherErrorOnBusinessId(false)
   }
 
   function changeFieldValue(
@@ -121,25 +127,43 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
     }
   }
 
+  function fillFormFields(data: OrganizationResponse) {
+    _.each(organizationToFormFieldIds, (formFieldId, organizationFieldName) => {
+      if (!_.isEmpty(data[organizationFieldName as OrganizationFieldName])) {
+        changeFieldValue(data, formFieldId, organizationFieldName)
+      }
+    })
+  }
+
   // actions that happen after user has submitted their organisation-id, calls backend organisaton api
   function fetchOrganizationData(id: string) {
-    const language = state.configuration.lang
-    HttpUtil.get<OrganizationResponse>(`/api/organisations/?organisation-id=${id}&lang=${language}`)
+    HttpUtil.get<OrganizationResponse>(`/api/organisations/?organisation-id=${id}&lang=fi`)
       .then((response) => {
-        _.each(organizationToFormFieldIds, (formFieldId, organizationFieldName) => {
-          if (!_.isEmpty(response[organizationFieldName as OrganizationFieldName])) {
-            changeFieldValue(response, formFieldId, organizationFieldName)
-          }
-        })
+        setFinnishOrganization(response)
+        setIncorrectBusinessId(false)
+        setOtherErrorOnBusinessId(false)
       })
       .catch((error: { response: { status: number } }) => {
         if (error.response.status === 404) {
           setIncorrectBusinessId(true)
-          openModal()
         } else {
           setOtherErrorOnBusinessId(true)
           setIncorrectBusinessId(false)
-          openModal()
+        }
+      })
+
+    HttpUtil.get<OrganizationResponse>(`/api/organisations/?organisation-id=${id}&lang=sv`)
+      .then((response) => {
+        setSwedishOrganization(response)
+        setIncorrectBusinessId(false)
+        setOtherErrorOnBusinessId(false)
+      })
+      .catch((error: { response: { status: number } }) => {
+        if (error.response.status === 404) {
+          setIncorrectBusinessId(true)
+        } else {
+          setOtherErrorOnBusinessId(true)
+          setIncorrectBusinessId(false)
         }
       })
   }
@@ -148,7 +172,6 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
   function handleOnSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     fetchOrganizationData(businessId)
-    setModalIsOpen(false)
   }
 
   function handleOnChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -159,9 +182,16 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
     setError(validation.error)
   }
 
+  function handleConfirm() {
+    if (selectedOrganisation) {
+      fillFormFields(selectedOrganisation)
+      closeModal()
+    }
+  }
+
   return (
     <div>
-      <ModalDialog isOpen={modalIsOpen} className="modal" overlayClassName="overlay">
+      <ModalDialog isOpen={modalIsOpen} className="business-id-search-modal" overlayClassName="overlay">
         <div>
           <h1>
             <LocalizedString
@@ -177,6 +207,7 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
               lang={lang}
             />
           </p>
+
           <p id="not-found-business-id">
             {incorrectBusinessId && (
               <LocalizedString
@@ -195,8 +226,9 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
               />
             )}
           </p>
+
           <form onSubmit={handleOnSubmit}>
-            <label className="modal-label">
+            <label className="business-id-search-modal-label">
               <LocalizedString
                 translations={translations}
                 translationKey="business-id"
@@ -219,6 +251,37 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
               disabled={isDisabled}
             />
           </form>
+
+          {(finnishOrganization || swedishOrganization) &&
+          <p>
+            <LocalizedString
+              translations={translations}
+              translationKey="confirm-business-id-info"
+              lang={lang}
+            />
+          </p>
+          }
+          <div className="language-divider-wrapper">
+            <div className="language-divider">
+            {finnishOrganization &&
+              <Selection translations={translations} lang={lang} organisation={finnishOrganization} setSelectedOrganisation={setSelectedOrganisation} selectedOrganisation={selectedOrganisation} />
+            }
+            {swedishOrganization &&
+              <Selection translations={translations} lang={lang} organisation={swedishOrganization} setSelectedOrganisation={setSelectedOrganisation} selectedOrganisation={selectedOrganisation} />
+            }
+            </div>
+            {(finnishOrganization || swedishOrganization) &&
+              <button
+                className="confirm-selection-button soresu-text-button"
+                onClick={handleConfirm}
+                disabled={!selectedOrganisation}
+                type="button"
+              >
+                <LocalizedString translations={translations} translationKey="confirm" lang={lang} />
+                </button>
+            }
+          </div>
+
           <p>
             <a onClick={closeModal}>
               <LocalizedString translations={translations} translationKey="cancel" lang={lang} />
@@ -227,5 +290,68 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
         </div>
       </ModalDialog>
     </div>
+  )
+}
+
+type ConfirmationProps = {
+  translations: LegacyTranslationDict
+  lang: Language
+  selectedOrganisation: OrganizationResponse|null
+  organisation: OrganizationResponse
+  setSelectedOrganisation: (organisation: OrganizationResponse|null) => void
+}
+
+function Selection ({translations, lang, selectedOrganisation, organisation, setSelectedOrganisation}: ConfirmationProps) {
+
+  const isSelected = selectedOrganisation && selectedOrganisation.name === organisation.name && selectedOrganisation?.email === organisation.email && selectedOrganisation?.['organisation-id'] === organisation['organisation-id']
+
+  return (
+            <button className={`organisation-selection${isSelected ? " selected" : ""}`} onClick={() => setSelectedOrganisation(organisation)}>
+              <div className="selection-field">
+                <span className="selection-field-label">
+                  <strong>
+                    <LocalizedString
+                      translations={translations}
+                      translationKey="hakija"
+                      lang={lang}
+                    />
+                    :
+                  </strong>
+                </span>
+                <span className="selection-field-value">
+                  {organisation.name}
+                </span>
+              </div>
+              <div className="selection-field">
+                <span className="selection-field-label">
+                  <strong>
+                    <LocalizedString
+                      translations={translations}
+                      translationKey="organization-email"
+                      lang={lang}
+                    />
+                    :
+                  </strong>
+                </span>
+                <span className="selection-field-value">
+                  {organisation.email}
+                </span>
+              </div>
+              <div className="selection-field">
+                <span className="selection-field-label">
+                  <strong>
+                    <LocalizedString
+                      translations={translations}
+                      translationKey="business-id"
+                      lang={lang}
+                    />
+                    :
+                  </strong>
+                </span>
+                <span className="selection-field-value">
+                  {organisation['organisation-id']}
+                </span>
+              </div>
+            </button>
   )
 }
