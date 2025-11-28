@@ -6,13 +6,13 @@
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "soresu-form/*": ["soresu-form/*"],
+      "soresu-form/*": ["soresu-form/*"]
     }
   },
   "include": [
     "./va-hakija/**/*",
     "./va-virkailija/**/*",
-    "./soresu-form/**/*",
+    "./soresu-form/**/*"
   ],
   "exclude": [
     "node_modules",
@@ -23,6 +23,6 @@
     "va-admin-ui/resources",
     "soresu-form/resources",
     "va-hakija/resources",
-    "va-virkailija/resources",
+    "va-virkailija/resources"
   ]
 }
