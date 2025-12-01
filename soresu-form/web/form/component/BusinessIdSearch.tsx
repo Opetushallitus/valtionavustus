@@ -264,10 +264,10 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
           <div className="language-divider-wrapper">
             <div className="language-divider">
             {finnishOrganization &&
-              <Selection translations={translations} lang={lang} organisation={finnishOrganization} setSelectedOrganisation={setSelectedOrganisation} selectedOrganisation={selectedOrganisation} />
+              <Selection translations={translations} lang={lang} organisation={finnishOrganization} setSelectedOrganisation={setSelectedOrganisation} selectedOrganisation={selectedOrganisation} organisationLang="fi" />
             }
             {swedishOrganization &&
-              <Selection translations={translations} lang={lang} organisation={swedishOrganization} setSelectedOrganisation={setSelectedOrganisation} selectedOrganisation={selectedOrganisation} />
+              <Selection translations={translations} lang={lang} organisation={swedishOrganization} setSelectedOrganisation={setSelectedOrganisation} selectedOrganisation={selectedOrganisation} organisationLang="sv" />
             }
             </div>
             {(finnishOrganization || swedishOrganization) &&
@@ -300,14 +300,15 @@ type ConfirmationProps = {
   selectedOrganisation: OrganizationResponse|null
   organisation: OrganizationResponse
   setSelectedOrganisation: (organisation: OrganizationResponse|null) => void
+  organisationLang: 'fi' | 'sv'
 }
 
-function Selection ({translations, lang, selectedOrganisation, organisation, setSelectedOrganisation}: ConfirmationProps) {
+function Selection ({translations, lang, selectedOrganisation, organisation, setSelectedOrganisation, organisationLang}: ConfirmationProps) {
 
   const isSelected = selectedOrganisation && selectedOrganisation.name === organisation.name && selectedOrganisation?.email === organisation.email && selectedOrganisation?.['organisation-id'] === organisation['organisation-id']
 
   return (
-            <button className={`organisation-selection${isSelected ? " selected" : ""}`} data-test-id={`organisation-selection-${lang}`} onClick={() => setSelectedOrganisation(organisation)}>
+            <button className={`organisation-selection${isSelected ? " selected" : ""}`} data-test-id={`organisation-selection-${organisationLang}`} onClick={() => setSelectedOrganisation(organisation)}>
               <div className="selection-field">
                 <span className="selection-field-label">
                   <strong>

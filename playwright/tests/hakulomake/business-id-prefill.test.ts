@@ -52,9 +52,8 @@ test('business ID prefill shows confirmation and fills organization details', as
 
   await test.step('clicking fetch shows language selection with organization details', async () => {
     await page.click('input.get-business-id')
-    await page.waitForTimeout(500)
 
-    await expect(page.locator('[data-test-id="organisation-selection-fi"]')).toBeVisible()
+    await expect(page.locator('[data-test-id="organisation-selection-fi"]')).toBeVisible({timeout: 5000})
     await expect(page.locator('[data-test-id="organisation-selection-fi"]')).toContainText(
       EXPECTED_ORGANIZATION_NAME
     )
