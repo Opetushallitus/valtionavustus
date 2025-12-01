@@ -6,6 +6,7 @@ import { AcceptedBudget, Budget, defaultBudget } from '../utils/budget'
 import { defaultValues } from './defaultValues'
 import { MuutoshakemusFixtures } from './muutoshakemusTest'
 import { PaatosPage } from '../pages/virkailija/hakujen-hallinta/PaatosPage'
+import { TEST_Y_TUNNUS } from '../utils/constants'
 
 export interface BudjettimuutoshakemusFixtures extends MuutoshakemusFixtures {
   budget: Budget
@@ -31,6 +32,7 @@ export const budjettimuutoshakemusTest = defaultValues.extend<Budjettimuutoshake
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
     await hakijaAvustusHakuPage.fillBudjettimuutoshakemusEnabledHakemus(
       avustushakuID,
+      TEST_Y_TUNNUS,
       answers,
       budget
     )

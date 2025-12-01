@@ -3,7 +3,7 @@ import { budjettimuutoshakemusTest } from '../../../fixtures/budjettimuutoshakem
 import { HakemustenArviointiPage } from '../../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { expectToBeDefined } from '../../../utils/util'
 import { HakijaAvustusHakuPage } from '../../../pages/hakija/hakijaAvustusHakuPage'
-import { answers, VIRKAILIJA_URL } from '../../../utils/constants'
+import { answers, TEST_Y_TUNNUS, VIRKAILIJA_URL } from '../../../utils/constants'
 
 interface ArviointiUiFilteringFixtures {
   hakemustenArviointiPage: HakemustenArviointiPage
@@ -43,6 +43,7 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers2.lang)
     await hakijaAvustusHakuPage.fillBudjettimuutoshakemusEnabledHakemus(
       avustushakuID,
+      TEST_Y_TUNNUS,
       answers2,
       budget2
     )
@@ -54,6 +55,7 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers3.lang)
     await hakijaAvustusHakuPage.fillBudjettimuutoshakemusEnabledHakemus(
       avustushakuID,
+      TEST_Y_TUNNUS,
       answers3,
       budget2
     )

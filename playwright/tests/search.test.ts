@@ -41,7 +41,6 @@ const test = budjettimuutoshakemusTest.extend<SearchFixtures>({
 
     const answers2: Answers = {
       ...answers,
-      organization: 'Hakusivufirma oy',
       projectName: `Pieni säätö ${randomStr}`,
       contactPersonEmail: 'erkki2.esimerkki@example.com',
       lang: 'sv' as const,
@@ -51,6 +50,7 @@ const test = budjettimuutoshakemusTest.extend<SearchFixtures>({
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers2.lang)
     await hakijaAvustusHakuPage.fillBudjettimuutoshakemusEnabledHakemus(
       avustushakuID,
+      '0124610-9',
       answers2,
       budget2
     )
@@ -58,13 +58,13 @@ const test = budjettimuutoshakemusTest.extend<SearchFixtures>({
 
     const answers3: Answers = {
       ...answers,
-      organization: 'Hakusivufirma oy',
       projectName: `Säätö ${randomStr} jatkuu...`,
       contactPersonEmail: 'erkki3.esimerkki@example.com',
     }
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers3.lang)
     await hakijaAvustusHakuPage.fillBudjettimuutoshakemusEnabledHakemus(
       avustushakuID,
+      '0101263-6',
       answers3,
       budget2
     )
@@ -106,15 +106,15 @@ test('Search page', async ({ page, moreSubmittedHakemuses, hakuProps, avustushak
 
   await test.step('sorts current results according to the created-at timestamps', async () => {
     await expect(searchPage.hakemusResults.locator('h2')).toContainText([
-      `3/${hakuProps.registerNumber} - Hakusivufirma oy`,
-      `2/${hakuProps.registerNumber} - Hakusivufirma oy`,
+      `3/${hakuProps.registerNumber} - Espoon kaupunki`,
+      `2/${hakuProps.registerNumber} - Vantaan kaupunki`,
       `1/${hakuProps.registerNumber} - Akaan kaupunki`,
     ])
     await searchPage.setOrder('asc')
     await expect(searchPage.hakemusResults.locator('h2')).toContainText([
       `1/${hakuProps.registerNumber} - Akaan kaupunki`,
-      `2/${hakuProps.registerNumber} - Hakusivufirma oy`,
-      `3/${hakuProps.registerNumber} - Hakusivufirma oy`,
+      `2/${hakuProps.registerNumber} - Vantaan kaupunki`,
+      `3/${hakuProps.registerNumber} - Espoon kaupunki`,
     ])
   })
 })

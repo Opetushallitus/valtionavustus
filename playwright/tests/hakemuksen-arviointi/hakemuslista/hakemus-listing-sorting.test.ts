@@ -61,12 +61,12 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
     const answers2 = {
       ...answers,
-      organization: 'Cekaan kaupunki',
       projectName: 'Mudassa kylpijät Ky Ay Oy',
       contactPersonEmail: 'erkki2.esimerkki@example.com',
     }
     await hakijaAvustusHakuPage.fillBudjettimuutoshakemusEnabledHakemus(
       avustushakuID,
+      '0101263-6',
       answers2,
       budget2
     )
@@ -75,12 +75,13 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
     await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
     const answers3 = {
       ...answers,
-      organization: 'Bekaan kaupunki',
+      organization: 'Vantaan kaupunki',
       projectName: 'Töissä kylpijät Ky Ay Oy',
       contactPersonEmail: 'erkki3.esimerkki@example.com',
     }
     await hakijaAvustusHakuPage.fillBudjettimuutoshakemusEnabledHakemus(
       avustushakuID,
+      '0124610-9',
       answers3,
       budget3
     )
@@ -117,12 +118,12 @@ test('hakemus list sorting when avustushaku is not resolved', async ({
     await hakemustenArviointiPage.sortBy('organization')
     const descElems = hakemustenArviointiPage.page.locator('[class="organization-cell"]')
     const descTexts = await descElems.allInnerTexts()
-    expect(descTexts).toEqual(['Cekaan kaupunki', 'Bekaan kaupunki', 'Akaan kaupunki'])
+    expect(descTexts).toEqual(['Vantaan kaupunki', 'Espoon kaupunki', 'Akaan kaupunki'])
 
     await hakemustenArviointiPage.sortBy('organization')
     const ascElems = hakemustenArviointiPage.page.locator('[class="organization-cell"]')
     const ascTexts = await ascElems.allInnerTexts()
-    expect(ascTexts).toEqual(['Akaan kaupunki', 'Bekaan kaupunki', 'Cekaan kaupunki'])
+    expect(ascTexts).toEqual(['Akaan kaupunki', 'Espoon kaupunki', 'Vantaan kaupunki'])
   })
 
   await test.step('can be sorted by register number', async () => {

@@ -250,10 +250,14 @@ export function HakijaAvustusHakuPage(page: Page) {
     await contactPhoneNumber.fill(answers.contactPersonPhoneNumber)
   }
 
-  async function startAndFillApplication(answers: Answers, avustushakuID: number) {
+  async function startAndFillApplication(
+    answers: Answers,
+    avustushakuID: number,
+    businessId: string = TEST_Y_TUNNUS
+  ) {
     const hakemusUrl = await startApplication(avustushakuID, answers.contactPersonEmail)
     await page.goto(hakemusUrl)
-    await fillApplication(answers, TEST_Y_TUNNUS)
+    await fillApplication(answers, businessId)
   }
 
   async function fillAndSendHakemus(avustushakuID: number, answers: Answers) {
@@ -373,11 +377,12 @@ export function HakijaAvustusHakuPage(page: Page) {
   /** @deprecated Use fillAndSendHakemus with corresponding answers */
   async function fillBudjettimuutoshakemusEnabledHakemus(
     avustushakuID: number,
+    businessId: string,
     answers: Answers,
     budget: Budget
   ) {
     const lang = answers.lang || 'fi'
-    await startAndFillApplication(answers, avustushakuID)
+    await startAndFillApplication(answers, avustushakuID, businessId)
     await page.fill("[id='signatories-fieldset-1.name']", 'Erkki Esimerkki')
     await page.fill("[id='signatories-fieldset-1.email']", 'erkki.esimerkki@example.com')
     await page
@@ -418,10 +423,6 @@ export function HakijaAvustusHakuPage(page: Page) {
     await page.fill("[id='project-begin']", '13.03.1992')
     await page.fill("[id='project-end']", '13.03.2032')
     await page.click('[for="vat-included.radio.0"]')
-
-    if (answers.organization) {
-      await page.fill('#organization', answers.organization)
-    }
 
     await fillBudget(page, budget, 'hakija')
   }
