@@ -81,4 +81,32 @@ test('business ID prefill shows confirmation and fills organization details', as
       EXPECTED_ORGANIZATION_ADDRESS
     )
   })
+
+  await test.step('prefilled organization fields are disabled', async () => {
+    await expect(page.locator('#organization')).toBeDisabled()
+    await expect(page.locator('#organization-email')).toBeDisabled()
+    await expect(page.locator('#business-id')).toBeDisabled()
+    await expect(page.locator('#organization-postal-address')).toBeDisabled()
+  })
+
+  await test.step('prefilled fields remain disabled after page refresh', async () => {
+    await page.reload()
+
+    // Wait for form to load
+    await expect(page.locator('#organization')).toBeVisible()
+
+    // Verify fields still have values
+    await expect(page.locator('#organization')).toHaveValue(EXPECTED_ORGANIZATION_NAME)
+    await expect(page.locator('#organization-email')).toHaveValue(EXPECTED_ORGANIZATION_EMAIL)
+    await expect(page.locator('#business-id')).toHaveValue(AKAAN_KAUPUNKI_BUSINESS_ID)
+    await expect(page.locator('#organization-postal-address')).toHaveValue(
+      EXPECTED_ORGANIZATION_ADDRESS
+    )
+
+    // Verify fields are still disabled
+    await expect(page.locator('#organization')).toBeDisabled()
+    await expect(page.locator('#organization-email')).toBeDisabled()
+    await expect(page.locator('#business-id')).toBeDisabled()
+    await expect(page.locator('#organization-postal-address')).toBeDisabled()
+  })
 })

@@ -75,6 +75,26 @@ function printEntityId(state: VaAppStateLoopState) {
   return state.saveStatus.hakemusId
 }
 
+function isFieldEnabled(state: VaAppStateLoopState, fieldId: string): boolean {
+  const fieldsToDisable = [
+    'organization',
+    'organization-email',
+    'business-id',
+    'organization-postal-address',
+  ]
+
+  if (!fieldsToDisable.includes(fieldId)) {
+    return true
+  }
+
+  // If it's an disabled field, check if it has a value
+  const values = state.saveStatus.values.value
+  const fieldValue = values.find((v: { key: string; value: any }) => v.key === fieldId)
+
+  // If the field has a value, disable it
+  return !fieldValue || !fieldValue.value || fieldValue.value.trim() === ''
+}
+
 const query = queryString.parse(location.search)
 const urlContent = { parsedQuery: query, location: location }
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
@@ -171,6 +191,12 @@ function initVaFormController() {
   return {
     stateProperty,
     getReactComponent: function getReactComponent(state: VaAppStateLoopState) {
+      // Disable specific fields such as those that are fetched from organisation service
+      // with business id
+      state.extensionApi.formOperations.isFieldEnabled = (fieldId: string) => {
+        return isFieldEnabled(state, fieldId)
+      }
+
       const realPreview = Boolean(location.pathname.includes('esikatselu'))
       const selvitysType =
         location.pathname.indexOf('loppuselvitys') !== -1 ? 'loppuselvitys' : 'valiselvitys'
