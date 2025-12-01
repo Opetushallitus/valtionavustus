@@ -86,7 +86,9 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
   const [businessId, setBusinessId] = useState('')
   const [finnishOrganization, setFinnishOrganization] = useState<OrganizationResponse | null>(null)
   const [swedishOrganization, setSwedishOrganization] = useState<OrganizationResponse | null>(null)
-  const [selectedOrganisation, setSelectedOrganisation] = useState<OrganizationResponse | null>(null)
+  const [selectedOrganisation, setSelectedOrganisation] = useState<OrganizationResponse | null>(
+    null
+  )
 
   const lang = state.configuration.lang
   const translations = state.configuration.translations.misc
@@ -191,7 +193,11 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
 
   return (
     <div>
-      <ModalDialog isOpen={modalIsOpen} className="business-id-search-modal" overlayClassName="overlay">
+      <ModalDialog
+        isOpen={modalIsOpen}
+        className="business-id-search-modal"
+        overlayClassName="overlay"
+      >
         <div>
           <h1>
             <LocalizedString
@@ -252,25 +258,39 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
             />
           </form>
 
-          {(finnishOrganization || swedishOrganization) &&
-          <p>
-            <LocalizedString
-              translations={translations}
-              translationKey="confirm-business-id-info"
-              lang={lang}
-            />
-          </p>
-          }
+          {(finnishOrganization || swedishOrganization) && (
+            <p>
+              <LocalizedString
+                translations={translations}
+                translationKey="confirm-business-id-info"
+                lang={lang}
+              />
+            </p>
+          )}
           <div className="language-divider-wrapper">
             <div className="language-divider">
-            {finnishOrganization &&
-              <Selection translations={translations} lang={lang} organisation={finnishOrganization} setSelectedOrganisation={setSelectedOrganisation} selectedOrganisation={selectedOrganisation} organisationLang="fi" />
-            }
-            {swedishOrganization &&
-              <Selection translations={translations} lang={lang} organisation={swedishOrganization} setSelectedOrganisation={setSelectedOrganisation} selectedOrganisation={selectedOrganisation} organisationLang="sv" />
-            }
+              {finnishOrganization && (
+                <Selection
+                  translations={translations}
+                  lang={lang}
+                  organisation={finnishOrganization}
+                  setSelectedOrganisation={setSelectedOrganisation}
+                  selectedOrganisation={selectedOrganisation}
+                  organisationLang="fi"
+                />
+              )}
+              {swedishOrganization && (
+                <Selection
+                  translations={translations}
+                  lang={lang}
+                  organisation={swedishOrganization}
+                  setSelectedOrganisation={setSelectedOrganisation}
+                  selectedOrganisation={selectedOrganisation}
+                  organisationLang="sv"
+                />
+              )}
             </div>
-            {(finnishOrganization || swedishOrganization) &&
+            {(finnishOrganization || swedishOrganization) && (
               <button
                 className="confirm-selection-button soresu-text-button"
                 data-test-id="confirm-selection"
@@ -279,8 +299,8 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
                 type="button"
               >
                 <LocalizedString translations={translations} translationKey="confirm" lang={lang} />
-                </button>
-            }
+              </button>
+            )}
           </div>
 
           <p>
@@ -297,63 +317,62 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
 type ConfirmationProps = {
   translations: LegacyTranslationDict
   lang: Language
-  selectedOrganisation: OrganizationResponse|null
+  selectedOrganisation: OrganizationResponse | null
   organisation: OrganizationResponse
-  setSelectedOrganisation: (organisation: OrganizationResponse|null) => void
+  setSelectedOrganisation: (organisation: OrganizationResponse | null) => void
   organisationLang: 'fi' | 'sv'
 }
 
-function Selection ({translations, lang, selectedOrganisation, organisation, setSelectedOrganisation, organisationLang}: ConfirmationProps) {
-
-  const isSelected = selectedOrganisation && selectedOrganisation.name === organisation.name && selectedOrganisation?.email === organisation.email && selectedOrganisation?.['organisation-id'] === organisation['organisation-id']
+function Selection({
+  translations,
+  lang,
+  selectedOrganisation,
+  organisation,
+  setSelectedOrganisation,
+  organisationLang,
+}: ConfirmationProps) {
+  const isSelected =
+    selectedOrganisation &&
+    selectedOrganisation.name === organisation.name &&
+    selectedOrganisation?.email === organisation.email &&
+    selectedOrganisation?.['organisation-id'] === organisation['organisation-id']
 
   return (
-            <button className={`organisation-selection${isSelected ? " selected" : ""}`} data-test-id={`organisation-selection-${organisationLang}`} onClick={() => setSelectedOrganisation(organisation)}>
-              <div className="selection-field">
-                <span className="selection-field-label">
-                  <strong>
-                    <LocalizedString
-                      translations={translations}
-                      translationKey="hakija"
-                      lang={lang}
-                    />
-                    :
-                  </strong>
-                </span>
-                <span className="selection-field-value">
-                  {organisation.name}
-                </span>
-              </div>
-              <div className="selection-field">
-                <span className="selection-field-label">
-                  <strong>
-                    <LocalizedString
-                      translations={translations}
-                      translationKey="organization-email"
-                      lang={lang}
-                    />
-                    :
-                  </strong>
-                </span>
-                <span className="selection-field-value">
-                  {organisation.email}
-                </span>
-              </div>
-              <div className="selection-field">
-                <span className="selection-field-label">
-                  <strong>
-                    <LocalizedString
-                      translations={translations}
-                      translationKey="business-id"
-                      lang={lang}
-                    />
-                    :
-                  </strong>
-                </span>
-                <span className="selection-field-value">
-                  {organisation['organisation-id']}
-                </span>
-              </div>
-            </button>
+    <button
+      className={`organisation-selection${isSelected ? ' selected' : ''}`}
+      data-test-id={`organisation-selection-${organisationLang}`}
+      onClick={() => setSelectedOrganisation(organisation)}
+    >
+      <div className="selection-field">
+        <span className="selection-field-label">
+          <strong>
+            <LocalizedString translations={translations} translationKey="hakija" lang={lang} />:
+          </strong>
+        </span>
+        <span className="selection-field-value">{organisation.name}</span>
+      </div>
+      <div className="selection-field">
+        <span className="selection-field-label">
+          <strong>
+            <LocalizedString
+              translations={translations}
+              translationKey="organization-email"
+              lang={lang}
+            />
+            :
+          </strong>
+        </span>
+        <span className="selection-field-value">{organisation.email}</span>
+      </div>
+      <div className="selection-field">
+        <span className="selection-field-label">
+          <strong>
+            <LocalizedString translations={translations} translationKey="business-id" lang={lang} />
+            :
+          </strong>
+        </span>
+        <span className="selection-field-value">{organisation['organisation-id']}</span>
+      </div>
+    </button>
   )
 }
