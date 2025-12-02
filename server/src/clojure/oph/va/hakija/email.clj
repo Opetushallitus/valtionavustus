@@ -235,7 +235,7 @@
     (log/info "Url would be: " url)
     (email/enqueue-message-to-be-send msg body)))
 
-(defn send-loppuselvitys-change-request-received-message-to-hakija! [to avustushaku-id parent-hakemus-id lang register-number project-name email-of-virkailija virkailija-first-name virkailija-last-name is-jotpa-hakemus?]
+(defn send-loppuselvitys-change-request-received-message-to-hakija! [to parent-hakemus-id lang register-number project-name email-of-virkailija virkailija-first-name virkailija-last-name is-jotpa-hakemus?]
   (let [subject (format "%s %s %s" (get-in mail-titles [:loppuselvitys-change-request-response-received lang]) register-number project-name)
         signature (email-signature-block lang)
         from            (if is-jotpa-hakemus? (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))

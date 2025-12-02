@@ -1,5 +1,4 @@
 (ns oph.va.hakija.routes
-  (:use [clojure.tools.trace :only [trace]])
   (:require [clojure.tools.logging :as log]
             [ring.util.http-response :refer :all]
             [ring.util.response :as resp]
@@ -104,15 +103,14 @@
 
 (defn- put-refuse-hakemus []
   (compojure-api/PUT "/:grant-id/hakemus/:application-id/:base-version/refuse/"
-    [grant-id application-id base-version :as request]
+                     [grant-id application-id base-version :as request]
     :path-params
     [grant-id :- Long, application-id :- s/Str, base-version :- Long]
     :query-params [{token :- String nil}]
     :return  Hakemus
     :body [refuse-data (compojure-api/describe RefuseData "Refuse data")]
     :summary "Update application status to refused"
-    (on-refuse-application
-     grant-id application-id base-version (:comment refuse-data) token)))
+    (on-refuse-application application-id base-version (:comment refuse-data) token)))
 
 (defn- post-hakemus []
   (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version" [haku-id hakemus-id base-version :as request]
@@ -120,7 +118,7 @@
     :body    [answers (compojure-api/describe Answers "New answers")]
     :return  Hakemus
     :summary "Update hakemus values"
-    (if (can-update-hakemus haku-id hakemus-id answers (:identity request))
+    (if (can-update-hakemus haku-id hakemus-id (:identity request))
       (try
         (on-hakemus-update haku-id hakemus-id base-version answers)
         (catch PSQLException e (do (log/warn e "Could not update hakemus")
@@ -133,7 +131,7 @@
     :body    [answers (compojure-api/describe Answers "New answers")]
     :return  Hakemus
     :summary "Submit hakemus"
-    (if (can-update-hakemus haku-id user-key answers nil)
+    (if (can-update-hakemus haku-id user-key nil)
       (on-hakemus-submit haku-id user-key base-version answers)
       (bad-request! {:error "can not update hakemus"}))))
 
@@ -143,7 +141,7 @@
     :body    [answers (compojure-api/describe Answers "New answers")]
     :return  nil
     :summary "Submit response for hakemus change request"
-    (if (can-update-hakemus haku-id hakemus-id answers nil)
+    (if (can-update-hakemus haku-id hakemus-id nil)
       (on-hakemus-change-request-response haku-id hakemus-id base-version answers)
       (bad-request! {:error "can not update hakemus"}))))
 
@@ -153,7 +151,7 @@
     :body    [answers (compojure-api/describe Answers "New answers")]
     :return  nil
     :summary "Submit officer edit changes"
-    (if (can-update-hakemus haku-id user-key answers (:identity request))
+    (if (can-update-hakemus haku-id user-key (:identity request))
       (on-hakemus-edit-submit haku-id user-key base-version answers :officer-edit)
       (bad-request! {:error "can not update hakemus"}))))
 
@@ -163,7 +161,7 @@
     :body    [answers (compojure-api/describe Answers "New answers")]
     :return  nil
     :summary "Submit applicant edit changes"
-    (if (can-update-hakemus haku-id user-key answers nil)
+    (if (can-update-hakemus haku-id user-key nil)
       (on-applicant-edit-submit haku-id user-key base-version answers :applicant-edit)
       (bad-request! {:error "can not update hakemus"}))))
 
@@ -194,12 +192,12 @@
     :path-params [haku-id :- Long, hakemus-id :- s/Str]
     :return s/Any
     :summary "List current attachments"
-    (ok (on-attachment-list haku-id hakemus-id))))
+    (ok (on-attachment-list hakemus-id))))
 
 (defn- get-attachment []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
     :path-params [haku-id :- Long, hakemus-id :- s/Str, field-id :- s/Str]
-    (on-attachment-get haku-id hakemus-id field-id)))
+    (on-attachment-get hakemus-id field-id)))
 
 (defn- options-del-attachment []
   (compojure-api/OPTIONS "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
@@ -212,7 +210,7 @@
   (compojure-api/DELETE "/:haku-id/hakemus/:hakemus-id/attachments/:field-id" [haku-id hakemus-id field-id]
     :path-params [haku-id :- Long, hakemus-id :- s/Str, field-id :- s/Str]
     :summary "Delete attachment (marks attachment as closed)"
-    (let [response (on-attachment-delete haku-id hakemus-id field-id)]
+    (let [response (on-attachment-delete hakemus-id field-id)]
       (assoc-in response [:headers "Access-Control-Allow-Origin"] (va-env/virkailija-url)))))
 
 (defn- options-put-attachment []
@@ -229,8 +227,7 @@
     :return Attachment
     :summary "Add new attachment. Existing attachment with same id is closed."
     (let [{:keys [filename content-type size tempfile]} file
-          response (on-attachment-create haku-id
-                                         hakemus-id
+          response (on-attachment-create hakemus-id
                                          hakemus-base-version
                                          field-id
                                          filename

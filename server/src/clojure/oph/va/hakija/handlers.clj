@@ -18,7 +18,8 @@
    [oph.va.hakija.notification-formatter :as va-submit-notification]
    [oph.va.hakija.officer-edit-auth :as officer-edit-auth]
    [oph.va.routes :refer :all]
-   [ring.util.http-response :refer :all]))
+   [ring.util.http-response :refer :all]
+   [oph.va.virkailija.authorization :as authorization]))
 
 (defn hakemus-conflict-response [hakemus]
   (conflict! {:id (if (:enabled? (:email config)) "" (:user_key hakemus))
@@ -120,7 +121,6 @@
             submission (form-db/get-form-submission-version
                         form-id submission-id
                         (:form_submission_version hakemus))
-            submission-version (:version submission)
             answers (:answers submission)
             attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
             budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
@@ -176,12 +176,12 @@
     (catch Exception e
       (log/warn "Could not normalize necessary hakemus fields for hakemus: " hakemus-id " Error: " (.getMessage e)))))
 
-(defn can-update-hakemus [haku-id user-key answers identity]
+(defn can-update-hakemus [haku-id user-key identity]
   (let [hakemus (va-db/get-hakemus user-key)
-        hakemus-id (:id hakemus)
+        {hakemus-id :id
+         status :status} hakemus
         avustushaku (va-db/get-avustushaku haku-id)
         phase (avustushaku-phase avustushaku)
-        status (:status hakemus)
         officer-edit-authorized? (officer-edit-auth/hakemus-update-authorized? identity hakemus-id)]
     (or
      (= phase "current")
@@ -220,15 +220,10 @@
          (log/warn {:error (ex-message (ex-cause e)) :in "on-hakemus-update" :user-key user-key})
          (conflict!))))
 
-(defn- is-valmistelija? [role]
-  (or
-   (= (:role role) "presenting_officer")
-   (= (:role role) "vastuuvalmistelija")))
-
 (defn- get-valmistelijas-for-avustushaku [avustushaku-id]
-  (filter is-valmistelija? (va-db/get-avustushaku-roles avustushaku-id)))
+  (filter authorization/is-valmistelija? (va-db/get-avustushaku-roles avustushaku-id)))
 
-(defn on-refuse-application [avustushaku-id hakemus-id base-version comment token]
+(defn on-refuse-application [hakemus-id base-version comment token]
   (let [hakemus (va-db/get-hakemus hakemus-id)
         avustushaku (va-db/get-avustushaku (:avustushaku hakemus))
         is-jotpa-hakemus (is-jotpa-avustushaku avustushaku)
@@ -326,23 +321,22 @@
         attachments (va-db/get-attachments user-key (:id hakemus))
         budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
         validation (merge (validation/validate-form form answers attachments)
-                          (va-budget/validate-budget-hakija answers budget-totals form))
-        lang (keyword (get hakemus :language "fi"))]
+                          (va-budget/validate-budget-hakija answers budget-totals form))]
     (if (every? empty? (vals validation))
       (if (= base-version (:version hakemus))
         (let [submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
-              submission-version (:version saved-submission)
-              submitted-hakemus (with-tx
-                                  (fn [tx]
-                                    (va-db/submit-hakemus
-                                     tx
-                                     haku-id
-                                     hakemus
-                                     submission-version
-                                     answers
-                                     budget-totals
-                                     user-key)))]
+              submission-version (:version saved-submission)]
+          (with-tx
+            (fn [tx]
+              (va-db/submit-hakemus
+               tx
+               haku-id
+               hakemus
+               submission-version
+               answers
+               budget-totals
+               user-key)))
           (method-not-allowed! {edit-type "saved"}))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
@@ -360,27 +354,27 @@
       (if (= base-version (:version hakemus))
         (let [submission-id (:form_submission_id hakemus)
               saved-submission (:body (update-form-submission form-id submission-id answers))
-              submission-version (:version saved-submission)
-              submitted-hakemus (with-tx
-                                  (fn [tx]
-                                    (va-db/submit-hakemus
-                                     tx
-                                     haku-id
-                                     hakemus
-                                     submission-version
-                                     answers
-                                     budget-totals
-                                     user-key)))]
+              submission-version (:version saved-submission)]
+          (with-tx
+            (fn [tx]
+              (va-db/submit-hakemus
+               tx
+               haku-id
+               hakemus
+               submission-version
+               answers
+               budget-totals
+               user-key)))
           (ok {edit-type "saved"}))
         (hakemus-conflict-response hakemus))
       (bad-request! validation))))
 
-(defn on-attachment-list [haku-id hakemus-id]
+(defn on-attachment-list [hakemus-id]
   (if-let [hakemus (va-db/get-hakemus hakemus-id)]
     (va-db/get-attachments hakemus-id (:id hakemus))))
 
 (defn on-attachment-create
-  [haku-id hakemus-id hakemus-base-version field-id filename provided-content-type size tempfile]
+  [hakemus-id hakemus-base-version field-id filename provided-content-type size tempfile]
   {:post [(some? %)]}
   (let [content-type-validation-result (attachment-validator/validate-file-content-type tempfile provided-content-type)
         detected-content-type          (:detected-content-type content-type-validation-result)]
@@ -414,7 +408,7 @@
                        "')"))
         (bad-request (merge content-type-validation-result {:error true}))))))
 
-(defn on-attachment-delete [haku-id hakemus-id field-id]
+(defn on-attachment-delete [hakemus-id field-id]
   (if-let [hakemus (va-db/get-hakemus hakemus-id)]
     (if (va-db/attachment-exists? (:id hakemus) field-id)
       (do (va-db/close-existing-attachment! (:id hakemus) field-id)
@@ -422,10 +416,10 @@
       (not-found))
     (not-found)))
 
-(defn on-attachment-get [haku-id hakemus-id field-id]
+(defn on-attachment-get [hakemus-id field-id]
   (if-let [hakemus (va-db/get-hakemus hakemus-id)]
     (if (va-db/attachment-exists-and-is-not-closed? (:id hakemus) field-id)
-      (let [{:keys [data size filename content-type]} (va-db/download-attachment (:id hakemus) field-id)]
+      (let [{:keys [data filename content-type]} (va-db/download-attachment (:id hakemus) field-id)]
         (-> (ok data)
             (assoc-in [:headers "Content-Type"] content-type)
             (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" filename "\""))))

@@ -192,7 +192,6 @@
                                                                                        avustushaku-name-fi
                                                                                        parent-hakemus-id)
           (va-email/send-loppuselvitys-change-request-received-message-to-hakija! [email-of-hakija]
-                                                                                  avustushaku-id
                                                                                   parent-hakemus-id
                                                                                   lang
                                                                                   register-number
@@ -211,7 +210,7 @@
     :body    [answers (compojure-api/describe soresu-schema/Answers "New answers")]
     :return  nil
     :summary "Submit response for loppuselvitys change request"
-    (if (handlers/can-update-hakemus avustushaku-id selvitys-key answers nil)
+    (if (handlers/can-update-hakemus avustushaku-id selvitys-key nil)
       (on-loppuselvitys-change-request-response avustushaku-id selvitys-key version answers)
       (http/bad-request! {:error "can not update loppuselvitys"}))))
 

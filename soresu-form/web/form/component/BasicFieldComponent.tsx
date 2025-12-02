@@ -92,14 +92,4 @@ export default class BasicFieldComponent<T> extends React.Component<BasicFieldCo
   hideLabel() {
     return this.props.renderingParameters && this.props.renderingParameters.hideLabels === true
   }
-
-  param(param: any, defaultValue: any) {
-    if (!this.props.field?.params) {
-      return defaultValue
-    }
-    if (this.props.field.params[param] !== undefined) {
-      return this.props.field.params[param]
-    }
-    return defaultValue
-  }
 }

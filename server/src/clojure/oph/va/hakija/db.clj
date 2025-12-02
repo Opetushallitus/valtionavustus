@@ -53,7 +53,7 @@
 (defn- get-owner-type [answers] (pluck-key answers "radioButton-0" :owner_type ""))
 (defn- get-business-id [answers] (pluck-key answers "business-id" :business_id ""))
 
-(defn- merge-calculated-params [params avustushaku-id answers]
+(defn- merge-calculated-params [params answers]
   (merge params
          (get-organization-name answers)
          (get-project-name answers)
@@ -102,11 +102,11 @@
        nil?
        not))
 
-(defn generate-register-number [avustushaku-id user-key]
+(defn- generate-register-number [avustushaku-id]
   (if-let [avustushaku-register-number (-> (get-avustushaku avustushaku-id) :register_number)]
     (when (re-matches #"\d+/\d+" avustushaku-register-number)
       (let [params {:suffix avustushaku-register-number}
-            {:keys [suffix seq_number]} (if (register-number-sequence-exists? avustushaku-register-number)
+            {:keys [seq_number]} (if (register-number-sequence-exists? avustushaku-register-number)
                                           (exec queries/update-register-number-sequence<! params)
                                           (exec queries/create-register-number-sequence<! params))]
         (format "%d/%s" seq_number avustushaku-register-number)))))
@@ -121,11 +121,11 @@
         params (-> {:avustushaku_id  avustushaku-id
                     :user_key        user-key
                     :form_submission (:id submission)
-                    :register_number (if (nil? register-number) (generate-register-number avustushaku-id user-key) register-number)
+                    :register_number (if (nil? register-number) (generate-register-number avustushaku-id) register-number)
                     :hakemus_type    hakemus-type
                     :parent_id       parent-id}
                    (merge (convert-budget-totals budget-totals))
-                   (merge-calculated-params avustushaku-id answers))
+                   (merge-calculated-params answers))
         hakemus (exec queries/create-hakemus<! params)]
     {:hakemus hakemus :submission submission}))
 
@@ -433,7 +433,7 @@
 
 (defn update-hakemus-tx [tx avustushaku-id user-key submission-version answers budget-totals hakemus]
   (let [register-number (or (:register_number hakemus)
-                            (generate-register-number avustushaku-id user-key))
+                            (generate-register-number avustushaku-id))
         new-hakemus (hakemus-copy/create-new-hakemus-version tx (:id hakemus))
         params (-> {:avustushaku_id avustushaku-id
                     :user_key user-key
@@ -446,7 +446,7 @@
                     :form_submission_id (:form_submission_id hakemus)
                     :form_submission_version submission-version}
                    (merge (convert-budget-totals budget-totals))
-                   (merge-calculated-params avustushaku-id answers))]
+                   (merge-calculated-params answers))]
     (queries/update-hakemus-submission<! params {:connection tx})))
 
 (defn- update-status
@@ -465,7 +465,7 @@
                     :status status
                     :status_change_comment status-change-comment}
                    (merge (convert-budget-totals budget-totals))
-                   (merge-calculated-params avustushaku-id answers))]
+                   (merge-calculated-params answers))]
     (queries/update-hakemus-status<! params {:connection tx})))
 
 (defn- new-update-status
@@ -484,7 +484,7 @@
                     :status status
                     :status_change_comment status-change-comment}
                    (merge (convert-budget-totals budget-totals))
-                   (merge-calculated-params avustushaku-id answers))]
+                   (merge-calculated-params answers))]
     (queries/update-hakemus-status<! params {:connection tx})
     new-hakemus))
 

@@ -1,5 +1,3 @@
-import ClassNames from 'classnames'
-import _ from 'lodash'
 import BasicFieldComponent, { BasicFieldComponentProps } from './BasicFieldComponent'
 
 export interface BasicSizedComponentProps extends BasicFieldComponentProps {
@@ -15,10 +13,5 @@ export default class BasicSizedComponent<T> extends BasicFieldComponent<
     } else {
       return undefined
     }
-  }
-
-  resolveClassName(className?: string) {
-    const classNames = ClassNames(className, { error: this.props.hasError }, this.sizeClassName())
-    return !_.isEmpty(classNames) ? classNames : undefined
   }
 }
