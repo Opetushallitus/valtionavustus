@@ -10,7 +10,7 @@ import { Field, Language, LegacyTranslationDict } from 'soresu-form/web/va/types
 import { BaseStateLoopState } from 'soresu-form/web/form/types/Form'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 
-import './BusinessIdSearch.less'
+import './OrganisationSelection.less'
 
 interface OrganizationContact {
   address?: string
@@ -39,69 +39,33 @@ interface FormController {
   componentOnChangeListener: (field: Field, value: string) => void
 }
 
-interface BusinessIdSearchProps {
+interface SelectedOrganisation extends OrganizationResponse {
+  lang: Language
+}
+
+interface OrganisationSelectionProps {
   state: BaseStateLoopState<BaseStateLoopState<unknown>>
   controller: FormController
 }
 
-interface ValidationResult {
-  isDisabled: boolean
-  error: string
-}
-
-const findFieldAnswerValue = (answers: Array<{ key: string; value: string }>, fieldId: string) => {
-  const value = _.find(answers, (x) => x.key === fieldId)
-  return value !== undefined ? value.value : undefined
-}
-
-const findBusinessIdRelatedFieldIdWithEmptyValue = (
-  formContent: Field[],
-  savedAnswers: Array<{ key: string; value: string }>
-) =>
-  _.find(
-    _.values(organizationToFormFieldIds),
-    (fieldId) =>
-      FormUtil.findField(formContent, fieldId) &&
-      _.isEmpty(findFieldAnswerValue(savedAnswers, fieldId))
-  )
-
-const shouldShowBusinessIdSearch = (
-  state: BaseStateLoopState<BaseStateLoopState<unknown>>
-): boolean =>
-  !state.configuration.preview &&
-  state.saveStatus.savedObject !== null &&
-  !!findBusinessIdRelatedFieldIdWithEmptyValue(state.form.content, state.saveStatus.values.value)
-
-const validateBusinessId = (str: string): ValidationResult =>
-  SyntaxValidator.validateBusinessId(str) === undefined
-    ? { isDisabled: false, error: '' }
-    : { isDisabled: true, error: 'error' }
-
-export default function BusinessIdSearch({ state, controller }: BusinessIdSearchProps) {
-  const [modalIsOpen, setModalIsOpen] = useState(shouldShowBusinessIdSearch(state))
-  const [isDisabled, setIsDisabled] = useState(true)
-  const [error, setError] = useState('error')
-  const [incorrectBusinessId, setIncorrectBusinessId] = useState(false)
-  const [otherErrorOnBusinessId, setOtherErrorOnBusinessId] = useState(false)
-  const [businessId, setBusinessId] = useState('')
-  const [finnishOrganization, setFinnishOrganization] = useState<OrganizationResponse | null>(null)
-  const [swedishOrganization, setSwedishOrganization] = useState<OrganizationResponse | null>(null)
-  const [selectedOrganisation, setSelectedOrganisation] = useState<OrganizationResponse | null>(
+export function OrganisationSelection({ state, controller }: OrganisationSelectionProps) {
+  const [modalIsOpen, setModalIsOpen] = useState(shouldOpenModal(state))
+  const [selectedOrganisation, setSelectedOrganisation] = useState<SelectedOrganisation | null>(
     null
   )
+  const [finnishOrganization, setFinnishOrganization] = useState<OrganizationResponse | null>(null)
+  const [swedishOrganization, setSwedishOrganization] = useState<OrganizationResponse | null>(null)
 
   const lang = state.configuration.lang
   const translations = state.configuration.translations.misc
   const translator = new Translator(state.configuration.translations.misc)
   const formContent = state.form.content
 
-  function closeModal() {
-    setModalIsOpen(false)
-    setFinnishOrganization(null)
-    setSwedishOrganization(null)
-    setBusinessId('')
-    setIncorrectBusinessId(false)
-    setOtherErrorOnBusinessId(false)
+  const handleConfirm = () => {
+    if (selectedOrganisation) {
+      fillFormFields(selectedOrganisation)
+      setModalIsOpen(false)
+    }
   }
 
   function changeFieldValue(
@@ -137,8 +101,59 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
     })
   }
 
+  return (
+    <div>
+      <ModalDialog isOpen={modalIsOpen} className="organisation-modal" overlayClassName="overlay">
+        <BusinessIdSearch
+          translator={translator}
+          lang={lang}
+          translations={translations}
+          setFinnishOrganization={setFinnishOrganization}
+          setSwedishOrganization={setSwedishOrganization}
+          setSelectedOrganisation={setSelectedOrganisation}
+        />
+        {(finnishOrganization || swedishOrganization) && (
+          <Selector
+            translations={translations}
+            lang={lang}
+            finnishOrganization={finnishOrganization}
+            swedishOrganization={swedishOrganization}
+            setSelectedOrganisation={setSelectedOrganisation}
+            handleConfirm={handleConfirm}
+            selectedOrganisation={selectedOrganisation}
+          />
+        )}
+      </ModalDialog>
+    </div>
+  )
+}
+
+interface BusinessIdSearchProps {
+  translator: Translator
+  translations: LegacyTranslationDict
+  lang: Language
+  setFinnishOrganization: (org: OrganizationResponse | null) => void
+  setSwedishOrganization: (org: OrganizationResponse | null) => void
+  setSelectedOrganisation: (organisation: SelectedOrganisation | null) => void
+}
+
+function BusinessIdSearch({
+  translator,
+  translations,
+  lang,
+  setFinnishOrganization,
+  setSwedishOrganization,
+  setSelectedOrganisation,
+}: BusinessIdSearchProps) {
+  const [isDisabled, setIsDisabled] = useState(true)
+  const [error, setError] = useState('error')
+  const [incorrectBusinessId, setIncorrectBusinessId] = useState(false)
+  const [otherErrorOnBusinessId, setOtherErrorOnBusinessId] = useState(false)
+  const [businessId, setBusinessId] = useState('')
+
   // actions that happen after user has submitted their organisation-id, calls backend organisaton api
-  function fetchOrganizationData(id: string) {
+  const fetchOrganizationData = (id: string) => {
+    setSelectedOrganisation(null)
     HttpUtil.get<OrganizationResponse>(`/api/organisations/?organisation-id=${id}&lang=fi`)
       .then((response) => {
         setFinnishOrganization(response)
@@ -146,6 +161,7 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
         setOtherErrorOnBusinessId(false)
       })
       .catch((error: { response: { status: number } }) => {
+        setFinnishOrganization(null)
         if (error.response.status === 404) {
           setIncorrectBusinessId(true)
         } else {
@@ -161,6 +177,7 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
         setOtherErrorOnBusinessId(false)
       })
       .catch((error: { response: { status: number } }) => {
+        setSwedishOrganization(null)
         if (error.response.status === 404) {
           setIncorrectBusinessId(true)
         } else {
@@ -184,143 +201,146 @@ export default function BusinessIdSearch({ state, controller }: BusinessIdSearch
     setError(validation.error)
   }
 
-  function handleConfirm() {
-    if (selectedOrganisation) {
-      fillFormFields(selectedOrganisation)
-      closeModal()
-    }
-  }
-
   return (
-    <div>
-      <ModalDialog
-        isOpen={modalIsOpen}
-        className="business-id-search-modal"
-        overlayClassName="overlay"
-      >
-        <div>
-          <h1>
-            <LocalizedString
-              translations={translations}
-              translationKey="give-businessid"
-              lang={lang}
-            />
-          </h1>
-          <p>
-            <LocalizedString
-              translations={translations}
-              translationKey="organisation-info"
-              lang={lang}
-            />
-          </p>
+    <div className="business-id-search">
+      <h1>
+        <LocalizedString translations={translations} translationKey="give-businessid" lang={lang} />
+      </h1>
+      <p>
+        <LocalizedString
+          translations={translations}
+          translationKey="organisation-info"
+          lang={lang}
+        />
+      </p>
 
-          <p id="not-found-business-id">
-            {incorrectBusinessId && (
-              <LocalizedString
-                translations={translations}
-                translationKey="not-found-business-id"
-                lang={lang}
-              />
-            )}
-          </p>
-          <p id="other-error-business-id">
-            {otherErrorOnBusinessId && (
-              <LocalizedString
-                translations={translations}
-                translationKey="error-with-business-id"
-                lang={lang}
-              />
-            )}
-          </p>
+      {incorrectBusinessId && (
+        <p id="not-found-business-id">
+          <LocalizedString
+            translations={translations}
+            translationKey="not-found-business-id"
+            lang={lang}
+          />
+        </p>
+      )}
+      {otherErrorOnBusinessId && (
+        <p id="other-error-business-id">
+          <LocalizedString
+            translations={translations}
+            translationKey="error-with-business-id"
+            lang={lang}
+          />
+        </p>
+      )}
 
-          <form onSubmit={handleOnSubmit}>
-            <label className="business-id-search-modal-label">
-              <LocalizedString
-                translations={translations}
-                translationKey="business-id"
-                lang={lang}
-              />
-              :
-              <input
-                id="finnish-business-id"
-                className={error}
-                type="text"
-                value={businessId}
-                onChange={handleOnChange}
-                autoFocus
-              />
-            </label>
-            <input
-              className={'get-business-id' + ' ' + 'soresu-text-button'}
-              type="submit"
-              value={translator.translate('get', lang)}
-              disabled={isDisabled}
-            />
-          </form>
-
-          {(finnishOrganization || swedishOrganization) && (
-            <p>
-              <LocalizedString
-                translations={translations}
-                translationKey="confirm-business-id-info"
-                lang={lang}
-              />
-            </p>
-          )}
-          <div className="language-divider-wrapper">
-            <div className="language-divider">
-              {finnishOrganization && (
-                <Selection
-                  translations={translations}
-                  lang={lang}
-                  organisation={finnishOrganization}
-                  setSelectedOrganisation={setSelectedOrganisation}
-                  selectedOrganisation={selectedOrganisation}
-                  organisationLang="fi"
-                />
-              )}
-              {swedishOrganization && (
-                <Selection
-                  translations={translations}
-                  lang={lang}
-                  organisation={swedishOrganization}
-                  setSelectedOrganisation={setSelectedOrganisation}
-                  selectedOrganisation={selectedOrganisation}
-                  organisationLang="sv"
-                />
-              )}
-            </div>
-            {(finnishOrganization || swedishOrganization) && (
-              <button
-                className="confirm-selection-button soresu-text-button"
-                data-test-id="confirm-selection"
-                onClick={handleConfirm}
-                disabled={!selectedOrganisation}
-                type="button"
-              >
-                <LocalizedString translations={translations} translationKey="confirm" lang={lang} />
-              </button>
-            )}
-          </div>
-
-          <p>
-            <a onClick={closeModal}>
-              <LocalizedString translations={translations} translationKey="cancel" lang={lang} />
-            </a>
-          </p>
-        </div>
-      </ModalDialog>
+      <form onSubmit={handleOnSubmit}>
+        <label className="organisation-modal-label">
+          <LocalizedString translations={translations} translationKey="business-id" lang={lang} />
+          :
+          <input
+            id="finnish-business-id"
+            className={error}
+            type="text"
+            value={businessId}
+            onChange={handleOnChange}
+            autoFocus
+          />
+        </label>
+        <input
+          className={'get-business-id' + ' ' + 'soresu-text-button'}
+          type="submit"
+          value={translator.translate('get', lang)}
+          disabled={isDisabled}
+        />
+      </form>
     </div>
   )
 }
 
-type ConfirmationProps = {
+type SelectorProps = {
   translations: LegacyTranslationDict
   lang: Language
-  selectedOrganisation: OrganizationResponse | null
+  finnishOrganization: OrganizationResponse | null
+  swedishOrganization: OrganizationResponse | null
+  setSelectedOrganisation: (organisation: SelectedOrganisation | null) => void
+  selectedOrganisation: SelectedOrganisation | null
+  handleConfirm: () => void
+}
+
+function Selector({
+  translations,
+  lang,
+  finnishOrganization,
+  swedishOrganization,
+  setSelectedOrganisation,
+  selectedOrganisation,
+  handleConfirm,
+}: SelectorProps) {
+  const organisationInformationIsSameForBothLang =
+    finnishOrganization &&
+    swedishOrganization &&
+    finnishOrganization.name === swedishOrganization.name &&
+    finnishOrganization.email === swedishOrganization.email &&
+    finnishOrganization['organisation-id'] === swedishOrganization['organisation-id'] &&
+    finnishOrganization.contact &&
+    swedishOrganization.contact &&
+    finnishOrganization.contact.city === swedishOrganization.contact.city &&
+    finnishOrganization.contact.address === swedishOrganization.contact.address &&
+    finnishOrganization.contact['postal-number'] === swedishOrganization.contact['postal-number']
+
+  return (
+    <div className="selector-wrapper">
+      <p>
+        <LocalizedString
+          translations={translations}
+          translationKey="confirm-business-id-info"
+          lang={lang}
+        />
+      </p>
+      <div className="selector">
+        {finnishOrganization && (
+          <Selection
+            translations={translations}
+            lang={lang}
+            organisation={finnishOrganization}
+            setSelectedOrganisation={setSelectedOrganisation}
+            selectedOrganisation={selectedOrganisation}
+            organisationLang="fi"
+          />
+        )}
+        {swedishOrganization && !organisationInformationIsSameForBothLang && (
+          <Selection
+            translations={translations}
+            lang={lang}
+            organisation={swedishOrganization}
+            setSelectedOrganisation={setSelectedOrganisation}
+            selectedOrganisation={selectedOrganisation}
+            organisationLang="sv"
+          />
+        )}
+      </div>
+      {(finnishOrganization || swedishOrganization) && (
+        <button
+          className="confirm-selection-button soresu-text-button"
+          data-test-id="confirm-selection"
+          onClick={handleConfirm}
+          disabled={!selectedOrganisation}
+          type="button"
+        >
+          <LocalizedString translations={translations} translationKey="confirm" lang={lang} />
+        </button>
+      )}
+    </div>
+  )
+}
+
+type SelectionProps = {
+  translations: LegacyTranslationDict
+  lang: Language
+  selectedOrganisation: SelectedOrganisation | null
   organisation: OrganizationResponse
-  setSelectedOrganisation: (organisation: OrganizationResponse | null) => void
-  organisationLang: 'fi' | 'sv'
+  setSelectedOrganisation: (organisation: SelectedOrganisation | null) => void
+  organisationLang: Language
 }
 
 function Selection({
@@ -330,18 +350,14 @@ function Selection({
   organisation,
   setSelectedOrganisation,
   organisationLang,
-}: ConfirmationProps) {
-  const isSelected =
-    selectedOrganisation &&
-    selectedOrganisation.name === organisation.name &&
-    selectedOrganisation?.email === organisation.email &&
-    selectedOrganisation?.['organisation-id'] === organisation['organisation-id']
+}: SelectionProps) {
+  const isSelected = selectedOrganisation && selectedOrganisation.lang === organisationLang
 
   return (
     <button
       className={`organisation-selection${isSelected ? ' selected' : ''}`}
       data-test-id={`organisation-selection-${organisationLang}`}
-      onClick={() => setSelectedOrganisation(organisation)}
+      onClick={() => setSelectedOrganisation({ lang: organisationLang, ...organisation })}
     >
       <div className="selection-field">
         <span className="selection-field-label">
@@ -375,4 +391,34 @@ function Selection({
       </div>
     </button>
   )
+}
+
+function findFieldAnswerValue(answers: Array<{ key: string; value: string }>, fieldId: string) {
+  const value = _.find(answers, (x) => x.key === fieldId)
+  return value !== undefined ? value.value : undefined
+}
+
+const findBusinessIdRelatedFieldIdWithEmptyValue = (
+  formContent: Field[],
+  savedAnswers: Array<{ key: string; value: string }>
+) =>
+  _.find(
+    _.values(organizationToFormFieldIds),
+    (fieldId) =>
+      FormUtil.findField(formContent, fieldId) &&
+      _.isEmpty(findFieldAnswerValue(savedAnswers, fieldId))
+  )
+
+function shouldOpenModal(state: BaseStateLoopState<BaseStateLoopState<unknown>>): boolean {
+  return (
+    !state.configuration.preview &&
+    state.saveStatus.savedObject !== null &&
+    !!findBusinessIdRelatedFieldIdWithEmptyValue(state.form.content, state.saveStatus.values.value)
+  )
+}
+
+function validateBusinessId(str: string) {
+  return SyntaxValidator.validateBusinessId(str) === undefined
+    ? { isDisabled: false, error: '' }
+    : { isDisabled: true, error: 'error' }
 }

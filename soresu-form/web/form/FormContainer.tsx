@@ -1,6 +1,6 @@
 import React from 'react'
 
-import BusinessIdSearch from './component/BusinessIdSearch'
+import { OrganisationSelection } from './component/OrganisationSelection'
 
 type FormContainerProps = {
   state: any
@@ -39,7 +39,7 @@ export default function FormContainer(props: FormContainerProps) {
     return (
       <section id={containerId}>
         {headerElements}
-        {useBusinessIdSearch && <BusinessIdSearch state={state} controller={controller} />}
+        {useBusinessIdSearch && <OrganisationSelection state={state} controller={controller} />}
         {formElement}
       </section>
     )
