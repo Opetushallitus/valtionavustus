@@ -102,8 +102,7 @@
     (on-hakemus-create haku-id answers)))
 
 (defn- put-refuse-hakemus []
-  (compojure-api/PUT "/:grant-id/hakemus/:application-id/:base-version/refuse/"
-                     [grant-id application-id base-version :as request]
+  (compojure-api/PUT "/:grant-id/hakemus/:application-id/:base-version/refuse/" [grant-id application-id base-version :as request]
     :path-params
     [grant-id :- Long, application-id :- s/Str, base-version :- Long]
     :query-params [{token :- String nil}]

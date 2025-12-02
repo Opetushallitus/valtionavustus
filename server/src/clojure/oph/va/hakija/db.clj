@@ -107,8 +107,8 @@
     (when (re-matches #"\d+/\d+" avustushaku-register-number)
       (let [params {:suffix avustushaku-register-number}
             {:keys [seq_number]} (if (register-number-sequence-exists? avustushaku-register-number)
-                                          (exec queries/update-register-number-sequence<! params)
-                                          (exec queries/create-register-number-sequence<! params))]
+                                   (exec queries/update-register-number-sequence<! params)
+                                   (exec queries/create-register-number-sequence<! params))]
         (format "%d/%s" seq_number avustushaku-register-number)))))
 
 (defn- convert-budget-totals [budget-totals]
