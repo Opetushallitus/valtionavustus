@@ -1,18 +1,18 @@
 import React, { ChangeEventHandler, FocusEventHandler } from 'react'
-import _ from 'lodash'
 import LocalizedString from './LocalizedString'
-import BasicSizedComponent, { BasicSizedComponentProps } from './BasicSizedComponent'
+import BasicFieldComponent, { BasicFieldComponentProps } from './BasicFieldComponent'
 
-interface BasicTextAreaProps extends BasicSizedComponentProps {
+interface BasicTextAreaProps extends BasicFieldComponentProps {
   maxLength: number
   onBlur: FocusEventHandler<any>
   onChange: ChangeEventHandler<any>
+  size?: string
 }
 
-export default class BasicTextArea extends BasicSizedComponent<BasicTextAreaProps> {
+export default class BasicTextArea extends BasicFieldComponent<BasicTextAreaProps> {
   render() {
     const props = this.props
-    const length = _.isUndefined(props.value) ? 0 : props.value.length
+    const length = props.value === undefined ? 0 : props.value.length
     const lengthLeft = props.maxLength - length
     const classStr = this.resolveClassName()
     return (

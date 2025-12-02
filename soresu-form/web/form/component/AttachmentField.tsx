@@ -5,7 +5,7 @@ import Dropzone, { DropEvent, FileRejection } from 'react-dropzone'
 
 import AttachmentDisplay from '../preview/AttachmentDisplay.jsx'
 import RemoveButton from './RemoveButton.jsx'
-import BasicSizedComponent from './BasicSizedComponent'
+import BasicFieldComponent from './BasicFieldComponent'
 import LocalizedString from './LocalizedString'
 
 interface Props {
@@ -20,7 +20,7 @@ interface Props {
   ) => void
 }
 
-export default class AttachmentField extends BasicSizedComponent<Props> {
+export default class AttachmentField extends BasicFieldComponent<Props> {
   render() {
     const props = this.props
     const translations = this.props.translations
