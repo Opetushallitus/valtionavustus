@@ -187,7 +187,7 @@
             organization-name (:organization_name hakemus)
             register-number (:register_number hakemus)
             has-required-fields? (and contact-person contact-email contact-phone
-                                     organization-name register-number)]
+                                      organization-name register-number)]
         (if has-required-fields?
           (store-normalized-hakemus tx hakemus-id hakemus answers)
           (log/info (str "Skipping normalized_hakemus creation for incomplete hakemus: " hakemus-id)))))))
