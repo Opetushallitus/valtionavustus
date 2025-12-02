@@ -170,13 +170,11 @@
   (let [{:keys [hakemus submission validation parent-hakemus]} (get-current-answers haku-id hakemus-id form-key)]
     (hakemus-ok-response hakemus submission validation parent-hakemus)))
 
-(defn try-store-normalized-hakemus [tx hakemus-id hakemus answers]
+(defn- try-store-normalized-hakemus [tx hakemus-id hakemus answers]
   (try
     (va-db/store-normalized-hakemus tx hakemus-id hakemus answers)
-    true
     (catch Exception e
-      (log/info "Could not normalize necessary hakemus fields for hakemus: " hakemus-id " Error: " (.getMessage e))
-      false)))
+      (log/warn "Could not normalize necessary hakemus fields for hakemus: " hakemus-id " Error: " (.getMessage e)))))
 
 (defn can-update-hakemus [haku-id user-key answers identity]
   (let [hakemus (va-db/get-hakemus user-key)
