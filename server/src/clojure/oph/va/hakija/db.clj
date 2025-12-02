@@ -179,8 +179,18 @@
       (log/info (str "Creating missing normalized_hakemus row for hakemus: " hakemus-id))
       (let [hakemus (first (query-original-identifiers tx "SELECT * FROM hakemukset WHERE id = ? AND version_closed IS NULL" [hakemus-id]))
             submission (first (query-original-identifiers tx "SELECT answers FROM form_submissions WHERE id = ? AND version_closed IS NULL" [(:form_submission_id hakemus)]))
-            answers (:answers submission)]
-        (store-normalized-hakemus tx hakemus-id hakemus answers)))))
+            answers (:answers submission)
+            ;; Check if we have all required fields for normalized_hakemus
+            contact-person (form-util/find-answer-value answers "applicant-name")
+            contact-email (form-util/find-answer-value answers "primary-email")
+            contact-phone (form-util/find-answer-value answers "textField-0")
+            organization-name (:organization_name hakemus)
+            register-number (:register_number hakemus)
+            has-required-fields? (and contact-person contact-email contact-phone
+                                     organization-name register-number)]
+        (if has-required-fields?
+          (store-normalized-hakemus tx hakemus-id hakemus answers)
+          (log/info (str "Skipping normalized_hakemus creation for incomplete hakemus: " hakemus-id)))))))
 
 (defn get-normalized-hakemus [user-key]
   (log/info (str "hakija/db Get normalized hakemus with user-key: " user-key))
