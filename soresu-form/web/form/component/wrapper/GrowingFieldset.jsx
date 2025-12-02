@@ -1,9 +1,8 @@
 import React from 'react'
 import ClassNames from 'classnames'
 import _ from 'lodash'
-import BasicFieldComponent from 'soresu-form/web/form/component/BasicFieldComponent'
 
-export default class GrowingFieldset extends BasicFieldComponent {
+export default class GrowingFieldset extends React.Component {
   className(className) {
     const field = this.props.field
     const classNames = ClassNames(className, {
