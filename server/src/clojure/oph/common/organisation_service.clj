@@ -1,9 +1,12 @@
 (ns oph.common.organisation-service
   (:require [org.httpkit.client :as http]
             [cheshire.core :as cheshire]
-            [oph.common.caller-id :as caller-id]))
+            [oph.common.caller-id :as caller-id]
+            [oph.soresu.common.config :refer [config]]))
 
-(def service-url "https://virkailija.opintopolku.fi/organisaatio-service/rest/")
+(def service-url
+  (when-not *compile-files*
+    (str (get-in config [:opintopolku :url]) "/organisaatio-service/rest/")))
 
 (def languages {:fi "kieli_fi#1" :sv "kieli_sv#1" :en "kieli_en#1"})
 
