@@ -134,7 +134,7 @@ jotpaSelvitysTest(
       const email = emails[0]
 
       expect(email['to-address']).toEqual(
-        expect.arrayContaining(['erkki.esimerkki@example.com', 'akaan.kaupunki@akaa.fi'])
+        expect.arrayContaining(['erkki.esimerkki@example.com', 'hakija-1424884@oph.fi'])
       )
       expect(email.subject).toMatch(/.*Väliselvitys.*käsitelty*/)
       expect(email.formatted).toMatch(/.*Hankkeen.*väliselvitys on käsitelty.*/)
@@ -226,7 +226,7 @@ swedishJotpaSelvitysTest(
       const email = emails[0]
 
       expect(email['to-address']).toEqual(
-        expect.arrayContaining(['lars.andersson@example.com', 'akaan.kaupunki@akaa.fi'])
+        expect.arrayContaining(['lars.andersson@example.com', 'hakija-1424884@oph.fi'])
       )
       expect(email.subject).toMatch(/.*Mellanredovisningen .* är behandlad*/)
       expect(email.formatted).toMatch(/.*Mellanredovisningen för projektet .* är behandlad.*/)

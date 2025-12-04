@@ -35,7 +35,7 @@ emailFieldTest(
     await expect(replyTo).toContainText('santeri.horttanainen@reaktor.com')
     await expect(
       page.getByText(
-        `LSyhteyshenkilo@example.com, erkki.esimerkki@example.com, akaan.kaupunki@akaa.fi`
+        `LSyhteyshenkilo@example.com, erkki.esimerkki@example.com, hakija-1424884@oph.fi`
       )
     ).toBeVisible()
   }
@@ -78,7 +78,7 @@ test('virkailija can accept loppuselvitys', async ({
     await expect(replyTo).toContainText('santeri.horttanainen@reaktor.com')
     await expect(
       page.getByText(
-        `Vastaanottajaterkki.esimerkki@example.com, akaan.kaupunki@akaa.fi, ${additionalReceiver}`
+        `Vastaanottajaterkki.esimerkki@example.com, hakija-1424884@oph.fi, ${additionalReceiver}`
       )
     ).toBeVisible()
     await expect(page.getByText(`Aihe${subject}`)).toBeVisible()

@@ -40,7 +40,7 @@ emailFieldTest(
     expect(email['to-address']).toEqual(
       expect.arrayContaining([
         'erkki.esimerkki@example.com',
-        'akaan.kaupunki@akaa.fi',
+        'hakija-1424884@oph.fi',
         'VSyhteyshenkilo@example.com',
       ])
     )
@@ -114,7 +114,7 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
         const emails = await waitUntilMinEmails(getValiselvitysEmailsForAvustus, 1, avustushakuID)
         const email = emails[0]
         expect(email['to-address']).toEqual(
-          expect.arrayContaining(['erkki.esimerkki@example.com', 'akaan.kaupunki@akaa.fi'])
+          expect.arrayContaining(['erkki.esimerkki@example.com', 'hakija-1424884@oph.fi'])
         )
         expect(email.subject).toMatch(/.*Väliselvitys täytettävissä haulle*/)
         expect(email.formatted).toMatch(/.*Väliselvityslomake löytyy osoitteesta.*/)
@@ -155,7 +155,7 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
         )
         const email = emails[0]
         expect(email['to-address']).toEqual(
-          expect.arrayContaining(['erkki.esimerkki@example.com', 'akaan.kaupunki@akaa.fi'])
+          expect.arrayContaining(['erkki.esimerkki@example.com', 'hakija-1424884@oph.fi'])
         )
         expect(email.subject).toMatch(/.*Väliselvitys.*käsitelty*/)
         expect(email.formatted).toMatch(/.*Hankkeen.*väliselvitys on käsitelty.*/)

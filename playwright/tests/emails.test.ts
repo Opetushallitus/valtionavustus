@@ -82,7 +82,7 @@ test('Täydennyspyyntö email', async ({
   expect(emails[0]['bcc']).toStrictEqual('santeri.horttanainen@reaktor.com')
   expect(emails[0].cc).toHaveLength(3)
   expect(emails[0].cc).toStrictEqual([
-    'akaan.kaupunki@akaa.fi',
+    'hakija-1424884@oph.fi',
     answers.signatories![0].email,
     answers.signatories![1].email,
   ])
@@ -116,7 +116,7 @@ const expectedSentToAddresses = [
   contactPersonEmail,
   signatories[0].email,
   signatories[1].email,
-  'akaan.kaupunki@akaa.fi',
+  'hakija-1424884@oph.fi',
 ].sort()
 
 test('sends emails to correct contact and hakemus emails', async ({
@@ -160,7 +160,7 @@ test('sends emails to correct contact and hakemus emails', async ({
         newContactPersonEmail,
         signatories[0].email,
         signatories[1].email,
-        'akaan.kaupunki@akaa.fi',
+        'hakija-1424884@oph.fi',
       ].sort()
     )
   })
@@ -172,7 +172,7 @@ test('sends emails to correct contact and hakemus emails', async ({
     const emails = await waitUntilMinEmails(getValiselvitysEmails, 1, hakemusID)
     expect(emails).toHaveLength(1)
     const email = lastOrFail(emails)
-    expect(email['to-address']).toEqual([newContactPersonEmail, 'akaan.kaupunki@akaa.fi'])
+    expect(email['to-address']).toEqual([newContactPersonEmail, 'hakija-1424884@oph.fi'])
     expect(email.bcc).toBeNull()
     expect(email.cc).toStrictEqual([])
     await expectIsFinnishOphEmail(email)
@@ -183,7 +183,7 @@ test('sends emails to correct contact and hakemus emails', async ({
     const emails = await waitUntilMinEmails(getLoppuselvitysEmails, 1, hakemusID)
     expect(emails).toHaveLength(1)
     const email = lastOrFail(emails)
-    expect(email['to-address']).toEqual([newContactPersonEmail, 'akaan.kaupunki@akaa.fi'])
+    expect(email['to-address']).toEqual([newContactPersonEmail, 'hakija-1424884@oph.fi'])
     expect(email.bcc).toBeNull()
     expect(email.cc).toStrictEqual([])
     await expectIsFinnishOphEmail(email)

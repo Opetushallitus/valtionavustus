@@ -5,7 +5,7 @@ import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hak
 
 const AKAAN_KAUPUNKI_BUSINESS_ID = '2050864-5'
 const EXPECTED_ORGANIZATION_NAME = 'Akaan kaupunki'
-const EXPECTED_ORGANIZATION_EMAIL = 'akaan.kaupunki@akaa.fi'
+const EXPECTED_ORGANIZATION_EMAIL = 'hakija-1424884@oph.fi'
 const EXPECTED_ORGANIZATION_ADDRESS = 'PL 34 37801 AKAA'
 
 const test = defaultValues.extend<{
