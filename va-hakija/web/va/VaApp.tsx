@@ -89,6 +89,9 @@ function isFieldEnabled(state: VaAppStateLoopState, fieldId: string): boolean {
 
   // If it's an disabled field, check if it has a value
   const values = state.saveStatus.values.value
+  if (!values) {
+    return false
+  }
   const fieldValue = values.find((v: { key: string; value: any }) => v.key === fieldId)
 
   // If the field has a value, disable it
