@@ -2,6 +2,18 @@
 set -o errexit -o nounset -o pipefail
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functions.sh"
 
+# Show help if requested
+if [[ "${1:-}" == "-h" ]] || [[ "${1:-}" == "--help" ]]; then
+  echo "Usage: $0 [--uberjar]"
+  echo ""
+  echo "Start local development environment"
+  echo ""
+  echo "Options:"
+  echo "  --uberjar    Use production uberjar build (slower, no hot-reload)"
+  echo "  (default)    Use lein with hot-reload (fast iteration)"
+  exit 0
+fi
+
 export REVISION=${revision}
 compose="docker compose -f docker-compose.yml"
 if [ -d "$repo/../valtionavustus-secret/" ]; then
@@ -10,8 +22,14 @@ fi
 mkdir -p tmp
 echo "${revision}" > "${repo}/tmp/version.txt"
 
-
-compose="$compose -f docker-compose.local-dev.yml"
+# Check if --uberjar flag is passed
+if [[ "${1:-}" == "--uberjar" ]]; then
+  echo "Starting with uberjar (production build)..."
+  compose="$compose -f docker-compose.local-dev-uberjar.yml"
+else
+  echo "Starting with lein (hot-reload enabled)..."
+  compose="$compose -f docker-compose.local-dev.yml"
+fi
 readonly compose
 
 function stop() {
