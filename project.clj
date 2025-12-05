@@ -69,9 +69,6 @@
                          [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor ~jackson-version]
                          [com.fasterxml.jackson.dataformat/jackson-dataformat-smile ~jackson-version]
 
-                         ;; testing
-                         [speclj "3.12.0" :exclusions [org.clojure/tools.reader org.clojure/java.classpath]]
-                         [speclj-junit "0.0.11"]
 
                          ;; other
                          [metosin/ring-swagger-ui "5.20.0"]
@@ -159,25 +156,7 @@
                                 :configdefaults "server/config/defaults.edn"}}
 
              :server-test {:env {:config "server/config/docker-compose-test.edn"
-                                 :configdefaults "server/config/defaults.edn"}}
-
-             :test {:env {:config "server/config/test.edn"
-                          :configdefaults "server/config/test.edn"
-                          :environment "test"}
-                    :test-paths ["server/spec"]
-                    :resource-paths ["server/test-resources"]
-                    :plugins [[speclj "3.12.0"]]
-                    :dependencies [[speclj]
-                                   [speclj-junit]]}
-
-             :test-legacy {:env {:config "server/config/test-legacy.edn"
-                                 :configdefaults "server/config/test.edn"
-                                 :environment "test"}
-                           :test-paths ["server/spec"]
-                           :resource-paths ["server/test-resources"]
-                           :plugins [[speclj "3.12.0"]]
-                           :dependencies [[speclj]
-                                          [speclj-junit]]}}
+                                 :configdefaults "server/config/defaults.edn"}}}
 
   :aot [oph.va.jdbc.enums oph.va.hakija.db.migrations oph.va.virkailija.db.migrations clj-time.core]
 

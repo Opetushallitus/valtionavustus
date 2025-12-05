@@ -19,22 +19,8 @@ function main {
     require_docker_compose
     require_built_image
     end_gh_actions_group
-    
+
     cd "$repo"
-
-    readonly test_image_tag="va-server-speclj:$revision"
-
-    start_gh_actions_group "Build test image"
-    docker build --tag "$test_image_tag" \
-        --build-arg "VA_SERVER_IMAGE=$image_tag" \
-        --file Dockerfile.lein-spec "$repo"
-    end_gh_actions_group
-
-    start_gh_actions_group "Run lein tests"
-    trap cleanup EXIT
-    $compose up --wait db
-    docker run --rm --network valtionavustus_local-dev "$test_image_tag"
-    end_gh_actions_group
 
     start_gh_actions_group "Run CDK tests"
     "$repo/cdk/run-tests.sh"

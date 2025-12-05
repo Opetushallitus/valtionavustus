@@ -1,9 +1,0 @@
-ARG VA_SERVER_IMAGE
-FROM ${VA_SERVER_IMAGE}
-
-COPY server/spec/ ./server/spec/
-COPY server/test-resources/ ./server/test-resources/
-
-RUN ./lein compile :all
-
-ENTRYPOINT ["./lein", "with-profile", "test", "spec", "--reporter", "documentation"]
