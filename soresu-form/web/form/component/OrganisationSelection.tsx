@@ -247,7 +247,7 @@ function BusinessIdSearch({
           />
         </label>
         <input
-          className={'get-business-id' + ' ' + 'soresu-text-button'}
+          className="organisation-selection-button"
           type="submit"
           value={translator.translate('get', lang)}
           disabled={isDisabled}
@@ -290,13 +290,11 @@ function Selector({
 
   return (
     <div className="selector-wrapper">
-      <p>
-        <LocalizedString
-          translations={translations}
-          translationKey="confirm-business-id-info"
-          lang={lang}
-        />
-      </p>
+      <LocalizedString
+        translations={translations}
+        translationKey="confirm-business-id-info"
+        lang={lang}
+      />
       <div className="selector">
         {finnishOrganization && (
           <Selection
@@ -321,7 +319,7 @@ function Selector({
       </div>
       {(finnishOrganization || swedishOrganization) && (
         <button
-          className="confirm-selection-button soresu-text-button"
+          className="organisation-selection-button"
           data-test-id="confirm-selection"
           onClick={handleConfirm}
           disabled={!selectedOrganisation}
@@ -330,6 +328,23 @@ function Selector({
           <LocalizedString translations={translations} translationKey="confirm" lang={lang} />
         </button>
       )}
+      <div className="organisation-selection-info">
+        <LocalizedString
+          translations={translations}
+          translationKey="organisation-selection-info-1"
+          lang={lang}
+        />
+        <LocalizedString
+          translations={translations}
+          translationKey="organisation-selection-info-2"
+          lang={lang}
+        />
+        <LocalizedString
+          translations={translations}
+          translationKey="organisation-selection-info-3"
+          lang={lang}
+        />
+      </div>
     </div>
   )
 }
