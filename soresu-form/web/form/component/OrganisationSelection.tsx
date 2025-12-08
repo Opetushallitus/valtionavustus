@@ -247,7 +247,7 @@ function BusinessIdSearch({
           />
         </label>
         <input
-          className="organisation-selection-button"
+          className="get-business-id"
           type="submit"
           value={translator.translate('get', lang)}
           disabled={isDisabled}
@@ -319,7 +319,7 @@ function Selector({
       </div>
       {(finnishOrganization || swedishOrganization) && (
         <button
-          className="organisation-selection-button"
+          className="get-business-id"
           data-test-id="confirm-selection"
           onClick={handleConfirm}
           disabled={!selectedOrganisation}
