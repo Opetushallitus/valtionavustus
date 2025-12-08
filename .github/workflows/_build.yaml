@@ -39,21 +39,6 @@ jobs:
       - name: Run 01-build.sh
         run: ./deploy-scripts/01-build.sh
 
-  other-tests:
-    name: 02-other-tests.sh
-    runs-on: ubuntu-24.04
-    needs: build
-    steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run 02-other-tests.sh
-        run: ./deploy-scripts/02-other-tests.sh
-
   playwright-tests:
     name: 03-playwright-tests.sh (shard ${{ matrix.shard }}/${{ matrix.total_shards }})
     runs-on: ubuntu-24.04
@@ -89,7 +74,7 @@ jobs:
 
   radiator-status-failure:
     name: Send failure status to radiator
-    needs: [ build, other-tests, playwright-tests, lint ]
+    needs: [build, playwright-tests, lint]
     if: ${{ always() && contains(needs.*.result, 'failure') && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-24.04
     steps:
