@@ -11,14 +11,21 @@ export function initialRecipientEmails(
   const normalizedVarayhteyshenkiloEmail = normalizedData?.['trusted-contact-email']
   const isVarayhteyshenkiloEmailField = (answer: Answer) =>
     !normalizedVarayhteyshenkiloEmail ? answer.key === 'trusted-contact-email' : false
+
+  const primaryContactEmail = normalizedData?.['contact-email']
+  const isPrimaryEmailField = (answer: Answer) =>
+    !primaryContactEmail ? isPrimaryEmail(answer) : false
+
   const emailsFromAnswers = answers
-    .filter((a) => isPrimaryEmail(a) || isOrganizationEmail(a) || isVarayhteyshenkiloEmailField(a))
+    .filter(
+      (a) => isPrimaryEmailField(a) || isOrganizationEmail(a) || isVarayhteyshenkiloEmailField(a)
+    )
     .map((a) => a.value)
 
   const valiselvitysEmails = getPrimaryOrOrganizationEmailFromAnswers(valiselvitysAnswers || [])
-  const emails = [...emailsFromAnswers, ...valiselvitysEmails].concat(
-    normalizedVarayhteyshenkiloEmail ? [normalizedVarayhteyshenkiloEmail] : []
-  )
+  const emails = [...emailsFromAnswers, ...valiselvitysEmails]
+    .concat(primaryContactEmail ? [primaryContactEmail] : [])
+    .concat(normalizedVarayhteyshenkiloEmail ? [normalizedVarayhteyshenkiloEmail] : [])
 
   return [...new Set(emails)]
 }
