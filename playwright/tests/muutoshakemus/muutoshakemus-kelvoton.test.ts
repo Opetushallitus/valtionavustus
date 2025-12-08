@@ -111,6 +111,7 @@ const akuTest = defaultValues.extend<{
   avustushakuID: async ({ page, hakuProps, userCache }, use) => {
     expectToBeDefined(userCache)
     const hakujenHallintaPage = new HakujenHallintaPage(page)
+    hakuProps.muutoshakuKelpoinen = false
     const { avustushakuID } = await hakujenHallintaPage.createHakuWithLomakeJson(
       muutoshakuDisabledMenoluokiteltuLomakeJson,
       hakuProps

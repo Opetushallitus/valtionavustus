@@ -76,6 +76,26 @@ test.describe.parallel('Avustushaku that was marked as muutoshakukelvoton', () =
     await page.bringToFront()
   })
 
+  test('has link to yhteystietojen muokkauslomake instead of muutoshakemuslomake in muutoshakemukset tab', async ({
+    avustushakuID,
+    acceptedHakemus: { userKey },
+    page,
+  }) => {
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
+    await hakemustenArviointiPage.tabs().muutoshakemus.click()
+
+    const newPagePromise = waitForNewTab(page)
+    await page.getByTestId('yhteystietojen-muokkaus-link').click()
+    const modificationPage = await newPagePromise
+
+    await modificationPage.bringToFront()
+    expect(await modificationPage.evaluate(() => window.location.href)).toMatch(
+      `${HAKIJA_URL}/avustushaku/${avustushakuID}/nayta?lang=fi&hakemus=${userKey}&modify-application=true`
+    )
+    await page.bringToFront()
+  })
+
   test('does not show link to muutoshaku in email preview', async ({
     avustushakuID,
     acceptedHakemus: { hakemusID },

@@ -46,6 +46,7 @@ export interface HakuProps {
   valiselvitysDeadline?: string
   loppuselvitysDeadline?: string
   decisionDate?: string
+  muutoshakuKelpoinen?: boolean
 }
 
 export enum Installment {
@@ -196,9 +197,17 @@ export class HakujenHallintaPage {
     valiselvitysDeadline,
     loppuselvitysDeadline,
     decisionDate,
+    muutoshakuKelpoinen,
   }: HakuProps) {
     await test.step('Fill in avustushaku details', async () => {
       const haunTiedotPage = HaunTiedotPage(this.page)
+
+      if (muutoshakuKelpoinen === true || muutoshakuKelpoinen === false) {
+        const radioId = muutoshakuKelpoinen
+          ? 'muutoshakukelpoinen_true'
+          : 'muutoshakukelpoinen_false'
+        await this.page.click(`label[for="${radioId}"]`)
+      }
 
       const taTili = haunTiedotPage.locators.taTili
       await taTili.tili(0).input.fill(talousarviotili.code)
@@ -292,6 +301,7 @@ export class HakujenHallintaPage {
   ): Promise<{ avustushakuID: number }> {
     const avustushakuID = await this.copyEsimerkkihaku()
     await this.fillAvustushaku(hakuProps)
+
     const formEditorPage = await this.switchToHakulomakeTab()
     await formEditorPage.waitFormToBeLoaded()
 

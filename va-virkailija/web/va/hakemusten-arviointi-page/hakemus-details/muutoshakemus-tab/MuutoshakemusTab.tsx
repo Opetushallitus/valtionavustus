@@ -17,12 +17,23 @@ const MuutoshakemusTab = () => {
   const { muutoshakemukset, language } = hakemus
   const lang = language || 'fi'
   const muutoshakemusUrl = `${environment['hakija-server'].url[lang]}muutoshakemus?lang=${lang}&user-key=${hakemus['user-key']}&avustushaku-id=${avustushaku.id}`
+  const yhteystietojenMuokkausUrl = `${environment['hakija-server'].url[lang]}avustushaku/${avustushaku.id}/nayta?lang=${lang}&hakemus=${hakemus['user-key']}&modify-application=true`
   return (
     <div id="tab-content" className={hakemus.refused ? 'disabled' : ''}>
-      {avustushaku.muutoshakukelpoinen && (
+      {avustushaku.muutoshakukelpoinen ? (
         <div className="muutoshakemus-link">
           <a href={muutoshakemusUrl} target="_blank" data-test-id="muutoshakemus-link">
             Linkki muutoshakemuslomakkeeseen
+          </a>
+        </div>
+      ) : (
+        <div className="muutoshakemus-link">
+          <a
+            href={yhteystietojenMuokkausUrl}
+            target="_blank"
+            data-test-id="yhteystietojen-muokkaus-link"
+          >
+            Linkki yhteystietojen muokkauslomakkeeseen
           </a>
         </div>
       )}
