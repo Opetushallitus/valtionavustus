@@ -350,6 +350,7 @@ test('varayhteyshenkilo flow', async ({
     await expect(hakijaSelvitysPage.submitButton).toHaveText('Loppuselvitys lähetetty')
     await virkailijaLoppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, acceptedHakemusId)
     await loppuselvitysPage.ensureMuistutusViestiEmailRecipientsContain([
+      'hakija-1424884@oph.fi',
       answers.contactPersonEmail,
       newEmail,
     ])

@@ -39,8 +39,9 @@ muutoshakemusTest(
       const { addressInputs } = form.recipients
       const replyTo = page.getByTestId('email-form-message-reply-to')
       await expect(replyTo).toHaveValue(virkailijaEmailAddress)
-      await expect(addressInputs).toHaveCount(1)
-      await expect(addressInputs).toHaveValue(answers.contactPersonEmail)
+      await expect(addressInputs).toHaveCount(2)
+      await expect(addressInputs.nth(0)).toHaveValue('hakija-1424884@oph.fi')
+      await expect(addressInputs.nth(1)).toHaveValue(answers.contactPersonEmail)
 
       await form.subject.fill(message1.subject)
       await form.body.fill(message1.body)
@@ -50,7 +51,8 @@ muutoshakemusTest(
       await form.previewButton.click()
 
       await expect(form.recipients.addButton).not.toBeVisible()
-      await expect(form.recipients.addressInputs).toBeDisabled()
+      await expect(form.recipients.addressInputs.nth(0)).toBeDisabled()
+      await expect(form.recipients.addressInputs.nth(1)).toBeDisabled()
       await expect(form.subject).toBeDisabled()
       await expect(form.subject).toHaveValue(message1.subject)
       await expect(form.body).toBeDisabled()
@@ -74,7 +76,9 @@ muutoshakemusTest(
       await expect(replyTo).toHaveText(virkailijaEmailAddress)
 
       await expect(messageRow.subject(row)).toHaveText(message1.subject)
-      await expect(messageRow.recipients(row)).toHaveText(answers.contactPersonEmail)
+      await expect(messageRow.recipients(row)).toHaveText(
+        `hakija-1424884@oph.fi, ${answers.contactPersonEmail}`
+      )
     })
 
     const message2 = {
@@ -85,8 +89,9 @@ muutoshakemusTest(
 
     await test.step('Toisen viestin lähettäminen ylimääräisellä vastaanottajalla', async () => {
       const { addressInputs } = form.recipients
-      await expect(addressInputs).toHaveCount(1)
-      await expect(addressInputs).toHaveValue(answers.contactPersonEmail)
+      await expect(addressInputs).toHaveCount(2)
+      await expect(addressInputs.nth(0)).toHaveValue('hakija-1424884@oph.fi')
+      await expect(addressInputs.nth(1)).toHaveValue(answers.contactPersonEmail)
 
       await form.recipients.addButton.click()
       await form.recipients.addressInputs.last().pressSequentially(extraRecipient)
