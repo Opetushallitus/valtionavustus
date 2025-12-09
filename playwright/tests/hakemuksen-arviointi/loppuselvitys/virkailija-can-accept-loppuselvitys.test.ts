@@ -35,7 +35,7 @@ emailFieldTest(
     await expect(replyTo).toContainText('santeri.horttanainen@reaktor.com')
     await expect(
       page.getByText(
-        `LSyhteyshenkilo@example.com, erkki.esimerkki@example.com, hakija-1424884@oph.fi`
+        `hakija-1424884@oph.fi, LSyhteyshenkilo@example.com, erkki.esimerkki@example.com`
       )
     ).toBeVisible()
   }
