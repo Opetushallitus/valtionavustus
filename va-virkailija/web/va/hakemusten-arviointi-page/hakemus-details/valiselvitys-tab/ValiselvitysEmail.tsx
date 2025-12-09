@@ -62,9 +62,7 @@ export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
   const [message, setMessage] = useState<string>(initialMessage(props))
   const [subject, setSubject] = useState<string>(initialSubject(props))
   const [recipientEmails, setRecipientEmails] = useState<Email[]>(
-    initialRecipientEmails(hakemus.answers, hakemus.normalizedData, valiselvitys.answers).map(
-      makeFormRecipientEmail
-    )
+    initialRecipientEmails(hakemus, hakemus.normalizedData).map(makeFormRecipientEmail)
   )
 
   function onRecipientEmailChange(index: number, event: React.ChangeEvent<HTMLInputElement>) {

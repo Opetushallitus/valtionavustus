@@ -1,13 +1,16 @@
-import { Answer, NormalizedHakemusData } from 'soresu-form/web/va/types'
+import { Answer, Hakemus, NormalizedHakemusData } from 'soresu-form/web/va/types'
 
 const isPrimaryEmail = ({ key }: Answer) => key === 'primary-email'
 const isOrganizationEmail = ({ key }: Answer) => key === 'organization-email'
 
 export function initialRecipientEmails(
-  answers: Answer[],
-  normalizedData: NormalizedHakemusData | undefined,
-  valiselvitysAnswers?: Answer[]
+  hakemus: Hakemus,
+  normalizedData: NormalizedHakemusData | undefined
 ) {
+  const answers = hakemus.answers
+  const valiselvitysAnswersList = hakemus.selvitys?.valiselvitys?.answers || []
+  const loppuselvitysAnswersList = hakemus.selvitys?.loppuselvitys?.answers || []
+
   const normalizedVarayhteyshenkiloEmail = normalizedData?.['trusted-contact-email']
   const isVarayhteyshenkiloEmailField = (answer: Answer) =>
     !normalizedVarayhteyshenkiloEmail ? answer.key === 'trusted-contact-email' : false
@@ -22,8 +25,10 @@ export function initialRecipientEmails(
     )
     .map((a) => a.value)
 
-  const valiselvitysEmails = getPrimaryOrOrganizationEmailFromAnswers(valiselvitysAnswers || [])
-  const emails = [...emailsFromAnswers, ...valiselvitysEmails]
+  const valiselvitysEmails = getPrimaryOrOrganizationEmailFromAnswers(valiselvitysAnswersList)
+  const loppuselvitysEmails = getPrimaryOrOrganizationEmailFromAnswers(loppuselvitysAnswersList)
+
+  const emails = [...emailsFromAnswers, ...valiselvitysEmails, ...loppuselvitysEmails]
     .concat(primaryContactEmail ? [primaryContactEmail] : [])
     .concat(normalizedVarayhteyshenkiloEmail ? [normalizedVarayhteyshenkiloEmail] : [])
 

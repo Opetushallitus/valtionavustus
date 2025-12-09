@@ -6,6 +6,7 @@ import { Hakemus, Language } from 'soresu-form/web/va/types'
 
 import { useUserInfo } from '../../../initial-data-context'
 import * as styles from './MultipleRecipentsEmailForm.module.less'
+import { initialRecipientEmails } from '../emailRecipients'
 
 export type Email = {
   lang: Language
@@ -22,10 +23,8 @@ type CancelButton = {
 }
 
 export function generateInitialEmail(hakemus: Hakemus): Email {
-  const contactEmail = hakemus.normalizedData?.['contact-email']
-  const trustedContactEmail = hakemus.normalizedData?.['trusted-contact-email']
-
-  const receivers = [contactEmail, trustedContactEmail].filter(isString)
+  const initialEmails = initialRecipientEmails(hakemus, hakemus.normalizedData)
+  const receivers = initialEmails.filter(isString)
   return {
     lang: hakemus.language,
     subject: '',

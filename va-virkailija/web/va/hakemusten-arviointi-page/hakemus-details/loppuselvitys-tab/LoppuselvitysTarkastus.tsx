@@ -163,10 +163,7 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
             senderName,
             userInfo.email
           )[lang],
-          receivers: initialRecipientEmails(
-            (loppuselvitys?.answers ?? []).concat(hakemus.answers),
-            hakemus.normalizedData
-          ),
+          receivers: initialRecipientEmails(hakemus, hakemus.normalizedData),
         }
   )
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
