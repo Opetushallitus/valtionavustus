@@ -81,7 +81,11 @@ const Warning = ({ result, controlDropdown, errorTexts }: WarningProps) => {
   )
 }
 
-export const Ok = () => {
+export const Ok = ({
+  avustushakuMuutoshakukelpoinen,
+}: {
+  avustushakuMuutoshakukelpoinen: boolean
+}) => {
   return (
     <div className={`${styles.validationInfo} ${styles.validationOkShadow}`}>
       <span data-test-id="validation-ok">
@@ -89,9 +93,18 @@ export const Ok = () => {
           <IconOkMark />
         </span>
         <span className={styles.validationTextBold}>Lomake on muutoshakukelpoinen</span>
-        <span className={styles.validationText}>
-          Muutoshakulomake toimitetaan avustuksen saajille automaattisesti päätösviestin yhteydessä
-        </span>
+        {avustushakuMuutoshakukelpoinen ? (
+          <span className={styles.validationText}>
+            Muutoshakulomake toimitetaan avustuksen saajille automaattisesti päätösviestin
+            yhteydessä
+          </span>
+        ) : (
+          <span className={styles.validationText}>
+            Muutoshakulomakkeen sijaan yhteystietojenmuokkauslomake toimitetaan avustuksen saajille
+            automaattisesti päätösviestin yhteydessä, sillä avustushaku on merkitty
+            muuoshakukelvottomaksi haun tiedot -välilehdellä
+          </span>
+        )}
       </span>
     </div>
   )
@@ -123,6 +136,7 @@ interface ValidationProps {
     single: string
     multiple: (numberOfErrors: number) => string
   }
+  avustushakuMuutoshakukelpoinen: boolean
 }
 
 let initialState = {
@@ -143,6 +157,7 @@ export const ValidationContainer = ({
   result,
   errorTexts,
   extraClasses = '',
+  avustushakuMuutoshakukelpoinen,
 }: ValidationProps & { extraClasses?: string }) => {
   const [state, setState] = useState(initialState)
   const colorClass = result['is-ok'] ? styles.validationOk : styles.validationWarning
@@ -153,11 +168,13 @@ export const ValidationContainer = ({
   return (
     <div className={classNames(styles.validationContainer, colorClass, extraClasses)}>
       {result['is-ok'] ? (
-        <Ok />
+        <Ok avustushakuMuutoshakukelpoinen={avustushakuMuutoshakukelpoinen} />
       ) : (
         <Warning result={result} controlDropdown={controlDropdown} errorTexts={errorTexts} />
       )}
-      {state.open && <Dropdown result={result} />}
+      {state.open && (
+        <Dropdown result={result} avustushakuMuutoshakukelpoinen={avustushakuMuutoshakukelpoinen} />
+      )}
     </div>
   )
 }

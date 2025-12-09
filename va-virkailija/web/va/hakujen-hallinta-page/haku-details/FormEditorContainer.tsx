@@ -100,6 +100,7 @@ const FormEditorPage = () => {
       {!varayhteyshenkiloResult['is-ok'] && (
         <ValidationContainer
           result={varayhteyshenkiloResult}
+          avustushakuMuutoshakukelpoinen={avustushaku.muutoshakukelpoinen}
           errorTexts={{
             single: 'Hakemukselta puuttuu varayhteyshenkilön täyttöön liittyvä kenttä.',
             multiple: (numberOfErrors) =>
@@ -108,7 +109,10 @@ const FormEditorPage = () => {
         />
       )}
       {avustushaku.muutoshakukelpoisuus && (
-        <ScrollAwareValidationContainer result={avustushaku.muutoshakukelpoisuus} />
+        <ScrollAwareValidationContainer
+          result={avustushaku.muutoshakukelpoisuus}
+          avustushakuMuutoshakukelpoinen={avustushaku.muutoshakukelpoinen}
+        />
       )}
       <div dangerouslySetInnerHTML={mainHelp} />
       <div style={{ float: 'right' }}>
