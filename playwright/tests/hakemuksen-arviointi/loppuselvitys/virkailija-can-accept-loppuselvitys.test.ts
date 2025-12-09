@@ -78,7 +78,7 @@ test('virkailija can accept loppuselvitys', async ({
     await expect(replyTo).toContainText('santeri.horttanainen@reaktor.com')
     await expect(
       page.getByText(
-        `Vastaanottajaterkki.esimerkki@example.com, hakija-1424884@oph.fi, ${additionalReceiver}`
+        `Vastaanottajathakija-1424884@oph.fi, erkki.esimerkki@example.com, ${additionalReceiver}`
       )
     ).toBeVisible()
     await expect(page.getByText(`Aihe${subject}`)).toBeVisible()

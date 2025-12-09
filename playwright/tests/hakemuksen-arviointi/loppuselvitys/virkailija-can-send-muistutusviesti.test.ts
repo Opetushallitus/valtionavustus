@@ -51,7 +51,7 @@ Loppuselvitys tulee palauttaa Opetushallituksen sähköiseen valtionapujärjeste
     const form = page.getByTestId('muistutusviesti-email').locator('form')
 
     await loppuselvitysPage.locators.muistutusviesti.addReceiver.click()
-    await loppuselvitysPage.locators.muistutusviesti.nthReceiver(1).fill(additionalReceiver)
+    await loppuselvitysPage.locators.muistutusviesti.nthReceiver(2).fill(additionalReceiver)
     await loppuselvitysPage.locators.muistutusviesti.subject.fill('')
     await loppuselvitysPage.locators.muistutusviesti.content.fill(content)
     await expect.poll(() => isValid(form), 'Form should be invalid').toBeFalsy()
@@ -77,7 +77,11 @@ ${footer}`)
     expect(email.bcc).toBeNull()
     expect(email.cc).toEqual([])
     expect(email['reply-to']).toBe('santeri.horttanainen@reaktor.com')
-    expect(email['to-address']).toEqual([answers.contactPersonEmail, additionalReceiver])
+    expect(email['to-address']).toEqual([
+      'hakija-1424884@oph.fi',
+      answers.contactPersonEmail,
+      additionalReceiver,
+    ])
   })
 
   await test.step('sent muistutusviesti is shown in list', async () => {
@@ -86,7 +90,9 @@ ${footer}`)
     ).toBeVisible()
     await page.getByTestId('open-email-0').click()
     await expect(
-      page.getByText('Vastaanottajaterkki.esimerkki@example.com, karri@kojootti.dog')
+      page.getByText(
+        'Vastaanottajathakija-1424884@oph.fi, erkki.esimerkki@example.com, karri@kojootti.dog'
+      )
     ).toBeVisible()
     await expect(page.getByText(`Aihe${subject}`)).toBeVisible()
     await expect(page.getByText(content)).toBeVisible()
