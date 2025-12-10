@@ -67,8 +67,10 @@ export const LoppuselvitysPage = (page: Page) => {
   async function ensureMuistutusViestiEmailRecipientsContain(recipients: string[]) {
     await page.getByRole('button', { name: 'Kirjoita' }).click()
     await Promise.all(
-      recipients.map((recipent, i) => {
-        expect(page.locator(`[data-test-id="muistutusviesti-receiver-${i}"]`)).toHaveValue(recipent)
+      recipients.map(async (recipent, i) => {
+        await expect(page.locator(`[data-test-id="muistutusviesti-receiver-${i}"]`)).toHaveValue(
+          recipent
+        )
       })
     )
   }
