@@ -1,5 +1,6 @@
 (ns oph.va.virkailija.email
   (:require [clojure.java.io :refer [copy input-stream resource]]
+            [clojure.string :as str]
             [clojure.tools.logging :as log]
             [clojurewerkz.quartzite.jobs :refer [defjob] :as j]
             [clojurewerkz.quartzite.schedule.cron :refer [schedule cron-schedule]]
@@ -182,8 +183,11 @@
         attachment {:title attachment-title
                     :description attachment-title
                     :contents attachment-contents}
+        hanke-name (if (str/blank? (:project_name hakemus))
+                     (:organization_name hakemus)
+                     (:project_name hakemus))
         msg {:register-number (:register_number hakemus)
-             :project-name (:project_name hakemus)
+             :project-name hanke-name
              :paatos-url muutoshakemus-paatos-url
              :muutoshakemus-url muutoshakemus-url
              :attachment-title attachment-title

@@ -168,12 +168,11 @@
                 join formfield on formfield.form_id = avustushaut.form
                 where avustushaut.id = ?
                 and (
-                  formfield.formfield_id = ANY(ARRAY['project-name','applicant-name','primary-email','textField-0'])
+                  formfield.formfield_id = ANY(ARRAY['applicant-name','primary-email','textField-0'])
                   or formfield.formfield_id = 'financing-plan' and
                      exists(select formfield.children->'budget'->'project-budget' from formfield)
                  )", [avustushaku-id])
-        required-fields [{:id "project-name"}
-                         {:id "applicant-name"}
+        required-fields [{:id "applicant-name"}
                          {:id "primary-email"}
                          {:id "textField-0"}
                          {:id "financing-plan"}]

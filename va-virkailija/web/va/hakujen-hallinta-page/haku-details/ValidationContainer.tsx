@@ -9,7 +9,6 @@ import classNames from 'classnames'
 import * as styles from './ValidationContainer.module.less'
 
 const fieldLabels: Record<string, string> = {
-  'project-name': 'Hankkeen nimi',
   'applicant-name': 'Yhteyshenkilön nimi',
   'primary-email': 'Yhteyshenkilön sähköposti',
   'textField-0': 'Yhteyshenkilön puhelinnumero',

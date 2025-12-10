@@ -1,5 +1,6 @@
 (ns oph.va.hakija.api.muutoshakemus
   (:require
+   [clojure.string :as str]
    [clojure.tools.logging :as log]
    [compojure.api.sweet :as compojure-api]
    [oph.va.hakija.db :as hakija-db]
@@ -35,7 +36,10 @@
         hakemus-id (:id hakemus)
         register-number (:register_number hakemus)
         normalized-hakemus (hakija-db/get-normalized-hakemus user-key)
-        hanke (:project-name normalized-hakemus)
+        ;; Use organization-name as fallback when project-name is blank
+        hanke (if (str/blank? (:project-name normalized-hakemus))
+                (:organization-name normalized-hakemus)
+                (:project-name normalized-hakemus))
         valmistelija-email (:email (hakija-db/get-valmistelija-assigned-to-hakemus hakemus-id))]
     (hakija-db/on-muutoshakemus user-key hakemus-id avustushaku-id muutoshakemus)
     (when (should-notify-valimistelija-of-new-muutoshakemus muutoshakemus)
