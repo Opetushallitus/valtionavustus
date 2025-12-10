@@ -1,6 +1,7 @@
 import React from 'react'
 import classNames from 'classnames'
 import * as styles from './Pill.module.less'
+import { AvustushakuStatus } from 'soresu-form/web/va/types'
 
 const pillStyles = {
   green: styles.greenPill,
@@ -9,6 +10,14 @@ const pillStyles = {
   grey: styles.greyPill,
   blue: styles.bluePill,
 } as const
+
+export const avustushakuStatusColor = {
+  new: 'blue',
+  draft: 'yellow',
+  published: 'green',
+  resolved: 'red',
+  deleted: 'grey',
+} satisfies Record<AvustushakuStatus, keyof typeof pillStyles>
 
 export interface PillProps {
   color: keyof typeof pillStyles

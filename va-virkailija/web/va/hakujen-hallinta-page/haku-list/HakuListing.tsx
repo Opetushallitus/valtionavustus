@@ -12,11 +12,12 @@ import {
 
 import useOutsideClick from '../../useOutsideClick'
 import { tryToUseCurrentAvustushaku } from '../useAvustushaku'
-import { Pill } from '../../common-components/Pill'
+import { avustushakuStatusColor, Pill } from '../../common-components/Pill'
 import { VirkailijaAvustushaku, selectLoadedInitialData } from '../hakuReducer'
 import * as styles from './HakuListing.module.less'
 import * as buttonStyles from '../../style/Button.module.less'
 import { useHakujenHallintaSelector } from '../hakujenHallintaStore'
+import { avustushakuStatusDescription } from '../status'
 
 export const AVUSTUSHAKU_STATUSES_AVAILABLE_FOR_FILTER = AVUSTUSHAKU_STATUSES.filter(
   (status) => status !== 'deleted'
@@ -62,7 +63,7 @@ interface SortState {
 
 const sortValueMap: SorterMap = {
   avustushaku: (a) => a.content.name.fi,
-  status: (a) => StatusToFi[a.status],
+  status: (a) => avustushakuStatusDescription[a.status],
   phase: (a) => PhaseToFi[a.phase],
   hakuaika: (a) => new Date(a.content.duration.end).getTime(),
   paatos: (a) => a['paatokset-lahetetty'] ?? 'zzz',
@@ -384,7 +385,7 @@ export const HakuListing = () => {
                   <StatusTableLabel
                     text="Tila"
                     statuses={AVUSTUSHAKU_STATUSES_AVAILABLE_FOR_FILTER}
-                    labelText={(status) => StatusToFi[status]}
+                    labelText={(status) => avustushakuStatusDescription[status]}
                     isChecked={(status) => statuses.includes(status)}
                     onToggle={(status) => dispatch({ type: 'toggle-status', status })}
                     amountOfStatus={(status) => hakuList.filter((a) => a.status === status).length}
@@ -615,24 +616,12 @@ const AvustushakuItem = ({
 
 const MemoizedAvustushakuItem = React.memo(AvustushakuItem)
 
-const StatusToFi = {
-  draft: 'Luonnos',
-  new: 'Uusi',
-  resolved: 'Ratkaistu',
-  deleted: 'Poistettu',
-  published: 'Julkaistu',
-} as const
-
-const StatusToColor = {
-  draft: 'yellow',
-  new: 'blue',
-  resolved: 'red',
-  deleted: 'grey',
-  published: 'green',
-} as const
-
 const StatusPill: React.FC<{ status: AvustushakuStatus }> = ({ status }) => (
-  <Pill testId="status" color={StatusToColor[status]} text={StatusToFi[status]} />
+  <Pill
+    testId="status"
+    color={avustushakuStatusColor[status]}
+    text={avustushakuStatusDescription[status]}
+  />
 )
 
 const PhaseToFi = {
