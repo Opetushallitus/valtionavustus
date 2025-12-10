@@ -8,7 +8,7 @@ import { HakuRoles } from './HakuRoles'
 import AutoCompleteCodeValue, { CodeType } from '../../common-components/AutoCompleteCodeValue'
 import { CustomHelpTooltip } from '../../common-components/HelpTooltip'
 import WarningBanner from '../../WarningBanner'
-import { VaCodeValue } from '../../types'
+import { VaCodeValue, ValidationResult } from '../../types'
 import { DateInput } from './DateInput'
 import { Raportointivelvoitteet } from './Raportointivelvoitteet'
 import { Lainsaadanto } from './Lainsaadanto'
@@ -31,6 +31,9 @@ import { Talousarviotilit } from './Talousarviotilit'
 import { tryToUseCurrentAvustushaku, useCurrentAvustushaku } from '../useAvustushaku'
 import { useSearchParams } from 'react-router-dom'
 import ChooseAvustushaku from './ChooseAvustushaku'
+import { avustushakuStatusDescription } from '../status'
+import { ScrollAwareValidationContainer } from './ValidationContainer'
+import * as validationContainerStyles from './ValidationContainer.module.less'
 
 export const HakuEdit = () => {
   const avustushaku = tryToUseCurrentAvustushaku()
@@ -65,6 +68,9 @@ const HakuEditor = () => {
     (k) => k.id === avustushaku['operational-unit-id']
   )
 
+  const [validationResult, setValidationResult] = useState<ValidationResult | undefined>()
+  const [highlightValidationErrorByScaling, setHighlightValidationErrorByScaling] = useState(false)
+
   const onChangeListener = (target: EventTarget & HTMLElement, value: string) => {
     dispatch(updateField({ avustushaku, field: target, newValue: value }))
   }
@@ -72,6 +78,24 @@ const HakuEditor = () => {
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
+    if (e.target.id.startsWith('set-status-') && e.target.value === 'published') {
+      if (
+        !(
+          avustushaku.muutoshakukelpoisuus?.['erroneous-fields'].length === 1 &&
+          avustushaku.muutoshakukelpoisuus['erroneous-fields'][0].id === 'financing-plan'
+        )
+      ) {
+        // If validation result already exists, trigger animation
+        if (validationResult) {
+          setHighlightValidationErrorByScaling(true)
+          setTimeout(() => setHighlightValidationErrorByScaling(false), 400)
+        }
+        setValidationResult(avustushaku.muutoshakukelpoisuus)
+      }
+      if (!avustushaku.muutoshakukelpoisuus?.['is-ok']) {
+        return
+      }
+    }
     onChangeListener(e.target, e.target.value)
   }
 
@@ -121,6 +145,21 @@ const HakuEditor = () => {
             </ul>
           </div>
         </WarningBanner>
+      )}
+      {validationResult && avustushaku.muutoshakukelpoisuus && (
+        <ScrollAwareValidationContainer
+          result={avustushaku.muutoshakukelpoisuus}
+          avustushakuMuutoshakukelpoinen={avustushaku.muutoshakukelpoinen}
+          extraClasses={
+            highlightValidationErrorByScaling ? validationContainerStyles.scaleAnimation : ''
+          }
+          errorTexts={{
+            single:
+              'Avustushaun lomakkeelta puuttuu tarpeellinen yhteystietokenttä. Avustushaun julkaiseminen ei ole mahdollista.',
+            multiple: (numberOfErrors) =>
+              `Avustushaun lomakkeelta puuttuu ${numberOfErrors} tarpeellista yhteystietokenttää. Avustushaun julkaiseminen ei ole mahdollista.`,
+          }}
+        />
       )}
       <div id="haku-edit-header" className="editor-header">
         <div>
@@ -552,14 +591,6 @@ const HakuEditor = () => {
     </div>
   )
 }
-
-const avustushakuStatusDescription = {
-  new: 'Uusi',
-  draft: 'Luonnos',
-  published: 'Julkaistu',
-  resolved: 'Ratkaistu',
-  deleted: 'Poistettu',
-} satisfies Record<AvustushakuStatus, string>
 
 type CreateHakuProps = {
   avustushaku: VirkailijaAvustushaku

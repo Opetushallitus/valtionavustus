@@ -136,6 +136,7 @@ interface ValidationProps {
     multiple: (numberOfErrors: number) => string
   }
   avustushakuMuutoshakukelpoinen: boolean
+  extraClasses?: string
 }
 
 let initialState = {
@@ -147,7 +148,10 @@ export const ScrollAwareValidationContainer = (props: ValidationProps) => {
   return (
     <ValidationContainer
       {...props}
-      extraClasses={isScrollingUp ? styles.validationContainerWithHeader : undefined}
+      extraClasses={classNames(
+        props.extraClasses,
+        isScrollingUp ? styles.validationContainerWithHeader : undefined
+      )}
     />
   )
 }
@@ -157,7 +161,7 @@ export const ValidationContainer = ({
   errorTexts,
   extraClasses = '',
   avustushakuMuutoshakukelpoinen,
-}: ValidationProps & { extraClasses?: string }) => {
+}: ValidationProps) => {
   const [state, setState] = useState(initialState)
   const colorClass = result['is-ok'] ? styles.validationOk : styles.validationWarning
 
