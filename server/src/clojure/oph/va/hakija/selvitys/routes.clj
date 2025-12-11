@@ -214,12 +214,6 @@
       (on-loppuselvitys-change-request-response avustushaku-id selvitys-key version answers)
       (http/bad-request! {:error "can not update loppuselvitys"}))))
 
-(defn- get-hakemus-contact-email [hakemus-id]
-  (let [normalized-hakemus (va-db/get-normalized-hakemus-by-id hakemus-id)]
-    (if (and normalized-hakemus (:contact-email normalized-hakemus))
-      (:contact-email normalized-hakemus)
-      (find-contact-person-email-from-last-hakemus-version hakemus-id))))
-
 (defn- on-selvitys-submit [haku-id selvitys-user-key base-version answers selvitys-field-keyword selvitys-type]
   (let [avustushaku (va-db/get-avustushaku haku-id)
         form-id (selvitys-field-keyword avustushaku)
