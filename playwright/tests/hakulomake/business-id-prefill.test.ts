@@ -1,3 +1,6 @@
+import path from 'node:path'
+import fs from "node:fs/promises"
+
 import { expect } from '@playwright/test'
 import { defaultValues } from '../../fixtures/defaultValues'
 import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
@@ -14,7 +17,15 @@ const test = defaultValues.extend<{
   hakijaAvustusHakuPage: async ({ page, answers, hakuProps, userCache }, use) => {
     expect(userCache).toBeDefined()
     const hakujenHallintaPage = new HakujenHallintaPage(page)
-    const avustushakuID = await hakujenHallintaPage.copyEsimerkkihaku()
+
+    const esimerkkiHakuWithContactDetails = await fs.readFile(
+      path.join(__dirname, '../../fixtures/avustushaku-with-contact-details.json'),
+      'utf8'
+    )
+
+    const {avustushakuID} = await hakujenHallintaPage.createHakuWithLomakeJson(esimerkkiHakuWithContactDetails, hakuProps)
+    await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
+
     await hakujenHallintaPage.fillAvustushaku(hakuProps)
     const haunTiedotPage = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
     await haunTiedotPage.publishAvustushaku()
