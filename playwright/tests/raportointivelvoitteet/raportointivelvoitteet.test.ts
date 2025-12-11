@@ -1,3 +1,5 @@
+import path from 'node:path'
+import fs from "node:fs/promises"
 import { expect } from '@playwright/test'
 import { defaultValues as test } from '../../fixtures/defaultValues'
 import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
@@ -16,7 +18,14 @@ test('raportointivelvoite', async ({ page, hakuProps, userCache }, testInfo) => 
     lisatiedot: '',
   }
   await test.step('can be edited in draft mode', async () => {
-    await hakujenHallintaPage.copyEsimerkkihaku()
+    const esimerkkiHakuWithContactDetails = await fs.readFile(
+      path.join(__dirname, '../../fixtures/avustushaku-with-contact-details.json'),
+      'utf8'
+    )
+
+    await hakujenHallintaPage.createHakuWithLomakeJson(esimerkkiHakuWithContactDetails, hakuProps)
+    await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
+
     await hakujenHallintaPage.fillAvustushaku({
       ...hakuProps,
       raportointivelvoitteet: [laji],
