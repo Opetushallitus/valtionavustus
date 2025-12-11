@@ -1,5 +1,5 @@
 import path from 'node:path'
-import fs from "node:fs/promises"
+import fs from 'node:fs/promises'
 
 import { expect, Locator, Page } from '@playwright/test'
 import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'

@@ -1,5 +1,5 @@
 import path from 'node:path'
-import fs from "node:fs/promises"
+import fs from 'node:fs/promises'
 
 import { expect } from '@playwright/test'
 import { defaultValues } from '../../fixtures/defaultValues'
@@ -23,7 +23,10 @@ const test = defaultValues.extend<{
       'utf8'
     )
 
-    const {avustushakuID} = await hakujenHallintaPage.createHakuWithLomakeJson(esimerkkiHakuWithContactDetails, hakuProps)
+    const { avustushakuID } = await hakujenHallintaPage.createHakuWithLomakeJson(
+      esimerkkiHakuWithContactDetails,
+      hakuProps
+    )
     await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
 
     await hakujenHallintaPage.fillAvustushaku(hakuProps)

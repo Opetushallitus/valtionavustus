@@ -11,155 +11,155 @@ import { TEST_Y_TUNNUS } from '../../utils/constants'
 const form = {
   content: [
     {
-      "fieldClass": "wrapperElement",
-      "id": "applicant-info",
-      "fieldType": "theme",
-      "children": [
+      fieldClass: 'wrapperElement',
+      id: 'applicant-info',
+      fieldType: 'theme',
+      children: [
         {
-          "fieldClass": "wrapperElement",
-          "id": "organization-fieldset",
-          "fieldType": "fieldset",
-          "children": [
+          fieldClass: 'wrapperElement',
+          id: 'organization-fieldset',
+          fieldType: 'fieldset',
+          children: [
             {
-              "label": {
-                "fi": "Hakijaorganisaatio",
-                "sv": "Sökandeorganisation"
+              label: {
+                fi: 'Hakijaorganisaatio',
+                sv: 'Sökandeorganisation',
               },
-              "fieldClass": "formField",
-              "helpText": {
-                "fi": "Ilmoita hakijaorganisaation nimi ja virallinen sähköpostiosoite.",
-                "sv": "Meddela sökandeorganisationens namn och officiella e-postadress."
+              fieldClass: 'formField',
+              helpText: {
+                fi: 'Ilmoita hakijaorganisaation nimi ja virallinen sähköpostiosoite.',
+                sv: 'Meddela sökandeorganisationens namn och officiella e-postadress.',
               },
-              "id": "organization",
-              "params": {
-                "size": "large",
-                "maxlength": 80
+              id: 'organization',
+              params: {
+                size: 'large',
+                maxlength: 80,
               },
-              "required": true,
-              "fieldType": "textField"
+              required: true,
+              fieldType: 'textField',
             },
             {
-              "label": {
-                "fi": "Organisaation sähköposti",
-                "sv": "Organisationens e-post"
+              label: {
+                fi: 'Organisaation sähköposti',
+                sv: 'Organisationens e-post',
               },
-              "fieldClass": "formField",
-              "helpText": {
-                "fi": "",
-                "sv": ""
+              fieldClass: 'formField',
+              helpText: {
+                fi: '',
+                sv: '',
               },
-              "id": "organization-email",
-              "params": {
-                "size": "small",
-                "maxlength": 80
+              id: 'organization-email',
+              params: {
+                size: 'small',
+                maxlength: 80,
               },
-              "required": true,
-              "fieldType": "emailField"
-            }
-          ]
+              required: true,
+              fieldType: 'emailField',
+            },
+          ],
         },
         {
-          "label": {
-            "fi": "Y-tunnus",
-            "sv": "Företags- och organisationsnummer"
+          label: {
+            fi: 'Y-tunnus',
+            sv: 'Företags- och organisationsnummer',
           },
-          "fieldClass": "formField",
-          "helpText": {
-            "fi": "",
-            "sv": ""
+          fieldClass: 'formField',
+          helpText: {
+            fi: '',
+            sv: '',
           },
-          "id": "business-id",
-          "params": {
-            "size": "small",
-            "maxlength": 9
+          id: 'business-id',
+          params: {
+            size: 'small',
+            maxlength: 9,
           },
-          "required": true,
-          "fieldType": "finnishBusinessIdField"
+          required: true,
+          fieldType: 'finnishBusinessIdField',
         },
         {
-          "fieldClass": "wrapperElement",
-          "id": "applicant-fieldset",
-          "fieldType": "fieldset",
-          "children": [
+          fieldClass: 'wrapperElement',
+          id: 'applicant-fieldset',
+          fieldType: 'fieldset',
+          children: [
             {
-              "label": {
-                "fi": "Yhteyshenkilö",
-                "sv": "Kontaktperson"
+              label: {
+                fi: 'Yhteyshenkilö',
+                sv: 'Kontaktperson',
               },
-              "fieldClass": "formField",
-              "helpText": {
-                "fi": "Yhteyshenkilöllä tarkoitetaan hankkeen vastuuhenkilöä hakijaorganisaatiossa.",
-                "sv": "Med kontaktperson avses den projektansvariga i sökandeorganisationen."
+              fieldClass: 'formField',
+              helpText: {
+                fi: 'Yhteyshenkilöllä tarkoitetaan hankkeen vastuuhenkilöä hakijaorganisaatiossa.',
+                sv: 'Med kontaktperson avses den projektansvariga i sökandeorganisationen.',
               },
-              "id": "applicant-name",
-              "params": {
-                "size": "large",
-                "maxlength": 80
+              id: 'applicant-name',
+              params: {
+                size: 'large',
+                maxlength: 80,
               },
-              "required": true,
-              "fieldType": "textField"
+              required: true,
+              fieldType: 'textField',
             },
             {
-              "label": {
-                "fi": "Sähköposti",
-                "sv": "E-post"
+              label: {
+                fi: 'Sähköposti',
+                sv: 'E-post',
               },
-              "fieldClass": "formField",
-              "helpText": {
-                "fi": "",
-                "sv": ""
+              fieldClass: 'formField',
+              helpText: {
+                fi: '',
+                sv: '',
               },
-              "id": "primary-email",
-              "params": {
-                "size": "small",
-                "maxlength": 80
+              id: 'primary-email',
+              params: {
+                size: 'small',
+                maxlength: 80,
               },
-              "required": true,
-              "fieldType": "emailField"
+              required: true,
+              fieldType: 'emailField',
             },
             {
-              "label": {
-                "fi": "Puhelinumero",
-                "sv": "Telefon"
+              label: {
+                fi: 'Puhelinumero',
+                sv: 'Telefon',
               },
-              "fieldClass": "formField",
-              "helpText": {
-                "fi": "",
-                "sv": ""
+              fieldClass: 'formField',
+              helpText: {
+                fi: '',
+                sv: '',
               },
-              "id": "textField-0",
-              "params": {
-                "size": "small",
-                "maxlength": 15
+              id: 'textField-0',
+              params: {
+                size: 'small',
+                maxlength: 15,
               },
-              "required": true,
-              "fieldType": "textField"
-            }
-          ]
+              required: true,
+              fieldType: 'textField',
+            },
+          ],
         },
         {
-          "label": {
-            "fi": "Osoite",
-            "sv": "TODO: Adress"
+          label: {
+            fi: 'Osoite',
+            sv: 'TODO: Adress',
           },
-          "fieldClass": "formField",
-          "helpText": {
-            "fi": "",
-            "sv": ""
+          fieldClass: 'formField',
+          helpText: {
+            fi: '',
+            sv: '',
           },
-          "id": "organization-postal-address",
-          "params": {
-            "size": "small",
-            "maxlength": 1000
+          id: 'organization-postal-address',
+          params: {
+            size: 'small',
+            maxlength: 1000,
           },
-          "required": true,
-          "fieldType": "textArea"
-        }
+          required: true,
+          fieldType: 'textArea',
+        },
       ],
-      "label": {
-        "fi": "Hakijan tiedot",
-        "sv": "Uppgifter om sökanden"
-      }
+      label: {
+        fi: 'Hakijan tiedot',
+        sv: 'Uppgifter om sökanden',
+      },
     },
     {
       fieldClass: 'wrapperElement',
