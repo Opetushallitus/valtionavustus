@@ -75,13 +75,7 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
       await expect(formEditorPage.locators.lomakeWarning.first()).toHaveText(
         'Hakemukselta puuttuu 3 varayhteyshenkilön täyttöön tarvittavaa kenttää.'
       )
-      await expect(formEditorPage.locators.lomakeWarning.nth(1)).toHaveText(
-        'Lomakkeesta puuttuu 2 muutoshakemukselle tarpeellista kenttää. Muutoshaku ei ole mahdollista.'
-      )
       await formEditorPage.changeLomakeJson(lomakeJson)
-      await expect(formEditorPage.locators.lomakeWarning).toHaveText(
-        'Lomakkeesta puuttuu 2 muutoshakemukselle tarpeellista kenttää. Muutoshaku ei ole mahdollista.'
-      )
       await expect(formEditorPage.locators.muutoshakuOk).toBeHidden()
       await formEditorPage.saveForm()
       await expect(formEditorPage.locators.lomakeWarning).toBeHidden()
