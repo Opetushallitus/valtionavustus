@@ -4,6 +4,10 @@ import { HakemustenArviointiPage } from '../../../pages/virkailija/hakemusten-ar
 import { selvitysTest as test } from '../../../fixtures/selvitysTest'
 import { LoppuselvitysPage } from '../../../pages/virkailija/hakujen-hallinta/LoppuselvitysPage'
 import loppuselvitysWithEmail from '../selvitysForms/loppuselvitys-with-email.json'
+import {
+  waitUntilMinEmails,
+  getLoppuselvitysSubmittedNotificationEmails,
+} from '../../../utils/emails'
 
 const emailFieldTest = test.extend({
   loppuselvitysForm: JSON.stringify(loppuselvitysWithEmail),
@@ -12,7 +16,8 @@ const emailFieldTest = test.extend({
 
 emailFieldTest(
   'Loppuselvityksen hyväksymis sähköposti autotäydentää sähköpostin vastaanottajan loppuselvitys formista',
-  async ({ page, asiatarkastus: { asiatarkastettu } }) => {
+
+  async ({ page, acceptedHakemus, asiatarkastus: { asiatarkastettu } }) => {
     expect(asiatarkastettu)
     let emailSendApiCalled = 0
     const loppuselvitysPage = LoppuselvitysPage(page)
@@ -38,6 +43,20 @@ emailFieldTest(
         `hakija-1424884@oph.fi, LSyhteyshenkilo@example.com, erkki.esimerkki@example.com`
       )
     ).toBeVisible()
+
+    const loppuselvitysSubmittedEmails = await waitUntilMinEmails(
+      getLoppuselvitysSubmittedNotificationEmails,
+      1,
+      acceptedHakemus.hakemusID
+    )
+    const loppuSubmittedEmail = loppuselvitysSubmittedEmails[0]
+    expect(loppuSubmittedEmail['to-address']).toEqual(
+      expect.arrayContaining([
+        'erkki.esimerkki@example.com',
+        'hakija-1424884@oph.fi',
+        'LSyhteyshenkilo@example.com',
+      ])
+    )
   }
 )
 

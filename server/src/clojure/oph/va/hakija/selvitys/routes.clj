@@ -133,6 +133,17 @@
         rows (query sql [hakemus-id])]
     (:primary-email (first rows))))
 
+(defn- find-organization-email-from-last-hakemus-version [hakemus-id]
+  (let [sql "SELECT answer.value->>'value' AS primary_email
+             FROM hakija.hakemukset hakemus_version
+             JOIN hakija.form_submissions fs ON hakemus_version.form_submission_id = fs.id AND hakemus_version.form_submission_version = fs.version
+             JOIN jsonb_array_elements(fs.answers->'value') answer ON true
+             WHERE hakemus_version.version_closed IS NULL
+             AND hakemus_version.id = ?
+             AND answer.value->>'key' = 'organization-email'"
+        rows (query sql [hakemus-id])]
+    (:primary-email (first rows))))
+
 (defn- get-email-and-name-of-virkailija [hakemus-id]
   (let [sql "select h.user_email, h.user_first_name, h.user_last_name
              from hakija.hakemukset h
@@ -143,11 +154,30 @@
         rows (query sql [hakemus-id])]
     (first rows)))
 
-(defn- get-hakemus-contact-email [hakemus-id]
-  (let [normalized-hakemus (va-db/get-normalized-hakemus-by-id hakemus-id)]
-    (if (and normalized-hakemus (:contact-email normalized-hakemus))
-      (:contact-email normalized-hakemus)
-      (find-contact-person-email-from-last-hakemus-version hakemus-id))))
+(defn- get-hakemus-contact-emails [hakemus-id]
+  (let [normalized-hakemus (va-db/get-normalized-hakemus-by-id hakemus-id)
+        ;; Hakemus emails
+        contact-email (:contact-email normalized-hakemus)
+        trusted-contact-email (:trusted-contact-email normalized-hakemus)
+        answer-email (find-contact-person-email-from-last-hakemus-version hakemus-id)
+        organization-email (find-organization-email-from-last-hakemus-version hakemus-id)
+        ;; Selvitys emails from normalized_hakemus
+        valiselvitys-contact (:valiselvitys-contact-email normalized-hakemus)
+        valiselvitys-org (:valiselvitys-organization-email normalized-hakemus)
+        loppuselvitys-contact (:loppuselvitys-contact-email normalized-hakemus)
+        loppuselvitys-org (:loppuselvitys-organization-email normalized-hakemus)
+        primary-contact-email (or contact-email answer-email)
+        all-emails (remove nil? (concat [primary-contact-email
+                                         trusted-contact-email
+                                         organization-email
+                                         valiselvitys-contact
+                                         valiselvitys-org
+                                         loppuselvitys-contact
+                                         loppuselvitys-org]))]
+    (distinct all-emails)))
+
+
+
 
 (defn- on-loppuselvitys-change-request-response [avustushaku-id selvitys-user-key base-version answers]
   (let [selvitys-type "loppuselvitys"
@@ -180,18 +210,20 @@
               email-of-virkailija (:user-email virkailija-name-and-email)
               virkailija-first-name (-> virkailija-name-and-email :user-first-name)
               virkailija-last-name (-> virkailija-name-and-email :user-last-name)
-              email-of-hakija (get-hakemus-contact-email parent-hakemus-id)
               avustushaku-name-fi (-> avustushaku :content :name :fi)
               register-number (-> hakemus :register_number)
               parent-hakemus (va-db/get-hakemus-by-id parent-hakemus-id)
               project-name (-> parent-hakemus :project-name)]
 
           (va-db/update-loppuselvitys-status id "submitted")
+          (with-tx (fn [tx]
+                     (va-db/update-normalized-hakemus-loppuselvitys-emails!
+                      tx parent-hakemus-id answers)))
           (va-email/send-loppuselvitys-change-request-responded-message-to-virkailija! [email-of-virkailija]
                                                                                        avustushaku-id
                                                                                        avustushaku-name-fi
                                                                                        parent-hakemus-id)
-          (va-email/send-loppuselvitys-change-request-received-message-to-hakija! [email-of-hakija]
+          (va-email/send-loppuselvitys-change-request-received-message-to-hakija! (get-hakemus-contact-emails parent-hakemus-id)
                                                                                   parent-hakemus-id
                                                                                   lang
                                                                                   register-number
@@ -237,7 +269,6 @@
                                            selvitys-user-key))
               lang (keyword (:language hakemus))
               parent_id (:parent_id hakemus)
-              contact-email (get-hakemus-contact-email parent_id)
               parent-hakemus (va-db/get-hakemus-by-id parent_id)
               hakemus-name (:project-name parent-hakemus)
               register-number (:register-number parent-hakemus)
@@ -245,7 +276,14 @@
           (if (= selvitys-type "loppuselvitys")
             (va-db/update-loppuselvitys-status parent_id "submitted")
             (va-db/update-valiselvitys-status parent_id "submitted"))
-          (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id hakemus-name register-number [contact-email] is-jotpa)
+          (try (with-tx (fn [tx]
+                     (if (= selvitys-type "valiselvitys")
+                       (va-db/update-normalized-hakemus-valiselvitys-emails!
+                        tx parent_id answers)
+                       (va-db/update-normalized-hakemus-loppuselvitys-emails!
+                        tx parent_id answers)))) (catch Exception e
+                                             (log/warn {:error (ex-message e)})))
+          (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id hakemus-name register-number (get-hakemus-contact-emails parent_id) is-jotpa)
           (handlers/hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (handlers/hakemus-conflict-response hakemus))
       (http/bad-request! validation))))

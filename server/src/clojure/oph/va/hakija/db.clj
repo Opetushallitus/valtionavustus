@@ -173,6 +173,30 @@
              (form-util/find-answer-value answers "trusted-contact-phone")])
   (log/info (str "Succesfully stored normalized fields for hakemus with id: " id)))
 
+(defn update-normalized-hakemus-valiselvitys-emails! [tx hakemus-id answers]
+  "Update valiselvitys email columns in normalized_hakemus"
+  (log/info (str "Updating valiselvitys emails for hakemus: " hakemus-id))
+  (let [contact-email (form-util/find-answer-value answers "primary-email")
+        organization-email (form-util/find-answer-value answers "organization-email")]
+    (execute! tx
+              "UPDATE virkailija.normalized_hakemus
+               SET valiselvitys_contact_email = ?,
+                   valiselvitys_organization_email = ?
+               WHERE hakemus_id = ?"
+              [contact-email organization-email hakemus-id])))
+
+(defn update-normalized-hakemus-loppuselvitys-emails! [tx hakemus-id answers]
+  "Update loppuselvitys email columns in normalized_hakemus"
+  (log/info (str "Updating loppuselvitys emails for hakemus: " hakemus-id))
+  (let [contact-email (form-util/find-answer-value answers "primary-email")
+        organization-email (form-util/find-answer-value answers "organization-email")]
+    (execute! tx
+              "UPDATE virkailija.normalized_hakemus
+               SET loppuselvitys_contact_email = ?,
+                   loppuselvitys_organization_email = ?
+               WHERE hakemus_id = ?"
+              [contact-email organization-email hakemus-id])))
+
 (defn- ensure-normalized-hakemus-exists [tx hakemus-id]
   (let [exists? (first (query tx "SELECT 1 FROM virkailija.normalized_hakemus WHERE hakemus_id = ?" [hakemus-id]))]
     (when-not exists?
@@ -212,7 +236,11 @@
                                 h.register_number,
                                 h.trusted_contact_name,
                                 h.trusted_contact_email,
-                                h.trusted_contact_phone
+                                h.trusted_contact_phone,
+                                h.valiselvitys_contact_email,
+                                h.valiselvitys_organization_email,
+                                h.loppuselvitys_contact_email,
+                                h.loppuselvitys_organization_email
                               FROM virkailija.normalized_hakemus as h
                               WHERE h.hakemus_id = ?"
                             [hakemus-id]))
@@ -232,7 +260,11 @@
                                              :talousarvio talousarvio
                                              :trusted-contact-name (get-in hakemus [:trusted-contact-name])
                                              :trusted-contact-email (get-in hakemus [:trusted-contact-email])
-                                             :trusted-contact-phone (get-in hakemus [:trusted-contact-phone])})))))))
+                                             :trusted-contact-phone (get-in hakemus [:trusted-contact-phone])
+                                             :valiselvitys-contact-email (get-in hakemus [:valiselvitys-contact-email])
+                                             :valiselvitys-organization-email (get-in hakemus [:valiselvitys-organization-email])
+                                             :loppuselvitys-contact-email (get-in hakemus [:loppuselvitys-contact-email])
+                                             :loppuselvitys-organization-email (get-in hakemus [:loppuselvitys-organization-email])})))))))
 
 (defn create-muutoshakemus-url [va-url avustushaku-id user-key]
   (let [url-parameters  (form-encode {:user-key user-key :avustushaku-id avustushaku-id})]
@@ -261,7 +293,11 @@
           register_number,
           trusted_contact_name,
           trusted_contact_email,
-          trusted_contact_phone
+          trusted_contact_phone,
+          valiselvitys_contact_email,
+          valiselvitys_organization_email,
+          loppuselvitys_contact_email,
+          loppuselvitys_organization_email
           from virkailija.normalized_hakemus WHERE hakemus_id = ?" [id])
         hakemus (into {} (filter (comp some? val) (first hakemukset)))
         talousarvio (when hakemus (get-talousarvio (:hakemus-id hakemus) "hakemus"))]

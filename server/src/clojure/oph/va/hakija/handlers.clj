@@ -61,6 +61,7 @@
   (ok (hakemus-response hakemus submission validation parent-hakemus)))
 
 (defn on-hakemus-create [haku-id answers]
+  (log/info "Creating hakemus for haku-id:" haku-id)
   (let [avustushaku (get-open-avustushaku haku-id {})
         avustushaku-content (:content avustushaku)
         form-id (:form avustushaku)

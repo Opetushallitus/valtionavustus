@@ -29,8 +29,22 @@ emailFieldTest(
     expectToBeDefined(väliselvitysSubmitted)
     const valiselvitysPage = ValiselvitysPage(page)
     await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, acceptedHakemus.hakemusID)
-
     await valiselvitysPage.acceptSelvitys()
+
+    const valiselvitysSubmittedEmails = await waitUntilMinEmails(
+      getValiselvitysSubmittedNotificationEmails,
+      1,
+      acceptedHakemus.hakemusID
+    )
+    const valiselvitysSubmittedEmail = valiselvitysSubmittedEmails[0]
+    expect(valiselvitysSubmittedEmail['to-address']).toEqual(
+      expect.arrayContaining([
+        'erkki.esimerkki@example.com',
+        'hakija-1424884@oph.fi',
+        'VSyhteyshenkilo@example.com',
+      ])
+    )
+
     const emails = await waitUntilMinEmails(
       getSelvitysEmailsWithValiselvitysSubject,
       1,
@@ -65,8 +79,8 @@ selvitysTest.describe('Väliselvitys', () => {
     async ({ page, acceptedHakemus: { hakemusID }, väliselvitysSubmitted }) => {
       expectToBeDefined(väliselvitysSubmitted)
       const email = lastOrFail(await getValiselvitysSubmittedNotificationEmails(hakemusID))
-      expect(email['to-address']).toHaveLength(1)
-      expect(email['to-address']).toEqual(['erkki.esimerkki@example.com'])
+      expect(email['to-address']).toHaveLength(2)
+      expect(email['to-address']).toEqual(['erkki.esimerkki@example.com', 'hakija-1424884@oph.fi'])
       expect(email['from-address']).toEqual('no-reply@valtionavustukset.oph.fi')
       expect(email.subject).toEqual('Väliselvityksenne on vastaanotettu')
       await expectIsFinnishOphEmail(email)
