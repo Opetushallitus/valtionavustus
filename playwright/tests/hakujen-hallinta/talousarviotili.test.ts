@@ -1,3 +1,6 @@
+import path from 'node:path'
+import fs from "node:fs/promises"
+
 import { expect, Locator, Page } from '@playwright/test'
 import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
 import { KoodienhallintaPage } from '../../pages/virkailija/koodienHallintaPage'
@@ -64,14 +67,21 @@ const test = defaultValues.extend<{
     tatili2: CreateTaTili
   }
 }>({
-  tilit: async ({ page, avustushakuName }, use, testInfo) => {
+  tilit: async ({ page, hakuProps, avustushakuName }, use, testInfo) => {
     testInfo.setTimeout(testInfo.timeout + 30_000)
     const tilit = await createTaTilit(page)
     const hakujenHallinta = new HakujenHallintaPage(page)
-    await hakujenHallinta.copyEsimerkkihaku()
+
+    const esimerkkiHakuWithContactDetails = await fs.readFile(
+      path.join(__dirname, '../../fixtures/avustushaku-with-contact-details.json'),
+      'utf8'
+    )
+
+    await hakujenHallinta.createHakuWithLomakeJson(esimerkkiHakuWithContactDetails, hakuProps)
+    await hakujenHallinta.commonHakujenHallinta.switchToHaunTiedotTab()
+
     const haunTiedotPage = HaunTiedotPage(page)
     await haunTiedotPage.locators.hakuName.fi.fill(avustushakuName)
-    await expect(haunTiedotPage.locators.puutteita).toBeVisible()
     await use(tilit)
   },
 })
