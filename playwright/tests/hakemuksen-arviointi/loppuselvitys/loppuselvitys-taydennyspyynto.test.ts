@@ -246,7 +246,10 @@ Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avu
     expect(email.subject).toBe(
       `Organisaationne loppuselvitystä on täydennetty: ${registerNumber} Rahassa kylpijät Ky Ay Oy`
     )
-    expect(email['to-address']).toStrictEqual(['erkki.esimerkki@example.com'])
+    expect(email['to-address']).toStrictEqual([
+      'erkki.esimerkki@example.com',
+      'hakija-1424884@oph.fi',
+    ])
 
     expect(email.formatted).toContain(
       `Hyvä vastaanottaja,\n\n` +
