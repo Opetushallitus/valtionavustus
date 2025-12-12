@@ -32,15 +32,13 @@ function createInitialTaydennyspyyntoEmail(
   userInfo: UserInfo,
   hakijaServerUrl: string
 ): Email {
-  const contactEmail = hakemus.normalizedData?.['contact-email']
-  const trustedContactEmail = hakemus.normalizedData?.['trusted-contact-email']
   const arkistointiTunnus = hakemus['register-number']
   const hakemusName = hakemus['project-name']
   const userKey = hakemus['user-key']
   const selvitysType = 'loppuselvitys'
   const publicUrl = `avustushaku/${avustushakuId}/${selvitysType}?hakemus=${userKey}`
   const fullUrl = `${hakijaServerUrl}${publicUrl}`
-
+  const initialEmails = initialRecipientEmails(hakemus, hakemus.normalizedData)
   return {
     lang: hakemus.language,
     subject: translations[hakemus.language].loppuselvitys.asiatarkastus.subject(
@@ -48,7 +46,7 @@ function createInitialTaydennyspyyntoEmail(
       hakemusName
     ),
     content: translations[hakemus.language].loppuselvitys.asiatarkastus.content,
-    receivers: [contactEmail, trustedContactEmail].filter(isString),
+    receivers: initialEmails,
     header: translations[hakemus.language].loppuselvitys.asiatarkastus.header(
       arkistointiTunnus!,
       hakemusName
@@ -180,7 +178,7 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
 
   const hakemusLoppuselvitysNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
   const disableAcceptButton = hakemusLoppuselvitysNotSubmitted || disabled
-
+  console.log(selvitysEmail?.to)
   return (
     <>
       <LoppuselvitysTarkastus
@@ -188,7 +186,7 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
         taydennyspyyntoType="taydennyspyynto-taloustarkastus"
         disabled={disabled || showEmail}
         heading="Loppuselvityksen taloustarkastus"
-        taydennyspyyntoHeading="Taloustarkastuksen täydennyspyyntö"
+        taydennyspyyntoHeading="Taloustarkastuksen täydennyspyyntö123"
         completedBy={
           isTaloustarkastettu &&
           hakemus['loppuselvitys-taloustarkastanut-name'] &&

@@ -201,6 +201,10 @@
    (s/optional-key :trusted-contact-name) s/Str
    (s/optional-key :trusted-contact-email) s/Str
    (s/optional-key :trusted-contact-phone) s/Str
+   (s/optional-key :valiselvitys-contact-email) s/Str
+   (s/optional-key :valiselvitys-organization-email) s/Str
+   (s/optional-key :loppuselvitys-contact-email) s/Str
+   (s/optional-key :loppuselvitys-organization-email) s/Str
    (s/optional-key :talousarvio) [Meno]})
 
 (s/defschema MuutoshakemusStatus

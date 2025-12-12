@@ -148,6 +148,10 @@ export interface NormalizedHakemusData {
   'trusted-contact-name'?: string
   'trusted-contact-email'?: string
   'trusted-contact-phone'?: string
+  'valiselvitys-contact-email'?: string
+  'valiselvitys-organization-email'?: string
+  'loppuselvitys-contact-email'?: string
+  'loppuselvitys-organization-email'?: string
   'hakemus-id': number
   id: number
   'organization-name': string

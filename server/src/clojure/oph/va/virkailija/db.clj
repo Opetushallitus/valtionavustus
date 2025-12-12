@@ -131,7 +131,11 @@
                             n.register_number,
                             n.trusted_contact_name,
                             n.trusted_contact_email,
-                            n.trusted_contact_phone
+                            n.trusted_contact_phone,
+                            n.valiselvitys_contact_email,
+                            n.valiselvitys_organization_email,
+                            n.loppuselvitys_contact_email,
+                            n.loppuselvitys_organization_email
                           FROM virkailija.normalized_hakemus n
                           JOIN hakija.hakemukset h ON h.id = n.hakemus_id
                           JOIN hakija.avustushaut a ON a.id = h.avustushaku

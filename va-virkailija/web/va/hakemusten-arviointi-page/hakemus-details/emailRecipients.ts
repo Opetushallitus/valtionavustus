@@ -19,6 +19,11 @@ export function initialRecipientEmails(
   const isPrimaryEmailField = (answer: Answer) =>
     !primaryContactEmail ? isPrimaryEmail(answer) : false
 
+  const valiselvitysContactEmail = normalizedData?.['valiselvitys-contact-email']
+  const valiselvitysOrganizationEmail = normalizedData?.['valiselvitys-organization-email']
+  const loppuselvitysContactEmail = normalizedData?.['loppuselvitys-contact-email']
+  const loppuselvitysOrganizationEmail = normalizedData?.['loppuselvitys-organization-email']
+
   const emailsFromAnswers = answers
     .filter(
       (a) => isPrimaryEmailField(a) || isOrganizationEmail(a) || isVarayhteyshenkiloEmailField(a)
@@ -31,6 +36,10 @@ export function initialRecipientEmails(
   const emails = [...emailsFromAnswers, ...valiselvitysEmails, ...loppuselvitysEmails]
     .concat(primaryContactEmail ? [primaryContactEmail] : [])
     .concat(normalizedVarayhteyshenkiloEmail ? [normalizedVarayhteyshenkiloEmail] : [])
+    .concat(valiselvitysContactEmail ? [valiselvitysContactEmail] : [])
+    .concat(valiselvitysOrganizationEmail ? [valiselvitysOrganizationEmail] : [])
+    .concat(loppuselvitysContactEmail ? [loppuselvitysContactEmail] : [])
+    .concat(loppuselvitysOrganizationEmail ? [loppuselvitysOrganizationEmail] : [])
 
   return [...new Set(emails)]
 }
