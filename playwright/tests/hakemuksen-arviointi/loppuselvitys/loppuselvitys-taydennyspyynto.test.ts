@@ -175,13 +175,17 @@ test('can send taydennyspyynto for loppuselvitys', async ({
     await expect(formHeading).toBeHidden()
     await loppuselvitysPage.locators.asiatarkastus.taydennyspyynto.click()
     await expect(formHeading).toBeVisible()
-    const email1 = 'erkki.esimerkki@example.com'
+    const email1 = 'hakija-1424884@oph.fi'
     await expect(
       page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-receiver-0')
     ).toHaveValue(email1)
+    const email2 = 'erkki.esimerkki@example.com'
+    await expect(
+      page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-receiver-1')
+    ).toHaveValue(email2)
     await page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-add-receiver').click()
-    const email2 = 'erkki.esimerkki2@example.com'
-    await page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-receiver-1').fill(email2)
+    const email3 = 'erkki.esimerkki2@example.com'
+    await page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-receiver-2').fill(email3)
     const subject = 'Täydennyspyyntö avustushaulle'
     await page
       .getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-email-subject')
@@ -192,7 +196,7 @@ test('can send taydennyspyynto for loppuselvitys', async ({
     await page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-submit').click()
     await expect(formHeading).toBeHidden()
     await page.getByTestId('open-email-0').click()
-    await expect(page.getByText(`Vastaanottajat${email1}, ${email2}`)).toBeVisible()
+    await expect(page.getByText(`Vastaanottajat${email1}, ${email2}, ${email3}`)).toBeVisible()
     await expect(page.getByText(`Aihe${subject}`)).toBeVisible()
     const emailsAfterSending = await getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails(hakemusID)
     expect(emailsAfterSending).toHaveLength(1)
@@ -286,10 +290,14 @@ Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avu
     await expect(formHeading).toBeHidden()
     await loppuselvitysPage.locators.taloustarkastus.taydennyspyynto.click()
     await expect(formHeading).toBeVisible()
-    const email1 = 'erkki.esimerkki@example.com'
+    const email1 = 'hakija-1424884@oph.fi'
     await expect(
       page.getByTestId('loppuselvitys-taydennyspyynto-taloustarkastus-receiver-0')
     ).toHaveValue(email1)
+    const email2 = 'erkki.esimerkki@example.com'
+    await expect(
+      page.getByTestId('loppuselvitys-taydennyspyynto-taloustarkastus-receiver-1')
+    ).toHaveValue(email2)
     const subject = 'Täydennyspyyntö koskien avustushaun budjettia'
     await page
       .getByTestId('loppuselvitys-taydennyspyynto-taloustarkastus-email-subject')
