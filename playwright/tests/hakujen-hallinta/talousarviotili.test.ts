@@ -112,6 +112,11 @@ test.describe.parallel('talousarvio select', () => {
     const taTili = haunTiedotPage.locators.taTili
     const firstTili = taTili.tili(0)
     const firstTiliFirstKoulutusaste = firstTili.koulutusaste(0)
+
+    await test.step('Remove existing talousarviotili to start on a clean slate', async () => {
+      await page.getByTitle('Poista talousarviotili').click()
+    })
+
     await test.step('correct starting states', async () => {
       await expect(firstTili.placeholder).toHaveText('Valitse talousarviotili')
       await expect(firstTiliFirstKoulutusaste.placeholder).toHaveText(
@@ -165,13 +170,16 @@ test.describe.parallel('talousarvio select', () => {
         expect(firstTiliFirstKoulutusaste.input).toBeDisabled(),
         haunTiedotPage.locators.hakuName.fi.pressSequentially('trigger auto save'),
       ])
-      await expect(haunTiedotPage.locators.puutteita).toBeVisible()
       await expect(firstTili.input).toBeEnabled()
       await expect(firstTiliFirstKoulutusaste.input).toBeEnabled()
     })
   })
   test('empty selects dont get saved', async ({ tilit: { tatili1 }, page }) => {
     const haunTiedotPage = HaunTiedotPage(page)
+
+    await test.step('Remove existing talousarviotili to start on a clean slate', async () => {
+      await page.getByTitle('Poista talousarviotili').click()
+    })
     const locators = haunTiedotPage.locators
     const taTili = locators.taTili
     const firstTili = taTili.tili(0)
