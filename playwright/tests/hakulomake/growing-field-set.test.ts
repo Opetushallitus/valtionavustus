@@ -3,6 +3,7 @@ import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hak
 import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
 import { expectToBeDefined } from '../../utils/util'
 import { Page, expect } from '@playwright/test'
+import { TEST_Y_TUNNUS } from '../../utils/constants'
 
 const form = {
   content: [
@@ -11,6 +12,67 @@ const form = {
       id: 'applicant-fieldset',
       fieldType: 'fieldset',
       children: [
+        {
+          fieldClass: 'wrapperElement',
+          id: 'organization-fieldset',
+          fieldType: 'fieldset',
+          children: [
+            {
+              label: {
+                fi: 'Hakijaorganisaatio',
+                sv: 'Sökandeorganisation',
+              },
+              fieldClass: 'formField',
+              helpText: {
+                fi: 'Ilmoita hakijaorganisaation nimi ja virallinen sähköpostiosoite.',
+                sv: 'Meddela sökandeorganisationens namn och officiella e-postadress.',
+              },
+              id: 'organization',
+              params: {
+                size: 'large',
+                maxlength: 80,
+              },
+              required: true,
+              fieldType: 'textField',
+            },
+            {
+              label: {
+                fi: 'Organisaation sähköposti',
+                sv: 'Organisationens e-post',
+              },
+              fieldClass: 'formField',
+              helpText: {
+                fi: '',
+                sv: '',
+              },
+              id: 'organization-email',
+              params: {
+                size: 'small',
+                maxlength: 80,
+              },
+              required: true,
+              fieldType: 'emailField',
+            },
+          ],
+        },
+        {
+          label: {
+            fi: 'Y-tunnus',
+            sv: 'Företags- och organisationsnummer',
+          },
+          fieldClass: 'formField',
+          helpText: {
+            fi: '',
+            sv: '',
+          },
+          id: 'business-id',
+          params: {
+            size: 'small',
+            maxlength: 9,
+          },
+          required: true,
+          fieldType: 'finnishBusinessIdField',
+        },
         {
           label: {
             fi: 'Yhteyshenkilö',
@@ -207,6 +269,8 @@ const test = defaultValues.extend<Fixtures>({
         answers.contactPersonEmail
       )
       await hakijaAvustusHakuPage.page.goto(hakemusUrl)
+      await hakijaAvustusHakuPage.fillApplication(answers, TEST_Y_TUNNUS)
+
       const { first, second, third } = growingSets
       await test.step('growing set shows label', async () => {
         const fieldSetLabel = hakijaAvustusHakuPage.page.locator('#project-description legend')

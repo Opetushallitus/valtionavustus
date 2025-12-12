@@ -176,9 +176,6 @@
                                          loppuselvitys-org]))]
     (distinct all-emails)))
 
-
-
-
 (defn- on-loppuselvitys-change-request-response [avustushaku-id selvitys-user-key base-version answers]
   (let [selvitys-type "loppuselvitys"
         selvitys-field-keyword (selvitys-form-keyword selvitys-type)
@@ -277,12 +274,12 @@
             (va-db/update-loppuselvitys-status parent_id "submitted")
             (va-db/update-valiselvitys-status parent_id "submitted"))
           (try (with-tx (fn [tx]
-                     (if (= selvitys-type "valiselvitys")
-                       (va-db/update-normalized-hakemus-valiselvitys-emails!
-                        tx parent_id answers)
-                       (va-db/update-normalized-hakemus-loppuselvitys-emails!
-                        tx parent_id answers)))) (catch Exception e
-                                             (log/warn {:error (ex-message e)})))
+                          (if (= selvitys-type "valiselvitys")
+                            (va-db/update-normalized-hakemus-valiselvitys-emails!
+                             tx parent_id answers)
+                            (va-db/update-normalized-hakemus-loppuselvitys-emails!
+                             tx parent_id answers)))) (catch Exception e
+                                                        (log/warn {:error (ex-message e)})))
           (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id hakemus-name register-number (get-hakemus-contact-emails parent_id) is-jotpa)
           (handlers/hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (handlers/hakemus-conflict-response hakemus))
