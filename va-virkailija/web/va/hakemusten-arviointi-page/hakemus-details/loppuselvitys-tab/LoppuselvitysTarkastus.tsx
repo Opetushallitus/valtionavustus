@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
-import { isString } from 'lodash'
 
 import { Hakemus, SelvitysEmail } from 'soresu-form/web/va/types'
 import HttpUtil from 'soresu-form/web/HttpUtil'
