@@ -7,6 +7,67 @@ import { Page, expect } from '@playwright/test'
 const form = {
   content: [
     {
+      fieldClass: 'wrapperElement',
+      id: 'applicant-fieldset',
+      fieldType: 'fieldset',
+      children: [
+        {
+          label: {
+            fi: 'Yhteyshenkilö',
+            sv: 'Kontaktperson',
+          },
+          fieldClass: 'formField',
+          helpText: {
+            fi: 'Yhteyshenkilöllä tarkoitetaan hankkeen vastuuhenkilöä.',
+            sv: 'Med kontaktperson avses den projektansvariga i sökandeorganisationen.',
+          },
+          id: 'applicant-name',
+          params: {
+            size: 'large',
+            maxlength: 80,
+          },
+          required: true,
+          fieldType: 'textField',
+        },
+        {
+          label: {
+            fi: 'Sähköposti',
+            sv: 'E-post',
+          },
+          fieldClass: 'formField',
+          helpText: {
+            fi: '',
+            sv: '',
+          },
+          id: 'primary-email',
+          params: {
+            size: 'small',
+            maxlength: 80,
+          },
+          required: true,
+          fieldType: 'vaEmailNotification',
+        },
+        {
+          label: {
+            fi: 'Puhelinumero',
+            sv: 'Telefon',
+          },
+          fieldClass: 'formField',
+          helpText: {
+            fi: '',
+            sv: '',
+          },
+          id: 'textField-0',
+          params: {
+            size: 'small',
+            maxlength: 15,
+          },
+          required: true,
+          fieldType: 'textField',
+        },
+      ],
+    },
+    {
       fieldClass: 'infoElement',
       id: 'name',
       fieldType: 'h1',
