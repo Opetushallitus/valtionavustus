@@ -75,24 +75,21 @@ const HakuEditor = () => {
     dispatch(updateField({ avustushaku, field: target, newValue: value }))
   }
 
+  const contactFieldIds = ['applicant-name', 'primary-email', 'textField-0']
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     if (e.target.id.startsWith('set-status-') && e.target.value === 'published') {
       if (
-        !(
-          avustushaku.muutoshakukelpoisuus?.['erroneous-fields'].length === 1 &&
-          avustushaku.muutoshakukelpoisuus['erroneous-fields'][0].id === 'financing-plan'
+        avustushaku.muutoshakukelpoisuus?.['erroneous-fields'].some((field) =>
+          contactFieldIds.includes(field.id)
         )
       ) {
-        // If validation result already exists, trigger animation
         if (validationResult) {
           setHighlightValidationErrorByScaling(true)
           setTimeout(() => setHighlightValidationErrorByScaling(false), 400)
         }
         setValidationResult(avustushaku.muutoshakukelpoisuus)
-      }
-      if (!avustushaku.muutoshakukelpoisuus?.['is-ok']) {
         return
       }
     }
