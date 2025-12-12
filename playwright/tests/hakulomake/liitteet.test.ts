@@ -1,3 +1,5 @@
+import path from 'node:path'
+import fs from 'node:fs/promises'
 import { defaultValues } from '../../fixtures/defaultValues'
 import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
 import { expect } from '@playwright/test'
@@ -10,8 +12,17 @@ const test = defaultValues.extend<{
   hakijaAvustusHakuPage: async ({ page, answers, hakuProps, userCache }, use) => {
     expect(userCache).toBeDefined()
     const hakujenHallintaPage = new HakujenHallintaPage(page)
-    const avustushakuID = await hakujenHallintaPage.copyEsimerkkihaku()
-    await hakujenHallintaPage.fillAvustushaku(hakuProps)
+
+    const esimerkkiHakuWithContactDetails = await fs.readFile(
+      path.join(__dirname, '../../fixtures/avustushaku-with-contact-details.json'),
+      'utf8'
+    )
+
+    const { avustushakuID } = await hakujenHallintaPage.createHakuWithLomakeJson(
+      esimerkkiHakuWithContactDetails,
+      hakuProps
+    )
+
     const haunTiedotPage = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
     await haunTiedotPage.publishAvustushaku()
     const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
@@ -22,7 +33,8 @@ const test = defaultValues.extend<{
       answers.contactPersonEmail
     )
     await hakijaAvustusHakuPage.page.goto(hakemusUrl)
-    await hakijaAvustusHakuPage.fillInBusinessId(TEST_Y_TUNNUS)
+    await hakijaAvustusHakuPage.fillApplication(answers, TEST_Y_TUNNUS)
+
     await hakijaAvustusHakuPage.page.fill('#applicant-name', answers.contactPersonName)
     await hakijaAvustusHakuPage.page.fill('#signature', answers.contactPersonName)
     await hakijaAvustusHakuPage.page.fill('#signature-email', answers.contactPersonEmail)
