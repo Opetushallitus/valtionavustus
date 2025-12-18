@@ -288,10 +288,6 @@
       "fi": "Aloita syöttämällä y-tunnus",
       "sv": "Börja med att fylla i Företags- och organisationsnummer"
     },
-    "organisation-info": {
-      "fi": "Tiedot haetaan organisaatiopalvelusta",
-      "sv": "Information ska hämtas from organisationsservice"
-    },
     "get": {
       "fi": "Hae",
       "sv": "Sök"
@@ -325,7 +321,7 @@
       "sv": "Uppgifterna har hämtats från Företags- och organisationsdatasystemet och kan inte redigeras här. Uppgifterna måste ändras i källregistret, varifrån de uppdateras till Utbildningsstyrelsens statsunderstödssystem."
     },
     "organisation-selection-info-2": {
-      "fi": "Mikäli hakijalla ei ole tietoja YTJ:ssä, on tiedot haettu OPH:n Organisaatiopalvelusta.",
+      "fi": "Mikäli hakijalla ei ole tietoja YTJ:ssä, on tiedot haettu Opintopolun Organisaatiopalvelusta.",
       "sv": "Om sökanden inte har uppgifter i Företags- och organisationsdatasystemet, har uppgifterna hämtats från Utbildningsstyrelsens Organisationstjänst."
     },
     "organisation-selection-info-3": {

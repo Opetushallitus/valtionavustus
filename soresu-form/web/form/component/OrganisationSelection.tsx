@@ -206,13 +206,7 @@ function BusinessIdSearch({
       <h1>
         <LocalizedString translations={translations} translationKey="give-businessid" lang={lang} />
       </h1>
-      <p>
-        <LocalizedString
-          translations={translations}
-          translationKey="organisation-info"
-          lang={lang}
-        />
-      </p>
+      <br />
 
       {incorrectBusinessId && (
         <p id="not-found-business-id">
