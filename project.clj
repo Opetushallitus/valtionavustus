@@ -75,7 +75,7 @@
 
                          [org.clojure/core.memoize "1.1.266"]]
 
-  :dependencies [[org.clojure/clojure "1.12.3"]
+  :dependencies [[org.clojure/clojure "1.12.4"]
                  [nrepl "1.5.1"]
                  [cider/cider-nrepl "0.58.0"]
                  [environ "1.2.0"]
