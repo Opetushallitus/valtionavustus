@@ -3,15 +3,42 @@ import _ from 'lodash'
 
 import JsUtil from '../../JsUtil'
 import FormUtil from '../FormUtil'
-import LocalizedString from './LocalizedString.tsx'
+import LocalizedString from './LocalizedString'
 import Translator from '../Translator'
+import FormController from 'soresu-form/web/form/FormController'
+import { Field, Language, LegacyTranslationDict } from 'soresu-form/web/va/types'
 
-function determineCssClass(isOpen) {
+interface ValidationError {
+  error: string
+}
+
+interface ValidationErrors {
+  [fieldId: string]: ValidationError[]
+}
+
+interface FieldWithErrorsAndParent {
+  field: Field
+  errors: ValidationError[]
+  closestParent: Field
+}
+
+interface FormErrorSummaryProps {
+  translations: LegacyTranslationDict
+  controller: FormController<any>
+  lang: Language
+  formContent: Field[]
+  validationErrors: ValidationErrors
+}
+
+function determineCssClass(isOpen: boolean): string {
   return isOpen ? 'open' : 'closed'
 }
 
-function resolveFieldsErrorsAndClosestParents(validationErrors, formContent) {
-  function gatherParentAndErrorsFromChildren(parentField) {
+function resolveFieldsErrorsAndClosestParents(
+  validationErrors: ValidationErrors,
+  formContent: Field[]
+): FieldWithErrorsAndParent[] {
+  function gatherParentAndErrorsFromChildren(parentField: Field) {
     _.forEach(parentField.children, (childField) => {
       const errorsOfField = validationErrors[childField.id]
       if (errorsOfField && errorsOfField.length > 0) {
@@ -24,10 +51,10 @@ function resolveFieldsErrorsAndClosestParents(validationErrors, formContent) {
     })
   }
 
-  const results = []
+  const results: FieldWithErrorsAndParent[] = []
   JsUtil.traverseMatching(
     formContent,
-    (x) => {
+    (x: any) => {
       return x && !_.isUndefined(x.id)
     },
     gatherParentAndErrorsFromChildren
@@ -35,17 +62,17 @@ function resolveFieldsErrorsAndClosestParents(validationErrors, formContent) {
   return _.sortBy(results, (x) => FormUtil.findIndexOfField(formContent, x.field.id))
 }
 
-export default function FormErrorSummary(props) {
+export default function FormErrorSummary(props: FormErrorSummaryProps) {
   const { translations, controller, lang, formContent, validationErrors } = props
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState<boolean>(false)
 
   const toggleOpen = () => {
     setOpen(!open)
   }
 
-  const jumpToField = (id) => {
-    return function (event) {
-      let field = document.getElementById(id)
+  const jumpToField = (id: string) => {
+    return function (event: React.MouseEvent<HTMLAnchorElement>) {
+      let field = document.getElementById(id) as HTMLElement | null
       if (!field) {
         const elementsByName = document.getElementsByName(id)
         if (elementsByName.length > 0) {
@@ -53,9 +80,9 @@ export default function FormErrorSummary(props) {
         }
       }
       if (field) {
-        const scrollToElement = field.previousElementSibling || field
+        const scrollToElement = (field.previousElementSibling as HTMLElement) || field
         FormUtil.scrollTo(scrollToElement, 700, function () {
-          field.focus()
+          field!.focus()
         })
       } else {
         console.error('Can not scroll to field, because not found ' + id)
@@ -64,8 +91,14 @@ export default function FormErrorSummary(props) {
     }
   }
 
-  const renderFieldErrors = (formContent, field, closestParent, errors, lang) => {
-    const fieldErrors = []
+  const renderFieldErrors = (
+    formContent: Field[],
+    field: Field,
+    closestParent: Field,
+    errors: ValidationError[],
+    lang: Language
+  ): React.ReactElement => {
+    const fieldErrors: React.ReactElement[] = []
     const labelHolder = field.label ? field : closestParent
     const htmlId = controller.constructHtmlId(formContent, field.id)
     for (let i = 0; i < errors.length; i++) {
@@ -87,7 +120,7 @@ export default function FormErrorSummary(props) {
       <div className="error" key={htmlId + '-validation-error'} data-test-id={htmlId}>
         <a role="button" onClick={jumpToField(htmlId)}>
           <LocalizedString
-            translations={labelHolder}
+            translations={labelHolder as any}
             translationKey="label"
             defaultValue={field.id}
             lang={lang}
@@ -123,8 +156,8 @@ export default function FormErrorSummary(props) {
         role="button"
         className={'error soresu-opener-handle validation-errors-summary ' + openStateClassName}
       >
-        {translator.translate('validation-errors', lang, null, {
-          kpl: invalidFieldsCount,
+        {translator.translate('validation-errors', lang, undefined, {
+          kpl: String(invalidFieldsCount),
         })}
       </a>
       <div className="popup validation-errors" hidden={!open}>

@@ -8,7 +8,7 @@ import EnvironmentInfo from 'soresu-form/web/va/EnvironmentInfo'
 
 import TextButton from 'soresu-form/web/form/component/TextButton'
 import FormSaveStatus from 'soresu-form/web/form/component/FormSaveStatus.jsx'
-import FormErrorSummary from 'soresu-form/web/form/component/FormErrorSummary.jsx'
+import FormErrorSummary from 'soresu-form/web/form/component/FormErrorSummary'
 import ServerError from 'soresu-form/web/form/component/ServerError.jsx'
 import FormController from 'soresu-form/web/form/FormController'
 import { BaseStateLoopState } from 'soresu-form/web/form/types/Form'
