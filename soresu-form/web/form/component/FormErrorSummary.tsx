@@ -29,10 +29,6 @@ interface FormErrorSummaryProps {
   validationErrors: ValidationErrors
 }
 
-function determineCssClass(isOpen: boolean): string {
-  return isOpen ? 'open' : 'closed'
-}
-
 function resolveFieldsErrorsAndClosestParents(
   validationErrors: ValidationErrors,
   formContent: Field[]
@@ -71,28 +67,24 @@ export default function FormErrorSummary(props: FormErrorSummaryProps) {
   const { translations, controller, lang, formContent, validationErrors } = props
   const [open, setOpen] = useState<boolean>(false)
 
-  const toggleOpen = () => {
-    setOpen(!open)
-  }
+  const jumpToField = (id: string) => (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault()
 
-  const jumpToField = (id: string) => {
-    return function (event: React.MouseEvent<HTMLAnchorElement>) {
-      let field = document.getElementById(id) as HTMLElement | null
-      if (!field) {
-        const elementsByName = document.getElementsByName(id)
-        if (elementsByName.length > 0) {
-          field = elementsByName[0]
-        }
+    let field = document.getElementById(id) as HTMLElement | null
+    if (!field) {
+      const elementsByName = document.getElementsByName(id)
+      if (elementsByName.length > 0) {
+        field = elementsByName[0]
       }
-      if (field) {
-        const scrollToElement = (field.previousElementSibling as HTMLElement) || field
-        FormUtil.scrollTo(scrollToElement, 700, function () {
-          field!.focus()
-        })
-      } else {
-        console.error('Can not scroll to field, because not found ' + id)
-      }
-      event.preventDefault()
+    }
+
+    if (field) {
+      const scrollToElement = (field.previousElementSibling as HTMLElement) || field
+      FormUtil.scrollTo(scrollToElement, 700, () => {
+        field!.focus()
+      })
+    } else {
+      console.error('Cannot scroll to field, element not found: ' + id)
     }
   }
 
@@ -152,14 +144,12 @@ export default function FormErrorSummary(props: FormErrorSummaryProps) {
     return renderFieldErrors(formContent, x.field, x.closestParent, x.errors, lang)
   })
 
-  const openStateClassName = determineCssClass(open)
-
   return (
     <div id="form-error-summary">
       <a
-        onClick={toggleOpen}
+        onClick={() => setOpen(!open)}
         role="button"
-        className={'error soresu-opener-handle validation-errors-summary ' + openStateClassName}
+        className={`error soresu-opener-handle validation-errors-summary ${open ? 'open' : 'closed'}`}
       >
         {translator.translate('validation-errors', lang, undefined, {
           kpl: String(invalidFieldsCount),
