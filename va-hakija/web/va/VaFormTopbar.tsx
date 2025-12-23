@@ -33,7 +33,7 @@ type ValidationErrors = Record<string, ValidationError[]>
 interface BudgetCalculatorState {
   form: {
     content: Field[]
-    validationErrors:  Immutable.ImmutableObject<ValidationErrors>
+    validationErrors: Immutable.ImmutableObject<ValidationErrors>
   }
   saveStatus: {
     values: SavedObject
