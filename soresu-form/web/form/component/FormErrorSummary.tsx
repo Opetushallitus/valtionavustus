@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import _ from 'lodash'
 
 import JsUtil from '../../JsUtil'
 import FormUtil from '../FormUtil'
@@ -39,27 +38,33 @@ function resolveFieldsErrorsAndClosestParents(
   formContent: Field[]
 ): FieldWithErrorsAndParent[] {
   function gatherParentAndErrorsFromChildren(parentField: Field) {
-    _.forEach(parentField.children, (childField) => {
-      const errorsOfField = validationErrors[childField.id]
-      if (errorsOfField && errorsOfField.length > 0) {
-        results.push({
-          field: childField,
-          errors: validationErrors[childField.id],
-          closestParent: parentField,
-        })
+    if (parentField.children) {
+      for (const childField of parentField.children) {
+        const errorsOfField = validationErrors[childField.id]
+        if (errorsOfField && errorsOfField.length > 0) {
+          results.push({
+            field: childField,
+            errors: validationErrors[childField.id],
+            closestParent: parentField,
+          })
+        }
       }
-    })
+    }
   }
 
   const results: FieldWithErrorsAndParent[] = []
   JsUtil.traverseMatching(
     formContent,
     (x: any) => {
-      return x && !_.isUndefined(x.id)
+      return x && x.id !== undefined
     },
     gatherParentAndErrorsFromChildren
   )
-  return _.sortBy(results, (x) => FormUtil.findIndexOfField(formContent, x.field.id))
+  return results.sort((a, b) => {
+    const indexA = FormUtil.findIndexOfField(formContent, a.field.id)
+    const indexB = FormUtil.findIndexOfField(formContent, b.field.id)
+    return indexA - indexB
+  })
 }
 
 export default function FormErrorSummary(props: FormErrorSummaryProps) {
@@ -143,7 +148,7 @@ export default function FormErrorSummary(props: FormErrorSummaryProps) {
     return null
   }
 
-  const fieldErrorMessageElements = _.map(fieldsWithErrorsAndClosestParents, (x) => {
+  const fieldErrorMessageElements = fieldsWithErrorsAndClosestParents.map((x) => {
     return renderFieldErrors(formContent, x.field, x.closestParent, x.errors, lang)
   })
 
