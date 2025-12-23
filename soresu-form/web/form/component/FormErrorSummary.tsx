@@ -34,17 +34,19 @@ function resolveFieldsErrorsAndClosestParents(
   formContent: Field[]
 ): FieldWithErrorsAndParent[] {
   function gatherParentAndErrorsFromChildren(parentField: Field) {
-    if (parentField.children) {
-      for (const childField of parentField.children) {
-        const errorsOfField = validationErrors[childField.id]
-        if (errorsOfField && errorsOfField.length > 0) {
-          results.push({
-            field: childField,
-            errors: validationErrors[childField.id],
-            closestParent: parentField,
-          })
-        }
+    if (!parentField.children) {
+      return
+    }
+    for (const childField of parentField.children) {
+      const errorsOfField = validationErrors[childField.id]
+      if (!errorsOfField || errorsOfField.length < 1) {
+        continue
       }
+      results.push({
+        field: childField,
+        errors: validationErrors[childField.id],
+        closestParent: parentField,
+      })
     }
   }
 
@@ -78,14 +80,49 @@ export default function FormErrorSummary(props: FormErrorSummaryProps) {
       }
     }
 
-    if (field) {
-      const scrollToElement = (field.previousElementSibling as HTMLElement) || field
-      FormUtil.scrollTo(scrollToElement, 700, () => {
-        field!.focus()
-      })
-    } else {
-      console.error('Cannot scroll to field, element not found: ' + id)
+    if (!field) {
+      return
     }
+    const scrollToElement = (field.previousElementSibling as HTMLElement) || field
+    FormUtil.scrollTo(scrollToElement, 700, () => {
+      field.focus()
+    })
+  }
+
+  const renderFieldError = (field: Field, closestParent: Field, errors: ValidationError[]) => {
+    const labelHolder = field.label ? field : closestParent
+    const htmlId = controller.constructHtmlId(formContent, field.id)
+
+    const fieldErrors: React.ReactElement[] = []
+    for (const error of errors) {
+      const key = htmlId + '-validation-error-' + error.error
+      if (fieldErrors.length > 0) {
+        fieldErrors.push(<span key={key + '-separator'}>, </span>)
+      }
+      fieldErrors.push(
+        <LocalizedString
+          key={key}
+          translations={translations}
+          translationKey={error.error}
+          lang={lang}
+        />
+      )
+    }
+
+    return (
+      <div className="error" key={htmlId + '-validation-error'} data-test-id={htmlId}>
+        <a role="button" onClick={jumpToField(htmlId)}>
+          <LocalizedString
+            translations={labelHolder as any}
+            translationKey="label"
+            defaultValue={field.id}
+            lang={lang}
+          />
+        </a>
+        <span>: </span>
+        {fieldErrors}
+      </div>
+    )
   }
 
   const translator = new Translator(translations)
@@ -111,43 +148,9 @@ export default function FormErrorSummary(props: FormErrorSummaryProps) {
         })}
       </a>
       <div className="popup validation-errors" hidden={!open}>
-        {fieldsWithErrorsAndClosestParents.map((x) => {
-          const { field, closestParent, errors } = x
-          const labelHolder = field.label ? field : closestParent
-          const htmlId = controller.constructHtmlId(formContent, field.id)
-
-          const fieldErrors: React.ReactElement[] = []
-          for (let i = 0; i < errors.length; i++) {
-            const error = errors[i]
-            const key = htmlId + '-validation-error-' + error.error
-            if (fieldErrors.length > 0) {
-              fieldErrors.push(<span key={key + '-separator'}>, </span>)
-            }
-            fieldErrors.push(
-              <LocalizedString
-                key={key}
-                translations={translations}
-                translationKey={error.error}
-                lang={lang}
-              />
-            )
-          }
-
-          return (
-            <div className="error" key={htmlId + '-validation-error'} data-test-id={htmlId}>
-              <a role="button" onClick={jumpToField(htmlId)}>
-                <LocalizedString
-                  translations={labelHolder as any}
-                  translationKey="label"
-                  defaultValue={field.id}
-                  lang={lang}
-                />
-              </a>
-              <span>: </span>
-              {fieldErrors}
-            </div>
-          )
-        })}
+        {fieldsWithErrorsAndClosestParents.map((x) =>
+          renderFieldError(x.field, x.closestParent, x.errors)
+        )}
       </div>
     </div>
   )
