@@ -65,7 +65,7 @@ function resolveFieldsErrorsAndClosestParents(
   })
 }
 
-export default function FormErrorSummary(props: FormErrorSummaryProps) {
+export function FormErrorSummary(props: FormErrorSummaryProps) {
   const { translations, controller, lang, formContent, validationErrors } = props
   const [open, setOpen] = useState<boolean>(false)
 

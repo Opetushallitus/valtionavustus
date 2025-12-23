@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
 import JsUtil from '../../../soresu-form/web/JsUtil'
-import FormErrorSummary from '../../../soresu-form/web/form/component/FormErrorSummary'
+import { FormErrorSummary } from '../../../soresu-form/web/form/component/FormErrorSummary'
 import TestUtil from './TestUtil'
 import { test, expect } from '@playwright/test'
 test.describe('Form full of errors', function () {
