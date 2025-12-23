@@ -88,47 +88,6 @@ export default function FormErrorSummary(props: FormErrorSummaryProps) {
     }
   }
 
-  const renderFieldErrors = (
-    formContent: Field[],
-    field: Field,
-    closestParent: Field,
-    errors: ValidationError[],
-    lang: Language
-  ): React.ReactElement => {
-    const fieldErrors: React.ReactElement[] = []
-    const labelHolder = field.label ? field : closestParent
-    const htmlId = controller.constructHtmlId(formContent, field.id)
-    for (let i = 0; i < errors.length; i++) {
-      const error = errors[i]
-      const key = htmlId + '-validation-error-' + error.error
-      if (fieldErrors.length > 0) {
-        fieldErrors.push(<span key={key + '-separator'}>, </span>)
-      }
-      fieldErrors.push(
-        <LocalizedString
-          key={key}
-          translations={translations}
-          translationKey={error.error}
-          lang={lang}
-        />
-      )
-    }
-    return (
-      <div className="error" key={htmlId + '-validation-error'} data-test-id={htmlId}>
-        <a role="button" onClick={jumpToField(htmlId)}>
-          <LocalizedString
-            translations={labelHolder as any}
-            translationKey="label"
-            defaultValue={field.id}
-            lang={lang}
-          />
-        </a>
-        <span>: </span>
-        {fieldErrors}
-      </div>
-    )
-  }
-
   const translator = new Translator(translations)
   const fieldsWithErrorsAndClosestParents = resolveFieldsErrorsAndClosestParents(
     validationErrors,
@@ -139,10 +98,6 @@ export default function FormErrorSummary(props: FormErrorSummaryProps) {
   if (invalidFieldsCount === 0) {
     return null
   }
-
-  const fieldErrorMessageElements = fieldsWithErrorsAndClosestParents.map((x) => {
-    return renderFieldErrors(formContent, x.field, x.closestParent, x.errors, lang)
-  })
 
   return (
     <div id="form-error-summary">
@@ -156,7 +111,43 @@ export default function FormErrorSummary(props: FormErrorSummaryProps) {
         })}
       </a>
       <div className="popup validation-errors" hidden={!open}>
-        {fieldErrorMessageElements}
+        {fieldsWithErrorsAndClosestParents.map((x) => {
+          const { field, closestParent, errors } = x
+          const labelHolder = field.label ? field : closestParent
+          const htmlId = controller.constructHtmlId(formContent, field.id)
+
+          const fieldErrors: React.ReactElement[] = []
+          for (let i = 0; i < errors.length; i++) {
+            const error = errors[i]
+            const key = htmlId + '-validation-error-' + error.error
+            if (fieldErrors.length > 0) {
+              fieldErrors.push(<span key={key + '-separator'}>, </span>)
+            }
+            fieldErrors.push(
+              <LocalizedString
+                key={key}
+                translations={translations}
+                translationKey={error.error}
+                lang={lang}
+              />
+            )
+          }
+
+          return (
+            <div className="error" key={htmlId + '-validation-error'} data-test-id={htmlId}>
+              <a role="button" onClick={jumpToField(htmlId)}>
+                <LocalizedString
+                  translations={labelHolder as any}
+                  translationKey="label"
+                  defaultValue={field.id}
+                  lang={lang}
+                />
+              </a>
+              <span>: </span>
+              {fieldErrors}
+            </div>
+          )
+        })}
       </div>
     </div>
   )
