@@ -1,8 +1,13 @@
 import React from 'react'
 import _ from 'lodash'
+import Immutable from 'seamless-immutable'
 
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString'
 import Translator from 'soresu-form/web/form/Translator'
+import JsUtil from 'soresu-form/web/JsUtil'
+import InputValueStorage from 'soresu-form/web/form/InputValueStorage'
+import SyntaxValidator, { ValidationError, Validator } from 'soresu-form/web/form/SyntaxValidator'
+import VaBudgetCalculator from 'soresu-form/web/va/VaBudgetCalculator'
 
 import EnvironmentInfo from 'soresu-form/web/va/EnvironmentInfo'
 
@@ -11,7 +16,8 @@ import FormSaveStatus from 'soresu-form/web/form/component/FormSaveStatus.jsx'
 import { FormErrorSummary } from 'soresu-form/web/form/component/FormErrorSummary'
 import ServerError from 'soresu-form/web/form/component/ServerError.jsx'
 import FormController from 'soresu-form/web/form/FormController'
-import { BaseStateLoopState } from 'soresu-form/web/form/types/Form'
+import { BaseStateLoopState, SavedObject } from 'soresu-form/web/form/types/Form'
+import { Field, Avustushaku } from 'soresu-form/web/va/types'
 import { Logo } from './Logo'
 import { isJotpaAvustushaku } from './jotpa'
 
@@ -22,6 +28,63 @@ interface Props<T extends BaseStateLoopState<T>> {
   isExpired?: boolean
 }
 
+type ValidationErrors = Record<string, ValidationError[]>
+
+interface BudgetCalculatorState {
+  form: {
+    content: Field[]
+    validationErrors:  Immutable.ImmutableObject<ValidationErrors>
+  }
+  saveStatus: {
+    values: SavedObject
+  }
+  avustushaku: Avustushaku
+}
+
+function calculateAllValidationErrors(
+  formContent: Field[],
+  values: SavedObject,
+  customFieldSyntaxValidator: typeof Validator,
+  avustushaku: Avustushaku
+) {
+  // Calculate syntax validation errors for all form fields
+  const allFields = JsUtil.flatFilter(formContent, (n: Field) => {
+    return n && n.id !== undefined && n.fieldClass === 'formField'
+  }) as Field[]
+
+  const validationErrors: ValidationErrors = {}
+  for (const field of allFields) {
+    const value = InputValueStorage.readValue(formContent, values, field.id)
+    const errors = SyntaxValidator.validateSyntax(field, value, customFieldSyntaxValidator)
+    if (errors && errors.length > 0) {
+      validationErrors[field.id] = errors
+    }
+  }
+
+  // Calculate budget validation errors
+  // VaBudgetCalculator mutates the form content, so we need a mutable deep copy
+  const mutableFormContent = JSON.parse(JSON.stringify(formContent))
+  const budgetCalculator = new VaBudgetCalculator()
+  const tempState: BudgetCalculatorState = {
+    form: {
+      content: mutableFormContent,
+      validationErrors: Immutable(validationErrors),
+    },
+    saveStatus: {
+      values: values,
+    },
+    avustushaku: avustushaku,
+  }
+
+  budgetCalculator.deriveValuesForAllBudgetElementsByMutation(tempState, {
+    reportValidationErrors: true,
+  })
+
+  // Return the merged validation errors (syntax + budget)
+  // Convert from immutable back to plain object for compatibility
+  return tempState.form.validationErrors.asMutable({ deep: true })
+}
+
 const VaFormTopbar = <T extends BaseStateLoopState<T>>(props: Props<T>) => {
   const { controller, state, hakemusType, isExpired } = props
   const saveStatus = state.saveStatus
@@ -29,6 +92,12 @@ const VaFormTopbar = <T extends BaseStateLoopState<T>>(props: Props<T>) => {
   const avustushaku = state.avustushaku
   const form = state.form
   const validationErrors = state.form.validationErrors
+  const allValidationErrors = calculateAllValidationErrors(
+    configuration.form.content,
+    saveStatus.values,
+    state.extensionApi.customFieldSyntaxValidator,
+    avustushaku
+  )
   const lang = configuration.lang
   const translations = configuration.translations
   const formTranslator = new Translator(translations.form)
@@ -204,6 +273,15 @@ const VaFormTopbar = <T extends BaseStateLoopState<T>>(props: Props<T>) => {
                 formContent={form.content}
                 controller={controller}
                 validationErrors={validationErrors}
+                translations={translations.errors}
+                lang={lang}
+              />
+            )}
+            {preview && (
+              <FormErrorSummary
+                formContent={configuration.form.content}
+                controller={controller}
+                validationErrors={allValidationErrors}
                 translations={translations.errors}
                 lang={lang}
               />
