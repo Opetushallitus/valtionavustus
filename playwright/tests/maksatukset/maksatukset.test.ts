@@ -268,7 +268,6 @@ twoAcceptedHakemusTest(
       await seuranta.shouldPay.comment.fill('Pyörrän päätökseni')
     })
     await test.step('only second hakemus maksatukset are created as first was marked should not pay', async () => {
-
       const projectName = secondAnswers.projectName
       if (!projectName) {
         throw new Error('projectName must be set')
