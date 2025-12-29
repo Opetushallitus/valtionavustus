@@ -1,7 +1,30 @@
 {
-  "extends": "../common-tsconfig.json",
+  "compilerOptions": {
+    "module": "nodenext",
+    "target": "esnext",
+    "jsx": "react",
+    "strict": true,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "noEmit": true,
+    "paths": {
+      "soresu-form/*": ["../soresu-form/*"]
+    }
+  },
   "include": [
-    "./**/*"
+    "./**/*",
+    "../va-hakija/**/*.ts",
+    "../va-virkailija/**/*.ts",
+    "../soresu-form/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "../soresu-form/target",
+    "../va-hakija/target",
+    "../va-virkailija/target",
+    "../soresu-form/resources",
+    "../va-hakija/resources",
+    "../va-virkailija/resources"
+  ]
 }

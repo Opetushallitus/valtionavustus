@@ -53,20 +53,24 @@ tmux send-keys "$up_cmd db" C-m
 
 tmux splitw -v
 tmux select-pane -t 1
+tmux send-keys "$repo/scripts/watch_playwright_types.sh" C-m
+
+tmux splitw -v
+tmux select-pane -t 2
 tmux send-keys "$repo/scripts/run_frontend.sh" C-m
 
-tmux select-pane -t 2
+tmux select-pane -t 3
 tmux send-keys "NODE_VERSION=${NODE_VERSION} REVISION=${REVISION}  $up_cmd va" C-m
 
-tmux select-pane -t 3
+tmux select-pane -t 4
 tmux send-keys "$up_cmd fakesmtp" C-m
 
 tmux splitw
-tmux select-pane -t 4
+tmux select-pane -t 5
 tmux send-keys "$up_cmd maksatuspalvelu" C-m
 
 tmux splitw
-tmux select-pane -t 5
+tmux select-pane -t 6
 tmux send-keys "$up_cmd pagerduty" C-m
 
 rename_panes_to_match_the_script_they_run
