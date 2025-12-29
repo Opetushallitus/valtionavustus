@@ -30,9 +30,13 @@ test('Vahintaan yksi projekti pitaa valita', async ({
     await haunTiedotPage.selectProject(firstProjectToSelect)
     await haunTiedotPage.common.waitForSave()
   })
+  const projectName = answers.projectName
+  if (!projectName) {
+    throw new Error('projectName must be set in order to select hakemus')
+  }
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   await hakemustenArviointiPage.navigate(closedAvustushaku.id)
-  const { projektikoodi } = await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+  const { projektikoodi } = await hakemustenArviointiPage.selectHakemusFromList(projectName)
   await test.step('in arviointi project code is not preselected', async () => {
     await hakemustenArviointiPage.waitForSave()
     await expect(projektikoodi.placeholder).toHaveText(

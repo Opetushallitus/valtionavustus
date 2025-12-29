@@ -63,9 +63,17 @@ export const budjettimuutoshakemusTest = defaultValues.extend<Budjettimuutoshake
     await hakemustenArviointiPage.navigate(avustushakuID)
 
     const acceptWithBudget = acceptedBudget ? acceptedBudget : budget
+
+
+    const projectName = answers.projectName
+
+    if (!projectName) {
+      throw new Error("projectName must be set in order to accept avustushaku")
+    }
+
     const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
       avustushakuID,
-      projectName: answers.projectName,
+      projectName: projectName,
       budget: acceptWithBudget,
       projektikoodi,
     })

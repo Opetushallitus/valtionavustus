@@ -29,7 +29,7 @@ interface FormErrorSummaryProps {
   validationErrors: ValidationErrors
 }
 
-function resolveFieldsErrorsAndClosestParents(
+export function resolveFieldsErrorsAndClosestParents(
   validationErrors: ValidationErrors,
   formContent: Field[]
 ): FieldWithErrorsAndParent[] {

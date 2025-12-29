@@ -7,9 +7,13 @@ test('virkailija can add comments', async ({
   closedAvustushaku: { id: avustushakuID },
   answers,
 }) => {
+  const projectName = answers.projectName
+  if (!projectName) {
+    throw new Error('projectName must be set in order to select hakemus')
+  }
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   await hakemustenArviointiPage.navigate(avustushakuID)
-  await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+  await hakemustenArviointiPage.selectHakemusFromList(projectName)
   const arviointiTab = hakemustenArviointiPage.arviointiTabLocators()
   const comments = arviointiTab.comments
   expect(await comments.comment.allTextContents()).toHaveLength(0)

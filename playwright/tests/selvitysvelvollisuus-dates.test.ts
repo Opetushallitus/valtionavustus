@@ -28,8 +28,13 @@ test('Make sure that selvityksen deadline date is formatted in finnish way', asy
   expectToBeDefined(userCache)
   expectToBeDefined(submittedHakemus)
 
+  const projectName = answers.projectName
+  if (!projectName) {
+    throw new Error('projectName must be set in order to navigate to hakemus')
+  }
+
   const arviointiPage = new HakemustenArviointiPage(page)
-  await arviointiPage.navigateToHakemus(avustushakuID, answers.projectName)
+  await arviointiPage.navigateToHakemus(avustushakuID, projectName)
   await arviointiPage.page.getByRole('link', { name: 'Loppuselvitys' }).click()
   await expect(
     arviointiPage.page.getByText(

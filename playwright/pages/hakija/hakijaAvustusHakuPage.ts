@@ -182,7 +182,9 @@ export function HakijaAvustusHakuPage(page: Page) {
     await page.fill('#textField-2', '2')
     await page.fill('#textField-1', '20')
     await page.fill('#project-nutshell', 'Projekti pähkinänkuoressa')
-    await tryToFillProjectName(answers.projectName)
+    if (answers.projectName) {
+      await tryToFillProjectName(answers.projectName)
+    }
 
     await page.click(`[for='language.radio.${lang === 'sv' ? 1 : 0}']`)
     await page.click("[for='checkboxButton-0.checkbox.0']")
@@ -240,10 +242,12 @@ export function HakijaAvustusHakuPage(page: Page) {
 
     const { applicantName, contactPhoneNumber, projectName } = locators.form.muutoshakuEnabledFields
 
-    try {
-      await projectName.fill(answers.projectName)
-    } catch (error) {
-      console.error('Error filling project name:', error)
+    if (answers.projectName) {
+      try {
+        await projectName.fill(answers.projectName)
+      } catch (error) {
+        console.error('Error filling project name:', error)
+      }
     }
 
     await applicantName.fill(answers.contactPersonName)
@@ -263,8 +267,10 @@ export function HakijaAvustusHakuPage(page: Page) {
   async function fillAndSendHakemus(avustushakuID: number, answers: Answers) {
     await startAndFillApplication(answers, avustushakuID)
 
-    const { projectName } = locators.form.muutoshakuEnabledFields
-    await projectName.fill(answers.projectName)
+    if (answers.projectName) {
+      const { projectName } = locators.form.muutoshakuEnabledFields
+      await projectName.fill(answers.projectName)
+    }
   }
 
   /** @deprecated Use fillAndSendHakemus with corresponding answers */
@@ -304,7 +310,9 @@ export function HakijaAvustusHakuPage(page: Page) {
     await locators.form.bank.iban.fill('FI95 6682 9530 0087 65')
     await locators.form.bank.bic.fill('OKOYFIHH')
     await page.fill('#textField-5', 'Kirkko')
-    await tryToFillProjectName(answers.projectName)
+    if (answers.projectName) {
+      await tryToFillProjectName(answers.projectName)
+    }
     await page.click(`[for='language.radio.0']`)
     await page.click(`[for='combined-effort.radio.0']`)
     await page.locator(`label:has-text("Yhteistyökumppanin nimi")`).first().fill('Esmo Esimerkki')
@@ -398,7 +406,9 @@ export function HakijaAvustusHakuPage(page: Page) {
     await locators.form.bank.bic.fill('OKOYFIHH')
     await page.fill('#textField-2', '2')
     await page.fill('#textField-1', '20')
-    await tryToFillProjectName(answers.projectName)
+    if (answers.projectName) {
+      await tryToFillProjectName(answers.projectName)
+    }
     await page.click(`[for='language.radio.${lang === 'sv' ? 1 : 0}']`)
     await page.click("[for='checkboxButton-0.checkbox.0']")
     await page

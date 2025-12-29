@@ -27,9 +27,13 @@ const test = muutoshakemusTest.extend({
     await hakemustenArviointiPage.navigate(avustushakuID)
     let hakemusID: number = 0
     await test.step('Accept hakemus', async () => {
+      const projectName = answers.projectName
+      if (!projectName) {
+        throw new Error('projectName must be set in order to accept avustushaku')
+      }
       hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
         avustushakuID,
-        projectName: answers.projectName,
+        projectName,
         projektikoodi,
         codes,
       })

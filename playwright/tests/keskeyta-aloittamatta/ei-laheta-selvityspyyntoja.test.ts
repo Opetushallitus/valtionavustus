@@ -15,10 +15,14 @@ test('Älä lähetä selvityspyyntöjä jos hakemus on kekeytetty aloittamatta',
   acceptedHakemus,
 }) => {
   expect(acceptedHakemus).toBeDefined
+  const projectName = answers.projectName
+  if (!projectName) {
+    throw new Error('projectName must be set in order to select hakemus')
+  }
   await test.step('Navigate to hakemus', async () => {
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigate(avustushakuID)
-    await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+    await hakemustenArviointiPage.selectHakemusFromList(projectName)
 
     await hakemustenArviointiPage.tabs().seuranta.click()
 

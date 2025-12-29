@@ -82,14 +82,18 @@ const muutosTest = budjettimuutoshakemusTest.extend<BudjettimuutoshakemusFixture
       const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
       await haunTiedotPage.setEndDate(moment().subtract(1, 'year').format('D.M.YYYY H.mm'))
     })
+    const projectName = answers.projectName
+    if (!projectName) {
+      throw new Error('projectName must be set in order to select hakemus')
+    }
     await hakemustenArviointiPage.navigate(avustushakuID)
-    await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+    await hakemustenArviointiPage.selectHakemusFromList(projectName)
     const hakemusID = await hakemustenArviointiPage.getHakemusID()
     expectToBeDefined(hakemusID)
     await hakemustenArviointiPage.closeHakemusDetails()
     await test.step('fill prerequisite info', async () => {
       await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
-      await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+      await hakemustenArviointiPage.selectHakemusFromList(projectName)
 
       await hakemustenArviointiPage.selectProject(projektikoodi, codes)
       await expect(hakemustenArviointiPage.arviointiTabLocators().taTili.value).toContainText(

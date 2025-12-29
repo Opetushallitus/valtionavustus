@@ -379,9 +379,13 @@ muutoshakemusTest(
       const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
       await haunTiedotPage.setEndDate(finalAvustushakuEndDate.format('D.M.YYYY H.mm'))
     })
+    const projectName = answers.projectName
+    if (!projectName) {
+      throw new Error('projectName must be set in order to select hakemus')
+    }
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigate(avustushakuID)
-    const { taTili } = await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+    const { taTili } = await hakemustenArviointiPage.selectHakemusFromList(projectName)
     await test.step('in arviointi tatili is not preselected', async () => {
       await hakemustenArviointiPage.waitForSave()
       await expect(taTili.placeholder).toHaveText('Valitse talousarviotili')

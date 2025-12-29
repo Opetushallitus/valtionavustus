@@ -191,9 +191,13 @@ export const muutoshakemusTest = submittedHakemusTest.extend<MuutoshakemusFixtur
     await hakemustenArviointiPage.navigate(avustushakuID)
     let hakemusID: number = 0
     await test.step('Accept hakemus', async () => {
+      const projectName = answers.projectName
+      if (!projectName) {
+        throw new Error('projectName must be set in order to accept avustushaku')
+      }
       hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
         avustushakuID,
-        projectName: answers.projectName,
+        projectName,
         projektikoodi,
         codes,
       })
@@ -237,8 +241,12 @@ export const muutoshakemusTest = submittedHakemusTest.extend<MuutoshakemusFixtur
 
     let hakemusID: number = 0
     await test.step('reject hakemus', async () => {
+      const projectName = answers.projectName
+      if (!projectName) {
+        throw new Error('projectName must be set in order to select hakemus')
+      }
       await hakemustenArviointiPage.navigate(avustushakuID)
-      await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+      await hakemustenArviointiPage.selectHakemusFromList(projectName)
       hakemusID = await hakemustenArviointiPage.getHakemusID()
 
       await hakemustenArviointiPage.selectProject(projektikoodi, codes)

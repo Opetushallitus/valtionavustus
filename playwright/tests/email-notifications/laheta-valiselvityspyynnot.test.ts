@@ -96,11 +96,15 @@ selvitysTest.describe('Lähetä väliselvityspyynnöt notifications', () => {
       })
 
       await test.step('send paatos', async () => {
+        const projectName = answers.projectName
+        if (!projectName) {
+          throw new Error('projectName must be set in order to accept avustushaku')
+        }
         const hakemustenArviointiPage = new HakemustenArviointiPage(page)
         await hakemustenArviointiPage.navigate(avustushakuID)
         const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
           avustushakuID,
-          projectName: answers.projectName,
+          projectName,
           projektikoodi,
         })
 

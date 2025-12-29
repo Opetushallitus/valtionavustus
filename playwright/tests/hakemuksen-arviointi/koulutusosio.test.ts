@@ -53,13 +53,17 @@ test.describe.parallel('avustushaku with koulutusosio happy path', () => {
         await hakijaAvustusHakuPage.submitApplication()
       })
       let hakemusID = 0
+      const projectName = answers.projectName
+      if (!projectName) {
+        throw new Error('projectName must be set in order to select hakemus')
+      }
       const hakujenHallintaPage = new HakujenHallintaPage(page)
       const hakemustenArviointiPage = new HakemustenArviointiPage(page)
       await test.step('get ready', async () => {
         const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
         await haunTiedotPage.closeAvustushakuByChangingEndDateToPast()
         await hakemustenArviointiPage.navigate(avustushakuID)
-        await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+        await hakemustenArviointiPage.selectHakemusFromList(projectName)
         hakemusID = await hakemustenArviointiPage.getHakemusID()
       })
       await test.step('ukota', async () => {
@@ -67,7 +71,7 @@ test.describe.parallel('avustushaku with koulutusosio happy path', () => {
         await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, '_ valtionavustus')
         await hakemustenArviointiPage.selectArvioijaForHakemus(hakemusID, '_ valtionavustus')
       })
-      await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+      await hakemustenArviointiPage.selectHakemusFromList(projectName)
       const { koulutusosio, budget } = hakemustenArviointiPage.arviointiTabLocators()
       await budget.fill('1000')
       await test.step('fill koulutusosio', async () => {

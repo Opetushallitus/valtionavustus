@@ -92,10 +92,14 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
 
   const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
   await test.step('hakija sees correct content', async () => {
+    const projectName = answers.projectName
+    if (!projectName) {
+      throw new Error('projectName must be set in order to verify form display')
+    }
     await hakijaMuutoshakemusPage.navigateWithLink(linkToMuutoshakemus)
     const locators = hakijaMuutoshakemusPage.locators()
     await expect(locators.avustushakuName).toHaveText(hakuProps.avustushakuName)
-    await expect(locators.projectName).toHaveText(answers.projectName)
+    await expect(locators.projectName).toHaveText(projectName)
     await expect(locators.contactPerson).toHaveValue(answers.contactPersonName)
     await expect(locators.contactPersonEmail).toHaveValue(answers.contactPersonEmail)
     await expect(locators.contactPersonPhoneNumber).toHaveValue(answers.contactPersonPhoneNumber)

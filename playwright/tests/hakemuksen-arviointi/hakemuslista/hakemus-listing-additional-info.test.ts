@@ -32,9 +32,13 @@ test(`hakemusten arviointi additional info`, async ({
     await expect(locators.budjetti).toHaveText('-')
   })
 
+  const projectName = answers.projectName
+  if (!projectName) {
+    throw new Error('projectName must be set in order to accept avustushaku')
+  }
   await hakemustenArviointiPage.acceptAvustushaku({
     avustushakuID,
-    projectName: answers.projectName,
+    projectName,
     projektikoodi,
   })
 

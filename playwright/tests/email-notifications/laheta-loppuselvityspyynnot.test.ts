@@ -91,9 +91,13 @@ notifyTest(
   'if hakemus has been refused notification is not send',
   async ({ page, answers, acceptedHakemus, avustushakuID, loppuselvitysDateSet }) => {
     expect(acceptedHakemus).toBeDefined()
+    const projectName = answers.projectName
+    if (!projectName) {
+      throw new Error('projectName must be set in order to select hakemus')
+    }
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigate(avustushakuID)
-    await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+    await hakemustenArviointiPage.selectHakemusFromList(projectName)
 
     await hakemustenArviointiPage.tabs().seuranta.click()
 
@@ -190,11 +194,15 @@ selvitysTest.describe('when sending päätös', async () => {
       })
 
       await test.step('send päätös', async () => {
+        const projectName = answers.projectName
+        if (!projectName) {
+          throw new Error('projectName must be set in order to accept avustushaku')
+        }
         const hakemustenArviointiPage = new HakemustenArviointiPage(page)
         await hakemustenArviointiPage.navigate(avustushakuID)
         const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
           avustushakuID,
-          projectName: answers.projectName,
+          projectName,
           projektikoodi,
         })
 

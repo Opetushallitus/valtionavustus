@@ -15,6 +15,7 @@ export type Field = { type: string; fieldId: string }
 type FieldAnswer = { fieldId: string; answer: string; isFileAttachment?: boolean }
 
 export interface Answers {
+  organization?: string
   projectName?: string
   contactPersonName: string
   contactPersonEmail: string

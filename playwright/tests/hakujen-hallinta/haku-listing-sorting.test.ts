@@ -5,7 +5,6 @@ import {
   HakuProps,
 } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { expectToBeDefined } from '../../utils/util'
-import { markAvustushakuAsMuutoshakukelvoton } from '../../utils/avustushaku'
 import moment from 'moment'
 import { MaksatuksetPage } from '../../pages/virkailija/hakujen-hallinta/maksatuksetPage'
 import { HaunTiedotPage } from '../../pages/virkailija/hakujen-hallinta/HaunTiedotPage'

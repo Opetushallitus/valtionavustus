@@ -91,12 +91,20 @@ const test = budjettimuutoshakemusTest.extend<ArviointiUiFilteringFixtures>({
     const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
     await haunTiedotPage.closeAvustushakuByChangingEndDateToPast()
 
+    const projectName = answers.projectName
+    if (!projectName) {
+      throw new Error('projectName must be set in order to navigate to hakemus')
+    }
+    const projectName2 = answers2.projectName
+    if (!projectName2) {
+      throw new Error('projectName must be set in order to select hakemus')
+    }
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
-    await hakemustenArviointiPage.navigateToHakemus(avustushakuID, answers.projectName)
+    await hakemustenArviointiPage.navigateToHakemus(avustushakuID, projectName)
     await hakemustenArviointiPage.acceptHakemus('7000')
     await hakemustenArviointiPage.waitForSave()
     await hakemustenArviointiPage.closeHakemusDetails()
-    await hakemustenArviointiPage.selectHakemusFromList(answers2.projectName)
+    await hakemustenArviointiPage.selectHakemusFromList(projectName2)
     await hakemustenArviointiPage.acceptHakemus('3000')
     await hakemustenArviointiPage.waitForSave()
     await hakemustenArviointiPage.closeHakemusDetails()

@@ -32,11 +32,15 @@ test.extend({
     ukotettuValmistelija,
     projektikoodi,
   }) => {
+    const projectName = answers.projectName
+    if (!projectName) {
+      throw new Error('projectName must be set in order to accept avustushaku')
+    }
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigate(avustushakuID)
     const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
       avustushakuID,
-      projectName: answers.projectName,
+      projectName,
       projektikoodi,
       paatoksenPerustelut: 'Timanttinen hakemus, ei voi muuta sanoa kun hattua nostaa!',
     })
@@ -178,11 +182,15 @@ test.extend({
     ukotettuValmistelija,
     projektikoodi,
   }) => {
+    const projectName = answers.projectName
+    if (!projectName) {
+      throw new Error('projectName must be set in order to accept avustushaku')
+    }
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigate(avustushakuID)
     const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
       avustushakuID,
-      projectName: answers.projectName,
+      projectName,
       projektikoodi,
       paatoksenPerustelut: 'Timanttinen hakemus, ei voi muuta sanoa kun hattua nostaa!',
     })

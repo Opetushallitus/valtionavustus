@@ -21,7 +21,11 @@ test('selects automatically only talousarviotili and projektikoodi', async ({
   await hakemustenArviointiPage.navigate(avustushakuID)
   await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
   await test.step('automagically selects and saves only talousarviotili and projektikoodi for first hakemus', async () => {
-    const hakemus1 = await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+    const projectName = answers.projectName
+    if (!projectName) {
+      throw new Error('projectName must be set in order to select hakemus')
+    }
+    const hakemus1 = await hakemustenArviointiPage.selectHakemusFromList(projectName)
     await expect(hakemustenArviointiPage.saveStatusSuccess).toBeVisible()
     await expect(hakemus1.taTili.value).toContainText(talousarviotili.code)
     await expect(hakemus1.projektikoodi.value).toContainText(projektikoodi)
@@ -29,7 +33,11 @@ test('selects automatically only talousarviotili and projektikoodi', async ({
   })
   await test.step('automagically selects and saves only talousarviotili and projektikoodi for 2nd hakemus', async () => {
     await hakemustenArviointiPage.toggleHakemusList.click()
-    const hakemus2 = await hakemustenArviointiPage.selectHakemusFromList(secondAnswers.projectName)
+    const projectName = secondAnswers.projectName
+    if (!projectName) {
+      throw new Error('projectName must be set in order to select hakemus')
+    }
+    const hakemus2 = await hakemustenArviointiPage.selectHakemusFromList(projectName)
     await expect(hakemustenArviointiPage.saveStatusSuccess).toBeVisible()
     await expect(hakemus2.taTili.value).toContainText(talousarviotili.code)
     await expect(hakemus2.projektikoodi.value).toContainText(projektikoodi)

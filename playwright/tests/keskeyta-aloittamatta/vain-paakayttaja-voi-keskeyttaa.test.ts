@@ -12,9 +12,13 @@ test('Vain pääkäyttäjä voi keskeyttää hankkeen', async ({
   acceptedHakemus,
 }) => {
   expectToBeDefined(acceptedHakemus)
+  const projectName = answers.projectName
+  if (!projectName) {
+    throw new Error('projectName must be set in order to select hakemus')
+  }
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   await hakemustenArviointiPage.navigate(avustushakuID)
-  await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+  await hakemustenArviointiPage.selectHakemusFromList(projectName)
 
   await hakemustenArviointiPage.tabs().seuranta.click()
 

@@ -13,11 +13,15 @@ const testSendingPaatos = async ({
   ukotettuValmistelija,
   projektikoodi,
 }: TestArgs) => {
+  const projectName = answers.projectName
+  if (!projectName) {
+    throw new Error('projectName must be set in order to accept avustushaku')
+  }
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   await hakemustenArviointiPage.navigate(avustushakuID)
   const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
     avustushakuID,
-    projectName: answers.projectName,
+    projectName,
     projektikoodi,
   })
 

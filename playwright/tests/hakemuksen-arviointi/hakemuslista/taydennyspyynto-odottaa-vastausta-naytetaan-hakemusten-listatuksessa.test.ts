@@ -16,10 +16,15 @@ test('Täydennyspyyntö odottaa vastausta näytetään hakemusten listauksessa',
   expect(userKey).toBeDefined()
   const avustushakuID = closedAvustushaku.id
 
+  const projectName = answers.projectName
+  if (!projectName) {
+    throw new Error('projectName must be set in order to select hakemus')
+  }
+
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
 
   await hakemustenArviointiPage.navigate(avustushakuID)
-  await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+  await hakemustenArviointiPage.selectHakemusFromList(projectName)
   const hakemusID = await hakemustenArviointiPage.getHakemusID()
 
   await test.step('Varmista että ennen täydennyspyyntöä hakemukselta ei odoteta täydennystä', async () => {
@@ -37,7 +42,7 @@ test('Täydennyspyyntö odottaa vastausta näytetään hakemusten listauksessa',
   })
 
   await test.step('Tee täydennyspyyntö', async () => {
-    await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+    await hakemustenArviointiPage.selectHakemusFromList(projectName)
 
     const täydennyspyyntöText =
       'Lisää turklesia ja turpaanvetoja; vähemmän koulutusuudistusta. Cowabungaa veli!!'
@@ -52,7 +57,7 @@ test('Täydennyspyyntö odottaa vastausta näytetään hakemusten listauksessa',
   })
 
   await test.step('Peru täydennyspyyntö', async () => {
-    await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+    await hakemustenArviointiPage.selectHakemusFromList(projectName)
     await hakemustenArviointiPage.cancelChangeRequest()
   })
 

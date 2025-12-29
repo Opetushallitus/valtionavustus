@@ -1,9 +1,8 @@
 import { submittedHakemusTest } from '../../fixtures/muutoshakemusTest'
-import { expect, Page } from '@playwright/test'
+import { expect, Page, BrowserContext } from '@playwright/test'
 import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { expectToBeDefined } from '../../utils/util'
-import { BrowserContext } from 'playwright-chromium'
 import { HaunTiedotPage } from '../../pages/virkailija/hakujen-hallinta/HaunTiedotPage'
 
 const lisatekstiDefault = 'myönteinenlisäteksti default'
@@ -43,9 +42,13 @@ const test = submittedHakemusTest.extend({
 
 test('paatos lisäteksti', async ({ closedAvustushaku, context, avustushakuID, page, answers }) => {
   expectToBeDefined(closedAvustushaku)
+  const projectName = answers.projectName
+  if (!projectName) {
+    throw new Error('projectName must be set in order to select hakemus')
+  }
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   await hakemustenArviointiPage.navigate(avustushakuID)
-  await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+  await hakemustenArviointiPage.selectHakemusFromList(projectName)
   const { taTili } = hakemustenArviointiPage.arviointiTabLocators()
   await test.step('if no talousarviotili selected show default text', async () => {
     await expect(taTili.value).toBeHidden()

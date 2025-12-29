@@ -151,11 +151,15 @@ test('help texts', async ({ page, avustushakuID, submittedHakemus, answers }) =>
     })
   })
 
+  const projectName = answers.projectName
+  if (!projectName) {
+    throw new Error('projectName must be set in order to navigate to hakemus')
+  }
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   await test.step('hakemuksen arviointi', async () => {
     const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
     await haunTiedotPage.closeAvustushakuByChangingEndDateToPast()
-    await hakemustenArviointiPage.navigateToHakemus(avustushakuID, answers.projectName)
+    await hakemustenArviointiPage.navigateToHakemus(avustushakuID, projectName)
     const hakemusId = await hakemustenArviointiPage.getHakemusID()
     expectToBeDefined(hakemusId)
     await hakemustenArviointiPage.toggleHakemusList.click()
@@ -222,7 +226,7 @@ test('help texts', async ({ page, avustushakuID, submittedHakemus, answers }) =>
       await haunTiedotPage.resolveAvustushaku()
     })
     await test.step(`Hovering over Lähetä sähköpostit uudestaan displays correct help text`, async () => {
-      await hakemustenArviointiPage.navigateToHakemus(avustushakuID, answers.projectName)
+      await hakemustenArviointiPage.navigateToHakemus(avustushakuID, projectName)
       await verifyTooltipText(
         page,
         '[data-test-id="tooltip-laheta-email-uudestaan"]',

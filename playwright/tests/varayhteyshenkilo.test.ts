@@ -109,9 +109,13 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
       await hakijaAvustusHakuPage.selectMaakuntaFromDropdown('Kainuu')
       await hakijaAvustusHakuPage.form.bank.iban.fill('FI95 6682 9530 0087 65')
       await hakijaAvustusHakuPage.form.bank.bic.fill('OKOYFIHH')
+      const projectName = answers.projectName
+      if (!projectName) {
+        throw new Error('projectName must be set in order to fill form field')
+      }
       await hakijaAvustusHakuPage.page.getByLabel('Opiskelijamäärä, nuorten oppimäärä').fill('25')
       await hakijaAvustusHakuPage.page.getByLabel('Opiskelijamäärä, aikuisten oppimäärä').fill('25')
-      await hakijaAvustusHakuPage.page.getByLabel('Hankkeen nimi').fill(answers.projectName)
+      await hakijaAvustusHakuPage.page.getByLabel('Hankkeen nimi').fill(projectName)
       await hakijaAvustusHakuPage.page.getByText('Suomi').nth(1).click()
       await hakijaAvustusHakuPage.page.getByText('Opetuksen lisääminen').click()
       await hakijaAvustusHakuPage.page.getByLabel('Hankkeen alkamisaika').fill('1.1.2030')
@@ -166,10 +170,14 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
       await haunTiedot.closeAvustushakuByChangingEndDateToPast()
       await haunTiedot.common.waitForSave()
       await hakemustenArviointiPage.navigate(avustushakuID)
+      const projectName = answers.projectName
+      if (!projectName) {
+        throw new Error('projectName must be set in order to accept avustushaku')
+      }
       await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
       await hakemustenArviointiPage.acceptAvustushaku({
         avustushakuID,
-        projectName: answers.projectName,
+        projectName,
         budget: '10000',
         projektikoodi,
       })
@@ -251,7 +259,11 @@ test('varayhteyshenkilo flow', async ({
         phone: answers.trustedContact.phoneNumber,
       })
     })
-    await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+    const projectName = answers.projectName
+    if (!projectName) {
+      throw new Error('projectName must be set in order to select hakemus')
+    }
+    await hakemustenArviointiPage.selectHakemusFromList(projectName)
     const sidebar = hakemustenArviointiPage.sidebarLocators()
     await expect(sidebar.oldAnswers.trustedContactName).toBeHidden()
     await expect(sidebar.oldAnswers.trustedContactEmail).toHaveText(answers.trustedContact.email)
@@ -264,6 +276,10 @@ test('varayhteyshenkilo flow', async ({
   })
 
   await test.step('name and phone can also be changed with muutoshakemus', async () => {
+    const projectName = answers.projectName
+    if (!projectName) {
+      throw new Error('projectName must be set in order to select hakemus')
+    }
     const newName = 'Ville Varahenkilö'
     const newPhone = '04059559599'
     const { trustedContact } = hakijaMuutoshakemusPage.locators()
@@ -285,7 +301,7 @@ test('varayhteyshenkilo flow', async ({
         phone: newPhone,
       })
     })
-    await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+    await hakemustenArviointiPage.selectHakemusFromList(projectName)
     const sidebar = hakemustenArviointiPage.sidebarLocators()
     await expect(sidebar.oldAnswers.trustedContactName).toHaveText(answers.trustedContact.name)
     await expect(sidebar.oldAnswers.trustedContactEmail).toHaveText(answers.trustedContact.email)

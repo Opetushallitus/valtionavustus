@@ -50,9 +50,13 @@ export const twoAcceptedHakemusTest = muutoshakemusTest.extend<Fixtures>({
     let hakemusID = 0
     let secondHakemusID = 0
     await twoAcceptedHakemusTest.step('accept first', async () => {
+      const projectName = answers.projectName
+      if (!projectName) {
+        throw new Error('projectName must be set in order to accept avustushaku')
+      }
       hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
         avustushakuID,
-        projectName: answers.projectName,
+        projectName,
         projektikoodi,
         codes,
       })
@@ -60,9 +64,13 @@ export const twoAcceptedHakemusTest = muutoshakemusTest.extend<Fixtures>({
       await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
     })
     await twoAcceptedHakemusTest.step('accept second', async () => {
+      const projectName = secondAnswers.projectName
+      if (!projectName) {
+        throw new Error('projectName must be set in order to accept avustushaku')
+      }
       secondHakemusID = await hakemustenArviointiPage.acceptAvustushaku({
         avustushakuID,
-        projectName: secondAnswers.projectName,
+        projectName,
         projektikoodi,
         codes,
       })

@@ -71,18 +71,26 @@ const test = muutoshakemusTest.extend<{
     const avustushakuID = closedAvustushaku.id
     testInfo.setTimeout(testInfo.timeout + 50_000)
 
+    const pyorijatProjectName = pyorijatAnswers.projectName
+    if (!pyorijatProjectName) {
+      throw new Error('projectName must be set in order to accept avustushaku')
+    }
+    const projectName = answers.projectName
+    if (!projectName) {
+      throw new Error('projectName must be set in order to accept avustushaku')
+    }
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigate(avustushakuID)
     const hakemusID1 = await hakemustenArviointiPage.acceptAvustushaku({
       avustushakuID,
-      projectName: pyorijatAnswers.projectName,
+      projectName: pyorijatProjectName,
       budget: '10000',
       projektikoodi,
     })
     await hakemustenArviointiPage.page.click('#close-hakemus-button')
     const hakemusID2 = await hakemustenArviointiPage.acceptAvustushaku({
       avustushakuID,
-      projectName: answers.projectName,
+      projectName,
       budget: '100000',
       projektikoodi,
     })

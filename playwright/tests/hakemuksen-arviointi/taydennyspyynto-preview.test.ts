@@ -19,9 +19,14 @@ test('Virkailija can preview OPH täydennyspyyntö', async ({
   const avustushakuID = closedAvustushaku.id
   testInfo.setTimeout(testInfo.timeout + 25_000)
 
+  const projectName = answers.projectName
+  if (!projectName) {
+    throw new Error('projectName must be set in order to select hakemus')
+  }
+
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   await hakemustenArviointiPage.navigate(avustushakuID)
-  await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+  await hakemustenArviointiPage.selectHakemusFromList(projectName)
   await hakemustenArviointiPage.fillTäydennyspyyntöField(täydennyspyyntöText)
   await page.getByText('Esikatsele').click()
 
@@ -69,9 +74,14 @@ jotpaPreviewTest(
     const avustushakuID = closedAvustushaku.id
     testInfo.setTimeout(testInfo.timeout + 25_000)
 
+    const projectName = answers.projectName
+    if (!projectName) {
+      throw new Error('projectName must be set in order to select hakemus')
+    }
+
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigate(avustushakuID)
-    await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+    await hakemustenArviointiPage.selectHakemusFromList(projectName)
     await hakemustenArviointiPage.fillTäydennyspyyntöField(täydennyspyyntöText)
     await page.getByText('Esikatsele').click()
 

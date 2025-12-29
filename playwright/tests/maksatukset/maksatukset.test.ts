@@ -249,10 +249,14 @@ twoAcceptedHakemusTest(
     secondAnswers,
   }) => {
     expectToBeDefined(hakemusID)
+    const projectName = answers.projectName
+    if (!projectName) {
+      throw new Error('projectName must be set in order to select hakemus')
+    }
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigate(avustushakuID)
     await test.step('set should pay to false for first hakemus', async () => {
-      await hakemustenArviointiPage.selectHakemusFromList(answers.projectName)
+      await hakemustenArviointiPage.selectHakemusFromList(projectName)
       await hakemustenArviointiPage.tabs().seuranta.click()
       const seuranta = hakemustenArviointiPage.seurantaTabLocators()
       await expect(seuranta.shouldPay.truthy).toBeChecked()
@@ -264,13 +268,18 @@ twoAcceptedHakemusTest(
       await seuranta.shouldPay.comment.fill('Pyörrän päätökseni')
     })
     await test.step('only second hakemus maksatukset are created as first was marked should not pay', async () => {
+
+      const projectName = secondAnswers.projectName
+      if (!projectName) {
+        throw new Error('projectName must be set')
+      }
       await hakemustenArviointiPage.waitForSave()
       const maksatuksetPage = MaksatuksetPage(page)
       await maksatuksetPage.goto(avustushakuName)
       const firstRowHanke = maksatuksetPage.maksatuksetTableRow(0).hanke
       await expect(firstRowHanke).toBeHidden()
       await maksatuksetPage.luoMaksatukset.click()
-      await expect(firstRowHanke).toHaveText(secondAnswers.projectName)
+      await expect(firstRowHanke).toHaveText(projectName)
       await expect(maksatuksetPage.maksatuksetTableRow(1).hanke).toBeHidden()
     })
   }
