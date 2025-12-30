@@ -270,7 +270,7 @@ const PakoteLiite = () => {
 						target="_blank"
 						rel="noopener noreferrer"
 					>
-						fi/sv
+						fi/sv/eng
 					</a>
 				</span>
 			</div>
