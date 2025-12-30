@@ -70,6 +70,7 @@
     "playwright:test": "playwright test --config=playwright/playwright.config.ts --project=Default",
     "playwright:smoketest-qa": "playwright test --config=playwright/playwright.config.ts --project=smoke-test-qa",
     "playwright:smoketest-prod": "playwright test --config=playwright/playwright.config.ts --project=smoke-test-prod",
+    "playwright:update-snapshots-linux": "./scripts/update-linux-snapshots.sh",
     "build": "webpack --progress",
     "build-production": "NODE_ENV=production npm run build",
     "build-watch": "webpack --progress --watch",
