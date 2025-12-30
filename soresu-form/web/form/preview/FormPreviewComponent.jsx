@@ -68,6 +68,12 @@ export default class FormPreviewComponent extends React.Component {
     })
   }
 
+  componentDidMount() {
+    if (this.props.field && this.props.controller) {
+      this.props.controller.componentDidMount(this.props.field, this.props.value)
+    }
+  }
+
   render() {
     const fieldType = this.props.fieldType
     const controller = this.props.controller
