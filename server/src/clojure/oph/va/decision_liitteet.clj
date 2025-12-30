@@ -43,5 +43,5 @@
 (def PakoteOhjeLiitteet
   {:id    "va_pakoteohje"
    :langs
-   {:fi "Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen valtionavustustoiminnassa"
-    :sv "Beaktande av sanktioner i anslutning till Rysslands attack mot Ukraina"}})
+   {:fi "Pakotteiden huomioon ottaminen valtionavustustoiminnassa"
+    :sv "Beaktande av sanktioner i statsunderstödsverksamheten"}})

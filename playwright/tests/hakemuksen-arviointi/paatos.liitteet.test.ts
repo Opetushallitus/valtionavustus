@@ -120,12 +120,10 @@ test.extend({
     await test.step('make sure pakoteohje is in paatos', async () => {
       const pakoteohjeLink = page
         .locator('a')
-        .locator(
-          'text=Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen valtionavustustoiminnassa'
-        )
+        .locator('text=Pakotteiden huomioon ottaminen valtionavustustoiminnassa')
       const blob = await downloadPdfFromLocator(pakoteohjeLink)
       const pdfText = await getPdfFirstPageTextContent(blob)
-      expect(pdfText).toContain('Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen')
+      expect(pdfText).toContain('Pakotteiden huomioon ottaminen valtionavustustoiminnassa')
     })
 
     await test.step('paatos page matches snapshot', async () => {
@@ -153,9 +151,7 @@ test.extend({
       await expect(yleisohjeLink).toBeVisible()
       const pakoteohjeLink = page
         .locator('a')
-        .locator(
-          'text=Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen valtionavustustoiminnassa'
-        )
+        .locator('text=Pakotteiden huomioon ottaminen valtionavustustoiminnassa')
       await expect(pakoteohjeLink).toBeHidden()
     })
   }

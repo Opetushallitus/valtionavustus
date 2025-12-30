@@ -29,11 +29,9 @@ export function PaatosPage(page: Page) {
     yleisOhjeCheckbox: page.locator('label').locator('text="Valtionavustusten yleisohje"'),
     jotpaOhjeCheckbox: page.locator('input[value="jotpa_vakioehdot"]'),
     yleisOhjeLiite: page.locator('[data-liite=va_yleisohje]'),
-    pakoteOhjeCheckbox: page
-      .locator('label')
-      .locator(
-        'text=Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen valtionavustustoiminnassa'
-      ),
+    pakoteOhjeCheckbox: page.locator(
+      'text=Pakotteiden huomioon ottaminen valtionavustustoiminnassa'
+    ),
     lisatekstiDefault: page.locator('[id="decision.myonteinenlisateksti.fi"]'),
     lisatekstiAmmatillinenKoulutus: page.locator(
       '[id="decision.myonteinenlisateksti-Ammatillinen_koulutus.fi"]'

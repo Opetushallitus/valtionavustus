@@ -237,8 +237,7 @@ const PakoteLiite = () => {
               )
             }
           />
-          Venäjän hyökkäyssotaan liittyvien pakotteiden huomioon ottaminen
-          valtionavustustoiminnassa{' '}
+          Pakotteiden huomioon ottaminen valtionavustustoiminnassa{' '}
         </label>
         <span>
           <a
