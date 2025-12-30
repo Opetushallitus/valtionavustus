@@ -1,5 +1,3 @@
-version: '3.9'
-
 name: valtionavustus
 
 services:
@@ -32,6 +30,7 @@ services:
       dockerfile: ./Dockerfile.va-app
       args:
         - REVISION
+        - NODE_VERSION
     image: ${VA_SERVER_IMAGE-va-server:latest}
     pull_policy: missing
     volumes:
