@@ -1,7 +1,7 @@
 (def log4j-version "2.25.3")
 (def jackson-version "2.19.2")
 (def http4s-version "0.16.6")
-(def flyway-version "11.20.0")
+(def flyway-version "11.20.1")
 
 (defproject oph-va/valtionavustus "0.1.0-SNAPSHOT"
 
