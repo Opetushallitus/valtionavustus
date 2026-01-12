@@ -29,43 +29,10 @@
 
   #preview-container,
   #preview-container-loppuselvitys {
-    container-type: inline-size;
-
-    @container (max-width: @preview-width) {
-      table,
-      thead,
-      tbody,
-      th,
-      td,
-      tr,
-      tfoot {
-        display: block;
-        width: 100%;
-        text-align: start;
-        padding: 0;
-      }
-
-      tr {
-        margin-bottom: 0;
-        border: 0;
-        padding-inline-start: 0;
-        padding-block-start: 0;
-        padding-inline-end: 0;
-        padding-block-end: 8px;
-      }
-
-      td {
-        display: flex;
-        justify-content: start;
-      }
-
-      td:empty {
-        display: none;
-      }
-    }
     background-color: @off-white;
     padding: 20px;
     overflow-y: scroll;
+    overflow-x: auto;
     width: @preview-width;
     margin-right: 10px;
     flex-shrink: 0;
@@ -114,6 +81,32 @@
           display: inline-block;
         }
       }
+    }
+
+    table {
+      display: table;
+      width: auto;
+    }
+
+    thead {
+      display: table-header-group;
+    }
+
+    tbody {
+      display: table-row-group;
+    }
+
+    tfoot {
+      display: table-footer-group;
+    }
+
+    tr {
+      display: table-row;
+    }
+
+    th,
+    td {
+      display: table-cell;
     }
   }
 
