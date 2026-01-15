@@ -317,16 +317,20 @@
       "sv": "Bekräfta"
     },
     "organisation-selection-info-1": {
-      "fi": "Tiedot on haettu YTJ:stä, eikä niitä voi tässä muokata. Tiedot tulee muuttaa lähteenä toimivaan rekisteriin, josta ne päivittyvät OPH:n valtionavustusjärjestelmään.",
-      "sv": "Uppgifterna har hämtats från Företags- och organisationsdatasystemet och kan inte redigeras här. Uppgifterna måste ändras i källregistret, varifrån de uppdateras till Utbildningsstyrelsens statsunderstödssystem."
+      "fi": "Tiedot haetaan YTJ:stä, eikä niitä voi tässä muokata. Tiedot tulee muuttaa lähteenä toimivaan rekisteriin, josta ne päivittyvät OPH:n valtionavustusjärjestelmään.",
+      "sv": "Uppgifterna hämtas från Företags- och organisationsdatasystemet och kan inte redigeras här. Uppgifterna måste ändras i källregistret, varifrån de uppdateras till Utbildningsstyrelsens statsunderstödssystem."
     },
     "organisation-selection-info-2": {
-      "fi": "Mikäli hakijalla ei ole tietoja YTJ:ssä, on tiedot haettu Opintopolun Organisaatiopalvelusta.",
-      "sv": "Om sökanden inte har uppgifter i Företags- och organisationsdatasystemet, har uppgifterna hämtats från Utbildningsstyrelsens Organisationstjänst."
+      "fi": "Mikäli hakijalla ei ole tietoja YTJ:ssä, haetaan tiedot Opintopolun Organisaatiopalvelusta.",
+      "sv": "Om sökanden inte har uppgifter i Företags- och organisationsdatasystemet hämtas uppgifterna från Utbildningsstyrelsens Organisationstjänst."
     },
-    "organisation-selection-info-3": {
-      "fi": "Jos hakujärjestelmä ei tunnista hakijan Y-tunnusta, tulee hakijan olla yhteydessä osoitteeseen yhteisetpalvelut@oph.fi hakemisen aloittamiseksi.",
-      "sv": "Om ansökningssystemet inte känner igen sökandens FO-nummer, bör sökanden kontakta yhteisetpalvelut@oph.fi för att påbörja ansökan."
+    "organisation-selection-info-3-before-email": {
+      "fi": "Jos hakujärjestelmä ei tunnista hakijan Y-tunnusta, tulee hakijan olla yhteydessä osoitteeseen ",
+      "sv": "Om ansökningssystemet inte känner igen sökandens FO-nummer, bör sökanden kontakta "
+    },
+    "organisation-selection-info-3-after-email": {
+      "fi": " hakemisen aloittamiseksi.",
+      "sv": " för att påbörja ansökan."
     }
   },
   "errors": {

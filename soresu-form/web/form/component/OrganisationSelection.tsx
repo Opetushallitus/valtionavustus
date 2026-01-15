@@ -247,6 +247,31 @@ function BusinessIdSearch({
           disabled={isDisabled}
         />
       </form>
+      <div className="organisation-selection-info">
+        <LocalizedString
+          translations={translations}
+          translationKey="organisation-selection-info-1"
+          lang={lang}
+        />
+        <LocalizedString
+          translations={translations}
+          translationKey="organisation-selection-info-2"
+          lang={lang}
+        />
+        <span>
+          <LocalizedString
+            translations={translations}
+            translationKey="organisation-selection-info-3-before-email"
+            lang={lang}
+          />
+          <a href="mailto:yhteisetpalvelut@oph.fi">yhteisetpalvelut@oph.fi</a>
+          <LocalizedString
+            translations={translations}
+            translationKey="organisation-selection-info-3-after-email"
+            lang={lang}
+          />
+        </span>
+      </div>
     </div>
   )
 }
@@ -322,23 +347,6 @@ function Selector({
           <LocalizedString translations={translations} translationKey="confirm" lang={lang} />
         </button>
       )}
-      <div className="organisation-selection-info">
-        <LocalizedString
-          translations={translations}
-          translationKey="organisation-selection-info-1"
-          lang={lang}
-        />
-        <LocalizedString
-          translations={translations}
-          translationKey="organisation-selection-info-2"
-          lang={lang}
-        />
-        <LocalizedString
-          translations={translations}
-          translationKey="organisation-selection-info-3"
-          lang={lang}
-        />
-      </div>
     </div>
   )
 }
