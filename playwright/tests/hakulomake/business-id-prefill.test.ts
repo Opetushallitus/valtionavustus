@@ -54,6 +54,21 @@ test('business ID prefill shows confirmation and fills organization details', as
     await expect(page.locator('input.get-business-id')).toBeVisible()
   })
 
+  await test.step('info texts are visible before fetching organization data', async () => {
+    const infoSection = page.locator('.organisation-selection-info')
+    await expect(infoSection).toBeVisible()
+
+    // Verify all three info texts are present
+    await expect(infoSection).toContainText('Tiedot haetaan YTJ:stä')
+    await expect(infoSection).toContainText('Mikäli hakijalla ei ole tietoja YTJ:ssä')
+    await expect(infoSection).toContainText('Jos hakujärjestelmä ei tunnista hakijan Y-tunnusta')
+
+    // Verify the email link is present and correct
+    const emailLink = infoSection.locator('a[href="mailto:yhteisetpalvelut@oph.fi"]')
+    await expect(emailLink).toBeVisible()
+    await expect(emailLink).toHaveText('yhteisetpalvelut@oph.fi')
+  })
+
   await test.step('fetch button is disabled for invalid business ID', async () => {
     await page.fill('#finnish-business-id', 'invalid-id')
     await expect(page.locator('input.get-business-id')).toBeDisabled()
