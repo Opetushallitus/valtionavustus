@@ -28,11 +28,12 @@
   }
 
   #preview-container,
-  #preview-container-loppuselvitys {
+  #preview-container-loppuselvitys,
+  #preview-container-valiselvitys {
     background-color: @off-white;
     padding: 20px;
     overflow-y: scroll;
-    overflow-x: auto;
+    overflow-x: hidden;
     width: @preview-width;
     margin-right: 10px;
     flex-shrink: 0;
@@ -85,7 +86,7 @@
 
     table {
       display: table;
-      width: auto;
+      max-width: 100%;
     }
 
     thead {
@@ -107,6 +108,7 @@
     th,
     td {
       display: table-cell;
+      overflow-wrap: break-word;
     }
   }
 
@@ -409,7 +411,9 @@
   margin-top: 22px;
   height: calc(100vh - @header-and-margin - 310px);
 
-  #preview-container {
+  #preview-container,
+  #preview-container-loppuselvitys,
+  #preview-container-valiselvitys {
     top: @overview-and-top-total-height;
   }
 

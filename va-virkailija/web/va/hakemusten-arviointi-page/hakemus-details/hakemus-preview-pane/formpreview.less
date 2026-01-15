@@ -23,11 +23,23 @@
   }
 
   .soresu-theme {
+    .soresu-preview-element {
+      max-width: 100%;
+      &.extra-extra-small,
+      &.extra-small,
+      &.small,
+      &.medium,
+      &.large,
+      &.extra-large {
+        max-width: 100%;
+      }
+    }
     .soresu-preview-fieldset,
     .soresu-preview-growing-fieldset {
       .soresu-preview-element {
         text-align: left;
         width: 100%;
+        max-width: 100%;
 
         &:not(.soresu-text-area).small,
         &:not(.soresu-text-area).medium,
@@ -97,19 +109,46 @@
       font-size: 15px;
     }
     .va-budget {
+      max-width: 100%;
       .summing-table,
       .budget-summary {
-        width: 100%;
+        width: 100% !important;
+        max-width: 100%;
         font-size: 14px;
-        .amount-value-column,
-        .percentage-value-column {
-          min-width: auto;
+        table-layout: fixed;
+        colgroup {
+          .label-column {
+            width: 70% !important;
+          }
+          .description-column {
+            width: 60% !important;
+          }
+          .amount-column {
+            width: 30% !important;
+          }
+          .amount-label-column {
+            width: 70% !important;
+          }
+          .amount-value-column {
+            width: 30% !important;
+          }
+          .percentage-label-column {
+            width: 70% !important;
+          }
+          .percentage-value-column {
+            width: 30% !important;
+          }
         }
         .amounts,
         .percentages {
           tbody tr:first-child td {
             height: auto;
           }
+        }
+        td, th {
+          overflow-wrap: break-word;
+          word-wrap: break-word;
+          hyphens: auto;
         }
       }
       .summing-table td {
