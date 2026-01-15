@@ -1,6 +1,6 @@
 import React from 'react'
 
-import * as styles from './Switch.module.less'
+import * as styles from './Switch.module.css'
 
 interface Props {
   onChange: () => void

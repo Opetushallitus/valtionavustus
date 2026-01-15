@@ -1,0 +1,125 @@
+@import "~soresu-form/web/va/style/soresu-va.css";
+
+.seuranta #budget-edit-container .va-budget .summing-table .label-column {
+    min-width: 26%;
+    width: auto;
+}
+
+.seuranta #budget-edit-container .va-budget .summing-table .description-column {
+    width: 25%;
+}
+
+#budget-edit-container {
+    margin-top: 20px;
+}
+
+#budget-edit-container .va-budget .summing-table,
+#budget-edit-container .va-budget .budget-summary {
+    font-size: 14px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+#budget-edit-container .va-budget .summing-table:first-child,
+#budget-edit-container .va-budget .budget-summary:first-child {
+    margin-top: 0;
+}
+
+#budget-edit-container .va-budget .summing-table caption {
+    margin: 0;
+}
+
+#budget-edit-container .va-budget .summing-table caption a.soresu-tooltip {
+    display: inline-block;
+    text-transform: initial;
+}
+
+#budget-edit-container .va-budget .summing-table button {
+    padding: 4px 8px;
+    font-size: inherit;
+    margin: 0;
+}
+
+#budget-edit-container .va-budget .summing-table td {
+    line-height: 2;
+    /* align text by baseline inside <span> and <input> */
+}
+
+#budget-edit-container .va-budget .summing-table th {
+    vertical-align: bottom;
+}
+
+#budget-edit-container .va-budget .summing-table .has-title {
+    cursor: help;
+}
+
+#budget-edit-container .va-budget .summing-table .label-column {
+    width: 38%;
+}
+
+#budget-edit-container .va-budget .summing-table .original-amount-column,
+#budget-edit-container .va-budget .summing-table .granted-amount-column,
+#budget-edit-container .va-budget .summing-table .valiselvitys-amount-column,
+#budget-edit-container .va-budget .summing-table .loppuselvitys-amount-column {
+    text-align: right;
+    padding-left: 15px;
+    width: 12%;
+}
+
+#budget-edit-container .va-budget .summing-table .amount-column {
+    width: 15%;
+    padding-left: 15px;
+}
+
+#budget-edit-container .va-budget .summing-table .description-column {
+    width: 35%;
+    padding-left: 15px;
+    padding-right: 5px;
+}
+
+#budget-edit-container .va-budget .summing-table span.money,
+#budget-edit-container .va-budget .summing-table span.soresu-money {
+    display: inline-block;
+    min-height: 30px;
+    margin: 0;
+}
+
+#budget-edit-container .va-budget .summing-table .extra-small,
+#budget-edit-container .va-budget .summing-table .small,
+#budget-edit-container .va-budget .summing-table .medium,
+#budget-edit-container .va-budget .summing-table .large,
+#budget-edit-container .va-budget .summing-table .extra-large {
+    width: auto;
+}
+
+#budget-edit-container .va-budget .summing-table div.extra-extra-small {
+    width: auto;
+}
+
+#budget-edit-container .va-budget .summing-table .soresu-text-field input[type="text"],
+#budget-edit-container .va-budget .summing-table .soresu-money-field input[type="text"],
+#budget-edit-container .va-budget .summing-table .soresu-preview-element,
+#budget-edit-container .va-budget .summing-table .soresu-value {
+    font-size: inherit;
+}
+
+#budget-edit-container .va-budget .summing-table .soresu-text-field input[type="text"],
+#budget-edit-container .va-budget .summing-table .soresu-money-field input[type="text"],
+#budget-edit-container .va-budget .summing-table .soresu-text-area textarea {
+    padding: 4px;
+    margin: 0;
+    width: 90%;
+}
+
+#budget-edit-container .va-budget .budget-summary .soresu-money:after {
+    content: "\00A0€";
+}
+
+#budget-edit-container .va-budget .budget-summary .amount-value-column .money:after {
+    margin-left: 0;
+}
+
+#budget-edit-container .va-budget .budget-summary .amounts tbody tr:first-child td,
+#budget-edit-container .va-budget .budget-summary .percentages tbody tr:first-child td {
+    height: auto;
+}

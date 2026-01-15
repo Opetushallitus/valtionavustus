@@ -1,4 +1,4 @@
-import 'soresu-form/web/va/muutoshakemus/talous.less'
+import 'soresu-form/web/va/muutoshakemus/talous.css'
 
 import React from 'react'
 

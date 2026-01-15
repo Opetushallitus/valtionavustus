@@ -1,7 +1,7 @@
 import React from 'react'
 import moment from 'moment'
 import { fiLongDateTimeFormatWithKlo } from 'soresu-form/web/va/i18n/dateformat'
-import './VerificationBox.less'
+import './VerificationBox.css'
 
 interface VerificationBoxProps {
   title: string

@@ -1,0 +1,90 @@
+.btn {
+  composes: font from './font.module.css';
+  font-size: 13px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #1a1919;
+}
+
+.btn:focus {
+  outline: none;
+}
+
+.btn:hover:not(:disabled) {
+  background-color: #499cc7;
+}
+
+.btn:active:not(:disabled) {
+  background-color: #3481a9;
+}
+
+.btn.selected {
+  border: 1px solid #499cc7;
+  background-color: #ebf7fd;
+}
+
+.btn:disabled {
+  background: #ffffff;
+  border: 1px solid #eaeaea;
+  color: #c1c1c1;
+  pointer-events: none;
+}
+
+.blueButton {
+  composes: btn;
+  background-color: #fff;
+  border: 1px solid #499cc7;
+  color: #499cc7;
+}
+
+.blueButton:hover:not(:disabled) {
+  background-color: #d6f1ff;
+}
+
+.greyButton {
+  composes: btn;
+  border: 1px solid #c1c1c1;
+  background-color: #ffffff;
+}
+
+.whiteButton {
+  composes: btn;
+  background-color: transparent;
+  color: #499cc7;
+}
+
+.whiteButton:hover:not(:disabled) {
+  background-color: transparent;
+  border: 1px solid #499cc7;
+}
+
+.whiteButton:disabled {
+  border: none;
+  background: unset;
+  color: black;
+}
+
+.deleteButton {
+  composes: btn;
+  background: transparent url('../img/x-button.svg') no-repeat center;
+  background-size: 14px 14px;
+  border-width: 0;
+  margin: 0;
+  height: 22px;
+  width: 22px;
+}
+
+.transparentButton {
+  composes: btn;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: transparent;
+  border-width: 0;
+  padding: 0;
+  margin: 0;
+  height: 22px;
+  width: 19px;
+}

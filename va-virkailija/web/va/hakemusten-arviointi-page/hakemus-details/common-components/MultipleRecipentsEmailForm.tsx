@@ -5,7 +5,7 @@ import { IconTrashcan } from 'soresu-form/web/va/img/IconTrashcan'
 import { Hakemus, Language } from 'soresu-form/web/va/types'
 
 import { useUserInfo } from '../../../initial-data-context'
-import * as styles from './MultipleRecipentsEmailForm.module.less'
+import * as styles from './MultipleRecipentsEmailForm.module.css'
 import { initialRecipientEmails } from '../emailRecipients'
 
 export type Email = {

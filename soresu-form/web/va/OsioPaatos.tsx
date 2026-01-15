@@ -6,7 +6,7 @@ import { IconRejected } from './img/IconRejected'
 import { IconAcceptedWithChanges } from './img/IconAcceptedWithChanges'
 import { PaatosStatus } from './types/muutoshakemus'
 
-import './OsioPaatos.less'
+import './OsioPaatos.css'
 
 const black = '#1A1919'
 

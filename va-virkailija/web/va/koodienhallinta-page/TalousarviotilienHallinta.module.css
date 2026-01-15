@@ -1,0 +1,147 @@
+.font {
+  font-size: 16px;
+  color: #1a1919;
+  line-height: 24px;
+  letter-spacing: -0.06em;
+}
+
+.smallFont {
+  composes: font;
+  font-size: 15px;
+}
+
+.required {
+  composes: smallFont;
+  color: #817c7b;
+  margin-left: 10px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 205px 1fr 2fr 150px 130px 70px;
+  grid-template-rows: 40px;
+  gap: 16px;
+  align-items: end;
+}
+
+.tiliRow {
+  composes: row;
+  margin-bottom: 8px;
+  padding: 8px;
+}
+
+.tiliRow button:disabled {
+  opacity: 0.4;
+}
+
+.tiliRowEditing {
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.input {
+  padding: 8px;
+  border: 1px solid #c1c1c1;
+  border-radius: 4px;
+}
+
+.input:disabled {
+  background-color: #fafafa;
+}
+
+.input.inputError {
+  border-color: red;
+}
+
+.isInUse {
+  align-self: center;
+  position: relative;
+  width: fit-content;
+}
+
+.isInUse button {
+  color: #00516d;
+  background-color: transparent;
+  padding: 8px 0;
+  border: none;
+  text-decoration: underline;
+}
+
+.isInUse button:disabled {
+  color: #1a1919;
+  background-color: transparent;
+  border: none;
+  text-decoration: none;
+}
+
+.usedInPopup {
+  background-color: #ffffff;
+  border: 1px solid #eaeaea;
+  text-overflow: ellipsis;
+  position: absolute;
+  bottom: 54px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  padding: 18px;
+}
+
+.usedInPopup a {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #499cc7;
+  text-decoration: underline;
+}
+
+.usedInPopup a:not(:last-child) {
+  margin-bottom: 8px;
+}
+
+.usedInPopup::after {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  content: "";
+  width: 0;
+  height: 0;
+  border: 8px solid #000;
+  border-color: transparent transparent #fff #fff;
+  transform-origin: 0 0;
+  transform: rotate(315deg) translateX(-100%);
+  box-shadow: -2px 2px 3px 0 rgb(0 0 0 / 10%);
+}
+
+.inputEuro {
+  composes: input;
+  text-align: right;
+}
+
+.grid {
+  composes: font;
+  display: grid;
+  margin: 32px 0 32px 0;
+}
+
+.fieldContainer {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.error {
+  position: absolute;
+  bottom: -24px;
+  left: 2px;
+  overflow: visible;
+  white-space: nowrap;
+  color: red;
+  height: 24px;
+}
+
+.buttonContainer {
+  display: flex;
+}

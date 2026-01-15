@@ -6,6 +6,8 @@ import MomentLocalizer from 'react-widgets-moment'
 import Localization from 'react-widgets/Localization'
 import moment from 'moment'
 
+import 'soresu-form/web/form/style/theme.css'
+
 import {
   getTranslationContext,
   TranslationContext,

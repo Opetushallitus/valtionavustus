@@ -1,0 +1,345 @@
+.soresu-tooltip {
+    position: relative;
+}
+
+.soresu-tooltip.soresu-help-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-top: 1px;
+    margin-left: 11px;
+    background: transparent url("../img/show_tooltip.png") no-repeat left top !important;
+}
+
+.soresu-tooltip.jotpa-help-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-top: 1px;
+    margin-left: 11px;
+    background: transparent url("../img/show_jotpa_tooltip.png") no-repeat left top !important;
+}
+
+.soresu-tooltip>span {
+
+    /* .box-triangle(295px) expansion */
+    &:before,
+    &:after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-color: transparent;
+    }
+
+    &:before {
+        left: 295px;
+        border-width: 11px;
+    }
+
+    &:after {
+        left: calc(295px + 1px);
+        border-width: 10px;
+    }
+
+    position: absolute;
+    width: 600px;
+    left: -223px;
+    margin-left: -76px;
+    margin-bottom: -4px;
+    color: var(--form-label-black);
+    background: #fff;
+    border: 1px solid var(--light-gray);
+    font-size: 14px;
+    padding: 5px 15px;
+    visibility: hidden;
+    white-space: pre-line;
+}
+
+.soresu-tooltip:hover>span {
+    visibility: visible;
+    opacity: 0.95;
+    z-index: 99;
+}
+
+.soresu-tooltip-up>span {
+
+    /* .box-triangle-down(@light-gray, #fff) expansion */
+    &:before,
+    &:after {
+        border-bottom: 0;
+    }
+
+    &:before {
+        bottom: -11px;
+        border-top-color: var(--light-gray);
+    }
+
+    &:after {
+        bottom: -10px;
+        border-top-color: #fff;
+    }
+}
+
+.soresu-tooltip-up:hover>span {
+    bottom: 32px;
+}
+
+.soresu-tooltip-down>span {
+
+    /* .box-triangle-up(@light-gray, #fff) expansion */
+    &:before,
+    &:after {
+        border-top: 0;
+    }
+
+    &:before {
+        top: -11px;
+        border-bottom-color: var(--light-gray);
+    }
+
+    &:after {
+        top: -10px;
+        border-bottom-color: #fff;
+    }
+}
+
+.soresu-tooltip-down:hover>span {
+    top: 42px;
+}
+
+.soresu-tooltip-left>span {
+
+    /* .box-triangle-left(@light-gray, #fff) expansion */
+    &:before,
+    &:after {
+        border-left: 0;
+    }
+
+    &:before {
+        top: 8px;
+        left: -11px;
+        border-right-color: var(--light-gray);
+    }
+
+    &:after {
+        top: 9px;
+        left: -10px;
+        border-right-color: #fff;
+    }
+}
+
+.soresu-tooltip-left:hover>span {
+    top: -10px;
+    left: 106px;
+}
+
+.soresu-tooltip-right>span {
+
+    /* .box-triangle-right(@light-gray, #fff) expansion */
+    &:before,
+    &:after {
+        border-right: 0;
+    }
+
+    &:before {
+        left: 630px;
+        border-left-color: var(--light-gray);
+    }
+
+    &:after {
+        top: 6px;
+        left: 630px;
+        border-left-color: #fff;
+    }
+}
+
+.soresu-tooltip-right:hover>span {
+    top: -10px;
+    left: -568px;
+}
+
+.soresu-tooltip-valmistelijan-huomiot>span {
+
+    /* .box-triangle(105px) expansion */
+    &:before,
+    &:after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-color: transparent;
+    }
+
+    &:before {
+        left: 105px;
+        border-width: 11px;
+    }
+
+    &:after {
+        left: 106px;
+        border-width: 10px;
+    }
+
+    /* .box-triangle-up(@light-gray, #fff) */
+    &:before,
+    &:after {
+        border-top: 0;
+    }
+
+    &:before {
+        top: -11px;
+        border-bottom-color: var(--light-gray);
+    }
+
+    &:after {
+        top: -10px;
+        border-bottom-color: #fff;
+    }
+}
+
+.soresu-tooltip-valmistelijan-huomiot:hover>span {
+    top: 42px;
+    left: -30px;
+}
+
+.soresu-tooltip-salli-nakyvyys>span {
+
+    /* .box-triangle(250px) */
+    &:before,
+    &:after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-color: transparent;
+    }
+
+    &:before {
+        left: 250px;
+        border-width: 11px;
+    }
+
+    &:after {
+        left: 251px;
+        border-width: 10px;
+    }
+
+    /* .box-triangle-up */
+    &:before,
+    &:after {
+        border-top: 0;
+    }
+
+    &:before {
+        top: -11px;
+        border-bottom-color: var(--light-gray);
+    }
+
+    &:after {
+        top: -10px;
+        border-bottom-color: #fff;
+    }
+}
+
+.soresu-tooltip-salli-nakyvyys:hover>span {
+    top: 42px;
+    left: -180px;
+}
+
+.soresu-tooltip-arviointi>span {
+
+    /* .box-triangle(105px) */
+    &:before,
+    &:after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-color: transparent;
+    }
+
+    &:before {
+        left: 105px;
+        border-width: 11px;
+    }
+
+    &:after {
+        left: 106px;
+        border-width: 10px;
+    }
+
+    /* .box-triangle-down */
+    &:before,
+    &:after {
+        border-bottom: 0;
+    }
+
+    &:before {
+        bottom: -11px;
+        border-top-color: var(--light-gray);
+    }
+
+    &:after {
+        bottom: -10px;
+        border-top-color: #fff;
+    }
+}
+
+.soresu-tooltip-arviointi:hover>span {
+    bottom: 32px;
+    left: -30px;
+}
+
+.soresu-tooltip-arviointi-slim>span {
+    max-width: 500px;
+    bottom: 32px;
+    left: -30px;
+
+    /* .box-triangle(105px) */
+    &:before,
+    &:after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-color: transparent;
+    }
+
+    &:before {
+        left: 105px;
+        border-width: 11px;
+    }
+
+    &:after {
+        left: 106px;
+        border-width: 10px;
+    }
+
+    /* .box-triangle-down */
+    &:before,
+    &:after {
+        border-bottom: 0;
+    }
+
+    &:before {
+        bottom: -11px;
+        border-top-color: var(--light-gray);
+    }
+
+    &:after {
+        bottom: -10px;
+        border-top-color: #fff;
+    }
+}
+
+.soresu-tooltip-arviointi-slim:hover>span {
+    max-width: 500px;
+    bottom: 32px;
+    left: -30px;
+}

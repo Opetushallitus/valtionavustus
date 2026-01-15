@@ -11,7 +11,7 @@ import BudgetEditFormController from './BudgetEditFormController'
 import BudgetEditComponentFactory from './BudgetEditComponentFactory'
 import FakeFormState from '../../../form/FakeFormState'
 
-import '../../../style/budgetedit.less'
+import '../../../style/budgetedit.css'
 import {
   useHakemustenArviointiDispatch,
   useHakemustenArviointiSelector,

@@ -2,7 +2,7 @@ import React from 'react'
 import { VaCodeValue } from '../../types'
 import ProjectSelector from '../../common-components/ProjectSelector'
 
-import './projektien-valinta.less'
+import './projektien-valinta.css'
 import { useHakujenHallintaDispatch, useHakujenHallintaSelector } from '../hakujenHallintaStore'
 import { VirkailijaAvustushaku, updateProjects } from '../hakuReducer'
 

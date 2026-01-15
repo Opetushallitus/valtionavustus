@@ -1,4 +1,5 @@
-import './Muutoshakemus.less'
+import './Muutoshakemus.css'
+import 'react-widgets/styles.css'
 
 import React, { useState } from 'react'
 import moment from 'moment'

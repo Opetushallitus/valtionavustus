@@ -1,8 +1,8 @@
 import React, { useEffect, useReducer, useState } from 'react'
 import { Hakemus, HakemusArviointiStatus, SelvitysStatus } from 'soresu-form/web/va/types'
 
-import * as styles from './HakemusListing.module.less'
-import * as buttonStyles from '../../style/Button.module.less'
+import * as styles from './HakemusListing.module.css'
+import * as buttonStyles from '../../style/Button.module.css'
 import { StarScoring } from './StarScoring'
 import { TaydennyspyyntoIndikaattori } from './TaydennyspyyntoIndikaattori'
 import { MuutoshakemusStatus } from 'soresu-form/web/va/types/muutoshakemus'

@@ -1,0 +1,172 @@
+/* Variables are now in theme.css or Shimmed variables.less */
+/* @import "~soresu-form/web/form/style/variables.less"; - Removed */
+
+#topbar {
+    width: 100%;
+    background-color: #fff;
+    position: fixed;
+    top: 0;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.10);
+    z-index: 100;
+
+    /* @center-block-width: 480px; - Inlined or var? Only used locally. */
+}
+
+#topbar #logo {
+    display: inline-block;
+    vertical-align: top;
+    object-fit: contain;
+    margin: 20px 70px 20px 20px;
+}
+
+@media print {
+    #topbar #logo {
+        margin-top: 0;
+    }
+}
+
+#topbar .topbar-right {
+    display: inline-block;
+    vertical-align: top;
+    margin: 25px 0 8px 0;
+}
+
+@media print {
+    #topbar .topbar-right {
+        margin-top: 5px;
+        width: calc(100% - 350px);
+    }
+}
+
+#topbar .topbar-title-and-save-status {
+    display: inline-block;
+    width: 480px;
+    /* @center-block-width */
+}
+
+@media print {
+    #topbar .topbar-title-and-save-status {
+        width: 100%;
+    }
+}
+
+#topbar h1 {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 22px;
+    font-weight: normal;
+    text-transform: uppercase;
+}
+
+#topbar #form-save-status {
+    display: inline-block;
+    vertical-align: middle;
+    height: 50px;
+    border-left: 1px solid var(--light-gray);
+    margin-left: 30px;
+    padding-left: 30px;
+}
+
+#topbar #form-save-status .messages {
+    font-size: 13px;
+    color: var(--form-label-black);
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+@media print {
+    #topbar #form-save-status {
+        border: none;
+        float: right;
+        padding-left: 0;
+    }
+}
+
+#topbar #form-controls {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 20px;
+}
+
+#topbar #form-controls .form-control,
+#topbar #form-controls #toggle-language,
+#topbar #form-controls #preview-button {
+    display: inline-block;
+}
+
+#topbar #form-controls .form-control-button-tooltip {
+    top: calc(100% + 6px);
+    left: 50%;
+    margin-left: -316px;
+}
+
+@media print {
+    #topbar #form-controls {
+        display: none;
+    }
+}
+
+#topbar .important-info {
+    display: inline-block;
+    vertical-align: top;
+    color: var(--bright-red);
+    width: 480px;
+    /* @center-block-width */
+}
+
+@media print {
+    #topbar .important-info {
+        display: none;
+    }
+}
+
+#topbar .environment-info {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+#topbar .environment-info__name {
+    text-transform: uppercase;
+}
+
+#topbar #avustushaku-has-ended-message {
+    display: inline-block;
+}
+
+#topbar #form-error-summary {
+    display: inline-block;
+    font-size: 13px;
+    margin-left: 20px;
+}
+
+#topbar .preview-link {
+    display: inline-block;
+    font-size: 13px;
+    margin-left: 20px;
+}
+
+#topbar #form-error-summary+.preview-link {
+    border-left: 1px solid var(--light-gray);
+    padding-left: 15px;
+    margin-left: 15px;
+}
+
+@media print {
+    #topbar {
+        position: relative;
+        box-shadow: none;
+    }
+}
+
+#top-container {
+    width: var(--form-width);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media print {
+    #top-container {
+        width: 100%;
+    }
+}

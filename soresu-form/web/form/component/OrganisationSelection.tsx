@@ -10,7 +10,7 @@ import { Field, Language, LegacyTranslationDict } from 'soresu-form/web/va/types
 import { BaseStateLoopState } from 'soresu-form/web/form/types/Form'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 
-import './OrganisationSelection.less'
+import './OrganisationSelection.css'
 
 interface OrganizationContact {
   address?: string
@@ -82,10 +82,9 @@ export function OrganisationSelection({ state, controller }: OrganisationSelecti
     const fieldValue =
       organizationFieldName === 'contact'
         ? _.trim(
-            `${data.contact.address || ''} ${data.contact['postal-number'] || ''} ${
-              data.contact.city || ''
-            }`
-          )
+          `${data.contact.address || ''} ${data.contact['postal-number'] || ''} ${data.contact.city || ''
+          }`
+        )
         : data[organizationFieldName as keyof OrganizationResponse]
 
     if (!_.isEmpty(fieldValue)) {

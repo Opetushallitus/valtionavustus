@@ -21,8 +21,9 @@ import DecisionEditor from './haku-details/DecisionEditor'
 import { SelvitysFormEditor } from './haku-details/SelvitysFormEditor'
 import { Maksatukset } from './haku-details/Maksatukset'
 
-import '../style/virkailija.less'
-import '../style/admin.less'
+import 'soresu-form/web/form/style/theme.css'
+import '../style/virkailija.css'
+import '../style/admin.css'
 import LoadingSitePage from '../common-components/LoadingSitePage'
 import ErrorBoundary from '../common-components/ErrorBoundary'
 

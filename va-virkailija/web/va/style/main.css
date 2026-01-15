@@ -1,0 +1,499 @@
+@import "soresu-form/web/form/style/common.css";
+@import "virkailija.css";
+
+/* JOTPA Customizations */
+/* Variables are now in theme.css */
+
+#footer {
+    position: absolute;
+    bottom: 2px;
+    font-size: 12px;
+    margin-left: 10px;
+}
+
+#footer .decision {
+    margin: 0 5px;
+}
+
+#footer .preview-links {
+    margin: 0 5px;
+}
+
+#hakemus-details {
+    margin-top: 8px;
+    display: flex;
+    height: calc(100vh - 56px - 20px);
+    /* @header-and-margin: 56px */
+}
+
+#hakemus-details #arviointi-container {
+    flex-shrink: 0;
+    margin-left: 8px;
+}
+
+#hakemus-details #preview-container,
+#hakemus-details #preview-container-loppuselvitys,
+#hakemus-details #preview-container-valiselvitys {
+    background-color: var(--off-white);
+    padding: 20px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width: var(--preview-width);
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+#hakemus-details #preview-container .va-register-number span,
+#hakemus-details #preview-container-loppuselvitys .va-register-number span,
+#hakemus-details #preview-container-valiselvitys .va-register-number span {
+    display: none;
+}
+
+#hakemus-details #preview-container .va-register-number span.value,
+#hakemus-details #preview-container-loppuselvitys .va-register-number span.value,
+#hakemus-details #preview-container-valiselvitys .va-register-number span.value {
+    color: var(--dark-gray);
+    display: inline;
+}
+
+#hakemus-details #preview-container .answer-old-value .soresu-value,
+#hakemus-details #preview-container .answer-old-value .soresu-money,
+#hakemus-details #preview-container .answer-old-value .soresu-attachment-display,
+#hakemus-details #preview-container .answer-old-value .soresu-attachment-missing,
+#hakemus-details #preview-container .answer-old-value .va-trainee-day-calculator,
+#hakemus-details #preview-container-loppuselvitys .answer-old-value .soresu-value,
+#hakemus-details #preview-container-loppuselvitys .answer-old-value .soresu-money,
+#hakemus-details #preview-container-loppuselvitys .answer-old-value .soresu-attachment-display,
+#hakemus-details #preview-container-loppuselvitys .answer-old-value .soresu-attachment-missing,
+#hakemus-details #preview-container-loppuselvitys .answer-old-value .va-trainee-day-calculator,
+#hakemus-details #preview-container-valiselvitys .answer-old-value .soresu-value,
+#hakemus-details #preview-container-valiselvitys .answer-old-value .soresu-money,
+#hakemus-details #preview-container-valiselvitys .answer-old-value .soresu-attachment-display,
+#hakemus-details #preview-container-valiselvitys .answer-old-value .soresu-attachment-missing,
+#hakemus-details #preview-container-valiselvitys .answer-old-value .va-trainee-day-calculator {
+    background-color: #f4cecd;
+    text-decoration: line-through;
+}
+
+#hakemus-details #preview-container .answer-old-value .soresu-attachment-block,
+#hakemus-details #preview-container-loppuselvitys .answer-old-value .soresu-attachment-block,
+#hakemus-details #preview-container-valiselvitys .answer-old-value .soresu-attachment-block {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+#hakemus-details #preview-container .answer-old-value .soresu-attachment-block .soresu-attachment-display,
+#hakemus-details #preview-container-loppuselvitys .answer-old-value .soresu-attachment-block .soresu-attachment-display,
+#hakemus-details #preview-container-valiselvitys .answer-old-value .soresu-attachment-block .soresu-attachment-display {
+    display: inline-block;
+}
+
+#hakemus-details #preview-container .answer-new-value .soresu-key,
+#hakemus-details #preview-container-loppuselvitys .answer-new-value .soresu-key,
+#hakemus-details #preview-container-valiselvitys .answer-new-value .soresu-key {
+    display: none;
+}
+
+#hakemus-details #preview-container .answer-new-value .soresu-value,
+#hakemus-details #preview-container .answer-new-value .soresu-money,
+#hakemus-details #preview-container .answer-new-value .soresu-attachment-display,
+#hakemus-details #preview-container .answer-new-value .soresu-attachment-missing,
+#hakemus-details #preview-container .answer-new-value .va-trainee-day-calculator,
+#hakemus-details #preview-container-loppuselvitys .answer-new-value .soresu-value,
+#hakemus-details #preview-container-loppuselvitys .answer-new-value .soresu-money,
+#hakemus-details #preview-container-loppuselvitys .answer-new-value .soresu-attachment-display,
+#hakemus-details #preview-container-loppuselvitys .answer-new-value .soresu-attachment-missing,
+#hakemus-details #preview-container-loppuselvitys .answer-new-value .va-trainee-day-calculator,
+#hakemus-details #preview-container-valiselvitys .answer-new-value .soresu-value,
+#hakemus-details #preview-container-valiselvitys .answer-new-value .soresu-money,
+#hakemus-details #preview-container-valiselvitys .answer-new-value .soresu-attachment-display,
+#hakemus-details #preview-container-valiselvitys .answer-new-value .soresu-attachment-missing,
+#hakemus-details #preview-container-valiselvitys .answer-new-value .va-trainee-day-calculator {
+    background-color: #d6f2b5;
+}
+
+#hakemus-details #preview-container .answer-new-value .soresu-attachment-block,
+#hakemus-details #preview-container-loppuselvitys .answer-new-value .soresu-attachment-block,
+#hakemus-details #preview-container-valiselvitys .answer-new-value .soresu-attachment-block {
+    border-top: none;
+}
+
+#hakemus-details #preview-container .answer-new-value .soresu-attachment-block .soresu-attachment-display,
+#hakemus-details #preview-container-loppuselvitys .answer-new-value .soresu-attachment-block .soresu-attachment-display,
+#hakemus-details #preview-container-valiselvitys .answer-new-value .soresu-attachment-block .soresu-attachment-display {
+    display: inline-block;
+}
+
+#hakemus-details #preview-container table,
+#hakemus-details #preview-container-loppuselvitys table,
+#hakemus-details #preview-container-valiselvitys table {
+    display: table;
+    max-width: 100%;
+}
+
+#hakemus-details #preview-container thead,
+#hakemus-details #preview-container-loppuselvitys thead,
+#hakemus-details #preview-container-valiselvitys thead {
+    display: table-header-group;
+}
+
+#hakemus-details #preview-container tbody,
+#hakemus-details #preview-container-loppuselvitys tbody,
+#hakemus-details #preview-container-valiselvitys tbody {
+    display: table-row-group;
+}
+
+#hakemus-details #preview-container tfoot,
+#hakemus-details #preview-container-loppuselvitys tfoot,
+#hakemus-details #preview-container-valiselvitys tfoot {
+    display: table-footer-group;
+}
+
+#hakemus-details #preview-container tr,
+#hakemus-details #preview-container-loppuselvitys tr,
+#hakemus-details #preview-container-valiselvitys tr {
+    display: table-row;
+}
+
+#hakemus-details #preview-container th,
+#hakemus-details #preview-container td,
+#hakemus-details #preview-container-loppuselvitys th,
+#hakemus-details #preview-container-loppuselvitys td,
+#hakemus-details #preview-container-valiselvitys th,
+#hakemus-details #preview-container-valiselvitys td {
+    display: table-cell;
+    overflow-wrap: break-word;
+}
+
+#hakemus-details #hakemus-arviointi {
+    font-size: 15px;
+    background-color: var(--off-white);
+    padding: 20px;
+    display: inline-block;
+    overflow-y: scroll;
+    width: calc(var(--content-width) - var(--preview-width) - 90px);
+    height: calc(100vh - 56px - 108px);
+    /* @header-and-margin: 56px */
+}
+
+#hakemus-details #hakemus-arviointi .hakemus-arviointi-section {
+    margin-top: 20px;
+    color: var(--dark-gray);
+}
+
+#hakemus-details #hakemus-arviointi .hakemus-arviointi-section a[disabled] {
+    color: var(--dark-gray);
+    cursor: default;
+}
+
+#hakemus-details #hakemus-arviointi .hakemus-arviointi-section button {
+    margin: 4px 4px 4px 0;
+    padding: 4px 8px;
+}
+
+#hakemus-details #hakemus-arviointi .hakemus-arviointi-section input {
+    margin: 4px 4px 4px 0;
+    padding: 5px;
+}
+
+#hakemus-details #hakemus-arviointi .input-number-sm {
+    width: 60px;
+    padding: 3px;
+}
+
+#hakemus-details #hakemus-arviointi .value-edit {
+    margin-top: 20px;
+}
+
+#hakemus-details #hakemus-arviointi .value-edit label {
+    color: var(--darker-gray);
+}
+
+#hakemus-details #hakemus-arviointi .value-edit button {
+    margin: 4px 4px 4px 0;
+    padding: 4px 8px;
+}
+
+#hakemus-details #hakemus-arviointi .value-edit textarea {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px;
+}
+
+#hakemus-details #hakemus-arviointi .value-edit .close {
+    cursor: pointer;
+    margin-right: 20px;
+    float: right;
+}
+
+#hakemus-details #hakemus-arviointi .value-edit .close:after {
+    content: "x";
+}
+
+#hakemus-details #hakemus-arviointi .change-request-title {
+    font-weight: 600;
+    color: var(--bright-red);
+}
+
+#hakemus-details #hakemus-arviointi .change-request-text {
+    font-style: italic;
+    white-space: pre-line;
+}
+
+#hakemus-details #hakemus-arviointi .change-request-text:before {
+    content: '"';
+}
+
+#hakemus-details #hakemus-arviointi .change-request-text:after {
+    content: '"';
+}
+
+#hakemus-details #hakemus-arviointi .budget-granted input {
+    text-align: right;
+}
+
+#hakemus-details #hakemus-arviointi #hakemus-scoring-container .valintaperuste-scoring-user {
+    padding: 20px 0 0 0px;
+    text-align: left;
+    color: var(--dark-blue);
+    font-weight: bold;
+    font-size: 18px;
+}
+
+#hakemus-details #hakemus-arviointi #hakemus-scoring-container .single-valintaperuste .valintaperuste-text {
+    padding: 20px 0 0 0;
+    max-width: 534px;
+    vertical-align: top;
+    color: var(--dark-gray);
+}
+
+#hakemus-details #hakemus-arviointi #hakemus-scoring-container .single-valintaperuste .score-row {
+    padding: 20px 0 0 20px;
+    vertical-align: top;
+}
+
+#hakemus-details #hakemus-arviointi #hakemus-scoring-container .single-valintaperuste .score-row .single-score:not(:first-child) {
+    padding-left: 14px;
+}
+
+#hakemus-details #hakemus-arviointi #hakemus-scoring-container .single-valintaperuste .score-row .single-score.editable {
+    cursor: pointer;
+}
+
+#hakemus-details #hakemus-arviointi #hakemus-scoring-container .single-valintaperuste .score-row .score-text {
+    color: var(--dark-gray);
+    font-size: 13px;
+}
+
+#hakemus-details #hakemus-arviointi #hakemus-scoring-container .see-others-scoring.disabled a {
+    color: var(--dark-gray);
+    cursor: default;
+}
+
+#hakemus-details #hakemus-arviointi .comment-list {
+    margin-bottom: 12px;
+}
+
+#hakemus-details #hakemus-arviointi .no-comments {
+    font-style: italic;
+}
+
+#hakemus-details #hakemus-arviointi .single-comment {
+    margin-bottom: 3px;
+    border-top: 1px solid var(--light-gray);
+}
+
+#hakemus-details #hakemus-arviointi .single-comment .comment-datetime {
+    margin-top: -5px;
+    color: var(--dark-gray);
+}
+
+#hakemus-details #hakemus-arviointi .single-comment p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    line-height: 1.1;
+}
+
+#hakemus-details #hakemus-arviointi .single-comment p:first-of-type {
+    display: inline-block;
+}
+
+#hakemus-details #hakemus-arviointi .comment-input {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+#hakemus-details #hakemus-arviointi .changelog {
+    font-size: 13px;
+}
+
+#hakemus-details #hakemus-arviointi .changelog__heading {
+    font-size: 13px;
+}
+
+#hakemus-details #hakemus-arviointi .changelog__table {
+    width: 100%;
+}
+
+#hakemus-details #hakemus-arviointi .changelog__row {
+    border-top: 5px solid transparent;
+}
+
+#hakemus-details #hakemus-arviointi .changelog__date {
+    width: 140px;
+    white-space: nowrap;
+    vertical-align: top;
+}
+
+#hakemus-details #hakemus-arviointi .changelog__name {
+    width: 200px;
+    padding: 0 20px;
+    vertical-align: top;
+}
+
+#hakemus-details #hakemus-arviointi .changelog__type {
+    vertical-align: top;
+}
+
+#hakemus-details #hakemus-arviointi .changelog__data {
+    margin: 10px 0 15px;
+    padding: 5px;
+    white-space: pre-wrap;
+    background-color: #dfdfdf;
+    font-size: 12px;
+    vertical-align: top;
+}
+
+#hakemus-details #hakemus-arviointi textarea:disabled,
+#hakemus-details #hakemus-arviointi input:disabled {
+    color: var(--dark-gray);
+    border-style: dotted;
+}
+
+#hakemus-details #hakemus-arviointi .selvitys-email-header {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+#hakemus-details #hakemus-arviointi .selvitys-email-header__header,
+#hakemus-details #hakemus-arviointi .selvitys-email-header__value {
+    text-align: left;
+    vertical-align: top;
+}
+
+#hakemus-details #hakemus-arviointi .selvitys-email-header__header {
+    padding: 4px 4px 4px 0;
+}
+
+#hakemus-details #hakemus-arviointi .selvitys-email-header__header--for-value-input {
+    padding-top: 8px;
+}
+
+#hakemus-details #hakemus-arviointi .selvitys-email-header__value {
+    padding: 4px 0 4px 4px;
+}
+
+#hakemus-details #hakemus-arviointi .selvitys-email-header__value-input-container {
+    position: relative;
+}
+
+#hakemus-details #hakemus-arviointi .selvitys-email-header .selvitys-email-header__value-input-container+.selvitys-email-header__value-input-container {
+    margin-top: 4px;
+}
+
+#hakemus-details #hakemus-arviointi .selvitys-email-header__value-input {
+    width: 500px;
+    height: 28px;
+}
+
+#hakemus-details #hakemus-arviointi .selvitys-email-header__value-input--error {
+    background-color: var(--bright-red-light);
+    border-color: var(--bright-red);
+}
+
+#hakemus-details #hakemus-arviointi .selvitys-email-header__remove-value-input-button {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    right: -26px;
+    bottom: 3px;
+}
+
+#hakemus-details #hakemus-arviointi .selvitys-email-message {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 10px 0;
+}
+
+#hakemus-details #hakemus-arviointi .selvitys-email-message--sent {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    background-color: #f0f0f0;
+}
+
+#hakemus-details #hakemus-arviointi .selvitys-email-message--unsent {
+    min-height: 180px;
+    display: block;
+}
+
+
+#close-hakemus-button,
+#toggle-hakemus-list-button {
+    position: absolute;
+    z-index: 20000;
+    margin: 0 0 0 -30px;
+    padding: 8px;
+    font-size: 22px;
+    font-weight: normal;
+    line-height: 1;
+    color: var(--dark-gray);
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+#close-hakemus-button:not(:disabled):hover,
+#toggle-hakemus-list-button:not(:disabled):hover {
+    color: var(--bright-blue);
+    background-color: transparent;
+}
+
+#close-hakemus-button {
+    top: calc(12px + 56px);
+    /* 12 + @header-and-margin */
+}
+
+#toggle-hakemus-list-button {
+    top: calc(50px + 56px);
+    /* 50 + @header-and-margin */
+}
+
+.split-view #hakemus-details {
+    margin-top: 22px;
+    height: calc(100vh - 56px - 310px);
+}
+
+/* @overview-and-top-total-height = @header-and-margin + @haku-selector-combobox-height (22px) + @overview-list-height (270px) = 56 + 22 + 270 = 348px */
+
+.split-view #hakemus-details #preview-container,
+.split-view #hakemus-details #preview-container-loppuselvitys,
+.split-view #hakemus-details #preview-container-valiselvitys {
+    top: 348px;
+}
+
+.split-view #hakemus-details #hakemus-arviointi {
+    top: 348px;
+    height: calc(100vh - 56px - 398px);
+}
+
+.split-view #hakemus-details #close-hakemus-button {
+    top: calc(348px + 12px);
+}
+
+.split-view #hakemus-details #toggle-hakemus-list-button {
+    top: calc(348px + 50px);
+}

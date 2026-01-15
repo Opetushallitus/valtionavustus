@@ -2,7 +2,7 @@ import React from 'react'
 import { createAverageSummaryText, effectiveAverage } from '../../ScoreResolver'
 import { Scoring } from 'soresu-form/web/va/types'
 
-import * as styles from './StarScoring.module.less'
+import * as styles from './StarScoring.module.css'
 import { useUserInfo } from '../../initial-data-context'
 
 interface StarProps {

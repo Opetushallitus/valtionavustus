@@ -5,7 +5,7 @@ import { useTranslations } from '../i18n/TranslationContext'
 import { isAcceptedWithOrWithoutChanges } from '../Muutoshakemus'
 import { OsioPaatos } from '../OsioPaatos'
 
-import './talous.less'
+import './talous.css'
 
 type MenoRowProps = {
   meno: Meno

@@ -1,0 +1,115 @@
+@import "~soresu-form/web/form/style/theme.css";
+
+.muutoshakemus__header {
+    color: #000;
+    font-weight: 700;
+    margin: 0;
+}
+
+h1.muutoshakemus__paatos-status {
+    color: #00516d;
+    font-weight: 700 !important;
+    font-size: 1.4rem !important;
+}
+
+h3.muutoshakemus__header {
+    font-size: 1.2rem;
+    margin: 1rem 0;
+}
+
+h4.muutoshakemus__header {
+    font-size: 1rem;
+}
+
+.muutoshakemus-section {
+    margin: 0 0 2rem;
+}
+
+.muutoshakemus-row {
+    margin: 2rem 0;
+}
+
+.muutoshakemus-description-box {
+    white-space: pre-wrap;
+    border: 1px solid #eaeaea;
+    padding: 0.75rem 1rem;
+}
+
+.muutoshakemus__paatos {
+    border-left: 3px solid var(--bright-blue);
+    padding-left: 1rem;
+}
+
+.muutoshakemus__paatos-status {
+    position: relative;
+    padding-left: 3rem;
+}
+
+.muutoshakemus__paatos-icon::before {
+    position: absolute;
+    content: "";
+    height: 100%;
+    width: 2rem;
+    left: 0;
+    top: 0;
+    background-size: 2rem;
+}
+
+.muutoshakemus__paatos-icon--accepted::before {
+    background: url("./img/icon_accepted.svg") no-repeat 50% 50%;
+}
+
+.muutoshakemus__paatos-icon--accepted_with_changes::before {
+    background: url("./img/icon_accepted.svg") no-repeat 50% 50%;
+}
+
+.muutoshakemus__paatos-icon--rejected::before {
+    background: url("./img/icon_rejected.svg") no-repeat 50% 50%;
+}
+
+.muutoshakemus__project-end-row {
+    display: flex;
+}
+
+.muutoshakemus__project-end-row div:not(:first-of-type) {
+    margin-left: 1vw;
+}
+
+.muutoshakemus-notice {
+    border: 1px solid #deb335;
+    box-sizing: border-box;
+    border-radius: 4px;
+    color: #956a14;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    letter-spacing: -0.035em;
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.muutoshakemus__existing-hakemus__container {
+    padding-left: 80px;
+    display: flex;
+    flex-direction: row;
+}
+
+.muutoshakemus__existing-hakemus__title {
+    font-size: 19px;
+    line-height: 27px;
+    letter-spacing: -0.015em;
+    flex-grow: 1;
+}
+
+.muutoshakemus__existing-hakemus__status {
+    color: var(--dark-blue);
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -0.035em;
+}
+
+.muutoshakemus__existing-hakemus__values {
+    margin-right: 80px;
+    flex-grow: 2;
+}

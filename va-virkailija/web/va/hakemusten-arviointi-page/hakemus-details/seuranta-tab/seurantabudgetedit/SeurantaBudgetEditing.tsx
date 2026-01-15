@@ -1,4 +1,4 @@
-import '../../../../style/budgetedit.less'
+import '../../../../style/budgetedit.css'
 
 import React from 'react'
 import _ from 'lodash'
@@ -76,7 +76,7 @@ const SeurantaBudgetEditing = ({
   const budgetSpecWithSelvityses = FormUtil.mergeDeepFieldTrees(
     vaBudget,
     FormUtil.findFieldByFieldType(hakemus?.selvitys?.valiselvitysForm?.content ?? [], 'vaBudget') ??
-      {},
+    {},
     FormUtil.findFieldByFieldType(
       hakemus?.selvitys?.loppuselvitysForm?.content ?? [],
       'vaBudget'
@@ -86,9 +86,9 @@ const SeurantaBudgetEditing = ({
   const budgetChangeEnabled = Array.isArray(hakemus.normalizedData?.talousarvio)
   const budgetSpec = budgetChangeEnabled
     ? {
-        ...budgetSpecWithSelvityses,
-        children: budgetSpecWithSelvityses.children?.filter((c) => c.id !== 'project-budget'),
-      }
+      ...budgetSpecWithSelvityses,
+      children: budgetSpecWithSelvityses.children?.filter((c) => c.id !== 'project-budget'),
+    }
     : budgetSpecWithSelvityses
   const fakeHakemus = {
     answers: hakemus.arvio['seuranta-answers'],

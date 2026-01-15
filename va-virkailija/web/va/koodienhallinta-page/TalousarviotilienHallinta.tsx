@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import * as yup from 'yup'
 
-import * as styles from './TalousarviotilienHallinta.module.less'
+import * as styles from './TalousarviotilienHallinta.module.css'
 
 import { Field, FormikProvider, useFormik } from 'formik'
 import {

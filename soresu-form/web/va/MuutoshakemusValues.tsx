@@ -10,7 +10,7 @@ import { Language } from './i18n/translations'
 import { useTranslations } from './i18n/TranslationContext'
 import { fiLongFormat, parseDateStringToMoment } from 'soresu-form/web/va/i18n/dateformat'
 
-import './MuutoshakemusValues.less'
+import './MuutoshakemusValues.css'
 
 export const datetimeFormat = (lang: Language) =>
   `D.M.YYYY [${lang === 'sv' ? 'kl.' : 'klo'}] HH.mm`
@@ -47,8 +47,8 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
             <h3 className="muutoshakemus__header" data-test-id="päätös-email-status">
               {a['paatos-sent-at']
                 ? `${t.email.paatos.status.sent} ${moment(a['paatos-sent-at']).format(
-                    datetimeFormat(lang)
-                  )}`
+                  datetimeFormat(lang)
+                )}`
                 : t.email.paatos.status.pending}
             </h3>
             <h3 className="muutoshakemus__header">{t.muutoshakemus.paatos.paatosDokumentti}:</h3>

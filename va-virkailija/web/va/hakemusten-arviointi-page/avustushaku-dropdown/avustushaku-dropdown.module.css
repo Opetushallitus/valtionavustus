@@ -1,0 +1,6 @@
+@import "~soresu-form/web/va/style/soresu-va.css";
+
+.dropdownList {
+    max-width: 800px;
+    border-color: #817C7B;
+}

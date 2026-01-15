@@ -1,0 +1,37 @@
+@import "topbar.css";
+
+#container p {
+    margin-top: 10px;
+}
+
+#container h2 {
+    margin-top: 20px;
+}
+
+#container .required:after {
+    content: "\00a0*";
+}
+
+#container label:after {
+    content: " ";
+}
+
+#container .message-container {
+    display: inline-block;
+    vertical-align: top;
+    width: 160px;
+    height: 40px;
+    font-size: 12px;
+}
+
+#container .message {
+    color: var(--dark-green);
+}
+
+#container .error {
+    color: var(--bright-red);
+}
+
+#container .text-red {
+    color: var(--bright-red);
+}

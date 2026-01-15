@@ -11,7 +11,8 @@ import { useGetEnvironmentAndUserInfoQuery } from '../apiSlice'
 import { TalousarviotilienHallinta } from './TalousarviotilienHallinta'
 
 import 'oph-virkailija-style-guide/oph-styles-min.css'
-import '../style/main.less'
+import 'soresu-form/web/form/style/theme.css'
+import '../style/main.css'
 import LoadingSitePage from '../common-components/LoadingSitePage'
 import ErrorBoundary from '../common-components/ErrorBoundary'
 

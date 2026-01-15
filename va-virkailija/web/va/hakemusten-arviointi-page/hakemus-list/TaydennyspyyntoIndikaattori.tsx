@@ -1,6 +1,6 @@
 import React from 'react'
 import ClassNames from 'classnames'
-import * as styles from './TaydennyspyyntoIndikaattori.module.less'
+import * as styles from './TaydennyspyyntoIndikaattori.module.css'
 
 export const TaydennyspyyntoIndikaattori = ({
   hakemusId,

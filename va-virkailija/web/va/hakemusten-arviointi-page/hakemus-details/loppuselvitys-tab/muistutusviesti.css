@@ -1,0 +1,98 @@
+.writeMuistutusviesti {
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+    display: flex;
+    justify-content: space-between;
+    padding-block: 0.5rem;
+    border-block: 1px var(--light-gray) solid;
+}
+
+.writeMuistutusviesti.noBottomBorder {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.writeMuistutusviesti .writeMuistutusviestiButton {
+    background-color: initial;
+    border: none;
+    color: var(--light-blue);
+}
+
+.writeMuistutusviesti .writeMuistutusviestiButton:hover {
+    background-color: initial;
+}
+
+.writeMuistutusviesti .writeMuistutusviestiButton:disabled {
+    color: var(--light-gray);
+}
+
+
+.viestiListaItem {
+    background-color: var(--background-blue);
+}
+
+.viestiListaItem .viestiListaRow {
+    cursor: pointer;
+    margin-bottom: 4px;
+    padding: 0 16px;
+    height: 56px;
+    display: grid;
+    grid: auto-flow / 24px 170px minmax(auto, 0.5fr) 1fr min-content;
+    gap: 8px;
+    grid-auto-flow: row;
+    justify-items: flex-start;
+    align-items: center;
+    line-height: 1.6;
+}
+
+.viestiListaItem .viestiListaRow .rowVirkailija {
+    margin-right: 1rem;
+}
+
+.viestiListaItem .viestiListaRow .rowDate {
+    margin-right: 1rem;
+}
+
+.viestiListaItem .viestiListaRow .rowHeading {
+    font-weight: 700;
+}
+
+.viestiListaItem .viestiListaRow .rowOpenCloseIcon {
+    cursor: pointer;
+    margin-right: 1rem;
+    flex-grow: 3;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 100%;
+}
+
+.viestiListaItem .messageDetails {
+    padding: 0.5rem;
+    margin: 0.5rem;
+    background-color: white;
+    color: var(--middle-gray);
+    max-height: 242px;
+    overflow-y: scroll;
+}
+
+.viestiListaItem .messageDetails .detailRow {
+    display: flex;
+    align-items: center;
+    padding-bottom: 0.5rem;
+}
+
+.viestiListaItem .messageDetails .detailRow .label {
+    font-weight: bold;
+    margin-right: 1rem;
+    min-width: 150px;
+}
+
+.viestiListaItem .messageDetails .detailRow .item {
+    flex-grow: 4;
+}
+
+.viestiListaItem .messageDetails .rowMessage {
+    margin-top: 1rem;
+    white-space: pre-line;
+}

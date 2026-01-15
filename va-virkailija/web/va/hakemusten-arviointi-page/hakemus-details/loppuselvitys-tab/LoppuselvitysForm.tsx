@@ -5,7 +5,7 @@ import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 import { Role, UserInfo } from '../../../types'
 import { Taloustarkastus, Asiatarkastus } from './LoppuselvitysTarkastus'
 
-import './LoppuselvitysForm.less'
+import './LoppuselvitysForm.css'
 import ViestiLista from '../ViestiLista'
 
 type LoppuselvitysFormProps = {

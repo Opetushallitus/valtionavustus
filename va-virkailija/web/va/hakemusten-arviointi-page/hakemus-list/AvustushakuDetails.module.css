@@ -1,0 +1,31 @@
+.box {
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  box-sizing: border-box;
+  border-radius: 4px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  line-height: 24px;
+  margin-right: 16px;
+  flex-grow: 1;
+}
+
+.box:last-of-type {
+  margin-right: 0;
+}
+
+.box .title {
+  font-weight: 600;
+}
+
+.box .deadline {
+  color: #817c7b;
+}
+
+.detailsContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}

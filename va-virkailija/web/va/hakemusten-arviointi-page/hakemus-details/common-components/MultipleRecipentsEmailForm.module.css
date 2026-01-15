@@ -1,0 +1,92 @@
+.form {
+  margin-bottom: 1rem;
+  width: 100%;
+  border: 1px solid #eaeaea;
+  background: var(--background-blue);
+}
+
+.form .formBody {
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.form .formHeader {
+  font: 'Open Sans';
+  margin: 0 0 1rem;
+}
+
+.form .formFooter {
+  padding: 0 1rem 1rem 1rem;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+}
+
+.form .formFooter .cancelButton {
+  background: initial;
+  border: initial;
+  color: var(--light-blue);
+}
+
+.form .formAddReceiver {
+  align-self: flex-start;
+  background-color: white;
+  color: #499cc7;
+  border: 1px solid #499cc7;
+}
+
+.form .formAddReceiver:hover {
+  background-color: #499cc7;
+  color: white;
+}
+
+.form .formReceiverRow {
+  display: flex;
+  flex-direction: row;
+}
+
+.form .formReceiverRow input {
+  flex-grow: 1;
+  border: 1px solid var(--middle-gray);
+}
+
+.form .formReceiverRow .formTrashcan {
+  cursor: pointer;
+  padding: 1rem;
+}
+
+.form fieldset {
+  display: flex;
+  flex-direction: column;
+}
+
+.form fieldset label,
+.form fieldset legend {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  margin-bottom: 4px;
+}
+
+.form fieldset input,
+.form fieldset textarea {
+  box-sizing: border-box;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  padding: 8px;
+}
+
+.form fieldset input:disabled,
+.form fieldset textarea:disabled {
+  background: #f9f9f9;
+}
+
+pre.emailFixedContent {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.errorMessage {
+  color: var(--bright-red);
+  padding-left: 1rem;
+}

@@ -1,4 +1,4 @@
-import './SelvitysLink.less'
+import './SelvitysLink.css'
 
 import React from 'react'
 import { HelpTooltip } from '../../../common-components/HelpTooltip'

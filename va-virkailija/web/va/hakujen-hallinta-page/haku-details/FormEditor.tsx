@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 
-import 'soresu-form/web/va/style/soresu-va.less'
-import 'soresu-form/web/form/style/formedit.less'
+import 'soresu-form/web/va/style/soresu-va.css'
+import 'soresu-form/web/form/style/formedit.css'
 
 import FormEdit from 'soresu-form/web/form/edit/FormEdit.jsx'
 import FormEditorController from 'soresu-form/web/form/edit/FormEditController'

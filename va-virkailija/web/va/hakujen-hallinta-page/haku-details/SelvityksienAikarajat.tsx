@@ -5,7 +5,7 @@ import { DateInput } from './DateInput'
 import { Avustushaku, HelpTexts } from 'soresu-form/web/va/types'
 import HelpTooltip from '../../common-components/HelpTooltip'
 
-import './selvityksien-aikarajat.less'
+import './selvityksien-aikarajat.css'
 import 'react-widgets/styles.css'
 import { updateField } from '../hakuReducer'
 import { useHakujenHallintaDispatch } from '../hakujenHallintaStore'

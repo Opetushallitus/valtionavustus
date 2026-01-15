@@ -1,0 +1,753 @@
+@import "~soresu-form/web/va/style/soresu-va.css";
+
+table.translation {
+    margin-top: 10px;
+    width: 100%;
+    text-align: left;
+}
+
+table.translation th {
+    margin: 10px 0 0 0;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--darker-gray);
+}
+
+table.translation td {
+    padding: 5px 0;
+}
+
+#editor-section {
+    width: 100%;
+    background-color: var(--lightest-gray);
+    border-top: 2px solid var(--lighter-gray);
+    padding-top: 22px;
+    padding-bottom: 100px;
+}
+
+#editor-subtab-selector {
+    border-bottom: 2px solid var(--lightish-gray);
+    padding-bottom: 6px;
+}
+
+#editor-subtab-selector>a,
+#editor-subtab-selector span {
+    padding-bottom: 6px;
+    margin-right: 25px;
+    text-transform: uppercase;
+    color: var(--dark-gray);
+    cursor: pointer;
+}
+
+#editor-subtab-selector>a:last-child,
+#editor-subtab-selector span:last-child {
+    margin: 0;
+}
+
+#editor-subtab-selector>a.selected,
+#editor-subtab-selector span.selected {
+    color: var(--light-blue);
+    border-bottom: 2px solid var(--light-blue);
+    cursor: default;
+}
+
+#editor-subtab-selector>a.disabled,
+#editor-subtab-selector span.disabled {
+    pointer-events: none;
+    color: var(--light-gray);
+}
+
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 10px;
+}
+
+.editor-header-element {
+    margin-top: 10px;
+}
+
+.editor-field-row {
+    display: flex;
+}
+
+.registerNumberHeading {
+    margin-right: 0.25em;
+}
+
+.editor-row-element:focus-within {
+    flex: 1;
+}
+
+.money_input input {
+    border: 2px solid #c1c1c1;
+    padding: 0 30px 0 4px;
+    border-radius: 4px;
+    min-height: 34px;
+}
+
+.money_input:after {
+    content: "€";
+    text-align: center;
+    position: relative;
+    right: 20px;
+}
+
+.spacer {
+    border-top: 1px solid #d9d9d9;
+    border-left: 0;
+    margin: 2rem 0;
+}
+
+#haku-edit #haku-edit-header {
+    margin-top: 20px;
+    width: var(--content-width);
+    border-bottom: 1px solid var(--light-gray);
+}
+
+#haku-edit #haku-edit-header h3 {
+    display: inline-block;
+}
+
+#haku-edit #haku-edit-header input {
+    display: inline-block;
+}
+
+#haku-edit #haku-edit-header #create-haku {
+    width: 150px;
+    border-left: 1px solid var(--light-gray);
+    text-align: right;
+    display: inline-block;
+    font-size: 14px;
+    padding: 0 10px;
+}
+
+#haku-edit #set-haku-type {
+    margin-top: 20px;
+}
+
+#haku-edit .dateDivider {
+    margin: 0 10px;
+}
+
+#haku-edit .dateDivider:after {
+    content: "—";
+}
+
+#haku-edit #set-maksuerat input[type="radio"]+label,
+#haku-edit #set-academysize input[type="radio"]+label {
+    text-transform: none;
+}
+
+#haku-edit input.percentage {
+    text-align: right;
+}
+
+#haku-edit .haku-roles {
+    margin-top: 30px;
+}
+
+#haku-edit .haku-roles-role-column,
+#haku-edit .haku-roles-name-column,
+#haku-edit .haku-roles-email-column {
+    text-align: left;
+    padding: 5px 8px;
+}
+
+#haku-edit .haku-roles-role-column {
+    padding-left: 0;
+}
+
+#haku-edit .haku-roles-name-column input,
+#haku-edit .haku-roles-email-column input,
+#haku-edit .haku-roles-vastuuvalmistelija input {
+    width: 280px;
+    border: 1px solid #c1c1c1;
+    padding: 0 4px;
+}
+
+#haku-edit .haku-roles-name-column input:invalid,
+#haku-edit .haku-roles-email-column input:invalid,
+#haku-edit .haku-roles-vastuuvalmistelija input:invalid {
+    background-color: var(--bright-red);
+}
+
+#haku-edit .haku-roles-vastuuvalmistelija>input:first-of-type {
+    margin-right: 16px;
+}
+
+#haku-edit .haku-roles-email-column {
+    padding-right: 0;
+    position: relative;
+}
+
+#haku-edit .haku-roles-remove {
+    position: absolute;
+    right: -34px;
+    top: 4px;
+}
+
+#haku-edit .haku-roles-remove:disabled {
+    background-position: -1px -3px;
+}
+
+#haku-edit .education-levels-table td {
+    width: 250px;
+    padding: 5px 10px 5px 10px;
+}
+
+#haku-edit .education-levels-table td div {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#haku-edit .education-levels-table tr {
+    border-bottom: solid 1px var(--light-gray);
+}
+
+#haku-edit .education-level-field {
+    width: 65%;
+    margin-right: 5px;
+    padding: 4px;
+}
+
+#haku-edit #rahoitusalueet {
+    margin-left: 50px;
+}
+
+#haku-edit #rahoitusalueet .rahoitusalue-row {
+    border: solid var(--lightest-gray) 10px;
+}
+
+#haku-edit #rahoitusalueet .rahoitusalue-row tr:not(:last-child) td {
+    padding-bottom: 0;
+}
+
+#haku-edit #rahoitusalueet th,
+#haku-edit #rahoitusalueet td {
+    padding: 15px 0 15px 30px;
+    vertical-align: center;
+    text-align: left;
+    background-color: var(--lighter-gray);
+}
+
+#haku-edit #rahoitusalueet th:nth-last-child(2),
+#haku-edit #rahoitusalueet td:nth-last-child(2) {
+    padding-left: 20px;
+    padding-right: 20px;
+    min-width: 22px;
+}
+
+#haku-edit #rahoitusalueet th:nth-last-child(1),
+#haku-edit #rahoitusalueet td:nth-last-child(1) {
+    padding-left: 10px;
+    background-color: transparent;
+}
+
+#haku-edit #rahoitusalueet input[type="text"] {
+    padding: 4px;
+}
+
+#haku-edit #rahoitusalueet button {
+    padding: 0;
+}
+
+#haku-edit .va-user-search-add-role {
+    min-height: 72px;
+}
+
+#haku-edit .va-user-search-add-role .va-user-search-error-display {
+    min-height: 22px;
+}
+
+#haku-edit .va-user-search-add-role .hidden {
+    display: none;
+}
+
+#haku-edit .va-user-search-add-role .va-user-search-block {
+    display: inline-block;
+    position: relative;
+}
+
+#haku-edit .va-user-search-add-role .va-user-search-block button.remove {
+    position: absolute;
+    right: -2px;
+    top: -5px;
+    height: 24px;
+}
+
+#haku-edit .va-user-search-add-role .va-user-search-block button.remove.enabled {
+    background-position: 1px 3px;
+}
+
+#haku-edit .va-user-search-add-role #va-user-search-results,
+#haku-edit .va-user-search-add-role #va-vastuuvalmistelija-search-results {
+    z-index: 500;
+    min-height: 20px;
+    width: 800px;
+    position: absolute;
+    left: 0;
+    top: 18px;
+}
+
+#haku-edit .va-user-search-add-role #va-user-search-results.loading,
+#haku-edit .va-user-search-add-role #va-vastuuvalmistelija-search-results.loading {
+    background: white url("../img/ajax-loader.gif") no-repeat 4px 4px;
+}
+
+#haku-edit .va-user-search-add-role #va-user-search-results ul,
+#haku-edit .va-user-search-add-role #va-vastuuvalmistelija-search-results ul {
+    background: white;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+    border-radius: 0 0 4px 4px;
+    list-style: none;
+    padding-left: 0;
+    display: inline-block;
+}
+
+#haku-edit .va-user-search-add-role #va-user-search-results ul li,
+#haku-edit .va-user-search-add-role #va-vastuuvalmistelija-search-results ul li {
+    margin-right: 0;
+    padding: 0 20px;
+    line-height: 27px;
+}
+
+#haku-edit .va-user-search-add-role #va-user-search-results ul li .access-level,
+#haku-edit .va-user-search-add-role #va-vastuuvalmistelija-search-results ul li .access-level {
+    display: inline-block;
+    width: 132px;
+}
+
+#haku-edit .va-user-search-add-role #va-user-search-results ul li a.disabled,
+#haku-edit .va-user-search-add-role #va-vastuuvalmistelija-search-results ul li a.disabled {
+    color: var(--dark-gray);
+    cursor: default;
+}
+
+#haku-edit .va-user-search-add-role #va-user-search-results ul li:hover:not(.disabled),
+#haku-edit .va-user-search-add-role #va-vastuuvalmistelija-search-results ul li:hover:not(.disabled) {
+    background-color: var(--lighter-blue);
+}
+
+#haku-edit .va-user-search-add-role #va-user-search-results ul li.no-results-row,
+#haku-edit .va-user-search-add-role #va-vastuuvalmistelija-search-results ul li.no-results-row {
+    padding-left: 30px;
+    background-color: #fff;
+}
+
+#haku-edit .va-user-search-add-role #va-user-search-results ul.loading,
+#haku-edit .va-user-search-add-role #va-vastuuvalmistelija-search-results ul.loading {
+    background: white url("../img/ajax-loader.gif") no-repeat 4px 4px;
+}
+
+#haku-edit .translation textarea,
+#haku-edit .translation input[type="text"] {
+    max-width: 97%;
+    width: 97%;
+}
+
+#haku-edit .haku-edit-field-container {
+    display: inline-block;
+    margin-right: 40px;
+}
+
+#haku-edit .haku-edit-radio-button {
+    display: inline-block;
+    margin-right: 4px;
+}
+
+#haku-edit .haku-edit-radio-button-item {
+    display: block;
+}
+
+#haku-edit .haku-edit-inline-input {
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+#haku-edit .haku-edit-field-label {
+    display: block;
+}
+
+#haku-edit .haku-edit-subrow {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#haku-edit .haku-edit-disabled-form {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+#haku-edit .disabled-input {
+    opacity: 0.2;
+}
+
+#haku-edit .multibatch-fields {
+    background-color: #f0f0f0;
+    padding: 1px 10px;
+}
+
+#haku-edit .haku-duration-edit-container,
+#haku-edit .haku-self-financing-edit-container {
+    display: inline-block;
+    margin-right: 40px;
+}
+
+#haku-edit #selection-criteria,
+#haku-edit #focus-areas {
+    margin-top: 20px;
+}
+
+#haku-edit #focus-areas textarea {
+    height: 66px;
+}
+
+#haku-edit input:disabled,
+#haku-edit textarea:disabled {
+    color: var(--dark-gray);
+    border-width: 1px;
+    border-style: dotted;
+}
+
+#haku-edit .raportointivelvoitteet * {
+    box-sizing: border-box;
+}
+
+#haku-edit .raportointivelvoitteet input {
+    border: 1px solid #c1c1c1;
+    padding: 0 4px;
+    border-radius: 4px;
+    width: 100%;
+}
+
+#haku-edit .raportointivelvoitteet h3 {
+    margin-top: 16px;
+}
+
+#haku-edit .raportointivelvoitteet_row {
+    display: flex;
+    justify-content: space-between;
+}
+
+#haku-edit .raportointivelvoitteet_raportointilaji {
+    width: 315px;
+}
+
+#haku-edit .raportointivelvoitteet_maaraaika {
+    width: 180px;
+}
+
+#haku-edit .raportointivelvoitteet_maaraaika input:disabled {
+    background: initial !important;
+}
+
+#haku-edit .raportointivelvoitteet_asha-tunnus {
+    width: 130px;
+}
+
+#haku-edit .raportointivelvoitteet_asha-tunnus input {
+    min-height: 38px;
+}
+
+#haku-edit .raportointivelvoitteet_label {
+    white-space: nowrap;
+}
+
+#haku-edit .raportointivelvoitteet_lisatiedot {
+    width: 420px;
+}
+
+#haku-edit .raportointivelvoitteet_lisatiedot input {
+    min-height: 38px;
+}
+
+#haku-edit .raportointivelvoitteet_buttons {
+    display: flex;
+    align-items: end;
+}
+
+#haku-edit .raportointivelvoitteet_button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    height: 30px;
+    width: 30px;
+    margin: 4px 0;
+}
+
+#haku-edit .lainsaadanto_options {
+    display: flex;
+}
+
+#haku-edit .lainsaadanto_option {
+    display: flex;
+    cursor: pointer;
+    margin: 8px 24px 8px 0;
+    line-height: 24px;
+    text-align: center;
+}
+
+#haku-edit .lainsaadanto_option label {
+    cursor: pointer;
+}
+
+#haku-edit .lainsaadanto_option input {
+    margin-right: 8px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.form-json-editor textarea {
+    width: 100%;
+    min-height: 200px;
+}
+
+.btn-fixed-container {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+}
+
+.btn-fixed {
+    margin-left: 10px;
+}
+
+.table {
+    width: 100%;
+    max-width: 100%;
+}
+
+.table th,
+.table td {
+    padding: 4px;
+    vertical-align: top;
+    text-align: left;
+}
+
+#paatosUpdatedAt {
+    text-align: right;
+}
+
+#loppuselvitysUpdatedAt,
+#valiselvitysUpdatedAt {
+    float: right;
+    margin-right: 20px;
+}
+
+.decision-editor {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.decision-subfields {
+    padding: 20px;
+}
+
+.table--sm {
+    font-size: 12px;
+}
+
+.decision-row {
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+}
+
+.decision-column {
+    width: 50%;
+}
+
+.decision-column label {
+    display: block;
+    color: var(--darker-gray);
+    margin-bottom: 5px;
+}
+
+.decision-column textarea {
+    width: 90%;
+}
+
+.decision-date {
+    padding-bottom: 19px;
+}
+
+.decision-separator {
+    border-bottom: solid var(--lightish-gray) 2px;
+    margin-bottom: 15px;
+}
+
+.decision-send-controls {
+    margin-bottom: 20px;
+}
+
+.decision-send-controls>.decision-separator {
+    margin-bottom: 20px;
+}
+
+.decision-date-label {
+    margin-right: 10px;
+}
+
+.decision-email-preview {
+    margin-bottom: 20px;
+}
+
+.decision-email-row {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.decision-email-field-label {
+    min-width: 125px;
+    text-align: right;
+    margin-right: 15px;
+}
+
+.decision-email-field-value {
+    display: inline-block;
+}
+
+.decision-email-content {
+    white-space: pre;
+    overflow-x: auto;
+}
+
+.decision-liite-selection input[type="radio"] {
+    display: inline-block;
+}
+
+.decision-liite-selection__liite-id {
+    font-size: 80%;
+    margin-left: 6px;
+}
+
+.decision-liite-selection__liite-id::before {
+    content: "(";
+}
+
+.decision-liite-selection__liite-id::after {
+    content: ")";
+}
+
+.decision-liite-selection__liite+.decision-liite-selection__liite {
+    margin-top: 6px;
+}
+
+.decision-liite-selection__liite-input,
+.decision-liite-selection__liite-version-input {
+    margin-right: 6px;
+}
+
+.decision-liite-selection__liite-version {
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
+    margin-left: 22px;
+}
+
+.decision-liite-selection__liite-version label:not(.disabled),
+.decision-liite-selection__liite-version input {
+    cursor: pointer;
+}
+
+.decision-liite-selection__link {
+    margin-left: 6px;
+}
+
+.send-decisions-panel {
+    padding-top: 20px;
+}
+
+.send-decisions-panel h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.haku-filter-remove {
+    margin-left: 10px;
+    font-size: 11px;
+}
+
+.two-column-container {
+    display: flex;
+}
+
+.two-column-container>div {
+    width: 50%;
+    flex-shrink: 0;
+}
+
+.payments-fields {
+    display: flex;
+}
+
+.tapahtumaloki {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.tapahtumaloki .header {
+    font-weight: 700;
+}
+
+.tapahtumaloki .entries div.entry:nth-child(even) {
+    background-color: var(--lighterer-gray);
+}
+
+.tapahtumaloki .entries .entry,
+.tapahtumaloki .entries .header-row {
+    display: flex;
+    text-align: center;
+    font-size: 12px;
+}
+
+.tapahtumaloki .entries .entry span:first-child,
+.tapahtumaloki .entries .header-row span:first-child {
+    margin-left: 20px;
+    text-align: left;
+}
+
+.tapahtumaloki .entries .entry span.timestamp,
+.tapahtumaloki .entries .header-row span.timestamp {
+    width: 15%;
+}
+
+.tapahtumaloki .entries .entry span.sender,
+.tapahtumaloki .entries .header-row span.sender {
+    width: 20%;
+}
+
+.tapahtumaloki .entries .entry span.sentCount,
+.tapahtumaloki .entries .header-row span.sentCount {
+    width: 10%;
+    min-width: 70px;
+}
+
+.tapahtumaloki .entries .entry span.failedCount,
+.tapahtumaloki .entries .header-row span.failedCount {
+    width: 15%;
+}
+
+.tapahtumaloki .entries .entry span.header,
+.tapahtumaloki .entries .header-row span.header {
+    font-weight: 700;
+}
+
+.warning-banner {
+    width: 100%;
+    background-color: var(--off-white);
+    border: 2px solid var(--yellow);
+    border-radius: 2px;
+}
+
+.warning-banner-content {
+    margin: 20px;
+    color: var(--text-black);
+}

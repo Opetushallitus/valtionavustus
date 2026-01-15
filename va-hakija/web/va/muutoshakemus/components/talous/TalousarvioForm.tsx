@@ -8,7 +8,7 @@ import {
 } from 'soresu-form/web/va/types/muutoshakemus'
 import { getNestedInputErrorClass } from 'soresu-form/web/va/formikHelpers'
 
-import 'soresu-form/web/va/muutoshakemus/talous.less'
+import 'soresu-form/web/va/muutoshakemus/talous.css'
 
 import { Language } from 'soresu-form/web/va/i18n/translations'
 import { useTranslations } from 'soresu-form/web/va/i18n/TranslationContext'

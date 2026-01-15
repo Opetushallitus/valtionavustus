@@ -5,9 +5,10 @@ import queryString from 'query-string'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 
-import '../style/virkailija.less'
-import './login.less'
-import * as styles from '../common-components/Header.module.less'
+import 'soresu-form/web/form/style/theme.css'
+import '../style/virkailija.css'
+import './login.css'
+import * as styles from '../common-components/Header.module.css'
 import ErrorBoundary from '../common-components/ErrorBoundary'
 
 export default class Login extends React.Component {

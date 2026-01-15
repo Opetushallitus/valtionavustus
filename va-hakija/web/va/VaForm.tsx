@@ -13,7 +13,8 @@ import VaFormTopbar from './VaFormTopbar'
 import GrantRefuse from './GrantRefuse'
 import OpenContactsEdit from './OpenContactsEdit'
 
-import './style/main.less'
+import 'soresu-form/web/form/style/theme.css'
+import './style/main.css'
 import { isJotpaAvustushaku } from './jotpa'
 import { changeFaviconIconTo } from './favicon'
 

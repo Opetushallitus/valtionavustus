@@ -9,7 +9,7 @@ import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 import { HakemusV2WithEvaluation, PaymentBatchV2, PaymentV2, VaCodeValue } from '../../types'
 import { LahtevatMaksatukset } from './LahtevatMaksatukset'
 
-import './Maksatukset.less'
+import './Maksatukset.css'
 import { MaksatuksetTable } from './MaksatuksetTable'
 import { useHakujenHallintaDispatch, useHakujenHallintaSelector } from '../hakujenHallintaStore'
 import {

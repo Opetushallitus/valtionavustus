@@ -1,0 +1,73 @@
+/* Variables are now in theme.css */
+
+/* @listing-table-width: @content-width - 30px; */
+/* Using calc for width */
+
+.listing-table-container {
+    position: relative;
+}
+
+.listing-table {
+    text-align: left;
+    overflow-y: auto;
+}
+
+.listing-table table {
+    width: calc(var(--content-width) - 30px);
+}
+
+.listing-table table thead {
+    /* .no-select() inlined */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.listing-table table thead th {
+    position: sticky;
+    top: -1px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--light-gray);
+
+    font-weight: normal;
+    color: var(--form-label-black);
+    background-color: var(--lighterer-gray);
+}
+
+.listing-table table tbody tr td:first-child {
+    padding-left: 7px;
+}
+
+.listing-table table tbody tr td {
+    padding: 5px 2px;
+}
+
+.listing-table table tbody tr.overview-row {
+    cursor: pointer;
+}
+
+.listing-table table tbody tr.unselected:hover {
+    background-color: var(--lighter-blue);
+}
+
+.listing-table table tbody tr.selected {
+    background-color: var(--light-blue);
+    color: white;
+}
+
+.listing-table table tbody tr.selected .btn-role {
+    border-color: #fff;
+}
+
+.listing-table table tbody tr.selected .btn-role__count {
+    color: #fff;
+}
+
+.listing-table table tfoot td {
+    position: sticky;
+    bottom: 0;
+    background-color: var(--lighterer-gray);
+}

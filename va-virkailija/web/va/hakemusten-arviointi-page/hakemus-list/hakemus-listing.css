@@ -1,0 +1,181 @@
+@import "../../style/table.css";
+
+.money:after {
+  content: " €";
+}
+
+.split-view .hakemus-list-container {
+  height: 235px;
+  min-height: auto;
+}
+
+.split-view .hakemus-list-container .listing-footer {
+  position: sticky;
+  bottom: 0;
+}
+
+.hakemus-list-container {
+  min-height: 600px;
+  overflow-x: visible;
+}
+
+.hakemus-list-container .listing-footer {
+  display: flex;
+  justify-content: space-between;
+  width: calc(var(--content-width) - 30px);
+  padding-top: 5px;
+  background-color: var(--lighterer-gray);
+}
+
+.hakemus-list-container .listing-footer .right-side {
+  display: flex;
+}
+
+.hakemus-list-container .listing-footer .right-side .granted-sum-column,
+.hakemus-list-container .listing-footer .right-side .applied-sum-column {
+  text-align: right;
+  font-weight: bold;
+  width: 120px;
+}
+
+table.hakemus-list .organization-column {
+  width: 280px;
+  max-width: 280px;
+}
+
+table.hakemus-list .project-name-column {
+  width: 390px;
+  max-width: 390px;
+}
+
+table.hakemus-list .organization-column,
+table.hakemus-list .project-name-column {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+table.hakemus-list .organization-column input.text-filter,
+table.hakemus-list .project-name-column input.text-filter {
+  width: 240px;
+}
+
+table.hakemus-list .score-column .list-score-row {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+table.hakemus-list .score-column .single-score {
+  padding: 0;
+}
+
+table.hakemus-list .score-column .single-score-0 {
+  opacity: 0.2;
+}
+
+table.hakemus-list .score-column .single-score-25 {
+  opacity: 0.4;
+}
+
+table.hakemus-list .score-column .single-score-50 {
+  opacity: 0.6;
+}
+
+table.hakemus-list .score-column .single-score-75 {
+  opacity: 0.8;
+}
+
+table.hakemus-list .status-column {
+  width: 110px;
+}
+
+table.hakemus-list .muutoshakemus-column {
+  width: 110px;
+}
+
+table.hakemus-list .muutoshakemus-values {
+  text-align: center;
+  width: 110px;
+}
+
+table.hakemus-list .muutoshakemus-values.new {
+  color: var(--mantis-green);
+}
+
+table.hakemus-list .selvitys-column {
+  width: 100px;
+  max-width: 100px;
+}
+
+table.hakemus-list .selvitys-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+table.hakemus-list .should-pay-notification-column {
+  color: var(--bright-red);
+  width: 30px;
+  text-align: center;
+  cursor: pointer;
+}
+
+table.hakemus-list .post-submit-notification-column {
+  text-align: center;
+  color: var(--dark-gray);
+  width: 30px;
+}
+
+table.hakemus-list .post-submit-notification-column span {
+  margin-left: 5px;
+}
+
+table.hakemus-list .change-request-column {
+  color: var(--bright-red);
+  width: 30px;
+  text-align: center;
+  cursor: pointer;
+}
+
+table.hakemus-list .applied-sum-column,
+table.hakemus-list .granted-sum-column {
+  width: 120px;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+table.hakemus-list.hakemus-list--resolved .project-name-column {
+  width: 400px;
+  max-width: 400px;
+}
+
+table.hakemus-list.hakemus-list--academysize .project-name-column {
+  width: 386px;
+  max-width: 386px;
+}
+
+table.hakemus-list.hakemus-list--academysize .academysize-column {
+  width: 70px;
+  text-align: right;
+}
+
+table.hakemus-list .person-filter-column {
+  width: 50px;
+  text-align: center;
+}
+
+table.hakemus-list thead th {
+  white-space: nowrap;
+  z-index: 1000;
+}
+
+table.hakemus-list tbody tr.selected td.status-column .accepted {
+  color: white;
+}
+
+table.hakemus-list tfoot .total-applications-column {
+  width: 996px;
+  font-size: 13px;
+  font-weight: normal;
+}

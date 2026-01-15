@@ -1,0 +1,17 @@
+.muutoshakemus-osio-paatos {
+
+    border: 1px solid;
+    box-sizing: border-box;
+    display: flex;
+    flex-grow: 1;
+    padding: 1rem;
+    align-items: center;
+
+    background: #F5F5F5;
+    border-color: #EAEAEA;
+
+    >svg {
+        padding-right: 1rem;
+        padding-top: 1px;
+    }
+}

@@ -2,7 +2,7 @@ import React from 'react'
 import classNames from 'classnames'
 import { useHakemustenArviointiSelector } from '../arviointiStore'
 
-import * as styles from './Person.module.less'
+import * as styles from './Person.module.css'
 
 export type RoleField = 'evaluator' | 'presenter'
 

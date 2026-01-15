@@ -1,0 +1,296 @@
+/* Variables are now in theme.css */
+/* @import "~soresu-form/web/form/style/variables.less"; */
+
+.change-request {
+    border: dotted var(--dark-gray);
+    border-width: 0 0 1px 0;
+    padding: 10px 0;
+    margin-bottom: 10px;
+
+    .change-request-title {
+        font-weight: 600;
+    }
+
+    .change-request-text {
+        white-space: pre-line;
+        font-style: italic;
+
+        &:before {
+            content: '"';
+        }
+
+        &:after {
+            content: '"';
+        }
+    }
+}
+
+.va-trainee-day-calculator,
+.va-trainee-day-calculator-total {
+    th {
+        font-weight: normal;
+        padding-right: 4px;
+        color: var(--form-label-black);
+    }
+
+    label.total {
+        display: inline;
+    }
+}
+
+.va-budget {
+    color: var(--form-label-black);
+
+    .summing-table,
+    .budget-summary {
+        width: calc(var(--section-width) - 18px);
+        text-align: left;
+
+        tbody tr:last-child td {
+            padding-bottom: 10px;
+        }
+
+        .soresu-money-field input[type=text] {
+            margin: 0 6px 4px 0;
+        }
+
+        .soresu-text-field input[type=text] {
+            margin: 0 4px 4px 0;
+        }
+
+        .soresu-text-area {
+            textarea {
+                margin: 0;
+                width: calc((var(--section-width) / 2) - 19px);
+                /* ceil() removed, relying on subpixel rendering */
+                height: 24px;
+            }
+
+            .length-left {
+                display: none;
+            }
+        }
+
+        .money:after {
+            content: "\00A0€";
+        }
+
+        .error {
+            color: var(--bright-red);
+        }
+    }
+
+    .summing-table {
+        margin-top: 13px;
+
+        caption {
+            margin: 8px 0 16px 0;
+            font-size: 18px;
+            text-align: left;
+            text-transform: uppercase;
+        }
+
+        thead {
+            tr {
+                /* tr cannot have margin */
+                border-top: 10px transparent solid;
+                border-bottom: 8px transparent solid;
+            }
+        }
+
+        tbody {
+            td {
+                vertical-align: top;
+                padding-bottom: 2px;
+            }
+        }
+
+        colgroup {
+            .label-column {
+                width: 415px;
+            }
+
+            .description-column {
+                width: 267px;
+            }
+
+            .amount-column {
+                width: 100px;
+            }
+        }
+
+        .label-column.disabled {
+            color: var(--darker-gray);
+        }
+
+        .amount-column {
+            text-align: right;
+        }
+
+        tfoot {
+            border-top: 1px solid var(--light-gray);
+            font-weight: bold;
+
+            td {
+                padding-top: 5px;
+            }
+        }
+    }
+
+    .budget-summary {
+        margin-top: 26px;
+
+        &-financing {
+            overflow: hidden;
+            /* clearfix */
+        }
+
+        h4 {
+            font-weight: bold;
+            margin: 14px 0;
+        }
+
+        &-financing-left {
+            float: left;
+            max-width: 50%;
+        }
+
+        &-financing-right {
+            float: right;
+            max-width: 50%;
+        }
+
+        .amounts {
+            margin-right: 20px;
+        }
+
+        .percentages {
+            margin-left: 20px;
+        }
+
+        .amounts,
+        .percentages {
+            tbody {
+                tr:first-child td {
+                    height: 50px;
+                }
+
+                tr:last-child td {
+                    padding-top: 10px;
+                    padding-bottom: 0;
+                }
+            }
+        }
+
+        .amount-label-column,
+        .percentage-label-column {
+            padding-right: 20px;
+        }
+
+        .amount-value-column,
+        .percentage-value-column {
+            min-width: 120px;
+            text-align: right;
+        }
+
+        .soresu-money-field {
+            margin: 0;
+
+            input[type=text] {
+                margin: 0;
+            }
+
+            &:after {
+                content: "\00A0€";
+                margin-left: 4px;
+            }
+        }
+
+        .percentage:after {
+            content: "\00A0%";
+        }
+
+        .amount-value-column .money:not(.error):after {
+            margin-left: 12px;
+        }
+    }
+}
+
+.soresu-growing-fieldset {
+    ol li.va-big-fieldset {
+        margin: 20px 0 0 -90px;
+    }
+
+    .va-big-fieldset {
+        &.disabled {
+            color: var(--darker-gray);
+        }
+
+        div.fieldset-elements {
+            float: left;
+            border-left: 1px solid var(--dark-gray);
+            border-right: 1px solid var(--dark-gray);
+            padding: 0 10px 0 21px;
+            margin: 0 10px 40px 10px;
+
+            input[type=text],
+            input[type=email] {
+                margin: 5px 10px 10px 0;
+            }
+        }
+
+        div.fieldset-control {
+            padding-top: 20px;
+            overflow: hidden;
+        }
+    }
+}
+
+.soresu-preview {
+    .soresu-preview-growing-fieldset {
+        ol li.va-big-fieldset {
+            margin: 0 0 40px -26px;
+        }
+
+        .va-big-fieldset {
+            div.fieldset-elements {
+                border-left: 1px solid var(--dark-gray);
+                padding: 0 0 0 21px;
+                margin: 0 0 0 20px;
+            }
+        }
+    }
+
+    .va-budget {
+        .soresu-value {
+            font-size: 16px;
+        }
+
+        .soresu-text-area,
+        .budget-summary .soresu-preview-element {
+
+            &.extra-extra-small,
+            &.extra-small,
+            &.small,
+            &.medium,
+            &.large,
+            &.extra-large {
+                width: auto;
+            }
+        }
+
+        .budget-summary .amount-value-column .money:not(.error):after {
+            margin-left: 0;
+        }
+    }
+}
+
+.va-register-number {
+    margin-top: 5px;
+    float: right;
+
+    .title {
+        margin-right: 5px;
+        font-weight: bold;
+    }
+}

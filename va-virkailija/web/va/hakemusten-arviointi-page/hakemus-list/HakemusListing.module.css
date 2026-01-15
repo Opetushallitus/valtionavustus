@@ -1,0 +1,70 @@
+.organizationCell {
+  display: flex;
+  gap: 1em;
+  align-items: center;
+}
+
+.table {
+  composes: hakemusTable from '../../style/HakemusTable.module.css';
+  width: 100%;
+}
+
+.largeFixedContainer {
+  composes: tableContainer from '../../style/HakemusTable.module.css';
+  height: 230px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.smallFixedContainer {
+  composes: largeFixedContainer;
+  height: 160px;
+}
+
+.projectTd {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.project {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.project span:nth-of-type(2) {
+  padding-left: 8px;
+}
+
+.yhteenveto {
+  margin-left: 1rem;
+}
+
+.tableLabelPopupEvaluator {
+  composes: tableLabelPopup from '../../style/HakemusTable.module.css';
+  right: 0;
+}
+
+.tableLabelPopupEvaluator::after {
+  right: 20px;
+  left: unset;
+}
+
+.statusCheckbox {
+  display: flex;
+  padding: 4px 0 4px 0;
+  align-items: center;
+}
+
+.statusCheckbox input {
+  margin-right: 8px;
+}
+
+.draft {
+  color: #c1c1c1;
+}
+
+.starsCell {
+  text-align: center;
+}

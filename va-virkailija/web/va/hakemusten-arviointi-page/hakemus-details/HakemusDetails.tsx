@@ -7,7 +7,7 @@ import { selectHakemus } from '../arviointiReducer'
 import { NavLinkWithQuery } from '../../NavLinkWithQuery'
 import { EnvelopeIcon } from '../../common-components/icons'
 
-import './hakemusDetails.less'
+import './hakemusDetails.css'
 
 export const HakemusDetails = () => {
   const { hakemusId } = useParams()

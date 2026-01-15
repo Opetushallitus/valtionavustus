@@ -31,27 +31,36 @@ const makeConfig = (basedir, componentName) => {
           },
         },
         {
-          test: /\.less$/,
+          test: /\.css$/,
           use: [
             { loader: 'style-loader' },
             {
               loader: 'css-loader',
               options: {
                 modules: {
-                  auto: true,
+                  auto: /\.module\.\w+$/i,
                   localIdentName: '[local]__[hash:base64]',
                 },
               },
             },
-            { loader: 'less-loader' },
-          ],
-        },
-        {
-          test: /\.css$/,
-          use: [
-            { loader: 'style-loader' },
             {
-              loader: 'css-loader',
+              loader: 'postcss-loader',
+              options: {
+                postcssOptions: {
+                  plugins: [
+                    [
+                      'postcss-preset-env',
+                      {
+                        // Options
+                        stage: 2,
+                        features: {
+                          'nesting-rules': true,
+                        },
+                      },
+                    ],
+                  ],
+                },
+              },
             },
           ],
         },

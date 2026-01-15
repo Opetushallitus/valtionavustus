@@ -1,0 +1,7 @@
+.envelope {
+  fill: #999290;
+}
+
+.envelope.active {
+  fill: #159ecb;
+}

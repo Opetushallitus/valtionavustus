@@ -1,0 +1,34 @@
+.table {
+  composes: hakemusTable from '../../style/HakemusTable.module.css';
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+  height: 400px;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.table thead > tr {
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  background-color: white;
+}
+
+.table thead > tr .nameFilter {
+  width: 560px;
+}
+
+.table .longTextTd > span {
+  white-space: pre-line;
+}
+
+.goodBadDate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.goodBadDate > svg {
+  margin-right: 4px;
+}

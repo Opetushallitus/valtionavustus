@@ -3,7 +3,7 @@ import { isEqual } from 'lodash'
 import * as Bacon from 'baconjs'
 import moment from 'moment'
 
-import * as styles from './SelvitysFormEditor.module.less'
+import * as styles from './SelvitysFormEditor.module.css'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'

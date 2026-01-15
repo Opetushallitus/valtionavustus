@@ -1,4 +1,4 @@
-import './MuutoshakemusTabs.less'
+import './MuutoshakemusTabs.css'
 
 import React from 'react'
 import moment from 'moment'

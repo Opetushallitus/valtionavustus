@@ -1,0 +1,28 @@
+.verification-footer {
+    display: flex;
+    align-items: center;
+
+    padding: 1rem;
+    background: var(--background-blue);
+    border: 1px solid #d6f1ff;
+    box-sizing: border-box;
+}
+
+.verification-footer .verification-footer-header {
+    display: inline;
+    margin-left: 1rem;
+}
+
+.verification-footer span {
+    margin-left: 2rem;
+}
+
+.verification-footer .date {
+    min-width: fit-content;
+}
+
+.verification-footer h3 {
+    margin: 0;
+    font-weight: bold;
+    color: var(--dark-blue);
+}

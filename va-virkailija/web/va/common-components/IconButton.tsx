@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes } from 'react'
 import React from 'react'
-import * as styles from './IconButton.module.less'
+import * as styles from './IconButton.module.css'
 
 export function IconButton(props: ButtonHTMLAttributes<any>) {
   const { className, children, ...restProps } = props

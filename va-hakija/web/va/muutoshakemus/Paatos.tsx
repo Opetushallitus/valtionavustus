@@ -8,7 +8,7 @@ import { useTranslations } from 'soresu-form/web/va/i18n/TranslationContext'
 
 import { Query } from './MuutoshakemusApp'
 
-import '../style/paatos.less'
+import '../style/paatos.css'
 
 const initialState: PaatosState = {} as PaatosState
 

@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom'
 
 import { Tabs } from './Tabs'
 
-import './Koodienhallinta.less'
+import './Koodienhallinta.css'
 
 export const Koodienhallinta = () => {
   return (

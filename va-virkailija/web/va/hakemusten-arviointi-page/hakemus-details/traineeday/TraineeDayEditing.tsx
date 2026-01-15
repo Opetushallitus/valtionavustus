@@ -1,4 +1,4 @@
-import './traineeday.less'
+import './traineeday.css'
 
 import _ from 'lodash'
 import React from 'react'

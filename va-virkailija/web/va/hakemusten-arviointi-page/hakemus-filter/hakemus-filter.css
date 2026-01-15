@@ -1,0 +1,97 @@
+.hakemus-filter-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+}
+
+.hakemus-filter-panel {
+  width: 500px;
+  position: absolute;
+  right: -50px;
+  top: 45px;
+}
+
+.hakemus-filter-panel::before,
+.hakemus-filter-panel::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-top: 0;
+}
+
+.hakemus-filter-panel::before {
+  left: 415px;
+  border-width: 11px;
+  top: -11px;
+  border-bottom-color: var(--light-gray);
+}
+
+.hakemus-filter-panel::after {
+  left: 416px;
+  border-width: 10px;
+  top: -10px;
+  border-bottom-color: var(--off-white);
+}
+
+.hakemus-filter-question {
+  color: var(--light-blue);
+  cursor: pointer;
+  margin-bottom: 10px;
+  position: relative;
+  margin-right: 20px;
+  font-size: 12px;
+}
+
+.hakemus-filter-question::before {
+  content: "\25BC";
+  font-size: 10px;
+  margin-right: 5px;
+}
+
+.hakemus-filter-question--open::before {
+  content: "\25B2";
+}
+
+.hakemus-filter-options {
+  margin-bottom: 10px;
+}
+
+.hakemus-filter-options button {
+  margin-bottom: 10px;
+}
+
+.hakemus-filter-remove {
+  background: transparent url('../../img/x-button.svg') no-repeat center;
+  background-size: 14px 14px;
+  border-width: 0;
+  height: 22px;
+  width: 22px;
+  padding: 0;
+}
+
+.hakemus-filter-remove:focus {
+  outline: none;
+}
+
+.hakemus-filter-remove:hover {
+  background-color: #00b5f0;
+  border-color: #00b5f0;
+}
+
+.hakemus-btn {
+  margin: 0;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-color: transparent;
+  color: #499cc7;
+  background-color: unset !important;
+  border-radius: 4px;
+}
+
+.hakemus-btn:hover {
+  border-color: #00b5f0;
+}

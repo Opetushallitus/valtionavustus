@@ -1,0 +1,27 @@
+div.selvityksien-aikarajat .aikaraja-label {
+  grid-area: label;
+}
+
+div.selvityksien-aikarajat .aikaraja-input {
+  grid-area: input;
+}
+
+div.selvityksien-aikarajat div.date-input-container {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  grid-template-areas: "label input";
+  align-items: center;
+}
+
+div.selvityksien-aikarajat div.date-input-container:not(:first-of-type) {
+  margin-top: 1em;
+}
+
+div.selvityksien-aikarajat div.date-input-container .datepicker {
+  max-width: 250px;
+}
+
+div.selvityksien-aikarajat div.date-input-container .error {
+  background: red;
+  border: 3px solid red;
+}

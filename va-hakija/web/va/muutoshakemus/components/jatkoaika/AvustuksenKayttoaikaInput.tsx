@@ -9,7 +9,7 @@ import { ErrorMessage } from '../../ErrorMessage'
 import { PerustelutTextArea } from '../PerustelutTextArea'
 
 import 'react-widgets/styles.css'
-import './jatkoaika.less'
+import './jatkoaika.css'
 
 type AvustuksenKayttoaikaInputProps = {
   f: FormikHook

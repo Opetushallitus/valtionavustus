@@ -2,7 +2,7 @@ import { Hakemus } from 'soresu-form/web/va/types'
 import React from 'react'
 import moment from 'moment'
 
-import * as styles from './AvustushakuDetails.module.less'
+import * as styles from './AvustushakuDetails.module.css'
 import { AvustushakuData } from '../arviointiReducer'
 
 type Props = AvustushakuData & {

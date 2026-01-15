@@ -11,7 +11,7 @@ import MultipleRecipentEmailForm, {
 import ViestiLista, { Message } from '../ViestiLista'
 import { fetchSentEmails, sendEmail } from '../sentEmails'
 
-import './muistutusviesti.less'
+import './muistutusviesti.css'
 import { useEnvironment, useUserInfo } from '../../../initial-data-context'
 
 type MuistutusviestiProps = {
@@ -35,9 +35,8 @@ export default function MuistutusViesti({ avustushaku, hakemus }: Muistutusviest
 
   const userKey = hakemus['user-key']
   const environment = useEnvironment()
-  const publicUrl = `${environment['hakija-server'].url[initialEmail.lang]}avustushaku/${
-    avustushaku.id
-  }/loppuselvitys?hakemus=${userKey}`
+  const publicUrl = `${environment['hakija-server'].url[initialEmail.lang]}avustushaku/${avustushaku.id
+    }/loppuselvitys?hakemus=${userKey}`
   const loppuselvitysNimi = `${asiatunnus} ${hakemusNimi}`.trim()
   const reminderEmail: Email = {
     ...initialEmail,

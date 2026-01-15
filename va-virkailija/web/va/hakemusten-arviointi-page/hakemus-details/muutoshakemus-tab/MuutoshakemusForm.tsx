@@ -1,5 +1,5 @@
-import 'soresu-form/web/form/style/main.less'
-import '../../../style/main.less'
+import 'soresu-form/web/form/style/main.css'
+import '../../../style/main.css'
 
 import React, { useMemo, useState } from 'react'
 import moment from 'moment'
@@ -134,26 +134,26 @@ const getPaatosSchema = (muutoshakemus: Muutoshakemus) =>
     talousarvio: Yup.lazy((talousarvio) =>
       talousarvio?.talousarvio
         ? Yup.object().shape({
-            status: Yup.string(),
-            talousarvio: Yup.object(getTalousarvioSchema(talousarvio.talousarvio, errors)),
-          })
+          status: Yup.string(),
+          talousarvio: Yup.object(getTalousarvioSchema(talousarvio.talousarvio, errors)),
+        })
         : Yup.object()
     ),
     'haen-kayttoajan-pidennysta': Yup.lazy((paattymispaiva) => {
       return muutoshakemus['haen-kayttoajan-pidennysta'] &&
         paattymispaiva?.status === 'accepted_with_changes'
         ? Yup.object({
-            status: Yup.string().required(),
-            paattymispaiva: Yup.date().required('Päättymispäivä on pakollinen kenttä'),
-          })
+          status: Yup.string().required(),
+          paattymispaiva: Yup.date().required('Päättymispäivä on pakollinen kenttä'),
+        })
         : Yup.object()
     }),
     'haen-sisaltomuutosta': Yup.lazy((haenSisaltomuutosta) => {
       const sisaltomuutosStatus = haenSisaltomuutosta?.status
       return isAcceptedWithOrWithoutChanges(sisaltomuutosStatus) || isRejected(sisaltomuutosStatus)
         ? Yup.object({
-            status: Yup.string().oneOf(PAATOS_STATUSES).required(),
-          })
+          status: Yup.string().oneOf(PAATOS_STATUSES).required(),
+        })
         : Yup.string()
     }),
   })
@@ -174,33 +174,33 @@ interface MuutoshakemusFormProps {
 
 const getInitialValues =
   (talousarvioValues: TalousarvioValues | undefined, muutoshakemus: Muutoshakemus) =>
-  (): MuutoshakemusPaatosRequest => {
-    const initialTalousarvio: MuutoshakemusPaatosRequest['talousarvio'] = talousarvioValues
-      ? {
+    (): MuutoshakemusPaatosRequest => {
+      const initialTalousarvio: MuutoshakemusPaatosRequest['talousarvio'] = talousarvioValues
+        ? {
           status: 'accepted',
           talousarvio: talousarvioValues,
         }
-      : undefined
-    const initialPidennys: MuutoshakemusPaatosRequest['haen-kayttoajan-pidennysta'] = muutoshakemus[
-      'haen-kayttoajan-pidennysta'
-    ]
-      ? {
+        : undefined
+      const initialPidennys: MuutoshakemusPaatosRequest['haen-kayttoajan-pidennysta'] = muutoshakemus[
+        'haen-kayttoajan-pidennysta'
+      ]
+        ? {
           status: 'accepted',
         }
-      : undefined
-    const initialSisaltomuutokset: MuutoshakemusPaatosRequest['haen-sisaltomuutosta'] =
-      muutoshakemus['haen-sisaltomuutosta']
-        ? {
+        : undefined
+      const initialSisaltomuutokset: MuutoshakemusPaatosRequest['haen-sisaltomuutosta'] =
+        muutoshakemus['haen-sisaltomuutosta']
+          ? {
             status: 'accepted',
           }
-        : undefined
-    return {
-      talousarvio: initialTalousarvio,
-      'haen-kayttoajan-pidennysta': initialPidennys,
-      'haen-sisaltomuutosta': initialSisaltomuutokset,
-      reason: '',
+          : undefined
+      return {
+        talousarvio: initialTalousarvio,
+        'haen-kayttoajan-pidennysta': initialPidennys,
+        'haen-sisaltomuutosta': initialSisaltomuutokset,
+        reason: '',
+      }
     }
-  }
 
 const formToPayload = (values: MuutoshakemusPaatosRequest) => {
   return {

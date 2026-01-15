@@ -8,7 +8,7 @@ import * as Yup from 'yup'
 import { Logo } from '../Logo'
 import CurrentHakemusIframe from '../muutoshakemus/CurrentHakemuksIframe'
 import { ErrorMessage } from '../muutoshakemus/ErrorMessage'
-import * as styles from './henkilotietoForm.module.less'
+import * as styles from './henkilotietoForm.module.css'
 
 const findAnswerValue = (answers: Answer[], key: string): string => {
   const answer = answers.find((a) => a.key === key)
@@ -305,11 +305,11 @@ function TopBar({
   title: string
   buttonText: string
   notification:
-    | {
-        text: string
-        type: 'success' | 'error'
-      }
-    | undefined
+  | {
+    text: string
+    type: 'success' | 'error'
+  }
+  | undefined
   showJotpaLogo: boolean
   lang: 'fi' | 'sv'
   disabled: boolean

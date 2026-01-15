@@ -1,7 +1,7 @@
 import React from 'react'
 import ClassNames from 'classnames'
 
-import './MuutoshakemusSection.less'
+import './MuutoshakemusSection.css'
 
 interface Props {
   blueMiddleComponent?: React.JSX.Element

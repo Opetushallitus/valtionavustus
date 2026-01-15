@@ -4,7 +4,7 @@ import { isoFormat } from 'soresu-form/web/va/i18n/dateformat'
 import { Avustushaku } from 'soresu-form/web/va/types'
 import { DateInput } from './DateInput'
 
-import './kayttoaika.less'
+import './kayttoaika.css'
 import 'react-widgets/styles.css'
 import { updateField } from '../hakuReducer'
 import { useHakujenHallintaDispatch } from '../hakujenHallintaStore'

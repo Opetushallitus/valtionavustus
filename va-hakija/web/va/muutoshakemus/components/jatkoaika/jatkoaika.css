@@ -1,0 +1,33 @@
+@import "~soresu-form/web/va/style/soresu-va.css";
+
+.h3 {
+    display: block;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+}
+
+div.twocolumns {
+    display: flex;
+}
+
+div.twocolumns>div:first-child {
+    padding-right: 1rem;
+}
+
+div.twocolumns>div:not(:first-child) {
+    border-left: 1px solid #979797;
+    padding-left: 1rem;
+}
+
+.datepicker,
+.datepicker:hover,
+.datepicker:focus {
+    width: min-content;
+}
+
+.muutoshakemus__current-project-end {
+    height: 30px;
+    display: flex;
+    align-items: center;
+}

@@ -1,0 +1,17 @@
+@import "~soresu-form/web/va/style/soresu-va.css";
+
+.topBar {
+    display: flex;
+}
+
+.saveSuccess {
+    color: var(--mantis-green);
+    margin-left: 10px;
+    width: 142px;
+}
+
+.saveError {
+    color: var(--bright-red);
+    margin-left: 10px;
+    width: 142px;
+}

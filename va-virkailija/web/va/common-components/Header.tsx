@@ -4,7 +4,7 @@ import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 import { UserInfo } from '../types'
-import * as styles from './Header.module.less'
+import * as styles from './Header.module.css'
 import useScrollingUp from '../useScrollingUp'
 
 export interface HeaderSaveStatus {

@@ -1,0 +1,213 @@
+@import "~soresu-form/web/form/style/theme.css";
+
+/* @amount-column-width: 160px; */
+
+.talousarvio {
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.talousarvio_header {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.talousarvio_header-column {
+    width: 160px;
+    padding: 0 0.5rem;
+    text-align: end;
+}
+
+.talousarvio_rows {
+    width: 100%;
+    border: 1px solid var(--light-gray);
+    box-sizing: border-box;
+}
+
+.talousarvio_rows .meno-row,
+.talousarvio_rows .summary-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.talousarvio_rows .meno-description {
+    flex-grow: 1;
+    padding: 0.5rem;
+}
+
+.talousarvio_rows .meno-amount {
+    flex-grow: 0;
+    flex-shrink: 0;
+    text-align: end;
+    padding: 0.5rem;
+    width: 160px;
+}
+
+.talousarvio_rows .meno-amount--linethrough {
+    text-decoration: line-through;
+}
+
+.talousarvio_rows .meno-amount:not(:last-of-type) {
+    border-right: 1px solid var(--light-gray);
+    box-sizing: border-box;
+}
+
+.talousarvio_rows .meno-row-even {
+    background: var(--lightest-gray);
+}
+
+.talousarvio .meno-row:last-of-type {
+    border-top: 1px solid var(--light-gray);
+    box-sizing: border-box;
+}
+
+/* 
+@currentBudgetWidth: 300px;
+@descriptionWidth: 240px;
+@existingAmountWidth: 100px;
+@requestedAmountWidth: 80px;
+@requestedAmountMargin: 30px;
+
+@separatorLeftMargin: 17px;
+@separatorBorder: 1px;
+@separatorRightMargin: 13px;
+@separatorWidth: @separatorLeftMargin + @separatorBorder + @separatorRightMargin; -> 31px
+
+@leftColumnWidth: @descriptionWidth + @existingAmountWidth + @separatorWidth; -> 240 + 100 + 31 = 371px
+
+@changedAmountWidth: 120px;
+@eurWidth: 15px;
+
+@totalWidth: @leftColumnWidth + @changedAmountWidth + @eurWidth;
+@totalWithRequestedAmountWidth: @currentBudgetWidth + @separatorWidth +
+  @requestedAmountWidth + @requestedAmountMargin + @changedAmountWidth +
+  @eurWidth;
+*/
+
+/* CSS Variables for calculations */
+:root {
+    --currentBudgetWidth: 300px;
+    --descriptionWidth: 240px;
+    --existingAmountWidth: 100px;
+    --requestedAmountWidth: 80px;
+    --requestedAmountMargin: 30px;
+    --separatorLeftMargin: 17px;
+    --separatorBorder: 1px;
+    --separatorRightMargin: 13px;
+    --separatorWidth: calc(var(--separatorLeftMargin) + var(--separatorBorder) + var(--separatorRightMargin));
+    --leftColumnWidth: calc(var(--descriptionWidth) + var(--existingAmountWidth) + var(--separatorWidth));
+    --changedAmountWidth: 120px;
+    --eurWidth: 15px;
+    --totalWidth: calc(var(--leftColumnWidth) + var(--changedAmountWidth) + var(--eurWidth));
+    --totalWithRequestedAmountWidth: calc(var(--currentBudgetWidth) + var(--separatorWidth) + var(--requestedAmountWidth) + var(--requestedAmountMargin) + var(--changedAmountWidth) + var(--eurWidth));
+}
+
+
+.muutoshakemus_talousarvio .headerContainer {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.muutoshakemus_talousarvio .headerContainer .currentBudget {
+    width: var(--leftColumnWidth);
+    /* was leftColumnWidth in less? wait less says width: @leftColumnWidth? yes line 94 */
+}
+
+.muutoshakemus_talousarvio_horizontalSeparator {
+    background-color: var(--darkish-gray);
+    border: 0;
+    height: var(--separatorBorder);
+    width: var(--totalWidth);
+    margin: 19px auto 0 0;
+}
+
+.muutoshakemus_talousarvio_horizontalSeparatorWithRequestedAmount {
+    background-color: var(--darkish-gray);
+    border: 0;
+    height: var(--separatorBorder);
+    width: var(--totalWithRequestedAmountWidth);
+    margin: 19px auto 0 0;
+}
+
+.muutoshakemus_talousarvio_row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    min-height: 38px;
+}
+
+.muutoshakemus_talousarvio_row .currentBudget {
+    display: flex;
+    justify-content: space-between;
+    width: var(--currentBudgetWidth);
+}
+
+.muutoshakemus_talousarvio_row .description {
+    width: var(--descriptionWidth);
+}
+
+.muutoshakemus_talousarvio_row .requestedHeader {
+    width: var(--requestedAmountWidth);
+    margin-right: var(--requestedAmountMargin);
+}
+
+.muutoshakemus_talousarvio_row .requestedAmount {
+    width: var(--requestedAmountWidth);
+    margin-right: var(--requestedAmountMargin);
+    text-align: right;
+}
+
+.muutoshakemus_talousarvio_row .existingAmount {
+    width: var(--existingAmountWidth);
+    text-align: right;
+}
+
+.muutoshakemus_talousarvio_row .linethrough {
+    text-decoration: line-through;
+}
+
+.muutoshakemus_talousarvio_row .uppercase {
+    text-decoration: uppercase;
+    /* invalid property value in original less? text-decoration: uppercase is valid? no, text-transform */
+    /* Assuming original meant text-transform */
+    text-transform: uppercase;
+}
+
+.muutoshakemus_talousarvio_row .separator {
+    align-self: stretch;
+    margin-left: var(--separatorLeftMargin);
+    border-right: var(--separatorBorder) solid var(--darkish-gray);
+    margin-right: var(--separatorRightMargin);
+}
+
+.muutoshakemus_talousarvio_row .noborder {
+    border: 0;
+}
+
+.muutoshakemus_talousarvio_row .changedAmount {
+    width: var(--changedAmountWidth);
+    display: flex;
+    align-items: center;
+    overflow: visible;
+    white-space: nowrap;
+}
+
+.muutoshakemus_talousarvio_row .changedAmount input {
+    width: 100px;
+    margin-right: 5px;
+}
+
+.muutoshakemus_talousarvio_row .changedAmountEur {
+    width: var(--eurWidth);
+}
+
+.muutoshakemus_talousarvio_row .currentSumError {
+    color: var(--bright-red);
+}
+
+#hakemus-arviointi [class="muutoshakemus_talousarvio"][data-accepted="true"] .linethrough {
+    text-decoration: none;
+}

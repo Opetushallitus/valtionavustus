@@ -14,7 +14,7 @@ import { Raportointivelvoitteet } from './Raportointivelvoitteet'
 import { Lainsaadanto } from './Lainsaadanto'
 import ProjectSelectors from './ProjectSelectors'
 
-import './koodien-valinta.less'
+import './koodien-valinta.css'
 import { useHakujenHallintaDispatch, useHakujenHallintaSelector } from '../hakujenHallintaStore'
 import {
   addFocusArea,
@@ -33,7 +33,7 @@ import { useSearchParams } from 'react-router-dom'
 import ChooseAvustushaku from './ChooseAvustushaku'
 import { avustushakuStatusDescription } from '../status'
 import { ScrollAwareValidationContainer } from './ValidationContainer'
-import * as validationContainerStyles from './ValidationContainer.module.less'
+import * as validationContainerStyles from './ValidationContainer.module.css'
 
 export const HakuEdit = () => {
   const avustushaku = tryToUseCurrentAvustushaku()

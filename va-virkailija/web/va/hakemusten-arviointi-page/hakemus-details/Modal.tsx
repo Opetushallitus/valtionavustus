@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import FocusLock from 'react-focus-lock'
 
-import './hakemusDetails.less'
+import './hakemusDetails.css'
 
 export const MODAL_ROOT_ID = 'modal-root'
 

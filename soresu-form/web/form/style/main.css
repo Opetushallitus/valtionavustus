@@ -1,0 +1,960 @@
+@import "common.css";
+@import "tooltip.css";
+
+/* JOTPA Customizations */
+.jotpa-customizations {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.jotpa-customizations .soresu-radio input[type=radio]:checked+label,
+.jotpa-customizations .soresu-checkbox input[type=checkbox]:checked+label {
+    border-color: var(--jotpa-green);
+}
+
+.jotpa-customizations #topbar #submit:not([disabled]) {
+    background-color: var(--jotpa-green);
+}
+
+.jotpa-customizations button.soresu-text-button,
+.jotpa-customizations input.soresu-text-button {
+    background-color: var(--jotpa-green);
+}
+
+.jotpa-customizations .soresu-file-upload .soresu-upload-button {
+    background-color: var(--jotpa-green);
+}
+
+.jotpa-customizations .soresu-tooltip.soresu-help-icon {
+    background: transparent url("../img/show_jotpa_tooltip.png") no-repeat left top !important;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: var(--lightest-gray);
+    color: var(--text-black);
+    font-size: 16px;
+}
+
+@media print {
+    body {
+        background-color: white;
+        color: black;
+    }
+}
+
+a {
+    color: var(--light-blue);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+ul {
+    margin: 10px 0 0 -40px;
+    list-style: none;
+}
+
+ul li {
+    display: table-row;
+}
+
+ul li:before {
+    color: var(--light-green);
+    content: "•";
+    font-size: 14px;
+    padding-right: 10px;
+    display: table-cell;
+}
+
+.popup {
+    position: fixed;
+    max-height: 250px;
+    z-index: 101;
+    overflow: auto;
+    margin-right: 20px;
+    background-color: rgba(255, 255, 255, 1);
+    padding: 10px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
+}
+
+#container {
+    max-width: var(--form-width);
+    margin-top: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 20px 20px 20px;
+}
+
+#container h1 {
+    font-weight: 300;
+    font-size: 24px;
+    margin: 0;
+}
+
+#container h2,
+#container h3 {
+    color: var(--darker-gray);
+    font-weight: 300;
+    font-size: 18px;
+}
+
+@media print {
+
+    #container h2,
+    #container h3 {
+        color: black;
+    }
+}
+
+#container h2> {
+    width: 250px;
+}
+
+#container h2>span {
+    text-transform: uppercase;
+}
+
+@media print {
+    #container {
+        margin: 0;
+    }
+}
+
+/* Soresu Form Styles */
+.soresu-form fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.soresu-form label,
+.soresu-form legend {
+    color: var(--form-label-black);
+    margin: 0 0 8px 0;
+}
+
+.soresu-form label.disabled,
+.soresu-form legend.disabled {
+    color: var(--darker-gray);
+}
+
+.soresu-form label:after,
+.soresu-form legend:after {
+    content: " ";
+}
+
+.soresu-form p.soresu-info-element {
+    color: var(--form-label-black);
+    font-size: 15px;
+}
+
+.soresu-form .required:after {
+    content: "\00a0*";
+}
+
+section.soresu-theme {
+    margin: 25px 0 0 0;
+    padding-top: 25px;
+    border-top: 1px solid var(--light-gray);
+}
+
+section.soresu-theme h2 {
+    float: left;
+}
+
+section.soresu-theme label {
+    display: block;
+}
+
+section.soresu-theme>div {
+    margin: 0 0 0 250px;
+    /* @formHeadingWidth */
+}
+
+section.soresu-theme>div>div,
+section.soresu-theme>div>fieldset,
+section.soresu-theme>div>p.soresu-info-element {
+    margin: 15px 0 20px 0;
+}
+
+@media print {
+    section.soresu-theme {
+        border-top: 0;
+    }
+}
+
+/* Fieldsets / Wrappers */
+.soresu-fieldset,
+.soresu-growing-fieldset {
+    max-width: calc(var(--section-width) + 11px);
+}
+
+.soresu-fieldset>div,
+.soresu-growing-fieldset>div {
+    display: inline-block;
+}
+
+.soresu-growing-fieldset div.extra-large {
+    display: block;
+}
+
+.soresu-growing-fieldset ol {
+    list-style-type: none;
+    counter-reset: item;
+}
+
+.soresu-growing-fieldset ol li.soresu-growing-fieldset-child {
+    margin: 20px 0 0 -58px;
+}
+
+.soresu-growing-fieldset ol li.soresu-growing-fieldset-child.disabled {
+    color: var(--darker-gray);
+}
+
+.soresu-growing-fieldset ol li:before {
+    content: counter(item) "  ";
+    counter-increment: item;
+    float: left;
+    width: 1em;
+    font-size: 18px;
+    margin-top: 15px;
+}
+
+.soresu-growing-fieldset.show-only-first-label ol li:first-child:before {
+    margin-top: 45px;
+}
+
+/* Form Components */
+/* Mixin Expansions */
+
+
+
+.soresu-text-field input[type=text],
+.soresu-text-field input[type=email],
+.soresu-text-field textarea,
+.soresu-email-field input[type=text],
+.soresu-email-field input[type=email],
+.soresu-email-field textarea {
+    border: 1px solid var(--middle-gray);
+    padding: 8px;
+    background-color: #fff;
+}
+
+.soresu-text-field input[type=text].error,
+.soresu-text-field input[type=email].error,
+.soresu-text-field textarea.error,
+.soresu-email-field input[type=text].error,
+.soresu-email-field input[type=email].error,
+.soresu-email-field textarea.error {
+    border: 1px solid var(--bright-red);
+}
+
+.soresu-text-field textarea[disabled],
+.soresu-text-field input[disabled],
+.soresu-email-field textarea[disabled],
+.soresu-email-field input[disabled] {
+    cursor: not-allowed;
+    color: var(--darker-gray);
+    background-color: var(--lightest-gray);
+    border: 1px solid var(--light-gray);
+}
+
+/* .soresu-focus-animation() */
+.soresu-text-field input:focus,
+.soresu-text-field select:focus,
+.soresu-text-field textarea:focus,
+.soresu-text-field button:focus,
+.soresu-email-field input:focus,
+.soresu-email-field select:focus,
+.soresu-email-field textarea:focus,
+.soresu-email-field button:focus {
+    box-shadow: 0 0 5px rgba(97, 186, 233, 1);
+    outline: 1px solid var(--light-blue);
+}
+
+.soresu-text-field input,
+.soresu-text-field select,
+.soresu-text-field textarea,
+.soresu-text-field button,
+.soresu-email-field input,
+.soresu-email-field select,
+.soresu-email-field textarea,
+.soresu-email-field button {
+    transition: all 0.30s ease-in-out;
+    outline: none;
+}
+
+/* .soresu-focus-show-error() */
+.soresu-text-field input:focus.error,
+.soresu-text-field select:focus.error,
+.soresu-text-field textarea:focus.error,
+.soresu-email-field input:focus.error,
+.soresu-email-field select:focus.error,
+.soresu-email-field textarea:focus.error {
+    box-shadow: 0 0 5px rgba(97, 186, 233, 1);
+    outline: 1px solid var(--bright-red);
+}
+
+.soresu-text-field input[type=text],
+.soresu-text-field input[type=email] {
+    margin: 5px 10px 0 0;
+    font-size: 18px;
+
+    /* Cascade widths */
+    width: calc(var(--section-width) / 1.5 - 28px);
+}
+
+.soresu-text-field input[type=text].extra-large {
+    width: calc(var(--section-width) - 18px);
+}
+
+/* Specific widths for variants would typically be handled by helper classes or specificity, 
+   but Less allowed overwriting. Assuming standard usage picks one. 
+   Replicating the last one applied or specificity if used together. 
+   However, Looking at Less source, it had:
+    width: calc(@section-width / 8 - 18px);
+    width: calc(@section-width / 4 - 18px);
+    ...
+   This implies the last one wins unless they were inside selectors. They were NOT. 
+   Wait, the Less code was:
+    width: calc(@section-width / 8 - 18px);
+    width: calc(@section-width / 4 - 18px);
+    width: calc(@section-width / 3 - 18px);
+    width: calc(@section-width / 2 - 18px);
+    width: calc(@section-width / 1.5 - 28px);
+   This creates a fallback chain in CSS but effectively only the LAST one applies if browser supports calc.
+   So default width is 1.5 - 28px.
+*/
+
+.soresu-text-field label,
+.soresu-email-field label {
+    width: calc(var(--section-width) / 1.5 - 18px);
+}
+
+.soresu-text-field label.extra-large,
+.soresu-email-field label.extra-large {
+    width: calc(var(--section-width) - 8px);
+}
+
+
+
+
+.soresu-money-field input[type=text],
+.soresu-money-field input[type=email],
+.soresu-money-field textarea {
+    border: 1px solid var(--middle-gray);
+    padding: 8px;
+    background-color: #fff;
+}
+
+.soresu-money-field input[type=text].error {
+    border: 1px solid var(--bright-red);
+}
+
+.soresu-money-field input[disabled] {
+    cursor: not-allowed;
+    color: var(--darker-gray);
+    background-color: var(--lightest-gray);
+    border: 1px solid var(--light-gray);
+}
+
+.soresu-money-field input:focus {
+    box-shadow: 0 0 5px rgba(97, 186, 233, 1);
+    outline: 1px solid var(--light-blue);
+}
+
+.soresu-money-field input {
+    transition: all 0.30s ease-in-out;
+    outline: none;
+}
+
+.soresu-money-field input:focus.error {
+    box-shadow: 0 0 5px rgba(97, 186, 233, 1);
+    outline: 1px solid var(--bright-red);
+}
+
+.soresu-money-field input[type=text] {
+    margin: 5px 10px 0 0;
+    font-size: 18px;
+    width: calc(var(--section-width) / 1.5 - 28px);
+    text-align: right;
+}
+
+.soresu-money-field label {
+    width: calc(var(--section-width) / 1.5 - 18px);
+}
+
+
+
+
+.soresu-finnish-business-id-field input[type=text] {
+    border: 1px solid var(--middle-gray);
+    padding: 8px;
+    background-color: #fff;
+    margin: 5px 10px 0 0;
+    font-size: 18px;
+    width: calc(var(--section-width) / 1.5 - 28px);
+}
+
+.soresu-finnish-business-id-field input[type=text].error {
+    border: 1px solid var(--bright-red);
+}
+
+.soresu-finnish-business-id-field input[disabled] {
+    cursor: not-allowed;
+    color: var(--darker-gray);
+    background-color: var(--lightest-gray);
+    border: 1px solid var(--light-gray);
+}
+
+.soresu-finnish-business-id-field input:focus {
+    box-shadow: 0 0 5px rgba(97, 186, 233, 1);
+    outline: 1px solid var(--light-blue);
+}
+
+.soresu-finnish-business-id-field input {
+    transition: all 0.30s ease-in-out;
+    outline: none;
+}
+
+.soresu-finnish-business-id-field input:focus.error {
+    box-shadow: 0 0 5px rgba(97, 186, 233, 1);
+    outline: 1px solid var(--bright-red);
+}
+
+.soresu-finnish-business-id-field label {
+    width: calc(var(--section-width) / 1.5 - 18px);
+}
+
+
+
+
+.soresu-text-area textarea {
+    border: 1px solid var(--middle-gray);
+    padding: 8px;
+    background-color: #fff;
+}
+
+.soresu-text-area textarea.error {
+    border: 1px solid var(--bright-red);
+}
+
+.soresu-text-area textarea[disabled] {
+    cursor: not-allowed;
+    color: var(--darker-gray);
+    background-color: var(--lightest-gray);
+    border: 1px solid var(--light-gray);
+}
+
+/* .soresu-focus-animation */
+.soresu-text-area textarea:focus {
+    box-shadow: 0 0 5px rgba(97, 186, 233, 1);
+    outline: 1px solid var(--light-blue);
+}
+
+.soresu-text-area textarea {
+    transition: all 0.30s ease-in-out;
+    outline: none;
+}
+
+/* .soresu-focus-show-error */
+.soresu-text-area textarea:focus.error {
+    box-shadow: 0 0 5px rgba(97, 186, 233, 1);
+    outline: 1px solid var(--bright-red);
+}
+
+.soresu-text-area label {
+    max-width: var(--section-width);
+}
+
+.soresu-text-area textarea {
+    width: calc(var(--section-width) - 18px);
+    height: 12em;
+    font-size: 16px;
+}
+
+.soresu-text-area textarea.extra-extra-small {
+    height: 1em;
+}
+
+.soresu-text-area textarea.extra-small {
+    height: 3em;
+}
+
+.soresu-text-area textarea.small {
+    height: 6em;
+}
+
+.soresu-text-area textarea.medium {
+    height: 12em;
+}
+
+.soresu-text-area textarea.large {
+    height: 18em;
+}
+
+.soresu-text-area textarea.extra-large {
+    height: 24em;
+}
+
+.soresu-text-area .length-left {
+    color: var(--dark-gray);
+    font-size: 12px;
+    width: calc(var(--section-width) - 10px);
+    text-align: right;
+}
+
+@media print {
+    .soresu-text-area {
+        width: 100%;
+    }
+}
+
+
+
+.soresu-text-button button:focus {
+    box-shadow: 0 0 5px rgba(97, 186, 233, 1);
+    outline: 1px solid var(--light-blue);
+}
+
+.soresu-text-button button {
+    transition: all 0.30s ease-in-out;
+    outline: none;
+}
+
+/* .soresu-dropdown() mixin expansion */
+/* Applied to what? It was a mixin definition. 
+   Searching for usages... it is used in .soresu-dropdown below?
+   Wait, the class is .soresu-dropdown in Less:
+   .soresu-dropdown { ... } BUT it was defined as .soresu-dropdown() { ... } on line 379
+   AND then .soresu-dropdown { ... } on line 637.
+   The mixin on 379 was likely used elsewhere or intended to be.
+   Ah, line 637 is the class definition. 
+   Line 379 was likely a helper.
+   Let's check if anyone calls .soresu-dropdown().
+   Nothing in this file calls it. It might be dead code or used in other files.
+   Given I am converting main.less into main.css, I can ignore the mixin definition if it's not used here.
+   However, .soresu-dropdown class at 637 might need those styles?
+   Lines 637-724 do NOT call .soresu-dropdown().
+   But .soresu-dropdown class usually implies it IS the dropdown component.
+   So I should probably apply the focus animation to .rw-dropdownlist?
+   Let's look at line 687: div.rw-input gets border.
+   Let's assume the mixin was legacy or unused for the main class structure here.
+*/
+
+.soresu-radio input[type=radio],
+.soresu-radio input[type=checkbox],
+.soresu-checkbox input[type=radio],
+.soresu-checkbox input[type=checkbox] {
+    display: none;
+}
+
+.soresu-radio input[type=radio]+label,
+.soresu-radio input[type=checkbox]+label,
+.soresu-checkbox input[type=radio]+label,
+.soresu-checkbox input[type=checkbox]+label {
+    display: inline-block;
+    color: var(--dark-gray);
+    margin: 4px 3px;
+    padding: 12px 30px;
+    background-color: #fff;
+    border: solid 1px var(--middle-gray);
+    cursor: pointer;
+}
+
+.soresu-radio input[type=radio]+label.error,
+.soresu-radio input[type=checkbox]+label.error,
+.soresu-checkbox input[type=radio]+label.error,
+.soresu-checkbox input[type=checkbox]+label.error {
+    border: solid 1px var(--bright-red);
+}
+
+.soresu-checkbox input[type=checkbox]+label {
+    width: calc(var(--section-width) - 68px);
+}
+
+.soresu-radio input[type=radio]:checked+label,
+.soresu-radio input[type=checkbox]:checked+label,
+.soresu-checkbox input[type=radio]:checked+label,
+.soresu-checkbox input[type=checkbox]:checked+label {
+    color: #000;
+    background: #fff url('../img/checkmark.png') no-repeat 10px 19px;
+    margin: 1px 1px;
+    border: solid 4px var(--light-green);
+}
+
+.soresu-radio input[disabled]+label,
+.soresu-checkbox input[disabled]+label {
+    color: var(--light-gray);
+    border-color: var(--light-gray);
+    background-color: var(--lightest-gray);
+    cursor: default;
+}
+
+.soresu-radio input[disabled]:checked+label,
+.soresu-checkbox input[disabled]:checked+label {
+    color: var(--dark-gray);
+    border: solid 4px var(--light-gray);
+    background-color: var(--lightest-gray);
+}
+
+
+.soresu-table {
+    border-collapse: separate;
+    border-spacing: 20px;
+    border: 1px solid transparent;
+}
+
+.soresu-table div {
+    display: block;
+}
+
+.soresu-table th.required::after {
+    font-weight: normal;
+    font-size: 80%;
+}
+
+.soresu-table--preview {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.soresu-table--error {
+    border: 1px solid var(--bright-red);
+}
+
+.soresu-table--disabled .soresu-table__caption,
+.soresu-table--disabled .soresu-table__column-title-cell,
+.soresu-table--disabled .soresu-table__row-title-cell,
+.soresu-table--disabled .soresu-table__value-cell,
+.soresu-table--disabled .soresu-table__sum-cell {
+    color: var(--darker-gray);
+}
+
+.soresu-table--disabled .soresu-table__value-cell-input {
+    background-color: var(--lightest-gray);
+    border-color: var(--light-gray);
+}
+
+.soresu-table__caption {
+    color: var(--form-label-black);
+    text-align: left;
+}
+
+.soresu-table__column-title-cell {
+    color: var(--form-label-black);
+    text-align: left;
+}
+
+.soresu-table__column-title-cell--number {
+    text-align: right;
+}
+
+.soresu-table__column-title-cell--preview {
+    padding: 4px 10px;
+}
+
+.soresu-table__row-title-cell {
+    color: var(--form-label-black);
+    text-align: right;
+}
+
+.soresu-table__row-title-cell--preview {
+    padding: 4px 10px;
+}
+
+.soresu-table__value-cell--number {
+    text-align: right;
+}
+
+.soresu-table__value-cell--number .soresu-table__value-cell-input {
+    text-align: right;
+}
+
+.soresu-table__value-cell--placeholder .soresu-table__value-cell-input {
+    border-color: var(--lightish-gray);
+}
+
+.soresu-table__value-cell--preview {
+    padding: 4px 10px;
+    border-bottom: 1px solid var(--middle-gray);
+}
+
+.soresu-table__value-cell-input {
+    text-align: left;
+    padding: 5px 9px;
+    border: 1px solid var(--middle-gray);
+}
+
+.soresu-table__value-cell-input--error {
+    border: 1px solid var(--bright-red);
+}
+
+.soresu-table__sum-cell {
+    color: var(--form-label-black);
+    padding: 4px 10px;
+}
+
+.soresu-table__sum-cell--number {
+    border-bottom: 1px solid var(--middle-gray);
+    text-align: right;
+}
+
+.soresu-table__sum-cell--preview {
+    border-bottom: 1px solid var(--middle-gray);
+}
+
+.soresu-table__cell-positioner {
+    width: 100%;
+    position: relative;
+}
+
+.soresu-table__remove-row-button {
+    position: absolute;
+    right: -30px;
+    top: 8px;
+}
+
+
+div.soresu-attachment-input-field button.soresu-remove {
+    position: relative;
+    top: 4px;
+    left: 6px;
+}
+
+div.soresu-attachment-input-field div.soresu-attachment-display {
+    display: inline-block;
+    margin: 0;
+}
+
+.soresu-file-upload {
+    margin-top: 10px;
+    margin-bottom: 4px;
+}
+
+.soresu-file-upload.error span.required {
+    color: var(--bright-red);
+}
+
+.soresu-file-upload .soresu-upload-button {
+    color: #fff;
+    background-color: var(--light-green);
+    border-width: 0;
+    margin: 4px 0 4px 0;
+    padding: 4px 24px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.soresu-file-upload.disabled {
+    color: var(--darker-gray);
+}
+
+.soresu-file-upload.disabled .soresu-upload-button {
+    background-color: var(--light-gray);
+    border: 1px solid var(--light-gray);
+    cursor: default;
+}
+
+.soresu-file-upload.disabled div {
+    border-color: var(--dark-gray);
+    cursor: default;
+}
+
+button.soresu-remove {
+    background: transparent url('../img/remove_line_enabled.png') no-repeat left top;
+    border-width: 0;
+    width: 20px;
+    height: 22px;
+}
+
+button[disabled].soresu-remove {
+    background: transparent url('../img/remove_line_disabled.png') no-repeat left top;
+}
+
+button.soresu-text-button,
+input.soresu-text-button {
+    color: #fff;
+    background-color: var(--light-green);
+    border-width: 0;
+    margin: 4px 20px 4px 0;
+    padding: 8px 15px;
+    font-size: 18px;
+    font-weight: 300;
+}
+
+button[disabled].soresu-text-button {
+    background-color: var(--light-gray);
+    border: 1px solid var(--light-gray);
+}
+
+
+.soresu-dropdown {
+    position: relative;
+    min-height: 70px;
+    margin-top: 0;
+    padding-left: 0;
+    min-width: 350px;
+    /* @soresu-dropdown-width */
+}
+
+.soresu-dropdown .dropdown-list {
+    display: grid;
+}
+
+.soresu-dropdown .rw-popup-container div {
+    display: block;
+}
+
+.soresu-dropdown .rw-dropdownlist {
+    min-width: 350px;
+    background: none;
+    border: none;
+    padding: 0 0 4px 0;
+    transition-duration: 0.2s;
+}
+
+.soresu-dropdown .rw-dropdownlist input {
+    width: 330px;
+    /* 350 - 20 */
+}
+
+.soresu-dropdown .rw-dropdownlist .rw-popup-container {
+    z-index: 20000;
+    width: 376px;
+    /* 350 + 26 */
+    max-height: 1000px;
+    padding-top: 16px;
+    top: 50px;
+    border: 1px solid var(--light-gray);
+    border-top: none;
+    transition-duration: 0.5s;
+}
+
+.soresu-dropdown .rw-dropdownlist .rw-popup-container ul {
+    height: auto;
+}
+
+.soresu-dropdown .rw-dropdownlist .rw-popup-container li {
+    margin: 0 12px 0 12px;
+    width: auto;
+}
+
+.soresu-dropdown .rw-dropdownlist.rw-open {
+    height: auto;
+    box-shadow: none;
+}
+
+.soresu-dropdown .rw-dropdownlist.rw-open div.rw-input {
+    border: solid 4px var(--light-green);
+    padding: 10px;
+}
+
+/* soresu-chevron-up/down replacement */
+/* .soresu-chevron-up(14px, 1px, @mid-gray) */
+.soresu-dropdown .rw-dropdownlist.rw-open div.rw-input span {
+    position: relative;
+    display: block;
+    height: 14px;
+}
+
+.soresu-dropdown .rw-dropdownlist.rw-open div.rw-input span:before,
+.soresu-dropdown .rw-dropdownlist.rw-open div.rw-input span:after {
+    right: 0;
+    top: -10px;
+    position: absolute;
+    display: block;
+    content: "";
+    border: 7px solid transparent;
+}
+
+.soresu-dropdown .rw-dropdownlist.rw-open div.rw-input span:before {
+    bottom: 10px;
+    border-bottom-color: var(--mid-gray);
+}
+
+.soresu-dropdown .rw-dropdownlist.rw-open div.rw-input span:after {
+    bottom: 9px;
+    /* 10 - thickness 1 */
+    border-bottom-color: #fff;
+}
+
+.soresu-dropdown .rw-dropdownlist.rw-open input.rw-input {
+    height: 26px;
+    margin-left: 12px;
+    margin-bottom: 2px;
+}
+
+.soresu-dropdown div.rw-input {
+    min-width: 350px;
+    margin: 0;
+    padding: 10px;
+    color: #000;
+    background-color: #fff;
+    border: solid 4px var(--light-green);
+}
+
+/* .soresu-chevron-down(14px, 1px, @mid-gray) */
+.soresu-dropdown div.rw-input span {
+    padding-bottom: 8px;
+    position: relative;
+    display: block;
+    height: 14px;
+}
+
+.soresu-dropdown div.rw-input span:before,
+.soresu-dropdown div.rw-input span:after {
+    right: 0;
+    position: absolute;
+    display: block;
+    content: "";
+    border: 7px solid transparent;
+}
+
+.soresu-dropdown div.rw-input span:before {
+    top: 10px;
+    border-top-color: var(--mid-gray);
+}
+
+.soresu-dropdown div.rw-input span:after {
+    top: 9px;
+    border-top-color: #fff;
+}
+
+.soresu-dropdown .rw-state-disabled div.rw-input {
+    color: var(--dark-gray);
+    border: solid 4px var(--light-gray);
+    background-color: var(--lightest-gray);
+    cursor: default;
+}
+
+.soresu-dropdown.soresu-dropdown-unselected .rw-dropdownlist div.rw-input {
+    border: solid 1px var(--middle-gray);
+}
+
+.soresu-dropdown.error .rw-dropdownlist div.rw-input {
+    border: solid 1px var(--bright-red);
+}
+
+.soresu-opener-handle {
+    color: var(--light-blue);
+    cursor: pointer;
+}
+
+.soresu-opener-handle.closed:after {
+    content: " \25BC";
+    font-family: Arial, sans-serif;
+}
+
+.soresu-opener-handle.open:after {
+    content: " \25B2";
+    font-family: Arial, sans-serif;
+}
+
+.soresu-accordion {
+    overflow-y: hidden;
+    margin-bottom: 40px;
+    transition-property: max-height;
+    transition-duration: 0.5s;
+    transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    width: var(--section-width);
+}

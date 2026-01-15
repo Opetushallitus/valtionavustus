@@ -13,7 +13,7 @@ import {
   Talousarvio,
 } from './types/muutoshakemus'
 
-import './MuutoshakemusPaatos.less'
+import './MuutoshakemusPaatos.css'
 import { Role } from '../../../va-virkailija/web/va/types'
 import { OsioPaatos, PaatosOsio } from './OsioPaatos'
 

@@ -4,8 +4,9 @@ import { createRoot } from 'react-dom/client'
 import QueryString from 'query-string'
 import * as Bacon from 'baconjs'
 
-import 'soresu-form/web/form/style/main.less'
-import './style/va-login.less'
+import 'soresu-form/web/form/style/theme.css'
+import 'soresu-form/web/form/style/main.css'
+import './style/va-login.css'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import LocalizedString from 'soresu-form/web/form/component/LocalizedString'

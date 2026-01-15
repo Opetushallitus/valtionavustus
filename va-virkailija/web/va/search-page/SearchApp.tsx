@@ -10,8 +10,9 @@ import { HeaderContainer } from '../common-components/Header'
 import HakemusArviointiStatuses from '../HakemusArviointiStatuses'
 
 import 'oph-virkailija-style-guide/oph-styles-min.css'
-import '../style/main.less'
-import * as styles from './Search.module.less'
+import 'soresu-form/web/form/style/theme.css'
+import '../style/main.css'
+import * as styles from './Search.module.css'
 import LoadingSitePage from '../common-components/LoadingSitePage'
 import ErrorBoundary from '../common-components/ErrorBoundary'
 

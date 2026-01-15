@@ -1,0 +1,41 @@
+.container {
+  display: grid;
+  justify-content: center;
+  background-color: #fafafa;
+}
+
+.body {
+  margin: 1rem 0;
+  width: var(--form-width);
+}
+
+.form {
+  display: flex;
+  width: 100%;
+}
+
+.form > div {
+  display: inline-block;
+}
+
+.form input {
+  width: 575px;
+  margin-right: 2rem;
+}
+
+.form select {
+  height: 100%;
+}
+
+.results > div {
+  margin: 2rem 0;
+}
+
+.results a:hover {
+  text-decoration: underline;
+}
+
+.rowTitle {
+  font-weight: 700;
+  margin-right: 0.5rem;
+}

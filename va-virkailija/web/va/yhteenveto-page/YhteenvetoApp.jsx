@@ -8,8 +8,9 @@ import YhteenvetoController from './YhteenvetoController'
 import HakemusArviointiStatuses from '../HakemusArviointiStatuses'
 import DateUtil from 'soresu-form/web/DateUtil'
 
-import '../style/main.less'
-import './summary.less'
+import 'soresu-form/web/form/style/theme.css'
+import '../style/main.css'
+import './summary.css'
 import ErrorBoundary from '../common-components/ErrorBoundary'
 
 class SummaryApp extends Component {
@@ -19,9 +20,9 @@ class SummaryApp extends Component {
     const hakemusList = hakuData.hakemukset.map((h) =>
       h.refused
         ? Object.assign(h, {
-            status: 'refused',
-            arvio: Object.assign(h.arvio, { status: 'refused' }),
-          })
+          status: 'refused',
+          arvio: Object.assign(h.arvio, { status: 'refused' }),
+        })
         : h
     )
     const avustushaku = hakuData.avustushaku

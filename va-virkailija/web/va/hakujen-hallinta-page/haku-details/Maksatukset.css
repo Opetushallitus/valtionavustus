@@ -1,0 +1,211 @@
+.maksatukset {
+  width: 100%;
+  margin: 2rem 0;
+}
+
+.maksatukset_avustushaku-info {
+  display: flex;
+}
+
+.maksatukset_avustushaku-info > div {
+  margin: 1rem;
+}
+
+.maksatukset_avustushaku-info label {
+  color: #aaaaaa;
+}
+
+.maksatukset_tabs {
+  display: flex;
+  border-top: 1px solid var(--light-gray);
+  border-bottom: 1px solid var(--light-gray);
+}
+
+.maksatukset_tab {
+  text-transform: uppercase;
+  appearance: none;
+  background: inherit;
+  padding: 0.5rem 0;
+  margin: 0;
+  font-weight: 700;
+  color: var(--light-gray);
+  cursor: pointer;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  box-sizing: border-box;
+}
+
+.maksatukset_tab:not(:disabled):hover {
+  background: none;
+}
+
+.maksatukset_tab:focus {
+  outline: 0;
+}
+
+.maksatukset_tab:not(:first-of-type) {
+  margin-left: 1vw;
+}
+
+.maksatukset_tab.active {
+  color: var(--light-blue);
+  border-bottom: 2px solid var(--light-blue);
+}
+
+.maksatukset_badge {
+  font-size: 0.6rem;
+  margin-left: 8px;
+  border-radius: 2px;
+  color: #fff;
+  background-color: var(--light-blue);
+  cursor: pointer;
+  padding: 1px 5px;
+}
+
+.maksatukset_report {
+  margin: 2rem 0;
+}
+
+.maksatukset_error-text {
+  color: #ba3e35;
+}
+
+.maksatukset_no-payments {
+  width: 100%;
+  padding: 1rem;
+  background-color: #ddd;
+}
+
+.maksatukset_table-container {
+  max-height: 300px;
+  overflow: auto;
+}
+
+.maksatukset_payments-table {
+  width: 100%;
+  box-sizing: border-box;
+  table-layout: fixed;
+}
+
+.maksatukset_payments-table th,
+.maksatukset_payments-table td {
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 400;
+  padding: 0.5rem 0;
+  max-width: 300px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.maksatukset_payments-table tr.gray {
+  background-color: #eee;
+}
+
+.maksatukset_payments-table tr.white {
+  background-color: #fff;
+}
+
+.maksatukset_payments-table td.align-right {
+  text-align: right;
+}
+
+.maksatukset_payments-table th:not(:first-of-type),
+.maksatukset_payments-table td:not(:first-of-type) {
+  padding-left: 0.5rem;
+}
+
+.maksatukset_payments-table .narrow-column {
+  width: 120px;
+}
+
+.maksatukset_payments-table .semi-narrow-column {
+  width: 160px;
+}
+
+.maksatukset_payments-table .phase-header {
+  border-top: 1px solid var(--light-gray);
+  border-bottom: 1px solid var(--light-gray);
+}
+
+.maksatukset_payments-table input {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.maksatukset_errors {
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid #000;
+  padding: 1rem 1rem 1.5rem;
+  margin-top: 1rem;
+}
+
+.maksatukset_paivamaarat {
+  display: flex;
+  margin-top: 1rem;
+}
+
+.maksatukset_paivamaarat > div:not(:first-of-type) {
+  margin-left: 2rem;
+}
+
+.maksatukset_documents {
+  margin: 1rem 0;
+}
+
+.maksatukset_document {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin: 2rem 0;
+}
+
+.maksatukset_document > div {
+  flex-grow: 1;
+  padding: 0 0.5rem;
+}
+
+.maksatukset_document div:first-of-type {
+  flex-grow: 0;
+}
+
+.maksatukset_document div:last-of-type {
+  flex-grow: 0;
+  align-self: flex-end;
+}
+
+.maksatukset_document input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 36px;
+  padding: 0 4px;
+  border-style: solid;
+  border-radius: 3px;
+  border-width: 1px;
+}
+
+.maksatukset_document input:invalid {
+  border-color: var(--bright-red);
+}
+
+.maksatukset_document button {
+  margin: 0 0 -2px 0;
+}
+
+.maksatukset_document-phase {
+  line-height: 36px;
+}
+
+.maksatukset_email-field {
+  position: relative;
+}
+
+.maksatukset_email-selector {
+  position: absolute;
+  border: 1px solid #000;
+  padding: 2px;
+  background-color: #fff;
+}

@@ -1,0 +1,26 @@
+.close {
+  composes: deleteButton from '../../style/Button.module.css';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.roleButton {
+  composes: greyButton from '../../style/Button.module.css';
+  margin-right: 10px;
+  margin-bottom: 10px;
+  padding: 4px 8px;
+}
+
+.roleContainer {
+  margin-bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.roleTitle {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #4d4d4d;
+}

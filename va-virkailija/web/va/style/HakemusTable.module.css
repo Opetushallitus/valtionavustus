@@ -1,0 +1,192 @@
+.tableHeader {
+  composes: font from './font.module.css';
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.tableHeader > input {
+  text-align: left;
+  padding: 4px 4px 4px 8px;
+  background: #ffffff;
+  border: 1px solid #817c7b;
+  box-sizing: border-box;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.tableLabel {
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+}
+
+.tableLabelButton {
+  composes: whiteButton from './Button.module.css';
+  width: 100%;
+  padding: 0;
+}
+
+.tableContainer {
+  padding: 1px;
+  background-color: #fafafa;
+}
+
+.containerForModals {
+  position: relative;
+}
+
+.ukotusModalContainer {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  pointer-events: none;
+}
+
+.tableLabelPopup {
+  position: absolute;
+  top: 38px;
+  background-color: #fff;
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+  width: 160px;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 40%);
+}
+
+.tableLabelPopup::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 0;
+  height: 0;
+  border: 5px solid;
+  border-color: transparent transparent #fff #fff;
+  transform-origin: 0 0;
+  transform: rotate(135deg);
+  box-shadow: -2px 2px 3px 0 rgb(0 0 0 / 10%);
+}
+
+.wideTableLabelPopup {
+  composes: tableLabelPopup;
+  width: 320px;
+  flex-direction: row;
+  align-items: center;
+  padding: 16px;
+}
+
+.hakemusTable {
+  composes: font from './font.module.css';
+  background-color: #fff;
+  table-layout: fixed;
+  outline: 1px solid #e6e6e6;
+  border-radius: 4px;
+}
+
+.hakemusTable th {
+  padding: 8px;
+  text-align: left;
+}
+
+.hakemusTable td {
+  padding: 4px 5px 4px 5px;
+}
+
+.hakemusTable tbody tr td:first-of-type,
+.hakemusTable tbody tr td:nth-of-type(2) {
+  padding-left: 12px;
+}
+
+.hakemusTable tbody tr td:last-of-type {
+  padding-right: 8px;
+}
+
+.hakemusTable tbody tr:nth-of-type(even):not(:hover) {
+  background: #fafafa;
+}
+
+.hakemusTable tbody tr:hover {
+  background-color: #ebf7fd;
+}
+
+.hakemusTable tbody tr:active {
+  background-color: #bde4f8;
+}
+
+.hakemusTable thead tr {
+  border-bottom: 1px solid #e1e1e1;
+}
+
+.hakemusTable tfoot {
+  position: sticky;
+  bottom: -1px;
+  z-index: 0;
+  background-color: #fff;
+  border-radius: 4px;
+  border-top: 1px solid #e1e1e1;
+}
+
+.hakemusTable tfoot td:first-of-type {
+  padding-left: 12px;
+}
+
+.hakemusTable tfoot td {
+  border-radius: 0 0 4px 4px;
+}
+
+.hakemusTable input {
+  margin-right: 2px;
+}
+
+.hakemusRow {
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.selectedHakemusRow {
+  composes: hakemusRow;
+  background-color: #daf0fb !important;
+  outline: 1px solid #c8e8f9;
+  outline-offset: -1px;
+}
+
+.selectedHakemusRow:hover {
+  background-color: #acddf6 !important;
+}
+
+.selectedHakemusRow:active {
+  background-color: #7ecbf1 !important;
+}
+
+.alignRight {
+  text-align: right;
+}
+
+.baseRoleButton {
+  line-height: 16px;
+  min-width: 36px;
+  min-height: 26px;
+}
+
+.roleContainer {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
+.addRoleButton {
+  composes: blueButton from './Button.module.css';
+  composes: baseRoleButton;
+  display: flex;
+  align-items: center;
+}
+
+.roleButton {
+  composes: blueButton from './Button.module.css';
+  composes: baseRoleButton;
+}

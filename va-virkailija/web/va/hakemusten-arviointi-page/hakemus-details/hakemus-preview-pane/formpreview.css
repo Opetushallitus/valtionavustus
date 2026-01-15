@@ -1,0 +1,19 @@
+@import "~soresu-form/web/form/style/preview.css";
+
+#form-preview {
+    margin: 0 40px 100px 40px;
+}
+
+#form-preview h1 {
+    margin: 20px 0;
+    font-size: 28px;
+}
+
+#form-preview #section-selector {
+    margin-bottom: 20px;
+}
+
+#form-preview .page-break {
+    margin-top: 30px;
+    border-top: 5px solid #eaeaea;
+}

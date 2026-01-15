@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import * as styles from './Pill.module.less'
+import * as styles from './Pill.module.css'
 import { AvustushakuStatus } from 'soresu-form/web/va/types'
 
 const pillStyles = {

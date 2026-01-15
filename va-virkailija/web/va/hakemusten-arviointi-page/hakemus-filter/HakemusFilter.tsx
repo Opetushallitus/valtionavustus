@@ -4,7 +4,7 @@ import ClassNames from 'classnames'
 
 import FormUtil from 'soresu-form/web/form/FormUtil'
 
-import './hakemus-filter.less'
+import './hakemus-filter.css'
 import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '../arviointiStore'
 import {
   clearFilters,

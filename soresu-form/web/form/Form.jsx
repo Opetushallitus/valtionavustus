@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
-import './style/main.less'
+import './style/main.css'
 
 import FormComponent from './component/FormComponent.jsx'
 import InfoElement from './component/InfoElement.jsx'
