@@ -17,6 +17,14 @@
   composes: tableLabel from '../../style/HakemusTable.module.css';
 }
 
+.tableLabelStatic {
+  position: static;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+}
+
 .tableLabelButton {
   composes: tableLabelButton from '../../style/HakemusTable.module.css';
 }
@@ -91,6 +99,14 @@
 
 .roleButton {
   composes: roleButton from '../../style/HakemusTable.module.css';
+}
+
+.sumColumn {
+  width: 120px;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: right;
+  white-space: nowrap;
 }
 
 .tableLabelPopupEvaluator {

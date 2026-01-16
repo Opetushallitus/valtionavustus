@@ -424,7 +424,7 @@ function HakemusTable({
   }, 0)
   const { organization, projectNameOrCode, status: statusFilter } = filterState
   return (
-    <table className={styles.table}>
+    <table className={`${styles.table} hakemus-list`}>
       <colgroup>
         <col style={{ width: '216px' }} />
         <col style={{ width: '210px' }} />
@@ -524,7 +524,7 @@ function HakemusTable({
               />
             </div>
           </th>
-          <th>
+          <th className={`${styles.sumColumn} applied-sum-column`}>
             <div className={styles.tableHeader}>
               <TableLabel text="Haettu" disabled />
               <SortButton
@@ -535,7 +535,7 @@ function HakemusTable({
               />
             </div>
           </th>
-          <th>
+          <th className={`${styles.sumColumn} granted-sum-column`}>
             <div className={styles.tableHeader}>
               <TableLabel text="Myönnetty" disabled />
               <SortButton
@@ -656,11 +656,13 @@ function HakemusTable({
                   />
                 )}
               </td>
-              <td className={`${styles.alignRight} applied-sum-cell`}>
+              <td
+                className={`${styles.alignRight} ${styles.sumColumn} applied-sum-column applied-sum-cell`}
+              >
                 {euroFormatter.format(hakemus['budget-oph-share'])}
               </td>
               <td
-                className={`${styles.alignRight} granted-sum-cell`}
+                className={`${styles.alignRight} ${styles.sumColumn} granted-sum-column granted-sum-cell`}
                 data-test-class="granted-sum-cell"
               >
                 {hakemus.arvio['budget-granted']
@@ -698,10 +700,16 @@ function HakemusTable({
               Päätöslista
             </a>
           </td>
-          <td colSpan={1} className={styles.alignRight}>
+          <td
+            colSpan={1}
+            className={`${styles.alignRight} ${styles.sumColumn} applied-sum-column`}
+          >
             {euroFormatter.format(totalOphShare)}
           </td>
-          <td colSpan={1} className={styles.alignRight}>
+          <td
+            colSpan={1}
+            className={`${styles.alignRight} ${styles.sumColumn} granted-sum-column`}
+          >
             {totalBudgetGranted > 0 ? euroFormatter.format(totalBudgetGranted) : '-'}
           </td>
           <td colSpan={2} />
@@ -754,7 +762,7 @@ function ResolvedTable(props: ResolvedTableProps) {
   const { projectNameOrCode, organization, status: statusFilter } = filterState
 
   return (
-    <table className={styles.table}>
+    <table className={`${styles.table} hakemus-list`}>
       <colgroup>
         <col style={{ width: '186px' }} />
         <col style={{ width: '210px' }} />
@@ -976,7 +984,7 @@ function ResolvedTable(props: ResolvedTableProps) {
               />
             </div>
           </th>
-          <th>
+          <th className={`${styles.sumColumn} granted-sum-column`}>
             <div className={styles.tableHeader}>
               <TableLabel text="Myönnetty" disabled />
               <SortButton
@@ -1091,7 +1099,10 @@ function ResolvedTable(props: ResolvedTableProps) {
                   refused={hakemus.refused}
                 />
               </td>
-              <td className={`${styles.alignRight} granted-sum-cell`} data-test-class="granted-sum-cell">
+              <td
+                className={`${styles.alignRight} ${styles.sumColumn} granted-sum-column granted-sum-cell`}
+                data-test-class="granted-sum-cell"
+              >
                 {hakemus.arvio['budget-granted']
                   ? euroFormatter.format(hakemus.arvio['budget-granted'])
                   : '-'}
@@ -1127,7 +1138,10 @@ function ResolvedTable(props: ResolvedTableProps) {
               Päätöslista
             </a>
           </td>
-          <td colSpan={1} className={styles.alignRight}>
+          <td
+            colSpan={1}
+            className={`${styles.alignRight} ${styles.sumColumn} granted-sum-column`}
+          >
             {totalBudgetGranted > 0 ? euroFormatter.format(totalBudgetGranted) : '-'}
           </td>
           <td colSpan={2} />
@@ -1260,7 +1274,11 @@ const TableLabel: React.FC<TableLabelProps> = ({ text, disabled, showDeleteButto
   const onOutsideClick = () => toggleMenu((value) => !value)
   const ref = useOutsideClick<HTMLDivElement>(onOutsideClick)
   return (
-    <div className={styles.tableLabel}>
+    <div
+      className={classNames(styles.tableLabel, {
+        [styles.tableLabelStatic]: disabled,
+      })}
+    >
       <button
         disabled={!!disabled}
         onClick={() => toggleMenu((state) => !state)}
