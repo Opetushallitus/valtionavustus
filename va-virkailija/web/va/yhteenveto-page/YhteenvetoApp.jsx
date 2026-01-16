@@ -20,9 +20,9 @@ class SummaryApp extends Component {
     const hakemusList = hakuData.hakemukset.map((h) =>
       h.refused
         ? Object.assign(h, {
-          status: 'refused',
-          arvio: Object.assign(h.arvio, { status: 'refused' }),
-        })
+            status: 'refused',
+            arvio: Object.assign(h.arvio, { status: 'refused' }),
+          })
         : h
     )
     const avustushaku = hakuData.avustushaku

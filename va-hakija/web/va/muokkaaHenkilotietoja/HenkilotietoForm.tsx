@@ -305,11 +305,11 @@ function TopBar({
   title: string
   buttonText: string
   notification:
-  | {
-    text: string
-    type: 'success' | 'error'
-  }
-  | undefined
+    | {
+        text: string
+        type: 'success' | 'error'
+      }
+    | undefined
   showJotpaLogo: boolean
   lang: 'fi' | 'sv'
   disabled: boolean

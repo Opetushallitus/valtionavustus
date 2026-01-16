@@ -47,8 +47,8 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
             <h3 className="muutoshakemus__header" data-test-id="päätös-email-status">
               {a['paatos-sent-at']
                 ? `${t.email.paatos.status.sent} ${moment(a['paatos-sent-at']).format(
-                  datetimeFormat(lang)
-                )}`
+                    datetimeFormat(lang)
+                  )}`
                 : t.email.paatos.status.pending}
             </h3>
             <h3 className="muutoshakemus__header">{t.muutoshakemus.paatos.paatosDokumentti}:</h3>

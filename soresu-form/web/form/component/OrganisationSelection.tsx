@@ -82,9 +82,10 @@ export function OrganisationSelection({ state, controller }: OrganisationSelecti
     const fieldValue =
       organizationFieldName === 'contact'
         ? _.trim(
-          `${data.contact.address || ''} ${data.contact['postal-number'] || ''} ${data.contact.city || ''
-          }`
-        )
+            `${data.contact.address || ''} ${data.contact['postal-number'] || ''} ${
+              data.contact.city || ''
+            }`
+          )
         : data[organizationFieldName as keyof OrganizationResponse]
 
     if (!_.isEmpty(fieldValue)) {

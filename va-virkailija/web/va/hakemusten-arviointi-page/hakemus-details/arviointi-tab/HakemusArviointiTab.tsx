@@ -268,15 +268,15 @@ const SetArviointiStatus = ({ hakemus, allowEditing }: SetArviointiStatusProps) 
     const statusFI = HakemusArviointiStatuses.statusToFI(statusValues[i])
     const onChange = allowEditing
       ? () => {
-        dispatch(
-          setArvioValue({
-            hakemusId: hakemus.id,
-            key: 'status',
-            value: statusValues[i],
-          })
-        )
-        dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }))
-      }
+          dispatch(
+            setArvioValue({
+              hakemusId: hakemus.id,
+              key: 'status',
+              value: statusValues[i],
+            })
+          )
+          dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }))
+        }
       : undefined
     statuses.push(
       <input
