@@ -8,6 +8,56 @@
   margin: 0 auto;
 }
 
+.tableLabel {
+  composes: tableLabel from '../../style/HakemusTable.module.css';
+}
+
+.tableLabelButton {
+  composes: tableLabelButton from '../../style/HakemusTable.module.css';
+}
+
+.tableLabelPopup {
+  composes: tableLabelPopup from '../../style/HakemusTable.module.css';
+}
+
+.wideTableLabelPopup {
+  composes: wideTableLabelPopup from '../../style/HakemusTable.module.css';
+}
+
+.tableHeader {
+  composes: tableHeader from '../../style/HakemusTable.module.css';
+}
+
+.containerForModals {
+  composes: containerForModals from '../../style/HakemusTable.module.css';
+}
+
+.tableContainer {
+  composes: tableContainer from '../../style/HakemusTable.module.css';
+}
+
+.hakemusRow {
+  composes: hakemusRow from '../../style/HakemusTable.module.css';
+}
+
+.selectedHakemusRow {
+  composes: selectedHakemusRow from '../../style/HakemusTable.module.css';
+}
+
+.alignRight {
+  composes: alignRight from '../../style/HakemusTable.module.css';
+}
+
+.statusCheckbox {
+  display: flex;
+  padding: 4px 0 4px 0;
+  align-items: center;
+}
+
+.statusCheckbox input {
+  margin-right: 8px;
+}
+
 .table thead > tr {
   position: sticky;
   z-index: 1;

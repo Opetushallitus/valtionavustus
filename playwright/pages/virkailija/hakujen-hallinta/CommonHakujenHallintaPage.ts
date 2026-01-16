@@ -22,6 +22,7 @@ export async function waitForSaveWithError(page: Page) {
 export const CommonHakujenHallintaPage = (page: Page) => {
   const hakuListingTableLocators = () => {
     const hakuList = page.locator('#haku-listing')
+    const hakuListHeader = hakuList.locator('thead')
     const hakuRows = hakuList.locator('tbody tr')
     const baseTableLocators = (columnTestId: string) => ({
       cellValue: (trTestId: string) => hakuList.getByTestId(trTestId).getByTestId(columnTestId),
@@ -37,17 +38,17 @@ export const CommonHakujenHallintaPage = (page: Page) => {
       },
       tila: {
         ...baseTableLocators('status'),
-        toggle: page.locator('button:has-text("Tila")'),
-        uusiCheckbox: page.locator('label:has-text("Uusi")'),
+        toggle: hakuListHeader.getByRole('button', { name: 'Tila', exact: true }),
+        uusiCheckbox: hakuListHeader.getByRole('checkbox', { name: /Uusi/ }),
       },
       vaihe: {
         ...baseTableLocators('phase'),
-        toggle: page.locator('button:has-text("Vaihe")'),
-        kiinniCheckbox: page.locator('label:has-text("Kiinni")'),
+        toggle: hakuListHeader.getByRole('button', { name: 'Vaihe', exact: true }),
+        kiinniCheckbox: hakuListHeader.getByRole('checkbox', { name: /Kiinni/ }),
       },
       hakuaika: {
         ...baseTableLocators('hakuaika'),
-        toggle: page.locator('button:has-text("Hakuaika")'),
+        toggle: hakuListHeader.getByRole('button', { name: 'Hakuaika', exact: true }),
         clear: page.locator('[aria-label="Tyhjennä hakuaika rajaukset"]'),
         hakuaikaStart: page.locator(
           '[aria-label="Rajaa avustushaut niihin joiden hakuaika alkaa päivämääränä tai sen jälkeen"] input'

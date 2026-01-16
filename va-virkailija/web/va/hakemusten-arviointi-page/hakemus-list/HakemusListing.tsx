@@ -1091,10 +1091,7 @@ function ResolvedTable(props: ResolvedTableProps) {
                   refused={hakemus.refused}
                 />
               </td>
-              <td
-                className={`${styles.alignRight} granted-sum-cell`}
-                data-test-class="granted-sum-cell"
-              >
+              <td className={`${styles.alignRight} granted-sum-cell`} data-test-class="granted-sum-cell">
                 {hakemus.arvio['budget-granted']
                   ? euroFormatter.format(hakemus.arvio['budget-granted'])
                   : '-'}

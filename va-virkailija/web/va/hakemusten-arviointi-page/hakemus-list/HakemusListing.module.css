@@ -9,6 +9,34 @@
   width: 100%;
 }
 
+.tableHeader {
+  composes: tableHeader from '../../style/HakemusTable.module.css';
+}
+
+.tableLabel {
+  composes: tableLabel from '../../style/HakemusTable.module.css';
+}
+
+.tableLabelButton {
+  composes: tableLabelButton from '../../style/HakemusTable.module.css';
+}
+
+.tableLabelPopup {
+  composes: tableLabelPopup from '../../style/HakemusTable.module.css';
+}
+
+.containerForModals {
+  composes: containerForModals from '../../style/HakemusTable.module.css';
+}
+
+.ukotusModalContainer {
+  composes: ukotusModalContainer from '../../style/HakemusTable.module.css';
+}
+
+.tableContainer {
+  composes: tableContainer from '../../style/HakemusTable.module.css';
+}
+
 .largeFixedContainer {
   composes: tableContainer from '../../style/HakemusTable.module.css';
   height: 230px;
@@ -39,6 +67,30 @@
 
 .yhteenveto {
   margin-left: 1rem;
+}
+
+.hakemusRow {
+  composes: hakemusRow from '../../style/HakemusTable.module.css';
+}
+
+.selectedHakemusRow {
+  composes: selectedHakemusRow from '../../style/HakemusTable.module.css';
+}
+
+.alignRight {
+  composes: alignRight from '../../style/HakemusTable.module.css';
+}
+
+.roleContainer {
+  composes: roleContainer from '../../style/HakemusTable.module.css';
+}
+
+.addRoleButton {
+  composes: addRoleButton from '../../style/HakemusTable.module.css';
+}
+
+.roleButton {
+  composes: roleButton from '../../style/HakemusTable.module.css';
 }
 
 .tableLabelPopupEvaluator {
