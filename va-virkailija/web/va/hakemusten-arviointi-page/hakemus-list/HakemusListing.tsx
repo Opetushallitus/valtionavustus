@@ -700,16 +700,10 @@ function HakemusTable({
               Päätöslista
             </a>
           </td>
-          <td
-            colSpan={1}
-            className={`${styles.alignRight} ${styles.sumColumn} applied-sum-column`}
-          >
+          <td colSpan={1} className={`${styles.alignRight} ${styles.sumColumn} applied-sum-column`}>
             {euroFormatter.format(totalOphShare)}
           </td>
-          <td
-            colSpan={1}
-            className={`${styles.alignRight} ${styles.sumColumn} granted-sum-column`}
-          >
+          <td colSpan={1} className={`${styles.alignRight} ${styles.sumColumn} granted-sum-column`}>
             {totalBudgetGranted > 0 ? euroFormatter.format(totalBudgetGranted) : '-'}
           </td>
           <td colSpan={2} />
@@ -1138,10 +1132,7 @@ function ResolvedTable(props: ResolvedTableProps) {
               Päätöslista
             </a>
           </td>
-          <td
-            colSpan={1}
-            className={`${styles.alignRight} ${styles.sumColumn} granted-sum-column`}
-          >
+          <td colSpan={1} className={`${styles.alignRight} ${styles.sumColumn} granted-sum-column`}>
             {totalBudgetGranted > 0 ? euroFormatter.format(totalBudgetGranted) : '-'}
           </td>
           <td colSpan={2} />
