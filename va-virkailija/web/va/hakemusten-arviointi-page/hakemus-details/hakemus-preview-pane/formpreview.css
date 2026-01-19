@@ -1,3 +1,4 @@
+@import "~soresu-form/web/va/style/soresu-va.css";
 @import "~soresu-form/web/form/style/preview.css";
 
 #form-preview {
@@ -16,4 +17,220 @@
 #form-preview .page-break {
     margin-top: 30px;
     border-top: 5px solid #eaeaea;
+}
+
+/* Preview-specific styles for forms - migrated from formpreview.less */
+.soresu-preview {
+    text-align: justify;
+
+    .soresu-accordion {
+        width: 100% !important;
+        max-width: 100%;
+        overflow-x: hidden;
+
+        .soresu-theme {
+            max-width: 100%;
+        }
+    }
+
+    h2 {
+        padding: 0;
+        margin: 30px 0 8px 0;
+    }
+
+    section.soresu-theme {
+        padding-top: 0;
+        border: none;
+
+        h2 {
+            float: none;
+            margin: 5px 0 0 0;
+        }
+
+        & > div {
+            margin-left: 0;
+        }
+    }
+
+    .soresu-theme {
+        .soresu-preview-element {
+            max-width: 100%;
+
+            &.extra-extra-small,
+            &.extra-small,
+            &.small,
+            &.medium,
+            &.large,
+            &.extra-large {
+                max-width: 100%;
+            }
+        }
+
+        .soresu-preview-fieldset,
+        .soresu-preview-growing-fieldset {
+            .soresu-preview-element {
+                text-align: left;
+                width: 100%;
+                max-width: 100%;
+
+                &:not(.soresu-text-area).small,
+                &:not(.soresu-text-area).medium,
+                &:not(.soresu-text-area).large {
+                    &:nth-child(odd) {
+                        margin-right: 10px;
+                    }
+                }
+            }
+        }
+
+        .soresu-preview-fieldset .soresu-preview-element {
+            &:not(.soresu-text-area).small,
+            &:not(.soresu-text-area).medium,
+            &:not(.soresu-text-area).large {
+                width: 255px;
+                vertical-align: top;
+                overflow-wrap: break-word;
+            }
+        }
+
+        .soresu-preview-growing-fieldset {
+            ol {
+                margin: 20px 0;
+                padding: 0;
+
+                li {
+                    & > * {
+                        margin-left: 20px;
+                    }
+
+                    &:before {
+                        padding-top: 12px;
+                        color: var(--dark-gray);
+                        width: 20px;
+                    }
+                }
+
+                .soresu-preview-element {
+                    &:not(.soresu-text-area).small,
+                    &:not(.soresu-text-area).medium,
+                    &:not(.soresu-text-area).large {
+                        width: 235px;
+                        vertical-align: top;
+                        overflow-wrap: break-word;
+                    }
+                }
+            }
+
+            .va-big-fieldset {
+                margin-left: 0;
+            }
+
+            &.show-only-first-label ol li:first-child:before {
+                margin-top: 0;
+            }
+        }
+
+        .soresu-preview-element {
+            width: auto;
+
+            .soresu-value {
+                font-size: 15px;
+            }
+
+            .soresu-key {
+                padding: 12px 0 6px 0;
+                font-size: 15px;
+                color: var(--dark-gray);
+            }
+
+            &.soresu-text-area {
+                width: auto;
+            }
+        }
+
+        .soresu-attachment-block {
+            width: auto;
+            font-size: 15px;
+        }
+
+        .va-budget {
+            max-width: 100%;
+
+            .summing-table,
+            .budget-summary {
+                width: 100% !important;
+                max-width: 100%;
+                font-size: 14px;
+                table-layout: fixed;
+
+                colgroup {
+                    .label-column {
+                        width: 70% !important;
+                    }
+
+                    .description-column {
+                        width: 60% !important;
+                    }
+
+                    .amount-column {
+                        width: 30% !important;
+                    }
+
+                    .amount-label-column {
+                        width: 70% !important;
+                    }
+
+                    .amount-value-column {
+                        width: 30% !important;
+                    }
+
+                    .percentage-label-column {
+                        width: 70% !important;
+                    }
+
+                    .percentage-value-column {
+                        width: 30% !important;
+                    }
+                }
+
+                .amounts,
+                .percentages {
+                    tbody tr:first-child td {
+                        height: auto;
+                    }
+                }
+
+                td,
+                th {
+                    overflow-wrap: break-word;
+                    word-wrap: break-word;
+                    hyphens: auto;
+                }
+            }
+
+            .summing-table td {
+                padding-bottom: 10px;
+            }
+        }
+
+        .va-trainee-day-calculator {
+            th {
+                color: var(--dark-gray);
+            }
+        }
+    }
+
+    .soresu-table {
+        &__caption {
+            color: var(--dark-gray);
+            font-size: 15px;
+        }
+
+        &__column-title-cell,
+        &__row-title-cell,
+        &__value-cell,
+        &__sum-cell {
+            font-size: 14px;
+        }
+    }
 }
