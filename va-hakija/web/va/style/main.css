@@ -318,7 +318,30 @@ div.notification-container div.error {
     background: var(--silver);
 }
 
-/* Preview-specific styles for esikatselu page - budget table overrides */
+/* Preview-specific styles for esikatselu page */
+.soresu-preview {
+    text-align: justify;
+}
+
+.soresu-preview h2 {
+    padding: 0;
+    margin: 30px 0 8px 0;
+}
+
+.soresu-preview section.soresu-theme {
+    padding-top: 0;
+    border: none;
+}
+
+.soresu-preview section.soresu-theme h2 {
+    float: none;
+    margin: 5px 0 0 0;
+}
+
+.soresu-preview section.soresu-theme > div {
+    margin-left: 0;
+}
+
 .soresu-preview .va-budget {
     max-width: 100%;
 
