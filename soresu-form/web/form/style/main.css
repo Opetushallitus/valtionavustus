@@ -295,15 +295,52 @@ section.soresu-theme>div>p.soresu-info-element {
 }
 
 .soresu-text-field input[type=text],
-.soresu-text-field input[type=email] {
+.soresu-text-field input[type=email],
+.soresu-email-field input[type=text],
+.soresu-email-field input[type=email] {
     margin: 5px 10px 0 0;
     font-size: 18px;
+}
 
-    /* Cascade widths */
+.soresu-text-field input[type=text].extra-extra-small,
+.soresu-text-field input[type=email].extra-extra-small,
+.soresu-email-field input[type=text].extra-extra-small,
+.soresu-email-field input[type=email].extra-extra-small {
+    width: calc(var(--section-width) / 8 - 18px);
+}
+
+.soresu-text-field input[type=text].extra-small,
+.soresu-text-field input[type=email].extra-small,
+.soresu-email-field input[type=text].extra-small,
+.soresu-email-field input[type=email].extra-small {
+    width: calc(var(--section-width) / 4 - 18px);
+}
+
+.soresu-text-field input[type=text].small,
+.soresu-text-field input[type=email].small,
+.soresu-email-field input[type=text].small,
+.soresu-email-field input[type=email].small {
+    width: calc(var(--section-width) / 3 - 18px);
+}
+
+.soresu-text-field input[type=text].medium,
+.soresu-text-field input[type=email].medium,
+.soresu-email-field input[type=text].medium,
+.soresu-email-field input[type=email].medium {
+    width: calc(var(--section-width) / 2 - 18px);
+}
+
+.soresu-text-field input[type=text].large,
+.soresu-text-field input[type=email].large,
+.soresu-email-field input[type=text].large,
+.soresu-email-field input[type=email].large {
     width: calc(var(--section-width) / 1.5 - 28px);
 }
 
-.soresu-text-field input[type=text].extra-large {
+.soresu-text-field input[type=text].extra-large,
+.soresu-text-field input[type=email].extra-large,
+.soresu-email-field input[type=text].extra-large,
+.soresu-email-field input[type=email].extra-large {
     width: calc(var(--section-width) - 18px);
 }
 
@@ -325,8 +362,28 @@ section.soresu-theme>div>p.soresu-info-element {
    So default width is 1.5 - 28px.
 */
 
-.soresu-text-field label,
-.soresu-email-field label {
+.soresu-text-field label.extra-extra-small,
+.soresu-email-field label.extra-extra-small {
+    width: calc(var(--section-width) / 8 - 8px);
+}
+
+.soresu-text-field label.extra-small,
+.soresu-email-field label.extra-small {
+    width: calc(var(--section-width) / 4 - 8px);
+}
+
+.soresu-text-field label.small,
+.soresu-email-field label.small {
+    width: calc(var(--section-width) / 3 - 8px);
+}
+
+.soresu-text-field label.medium,
+.soresu-email-field label.medium {
+    width: calc(var(--section-width) / 2 - 8px);
+}
+
+.soresu-text-field label.large,
+.soresu-email-field label.large {
     width: calc(var(--section-width) / 1.5 - 18px);
 }
 
@@ -375,12 +432,55 @@ section.soresu-theme>div>p.soresu-info-element {
 .soresu-money-field input[type=text] {
     margin: 5px 10px 0 0;
     font-size: 18px;
-    width: calc(var(--section-width) / 1.5 - 28px);
     text-align: right;
 }
 
-.soresu-money-field label {
+.soresu-money-field input[type=text].extra-extra-small {
+    width: calc(var(--section-width) / 8 - 18px);
+}
+
+.soresu-money-field input[type=text].extra-small {
+    width: calc(var(--section-width) / 4 - 18px);
+}
+
+.soresu-money-field input[type=text].small {
+    width: calc(var(--section-width) / 3 - 18px);
+}
+
+.soresu-money-field input[type=text].medium {
+    width: calc(var(--section-width) / 2 - 18px);
+}
+
+.soresu-money-field input[type=text].large {
+    width: calc(var(--section-width) / 1.5 - 28px);
+}
+
+.soresu-money-field input[type=text].extra-large {
+    width: calc(var(--section-width) - 18px);
+}
+
+.soresu-money-field label.extra-extra-small {
+    width: calc(var(--section-width) / 8 - 8px);
+}
+
+.soresu-money-field label.extra-small {
+    width: calc(var(--section-width) / 4 - 8px);
+}
+
+.soresu-money-field label.small {
+    width: calc(var(--section-width) / 3 - 8px);
+}
+
+.soresu-money-field label.medium {
+    width: calc(var(--section-width) / 2 - 8px);
+}
+
+.soresu-money-field label.large {
     width: calc(var(--section-width) / 1.5 - 18px);
+}
+
+.soresu-money-field label.extra-large {
+    width: calc(var(--section-width) - 8px);
 }
 
 
@@ -392,7 +492,30 @@ section.soresu-theme>div>p.soresu-info-element {
     background-color: #fff;
     margin: 5px 10px 0 0;
     font-size: 18px;
+}
+
+.soresu-finnish-business-id-field input[type=text].extra-extra-small {
+    width: calc(var(--section-width) / 8 - 18px);
+}
+
+.soresu-finnish-business-id-field input[type=text].extra-small {
+    width: calc(var(--section-width) / 4 - 18px);
+}
+
+.soresu-finnish-business-id-field input[type=text].small {
+    width: calc(var(--section-width) / 3 - 18px);
+}
+
+.soresu-finnish-business-id-field input[type=text].medium {
+    width: calc(var(--section-width) / 2 - 18px);
+}
+
+.soresu-finnish-business-id-field input[type=text].large {
     width: calc(var(--section-width) / 1.5 - 28px);
+}
+
+.soresu-finnish-business-id-field input[type=text].extra-large {
+    width: calc(var(--section-width) - 18px);
 }
 
 .soresu-finnish-business-id-field input[type=text].error {
@@ -421,8 +544,28 @@ section.soresu-theme>div>p.soresu-info-element {
     outline: 1px solid var(--bright-red);
 }
 
-.soresu-finnish-business-id-field label {
+.soresu-finnish-business-id-field label.extra-extra-small {
+    width: calc(var(--section-width) / 8 - 8px);
+}
+
+.soresu-finnish-business-id-field label.extra-small {
+    width: calc(var(--section-width) / 4 - 8px);
+}
+
+.soresu-finnish-business-id-field label.small {
+    width: calc(var(--section-width) / 3 - 8px);
+}
+
+.soresu-finnish-business-id-field label.medium {
+    width: calc(var(--section-width) / 2 - 8px);
+}
+
+.soresu-finnish-business-id-field label.large {
     width: calc(var(--section-width) / 1.5 - 18px);
+}
+
+.soresu-finnish-business-id-field label.extra-large {
+    width: calc(var(--section-width) - 8px);
 }
 
 
