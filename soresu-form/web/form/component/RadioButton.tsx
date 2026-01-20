@@ -1,4 +1,4 @@
-import React, { ChangeEventHandler } from 'react'
+import React, { ChangeEventHandler, MouseEventHandler } from 'react'
 import Translator from '../Translator'
 import BasicFieldComponent, { BasicFieldComponentProps } from './BasicFieldComponent'
 
@@ -8,6 +8,15 @@ interface RadioButtonProps extends BasicFieldComponentProps {
 }
 
 export default class RadioButton extends BasicFieldComponent<RadioButtonProps> {
+  handleClick: MouseEventHandler<HTMLInputElement> = (e) => {
+    const target = e.target as HTMLInputElement
+    const clickedValue = target.value
+    if (clickedValue === this.props.value && !this.props.disabled) {
+      // Clicking already-selected option unselects it
+      this.props.onChange({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>)
+    }
+  }
+
   render() {
     const props = this.props
     const radiobuttons = []
@@ -29,6 +38,7 @@ export default class RadioButton extends BasicFieldComponent<RadioButtonProps> {
             disabled={props.disabled}
             value={props.options[i].value}
             onChange={props.onChange}
+            onClick={this.handleClick}
             checked={props.options[i].value === props.value}
           />
         )
