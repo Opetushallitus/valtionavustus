@@ -414,7 +414,12 @@ export function HakijaAvustusHakuPage(page: Page) {
     if (answers.projectName) {
       await tryToFillProjectName(answers.projectName)
     }
-    await page.click(`[for='language.radio.${lang === 'sv' ? 1 : 0}']`)
+
+    const languageRadio = page.locator(`#language\\.radio\\.${lang === 'sv' ? 1 : 0}`)
+    if (!(await languageRadio.isChecked())) {
+      await page.locator(`label[for='language.radio.${lang === 'sv' ? 1 : 0}']`).click()
+    }
+
     await page.click("[for='checkboxButton-0.checkbox.0']")
     await page
       .getByText(lang === 'fi' ? 'Opetuksen lisääminen' : 'Ordnande av extra undervisning')
