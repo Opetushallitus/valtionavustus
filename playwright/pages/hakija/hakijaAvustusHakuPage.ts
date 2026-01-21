@@ -321,7 +321,7 @@ export function HakijaAvustusHakuPage(page: Page) {
     if (answers.projectName) {
       await tryToFillProjectName(answers.projectName)
     }
-    await page.click(`[for='language.radio.0']`)
+    await ensureLanguageSelected('fi')
     await page.click(`[for='combined-effort.radio.0']`)
     await page.locator(`label:has-text("Yhteistyökumppanin nimi")`).first().fill('Esmo Esimerkki')
     await page.locator(`label:has-text("Yhteyshenkilön nimi")`).first().fill('Esmo Esimerkki')
