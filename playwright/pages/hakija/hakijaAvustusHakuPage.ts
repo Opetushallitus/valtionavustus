@@ -148,6 +148,13 @@ export function HakijaAvustusHakuPage(page: Page) {
     }
   }
 
+  async function ensureLanguageSelected(lang: string) {
+    const languageRadio = page.locator(`#language\\.radio\\.${lang === 'sv' ? 1 : 0}`)
+    if (!(await languageRadio.isChecked())) {
+      await page.locator(`label[for='language.radio.${lang === 'sv' ? 1 : 0}']`).click()
+    }
+  }
+
   async function fillMuutoshakemusEnabledHakemus(answers: Answers, beforeSubmitFn?: () => void) {
     const lang = answers.lang || 'fi'
 
@@ -186,11 +193,7 @@ export function HakijaAvustusHakuPage(page: Page) {
       await tryToFillProjectName(answers.projectName)
     }
 
-    // Only click language radio if not already selected (might be pre-selected from URL lang param)
-    const languageRadio = page.locator(`#language\\.radio\\.${lang === 'sv' ? 1 : 0}`)
-    if (!(await languageRadio.isChecked())) {
-      await page.locator(`label[for='language.radio.${lang === 'sv' ? 1 : 0}']`).click()
-    }
+    await ensureLanguageSelected(lang)
 
     await page.click("[for='checkboxButton-0.checkbox.0']")
     await page
@@ -415,10 +418,7 @@ export function HakijaAvustusHakuPage(page: Page) {
       await tryToFillProjectName(answers.projectName)
     }
 
-    const languageRadio = page.locator(`#language\\.radio\\.${lang === 'sv' ? 1 : 0}`)
-    if (!(await languageRadio.isChecked())) {
-      await page.locator(`label[for='language.radio.${lang === 'sv' ? 1 : 0}']`).click()
-    }
+    await ensureLanguageSelected(lang)
 
     await page.click("[for='checkboxButton-0.checkbox.0']")
     await page
