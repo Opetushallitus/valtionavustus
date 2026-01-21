@@ -118,6 +118,23 @@ export class OptionFieldPropertyMapper {
   }
 }
 
+export class RadioButtonPropertyMapper {
+  static map(props) {
+    const optionProps = OptionFieldPropertyMapper.map(props)
+    const field = props.field
+    const currentValue = props.value
+    return {
+      ...optionProps,
+      onClick: (e) => {
+        if (!currentValue) return
+        if (e.currentTarget.value === currentValue) {
+          props.onChange(field, '')
+        }
+      },
+    }
+  }
+}
+
 export class DropdownFieldPropertyMapper {
   static map(props) {
     const commonProps = OptionFieldPropertyMapper.map(props)

@@ -186,7 +186,12 @@ export function HakijaAvustusHakuPage(page: Page) {
       await tryToFillProjectName(answers.projectName)
     }
 
-    await page.click(`[for='language.radio.${lang === 'sv' ? 1 : 0}']`)
+    // Only click language radio if not already selected (might be pre-selected from URL lang param)
+    const languageRadio = page.locator(`#language\\.radio\\.${lang === 'sv' ? 1 : 0}`)
+    if (!(await languageRadio.isChecked())) {
+      await page.locator(`label[for='language.radio.${lang === 'sv' ? 1 : 0}']`).click()
+    }
+
     await page.click("[for='checkboxButton-0.checkbox.0']")
     await page
       .getByText(lang === 'fi' ? 'Opetuksen lisääminen' : 'Ordnande av extra undervisning')
@@ -376,7 +381,7 @@ export function HakijaAvustusHakuPage(page: Page) {
     await koulutusTd.nth(1).fill('33')
     await koulutusTd.nth(2).fill('33')
     await page.locator("[name='namedAttachment-0']").setInputFiles(dummyExcelPath)
-    await page.locator(`[for="vat-included.radio.1"]`).click()
+    await page.locator('#vat-included\\.radio\\.1').click()
     await page.locator(`[id="personnel-costs-row.amount"]`).fill('1000')
     await page.locator(`[id="own-income-row.description"]`).fill('Oma osuus')
     await page.locator(`[id="own-income-row.amount"]`).fill('500')
