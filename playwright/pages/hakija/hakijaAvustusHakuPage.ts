@@ -384,7 +384,7 @@ export function HakijaAvustusHakuPage(page: Page) {
     await koulutusTd.nth(1).fill('33')
     await koulutusTd.nth(2).fill('33')
     await page.locator("[name='namedAttachment-0']").setInputFiles(dummyExcelPath)
-    await page.locator('#vat-included\\.radio\\.1').click()
+    await page.locator(`label[for='vat-included.radio.1']`).click()
     await page.locator(`[id="personnel-costs-row.amount"]`).fill('1000')
     await page.locator(`[id="own-income-row.description"]`).fill('Oma osuus')
     await page.locator(`[id="own-income-row.amount"]`).fill('500')
