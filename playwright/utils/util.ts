@@ -17,7 +17,7 @@ export async function expectQueryParameter(page: Page, paramName: string): Promi
   return value
 }
 
-type FakeIdentity = 'valtionavustus' | 'paivipaakayttaja' | 'viivivirkailija'
+type FakeIdentity = 'valtionavustus' | 'paivipaakayttaja' | 'viivivirkailija' | 'jotpakayttaja'
 export async function switchUserIdentityTo(page: Page, identity: FakeIdentity): Promise<void> {
   await page.request.post(`${VIRKAILIJA_URL}/api/test/set-fake-identity/${identity}`)
   await page.reload()

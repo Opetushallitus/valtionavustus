@@ -28,10 +28,20 @@
    :surname "Virkailija"
    :username "viivivirkailija"})
 
+(def fake-identity-jotpa-kayttaja
+  {:email "jotpa.kayttaja@jotpa.fi"
+   :first-name "Jotpa"
+   :lang "fi"
+   :person-oid "1.2.246.562.24.99000000003"
+   :privileges ["va-admin"]
+   :surname "Käyttäjä"
+   :username "jotpakayttaja"})
+
 (def fake-identities
   {"valtionavustus"   default-fake-admin-identity
    "paivipaakayttaja" fake-identity-paivi-paakayttaja
-   "viivivirkailija"  fake-identity-viivi-virkailija})
+   "viivivirkailija"  fake-identity-viivi-virkailija
+   "jotpakayttaja"    fake-identity-jotpa-kayttaja})
 
 (defn valid-fake-identity? [name]
   (contains? fake-identities name))

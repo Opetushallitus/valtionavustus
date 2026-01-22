@@ -155,6 +155,14 @@ export const defaultValues = workerScopedDefaultValues.extend<DefaultValueFixtur
           lang: 'fi',
           privileges: ['va-user'],
         },
+        {
+          'person-oid': '1.2.246.562.24.99000000003',
+          'first-name': 'Jotpa',
+          surname: 'Käyttäjä',
+          email: 'jotpa.kayttaja@jotpa.fi',
+          lang: 'fi',
+          privileges: ['va-admin'],
+        },
       ]
       const response = await page.request.post(`${VIRKAILIJA_URL}/api/test/user-cache`, {
         data: users,
