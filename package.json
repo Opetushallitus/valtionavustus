@@ -19,7 +19,7 @@
     "big.js": "7.0.1",
     "classnames": "2.5.1",
     "formik": "2.4.9",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "moment": "2.30.1",
     "moment-timezone": "0.6.0",
     "oph-virkailija-style-guide": "github:Opetushallitus/virkailija-styles",
