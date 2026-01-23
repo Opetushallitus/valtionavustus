@@ -275,7 +275,7 @@
 
 (defn log-paatos-display [user-key headers remote-addr]
   (let [hakemus (hakija-db/get-hakemus user-key)]
-    (if-let [hakemus-id (:id hakemus)]
+    (when-let [hakemus-id (:id hakemus)]
       (hakija-db/add-paatos-view hakemus-id headers remote-addr))))
 
 (compojure-api/defroutes resource-routes
@@ -289,19 +289,19 @@
    ;; Finnish subcontext
    (compojure/GET "/muutoshakemus" [] (return-html "hakija/muutoshakemus.html"))
    (compojure/GET "/muutoshakemus/paatos" [] (return-html "hakija/muutoshakemus.html"))
-   (compojure/GET "/avustushaku/:avustushaku-id/nayta" [avustushaku-id] (return-html "hakija/index.html"))
-   (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys" [avustushaku-id] (return-html "hakija/selvitys.html"))
-   (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys" [avustushaku-id] (return-html "hakija/selvitys.html"))
-   (compojure/GET "/avustushaku/:avustushaku-id/" [avustushaku-id] (return-html "hakija/login.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/nayta" [] (return-html "hakija/index.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys" [] (return-html "hakija/selvitys.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys" [] (return-html "hakija/selvitys.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/" [] (return-html "hakija/login.html"))
 
-   (compojure/GET "/avustushaku/:avustushaku-id/esikatselu" [avustushaku-id] (return-html "hakija/index.html"))
-   (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys/esikatselu" [avustushaku-id] (return-html "hakija/selvitys.html"))
-   (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys/esikatselu" [avustushaku-id] (return-html "hakija/selvitys.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/esikatselu" [] (return-html "hakija/index.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys/esikatselu" [] (return-html "hakija/selvitys.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys/esikatselu" [] (return-html "hakija/selvitys.html"))
 
    (compojure-api/GET "/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" [avustushaku-id user-key :as request]
      :path-params [avustushaku-id :- Long user-key :- s/Str]
      :query-params [{nolog :- s/Str nil}]
-     (if (nil? nolog) (log-paatos-display user-key (:headers request) (:remote-addr request)))
+     (when (nil? nolog) (log-paatos-display user-key (:headers request) (:remote-addr request)))
      (let [hakemus (hakija-db/get-hakemus user-key)
            hakemus-id (:id hakemus)
            hakemus-paatos (hakija-db/get-hakemus-paatos hakemus-id)
@@ -315,8 +315,8 @@
    (compojure-route/resources "/muutoshakemus/paatos" {:mime-types {"html" "text/html; charset=utf-8"}})
 
    ;;; Swedish subcontext
-   (compojure/GET "/statsunderstod/:avustushaku-id/visa" [avustushaku-id] (return-html "hakija/index.html"))
-   (compojure/GET "/statsunderstod/:avustushaku-id/" [avustushaku-id] (return-html "hakija/login.html"))
+   (compojure/GET "/statsunderstod/:avustushaku-id/visa" [] (return-html "hakija/index.html"))
+   (compojure/GET "/statsunderstod/:avustushaku-id/" [] (return-html "hakija/login.html"))
 
    va-routes/logo-route
 

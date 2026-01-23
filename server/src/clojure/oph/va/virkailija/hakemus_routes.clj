@@ -301,9 +301,8 @@
              :status va-schema/HakemusStatus}
     :summary "Update status of hakemus"
     (let [{:keys [avustushaku hakemus]} (get-hakemus-and-its-avustushaku avustushaku-id hakemus-id)
-          identity (authentication/get-request-identity request)
-          new-status (:status body)
-          status-comment (:comment body)]
+          {new-status :status status-comment :comment} body
+          identity (authentication/get-request-identity request)]
       (when (and (= "cancelled" new-status) (= "resolved" (:status avustushaku)))
         (http/method-not-allowed!))
       (let [updated-hakemus (hakija-api/update-hakemus-status hakemus new-status status-comment identity)]
