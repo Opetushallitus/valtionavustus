@@ -47,7 +47,7 @@
     "@types/chai": "5.2.3",
     "@types/lodash": "4.17.23",
     "@types/node": "24.10.9",
-    "@types/react": "19.2.8",
+    "@types/react": "19.2.9",
     "@types/react-dom": "19.2.3",
     "@types/seamless-immutable": "7.1.19",
     "babel-loader": "10.0.0",
