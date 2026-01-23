@@ -135,3 +135,87 @@ div.soresu-attachment-display button.soresu-remove {
 .soresu-preview .soresu-preview-growing-fieldset.show-only-first-label ol li:first-child:before {
     margin-top: 22px;
 }
+
+/* Section theme header - constrain width to prevent overlap */
+section.soresu-theme h2 {
+    max-width: 230px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Budget summary styles for preview context */
+.budget-summary {
+    margin-top: 26px;
+}
+
+.budget-summary h4 {
+    font-weight: bold;
+    margin: 14px 0;
+}
+
+.budget-summary-financing {
+    overflow: hidden;
+}
+
+.budget-summary-financing-left {
+    float: left;
+    max-width: 50%;
+}
+
+.budget-summary-financing-right {
+    float: right;
+    max-width: 50%;
+}
+
+.budget-summary .amounts {
+    margin-right: 20px;
+}
+
+.budget-summary .percentages {
+    margin-left: 20px;
+}
+
+.budget-summary .amounts,
+.budget-summary .percentages {
+    border-collapse: collapse;
+}
+
+.budget-summary .amounts td,
+.budget-summary .percentages td {
+    vertical-align: middle;
+    height: 60px;
+}
+
+.budget-summary .amount-label-column,
+.budget-summary .percentage-label-column {
+    padding-right: 20px;
+}
+
+.budget-summary .amount-value-column,
+.budget-summary .percentage-value-column {
+    min-width: 120px;
+    text-align: right;
+}
+
+.budget-summary .soresu-money-field {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+}
+
+.budget-summary .soresu-money-field input[type=text] {
+    margin: 0;
+}
+
+.budget-summary .soresu-money-field:after {
+    content: "\00A0€";
+    margin-left: 4px;
+}
+
+.budget-summary .percentage:after {
+    content: "\00A0%";
+}
+
+.budget-summary .error {
+    color: var(--bright-red);
+}
