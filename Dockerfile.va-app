@@ -27,7 +27,7 @@ RUN npm run build-production
 #
 # va-base with all the Clojure stuff
 #
-FROM maven:3.9.12-eclipse-temurin-21@sha256:594fe27803ed961f664eea91851107622bd39b67a801f12ba583c4419252295e AS va-base
+FROM maven:3.9.12-eclipse-temurin-21@sha256:7d8cf78b43f2733e53bcf19fbe8c57d9831c7b303dfb72ee3b60a3b9fda6c251 AS va-base
 
 WORKDIR /app
 
