@@ -191,10 +191,26 @@ section.soresu-theme>div>p.soresu-info-element {
 .soresu-fieldset>div,
 .soresu-growing-fieldset>div {
     display: inline-block;
+    vertical-align: top;
+    width: calc(var(--section-width) / 3);
+    box-sizing: border-box;
+}
+
+.soresu-fieldset>.soresu-dropdown,
+.soresu-growing-fieldset>.soresu-dropdown {
+    width: calc(var(--section-width) / 2);
+}
+
+.soresu-fieldset>.soresu-radio,
+.soresu-fieldset>.soresu-checkbox,
+.soresu-growing-fieldset>.soresu-radio,
+.soresu-growing-fieldset>.soresu-checkbox {
+    width: var(--section-width);
 }
 
 .soresu-growing-fieldset div.extra-large {
     display: block;
+    width: var(--section-width);
 }
 
 .soresu-growing-fieldset ol {

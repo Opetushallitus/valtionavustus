@@ -102,6 +102,7 @@ div.soresu-attachment-display button.soresu-remove {
 .soresu-preview .soresu-preview-fieldset .soresu-preview-element,
 .soresu-preview .soresu-preview-growing-fieldset .soresu-preview-element {
     display: inline-block;
+    vertical-align: top;
 }
 
 .soresu-preview .soresu-preview-fieldset .hidden,
