@@ -2,8 +2,7 @@
   (:require [clojure.tools.logging :as log]
             [compojure.api.sweet :as compojure-api]
             [oph.soresu.common.db :refer [with-tx]]
-            [oph.common.email :as common-email]
-            [oph.soresu.common.config :refer [feature-enabled?]]
+            [oph.common.email :as common-email :refer [smtp-config]]
             [oph.soresu.form.formutil :as formutil]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.schema :as va-schema]
@@ -19,7 +18,7 @@
             [oph.va.virkailija.tapahtumaloki :as tapahtumaloki]
             [ring.util.http-response :as http]
             [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
-            [oph.common.email :refer [smtp-config]]
+            [clojure.string]
             [schema.core :as s]))
 
 (defn- notEmptyString [x] (not (clojure.string/blank? x)))
@@ -250,7 +249,7 @@
     :query-params [{attachment-version :- Long nil}]
     :summary "Download attachment attached to given field"
     (if (hakija-api/attachment-exists? hakemus-id field-id)
-      (let [{:keys [data size filename content-type]} (hakija-api/download-attachment hakemus-id field-id attachment-version)]
+      (let [{:keys [data filename content-type]} (hakija-api/download-attachment hakemus-id field-id attachment-version)]
         (-> (http/ok data)
             (assoc-in [:headers "Content-Type"] content-type)
             (assoc-in [:headers "Content-Disposition"] (str "inline; filename=\"" filename "\""))))
@@ -305,10 +304,10 @@
           identity (authentication/get-request-identity request)
           new-status (:status body)
           status-comment (:comment body)]
-      (if (and (= "cancelled" new-status) (= "resolved" (:status avustushaku)))
+      (when (and (= "cancelled" new-status) (= "resolved" (:status avustushaku)))
         (http/method-not-allowed!))
       (let [updated-hakemus (hakija-api/update-hakemus-status hakemus new-status status-comment identity)]
-        (if (= new-status "pending_change_request")
+        (when (= new-status "pending_change_request")
           (let [submission (hakija-api/get-hakemus-submission updated-hakemus)
                 answers (:answers submission)
                 language (keyword (or (formutil/find-answer-value answers "language") "fi"))
@@ -321,7 +320,7 @@
                 allekirjoitusomaavat (map #(map-email-field-value %) (map :value allekirjoitusoikeudelliset))
                 cc (vec (conj (flatten allekirjoitusomaavat) organisaatio-email))]
             (email/send-taydennyspyynto-message! language email cc avustushaku hakemus-id avustushaku-name user-key status-comment presenting-officer-email)))
-        (if (= new-status "submitted")
+        (when (= new-status "submitted")
           (virkailija-db/update-submitted-hakemus-version (:id hakemus)))
         (http/ok {:hakemus-id hakemus-id
                   :status new-status})))))
