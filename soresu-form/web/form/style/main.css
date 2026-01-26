@@ -159,6 +159,9 @@ section.soresu-theme {
 
 section.soresu-theme h2 {
     float: left;
+    max-width: 230px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 section.soresu-theme label {
@@ -188,7 +191,7 @@ section.soresu-theme>div>p.soresu-info-element {
     max-width: calc(var(--section-width) + 11px);
 }
 
-.soresu-fieldset {
+fieldset.soresu-fieldset {
     display: flex;
     flex-wrap: wrap;
 }

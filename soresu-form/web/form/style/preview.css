@@ -136,13 +136,6 @@ div.soresu-attachment-display button.soresu-remove {
     margin-top: 22px;
 }
 
-/* Section theme header - constrain width to prevent overlap */
-section.soresu-theme h2 {
-    max-width: 230px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
 /* Budget summary styles for preview context */
 .budget-summary {
     margin-top: 26px;
