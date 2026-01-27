@@ -57,7 +57,7 @@
   (job-supervisor/stop-background-job :timeout-sessions))
 
 (defn- authenticate-and-authorize-va-user [cas-ticket virkailija-login-url]
-  (if-let [username (cas/validate-service-ticket virkailija-login-url cas-ticket)]
+  (when-let [username (cas/validate-service-ticket virkailija-login-url cas-ticket)]
     (va-users/get-va-user-by-username username)))
 
 (defn authenticate [cas-ticket virkailija-login-url]
