@@ -64,9 +64,9 @@ test('business ID prefill shows confirmation and fills organization details', as
     await expect(infoSection).toContainText('Jos hakujärjestelmä ei tunnista hakijan Y-tunnusta')
 
     // Verify the email link is present and correct
-    const emailLink = infoSection.locator('a[href="mailto:yhteisetpalvelut@oph.fi"]')
+    const emailLink = infoSection.locator('a[href="mailto:valtionavustukset@oph.fi"]')
     await expect(emailLink).toBeVisible()
-    await expect(emailLink).toHaveText('yhteisetpalvelut@oph.fi')
+    await expect(emailLink).toHaveText('valtionavustukset@oph.fi')
   })
 
   await test.step('fetch button is disabled for invalid business ID', async () => {
@@ -141,3 +141,50 @@ test('business ID prefill shows confirmation and fills organization details', as
     await expect(page.locator('#organization-postal-address')).toBeDisabled()
   })
 })
+
+const swedishTest = defaultValues.extend<{
+  hakijaAvustusHakuPage: ReturnType<typeof HakijaAvustusHakuPage>
+}>({
+  hakijaAvustusHakuPage: async ({ page, swedishAnswers, hakuProps, userCache }, use) => {
+    expect(userCache).toBeDefined()
+    const hakujenHallintaPage = new HakujenHallintaPage(page)
+
+    const esimerkkiHakuWithContactDetails = await fs.readFile(
+      path.join(__dirname, '../../fixtures/avustushaku-with-contact-details.json'),
+      'utf8'
+    )
+
+    const { avustushakuID } = await hakujenHallintaPage.createHakuWithLomakeJson(
+      esimerkkiHakuWithContactDetails,
+      hakuProps
+    )
+    await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
+
+    await hakujenHallintaPage.fillAvustushaku(hakuProps)
+    const haunTiedotPage = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
+    await haunTiedotPage.publishAvustushaku()
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
+    await hakijaAvustusHakuPage.navigate(avustushakuID, swedishAnswers.lang)
+
+    const hakemusUrl = await hakijaAvustusHakuPage.startApplication(
+      avustushakuID,
+      swedishAnswers.contactPersonEmail
+    )
+    await hakijaAvustusHakuPage.page.goto(hakemusUrl)
+    await use(hakijaAvustusHakuPage)
+  },
+})
+
+swedishTest(
+  'business ID prefill shows Swedish contact email for Swedish language',
+  async ({ hakijaAvustusHakuPage }) => {
+    const { page } = hakijaAvustusHakuPage
+
+    const infoSection = page.locator('.organisation-selection-info')
+    await expect(infoSection).toBeVisible()
+
+    const emailLink = infoSection.locator('a[href="mailto:statsunderstod@oph.fi"]')
+    await expect(emailLink).toBeVisible()
+    await expect(emailLink).toHaveText('statsunderstod@oph.fi')
+  }
+)

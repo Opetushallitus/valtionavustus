@@ -201,6 +201,8 @@ function BusinessIdSearch({
     setError(validation.error)
   }
 
+  const contactEmail = lang === 'sv' ? 'statsunderstod@oph.fi' : 'valtionavustukset@oph.fi'
+
   return (
     <div className="business-id-search">
       <h1>
@@ -264,7 +266,7 @@ function BusinessIdSearch({
             translationKey="organisation-selection-info-3-before-email"
             lang={lang}
           />
-          <a href="mailto:valtionavustukset@oph.fi">valtionavustukset@oph.fi</a>
+          <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
           <LocalizedString
             translations={translations}
             translationKey="organisation-selection-info-3-after-email"
