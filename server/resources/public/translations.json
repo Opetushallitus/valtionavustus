@@ -329,8 +329,8 @@
       "sv": "Om ansökningssystemet inte känner igen sökandens FO-nummer, bör sökanden kontakta "
     },
     "organisation-selection-info-3-after-email": {
-      "fi": " hakemisen aloittamiseksi.",
-      "sv": " för att påbörja ansökan."
+      "fi": " hakemisen aloittamiseksi. Sähköpostissa hakijan tulee ilmoittaa Y-tunnus, organisaation virallinen nimi sekä virallinen sähköpostiosoite.",
+      "sv": " för att påbörja ansökan. I e-postmeddelandet ska sökanden ange FO-nummer, organisationens officiella namn samt officiell e-postadress."
     }
   },
   "errors": {

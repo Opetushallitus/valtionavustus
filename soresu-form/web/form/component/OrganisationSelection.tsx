@@ -264,7 +264,7 @@ function BusinessIdSearch({
             translationKey="organisation-selection-info-3-before-email"
             lang={lang}
           />
-          <a href="mailto:yhteisetpalvelut@oph.fi">yhteisetpalvelut@oph.fi</a>
+          <a href="mailto:valtionavustukset@oph.fi">valtionavustukset@oph.fi</a>
           <LocalizedString
             translations={translations}
             translationKey="organisation-selection-info-3-after-email"
