@@ -164,8 +164,9 @@
    :is-jotpa-hakemus is-jotpa-hakemus
    :grant-name grant-name})
 
-(defn send-refused-message! [lang recipients grant-name hakemus-id is-jotpa-hakemus]
-  (let [msg (generate-refused-email lang recipients grant-name hakemus-id is-jotpa-hakemus)
+(defn send-refused-message! [lang recipients grant-name hakemus-id is-jotpa-hakemus business-id]
+  (let [enriched-recipients (email/get-recipients-with-org-email business-id recipients)
+        msg (generate-refused-email lang enriched-recipients grant-name hakemus-id is-jotpa-hakemus)
         signature (email-signature-block lang)
         body (render-body msg signature)]
     (email/enqueue-message-to-be-send msg body)))

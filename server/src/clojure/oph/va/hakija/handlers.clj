@@ -255,7 +255,7 @@
              avustushaku
              (:id hakemus)))
           (when (< 0 (count to))
-            (va-email/send-refused-message! lang to (get-in avustushaku [:content :name lang]) (:id hakemus) is-jotpa-hakemus)))
+            (va-email/send-refused-message! lang to (get-in avustushaku [:content :name lang]) (:id hakemus) is-jotpa-hakemus (:business_id hakemus))))
         (hakemus-ok-response (va-db/get-hakemus hakemus-id) submission {} nil))
       :else (hakemus-conflict-response hakemus))))
 
