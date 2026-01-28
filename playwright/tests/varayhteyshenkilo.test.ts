@@ -402,8 +402,9 @@ test('varayhteyshenkilö refused avustushaku', async ({
       'Ilmoitus avustuksenne vastaanottamatta jättämisestä on lähetetty'
     )
     const to = emails[0]['to-address']
-    expect(to).toHaveLength(2)
+    expect(to).toHaveLength(3)
     expect(to).toContain(answers.contactPersonEmail)
     expect(to).toContain(answers.trustedContact.email)
+    expect(to).toContain('hakija-1424884@oph.fi')
   })
 })

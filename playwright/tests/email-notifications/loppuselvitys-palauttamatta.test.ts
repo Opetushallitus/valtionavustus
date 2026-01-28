@@ -64,8 +64,9 @@ selvitysTest.describe('loppuselvitys-palauttamatta', () => {
         const emails = await waitUntilMinEmails(getLoppuselvitysPalauttamattaEmails, 1, hakemusID)
         expect(emails).toHaveLength(1)
         const email = emails[0]
-        expect(email['to-address']).toHaveLength(1)
+        expect(email['to-address']).toHaveLength(2)
         expect(email['to-address']).toContain(answers.contactPersonEmail)
+        expect(email['to-address']).toContain('hakija-1424884@oph.fi')
         await expectIsFinnishOphEmail(email)
         expect(email.subject).toContain('Muistutus loppuselvityksen palauttamisesta')
         expect(email['formatted']).toContain(`Hyvä vastaanottaja,
@@ -190,8 +191,9 @@ swedishLoppuselvitysTest(
     await sendLoppuselvitysPalauttamattaNotifications(page)
     const emails = await waitUntilMinEmails(getLoppuselvitysPalauttamattaEmails, 1, hakemusID)
     const email = emails[0]
-    expect(email['to-address']).toHaveLength(1)
+    expect(email['to-address']).toHaveLength(2)
     expect(email['to-address']).toContain('lars.andersson@example.com')
+    expect(email['to-address']).toContain('hakija-1424884@oph.fi')
     await expectIsSwedishOphEmail(email)
     expect(email.subject).toContain('Påminnelse om att lämna in slutredovisningen')
     expect(email['formatted']).toContain(`Bästa mottagare,
@@ -239,8 +241,9 @@ jotpaLoppuselvitysTest.describe('Jotpan loppuselvitys palauttamatta', () => {
         const emails = await waitUntilMinEmails(getLoppuselvitysPalauttamattaEmails, 1, hakemusID)
         expect(emails).toHaveLength(1)
         const email = emails[0]
-        expect(email['to-address']).toHaveLength(1)
+        expect(email['to-address']).toHaveLength(2)
         expect(email['to-address']).toContain(answers.contactPersonEmail)
+        expect(email['to-address']).toContain('hakija-1424884@oph.fi')
         await expectIsFinnishJotpaEmail(email)
         expect(email.subject).toContain('Muistutus loppuselvityksen palauttamisesta')
         expect(email['formatted']).toContain(`Hyvä vastaanottaja,
@@ -285,8 +288,9 @@ swedishJotpaLoppuselvitysTest(
     await sendLoppuselvitysPalauttamattaNotifications(page)
     const emails = await waitUntilMinEmails(getLoppuselvitysPalauttamattaEmails, 1, hakemusID)
     const email = emails[0]
-    expect(email['to-address']).toHaveLength(1)
+    expect(email['to-address']).toHaveLength(2)
     expect(email['to-address']).toContain('lars.andersson@example.com')
+    expect(email['to-address']).toContain('hakija-1424884@oph.fi')
     await expectIsSwedishJotpaEmail(email)
     expect(email.subject).toContain('Påminnelse om att lämna in slutredovisningen')
     expect(email['formatted']).toContain(`Bästa mottagare,

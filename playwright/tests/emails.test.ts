@@ -82,8 +82,9 @@ test('Täydennyspyyntö email', async ({
 
   const emails = await waitUntilMinEmails(getTäydennyspyyntöEmails, 1, hakemusID)
   expect(emails).toHaveLength(1)
-  expect(emails[0]['to-address']).toHaveLength(1)
+  expect(emails[0]['to-address']).toHaveLength(2)
   expect(emails[0]['to-address']).toContain(answers.contactPersonEmail)
+  expect(emails[0]['to-address']).toContain('hakija-1424884@oph.fi')
   expect(emails[0]['bcc']).toStrictEqual('santeri.horttanainen@reaktor.com')
   expect(emails[0].cc).toHaveLength(3)
   expect(emails[0].cc).toStrictEqual([

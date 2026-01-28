@@ -56,8 +56,9 @@ selvitysTest.describe('valiselvitys-palauttamatta', () => {
         const emails = await waitUntilMinEmails(getValiselvitysPalauttamattaEmails, 1, hakemusID)
         const email = emails[0]
         await expectIsFinnishOphEmail(email)
-        expect(email['to-address']).toHaveLength(1)
+        expect(email['to-address']).toHaveLength(2)
         expect(email['to-address']).toContain('erkki.esimerkki@example.com')
+        expect(email['to-address']).toContain('hakija-1424884@oph.fi')
         expect(email.subject).toContain('Muistutus väliselvityksen palauttamisesta')
         expect(email['formatted']).toContain(`Hyvä vastaanottaja,
 
@@ -127,8 +128,9 @@ swedishValiselvitysTest(
     const emails = await waitUntilMinEmails(getValiselvitysPalauttamattaEmails, 1, hakemusID)
     const email = emails[0]
     await expectIsSwedishOphEmail(email)
-    expect(email['to-address']).toHaveLength(1)
+    expect(email['to-address']).toHaveLength(2)
     expect(email['to-address']).toContain('lars.andersson@example.com')
+    expect(email['to-address']).toContain('hakija-1424884@oph.fi')
     expect(email.subject).toContain('Påminnelse om att lämna in mellanredovisningen')
     expect(email['formatted']).toContain(`Bästa mottagare,
 
@@ -170,8 +172,9 @@ jotpaValiselvitysTest.describe('Jotpan valiselvitys palauttamatta', () => {
         const emails = await waitUntilMinEmails(getValiselvitysPalauttamattaEmails, 1, hakemusID)
         expect(emails).toHaveLength(1)
         const email = emails[0]
-        expect(email['to-address']).toHaveLength(1)
+        expect(email['to-address']).toHaveLength(2)
         expect(email['to-address']).toContain(answers.contactPersonEmail)
+        expect(email['to-address']).toContain('hakija-1424884@oph.fi')
         await expectIsFinnishJotpaEmail(email)
         expect(email.subject).toContain('Muistutus väliselvityksen palauttamisesta')
         expect(email['formatted']).toContain(`Hyvä vastaanottaja,
@@ -210,8 +213,9 @@ swedishJotpaValiselvitysTest(
     await sendValiselvitysPalauttamattaNotifications(page)
     const emails = await waitUntilMinEmails(getValiselvitysPalauttamattaEmails, 1, hakemusID)
     const email = emails[0]
-    expect(email['to-address']).toHaveLength(1)
+    expect(email['to-address']).toHaveLength(2)
     expect(email['to-address']).toContain('lars.andersson@example.com')
+    expect(email['to-address']).toContain('hakija-1424884@oph.fi')
     await expectIsSwedishJotpaEmail(email)
     expect(email.subject).toContain('Påminnelse om att lämna in mellanredovisningen')
     expect(email['formatted']).toContain(`Bästa mottagare,

@@ -43,8 +43,9 @@ for (const tz of timezones) {
           const emails = await waitUntilMinEmails(getHakuaikaPaattymassaEmails, 1, avustushakuID)
           const email = emails[0]
 
-          expect(email['to-address']).toHaveLength(1)
+          expect(email['to-address']).toHaveLength(2)
           expect(email['to-address']).toContain(randomEmail)
+          expect(email['to-address']).toContain('hakija-1424884@oph.fi')
           expect(email.subject).toEqual('Hakuaika on päättymässä')
           await expectIsFinnishOphEmail(email)
 
@@ -80,8 +81,9 @@ Mikäli olette päättäneet jättää hakemuksen lähettämättä, on tämä vi
             const emails = await waitUntilMinEmails(getHakuaikaPaattymassaEmails, 1, avustushakuID)
             const email = emails[0]
 
-            expect(email['to-address']).toHaveLength(1)
+            expect(email['to-address']).toHaveLength(2)
             expect(email['to-address']).toContain(randomEmail)
+            expect(email['to-address']).toContain('hakija-1424884@oph.fi')
             expect(email.subject).toEqual('Ansökningstiden närmar sig sitt slut')
 
             const endDate = moment(hakuProps.hakuaikaEnd).format('DD.MM.YYYY')
