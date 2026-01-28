@@ -1,4 +1,4 @@
-FROM eclipse-temurin:25.0.1_8-jdk-alpine@sha256:0c4c6300cc86efdf6454702336a0d60352e227f3a862e8ae9861f393f8f1ede9
+FROM eclipse-temurin:25.0.1_8-jdk-alpine@sha256:7ace075f29555df6696750ee3caffea4fb542a1db8a5b1e7578129162f071c03
 
 ADD https://nilhcem.github.io/FakeSMTP/downloads/fakeSMTP-latest.zip /fakeSMTP-latest.zip
 RUN unzip /fakeSMTP-latest.zip
