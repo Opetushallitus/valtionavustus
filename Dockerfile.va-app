@@ -27,7 +27,7 @@ RUN npm run build-production
 #
 # va-base with all the Clojure stuff
 #
-FROM eclipse-temurin:21-jdk AS va-base
+FROM eclipse-temurin:21-jdk@sha256:e8d57b6c5c73d93212a4384f588309b44bc75fd15b38f78e6a6db1b350dc4ef3 AS va-base
 
 WORKDIR /app
 
@@ -75,7 +75,7 @@ COPY --from=va-base /app/pom.xml /pom.xml
 #
 # va-server
 #
-FROM eclipse-temurin:21-jre as va-server
+FROM eclipse-temurin:21-jre@sha256:d45e4719da1774b3abde398867f78a6d9b9afe4265f574f3d54062f6daeb00b3 as va-server
 WORKDIR /app
 LABEL org.opencontainers.image.source=https://github.com/opetushallitus/valtionavustus
 COPY --from=uberjar-builder \
