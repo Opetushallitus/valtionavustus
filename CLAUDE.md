@@ -62,8 +62,8 @@ This is a **monorepo** with shared code. Both services (va-hakija and va-virkail
 ### Key Technologies
 
 - **Backend**: Clojure 1.12.3, Leiningen 2.11.2
-- **Frontend**: React 19.1.1, TypeScript 5.9.2, Webpack 5
-- **Database**: PostgreSQL 17.6 (with Flyway migrations)
+- **Frontend**: React 19.2.3, TypeScript 5.9.3, Webpack 5
+- **Database**: PostgreSQL 18.1 (with Flyway migrations)
 - **Testing**: Speclj (Clojure), Playwright (E2E)
 - **Server**: http-kit
 - **Routing**: Compojure/compojure-api
@@ -78,21 +78,18 @@ Both services run from the same main entry point (`oph.va.hakija.main`) but expo
 
 ### Prerequisites
 
-- Node.js 22.19.0 (see `.nvmrc`)
+- Node.js 24.13.0 (see `.nvmrc`)
 - Leiningen 2.11.2 (use included `./lein` script)
 - Java 8
-- PostgreSQL 12.2+ or Docker
+- PostgreSQL 18+ or Docker
 - Docker and Docker Compose
 - tmux (for `start-local-env.sh` script)
 
 ### Database
 
-Using Docker (recommended):
+Using Docker Compose (recommended):
 ```bash
-cd script/postgres-docker
-docker build -t va-postgres:12.2 .
-mkdir -p postgres-data
-./run_database.sh
+docker compose up db
 ```
 
 Manual restore from backup:
