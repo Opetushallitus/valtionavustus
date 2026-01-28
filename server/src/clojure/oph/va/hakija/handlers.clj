@@ -90,21 +90,24 @@
                                           (datetime/parse))
                 email (find-answer-value answers "primary-email")
                 user-key (-> new-hakemus :hakemus :user_key)]
-            (if (is-jotpa-avustushaku avustushaku)
-              (va-email/send-new-jotpa-hakemus-message! language
-                                                        [email]
-                                                        haku-id
-                                                        avustushaku-title
-                                                        user-key
-                                                        avustushaku-start-date
-                                                        avustushaku-end-date)
-              (va-email/send-new-hakemus-message! language
-                                                  [email]
-                                                  haku-id
-                                                  avustushaku-title
-                                                  user-key
-                                                  avustushaku-start-date
-                                                  avustushaku-end-date))
+            (let [business-id (-> new-hakemus :hakemus :business_id)]
+              (if (is-jotpa-avustushaku avustushaku)
+                (va-email/send-new-jotpa-hakemus-message! language
+                                                          [email]
+                                                          haku-id
+                                                          avustushaku-title
+                                                          user-key
+                                                          avustushaku-start-date
+                                                          avustushaku-end-date
+                                                          business-id)
+                (va-email/send-new-hakemus-message! language
+                                                    [email]
+                                                    haku-id
+                                                    avustushaku-title
+                                                    user-key
+                                                    avustushaku-start-date
+                                                    avustushaku-end-date
+                                                    business-id)))
             (hakemus-ok-response (:hakemus new-hakemus) (without-id (:submission new-hakemus)) validation nil))
           (internal-server-error!)))
       (bad-request! security-validation))))

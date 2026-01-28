@@ -104,7 +104,7 @@
          template (get-in mail-templates [email-type lang])]
      (render template msg partials))))
 
-(defn send-taydennyspyynto-message! [lang to cc avustushaku hakemus-id avustushaku-name user-key taydennyspyynto presenting-officer-email]
+(defn send-taydennyspyynto-message! [lang to cc avustushaku hakemus-id avustushaku-name user-key taydennyspyynto presenting-officer-email business-id]
   (let [avustushaku-id (:id avustushaku)
         is-jotpa-avustushaku (is-jotpa-avustushaku avustushaku)
         url (email-utils/generate-url avustushaku-id lang user-key false)
@@ -124,7 +124,8 @@
      (email/message lang :taydennyspyynto [to] mail-subject body {:cc cc :bcc presenting-officer-email})
      {:hakemus-id hakemus-id
       :avustushaku-id avustushaku-id
-      :from           from})))
+      :from           from
+      :business-id    business-id})))
 
 (defn paatos-url [avustushaku-id user-key lang]
   (let [va-url (-> config :server :url lang)]
@@ -200,7 +201,8 @@
      {:hakemus-id hakemus-id
       :muutoshakemus-id muutoshakemus-id
       :avustushaku-id (:id avustushaku)
-      :from           from})))
+      :from           from
+      :business-id    (:business_id hakemus)})))
 
 (defn- generate-avustushaku-url [avustushaku-id]
   (str (-> config :server :virkailija-url)
@@ -257,7 +259,8 @@
      (email/message lang :hakuaika-paattymassa [to] mail-subject body)
      {:hakemus-id     (:id hakemus)
       :avustushaku-id (:id avustushaku)
-      :from           from})))
+      :from           from
+      :business-id    (:business-id hakemus)})))
 
 (defn send-kuukausittainen-tasmaytysraportti [raportti]
   (let [email-type     :kuukausittainen-tasmaytysraportti
@@ -358,7 +361,8 @@
      (email/message lang :valiselvitys-palauttamatta [(:contact-email notification)] mail-subject body)
      {:hakemus-id     (:hakemus-id notification)
       :avustushaku-id (:avustushaku-id notification)
-      :from           from})))
+      :from           from
+      :business-id    (:business-id notification)})))
 
 (defn send-laheta-valiselvityspyynnot [notification]
   (let [lang         :fi
@@ -404,7 +408,8 @@
      (email/message lang :loppuselvitys-palauttamatta [(:contact-email notification)] mail-subject body)
      {:hakemus-id     (:hakemus-id notification)
       :avustushaku-id (:avustushaku-id notification)
-      :from           from})))
+      :from           from
+      :business-id    (:business-id notification)})))
 
 (defn send-paatos! [to avustushaku hakemus]
   (let [lang-str (:language hakemus)
@@ -427,7 +432,8 @@
      (email/message lang :paatos to mail-subject body)
      {:hakemus-id     (:id hakemus)
       :avustushaku-id (:id avustushaku)
-      :from           from})))
+      :from           from
+      :business-id    (:business_id hakemus)})))
 
 (defn send-paatokset-lahetetty [yhteenveto-url avustushaku-id avustushaku-name to]
   (let [lang (keyword "fi")]
@@ -491,7 +497,8 @@
      (email/message lang :paatos-refuse to mail-subject body)
      {:hakemus-id     (:id hakemus)
       :avustushaku-id (:id avustushaku)
-      :from           from})))
+      :from           from
+      :business-id    (:business_id hakemus)})))
 
 (defn send-selvitys! [to hakemus mail-subject mail-message is-jotpa-hakemus]
   (let [lang (keyword (:language hakemus))
@@ -542,6 +549,7 @@
         selvitysdate-unformatted ((keyword (str selvitys-type "date")) avustushaku)
         selvitysdate (if (nil? selvitysdate-unformatted) "" (datetime/java8-date-string selvitysdate-unformatted))
         signature (email-signature-block lang)
+        enriched-to (email/get-recipients-with-org-email (:business_id hakemus) to)
         msg {:operation :send
              :hakemus-id (:id hakemus)
              :avustushaku-id (:id avustushaku)
@@ -554,7 +562,7 @@
              :selvitysdate selvitysdate
              :presenter-name (:name presenter)
              :avustushaku-name avustushaku-name
-             :to to
+             :to enriched-to
              :bcc (when-not disable-selvitysmail-to-virkailija (:email identity))
              :url url
              :register-number (:register_number hakemus)

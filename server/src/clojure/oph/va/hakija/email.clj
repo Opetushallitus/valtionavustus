@@ -77,7 +77,7 @@
         lang-str (or (clojure.core/name lang) "fi")]
     (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?" selvitys-type "=" selvitys-user-key "&lang=" lang-str "&preview=true")))
 
-(defn send-selvitys-submitted-message! [avustushaku-id selvitys-user-key selvitys-type lang hakemus-id hakemus-name register-number to is-jotpa]
+(defn send-selvitys-submitted-message! [avustushaku-id selvitys-user-key selvitys-type lang hakemus-id hakemus-name register-number to is-jotpa business-id]
   (log/info "Sending notification for a submitted selvitys of type " selvitys-type)
   (let [type (if (= selvitys-type "loppuselvitys")
                :loppuselvitys-submitted-notification
@@ -95,22 +95,24 @@
      (email/message lang type to subject body)
      {:hakemus-id     hakemus-id
       :avustushaku-id avustushaku-id
-      :from           (if is-jotpa (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))})))
+      :from           (if is-jotpa (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
+      :business-id    business-id})))
 
-(defn send-new-jotpa-hakemus-message! [lang to avustushaku-id avustushaku user-key start-date end-date]
+(defn send-new-jotpa-hakemus-message! [lang to avustushaku-id avustushaku user-key start-date end-date business-id]
   (let [start-date-string (datetime/date-string start-date)
         start-time-string (datetime/time-string start-date)
         end-date-string (datetime/date-string end-date)
         end-time-string (datetime/time-string end-date)
         url (email-utils/generate-url avustushaku-id lang user-key false)
         signature (email-signature-block lang)
+        enriched-to (email/get-recipients-with-org-email business-id to)
         msg {:operation :send
              :email-type :new-hakemus
              :lang lang
              :from (-> email/smtp-config :jotpa-from :fi)
              :sender (-> email/smtp-config :sender)
              :subject (get-in mail-titles [:new-jotpa-hakemus lang])
-             :to to
+             :to enriched-to
              :avustushaku avustushaku
              :avustushaku-id avustushaku-id
              :is-jotpa-hakemus true
@@ -123,20 +125,21 @@
     (log/info "Url would be: " url)
     (email/enqueue-message-to-be-send msg body)))
 
-(defn send-new-hakemus-message! [lang to avustushaku-id avustushaku user-key start-date end-date]
+(defn send-new-hakemus-message! [lang to avustushaku-id avustushaku user-key start-date end-date business-id]
   (let [start-date-string (datetime/date-string start-date)
         start-time-string (datetime/time-string start-date)
         end-date-string (datetime/date-string end-date)
         end-time-string (datetime/time-string end-date)
         url (email-utils/generate-url avustushaku-id lang user-key false)
         signature (email-signature-block lang)
+        enriched-to (email/get-recipients-with-org-email business-id to)
         msg {:operation :send
              :email-type :new-hakemus
              :lang lang
              :from (-> email/smtp-config :from lang)
              :sender (-> email/smtp-config :sender)
              :subject (get-in mail-titles [:new-hakemus lang])
-             :to to
+             :to enriched-to
              :avustushaku avustushaku
              :is-jotpa-hakemus false
              :avustushaku-id avustushaku-id
@@ -235,10 +238,11 @@
     (log/info "Url would be: " url)
     (email/enqueue-message-to-be-send msg body)))
 
-(defn send-loppuselvitys-change-request-received-message-to-hakija! [to parent-hakemus-id lang register-number project-name email-of-virkailija virkailija-first-name virkailija-last-name is-jotpa-hakemus?]
+(defn send-loppuselvitys-change-request-received-message-to-hakija! [to parent-hakemus-id lang register-number project-name email-of-virkailija virkailija-first-name virkailija-last-name is-jotpa-hakemus? business-id]
   (let [subject (format "%s %s %s" (get-in mail-titles [:loppuselvitys-change-request-response-received lang]) register-number project-name)
         signature (email-signature-block lang)
         from            (if is-jotpa-hakemus? (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
+        enriched-to (email/get-recipients-with-org-email business-id to)
         msg {:operation :send
              :email-type :loppuselvitys-change-request-response-received
              :lang lang
@@ -247,7 +251,7 @@
              :from from
              :sender (-> email/smtp-config :sender)
              :subject subject
-             :to to
+             :to enriched-to
              :project-name project-name
              :register-number register-number
              :email-of-virkailija email-of-virkailija
@@ -257,7 +261,7 @@
         body (render-body msg signature)]
     (email/enqueue-message-to-be-send msg body)))
 
-(defn send-hakemus-submitted-message! [is-change-request-response? is-jotpa-avustushaku? lang to avustushaku-id avustushaku user-key start-date end-date hakemus-id]
+(defn send-hakemus-submitted-message! [is-change-request-response? is-jotpa-avustushaku? lang to avustushaku-id avustushaku user-key start-date end-date hakemus-id business-id]
   (let [start-date-string (datetime/date-string start-date)
         start-time-string (datetime/time-string start-date)
         end-date-string (datetime/date-string end-date)
@@ -265,13 +269,14 @@
         url (email-utils/generate-url avustushaku-id lang user-key true)
         from (if is-jotpa-avustushaku? (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
         signature (email-signature-block lang)
+        enriched-to (email/get-recipients-with-org-email business-id to)
         user-message {:operation :send
                       :email-type  :hakemus-submitted
                       :lang lang
                       :from from
                       :sender (-> email/smtp-config :sender)
                       :subject (get-in mail-titles [(if is-change-request-response? :hakemus-submitted-after-change-request :hakemus-submitted) lang])
-                      :to to
+                      :to enriched-to
                       :avustushaku avustushaku
                       :start-date start-date-string
                       :start-time start-time-string

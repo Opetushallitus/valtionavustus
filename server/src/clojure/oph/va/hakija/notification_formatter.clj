@@ -30,6 +30,7 @@
                                     (datetime/parse))
         destination-emails     (find-emails-to-notify answers)
         user-key               (-> submitted-hakemus :user_key)
+        business-id            (:business_id submitted-hakemus)
         is-jotpa-avustushaku?  (is-jotpa-avustushaku avustushaku)]
     (when (not-empty destination-emails)
       (send! is-change-request-response?
@@ -41,4 +42,5 @@
              user-key
              avustushaku-start-date
              avustushaku-end-date
-             hakemus-id))))
+             hakemus-id
+             business-id))))

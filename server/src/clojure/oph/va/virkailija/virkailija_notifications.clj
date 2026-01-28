@@ -18,7 +18,7 @@
 
 (defn- get-hakuaika-paattymassa-haut []
   (query "SELECT h.id, h.avustushaku as avustushaku_id, h.user_key, hakemus.contact_email AS contact_email,
-            h.language,
+            h.language, h.business_id,
             jsonb_extract_path_text(avustushaku.content, 'name', h.language) as avustushaku_name,
             avustushaku.content->'duration'->>'end' AS paattymispaiva
           FROM hakija.hakemukset h
@@ -154,6 +154,7 @@
             avustushaut.id as avustushaku_id,
             h.hakemus_id,
             hv.language,
+            hv.business_id,
             jsonb_extract_path_text(avustushaut.content, 'name', hv.language) as avustushaku_name,
             hv.user_key,
             coalesce(
@@ -213,6 +214,7 @@
             avustushaut.id as avustushaku_id,
             h.hakemus_id,
             hv.language,
+            hv.business_id,
             jsonb_extract_path_text(avustushaut.content, 'name', hv.language) as avustushaku_name,
             hv.user_key,
             avustushaut.valiselvitysdate::date AS valiselvitys_deadline,

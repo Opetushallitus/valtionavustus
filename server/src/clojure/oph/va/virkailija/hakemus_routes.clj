@@ -317,8 +317,9 @@
                 user-key (:user_key updated-hakemus)
                 presenting-officer-email (:email identity)
                 allekirjoitusomaavat (map #(map-email-field-value %) (map :value allekirjoitusoikeudelliset))
-                cc (vec (conj (flatten allekirjoitusomaavat) organisaatio-email))]
-            (email/send-taydennyspyynto-message! language email cc avustushaku hakemus-id avustushaku-name user-key status-comment presenting-officer-email)))
+                cc (vec (conj (flatten allekirjoitusomaavat) organisaatio-email))
+                business-id (:business_id hakemus)]
+            (email/send-taydennyspyynto-message! language email cc avustushaku hakemus-id avustushaku-name user-key status-comment presenting-officer-email business-id)))
         (when (= new-status "submitted")
           (virkailija-db/update-submitted-hakemus-version (:id hakemus)))
         (http/ok {:hakemus-id hakemus-id

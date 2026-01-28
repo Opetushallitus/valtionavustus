@@ -210,7 +210,8 @@
               avustushaku-name-fi (-> avustushaku :content :name :fi)
               register-number (-> hakemus :register_number)
               parent-hakemus (va-db/get-hakemus-by-id parent-hakemus-id)
-              project-name (-> parent-hakemus :project-name)]
+              project-name (-> parent-hakemus :project-name)
+              business-id (:business_id parent-hakemus)]
 
           (va-db/update-loppuselvitys-status id "submitted")
           (with-tx (fn [tx]
@@ -228,7 +229,8 @@
                                                                                   email-of-virkailija
                                                                                   virkailija-first-name
                                                                                   virkailija-last-name
-                                                                                  is-jotpa-avustushaku)
+                                                                                  is-jotpa-avustushaku
+                                                                                  business-id)
           (handlers/hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (handlers/hakemus-conflict-response hakemus))
       (http/bad-request! validation))))
@@ -269,6 +271,7 @@
               parent-hakemus (va-db/get-hakemus-by-id parent_id)
               hakemus-name (:project-name parent-hakemus)
               register-number (:register-number parent-hakemus)
+              business-id (:business_id parent-hakemus)
               is-jotpa (is-jotpa-avustushaku avustushaku)]
           (if (= selvitys-type "loppuselvitys")
             (va-db/update-loppuselvitys-status parent_id "submitted")
@@ -280,7 +283,7 @@
                             (va-db/update-normalized-hakemus-loppuselvitys-emails!
                              tx parent_id answers)))) (catch Exception e
                                                         (log/warn {:error (ex-message e)})))
-          (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id hakemus-name register-number (get-hakemus-contact-emails parent_id) is-jotpa)
+          (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id hakemus-name register-number (get-hakemus-contact-emails parent_id) is-jotpa business-id)
           (handlers/hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (handlers/hakemus-conflict-response hakemus))
       (http/bad-request! validation))))

@@ -7,7 +7,8 @@
             [oph.soresu.common.config :refer [config]]
             [oph.soresu.common.db :refer [query execute!]]
             [oph.common.string :as common-string]
-            [oph.common.background-job-supervisor :as job-supervisor])
+            [oph.common.background-job-supervisor :as job-supervisor]
+            [oph.common.organisation-service :as org-service])
   (:import [org.apache.commons.mail SimpleEmail]
            [org.apache.commons.mail MultiPartEmail]
            [org.apache.commons.mail ByteArrayDataSource]
@@ -29,6 +30,28 @@
   ["organization-email" contact-email-field-id "signature-email"])
 (def legacy-email-field-ids-without-contact-email
   (remove #(= contact-email-field-id %) legacy-email-field-ids))
+
+(defn get-recipients-with-org-email
+  "Adds the current organization email from organisaatiopalvelu to the recipient list.
+   - business-id: Y-tunnus to look up in organisaatiopalvelu
+   - recipients: existing list of email addresses
+   Returns: deduplicated list of recipients including org email (if found and different)"
+  [business-id recipients]
+  (if (string/blank? business-id)
+    recipients
+    (try
+      (let [org-info (org-service/get-compact-translated-info business-id)
+            org-email (:email org-info)]
+        (if (and org-email
+                 (not (some #(= (string/lower-case %)
+                                (string/lower-case org-email))
+                            recipients)))
+          (conj (vec recipients) org-email)
+          recipients))
+      (catch Exception e
+        (log/warn e "Failed to fetch org email for business-id:" business-id
+                  "- sending to original recipients only")
+        recipients))))
 
 (defn- trim-ws-or-nil [str]
   (when str
@@ -58,7 +81,7 @@
 
 (defn- valid-message? [{:keys [to sender from subject email-type lang]}]
   (and (coll? to)
-       (not (empty? to))
+       (seq to)
        (not-any? empty? to)
        (not-empty sender)
        (not-empty from)
@@ -347,9 +370,18 @@
   "Tries to send email asynchronously. Sending is retried later if unsuccessful.
    Throws on validation error or if email cannot be inserted to db.
 
+   Options:
+   - :hakemus-id, :avustushaku-id, :muutoshakemus-id - for tracking/logging
+   - :from - override sender address
+   - :business-id - Y-tunnus; when provided, fetches current organization email
+     from organisaatiopalvelu and adds it to recipients (deduplicated)
+
    Returns the id of the email added to db"
-  [raw-email & {:keys [hakemus-id avustushaku-id muutoshakemus-id from]}]
-  (let [email (clean-email-fields raw-email)]
+  [raw-email & {:keys [hakemus-id avustushaku-id muutoshakemus-id from business-id]}]
+  (let [email (-> raw-email
+                  clean-email-fields
+                  (cond-> business-id
+                    (update :to #(get-recipients-with-org-email business-id %))))]
     (if (s/valid? :email/message email)
       (let [lang (:lang email)
             from (or from (-> smtp-config :from lang))
