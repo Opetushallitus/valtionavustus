@@ -59,6 +59,7 @@ import { Modal } from '../Modal'
 
 import { useHakemustenArviointiDispatch } from '../../arviointiStore'
 import { setMuutoshakemukset } from '../../arviointiReducer'
+import { isPääkäyttäjä } from '../../../authorization'
 
 moment.locale('fi')
 const localizer = new MomentLocalizer(moment)
@@ -237,6 +238,8 @@ export const MuutoshakemusForm = ({
   const { t } = useTranslations()
   const [showModal, setModalVisibility] = useState(false)
   const dispatch = useHakemustenArviointiDispatch()
+  const canMakeMuutospaatos =
+    isPääkäyttäjä(userInfo) || isCurrentUserHakemukselleUkotettuValmistelija
   const talousarvioValues = muutoshakemus.talousarvio.length
     ? getTalousarvioValues(muutoshakemus.talousarvio)
     : undefined
@@ -300,129 +303,141 @@ export const MuutoshakemusForm = ({
 
   return (
     <form onSubmit={f.handleSubmit} data-test-id="muutoshakemus-form">
-      {muutoshakemus['haettu-kayttoajan-paattymispaiva'] && (
-        <MuutoshakemusSection
-          blueMiddleComponent={
-            <PaatosStatusRadioButtonGroup f={f} group="haen-kayttoajan-pidennysta" />
-          }
-          bottomComponent={
-            isAcceptedWithChanges(f.values['haen-kayttoajan-pidennysta']?.status) ? (
-              <KayttoajanPidennysAcceptWithChangesForm
-                f={f}
-                muutoshakemus={muutoshakemus}
-                projectEndDate={projectEndDate}
-              />
-            ) : undefined
-          }
-          datepickerFix
-        >
-          <h2 className="muutoshakemus-section-title">Käyttöaika</h2>
-          <PaattymispaivaValues muutoshakemus={muutoshakemus} projectEndDate={projectEndDate} />
-        </MuutoshakemusSection>
-      )}
-      {!!muutoshakemus.talousarvio.length && (
-        <MuutoshakemusSection
-          blueMiddleComponent={
-            <PaatosStatusRadioButtonGroup
-              f={f}
-              group="talousarvio"
-              talousarvioValues={talousarvioValues}
-            />
-          }
-          bottomComponent={
-            isAcceptedWithChanges(f.values.talousarvio?.status) ? (
-              <TalousarvioAcceptWithChangesForm
-                f={f}
-                talousarvio={talousarvio}
-                requestedTalousarvio={muutoshakemus.talousarvio}
-              />
-            ) : undefined
-          }
-        >
-          <h2 className="muutoshakemus-section-title">Budjetti</h2>
-          <MuutosTaloudenKayttosuunnitelmaan
-            currentTalousarvio={currentTalousarvio}
-            newTalousarvio={muutoshakemus.talousarvio}
-            status={muutoshakemus['paatos-status-talousarvio']}
-            reason={muutoshakemus['talousarvio-perustelut']}
-          />
-        </MuutoshakemusSection>
-      )}
-      {muutoshakemus['haen-sisaltomuutosta'] && (
-        <MuutoshakemusSection
-          blueMiddleComponent={<PaatosStatusRadioButtonGroup group="haen-sisaltomuutosta" f={f} />}
-        >
-          <h2 className="muutoshakemus-section-title">Sisältö ja toteutustapa</h2>
-          <div className="muutoshakemus-row">
-            <h4 className="muutoshakemus__header">{t.sisaltomuutos.appliedChange}</h4>
-            <div className="muutoshakemus-description-box" data-test-id="sisaltomuutos-perustelut">
-              {muutoshakemus['sisaltomuutos-perustelut']}
-            </div>
-          </div>
-          {isAcceptedWithChanges(f.values['haen-sisaltomuutosta']?.status) && (
-            <div className="muutoshakemus-notice">
-              Olet tekemässä päätöksen, jossa haetut sisältömuutokset hyväksytään muutettuna.
-              Varmista, että perusteluissa hakijalle kuvataan mitkä haetuista sisältömuutoksista
-              hyväksytään ja mitkä hylätään.
-            </div>
-          )}
-        </MuutoshakemusSection>
-      )}
-      <MuutoshakemusSection
-        blueMiddleComponent={
-          <button type="submit" disabled={isSubmitDisabled(f)} data-test-id="muutoshakemus-submit">
-            Tee päätös ja lähetä hakijalle
-          </button>
-        }
-      >
-        <div>
-          <h2 className="muutoshakemus-section-title">
-            Yhteiset perustelut ja päätöksen lähettäminen
-          </h2>
-          <div className="muutoshakemus-paatos-notice">
-            Jos päätös tarvitsee päällikön hyväksynnän, pyydä häntä katsomaan hakemus ja tekemään
-            päätös.
-          </div>
-          <a onClick={() => copyToClipboard(window.location.href)}>
-            Kopioi leikepöydälle linkki hakemukseen
-          </a>
+      {!canMakeMuutospaatos && (
+        <div className="muutoshakemus-paatos-notice" data-test-id="muutospaatos-not-allowed-notice">
+          Muutospäätöksen tekeminen ei ole mahdollista, koska et ole tämän avustuksen valmistelija.
+          Jatkaaksesi käsittelyä pyydä nykyistä valmistelijaa tekemään päätös tai vaihda itsesi
+          valmistelijaksi.
         </div>
-        <div className="muutoshakemus-row">
-          <h4 className="muutoshakemus__header">
-            Perustelut{' '}
-            <span className="muutoshakemus__default-reason-link">
-              <a onClick={() => setDefaultReason(f, 'fi')}>Lisää vakioperustelu suomeksi</a> |{' '}
-              <a onClick={() => setDefaultReason(f, 'sv')}>Lisää vakioperustelu ruotsiksi</a>
-            </span>
-          </h4>
-          <textarea
-            id="reason"
-            name="reason"
-            rows={5}
-            cols={53}
-            onChange={f.handleChange}
-            onBlur={f.handleBlur}
-            value={f.values.reason}
-            className={isError(f, 'reason') ? 'muutoshakemus__error' : undefined}
-          />
-          {isError(f, 'reason') && (
-            <div className="muutoshakemus__error">Perustelu on pakollinen kenttä!</div>
-          )}
-        </div>
-        <div className="muutoshakemus-row muutoshakemus__preview-row">
-          <a
-            className="muutoshakemus__paatos-preview-link"
-            onClick={() => setModalVisibility(true)}
+      )}
+      <fieldset disabled={!canMakeMuutospaatos}>
+        {muutoshakemus['haettu-kayttoajan-paattymispaiva'] && (
+          <MuutoshakemusSection
+            blueMiddleComponent={
+              <PaatosStatusRadioButtonGroup f={f} group="haen-kayttoajan-pidennysta" />
+            }
+            bottomComponent={
+              isAcceptedWithChanges(f.values['haen-kayttoajan-pidennysta']?.status) ? (
+                <KayttoajanPidennysAcceptWithChangesForm
+                  f={f}
+                  muutoshakemus={muutoshakemus}
+                  projectEndDate={projectEndDate}
+                />
+              ) : undefined
+            }
+            datepickerFix
           >
-            Esikatsele päätösdokumentti
-          </a>
-        </div>
-        {showModal && (
-          <Modal title="ESIKATSELU" onClose={() => setModalVisibility(false)}>
-            {createPaatosPreviewElement()}
-          </Modal>
+            <h2 className="muutoshakemus-section-title">Käyttöaika</h2>
+            <PaattymispaivaValues muutoshakemus={muutoshakemus} projectEndDate={projectEndDate} />
+          </MuutoshakemusSection>
         )}
-      </MuutoshakemusSection>
+        {!!muutoshakemus.talousarvio.length && (
+          <MuutoshakemusSection
+            blueMiddleComponent={
+              <PaatosStatusRadioButtonGroup
+                f={f}
+                group="talousarvio"
+                talousarvioValues={talousarvioValues}
+              />
+            }
+            bottomComponent={
+              isAcceptedWithChanges(f.values.talousarvio?.status) ? (
+                <TalousarvioAcceptWithChangesForm
+                  f={f}
+                  talousarvio={talousarvio}
+                  requestedTalousarvio={muutoshakemus.talousarvio}
+                />
+              ) : undefined
+            }
+          >
+            <h2 className="muutoshakemus-section-title">Budjetti</h2>
+            <MuutosTaloudenKayttosuunnitelmaan
+              currentTalousarvio={currentTalousarvio}
+              newTalousarvio={muutoshakemus.talousarvio}
+              status={muutoshakemus['paatos-status-talousarvio']}
+              reason={muutoshakemus['talousarvio-perustelut']}
+            />
+          </MuutoshakemusSection>
+        )}
+        {muutoshakemus['haen-sisaltomuutosta'] && (
+          <MuutoshakemusSection
+            blueMiddleComponent={
+              <PaatosStatusRadioButtonGroup group="haen-sisaltomuutosta" f={f} />
+            }
+          >
+            <h2 className="muutoshakemus-section-title">Sisältö ja toteutustapa</h2>
+            <div className="muutoshakemus-row">
+              <h4 className="muutoshakemus__header">{t.sisaltomuutos.appliedChange}</h4>
+              <div
+                className="muutoshakemus-description-box"
+                data-test-id="sisaltomuutos-perustelut"
+              >
+                {muutoshakemus['sisaltomuutos-perustelut']}
+              </div>
+            </div>
+            {isAcceptedWithChanges(f.values['haen-sisaltomuutosta']?.status) && (
+              <div className="muutoshakemus-notice">
+                Olet tekemässä päätöksen, jossa haetut sisältömuutokset hyväksytään muutettuna.
+                Varmista, että perusteluissa hakijalle kuvataan mitkä haetuista sisältömuutoksista
+                hyväksytään ja mitkä hylätään.
+              </div>
+            )}
+          </MuutoshakemusSection>
+        )}
+        <MuutoshakemusSection
+          blueMiddleComponent={
+            <button
+              type="submit"
+              disabled={isSubmitDisabled(f)}
+              data-test-id="muutoshakemus-submit"
+            >
+              Tee päätös ja lähetä hakijalle
+            </button>
+          }
+        >
+          <div>
+            <h2 className="muutoshakemus-section-title">Perustelut ja päätöksen lähettäminen</h2>
+            <a onClick={() => copyToClipboard(window.location.href)}>
+              Kopioi leikepöydälle linkki hakemukseen
+            </a>
+          </div>
+          <div className="muutoshakemus-row">
+            <h4 className="muutoshakemus__header">
+              Perustelut{' '}
+              <span className="muutoshakemus__default-reason-link">
+                <a onClick={() => setDefaultReason(f, 'fi')}>Lisää vakioperustelu suomeksi</a> |{' '}
+                <a onClick={() => setDefaultReason(f, 'sv')}>Lisää vakioperustelu ruotsiksi</a>
+              </span>
+            </h4>
+            <textarea
+              id="reason"
+              name="reason"
+              rows={5}
+              cols={53}
+              onChange={f.handleChange}
+              onBlur={f.handleBlur}
+              value={f.values.reason}
+              className={isError(f, 'reason') ? 'muutoshakemus__error' : undefined}
+            />
+            {isError(f, 'reason') && (
+              <div className="muutoshakemus__error">Perustelu on pakollinen kenttä!</div>
+            )}
+          </div>
+          <div className="muutoshakemus-row muutoshakemus__preview-row">
+            <a
+              className="muutoshakemus__paatos-preview-link"
+              onClick={() => setModalVisibility(true)}
+            >
+              Esikatsele päätösdokumentti
+            </a>
+          </div>
+          {showModal && (
+            <Modal title="ESIKATSELU" onClose={() => setModalVisibility(false)}>
+              {createPaatosPreviewElement()}
+            </Modal>
+          )}
+        </MuutoshakemusSection>
+      </fieldset>
     </form>
   )
 }

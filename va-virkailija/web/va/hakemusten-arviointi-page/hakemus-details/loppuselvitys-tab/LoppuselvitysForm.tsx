@@ -3,6 +3,7 @@ import React from 'react'
 import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 
 import { Role, UserInfo } from '../../../types'
+import { isPääkäyttäjä } from '../../../authorization'
 import { Taloustarkastus, Asiatarkastus } from './LoppuselvitysTarkastus'
 
 import './LoppuselvitysForm.css'
@@ -65,8 +66,4 @@ export const LoppuselvitysForm = ({ hakemus, userInfo, presenter }: Loppuselvity
       )}
     </div>
   )
-}
-
-function isPääkäyttäjä(userInfo: UserInfo): boolean {
-  return userInfo.privileges.includes('va-admin')
 }

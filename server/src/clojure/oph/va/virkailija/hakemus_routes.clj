@@ -7,6 +7,7 @@
             [oph.va.hakija.api :as hakija-api]
             [oph.va.schema :as va-schema]
             [oph.va.virkailija.authentication :as authentication]
+            [oph.va.virkailija.authorization :as authorization]
             [oph.va.virkailija.db :as virkailija-db]
             [oph.va.hakija.db :as hakija-db]
             [oph.va.virkailija.email :as email]
@@ -40,6 +41,13 @@
 (defn- map-email-field-value [field]
   (map :value (filter #(formutil/has-field-type? "vaEmailNotification" %) field)))
 
+(defn- can-make-muutospaatos? [identity hakemus-id]
+  (let [valmistelija (hakija-db/get-valmistelija-assigned-to-hakemus hakemus-id)
+        user-oid (:person-oid identity)
+        valmistelija-oid (:oid valmistelija)]
+    (or (authorization/is-pääkäyttäjä? identity)
+        (and valmistelija-oid (= user-oid valmistelija-oid)))))
+
 (defn- cancel-taydennyspyynto [hakemus identity]
   (hakija-api/update-hakemus-status hakemus "submitted" "Täydennyspyyntö peruttu" identity)
   (http/ok {:status "ok"}))
@@ -61,19 +69,21 @@
     :body [paatos (compojure-api/describe virkailija-schema/MuutoshakemusPaatosRequest "Muutoshakemus paatos")]
     :return va-schema/MuutoshakemusList
     :summary "Create a paatos for muutoshakemus"
-    (let [{:keys [avustushaku hakemus]} (get-hakemus-and-its-avustushaku avustushaku-id hakemus-id)
-          roles (hakija-api/get-avustushaku-roles avustushaku-id)
-          arvio (virkailija-db/get-arvio hakemus-id)
-          normalized-hakemus (virkailija-db/get-normalized-hakemus hakemus-id)
-          contact-email (:contact-email normalized-hakemus)
-          trusted-contact-email (:trusted-contact-email normalized-hakemus)
-          to (remove nil? [contact-email trusted-contact-email])
-          identity (authentication/get-request-identity request)
-          decider (str (:first-name identity) " " (:surname identity))
-          paatos (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)
-          token (virkailija-db/create-application-token (:id hakemus))]
-      (email/send-muutoshakemus-paatos to avustushaku hakemus arvio roles token muutoshakemus-id paatos)
-      (http/ok (virkailija-db/get-muutoshakemukset hakemus-id))))
+    (let [identity (authentication/get-request-identity request)]
+      (when-not (can-make-muutospaatos? identity hakemus-id)
+        (http/forbidden! {:error "Vain hankkeelle osoitettu valmistelija tai pääkäyttäjä voi tehdä muutospäätöksen"}))
+      (let [{:keys [avustushaku hakemus]} (get-hakemus-and-its-avustushaku avustushaku-id hakemus-id)
+            roles (hakija-api/get-avustushaku-roles avustushaku-id)
+            arvio (virkailija-db/get-arvio hakemus-id)
+            normalized-hakemus (virkailija-db/get-normalized-hakemus hakemus-id)
+            contact-email (:contact-email normalized-hakemus)
+            trusted-contact-email (:trusted-contact-email normalized-hakemus)
+            to (remove nil? [contact-email trusted-contact-email])
+            decider (str (:first-name identity) " " (:surname identity))
+            paatos (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)
+            token (virkailija-db/create-application-token (:id hakemus))]
+        (email/send-muutoshakemus-paatos to avustushaku hakemus arvio roles token muutoshakemus-id paatos)
+        (http/ok (virkailija-db/get-muutoshakemukset hakemus-id)))))
 
   (compojure-api/POST "/project" [avustushaku-id hakemus-id]
     :path-params [avustushaku-id :- Long hakemus-id :- Long]
