@@ -23,6 +23,15 @@ import { FormEvents } from 'soresu-form/web/form/FormController'
 import { Field, Language } from 'soresu-form/web/va/types'
 import { BaseStateLoopState } from 'soresu-form/web/form/types/Form'
 
+declare global {
+  interface Window {
+    __VA_AUTOSAVE_TIMEOUT__?: number
+  }
+}
+
+const DEFAULT_AUTOSAVE_TIMEOUT = 3000
+const getAutosaveTimeout = () => window.__VA_AUTOSAVE_TIMEOUT__ ?? DEFAULT_AUTOSAVE_TIMEOUT
+
 const serverOperations = {
   initialSave: 'initialSave',
   autoSave: 'autoSave',
@@ -42,7 +51,7 @@ export default class FormStateTransitions {
     this.events = events
     this.autoSave = _.debounce(function () {
       dispatcher.push(events.save, {})
-    }, 3000)
+    }, getAutosaveTimeout())
     this._bind(
       'startAutoSave',
       'onInitialState',

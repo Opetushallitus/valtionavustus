@@ -21,6 +21,15 @@ import {
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import _ from 'lodash'
 import FormUtil from 'soresu-form/web/form/FormUtil'
+
+declare global {
+  interface Window {
+    __VA_AUTOSAVE_TIMEOUT__?: number
+  }
+}
+
+const DEFAULT_AUTOSAVE_TIMEOUT = 3000
+const getAutosaveTimeout = () => window.__VA_AUTOSAVE_TIMEOUT__ ?? DEFAULT_AUTOSAVE_TIMEOUT
 import { fiLongDateTimeFormat, parseFinnishTimestamp } from 'soresu-form/web/va/i18n/dateformat'
 import { HakujenHallintaRootState } from './hakujenHallintaStore'
 import { TalousarviotiliWithUsageInfo } from '../koodienhallinta-page/types'
@@ -453,7 +462,7 @@ const callSaveRole: AsyncThunkPayloadCreator<
 
 export const debouncedSaveRole = createAsyncThunk<void, { role: Role; avustushakuId: number }>(
   'haku/debouncedSaveRole',
-  _.debounce(callSaveRole, 2000)
+  _.debounce(callSaveRole, getAutosaveTimeout())
 )
 
 const debouncedSave: AsyncThunkPayloadCreator<
@@ -467,7 +476,7 @@ const debouncedSave: AsyncThunkPayloadCreator<
 
 const debouncedSaveHaku = createAsyncThunk<void, number, { state: HakujenHallintaRootState }>(
   'haku/debouncedSaveHaku',
-  _.debounce(debouncedSave, 3000)
+  _.debounce(debouncedSave, getAutosaveTimeout())
 )
 
 export const startAutoSaveForAvustushaku = createAsyncThunk<

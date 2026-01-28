@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './baseTest'
 import moment from 'moment'
 
 import { HakuProps, parseDate } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'

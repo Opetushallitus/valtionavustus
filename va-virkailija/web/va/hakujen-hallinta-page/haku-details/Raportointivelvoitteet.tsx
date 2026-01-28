@@ -5,6 +5,9 @@ import Select, { components, OptionProps, GroupBase } from 'react-select'
 
 import { HelpTexts, Raportointivelvoite } from 'soresu-form/web/va/types'
 
+const DEFAULT_AUTOSAVE_TIMEOUT = 3000
+const getAutosaveTimeout = () => window.__VA_AUTOSAVE_TIMEOUT__ ?? DEFAULT_AUTOSAVE_TIMEOUT
+
 import HelpTooltip from '../../common-components/HelpTooltip'
 import { DateInput } from './DateInput'
 import { useHakujenHallintaDispatch } from '../hakujenHallintaStore'
@@ -102,7 +105,7 @@ const Raportointivelvoite = ({
       async (payload: { raportointivelvoite: Raportointivelvoite; avustushakuId: number }) => {
         putRaportointivelvoite(payload).unwrap().then(saveSuccessful()).catch(saveSuccessful(false))
       },
-      2000
+      getAutosaveTimeout()
     ),
     []
   )
@@ -114,7 +117,7 @@ const Raportointivelvoite = ({
           .then(saveSuccessful())
           .catch(saveSuccessful(false))
       },
-      2000
+      getAutosaveTimeout()
     ),
     []
   )
