@@ -4,7 +4,7 @@ import { test as base, BrowserContext, Browser } from '@playwright/test'
  * Autosave timeout for tests (in milliseconds).
  * This is much shorter than the production value (3000ms) to speed up tests.
  */
-export const TEST_AUTOSAVE_TIMEOUT = 500
+export const TEST_AUTOSAVE_TIMEOUT = 250
 
 const AUTOSAVE_INIT_SCRIPT = `window.__VA_AUTOSAVE_TIMEOUT__ = ${TEST_AUTOSAVE_TIMEOUT};`
 
