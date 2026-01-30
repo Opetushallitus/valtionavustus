@@ -510,10 +510,11 @@ div.soresu-field-edit .soresu-edit-properties-line .soresu-edit-property .soresu
 }
 
 .person-panel.person-panel--top {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    left: inherit;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    right: auto;
 }
 
 .person-panel.person-panel--top:before,

@@ -12,6 +12,11 @@
   padding: 4px 8px;
 }
 
+.selected {
+  border: 1px solid #499cc7;
+  background-color: #ebf7fd;
+}
+
 .roleContainer {
   margin-bottom: 10px;
   display: flex;
