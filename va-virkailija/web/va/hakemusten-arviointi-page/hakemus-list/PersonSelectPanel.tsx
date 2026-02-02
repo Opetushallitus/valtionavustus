@@ -114,9 +114,12 @@ export const PersonSelectPanel = ({ hakemus, toggleUkotusModal }: PersonSelectBu
   )
   const roles = [...hakuDataRoles].sort((a, b) => (a.name > b.name ? -1 : 1))
   const presenters = roles.filter(isPresenterRole)
+  const registerNumber = hakemus['register-number'] ?? ''
+  const projectName = hakemus['project-name']
+  const title = `${registerNumber} ${projectName}`.trim()
   return (
     <div data-test-id="ukotusModal" className="panel person-panel person-panel--top">
-      <p>{hakemus['project-name']}</p>
+      <p>{title}</p>
       <button
         onClick={(e) => {
           e.stopPropagation()
