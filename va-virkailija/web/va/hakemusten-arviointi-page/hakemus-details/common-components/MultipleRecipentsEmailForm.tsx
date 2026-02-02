@@ -15,6 +15,7 @@ export type Email = {
   content: string
   footer?: string
   receivers: string[]
+  placeholder?: string
 }
 
 type CancelButton = {
@@ -224,6 +225,7 @@ function EmailContent({
         value={content}
         disabled={isPreviewing}
         required
+        placeholder={email.placeholder}
       />
       {!isPreviewing && email.footer && (
         <pre data-test-id={`${formName}-email-footer`} className={styles.emailFixedContent}>

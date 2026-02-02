@@ -44,7 +44,8 @@ function createInitialTaydennyspyyntoEmail(
       arkistointiTunnus!,
       hakemusName
     ),
-    content: translations[hakemus.language].loppuselvitys.asiatarkastus.content,
+    content: '',
+    placeholder: translations[hakemus.language].loppuselvitys.asiatarkastus.content,
     receivers: initialEmails,
     header: translations[hakemus.language].loppuselvitys.asiatarkastus.header(
       arkistointiTunnus!,
@@ -185,7 +186,7 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
         taydennyspyyntoType="taydennyspyynto-taloustarkastus"
         disabled={disabled || showEmail}
         heading="Loppuselvityksen taloustarkastus"
-        taydennyspyyntoHeading="Taloustarkastuksen täydennyspyyntö123"
+        taydennyspyyntoHeading="Taloustarkastuksen täydennyspyyntö"
         completedBy={
           isTaloustarkastettu &&
           hakemus['loppuselvitys-taloustarkastanut-name'] &&
