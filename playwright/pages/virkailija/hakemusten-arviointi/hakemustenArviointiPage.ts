@@ -63,6 +63,7 @@ export class HakemustenArviointiPage {
     options?: {
       showAll?: boolean
       showAdditionalInfo?: boolean
+      splitView?: boolean
     }
   ) {
     const params = new URLSearchParams()
@@ -71,6 +72,9 @@ export class HakemustenArviointiPage {
     }
     if (options?.showAdditionalInfo) {
       params.append('showAdditionalInfo', 'true')
+    }
+    if (options?.splitView) {
+      params.append('splitView', 'true')
     }
     await navigate(this.page, `/avustushaku/${avustushakuID}/?${params.toString()}`)
   }

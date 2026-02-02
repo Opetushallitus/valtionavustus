@@ -61,9 +61,7 @@ manyApplicationsTest(
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
 
     await test.step('Navigate to hakemusten arviointi in split view with first hakemus selected', async () => {
-      await page.goto(
-        `http://localhost:8081/avustushaku/${avustushakuID}/?splitView=true`
-      )
+      await hakemustenArviointiPage.navigate(avustushakuID, { splitView: true })
       await expect(page.locator('#hakemus-listing')).toBeVisible()
       await hakemustenArviointiPage.selectHakemusFromList('Test Project 00')
       await expect(page.locator('.split-view')).toBeVisible()
