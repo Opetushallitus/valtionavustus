@@ -20,6 +20,7 @@ selectors.setTestIdAttribute('data-test-id')
 
 const contactPersonEmail = 'yrjo.yhteyshenkilo@example.com'
 const newContactPersonEmail = 'uusi.yhteyshenkilo@example.com'
+const trustedContactEmail = 'vara.yhteyshenkilo@example.com'
 
 const signatories = [
   {
@@ -32,6 +33,12 @@ const signatories = [
   },
 ]
 
+const trustedContact = {
+  name: 'Vara Yhteyshenkilö',
+  email: trustedContactEmail,
+  phone: '0509876543',
+}
+
 const test = muutoshakemusTest.extend({
   answers: async ({}, use) => {
     await use({
@@ -40,6 +47,19 @@ const test = muutoshakemusTest.extend({
       contactPersonPhoneNumber: '0501234567',
       projectName: 'Hanke päätöksen uudelleenlähetyksen testaamiseksi',
       signatories,
+    })
+  },
+})
+
+const testWithTrustedContact = muutoshakemusTest.extend({
+  answers: async ({}, use) => {
+    await use({
+      contactPersonEmail,
+      contactPersonName: 'Yrjö Yhteyshenkilö',
+      contactPersonPhoneNumber: '0501234567',
+      projectName: 'Hanke täydennyspyynnön testaamiseksi varayhteyshenkilöllä',
+      signatories,
+      trustedContact,
     })
   },
 })
@@ -106,6 +126,51 @@ Lisätietoja voit kysyä sähköpostitse yhteyshenkilöltä santeri.horttanainen
   )
   await expectIsFinnishOphEmail(emails[0])
 })
+
+testWithTrustedContact(
+  'Täydennyspyyntö email includes trusted contact (varayhteyshenkilö)',
+  async ({ closedAvustushaku, page, submittedHakemus: _submittedHakemus, answers }, testInfo) => {
+    const avustushakuID = closedAvustushaku.id
+    testInfo.setTimeout(testInfo.timeout + 25_000)
+
+    const projectName = answers.projectName
+    if (!projectName) {
+      throw new Error('projectName must be set in order to select hakemus')
+    }
+
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+
+    await hakemustenArviointiPage.navigate(avustushakuID)
+    await hakemustenArviointiPage.selectHakemusFromList(projectName)
+
+    const hakemusID = await hakemustenArviointiPage.getHakemusID()
+
+    expect(await getTäydennyspyyntöEmails(hakemusID)).toHaveLength(0)
+
+    const täydennyspyyntöText = 'Täydennä hakemustasi, kiitos.'
+    await hakemustenArviointiPage.fillTäydennyspyyntöField(täydennyspyyntöText)
+
+    await hakemustenArviointiPage.clickToSendTäydennyspyyntö(avustushakuID, hakemusID)
+
+    await expect(page.locator('#arviointi-tab .change-request-title')).toHaveText(
+      /\* Täydennyspyyntö lähetetty \d{1,2}\.\d{1,2}\.\d{4} \d{1,2}\.\d{1,2}/
+    )
+
+    const emails = await waitUntilMinEmails(getTäydennyspyyntöEmails, 1, hakemusID)
+    expect(emails).toHaveLength(1)
+    expect(emails[0]['to-address']).toHaveLength(2)
+    expect(emails[0]['to-address']).toContain(answers.contactPersonEmail)
+    expect(emails[0]['to-address']).toContain('hakija-1424884@oph.fi')
+    expect(emails[0]['bcc']).toStrictEqual('santeri.horttanainen@reaktor.com')
+    // CC should include: organization-email, 2 signatories, AND trusted-contact-email
+    expect(emails[0].cc).toHaveLength(4)
+    expect(emails[0].cc).toContain('hakija-1424884@oph.fi')
+    expect(emails[0].cc).toContain(answers.signatories![0].email)
+    expect(emails[0].cc).toContain(answers.signatories![1].email)
+    expect(emails[0].cc).toContain(answers.trustedContact!.email)
+    await expectIsFinnishOphEmail(emails[0])
+  }
+)
 
 async function getLatestAcceptedPaatosEmailsForHakemus(hakemusID: number, nthSentEmail: number) {
   const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, nthSentEmail, hakemusID)

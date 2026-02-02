@@ -159,6 +159,60 @@
             },
             {
               "label": {
+                "fi": "Varayhteyshenkilö",
+                "sv": "Kontaktperson"
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "Varayhteyshenkilöllä tarkoitetaan hankkeen varavastuuhenkilöä.",
+                "sv": ""
+              },
+              "id": "trusted-contact-name",
+              "params": {
+                "size": "large",
+                "maxlength": 80
+              },
+              "required": false,
+              "fieldType": "textField"
+            },
+            {
+              "label": {
+                "fi": "Varayhteyshenkilön sähköposti",
+                "sv": "E-post"
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "",
+                "sv": ""
+              },
+              "id": "trusted-contact-email",
+              "params": {
+                "size": "small",
+                "maxlength": 80
+              },
+              "required": false,
+              "fieldType": "vaEmailNotification"
+            },
+            {
+              "label": {
+                "fi": "Varayhteyshenkilön puhelinumero",
+                "sv": "Telefon"
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "",
+                "sv": ""
+              },
+              "id": "trusted-contact-phone",
+              "params": {
+                "size": "small",
+                "maxlength": 15
+              },
+              "required": false,
+              "fieldType": "textField"
+            },
+            {
+              "label": {
                 "fi": "Omistajatyyppi",
                 "sv": "Ägartyp"
               },

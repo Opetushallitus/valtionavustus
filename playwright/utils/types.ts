@@ -14,6 +14,12 @@ export interface PaatosValues {
 export type Field = { type: string; fieldId: string }
 type FieldAnswer = { fieldId: string; answer: string; isFileAttachment?: boolean }
 
+export interface TrustedContact {
+  name: string
+  email: string
+  phone: string
+}
+
 export interface Answers {
   organization?: string
   projectName?: string
@@ -21,6 +27,7 @@ export interface Answers {
   contactPersonEmail: string
   contactPersonPhoneNumber: string
   signatories?: Signatory[]
+  trustedContact?: TrustedContact
   lang?: 'fi' | 'sv'
 
   hakemusFields?: FieldAnswer[]

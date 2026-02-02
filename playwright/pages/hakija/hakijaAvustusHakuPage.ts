@@ -5,7 +5,7 @@ import { dummyExcelPath, TEST_Y_TUNNUS } from '../../utils/constants'
 import { expectQueryParameter, expectToBeDefined } from '../../utils/util'
 import { getHakemusUrlFromEmail, pollUntilNewHakemusEmailArrives } from '../../utils/emails'
 import { Budget, fillBudget } from '../../utils/budget'
-import { Answers, Signatory } from '../../utils/types'
+import { Answers, Signatory, TrustedContact } from '../../utils/types'
 import { getNormalizedHakemus } from '../../utils/hakemus'
 import { HakijaHakemusMuokkausPage } from './hakijaHakemusMuokkausPage'
 
@@ -148,6 +148,12 @@ export function HakijaAvustusHakuPage(page: Page) {
     }
   }
 
+  const fillTrustedContact = async (trustedContact: TrustedContact) => {
+    await locators.form.trustedContact.name.fill(trustedContact.name)
+    await locators.form.trustedContact.email.fill(trustedContact.email)
+    await locators.form.trustedContact.phone.fill(trustedContact.phone)
+  }
+
   async function ensureLanguageSelected(lang: string) {
     const languageRadio = page.locator(`#language\\.radio\\.${lang === 'sv' ? 1 : 0}`)
     if (!(await languageRadio.isChecked())) {
@@ -172,6 +178,10 @@ export function HakijaAvustusHakuPage(page: Page) {
     }
 
     await fillSignatories(getSignatoriesOrDefault())
+
+    if (answers.trustedContact) {
+      await fillTrustedContact(answers.trustedContact)
+    }
 
     await page
       .getByText(
