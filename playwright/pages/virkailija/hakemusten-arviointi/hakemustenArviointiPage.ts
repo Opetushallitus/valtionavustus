@@ -591,7 +591,7 @@ export class HakemustenArviointiPage {
       trustedContact: {
         name: this.page.locator('#trusted-contact-name'),
         email: this.page.locator('#trusted-contact-email'),
-        phoneNumber: this.page.locator('#trusted-contact-phone'),
+        phone: this.page.locator('#trusted-contact-phone'),
       },
     }
   }

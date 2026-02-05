@@ -32,7 +32,7 @@ type VarayhteyshenkiloAnswers = Answers & {
   trustedContact: {
     name: string
     email: string
-    phoneNumber: string
+    phone: string
   }
 }
 
@@ -48,7 +48,7 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
       trustedContact: {
         name: 'Ville Varayhteyshenkilö',
         email: 'ville.vara@example.com',
-        phoneNumber: '0405955959',
+        phone: '0405955959',
       },
       signatories: [
         {
@@ -144,7 +144,7 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
       await hakijaAvustusHakuPage.form.trustedContact.email.fill(answers.trustedContact.email)
       await expect(hakijaAvustusHakuPage.validationErrors.haveErrorsButton(1)).toBeVisible()
       await expect(hakijaAvustusHakuPage.validationErrors.trustedContact.phone).toBeVisible()
-      await hakijaAvustusHakuPage.form.trustedContact.phone.fill(answers.trustedContact.phoneNumber)
+      await hakijaAvustusHakuPage.form.trustedContact.phone.fill(answers.trustedContact.phone)
       await hakijaAvustusHakuPage.submitApplication()
     })
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
@@ -160,9 +160,7 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
       const sidebarLocators = hakemustenArviointiPage.sidebarLocators()
       await expect(sidebarLocators.trustedContact.name).toHaveText(answers.trustedContact.name)
       await expect(sidebarLocators.trustedContact.email).toHaveText(answers.trustedContact.email)
-      await expect(sidebarLocators.trustedContact.phoneNumber).toHaveText(
-        answers.trustedContact.phoneNumber
-      )
+      await expect(sidebarLocators.trustedContact.phone).toHaveText(answers.trustedContact.phone)
     })
     const hakujenHallinta = new HakujenHallintaPage(page)
     await test.step('close and approve hakemus', async () => {
@@ -233,7 +231,7 @@ test('varayhteyshenkilo flow', async ({
     expectVarayhteyshenkiloColumns(workbook, {
       name: answers.trustedContact.name,
       email: answers.trustedContact.email,
-      phone: answers.trustedContact.phoneNumber,
+      phone: answers.trustedContact.phone,
     })
   })
   const hakujenHallinta = new HakujenHallintaPage(page)
@@ -245,7 +243,7 @@ test('varayhteyshenkilo flow', async ({
     const { trustedContact } = hakijaMuutoshakemusPage.locators()
     await expect(trustedContact.name).toHaveValue(answers.trustedContact.name)
     await expect(trustedContact.email).toHaveValue(answers.trustedContact.email)
-    await expect(trustedContact.phone).toHaveValue(answers.trustedContact.phoneNumber)
+    await expect(trustedContact.phone).toHaveValue(answers.trustedContact.phone)
     await trustedContact.email.fill(newEmail)
     await hakijaMuutoshakemusPage.clickSaveContacts()
     await hakijaMuutoshakemusPage.expectMuutoshakemusToBeSubmittedSuccessfully(false)
@@ -256,7 +254,7 @@ test('varayhteyshenkilo flow', async ({
       expectVarayhteyshenkiloColumns(workbook, {
         name: answers.trustedContact.name,
         email: newEmail,
-        phone: answers.trustedContact.phoneNumber,
+        phone: answers.trustedContact.phone,
       })
     })
     const projectName = answers.projectName
@@ -269,7 +267,7 @@ test('varayhteyshenkilo flow', async ({
     await expect(sidebar.oldAnswers.trustedContactEmail).toHaveText(answers.trustedContact.email)
     await expect(sidebar.oldAnswers.trustedContactPhone).toBeHidden()
     await expect(sidebar.trustedContact.name).toHaveText(answers.trustedContact.name)
-    await expect(sidebar.trustedContact.phoneNumber).toHaveText(answers.trustedContact.phoneNumber)
+    await expect(sidebar.trustedContact.phone).toHaveText(answers.trustedContact.phone)
     await expect(sidebar.newAnswers.trustedContactName).toBeHidden()
     await expect(sidebar.newAnswers.trustedContactEmail).toHaveText(newEmail)
     await expect(sidebar.newAnswers.trustedContactPhone).toBeHidden()
@@ -286,7 +284,7 @@ test('varayhteyshenkilo flow', async ({
     await hakijaMuutoshakemusPage.navigateWithLink(muutoshakemusUrl)
     await expect(trustedContact.name).toHaveValue(answers.trustedContact.name)
     await expect(trustedContact.email).toHaveValue(newEmail)
-    await expect(trustedContact.phone).toHaveValue(answers.trustedContact.phoneNumber)
+    await expect(trustedContact.phone).toHaveValue(answers.trustedContact.phone)
     await trustedContact.name.fill(newName)
     await trustedContact.phone.fill(newPhone)
     await hakijaMuutoshakemusPage.clickSaveContacts()
@@ -305,9 +303,7 @@ test('varayhteyshenkilo flow', async ({
     const sidebar = hakemustenArviointiPage.sidebarLocators()
     await expect(sidebar.oldAnswers.trustedContactName).toHaveText(answers.trustedContact.name)
     await expect(sidebar.oldAnswers.trustedContactEmail).toHaveText(answers.trustedContact.email)
-    await expect(sidebar.oldAnswers.trustedContactPhone).toHaveText(
-      answers.trustedContact.phoneNumber
-    )
+    await expect(sidebar.oldAnswers.trustedContactPhone).toHaveText(answers.trustedContact.phone)
     await expect(sidebar.newAnswers.trustedContactName).toHaveText(newName)
     await expect(sidebar.newAnswers.trustedContactEmail).toHaveText(newEmail)
     await expect(sidebar.newAnswers.trustedContactPhone).toHaveText(newPhone)
@@ -390,7 +386,7 @@ test('varayhteyshenkilö refused avustushaku', async ({
     expectToBeDefined(answers.trustedContact)
     await expect(refusePage.page.getByText(answers.trustedContact.name)).toBeVisible()
     await expect(refusePage.page.getByText(answers.trustedContact.email)).toBeVisible()
-    await expect(refusePage.page.getByText(answers.trustedContact.phoneNumber)).toBeVisible()
+    await expect(refusePage.page.getByText(answers.trustedContact.phone)).toBeVisible()
   })
   await test.step('refuse avustushaku', async () => {
     await refusePage.refuseGrant()
