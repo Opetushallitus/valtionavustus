@@ -67,7 +67,8 @@ const test = defaultValues.extend<{
     tatili2: CreateTaTili
   }
 }>({
-  tilit: async ({ page, hakuProps, avustushakuName }, use, testInfo) => {
+  tilit: async ({ page, hakuProps, avustushakuName, userCache }, use, testInfo) => {
+    expectToBeDefined(userCache)
     testInfo.setTimeout(testInfo.timeout + 30_000)
     const tilit = await createTaTilit(page)
     const hakujenHallinta = new HakujenHallintaPage(page)
