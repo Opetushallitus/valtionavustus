@@ -162,7 +162,8 @@ export const HaunTiedotPage = (page: Page) => {
 
   async function addValmistelija(name: string, waitForSave = true) {
     await locators.hakuRole.searchInput.fill(name)
-    await page.locator('a').getByText(name).click()
+    const searchResults = page.locator('#va-user-search-results')
+    await searchResults.locator('a').getByText(name).click()
     if (waitForSave) {
       await common.waitForSave()
     }
@@ -180,7 +181,8 @@ export const HaunTiedotPage = (page: Page) => {
 
   async function addArvioija(name: string, waitForSave = true) {
     await locators.hakuRole.searchInput.fill(name)
-    await page.locator('a').getByText(name).click()
+    const searchResults = page.locator('#va-user-search-results')
+    await searchResults.locator('a').getByText(name).click()
     await setUserRole(name, 'evaluator')
     if (waitForSave) {
       await common.waitForSave()
@@ -189,7 +191,8 @@ export const HaunTiedotPage = (page: Page) => {
 
   async function addVastuuvalmistelija(name: string) {
     await locators.hakuRole.searchInput.fill(name)
-    await page.locator('a').getByText(name).click()
+    const searchResults = page.locator('#va-user-search-results')
+    await searchResults.locator('a').getByText(name).click()
     await setUserRole(name, 'vastuuvalmistelija')
     await common.waitForSave()
   }
