@@ -281,6 +281,7 @@ const AttachmentLiite = ({
             attachment={attachment}
             isLiiteSelected={isSelected && selectedVersions[attachment.id] === v.id}
             isDisabled={disabled || (disableOldVersions ? index + 1 < amountOfVersions : undefined)}
+            isParentSelected={isSelected}
             versionSpec={v}
             environment={environment}
             onChangeLiiteVersions={onChangeLiiteVersions}
@@ -350,6 +351,7 @@ const LiiteVersion = ({
   versionSpec,
   environment,
   isDisabled,
+  isParentSelected,
   onChangeLiiteVersions,
 }: {
   attachment: LiiteAttachment
@@ -357,9 +359,10 @@ const LiiteVersion = ({
   versionSpec: LiiteAttachmentVersion
   environment: EnvironmentApiResponse
   isDisabled?: boolean
+  isParentSelected: boolean
   onChangeLiiteVersions: (e: React.ChangeEvent<HTMLInputElement>) => void
 }) => {
-  const disabled = isDisabled || !isLiiteSelected
+  const disabled = isDisabled ? true : !isParentSelected
   return (
     <div className="decision-liite-selection__liite-version">
       <label key={'v' + versionSpec.id} className={disabled ? 'disabled' : undefined}>

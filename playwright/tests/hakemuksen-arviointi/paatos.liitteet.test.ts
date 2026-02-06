@@ -7,6 +7,7 @@ import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
 import { waitForSave } from '../../pages/virkailija/hakujen-hallinta/CommonHakujenHallintaPage'
 import type { Blob } from 'node:buffer'
 import { createJotpaCodes } from '../../fixtures/JotpaTest'
+import { VIRKAILIJA_URL } from '../../utils/constants'
 
 async function downloadPdfFromLocator(locator: Locator): Promise<Blob> {
   const downloadPromise = locator.page().waitForEvent('download')
@@ -235,6 +236,109 @@ test.extend({
           })
         })
       })
+    })
+  }
+)
+
+test.extend({
+  avustushakuName: async ({}, use) => await use('old yleisohje version test'),
+  hakuProps: async ({ hakuProps }, use) => {
+    await use({
+      ...hakuProps,
+      registerNumber: '4/20',
+    })
+  },
+})(
+  'grant with old yleisohje version stored in database shows newest version',
+  async ({
+    page,
+    closedAvustushaku: { id: avustushakuID },
+    answers,
+    ukotettuValmistelija,
+    projektikoodi,
+  }) => {
+    const projectName = answers.projectName
+    if (!projectName) {
+      throw new Error('projectName must be set in order to accept avustushaku')
+    }
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    await hakemustenArviointiPage.navigate(avustushakuID)
+    const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
+      avustushakuID,
+      projectName,
+      projektikoodi,
+      paatoksenPerustelut: 'Timanttinen hakemus, ei voi muuta sanoa kun hattua nostaa!',
+    })
+    const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
+    await haunTiedotPage.resolveAvustushaku()
+    await hakemustenArviointiPage.navigate(avustushakuID)
+    await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
+
+    const paatosPage = PaatosPage(page)
+    await paatosPage.navigateTo(avustushakuID)
+
+    const { yleisOhjeCheckbox, yleisOhjeLiite } = paatosPage.locators
+    const amountOfYleisohjeet = 6
+    const newestIndex = amountOfYleisohjeet - 1
+
+    await test.step('select yleisohje to save it to database', async () => {
+      await yleisOhjeCheckbox.click()
+      await expect(yleisOhjeCheckbox).toBeChecked()
+      await hakemustenArviointiPage.waitForSave()
+      await expect(yleisOhjeLiite.nth(newestIndex)).toBeChecked()
+    })
+
+    await test.step('inject old yleisohje version via API to simulate legacy data', async () => {
+      const hakuDataResponse = await page.request.get(
+        `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}`
+      )
+      const hakuData = await hakuDataResponse.json()
+      const avustushaku = hakuData.avustushaku
+
+      const modifiedDecision = {
+        ...avustushaku.decision,
+        liitteet: avustushaku.decision.liitteet.map(
+          (liite: { group: string; id: string; version: string }) => {
+            if (liite.id === 'va_yleisohje') {
+              return { ...liite, version: '_2021-05' }
+            }
+            return liite
+          }
+        ),
+      }
+
+      await page.request.post(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}`, {
+        data: { ...avustushaku, decision: modifiedDecision },
+      })
+    })
+
+    await test.step('reload page and verify old version is shown but newest is enabled', async () => {
+      await paatosPage.navigateTo(avustushakuID)
+      await expect(yleisOhjeCheckbox).toBeChecked()
+
+      const oldVersionIndex = 3 // _2021-05
+      await expect(yleisOhjeLiite.nth(oldVersionIndex)).toBeChecked()
+      await expect(yleisOhjeLiite.nth(newestIndex)).not.toBeChecked()
+      await expect(yleisOhjeLiite.nth(newestIndex)).toBeEnabled()
+    })
+
+    await test.step('old versions are disabled', async () => {
+      for (let i = 0; i < newestIndex; i++) {
+        await expect(yleisOhjeLiite.nth(i)).toBeDisabled()
+      }
+    })
+
+    await test.step('user can switch to newest version and decision PDF uses it', async () => {
+      await yleisOhjeLiite.nth(newestIndex).click()
+      await hakemustenArviointiPage.waitForSave()
+      await expect(yleisOhjeLiite.nth(newestIndex)).toBeChecked()
+
+      await paatosPage.sendPaatos()
+      await paatosPage.navigateToLatestHakijaPaatos(hakemusID)
+
+      const yleisohjeLink = page.locator('a').locator('text=Valtionavustusten yleisohje')
+      const href = '/liitteet/va_yleisohje_2023-05_fi.pdf'
+      expect(await yleisohjeLink.getAttribute('href')).toBe(href)
     })
   }
 )
