@@ -277,15 +277,14 @@ test.extend({
     const paatosPage = PaatosPage(page)
     await paatosPage.navigateTo(avustushakuID)
 
-    const { yleisOhjeCheckbox, yleisOhjeLiite } = paatosPage.locators
-    const amountOfYleisohjeet = 6
-    const newestIndex = amountOfYleisohjeet - 1
+    const { yleisOhjeCheckbox } = paatosPage.locators
+    const newestVersionRadio = page.locator('[data-liite=va_yleisohje][value="_2023-05"]')
 
     await test.step('select yleisohje to save it to database', async () => {
       await yleisOhjeCheckbox.click()
       await expect(yleisOhjeCheckbox).toBeChecked()
       await hakemustenArviointiPage.waitForSave()
-      await expect(yleisOhjeLiite.nth(newestIndex)).toBeChecked()
+      await expect(newestVersionRadio).toBeChecked()
     })
 
     await test.step('inject old yleisohje version via API to simulate legacy data', async () => {
@@ -316,22 +315,24 @@ test.extend({
       await paatosPage.navigateTo(avustushakuID)
       await expect(yleisOhjeCheckbox).toBeChecked()
 
-      const oldVersionIndex = 3 // _2021-05
-      await expect(yleisOhjeLiite.nth(oldVersionIndex)).toBeChecked()
-      await expect(yleisOhjeLiite.nth(newestIndex)).not.toBeChecked()
-      await expect(yleisOhjeLiite.nth(newestIndex)).toBeEnabled()
+      const oldVersionRadio = page.locator('[data-liite=va_yleisohje][value="_2021-05"]')
+      await expect(oldVersionRadio).toBeChecked()
+      await expect(newestVersionRadio).not.toBeChecked()
+      await expect(newestVersionRadio).toBeEnabled()
     })
 
     await test.step('old versions are disabled', async () => {
-      for (let i = 0; i < newestIndex; i++) {
-        await expect(yleisOhjeLiite.nth(i)).toBeDisabled()
+      const olderVersions = page.locator('[data-liite=va_yleisohje]:not([value="_2023-05"])')
+      const count = await olderVersions.count()
+      for (let i = 0; i < count; i++) {
+        await expect(olderVersions.nth(i)).toBeDisabled()
       }
     })
 
     await test.step('user can switch to newest version and decision PDF uses it', async () => {
-      await yleisOhjeLiite.nth(newestIndex).click()
+      await newestVersionRadio.click()
       await hakemustenArviointiPage.waitForSave()
-      await expect(yleisOhjeLiite.nth(newestIndex)).toBeChecked()
+      await expect(newestVersionRadio).toBeChecked()
 
       await paatosPage.sendPaatos()
       await paatosPage.navigateToLatestHakijaPaatos(hakemusID)
