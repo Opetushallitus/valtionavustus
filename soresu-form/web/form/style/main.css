@@ -220,6 +220,11 @@ fieldset.soresu-fieldset {
     width: calc(var(--section-width) / 2);
 }
 
+.soresu-fieldset > p.soresu-info-element {
+    width: var(--section-width);
+}
+
+.soresu-fieldset > div.extra-large:not(.soresu-radio):not(.soresu-checkbox),
 .soresu-growing-fieldset div.extra-large {
     display: block;
     width: var(--section-width);
