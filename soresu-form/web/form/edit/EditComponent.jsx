@@ -372,11 +372,12 @@ export class TextFieldEdit extends FieldEditComponent {
         />
       </span>
     )
-    const sizeAlternatives = ['small', 'medium', 'large']
+    const sizeAlternatives = ['small', 'medium', 'large', 'extra-large']
     const sizeTexts = {
       small: 'S',
       medium: 'M',
       large: 'L',
+      'extra-large': 'XL',
     }
     const sizeAlternenativeButtons = []
     for (let i = 0; i < sizeAlternatives.length; i++) {
