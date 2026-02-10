@@ -194,6 +194,7 @@ section.soresu-theme>div>p.soresu-info-element {
 fieldset.soresu-fieldset {
     display: flex;
     flex-wrap: wrap;
+    row-gap: 16px;
 }
 
 .soresu-fieldset>div:not(.soresu-radio):not(.soresu-checkbox),
