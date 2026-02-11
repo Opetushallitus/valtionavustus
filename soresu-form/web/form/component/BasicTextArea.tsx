@@ -1,4 +1,5 @@
 import React, { ChangeEventHandler, FocusEventHandler } from 'react'
+import ClassNames from 'classnames'
 import LocalizedString from './LocalizedString'
 import BasicFieldComponent, { BasicFieldComponentProps } from './BasicFieldComponent'
 
@@ -16,7 +17,7 @@ export default class BasicTextArea extends BasicFieldComponent<BasicTextAreaProp
     const lengthLeft = props.maxLength - length
     const classStr = this.resolveClassName()
     return (
-      <div className={`soresu-text-area${typeof props.size === 'string' ? ` ${props.size}` : ''}`}>
+      <div className={ClassNames('soresu-text-area', props.size)}>
         {this.label(classStr)}
         <textarea
           id={props.htmlId}
