@@ -1,5 +1,6 @@
 (def log4j-version "2.25.3")
-(def jackson-version "2.21")
+(def jackson-version "2.21.0")
+(def jackson-annotations-version "2.21")
 (def http4s-version "0.16.6")
 (def flyway-version "11.20.2")
 
@@ -61,7 +62,7 @@
                          ;;   ... -> [com.fasterxml.jackson.core/jackson-databind ~jackson-version] ->
                          ;;             [com.fasterxml.jackson.core/jackson-annotations ~jackson-version]
                          [com.fasterxml.jackson.core/jackson-databind ~jackson-version]
-                         [com.fasterxml.jackson.core/jackson-annotations ~jackson-version]
+                         [com.fasterxml.jackson.core/jackson-annotations ~jackson-annotations-version]
 
 
                          ;; [cheshire "6.1.0"] -> [com.fasterxml.jackson.core/jackson-core ~jackson-version]
