@@ -4,17 +4,13 @@
     "config:best-practices",
     "workarounds:javaLTSVersions",
     ":rebaseStalePrs",
-    "npm:unpublishSafe"
+    "security:minimumReleaseAgeNpm"
   ],
   "onboarding": false,
   "postUpgradeTasks": {
     "executionMode": "branch",
-    "commands": [
-      "./scripts/refresh_pom_xml.sh"
-    ],
-    "fileFilters": [
-      "pom.xml"
-    ]
+    "commands": ["./scripts/refresh_pom_xml.sh"],
+    "fileFilters": ["pom.xml"]
   },
   "rangeStrategy": "pin",
   "dependencyDashboard": true,
@@ -26,23 +22,16 @@
   "forkProcessing": "disabled",
   "ignoreTests": false,
   "automergeType": "pr",
-  "lockFileMaintenance": { "enabled": true },
+  "lockFileMaintenance": {
+    "enabled": true
+  },
   "minimumReleaseAge": "3 days",
   "internalChecksFilter": "strict",
-  "schedule": [
-    "every weekend",
-    "after 5pm",
-    "before 5am"
-  ],
-  "automergeSchedule": [
-    "every weekend",
-    "after 5pm and before 5am"
-  ],
+  "schedule": ["every weekend", "after 5pm", "before 5am"],
+  "automergeSchedule": ["every weekend", "after 5pm and before 5am"],
   "platformAutomerge": true,
   "automerge": true,
-  "repositories": [
-    "Opetushallitus/valtionavustus"
-  ],
+  "repositories": ["Opetushallitus/valtionavustus"],
   "osvVulnerabilityAlerts": true,
   "vulnerabilityAlerts": {
     "labels": ["security"],
@@ -58,9 +47,7 @@
   ],
   "packageRules": [
     {
-      "matchDatasources": [
-        "clojure"
-      ],
+      "matchDatasources": ["clojure"],
       "registryUrls": [
         "https://repo1.maven.org/maven2/",
         "https://repo.clojars.org/",
@@ -68,41 +55,23 @@
       ]
     },
     {
-      "matchManagers": [
-        "nvm",
-        "npm",
-        "dockerfile"
-      ],
-      "matchPackageNames": [
-        "@types/node",
-        "node"
-      ],
+      "matchManagers": ["nvm", "npm", "dockerfile"],
+      "matchPackageNames": ["@types/node", "node"],
       "groupName": "Node.js"
     },
     {
-      "matchPackageNames": [
-        "@playwright/test",
-        "mcr.microsoft.com/playwright"
-      ],
+      "matchPackageNames": ["@playwright/test", "mcr.microsoft.com/playwright"],
       "groupName": "Playwright"
     },
     {
-      "matchPackageNames": [
-        "com.google.guava:guava"
-      ],
+      "matchPackageNames": ["com.google.guava:guava"],
       "description": "Custom versioning regex for Guava so that we keep `-android` versions",
       "versioning": "regex:^(?<major>\\d+)(\\.(?<minor>\\d+))?(\\.(?<patch>\\d+))?(-(?<compatibility>.*))?$"
     },
     {
-      "matchManagers": [
-        "npm"
-      ],
-      "matchPackageNames": [
-        "pdfjs-dist"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["pdfjs-dist"],
+      "matchUpdateTypes": ["major"],
       "groupName": "Pdf.js",
       "description": "Pdf.js only provides ES module based version starting from major version 4. Migrating the project completely or partially (Playwright tests) to ESM is postponed until there a more urgent need",
       "enabled": false
