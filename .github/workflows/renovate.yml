@@ -5,7 +5,7 @@ on:
     branches:
       - master
   schedule:
-    - cron: '0 16/2,0-6/2 * * *'
+    - cron: "0 16/2,0-6/2 * * *"
 
 concurrency: renovate
 
@@ -27,3 +27,6 @@ jobs:
         with:
           configurationFile: .github/renovate.json
           token: ${{ steps.app-token.outputs.token }}
+          renovate-version: 42-full
+        env:
+          RENOVATE_ALLOWED_POST_UPGRADE_COMMANDS: '["./scripts/refresh_pom_xml.sh"]'
