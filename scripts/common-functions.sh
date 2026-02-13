@@ -13,6 +13,8 @@ readonly revision="${GITHUB_SHA:-$(git rev-parse HEAD)}"
 readonly VA_SECRETS_REPO="$repo/../valtionavustus-secret"
 node_version="$(cat "$repo/.nvmrc")" && readonly node_version
 export NODE_VERSION="${node_version}"
+playwright_version="$(node -e "console.log(require('./package-lock.json').packages['node_modules/@playwright/test'].version)")" && readonly playwright_version
+export PLAYWRIGHT_VERSION="${playwright_version}"
 readonly local_docker_namespace="va"
 
 readonly HAKIJA_HOSTNAME=${HAKIJA_HOSTNAME:-"localhost"}

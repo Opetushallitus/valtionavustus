@@ -15,7 +15,7 @@ function cleanup {
 trap cleanup EXIT
 
 echo "Building playwright Docker image..."
-docker build -t playwright-image -f Dockerfile.playwright-test-runner .
+docker build -t playwright-image -f Dockerfile.playwright-test-runner --build-arg "PLAYWRIGHT_VERSION=${PLAYWRIGHT_VERSION}" .
 
 echo "Building VA service image..."
 $compose build va

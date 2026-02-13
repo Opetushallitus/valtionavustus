@@ -29,7 +29,7 @@ function main {
 
   start_gh_actions_group "Pull and build images required for playwright tests"
   $compose build db fakesmtp maksatuspalvelu
-  docker build -t playwright-image -f Dockerfile.playwright-test-runner .
+  docker build -t playwright-image -f Dockerfile.playwright-test-runner --build-arg "PLAYWRIGHT_VERSION=${PLAYWRIGHT_VERSION}" .
   end_gh_actions_group
 
   start_gh_actions_group "Start services"
