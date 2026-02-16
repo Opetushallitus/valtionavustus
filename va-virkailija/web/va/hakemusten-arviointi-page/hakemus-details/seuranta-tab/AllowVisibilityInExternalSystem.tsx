@@ -2,7 +2,7 @@ import React from 'react'
 import { HelpTooltip } from '../../../common-components/HelpTooltip'
 import { Hakemus } from 'soresu-form/web/va/types'
 import { useHakemustenArviointiDispatch } from '../../arviointiStore'
-import { setArvioValue, startHakemusArvioAutoSave } from '../../arviointiReducer'
+import { saveHakemusArvio, setArvioValue } from '../../arviointiReducer'
 
 interface Props {
   hakemus: Hakemus
@@ -33,7 +33,7 @@ const AllowVisibilityInExternalSystem = ({ hakemus, allowEditing }: Props) => {
         value: event.target.value === 'true',
       })
     )
-    dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }))
+    dispatch(saveHakemusArvio({ hakemusId: hakemus.id }))
   }
   const arvio = hakemus.arvio
   const selectedAllowVisibilityInExternalSystem =

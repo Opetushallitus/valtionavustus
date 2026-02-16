@@ -8,8 +8,8 @@ import {
 } from '../../arviointiStore'
 import {
   getLoadedAvustushakuData,
+  saveHakemusArvio,
   setArvioValue,
-  startHakemusArvioAutoSave,
 } from '../../arviointiReducer'
 
 interface Props {
@@ -38,7 +38,7 @@ const SeurantaTags = ({ hakemus }: Props) => {
         },
       })
     )
-    dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }))
+    dispatch(saveHakemusArvio({ hakemusId: hakemus.id }))
   }
 
   const predefinedTags = ['budjettimuutos', 'sisällön muutos', 'lisäaika']

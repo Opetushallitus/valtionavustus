@@ -28,6 +28,17 @@ arvioAutoSave.startListening({
     )
   },
 })
+arvioAutoSave.startListening({
+  actionCreator: saveHakemusArvio.pending,
+  effect: (action) => {
+    const { hakemusId } = action.meta.arg
+    const existingTimer = pendingSaveTimers.get(hakemusId)
+    if (existingTimer !== undefined) {
+      clearTimeout(existingTimer)
+      pendingSaveTimers.delete(hakemusId)
+    }
+  },
+})
 
 const store = configureStore({
   reducer: {
