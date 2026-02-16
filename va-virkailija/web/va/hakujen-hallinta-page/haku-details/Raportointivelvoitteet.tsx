@@ -121,14 +121,29 @@ const Raportointivelvoite = ({
     ),
     []
   )
+  const saveRaportointivelvoiteImmediately = useCallback(
+    (body: Raportointivelvoite) => {
+      debouncedPutRaportointivelvoite.cancel()
+      debouncedPostRaportointivelvoite.cancel()
+      startAutoSave()
+      const payload = { raportointivelvoite: body, avustushakuId }
+      if (body.id) {
+        postRaportointivelvoite(payload)
+          .unwrap()
+          .then(saveSuccessful())
+          .catch(saveSuccessful(false))
+      } else {
+        putRaportointivelvoite(payload).unwrap().then(saveSuccessful()).catch(saveSuccessful(false))
+      }
+    },
+    [avustushakuId]
+  )
   useEffect(() => {
     if (
       raportointilaji &&
       maaraaika &&
       ashaTunnus &&
-      (raportointivelvoite?.raportointilaji !== raportointilaji ||
-        raportointivelvoite?.maaraaika !== maaraaika ||
-        raportointivelvoite?.['asha-tunnus'] !== ashaTunnus ||
+      (raportointivelvoite?.['asha-tunnus'] !== ashaTunnus ||
         raportointivelvoite?.lisatiedot !== lisatiedot)
     ) {
       startAutoSave()
@@ -151,7 +166,7 @@ const Raportointivelvoite = ({
         })
       }
     }
-  }, [raportointilaji, maaraaika, ashaTunnus, lisatiedot])
+  }, [ashaTunnus, lisatiedot])
 
   function onChangeRaportointilaji(selectedLaji: string | undefined) {
     setRaportointilaji(selectedLaji)
@@ -165,6 +180,30 @@ const Raportointivelvoite = ({
           ...existingSelectionsWithoutThisComponent,
           { id: raportointivelvoite?.id, raportointilaji: selectedLaji },
         ]
+      })
+      // Save immediately if all required fields are present
+      if (maaraaika && ashaTunnus) {
+        saveRaportointivelvoiteImmediately({
+          id: raportointivelvoite?.id,
+          raportointilaji: selectedLaji,
+          maaraaika,
+          'asha-tunnus': ashaTunnus,
+          lisatiedot,
+        })
+      }
+    }
+  }
+
+  const onChangeMaaraaika = (_id: string, date: any) => {
+    const formattedDate = date.format('YYYY-MM-DD')
+    setMaaraaika(formattedDate)
+    if (raportointilaji && ashaTunnus) {
+      saveRaportointivelvoiteImmediately({
+        id: raportointivelvoite?.id,
+        raportointilaji,
+        maaraaika: formattedDate,
+        'asha-tunnus': ashaTunnus,
+        lisatiedot,
       })
     }
   }
@@ -206,7 +245,7 @@ const Raportointivelvoite = ({
         <DateInput
           data-test-id={`maaraaika-${index}`}
           id={`maaraaika-${index}`}
-          onChange={(_id, date) => setMaaraaika(date.format('YYYY-MM-DD'))}
+          onChange={onChangeMaaraaika}
           defaultValue={maaraaika ? new Date(maaraaika) : undefined}
           allowEmpty={true}
           placeholder="Päivämäärä"
