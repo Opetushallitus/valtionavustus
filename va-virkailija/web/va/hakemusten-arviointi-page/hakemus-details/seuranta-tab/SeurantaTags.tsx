@@ -6,11 +6,7 @@ import {
   useHakemustenArviointiDispatch,
   useHakemustenArviointiSelector,
 } from '../../arviointiStore'
-import {
-  getLoadedAvustushakuData,
-  saveHakemusArvio,
-  setArvioValue,
-} from '../../arviointiReducer'
+import { getLoadedAvustushakuData, saveHakemusArvio, setArvioValue } from '../../arviointiReducer'
 
 interface Props {
   hakemus: Hakemus

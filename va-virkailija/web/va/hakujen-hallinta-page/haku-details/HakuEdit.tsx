@@ -110,9 +110,7 @@ const HakuEditor = () => {
     onChangeListener(e.target, e.target.value.replace(/\s/g, ' '))
   }
 
-  const onChangeImmediate = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const onChangeImmediate = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     if (e.target.id.startsWith('set-status-') && e.target.value === 'published') {
       if (
         avustushaku.muutoshakukelpoisuus?.['erroneous-fields'].some((field) =>
@@ -127,7 +125,9 @@ const HakuEditor = () => {
         return
       }
     }
-    dispatch(updateField({ avustushaku, field: e.target, newValue: e.target.value, immediate: true }))
+    dispatch(
+      updateField({ avustushaku, field: e.target, newValue: e.target.value, immediate: true })
+    )
   }
 
   const mainHelp = {
