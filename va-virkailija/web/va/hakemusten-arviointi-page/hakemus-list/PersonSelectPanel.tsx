@@ -6,11 +6,7 @@ import { Hakemus } from 'soresu-form/web/va/types'
 import { Role } from '../../types'
 
 import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '../arviointiStore'
-import {
-  getLoadedAvustushakuData,
-  saveHakemusArvio,
-  setArvioValue,
-} from '../arviointiReducer'
+import { getLoadedAvustushakuData, saveHakemusArvio, setArvioValue } from '../arviointiReducer'
 
 import * as styles from './Person.module.css'
 
