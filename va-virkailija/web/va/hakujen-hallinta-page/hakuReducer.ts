@@ -460,10 +460,21 @@ const callSaveRole: AsyncThunkPayloadCreator<
   thunkAPI.dispatch(saveRole({ role, avustushakuId }))
 }
 
+const debouncedSaveRoleFn = _.debounce(callSaveRole, getAutosaveTimeout())
+
 export const debouncedSaveRole = createAsyncThunk<void, { role: Role; avustushakuId: number }>(
   'haku/debouncedSaveRole',
-  _.debounce(callSaveRole, getAutosaveTimeout())
+  debouncedSaveRoleFn
 )
+
+export const saveRoleImmediately = createAsyncThunk<
+  void,
+  { role: Role; avustushakuId: number },
+  { state: HakujenHallintaRootState }
+>('haku/saveRoleImmediately', async ({ role, avustushakuId }, thunkAPI) => {
+  debouncedSaveRoleFn.cancel()
+  thunkAPI.dispatch(saveRole({ role, avustushakuId }))
+})
 
 const debouncedSave: AsyncThunkPayloadCreator<
   void,

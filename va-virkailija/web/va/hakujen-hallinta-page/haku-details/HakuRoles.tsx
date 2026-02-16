@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import ClassNames from 'classnames'
-import { isEqual } from 'lodash'
 
 import NameFormatter from 'soresu-form/web/va/util/NameFormatter'
 import { HelpTexts } from 'soresu-form/web/va/types'
@@ -14,6 +13,7 @@ import {
   deleteRole,
   VirkailijaAvustushaku,
   debouncedSaveRole,
+  saveRoleImmediately,
 } from '../hakuReducer'
 
 type HakuRolesProps = {
@@ -225,10 +225,16 @@ const RoleRow = ({
   }, [role])
 
   useEffect(() => {
-    if (emailOk && !isEqual(role, editedRole)) {
+    if (emailOk && (role.name !== editedRole.name || role.email !== editedRole.email)) {
       dispatch(debouncedSaveRole({ role: editedRole, avustushakuId: avustushaku.id }))
     }
-  }, [editedRole])
+  }, [editedRole.name, editedRole.email])
+
+  const handleRoleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newRole = { ...editedRole, role: e.target.value as RoleType }
+    setEditedRole(newRole)
+    dispatch(saveRoleImmediately({ role: newRole, avustushakuId: avustushaku.id }))
+  }
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmailOk(event.target.checkValidity())
@@ -253,7 +259,7 @@ const RoleRow = ({
     >
       <td className="haku-roles-role-column">
         <select
-          onChange={(e) => setEditedRole({ ...editedRole, role: e.target.value as RoleType })}
+          onChange={handleRoleTypeChange}
           name="role"
           value={editedRole.role}
           disabled={disableChangingVastuuvalmistelija}
