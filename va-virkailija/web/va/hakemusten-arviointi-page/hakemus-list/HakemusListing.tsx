@@ -275,8 +275,24 @@ const useSorting = (): [SortState, (newSortKey?: SortKey) => void] => {
 export default function HakemusListing(props: Props) {
   const { selectedHakemus, hakemusList, splitView, isResolved, additionalInfoOpen } = props
   const [showUkotusModalForHakemusId, setShowUkotusModal] = useState<number | undefined>(undefined)
-  const toggleUkotusModal = (selectedHakemusId: number | undefined) =>
+  const [ukotusAnchorElement, setUkotusAnchorElement] = useState<HTMLElement | null>(null)
+  useEffect(() => {
+    if (ukotusAnchorElement) {
+      ukotusAnchorElement.style.setProperty('anchor-name', '--ukotus-anchor')
+    }
+    return () => {
+      if (ukotusAnchorElement) {
+        ukotusAnchorElement.style.removeProperty('anchor-name')
+      }
+    }
+  }, [ukotusAnchorElement])
+  const toggleUkotusModal = (
+    selectedHakemusId: number | undefined,
+    anchorElement?: HTMLElement | null
+  ) => {
     setShowUkotusModal(selectedHakemusId)
+    setUkotusAnchorElement(selectedHakemusId !== undefined ? (anchorElement ?? null) : null)
+  }
 
   const hakemusFilterState = useHakemustenArviointiSelector((state) => state.filter)
   const selectedHakemusId = selectedHakemus ? selectedHakemus.id : undefined
@@ -323,7 +339,12 @@ export default function HakemusListing(props: Props) {
   const navigate = useNavigate()
   const changeHakemus = (navigate: NavigateFunction) => (hakemusId: number) => {
     navigate(`hakemus/${hakemusId}/arviointi${window.location.search}`)
-    showUkotusModalForHakemusId !== undefined && toggleUkotusModal(hakemusId)
+    if (showUkotusModalForHakemusId !== undefined) {
+      const anchor = document.querySelector(
+        `[data-ukotus-presenter-id="${hakemusId}"]`
+      ) as HTMLElement | null
+      toggleUkotusModal(hakemusId, anchor)
+    }
   }
   const onHakemusClick = changeHakemus(navigate)
   return (
@@ -378,7 +399,7 @@ interface HakemusTableProps {
   totalBudgetGranted: number
   setSorting: (sortKey?: SortKey) => void
   sortingState: SortState
-  toggleUkotusModal: (hakemusId: number | undefined) => void
+  toggleUkotusModal: (hakemusId: number | undefined, anchorElement?: HTMLElement | null) => void
   onHakemusClick: (hakemusId: number) => void
 }
 
@@ -593,8 +614,11 @@ function HakemusTable({
           const modified = hakemusModifiedAfterSubmitted(hakemus)
           const draft = hakemus.status === 'draft'
           const scoring = hakemus.arvio.scoring
-          const onRoleButtonClick = () => {
-            toggleUkotusModal(hakemus.id)
+          const onRoleButtonClick = (
+            _hakemusId: number | undefined,
+            anchorElement?: HTMLElement | null
+          ) => {
+            toggleUkotusModal(hakemus.id, anchorElement)
           }
           return (
             <tr
@@ -723,7 +747,7 @@ interface ResolvedTableProps {
   totalBudgetGranted: number
   setSorting: (sortKey?: SortKey) => void
   sortingState: SortState
-  toggleUkotusModal: (hakemusId: number | undefined) => void
+  toggleUkotusModal: (hakemusId: number | undefined, anchorElement?: HTMLElement | null) => void
   onHakemusClick: (hakemusId: number) => void
 }
 
@@ -1033,8 +1057,11 @@ function ResolvedTable(props: ResolvedTableProps) {
       </thead>
       <tbody>
         {filteredList.map((hakemus) => {
-          const onRoleButtonClick = () => {
-            toggleUkotusModal(hakemus.id)
+          const onRoleButtonClick = (
+            _hakemusId: number | undefined,
+            anchorElement?: HTMLElement | null
+          ) => {
+            toggleUkotusModal(hakemus.id, anchorElement)
           }
           return (
             <tr
@@ -1157,7 +1184,7 @@ const getProject = (hakemus: Hakemus) => {
 interface PeopleRoleButton {
   hakemus: Hakemus
   selectedRole: 'evaluators' | 'presenter'
-  toggleUkotusModal: (hakemusId: number | undefined) => void
+  toggleUkotusModal: (hakemusId: number | undefined, anchorElement?: HTMLElement | null) => void
 }
 
 const PeopleRoleButton = ({ selectedRole, hakemus, toggleUkotusModal }: PeopleRoleButton) => {
@@ -1169,7 +1196,7 @@ const PeopleRoleButton = ({ selectedRole, hakemus, toggleUkotusModal }: PeopleRo
     e.stopPropagation()
     searchParams.set('splitView', 'true')
     setSearchParams(searchParams)
-    toggleUkotusModal(hakemus.id)
+    toggleUkotusModal(hakemus.id, e.currentTarget)
   }
   const presentersWanted = selectedRole === 'presenter'
   const filteredRoles =
@@ -1189,7 +1216,10 @@ const PeopleRoleButton = ({ selectedRole, hakemus, toggleUkotusModal }: PeopleRo
     ? 'Lisää valmistelija hakemukselle'
     : 'Lisää arvioija hakemukselle'
   return (
-    <div className={styles.roleContainer}>
+    <div
+      className={styles.roleContainer}
+      {...(presentersWanted ? { 'data-ukotus-presenter-id': String(hakemus.id) } : {})}
+    >
       {buttonInitials.length === 0 ? (
         <button
           aria-label={ariaLabel}

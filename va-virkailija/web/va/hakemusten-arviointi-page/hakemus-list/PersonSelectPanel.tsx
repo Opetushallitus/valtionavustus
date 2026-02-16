@@ -105,7 +105,7 @@ const RoleContainer = ({ roleName, roleField, roles, hakemus }: RoleContainerPro
 
 type PersonSelectButtonProps = {
   hakemus: Hakemus
-  toggleUkotusModal: (hakemusId: number | undefined) => void
+  toggleUkotusModal: (hakemusId: number | undefined, anchorElement?: HTMLElement | null) => void
 }
 
 export const PersonSelectPanel = ({ hakemus, toggleUkotusModal }: PersonSelectButtonProps) => {
