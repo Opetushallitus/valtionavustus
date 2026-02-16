@@ -10,12 +10,22 @@ import filterReducer from './filterReducer'
 import { apiSlice } from '../apiSlice'
 
 const arvioAutoSave = createListenerMiddleware<{ arviointi: ArviointiState }>()
+const pendingSaveTimers = new Map<number, ReturnType<typeof setTimeout>>()
 arvioAutoSave.startListening({
   actionCreator: startHakemusArvioAutoSave,
-  effect: async (action, listenerApi) => {
-    listenerApi.cancelActiveListeners()
-    await listenerApi.delay(3000)
-    await listenerApi.dispatch(saveHakemusArvio(action.payload))
+  effect: (action, listenerApi) => {
+    const { hakemusId } = action.payload
+    const existingTimer = pendingSaveTimers.get(hakemusId)
+    if (existingTimer !== undefined) {
+      clearTimeout(existingTimer)
+    }
+    pendingSaveTimers.set(
+      hakemusId,
+      setTimeout(() => {
+        pendingSaveTimers.delete(hakemusId)
+        listenerApi.dispatch(saveHakemusArvio({ hakemusId }))
+      }, 3000)
+    )
   },
 })
 

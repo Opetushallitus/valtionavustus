@@ -8,8 +8,8 @@ import { Role } from '../../types'
 import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '../arviointiStore'
 import {
   getLoadedAvustushakuData,
+  saveHakemusArvio,
   setArvioValue,
-  startHakemusArvioAutoSave,
 } from '../arviointiReducer'
 
 import * as styles from './Person.module.css'
@@ -68,7 +68,7 @@ const RoleButton = ({ role, roleField, hakemus }: RoleButtonProps) => {
             })
           )
         }
-        dispatch(startHakemusArvioAutoSave({ hakemusId: hakemus.id }))
+        dispatch(saveHakemusArvio({ hakemusId: hakemus.id }))
       }}
       className={classNames(styles.roleButton, { [styles.selected]: active })}
       aria-label={ariaLabel}
