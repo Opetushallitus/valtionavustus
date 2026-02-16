@@ -384,17 +384,6 @@
       <version>2.2.0</version>
     </dependency>
     <dependency>
-      <groupId>com.cemerick</groupId>
-      <artifactId>url</artifactId>
-      <version>0.1.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>clojurescript.test</artifactId>
-          <groupId>com.cemerick</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>nrepl</groupId>
       <artifactId>nrepl</artifactId>
       <version>1.5.2</version>

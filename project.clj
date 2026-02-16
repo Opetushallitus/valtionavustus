@@ -145,8 +145,6 @@
                  ;; job scheduling
                  [clojurewerkz/quartzite "2.2.0"]
 
-                 ;; ????
-                 [com.cemerick/url "0.1.1" :exclusions [com.cemerick/clojurescript.test]] ; this is basically useless, we only use one function that would be trivial to implement
                  ]
 
   :profiles {:dev {:dependencies [[nrepl "1.5.2"]

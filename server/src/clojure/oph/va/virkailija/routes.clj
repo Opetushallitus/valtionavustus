@@ -1,6 +1,5 @@
 (ns oph.va.virkailija.routes
-  (:require [cemerick.url :refer [map->query]]
-            [clojure.tools.logging :as log]
+  (:require [clojure.tools.logging :as log]
             [compojure.api.exception :as compojure-ex]
             [compojure.middleware :as middleware]
             [compojure.api.sweet :as compojure-api]
@@ -565,7 +564,7 @@
   (let [payload-params (apply dissoc original-query-params keys-to-remove)
         complete-params (merge payload-params params-to-add)]
     (if (not (empty? complete-params))
-      (->> complete-params map->query (str "?")))))
+      (->> complete-params codec/form-encode (str "?")))))
 
 (defn- url-after-login [request]
   (let [original-url (-> request :session :original-url)]
