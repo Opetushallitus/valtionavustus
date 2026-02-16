@@ -29,6 +29,21 @@ declare global {
   }
 }
 
+const TEXT_INPUT_FIELD_TYPES = new Set([
+  'textField',
+  'textArea',
+  'nameField',
+  'emailField',
+  'moneyField',
+  'fixedMultiplierMoneyField',
+  'fixedMultiplierField',
+  'integerField',
+  'decimalField',
+  'finnishBusinessIdField',
+  'iban',
+  'bic',
+])
+
 const DEFAULT_AUTOSAVE_TIMEOUT = 3000
 const getAutosaveTimeout = () => window.__VA_AUTOSAVE_TIMEOUT__ ?? DEFAULT_AUTOSAVE_TIMEOUT
 
@@ -54,6 +69,7 @@ export default class FormStateTransitions {
     }, getAutosaveTimeout())
     this._bind(
       'startAutoSave',
+      'saveImmediately',
       'onInitialState',
       'onUpdateField',
       'onFieldValidation',
@@ -90,6 +106,16 @@ export default class FormStateTransitions {
     return state
   }
 
+  saveImmediately<T extends BaseStateLoopState<T>>(state: T) {
+    const formOperations = state.extensionApi.formOperations
+    if (formOperations.isSaveDraftAllowed(state)) {
+      state.saveStatus.saveInProgress = true
+      this.autoSave.cancel()
+      this.dispatcher.push(this.events.save, {})
+    }
+    return state
+  }
+
   onInitialState<T extends BaseStateLoopState<T>>(_state: T | {}, realInitialState: T) {
     const onInitialStateLoaded = realInitialState.extensionApi.onInitialStateLoaded
     FormBranchGrower.addFormFieldsForGrowingFieldsInInitialRender(
@@ -122,7 +148,11 @@ export default class FormStateTransitions {
     }
     state.saveStatus.changes = true
     LocalStorage.save(formOperations.createUiStateIdentifier, state)
-    this.startAutoSave(state)
+    if (TEXT_INPUT_FIELD_TYPES.has(fieldUpdate.field.fieldType)) {
+      this.startAutoSave(state)
+    } else {
+      this.saveImmediately(state)
+    }
     return state
   }
 
