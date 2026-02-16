@@ -122,7 +122,7 @@ const Raportointivelvoite = ({
     []
   )
   const saveRaportointivelvoiteImmediately = useCallback(
-    (body: Raportointivelvoite) => {
+    debounce((body: Raportointivelvoite) => {
       debouncedPutRaportointivelvoite.cancel()
       debouncedPostRaportointivelvoite.cancel()
       startAutoSave()
@@ -135,7 +135,7 @@ const Raportointivelvoite = ({
       } else {
         putRaportointivelvoite(payload).unwrap().then(saveSuccessful()).catch(saveSuccessful(false))
       }
-    },
+    }, 100),
     [avustushakuId]
   )
   useEffect(() => {

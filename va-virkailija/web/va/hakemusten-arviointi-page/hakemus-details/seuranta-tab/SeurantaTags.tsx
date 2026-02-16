@@ -6,7 +6,11 @@ import {
   useHakemustenArviointiDispatch,
   useHakemustenArviointiSelector,
 } from '../../arviointiStore'
-import { getLoadedAvustushakuData, saveHakemusArvio, setArvioValue } from '../../arviointiReducer'
+import {
+  getLoadedAvustushakuData,
+  saveHakemusArvioSoon,
+  setArvioValue,
+} from '../../arviointiReducer'
 
 interface Props {
   hakemus: Hakemus
@@ -34,7 +38,7 @@ const SeurantaTags = ({ hakemus }: Props) => {
         },
       })
     )
-    dispatch(saveHakemusArvio({ hakemusId: hakemus.id }))
+    dispatch(saveHakemusArvioSoon({ hakemusId: hakemus.id }))
   }
 
   const predefinedTags = ['budjettimuutos', 'sisällön muutos', 'lisäaika']

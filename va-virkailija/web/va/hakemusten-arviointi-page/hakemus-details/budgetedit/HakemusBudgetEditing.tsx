@@ -19,7 +19,7 @@ import {
 import { Answer, Field, Hakemus } from 'soresu-form/web/va/types'
 import {
   getLoadedAvustushakuData,
-  saveHakemusArvio,
+  saveHakemusArvioSoon,
   setArvioFieldValue,
   setArvioValue,
   startHakemusArvioAutoSave,
@@ -84,7 +84,7 @@ const HakemusBudgetEditing = ({ allowEditing, hakemus }: Props) => {
         value,
       })
     )
-    dispatch(saveHakemusArvio({ hakemusId }))
+    dispatch(saveHakemusArvioSoon({ hakemusId }))
   }
 
   const onCostsGranted = (hakemusId: number, value: number) => {

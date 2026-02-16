@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { HelpTooltip } from '../../../common-components/HelpTooltip'
 import { Hakemus } from 'soresu-form/web/va/types'
 import { useHakemustenArviointiDispatch } from '../../arviointiStore'
-import { saveHakemusArvio, setArvioValue } from '../../arviointiReducer'
+import { saveHakemusArvioSoon, setArvioValue } from '../../arviointiReducer'
 
 interface Props {
   hakemus: Hakemus
@@ -25,7 +25,7 @@ const ShouldPay = ({ hakemus, allowEditing }: Props) => {
         value: event.target.value === 'true',
       })
     )
-    dispatch(saveHakemusArvio({ hakemusId: hakemus.id }))
+    dispatch(saveHakemusArvioSoon({ hakemusId: hakemus.id }))
   }
   const options = groupOptions.flatMap((spec) => [
     <input

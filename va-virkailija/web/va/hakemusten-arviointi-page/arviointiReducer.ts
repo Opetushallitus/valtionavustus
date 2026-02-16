@@ -263,6 +263,10 @@ export const startHakemusArvioAutoSave = createAction<{ hakemusId: number }>(
   'arviointi/startHakemusArvioAutoSave'
 )
 
+export const saveHakemusArvioSoon = createAction<{ hakemusId: number }>(
+  'arviointi/saveHakemusArvioSoon'
+)
+
 export const updateHakemusStatus = createAsyncThunk<
   ChangeRequest[],
   { hakemusId: number; status: HakemusStatus; comment: string },
@@ -577,7 +581,11 @@ const arviointiSlice = createSlice({
         }
       })
       .addMatcher(
-        isAnyOf(isPending(...saveStatusAwareActions), startHakemusArvioAutoSave),
+        isAnyOf(
+          isPending(...saveStatusAwareActions),
+          startHakemusArvioAutoSave,
+          saveHakemusArvioSoon
+        ),
         (state) => {
           state.saveStatus = {
             saveInProgress: true,

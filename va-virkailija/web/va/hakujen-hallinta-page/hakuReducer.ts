@@ -467,13 +467,21 @@ export const debouncedSaveRole = createAsyncThunk<void, { role: Role; avustushak
   debouncedSaveRoleFn
 )
 
+let pendingImmediateRoleSave: ReturnType<typeof setTimeout> | null = null
+
 export const saveRoleImmediately = createAsyncThunk<
   void,
   { role: Role; avustushakuId: number },
   { state: HakujenHallintaRootState }
->('haku/saveRoleImmediately', async ({ role, avustushakuId }, thunkAPI) => {
+>('haku/saveRoleImmediately', ({ role, avustushakuId }, thunkAPI) => {
   debouncedSaveRoleFn.cancel()
-  thunkAPI.dispatch(saveRole({ role, avustushakuId }))
+  if (pendingImmediateRoleSave !== null) {
+    clearTimeout(pendingImmediateRoleSave)
+  }
+  pendingImmediateRoleSave = setTimeout(() => {
+    pendingImmediateRoleSave = null
+    thunkAPI.dispatch(saveRole({ role, avustushakuId }))
+  }, IMMEDIATE_SAVE_TIMEOUT)
 })
 
 const debouncedSave: AsyncThunkPayloadCreator<
@@ -500,14 +508,23 @@ export const startAutoSaveForAvustushaku = createAsyncThunk<
   thunkAPI.dispatch(debouncedSaveHaku(id))
 })
 
+const IMMEDIATE_SAVE_TIMEOUT = 100
+let pendingImmediateHakuSave: ReturnType<typeof setTimeout> | null = null
+
 export const saveHakuImmediately = createAsyncThunk<
   void,
   number,
   { state: HakujenHallintaRootState }
->('haku/saveHakuImmediately', async (id, thunkAPI) => {
+>('haku/saveHakuImmediately', (id, thunkAPI) => {
   debouncedSaveFn.cancel()
-  const haku = selectAvustushaku(thunkAPI.getState().haku, id)
-  thunkAPI.dispatch(saveHaku(haku))
+  if (pendingImmediateHakuSave !== null) {
+    clearTimeout(pendingImmediateHakuSave)
+  }
+  pendingImmediateHakuSave = setTimeout(() => {
+    pendingImmediateHakuSave = null
+    const haku = selectAvustushaku(thunkAPI.getState().haku, id)
+    thunkAPI.dispatch(saveHaku(haku))
+  }, IMMEDIATE_SAVE_TIMEOUT)
 })
 
 const selvitysFormMap = {

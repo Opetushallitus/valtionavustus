@@ -57,16 +57,22 @@ const serverOperations = {
 
 type ServerOperation = (typeof serverOperations)[keyof typeof serverOperations]
 
+const IMMEDIATE_SAVE_TIMEOUT = 100
+
 export default class FormStateTransitions {
   dispatcher: Dispatcher
   events: FormEvents
   autoSave: DebouncedFunc<() => void>
+  autoSaveImmediate: DebouncedFunc<() => void>
   constructor(dispatcher: Dispatcher, events: FormEvents) {
     this.dispatcher = dispatcher
     this.events = events
     this.autoSave = _.debounce(function () {
       dispatcher.push(events.save, {})
     }, getAutosaveTimeout())
+    this.autoSaveImmediate = _.debounce(function () {
+      dispatcher.push(events.save, {})
+    }, IMMEDIATE_SAVE_TIMEOUT)
     this._bind(
       'startAutoSave',
       'saveImmediately',
@@ -111,7 +117,7 @@ export default class FormStateTransitions {
     if (formOperations.isSaveDraftAllowed(state)) {
       state.saveStatus.saveInProgress = true
       this.autoSave.cancel()
-      this.dispatcher.push(this.events.save, {})
+      this.autoSaveImmediate()
     }
     return state
   }

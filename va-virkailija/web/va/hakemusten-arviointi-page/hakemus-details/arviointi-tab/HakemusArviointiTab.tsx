@@ -31,7 +31,7 @@ import {
   addPayment,
   hasMultibatchPayments,
   removePayment,
-  saveHakemusArvio,
+  saveHakemusArvioSoon,
   selectProject as selectProjectThunk,
   setArvioValue,
   startHakemusArvioAutoSave,
@@ -276,7 +276,7 @@ const SetArviointiStatus = ({ hakemus, allowEditing }: SetArviointiStatusProps) 
               value: statusValues[i],
             })
           )
-          dispatch(saveHakemusArvio({ hakemusId: hakemus.id }))
+          dispatch(saveHakemusArvioSoon({ hakemusId: hakemus.id }))
         }
       : undefined
     statuses.push(
@@ -471,7 +471,7 @@ const TalousarviotiliSelect = ({ isDisabled, hakemus }: TalousarviotiliSelectPro
               value: option.value.talousarviotili,
             })
           )
-          dispatch(saveHakemusArvio({ hakemusId: hakemus.id }))
+          dispatch(saveHakemusArvioSoon({ hakemusId: hakemus.id }))
         }}
         isDisabled={isDisabled}
         placeholder="Valitse talousarviotili"

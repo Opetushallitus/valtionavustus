@@ -4,6 +4,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 import arviointiReducer, {
   ArviointiState,
   saveHakemusArvio,
+  saveHakemusArvioSoon,
   startHakemusArvioAutoSave,
 } from './arviointiReducer'
 import filterReducer from './filterReducer'
@@ -25,6 +26,24 @@ arvioAutoSave.startListening({
         pendingSaveTimers.delete(hakemusId)
         listenerApi.dispatch(saveHakemusArvio({ hakemusId }))
       }, 3000)
+    )
+  },
+})
+const IMMEDIATE_SAVE_TIMEOUT = 100
+arvioAutoSave.startListening({
+  actionCreator: saveHakemusArvioSoon,
+  effect: (action, listenerApi) => {
+    const { hakemusId } = action.payload
+    const existingTimer = pendingSaveTimers.get(hakemusId)
+    if (existingTimer !== undefined) {
+      clearTimeout(existingTimer)
+    }
+    pendingSaveTimers.set(
+      hakemusId,
+      setTimeout(() => {
+        pendingSaveTimers.delete(hakemusId)
+        listenerApi.dispatch(saveHakemusArvio({ hakemusId }))
+      }, IMMEDIATE_SAVE_TIMEOUT)
     )
   },
 })

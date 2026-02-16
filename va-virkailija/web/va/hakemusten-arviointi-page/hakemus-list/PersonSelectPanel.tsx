@@ -6,7 +6,7 @@ import { Hakemus } from 'soresu-form/web/va/types'
 import { Role } from '../../types'
 
 import { useHakemustenArviointiDispatch, useHakemustenArviointiSelector } from '../arviointiStore'
-import { getLoadedAvustushakuData, saveHakemusArvio, setArvioValue } from '../arviointiReducer'
+import { getLoadedAvustushakuData, saveHakemusArvioSoon, setArvioValue } from '../arviointiReducer'
 
 import * as styles from './Person.module.css'
 
@@ -64,7 +64,7 @@ const RoleButton = ({ role, roleField, hakemus }: RoleButtonProps) => {
             })
           )
         }
-        dispatch(saveHakemusArvio({ hakemusId: hakemus.id }))
+        dispatch(saveHakemusArvioSoon({ hakemusId: hakemus.id }))
       }}
       className={classNames(styles.roleButton, { [styles.selected]: active })}
       aria-label={ariaLabel}
