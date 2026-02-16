@@ -110,6 +110,26 @@ const HakuEditor = () => {
     onChangeListener(e.target, e.target.value.replace(/\s/g, ' '))
   }
 
+  const onChangeImmediate = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    if (e.target.id.startsWith('set-status-') && e.target.value === 'published') {
+      if (
+        avustushaku.muutoshakukelpoisuus?.['erroneous-fields'].some((field) =>
+          contactFieldIds.includes(field.id)
+        )
+      ) {
+        if (validationResult) {
+          setHighlightValidationErrorByScaling(true)
+          setTimeout(() => setHighlightValidationErrorByScaling(false), 400)
+        }
+        setValidationResult(avustushaku.muutoshakukelpoisuus)
+        return
+      }
+    }
+    dispatch(updateField({ avustushaku, field: e.target, newValue: e.target.value, immediate: true }))
+  }
+
   const mainHelp = {
     __html: helpTexts['hakujen_hallinta__haun_tiedot___ohje'],
   }
@@ -117,13 +137,14 @@ const HakuEditor = () => {
   const updateCodeValue =
     (id: CodeType, avustushaku: VirkailijaAvustushaku) => (option: VaCodeValue | null) => {
       if (option == null) {
-        dispatch(updateField({ avustushaku, field: { id }, newValue: null }))
+        dispatch(updateField({ avustushaku, field: { id }, newValue: null, immediate: true }))
       } else {
         dispatch(
           updateField({
             avustushaku,
             field: { id },
             newValue: option.id,
+            immediate: true,
           })
         )
       }
@@ -259,7 +280,7 @@ const HakuEditor = () => {
             hakuIsValid={checkIfAvustushakuIsValid(avustushaku)}
             currentStatus={avustushaku.status}
             userHasEditPrivilege={userHasEditPrivilege}
-            onChange={onChange}
+            onChange={onChangeImmediate}
             helpTexts={helpTexts}
           />
           <div className="haku-duration-and-self-financing">
@@ -291,13 +312,13 @@ const HakuEditor = () => {
           <HakuType
             hakuType={avustushaku['haku-type']}
             disabled={!allowAllHakuEdits}
-            onChange={onChange}
+            onChange={onChangeImmediate}
             helpTexts={helpTexts}
           />
           <AcademySize
             value={avustushaku.is_academysize}
             disabled={!allowAllHakuEdits}
-            onChange={onChange}
+            onChange={onChangeImmediate}
             helpTexts={helpTexts}
           />
         </div>
@@ -311,7 +332,7 @@ const HakuEditor = () => {
                   type="radio"
                   name="allow_visibility_in_external_system"
                   value="true"
-                  onChange={onChange}
+                  onChange={onChangeImmediate}
                   checked={avustushaku.allow_visibility_in_external_system}
                 />
                 <label htmlFor="allow_visibility_in_external_system_true">Kyllä</label>
@@ -322,7 +343,7 @@ const HakuEditor = () => {
                   type="radio"
                   name="allow_visibility_in_external_system"
                   value="false"
-                  onChange={onChange}
+                  onChange={onChangeImmediate}
                   checked={!avustushaku.allow_visibility_in_external_system}
                 />
                 <label htmlFor="allow_visibility_in_external_system_false">Ei</label>
@@ -338,7 +359,7 @@ const HakuEditor = () => {
                   type="radio"
                   name="muutoshakukelpoinen"
                   value="true"
-                  onChange={onChange}
+                  onChange={onChangeImmediate}
                   checked={avustushaku.muutoshakukelpoinen}
                   disabled={!allowAllHakuEdits}
                 />
@@ -350,7 +371,7 @@ const HakuEditor = () => {
                   type="radio"
                   name="muutoshakukelpoinen"
                   value="false"
-                  onChange={onChange}
+                  onChange={onChangeImmediate}
                   checked={!avustushaku.muutoshakukelpoinen}
                   disabled={!allowAllHakuEdits}
                 />
@@ -380,7 +401,7 @@ const HakuEditor = () => {
               <Maksuerat
                 value={avustushaku.content.multiplemaksuera}
                 disabled={!allowAllHakuEdits}
-                onChange={onChange}
+                onChange={onChangeImmediate}
               />
             </div>
             <div className="haku-edit-field-container">
@@ -427,7 +448,7 @@ const HakuEditor = () => {
                     value="no-limit"
                     checked={avustushaku.content['payment-size-limit'] === 'no-limit'}
                     className="haku-edit-radio-button"
-                    onChange={onChange}
+                    onChange={onChangeImmediate}
                     id="payment-size-limit-1"
                   />
                   Kaikille avustuksen saajille maksetaan useammassa erässä
@@ -439,7 +460,7 @@ const HakuEditor = () => {
                     value="fixed-limit"
                     checked={avustushaku.content['payment-size-limit'] === 'fixed-limit'}
                     className="haku-edit-radio-button"
-                    onChange={onChange}
+                    onChange={onChangeImmediate}
                     id="payment-size-limit-2"
                   />
                   Maksetaan useammassa erässä, kun OPH:n avustus hankkeelle (ts. maksettava
@@ -483,7 +504,7 @@ const HakuEditor = () => {
                 </h3>
                 <select
                   id="transaction-account"
-                  onChange={onChange}
+                  onChange={onChangeImmediate}
                   name="transaction-account"
                   value={avustushaku.content['transaction-account'] || ''}
                 >
@@ -506,7 +527,7 @@ const HakuEditor = () => {
                 </h3>
                 <select
                   id="document-type"
-                  onChange={onChange}
+                  onChange={onChangeImmediate}
                   name="document-type"
                   value={avustushaku.content['document-type'] || ''}
                 >

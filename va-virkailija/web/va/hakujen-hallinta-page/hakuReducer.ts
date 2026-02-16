@@ -474,9 +474,11 @@ const debouncedSave: AsyncThunkPayloadCreator<
   thunkAPI.dispatch(saveHaku(haku))
 }
 
+const debouncedSaveFn = _.debounce(debouncedSave, getAutosaveTimeout())
+
 const debouncedSaveHaku = createAsyncThunk<void, number, { state: HakujenHallintaRootState }>(
   'haku/debouncedSaveHaku',
-  _.debounce(debouncedSave, getAutosaveTimeout())
+  debouncedSaveFn
 )
 
 export const startAutoSaveForAvustushaku = createAsyncThunk<
@@ -485,6 +487,16 @@ export const startAutoSaveForAvustushaku = createAsyncThunk<
   { state: HakujenHallintaRootState }
 >('haku/startAutoSave', async (id, thunkAPI) => {
   thunkAPI.dispatch(debouncedSaveHaku(id))
+})
+
+export const saveHakuImmediately = createAsyncThunk<
+  void,
+  number,
+  { state: HakujenHallintaRootState }
+>('haku/saveHakuImmediately', async (id, thunkAPI) => {
+  debouncedSaveFn.cancel()
+  const haku = selectAvustushaku(thunkAPI.getState().haku, id)
+  thunkAPI.dispatch(saveHaku(haku))
 })
 
 const selvitysFormMap = {
@@ -581,6 +593,7 @@ export const updateField = createAsyncThunk<
     avustushaku: VirkailijaAvustushaku
     field: { id: string; name?: string; dataset?: any }
     newValue: any // TODO: should really be string | number | null
+    immediate?: boolean
   },
   { state: HakujenHallintaRootState }
 >('haku/updateField', async (update, thunkAPI) => {
@@ -664,7 +677,11 @@ export const updateField = createAsyncThunk<
     console.error('Unsupported update to field ', update.field.id, ':', update)
   }
   thunkAPI.dispatch(updateAvustushaku(avustushaku))
-  thunkAPI.dispatch(startAutoSaveForAvustushaku(avustushaku.id))
+  if (update.immediate) {
+    thunkAPI.dispatch(saveHakuImmediately(avustushaku.id))
+  } else {
+    thunkAPI.dispatch(startAutoSaveForAvustushaku(avustushaku.id))
+  }
 })
 
 const initialState: State = {
@@ -879,6 +896,7 @@ const hakuSlice = createSlice({
         state.saveStatus.saveInProgress = false
       })
       .addCase(startAutoSaveForAvustushaku.pending, startSaving('saveInProgress'))
+      .addCase(saveHakuImmediately.pending, startSaving('saveInProgress'))
       .addCase(createHakuRole.pending, startSaving('savingRoles'))
       .addCase(createHakuRole.fulfilled, (state, action) => {
         state.saveStatus = saveSuccess(state, 'savingRoles')
