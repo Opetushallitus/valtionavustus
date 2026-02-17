@@ -20,10 +20,8 @@ test('Vahintaan yksi projekti pitaa valita', async ({
   const haunTiedotPage = await alustaAvustushaunTaytto(page, hakuProps)
   await test.step('saving fails with something is wrong as no project code selected', async () => {
     await page.fill('#haku-name-fi', hakuProps.avustushakuName + '-lisays')
-    await Promise.all([
-      page.locator('text=Kaikki tiedot tallennettu').waitFor(),
-      page.locator('text=Jossain kentässä puutteita. Tarkasta arvot.').waitFor(),
-    ])
+    await page.locator('text=Tallennetaan').waitFor()
+    await page.locator('text=Jossain kentässä puutteita. Tarkasta arvot.').waitFor()
   })
   await test.step('saving ok after selecting project code', async () => {
     const firstProjectToSelect = hakuProps.vaCodes.project[1]

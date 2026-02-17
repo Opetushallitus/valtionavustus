@@ -1,6 +1,6 @@
 import { expect, Page } from '@playwright/test'
 import { createReactSelectLocators } from '../../../utils/react-select'
-import { CommonHakujenHallintaPage, saveStatusTestId } from './CommonHakujenHallintaPage'
+import { CommonHakujenHallintaPage } from './CommonHakujenHallintaPage'
 import moment from 'moment/moment'
 import { NoProjectCodeProvided, VaCodeValues } from '../../../utils/types'
 
@@ -158,7 +158,6 @@ export const HaunTiedotPage = (page: Page) => {
   }
 
   async function addValmistelija(name: string, waitForSave = true) {
-    await common.waitForSave()
     await expect(locators.hakuRole.searchInput).toBeEnabled({ timeout: 10000 })
     const searchResults = page.locator('#va-user-search-results')
     await locators.hakuRole.searchInput.click()
@@ -181,7 +180,6 @@ export const HaunTiedotPage = (page: Page) => {
   }
 
   async function addArvioija(name: string, waitForSave = true) {
-    await common.waitForSave()
     await expect(locators.hakuRole.searchInput).toBeEnabled({ timeout: 10000 })
     const searchResults = page.locator('#va-user-search-results')
     await locators.hakuRole.searchInput.click()
@@ -195,7 +193,6 @@ export const HaunTiedotPage = (page: Page) => {
   }
 
   async function addVastuuvalmistelija(name: string) {
-    await common.waitForSave()
     await expect(locators.hakuRole.searchInput).toBeEnabled({ timeout: 10000 })
     const searchResults = page.locator('#va-user-search-results')
     await locators.hakuRole.searchInput.click()
