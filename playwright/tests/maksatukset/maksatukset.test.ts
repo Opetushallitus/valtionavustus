@@ -277,7 +277,10 @@ twoAcceptedHakemusTest(
       await maksatuksetPage.goto(avustushakuName)
       const firstRowHanke = maksatuksetPage.maksatuksetTableRow(0).hanke
       await expect(firstRowHanke).toBeHidden()
-      await maksatuksetPage.luoMaksatukset.click()
+      await Promise.all([
+        page.waitForResponse(new RegExp('/api/v2/grants/\\d+/payments/')),
+        maksatuksetPage.luoMaksatukset.click(),
+      ])
       await expect(firstRowHanke).toHaveText(projectName)
       await expect(maksatuksetPage.maksatuksetTableRow(1).hanke).toBeHidden()
     })

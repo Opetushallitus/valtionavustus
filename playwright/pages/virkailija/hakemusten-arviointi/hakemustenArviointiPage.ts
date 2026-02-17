@@ -193,11 +193,13 @@ export class HakemustenArviointiPage {
   }
 
   async selectArvioijaForHakemus(hakemusID: number, valmistelijaName: string) {
+    await expect(this.saveStatusSaving.or(this.saveStatusLoading)).not.toBeVisible()
     await this.openUkotusModal(hakemusID)
     await this.page.click(`[aria-label="Lisää ${valmistelijaName} arvioijaksi"]`)
     await expect(
       this.page.locator(`[aria-label="Poista ${valmistelijaName} arvioijan roolista"]`)
     ).toBeVisible()
+    await this.waitForSave()
     await this.closeUkotusModal()
   }
 

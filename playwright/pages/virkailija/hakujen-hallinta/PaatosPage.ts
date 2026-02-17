@@ -71,9 +71,7 @@ export function PaatosPage(page: Page) {
     await locators.sendPaatokset(amount).click()
     await Promise.all([
       page.waitForResponse(new RegExp('/api/paatos/sendall/\\d+$')),
-      page.waitForResponse(
-        new RegExp('/api/avustushaku/\\d+/tapahtumaloki/paatoksen_lahetys$')
-      ),
+      page.waitForResponse(new RegExp('/api/avustushaku/\\d+/tapahtumaloki/paatoksen_lahetys$')),
       locators.confirmSending.click(),
     ])
     await expect(page.locator('.tapahtumaloki .entry')).toHaveCount(1)

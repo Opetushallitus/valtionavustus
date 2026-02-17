@@ -40,7 +40,9 @@ async function downloadToBlob(download: Download): Promise<Blob> {
 }
 
 async function sendTasmaytysraporttiEmail(page: Page) {
-  return await page.request.get(`${VIRKAILIJA_URL}/api/test/send-excel-tasmaytysraportti`)
+  return await page.request.get(`${VIRKAILIJA_URL}/api/test/send-excel-tasmaytysraportti`, {
+    failOnStatusCode: true,
+  })
 }
 
 test('tasmaytysraportti is sent when maksatuset are sent', async ({

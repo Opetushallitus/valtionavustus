@@ -198,7 +198,11 @@ test('can send taydennyspyynto for loppuselvitys', async ({
     await page.getByTestId('open-email-0').click()
     await expect(page.getByText(`Vastaanottajat${email1}, ${email2}, ${email3}`)).toBeVisible()
     await expect(page.getByText(`Aihe${subject}`)).toBeVisible()
-    const emailsAfterSending = await getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails(hakemusID)
+    const emailsAfterSending = await waitUntilMinEmails(
+      getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails,
+      1,
+      hakemusID
+    )
     expect(emailsAfterSending).toHaveLength(1)
   })
   await test.step('waiting T-icon as täydennys has been sent', async () => {
@@ -231,7 +235,7 @@ test('can send taydennyspyynto for loppuselvitys', async ({
     await expect(yhteenvetoLocator).toHaveText(asiatarkastusTaydennysYhteenveto)
   })
   await test.step('virkailija receives täydennys received email after hakija submission', async () => {
-    const emails = await getLoppuselvitysTaydennysReceivedEmails(hakemusID)
+    const emails = await waitUntilMinEmails(getLoppuselvitysTaydennysReceivedEmails, 1, hakemusID)
     expect(emails).toHaveLength(1)
     expect(emails[0].subject).toBe(
       'Automaattinen viesti: avustushakemuksen loppuselvitystä on täydennetty'
@@ -338,7 +342,7 @@ Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avu
     await expect(yhteenvetoLocator).toHaveText(taloustarkastusTaydennysYhteenveto)
   })
   await test.step('virkailija receives täydennys received email again after hakija submission', async () => {
-    const emails = await getLoppuselvitysTaydennysReceivedEmails(hakemusID)
+    const emails = await waitUntilMinEmails(getLoppuselvitysTaydennysReceivedEmails, 2, hakemusID)
     expect(emails).toHaveLength(2)
   })
   await test.step('shows diff of new answers for virkailija', async () => {
@@ -363,8 +367,14 @@ Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avu
     await expect(loppuselvitysPage.locators.asiatarkastus.taydennyspyynto).toBeDisabled()
     await expect(loppuselvitysPage.locators.taloustarkastus.accept).toBeDisabled()
     await expect(loppuselvitysPage.locators.taloustarkastus.taydennyspyynto).toBeDisabled()
-    const afterSelvitysEmails = await getSelvitysEmailsWithLoppuselvitysSubject(avustushakuID)
-    expect(afterSelvitysEmails).toHaveLength(1)
+    let afterSelvitysEmails: Awaited<ReturnType<typeof getSelvitysEmailsWithLoppuselvitysSubject>> =
+      []
+    await expect
+      .poll(async () => {
+        afterSelvitysEmails = await getSelvitysEmailsWithLoppuselvitysSubject(avustushakuID)
+        return afterSelvitysEmails.length
+      })
+      .toEqual(1)
     expect(afterSelvitysEmails[0].subject).toBe(
       `Loppuselvitys 1/${hakuProps.registerNumber} käsitelty`
     )

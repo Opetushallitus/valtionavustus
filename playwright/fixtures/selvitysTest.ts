@@ -53,6 +53,9 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
         page.waitForResponse(
           `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitys/valiselvitys/send-notification`
         ),
+        page.waitForResponse(
+          new RegExp(`/api/avustushaku/${avustushakuID}/tapahtumaloki/valiselvitys-notification$`)
+        ),
         valiselvitysPage.sendValiselvitys(),
       ])
     })
@@ -107,6 +110,9 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     await Promise.all([
       page.waitForResponse(
         `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitys/loppuselvitys/send-notification`
+      ),
+      page.waitForResponse(
+        new RegExp(`/api/avustushaku/${avustushakuID}/tapahtumaloki/loppuselvitys-notification$`)
       ),
       page.getByTestId('send-loppuselvitys').click(),
     ])
