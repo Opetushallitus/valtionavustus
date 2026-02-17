@@ -237,8 +237,11 @@ export class HakemustenArviointiPage {
   }
 
   async selectHakemusFromList(rowText: string) {
+    const hakemusDataLoaded = this.page.waitForResponse(
+      (resp) => resp.url().endsWith('/project') && resp.ok()
+    )
     await this.page.click(`text=${rowText}`)
-    await expect(this.saveStatusLoading).not.toBeVisible()
+    await hakemusDataLoaded
     return this.arviointiTabLocators()
   }
 
