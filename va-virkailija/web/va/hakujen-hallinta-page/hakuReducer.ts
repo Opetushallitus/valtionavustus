@@ -938,6 +938,7 @@ const hakuSlice = createSlice({
         state.saveStatus.saveInProgress = false
       })
       .addCase(debouncedSaveRole.pending, startSaving('savingRoles'))
+      .addCase(saveRoleImmediately.pending, startSaving('savingRoles'))
       .addCase(saveRole.fulfilled, (state, action) => {
         state.saveStatus = saveSuccess(state, 'savingRoles')
         const payload = action.payload

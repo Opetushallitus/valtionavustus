@@ -190,6 +190,7 @@ export const HaunTiedotPage = (page: Page) => {
     await locators.hakuRole.searchInput.fill(name)
     const searchResults = page.locator('#va-user-search-results')
     await searchResults.locator('a').getByText(name).click()
+    await common.waitForSave()
     await setUserRole(name, 'vastuuvalmistelija')
     await common.waitForSave()
   }
