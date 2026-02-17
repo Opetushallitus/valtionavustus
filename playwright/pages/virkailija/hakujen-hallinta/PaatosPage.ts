@@ -69,11 +69,16 @@ export function PaatosPage(page: Page) {
 
   async function sendPaatos(amount = 1) {
     await locators.sendPaatokset(amount).click()
-    await Promise.all([
-      page.waitForResponse(new RegExp('/api/paatos/sendall/\\d+$')),
-      page.waitForResponse(new RegExp('/api/avustushaku/\\d+/tapahtumaloki/paatoksen_lahetys$')),
-      locators.confirmSending.click(),
-    ])
+    const sendallResponse = page.waitForResponse(new RegExp('/api/paatos/sendall/\\d+$'), {
+      timeout: 30_000,
+    })
+    const tapahtumalokiResponse = page.waitForResponse(
+      new RegExp('/api/avustushaku/\\d+/tapahtumaloki/paatoksen_lahetys$'),
+      { timeout: 30_000 }
+    )
+    await locators.confirmSending.click()
+    await sendallResponse
+    await tapahtumalokiResponse
     await expect(page.locator('.tapahtumaloki .entry')).toHaveCount(1)
   }
 
