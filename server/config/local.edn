@@ -20,9 +20,10 @@
                                                                          :password         "pass"}}
 
  :api                                         {:restricted-routes? false}
- :db                                          {:database-name "va-dev"
-                                               :server-name   "va-postgres"
-                                               :port-number   5432}
+ :db                                          {:database-name      "va-dev"
+                                               :server-name        "va-postgres"
+                                               :port-number        5432
+                                               :maximum-pool-size  40}
  :nrepl-enabled?                              true
  :email                                       {:enabled? true
                                                :host     "fakesmtp"

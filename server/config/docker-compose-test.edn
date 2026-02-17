@@ -21,8 +21,9 @@
                                                                          :password         "pass"}
                                                }
  :api                                         {:restricted-routes? false}
- :db                                          {:database-name "va-dev"
-                                               :server-name   "va-postgres"}
+ :db                                          {:database-name     "va-dev"
+                                               :server-name       "va-postgres"
+                                               :maximum-pool-size 40}
  :nrepl-enabled?                              true
  :email                                       {:enabled? true
                                                :host     "fakesmtp"

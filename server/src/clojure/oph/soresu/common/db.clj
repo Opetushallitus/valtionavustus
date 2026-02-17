@@ -29,7 +29,7 @@
           :idle-timeout 600000
           :max-lifetime 1800000
           :minimum-idle 10
-          :maximum-pool-size 10
+          :maximum-pool-size 20
           :pool-name "db-pool"
           :adapter "postgresql"
           :currentSchema "virkailija,hakija"}

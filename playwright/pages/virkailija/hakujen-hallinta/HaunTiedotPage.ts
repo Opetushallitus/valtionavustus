@@ -159,11 +159,11 @@ export const HaunTiedotPage = (page: Page) => {
 
   async function addValmistelija(name: string, waitForSave = true) {
     await common.waitForSave()
+    await expect(locators.hakuRole.searchInput).toBeEnabled({ timeout: 10000 })
     const searchResults = page.locator('#va-user-search-results')
-    await Promise.all([
-      page.waitForResponse('/api/va-user/search'),
-      locators.hakuRole.searchInput.fill(name),
-    ])
+    await locators.hakuRole.searchInput.click()
+    await locators.hakuRole.searchInput.fill(name)
+    await expect(searchResults.locator('a').getByText(name)).toBeVisible({ timeout: 10000 })
     await searchResults.locator('a').getByText(name).click()
     if (waitForSave) {
       await common.waitForSave()
@@ -182,11 +182,11 @@ export const HaunTiedotPage = (page: Page) => {
 
   async function addArvioija(name: string, waitForSave = true) {
     await common.waitForSave()
+    await expect(locators.hakuRole.searchInput).toBeEnabled({ timeout: 10000 })
     const searchResults = page.locator('#va-user-search-results')
-    await Promise.all([
-      page.waitForResponse('/api/va-user/search'),
-      locators.hakuRole.searchInput.fill(name),
-    ])
+    await locators.hakuRole.searchInput.click()
+    await locators.hakuRole.searchInput.fill(name)
+    await expect(searchResults.locator('a').getByText(name)).toBeVisible({ timeout: 10000 })
     await searchResults.locator('a').getByText(name).click()
     await setUserRole(name, 'evaluator')
     if (waitForSave) {
@@ -196,11 +196,11 @@ export const HaunTiedotPage = (page: Page) => {
 
   async function addVastuuvalmistelija(name: string) {
     await common.waitForSave()
+    await expect(locators.hakuRole.searchInput).toBeEnabled({ timeout: 10000 })
     const searchResults = page.locator('#va-user-search-results')
-    await Promise.all([
-      page.waitForResponse('/api/va-user/search'),
-      locators.hakuRole.searchInput.fill(name),
-    ])
+    await locators.hakuRole.searchInput.click()
+    await locators.hakuRole.searchInput.fill(name)
+    await expect(searchResults.locator('a').getByText(name)).toBeVisible({ timeout: 10000 })
     await searchResults.locator('a').getByText(name).click()
     await common.waitForSave()
     await setUserRole(name, 'vastuuvalmistelija')
