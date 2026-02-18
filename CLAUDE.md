@@ -147,6 +147,8 @@ Important: **va-virkailija tests require va-hakija tests to have been run first*
 npm run playwright:test
 ```
 
+**IMPORTANT — Playwright testing patterns**: When writing or modifying Playwright tests, you **must** read and follow `playwright/TESTING_PATTERNS.md`. It documents required patterns for avoiding race conditions — including waiting for cascading API responses, email assertion polling, stabilizing UI before interaction, and waiting for API responses after triggering actions. Failing to follow these patterns produces flaky tests.
+
 **Linting**:
 ```bash
 npm run prettier-check-project   # Check formatting
