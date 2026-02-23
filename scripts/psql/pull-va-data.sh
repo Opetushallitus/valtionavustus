@@ -97,11 +97,22 @@ function write_delete_statements {
 DELETE FROM virkailija.email WHERE id IN (SELECT email_id FROM virkailija.email_event WHERE avustushaku_id = ${AVUSTUSHAKU_ID});
 DELETE FROM virkailija.email_event WHERE avustushaku_id = ${AVUSTUSHAKU_ID};
 DELETE FROM virkailija.tapahtumaloki WHERE avustushaku_id = ${AVUSTUSHAKU_ID};
-DELETE FROM virkailija.payments WHERE application_id IN (${HAKEMUS_ID_LIST});
 DELETE FROM virkailija.menoluokka_paatos WHERE menoluokka_id IN (SELECT id FROM virkailija.menoluokka WHERE avustushaku_id = ${AVUSTUSHAKU_ID});
 DELETE FROM virkailija.menoluokka_muutoshakemus WHERE menoluokka_id IN (SELECT id FROM virkailija.menoluokka WHERE avustushaku_id = ${AVUSTUSHAKU_ID});
 DELETE FROM virkailija.menoluokka_hakemus WHERE menoluokka_id IN (SELECT id FROM virkailija.menoluokka WHERE avustushaku_id = ${AVUSTUSHAKU_ID});
 DELETE FROM virkailija.menoluokka WHERE avustushaku_id = ${AVUSTUSHAKU_ID};
+DELETE FROM virkailija.avustushaku_project_code WHERE avustushaku_id = ${AVUSTUSHAKU_ID};
+DELETE FROM virkailija.avustushaku_talousarviotilit WHERE avustushaku_id = ${AVUSTUSHAKU_ID};
+DELETE FROM hakija.form_submissions WHERE id IN (SELECT form_submission_id FROM hakija.hakemukset WHERE avustushaku = ${AVUSTUSHAKU_ID});
+DELETE FROM hakija.hakemukset WHERE avustushaku = ${AVUSTUSHAKU_ID};
+DELETE FROM hakija.avustushaku_roles WHERE avustushaku = ${AVUSTUSHAKU_ID};
+DELETE FROM hakija.forms WHERE id IN (${FORM_IDS});
+DELETE FROM hakija.avustushaut WHERE id = ${AVUSTUSHAKU_ID};
+EOSQL
+
+  if [ -n "${HAKEMUS_ID_LIST}" ]; then
+    cat >> "${DUMP_FILE}" << EOSQL
+DELETE FROM virkailija.payments WHERE application_id IN (${HAKEMUS_ID_LIST});
 DELETE FROM virkailija.paatos_jatkoaika WHERE paatos_id IN (SELECT paatos_id FROM virkailija.muutoshakemus WHERE hakemus_id IN (${HAKEMUS_ID_LIST}));
 DELETE FROM virkailija.paatos_sisaltomuutos WHERE paatos_id IN (SELECT paatos_id FROM virkailija.muutoshakemus WHERE hakemus_id IN (${HAKEMUS_ID_LIST}));
 DELETE FROM virkailija.paatos_talousarvio WHERE paatos_id IN (SELECT paatos_id FROM virkailija.muutoshakemus WHERE hakemus_id IN (${HAKEMUS_ID_LIST}));
@@ -111,19 +122,14 @@ DELETE FROM virkailija.normalized_hakemus WHERE hakemus_id IN (${HAKEMUS_ID_LIST
 DELETE FROM virkailija.scores WHERE arvio_id IN (SELECT id FROM virkailija.arviot WHERE hakemus_id IN (${HAKEMUS_ID_LIST}));
 DELETE FROM virkailija.comments WHERE arvio_id IN (SELECT id FROM virkailija.arviot WHERE hakemus_id IN (${HAKEMUS_ID_LIST}));
 DELETE FROM virkailija.arviot WHERE hakemus_id IN (${HAKEMUS_ID_LIST});
-DELETE FROM virkailija.avustushaku_project_code WHERE avustushaku_id = ${AVUSTUSHAKU_ID};
-DELETE FROM virkailija.avustushaku_talousarviotilit WHERE avustushaku_id = ${AVUSTUSHAKU_ID};
 DELETE FROM hakija.hakemus_paatokset WHERE hakemus_id IN (${HAKEMUS_ID_LIST});
 DELETE FROM hakija.application_tokens WHERE application_id IN (${HAKEMUS_ID_LIST});
 DELETE FROM hakija.attachments WHERE hakemus_id IN (${HAKEMUS_ID_LIST});
-DELETE FROM hakija.form_submissions WHERE id IN (SELECT form_submission_id FROM hakija.hakemukset WHERE avustushaku = ${AVUSTUSHAKU_ID});
-DELETE FROM hakija.hakemukset WHERE avustushaku = ${AVUSTUSHAKU_ID};
 DELETE FROM virkailija.hakemus WHERE id IN (${HAKEMUS_ID_LIST});
-DELETE FROM hakija.avustushaku_roles WHERE avustushaku = ${AVUSTUSHAKU_ID};
-DELETE FROM hakija.forms WHERE id IN (${FORM_IDS});
-DELETE FROM hakija.avustushaut WHERE id = ${AVUSTUSHAKU_ID};
-
 EOSQL
+  fi
+
+  echo "" >> "${DUMP_FILE}"
 }
 
 function export_data {
@@ -139,10 +145,10 @@ function export_data {
   fi
 
   if [ -z "${HAKEMUS_ID_LIST}" ]; then
-    fatal "No hakemukset found for avustushaku ${AVUSTUSHAKU_ID}"
+    info "No hakemukset found for avustushaku ${AVUSTUSHAKU_ID} — pulling avustushaku data only"
+  else
+    info "Hakemus IDs: ${HAKEMUS_ID_LIST}"
   fi
-
-  info "Hakemus IDs: ${HAKEMUS_ID_LIST}"
 
   # Get form IDs from avustushaut
   FORM_IDS=$("${REMOTE_PSQL[@]}" -t -A -c \
@@ -212,53 +218,55 @@ function export_data {
   export_table "hakija.avustushaku_roles" \
     "SELECT * FROM hakija.avustushaku_roles WHERE avustushaku = ${AVUSTUSHAKU_ID}"
 
-  export_table "hakija.form_submissions" \
-    "SELECT fs.* FROM hakija.form_submissions fs
-     WHERE fs.id IN (SELECT form_submission_id FROM hakija.hakemukset WHERE id IN (${HAKEMUS_ID_LIST}) AND avustushaku = ${AVUSTUSHAKU_ID})"
+  if [ -n "${HAKEMUS_ID_LIST}" ]; then
+    export_table "hakija.form_submissions" \
+      "SELECT fs.* FROM hakija.form_submissions fs
+       WHERE fs.id IN (SELECT form_submission_id FROM hakija.hakemukset WHERE id IN (${HAKEMUS_ID_LIST}) AND avustushaku = ${AVUSTUSHAKU_ID})"
 
-  export_table "virkailija.hakemus" \
-    "SELECT * FROM virkailija.hakemus WHERE id IN (${HAKEMUS_ID_LIST})"
+    export_table "virkailija.hakemus" \
+      "SELECT * FROM virkailija.hakemus WHERE id IN (${HAKEMUS_ID_LIST})"
 
-  export_table "hakija.hakemukset" \
-    "SELECT * FROM hakija.hakemukset WHERE id IN (${HAKEMUS_ID_LIST}) AND avustushaku = ${AVUSTUSHAKU_ID}"
+    export_table "hakija.hakemukset" \
+      "SELECT * FROM hakija.hakemukset WHERE id IN (${HAKEMUS_ID_LIST}) AND avustushaku = ${AVUSTUSHAKU_ID}"
 
-  export_table "hakija.application_tokens" \
-    "SELECT * FROM hakija.application_tokens WHERE application_id IN (${HAKEMUS_ID_LIST})" \
-    "optional"
+    export_table "hakija.application_tokens" \
+      "SELECT * FROM hakija.application_tokens WHERE application_id IN (${HAKEMUS_ID_LIST})" \
+      "optional"
 
-  export_table "hakija.hakemus_paatokset" \
-    "SELECT * FROM hakija.hakemus_paatokset WHERE hakemus_id IN (${HAKEMUS_ID_LIST})" \
-    "optional"
+    export_table "hakija.hakemus_paatokset" \
+      "SELECT * FROM hakija.hakemus_paatokset WHERE hakemus_id IN (${HAKEMUS_ID_LIST})" \
+      "optional"
 
-  export_table "virkailija.arviot" \
-    "SELECT * FROM virkailija.arviot WHERE hakemus_id IN (${HAKEMUS_ID_LIST})"
+    export_table "virkailija.arviot" \
+      "SELECT * FROM virkailija.arviot WHERE hakemus_id IN (${HAKEMUS_ID_LIST})"
 
-  export_table "virkailija.comments" \
-    "SELECT * FROM virkailija.comments WHERE arvio_id IN (SELECT id FROM virkailija.arviot WHERE hakemus_id IN (${HAKEMUS_ID_LIST}))"
+    export_table "virkailija.comments" \
+      "SELECT * FROM virkailija.comments WHERE arvio_id IN (SELECT id FROM virkailija.arviot WHERE hakemus_id IN (${HAKEMUS_ID_LIST}))"
 
-  export_table "virkailija.scores" \
-    "SELECT * FROM virkailija.scores WHERE arvio_id IN (SELECT id FROM virkailija.arviot WHERE hakemus_id IN (${HAKEMUS_ID_LIST}))"
+    export_table "virkailija.scores" \
+      "SELECT * FROM virkailija.scores WHERE arvio_id IN (SELECT id FROM virkailija.arviot WHERE hakemus_id IN (${HAKEMUS_ID_LIST}))"
 
-  export_table "virkailija.paatos" \
-    "SELECT * FROM virkailija.paatos WHERE id IN (SELECT paatos_id FROM virkailija.muutoshakemus WHERE hakemus_id IN (${HAKEMUS_ID_LIST}))"
+    export_table "virkailija.paatos" \
+      "SELECT * FROM virkailija.paatos WHERE id IN (SELECT paatos_id FROM virkailija.muutoshakemus WHERE hakemus_id IN (${HAKEMUS_ID_LIST}))"
 
-  export_table "virkailija.muutoshakemus" \
-    "SELECT * FROM virkailija.muutoshakemus WHERE hakemus_id IN (${HAKEMUS_ID_LIST})"
+    export_table "virkailija.muutoshakemus" \
+      "SELECT * FROM virkailija.muutoshakemus WHERE hakemus_id IN (${HAKEMUS_ID_LIST})"
 
-  export_table "virkailija.paatos_jatkoaika" \
-    "SELECT * FROM virkailija.paatos_jatkoaika WHERE paatos_id IN (SELECT paatos_id FROM virkailija.muutoshakemus WHERE hakemus_id IN (${HAKEMUS_ID_LIST}))" \
-    "optional"
+    export_table "virkailija.paatos_jatkoaika" \
+      "SELECT * FROM virkailija.paatos_jatkoaika WHERE paatos_id IN (SELECT paatos_id FROM virkailija.muutoshakemus WHERE hakemus_id IN (${HAKEMUS_ID_LIST}))" \
+      "optional"
 
-  export_table "virkailija.paatos_sisaltomuutos" \
-    "SELECT * FROM virkailija.paatos_sisaltomuutos WHERE paatos_id IN (SELECT paatos_id FROM virkailija.muutoshakemus WHERE hakemus_id IN (${HAKEMUS_ID_LIST}))" \
-    "optional"
+    export_table "virkailija.paatos_sisaltomuutos" \
+      "SELECT * FROM virkailija.paatos_sisaltomuutos WHERE paatos_id IN (SELECT paatos_id FROM virkailija.muutoshakemus WHERE hakemus_id IN (${HAKEMUS_ID_LIST}))" \
+      "optional"
 
-  export_table "virkailija.paatos_talousarvio" \
-    "SELECT * FROM virkailija.paatos_talousarvio WHERE paatos_id IN (SELECT paatos_id FROM virkailija.muutoshakemus WHERE hakemus_id IN (${HAKEMUS_ID_LIST}))" \
-    "optional"
+    export_table "virkailija.paatos_talousarvio" \
+      "SELECT * FROM virkailija.paatos_talousarvio WHERE paatos_id IN (SELECT paatos_id FROM virkailija.muutoshakemus WHERE hakemus_id IN (${HAKEMUS_ID_LIST}))" \
+      "optional"
 
-  export_table "virkailija.normalized_hakemus" \
-    "SELECT * FROM virkailija.normalized_hakemus WHERE hakemus_id IN (${HAKEMUS_ID_LIST})"
+    export_table "virkailija.normalized_hakemus" \
+      "SELECT * FROM virkailija.normalized_hakemus WHERE hakemus_id IN (${HAKEMUS_ID_LIST})"
+  fi
 
   export_table "virkailija.menoluokka" \
     "SELECT * FROM virkailija.menoluokka WHERE avustushaku_id = ${AVUSTUSHAKU_ID}"
@@ -283,9 +291,11 @@ function export_data {
   export_table "virkailija.tapahtumaloki" \
     "SELECT * FROM virkailija.tapahtumaloki WHERE avustushaku_id = ${AVUSTUSHAKU_ID}"
 
-  export_table "virkailija.payments" \
-    "SELECT * FROM virkailija.payments WHERE application_id IN (${HAKEMUS_ID_LIST})" \
-    "optional"
+  if [ -n "${HAKEMUS_ID_LIST}" ]; then
+    export_table "virkailija.payments" \
+      "SELECT * FROM virkailija.payments WHERE application_id IN (${HAKEMUS_ID_LIST})" \
+      "optional"
+  fi
 
   export_table "virkailija.email" \
     "SELECT * FROM virkailija.email WHERE id IN (SELECT email_id FROM virkailija.email_event WHERE avustushaku_id = ${AVUSTUSHAKU_ID})" \
