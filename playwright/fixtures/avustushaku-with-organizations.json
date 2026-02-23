@@ -1,0 +1,674 @@
+{
+  "content": [
+    {
+      "fieldClass": "infoElement",
+      "id": "name",
+      "fieldType": "h1"
+    },
+    {
+      "fieldClass": "infoElement",
+      "id": "duration",
+      "fieldType": "dateRange"
+    },
+    {
+      "fieldClass": "infoElement",
+      "id": "duration-help",
+      "fieldType": "p",
+      "text": {
+        "fi": "Hakemusta on mahdollista muokata hakuajan loppuun asti. Hakemukset käsitellään hakuajan jälkeen.",
+        "sv": "Ansökan kan bearbetas ända till  ansökningstidens slut. Ansökningarna behandlas efter ansökningstiden."
+      }
+    },
+    {
+      "fieldClass": "wrapperElement",
+      "id": "applicant-info",
+      "fieldType": "theme",
+      "children": [
+        {
+          "fieldClass": "wrapperElement",
+          "id": "organization-fieldset",
+          "fieldType": "fieldset",
+          "children": [
+            {
+              "label": {
+                "fi": "Hakijaorganisaatio",
+                "sv": "Sökandeorganisation"
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "Ilmoita hakijaorganisaation nimi ja virallinen sähköpostiosoite.",
+                "sv": "Meddela sökandeorganisationens namn och officiella e-postadress."
+              },
+              "id": "organization",
+              "params": {
+                "size": "large",
+                "maxlength": 80
+              },
+              "required": true,
+              "fieldType": "textField"
+            },
+            {
+              "label": {
+                "fi": "Organisaation sähköposti",
+                "sv": "Organisationens e-post"
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "",
+                "sv": ""
+              },
+              "id": "organization-email",
+              "params": {
+                "size": "small",
+                "maxlength": 80
+              },
+              "required": true,
+              "fieldType": "emailField"
+            }
+          ]
+        },
+        {
+          "label": {
+            "fi": "Y-tunnus",
+            "sv": "Företags- och organisationsnummer"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "business-id",
+          "params": {
+            "size": "small",
+            "maxlength": 9
+          },
+          "required": true,
+          "fieldType": "finnishBusinessIdField"
+        },
+        {
+          "fieldClass": "wrapperElement",
+          "id": "applicant-fieldset",
+          "fieldType": "fieldset",
+          "children": [
+            {
+              "label": {
+                "fi": "Yhteyshenkilö",
+                "sv": "Kontaktperson"
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "Yhteyshenkilöllä tarkoitetaan hankkeen vastuuhenkilöä hakijaorganisaatiossa.",
+                "sv": "Med kontaktperson avses den projektansvariga i sökandeorganisationen."
+              },
+              "id": "applicant-name",
+              "params": {
+                "size": "large",
+                "maxlength": 80
+              },
+              "required": true,
+              "fieldType": "textField"
+            },
+            {
+              "label": {
+                "fi": "Sähköposti",
+                "sv": "E-post"
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "",
+                "sv": ""
+              },
+              "id": "primary-email",
+              "params": {
+                "size": "small",
+                "maxlength": 80
+              },
+              "required": true,
+              "fieldType": "emailField"
+            },
+            {
+              "label": {
+                "fi": "Puhelinumero",
+                "sv": "Telefon"
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "",
+                "sv": ""
+              },
+              "id": "textField-0",
+              "params": {
+                "size": "small",
+                "maxlength": 15
+              },
+              "required": true,
+              "fieldType": "textField"
+            }
+          ]
+        },
+        {
+          "label": {
+            "fi": "Osoite",
+            "sv": "TODO: Adress"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "organization-postal-address",
+          "params": {
+            "size": "small",
+            "maxlength": 1000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "fieldClass": "wrapperElement",
+          "id": "signature-fieldset",
+          "fieldType": "fieldset",
+          "children": [
+            {
+              "label": {
+                "fi": "Allekirjoitusoikeudellinen henkilö",
+                "sv": "Person med namnteckningsrätt"
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "",
+                "sv": ""
+              },
+              "id": "signature",
+              "params": {
+                "size": "large",
+                "maxlength": 80
+              },
+              "required": true,
+              "fieldType": "textField"
+            },
+            {
+              "label": {
+                "fi": "Sähköposti",
+                "sv": "E-post"
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "",
+                "sv": ""
+              },
+              "id": "signature-email",
+              "params": {
+                "size": "small",
+                "maxlength": 80
+              },
+              "required": true,
+              "fieldType": "emailField"
+            }
+          ]
+        },
+        {
+          "fieldClass": "wrapperElement",
+          "id": "bank-fieldset",
+          "fieldType": "fieldset",
+          "children": [
+            {
+              "label": {
+                "fi": "Tilinumero IBAN-muodossa",
+                "sv": "Kontonummer i IBAN-format"
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "",
+                "sv": ""
+              },
+              "id": "bank-iban",
+              "params": {
+                "size": "large",
+                "maxlength": 80
+              },
+              "required": true,
+              "fieldType": "iban"
+            },
+            {
+              "label": {
+                "fi": "Pankin BIC/SWIFT-koodi",
+                "sv": "Bankens BIC/SWIFT-kod"
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "",
+                "sv": ""
+              },
+              "id": "bank-bic",
+              "params": {
+                "size": "small",
+                "maxlength": 80
+              },
+              "required": true,
+              "fieldType": "bic"
+            }
+          ]
+        },
+        {
+          "label": {
+            "fi": "Onko kyseessä yhteishanke?",
+            "sv": "Är projektet ett samprojekt?"
+          },
+          "fieldClass": "formField",
+          "helpText": { "fi": "", "sv": "" },
+          "id": "combined-effort",
+          "options": [
+            { "value": "yes", "label": { "fi": "Kyllä", "sv": "Ja" } },
+            { "value": "no", "label": { "fi": "Ei", "sv": "Nej" } }
+          ],
+          "required": true,
+          "fieldType": "radioButton"
+        },
+        {
+          "fieldClass": "wrapperElement",
+          "id": "other-organizations",
+          "fieldType": "growingFieldset",
+          "children": [
+            {
+              "fieldClass": "wrapperElement",
+              "id": "other-organizations-1",
+              "fieldType": "growingFieldsetChild",
+              "children": [
+                {
+                  "label": { "fi": "Yhteistyökumppanin nimi", "sv": "Projektets samarbetspartner" },
+                  "fieldClass": "formField",
+                  "helpText": { "fi": "", "sv": "" },
+                  "id": "other-organizations.other-organizations-1.name",
+                  "params": { "size": "large", "maxlength": 80 },
+                  "required": true,
+                  "fieldType": "textField"
+                },
+                {
+                  "label": { "fi": "Yhteyshenkilön nimi", "sv": "Kontaktpersonens namn" },
+                  "fieldClass": "formField",
+                  "helpText": { "fi": "", "sv": "" },
+                  "id": "other-organizations.other-organizations-1.contactperson",
+                  "params": { "size": "large", "maxlength": 80 },
+                  "required": true,
+                  "fieldType": "textField"
+                },
+                {
+                  "label": { "fi": "Yhteyshenkilön sähköposti", "sv": "Kontaktpersonens e-postadress" },
+                  "fieldClass": "formField",
+                  "helpText": { "fi": "", "sv": "" },
+                  "id": "other-organizations.other-organizations-1.email",
+                  "params": { "size": "small", "maxlength": 80 },
+                  "required": true,
+                  "fieldType": "emailField"
+                }
+              ]
+            }
+          ],
+          "params": { "showOnlyFirstLabels": false }
+        },
+        {
+          "label": {
+            "fi": "Oppilaitosmuoto",
+            "sv": "TODO: Oppilaitosmuoto"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "type-of-organization",
+          "options": [
+            {
+              "value": "kansanopisto",
+              "label": {
+                "fi": "Kansanopisto",
+                "sv": "TODO: Kansanopisto"
+              }
+            },
+            {
+              "value": "kesäyliopisto",
+              "label": {
+                "fi": "Kesäyliopisto",
+                "sv": "TODO: Sommarskola"
+              }
+            }
+          ],
+          "required": true,
+          "fieldType": "radioButton"
+        }
+      ],
+      "label": {
+        "fi": "Hakijan tiedot",
+        "sv": "Uppgifter om sökanden"
+      }
+    },
+    {
+      "fieldClass": "wrapperElement",
+      "id": "financing-plan",
+      "fieldType": "theme",
+      "children": [
+        {
+          "fieldClass": "infoElement",
+          "id": "financing-plan-help",
+          "fieldType": "p",
+          "text": {
+            "fi": "Valtionavustuksen kokonaiskustannuksiin hyväksytään hankkeen toteuttamisesta aiheutuvat välittömät kustannukset sekä organisaation muista kustannuksista ne kustannuserät, jotka voidaan suoran dokumentoida aiheuttamisperiaatteen mukaisesti kirjata hankkeen menoksi kirjanpitoon hankkeen toteuttamisaikana. Vain todellisiin ja toteutuneisiin kustannuksiin perustuvat menot ovat hyväksyttäviä. Laskennallisilla ja prosentuaalisilla kustannuserillä ei ole suoraa aiheuttamisperiaatetta, joten niitä ei hyväksytä valtionavustushankkeen kustannukseksi. ",
+            "sv": "Till de totala kostnaderna för projektet godkänns de omedelbara kostnaderna för genomförandet av projektet och av de övriga kostnaderna de kostnadsposter som enligt direkt, dokumenterad upphovsprincip kan bokföras som utgifter för projektet under projekttiden. Endast utgifter som baserar sig på faktiska och förverkligade kostnader är godtagbara. Direkt upphovsprincip finns inte för kalkylerade och procentuella kostnadsposter, och sådana godkänns därför inte som kostnader för statsunderstödsprojektet."
+          }
+        },
+        {
+          "fieldClass": "wrapperElement",
+          "id": "budget",
+          "fieldType": "vaBudget",
+          "children": [
+            {
+              "fieldClass": "wrapperElement",
+              "id": "project-budget",
+              "fieldType": "vaSummingBudgetElement",
+              "children": [
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "project-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "initialValue": {
+                        "fi": "Tarkenna tarvittaessa",
+                        "sv": "TODO: Tarkenna tarvittaessa"
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "project-costs-row.description",
+                      "params": {
+                        "size": "small",
+                        "maxlength": 80
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "project-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Hankkeen kustannukset",
+                    "sv": "TODO: Kostnaderna för projekt"
+                  }
+                }
+              ],
+              "params": {
+                "sumRowLabel": {
+                  "fi": "Kustannukset yhteensä",
+                  "sv": "Kostnader sammanlagt"
+                },
+                "columnTitles": {
+                  "label": {
+                    "fi": "Menot",
+                    "sv": "Kostnader"
+                  },
+                  "amount": {
+                    "fi": "Yhteensä",
+                    "sv": "Totalt"
+                  },
+                  "description": {
+                    "fi": "Selite, lyhyt kuvaus",
+                    "sv": "Förklaring, kort beskrivning"
+                  }
+                },
+                "showColumnTitles": true
+              },
+              "label": {
+                "fi": "Hankkeen kustannusarvio",
+                "sv": "Projektkostnaderna"
+              }
+            },
+            {
+              "fieldClass": "wrapperElement",
+              "id": "third-party-income",
+              "fieldType": "vaSummingBudgetElement",
+              "children": [
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "eu-programs-income-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "eu-programs-income-row.description",
+                      "params": {
+                        "size": "small",
+                        "maxlength": 80
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "eu-programs-income-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": false
+                  },
+                  "label": {
+                    "fi": "EU-ohjelmat",
+                    "sv": "EU-program"
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "other-public-financing-income-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "other-public-financing-income-row.description",
+                      "params": {
+                        "size": "small",
+                        "maxlength": 80
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "other-public-financing-income-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": false
+                  },
+                  "label": {
+                    "fi": "Muu julkinen rahoitus",
+                    "sv": "Annan offentlig finansiering"
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "private-financing-income-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "private-financing-income-row.description",
+                      "params": {
+                        "size": "small",
+                        "maxlength": 80
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "private-financing-income-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": false
+                  },
+                  "label": {
+                    "fi": "Yksityinen rahoitus",
+                    "sv": "Privat finansiering"
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "project-other-income-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "project-other-income-row.description",
+                      "params": {
+                        "size": "small",
+                        "maxlength": 80
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "project-other-income-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": false
+                  },
+                  "label": {
+                    "fi": "Muut tulot",
+                    "sv": "TODO: Andra inkomster"
+                  }
+                }
+              ],
+              "params": {
+                "sumRowLabel": {
+                  "fi": "Muu rahoitus yhteensä",
+                  "sv": "Övriga kostnader sammanlagt"
+                },
+                "showColumnTitles": false
+              },
+              "label": {
+                "fi": "Hankkeen rahoitus",
+                "sv": "Finansieringen av projektet"
+              }
+            },
+            {
+              "fieldClass": "wrapperElement",
+              "id": "budget-summary",
+              "fieldType": "vaBudgetSummaryElement",
+              "children": [],
+              "params": {
+                "showColumnTitles": false,
+                "totalSumRowLabel": {
+                  "fi": "Hankkeen rahoitus yhteensä",
+                  "sv": "Projektets finansiering sammanlagt"
+                },
+                "ophFinancingLabel": {
+                  "fi": "Opetushallitukselta haettava rahoitus",
+                  "sv": "Finansiering som söks av Utbildningsstyrelsen"
+                },
+                "selfFinancingLabel": {
+                  "fi": "Omarahoitus",
+                  "sv": "Egen finansiering"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "label": {
+        "fi": "Rahoitussuunnitelma",
+        "sv": "Finansieringsplan"
+      }
+    }
+  ],
+  "rules": [
+    {
+      "type": "includeIf",
+      "triggerId": "combined-effort",
+      "targetIds": ["other-organizations"],
+      "params": { "triggerValue": "yes" }
+    }
+  ],
+  "created_at": "2025-12-11T11:42:01Z",
+  "updated_at": "2025-12-11T11:42:01Z"
+}

@@ -180,6 +180,16 @@
     (catch Exception e
       (log/warn "Could not normalize necessary hakemus fields for hakemus: " hakemus-id " Error: " (.getMessage e)))))
 
+(defn- try-store-yhteishanke-organizations [tx hakemus-id answers]
+  (try
+    (va-db/store-yhteishanke-organizations tx hakemus-id answers)
+    (catch Exception e
+      (log/warn "Could not store yhteishanke organizations for hakemus: " hakemus-id " Error: " (.getMessage e)))))
+
+(defn- store-normalized-hakemus-and-yhteishanke-organizations [tx hakemus-id hakemus answers]
+  (try-store-normalized-hakemus tx hakemus-id hakemus answers)
+  (try-store-yhteishanke-organizations tx hakemus-id answers))
+
 (defn can-update-hakemus [haku-id user-key identity]
   (let [hakemus (va-db/get-hakemus user-key)
         {hakemus-id :id
@@ -216,7 +226,7 @@
                                                                        answers
                                                                        budget-totals
                                                                        hakemus)]
-                          (with-tx (fn [tx] (try-store-normalized-hakemus tx (:id hakemus) hakemus answers)))
+                          (store-normalized-hakemus-and-yhteishanke-organizations tx (:id hakemus) hakemus answers)
                           (hakemus-ok-response updated-hakemus updated-submission validation nil))
                         (hakemus-conflict-response hakemus))
                       (bad-request! security-validation)))))
@@ -281,7 +291,7 @@
                                                                  answers
                                                                  budget-totals
                                                                  user-key)]
-                     (with-tx (fn [tx] (try-store-normalized-hakemus tx (:id hakemus) hakemus answers)))
+                     (store-normalized-hakemus-and-yhteishanke-organizations tx (:id hakemus) hakemus answers)
                      (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! false answers submitted-hakemus avustushaku (:id hakemus))
                      (hakemus-ok-response submitted-hakemus saved-submission validation nil))
                    (hakemus-conflict-response hakemus))

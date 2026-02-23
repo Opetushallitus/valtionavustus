@@ -3,6 +3,7 @@
         [oph.soresu.form.db :as form-db]
         [clojure.tools.trace :only [trace]])
   (:require [clojure.java.io :as io]
+            [clojure.string]
             [clojure.tools.logging :as log]
             [ring.util.codec :refer [form-encode]]
             [oph.soresu.common.db :refer [exec with-tx query query-original-identifiers execute!]]
@@ -11,7 +12,7 @@
             [oph.va.hakemus.db :as hakemus-copy]
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.jdbc.extensions :refer :all]
-            [oph.soresu.common.config :refer [config]]
+            [oph.soresu.common.config :refer [config feature-enabled?]]
             [oph.va.hakija.db.queries :as queries]))
 
 (defn slurp-binary-file! [file]
@@ -136,42 +137,83 @@
          [id]))
 
 (defn store-normalized-hakemus [tx id hakemus answers]
-  (log/info (str "Storing normalized fields for hakemus: " id))
-  (execute! tx
-            "INSERT INTO virkailija.normalized_hakemus (
-          hakemus_id,
-          project_name,
-          contact_person,
-          contact_email,
-          contact_phone,
-          organization_name,
-          register_number,
-          trusted_contact_name,
-          trusted_contact_email,
-          trusted_contact_phone
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ON CONFLICT (hakemus_id) DO UPDATE SET
-          project_name = EXCLUDED.project_name,
-          contact_person = EXCLUDED.contact_person,
-          contact_email = EXCLUDED.contact_email,
-          contact_phone = EXCLUDED.contact_phone,
-          organization_name = EXCLUDED.organization_name,
-          register_number = EXCLUDED.register_number,
-          trusted_contact_name = EXCLUDED.trusted_contact_name,
-          trusted_contact_email = EXCLUDED.trusted_contact_email,
-          trusted_contact_phone = EXCLUDED.trusted_contact_phone"
-            [id,
-             (form-util/find-answer-value answers "project-name"),
-             (form-util/find-answer-value answers "applicant-name"),
-             (form-util/find-answer-value answers "primary-email"),
-             (form-util/find-answer-value answers "textField-0"),
-             (:organization_name hakemus),
-             (:register_number hakemus)
-             (form-util/find-answer-value answers "trusted-contact-name")
-             (form-util/find-answer-value answers "trusted-contact-email")
-             (form-util/find-answer-value answers "trusted-contact-phone")])
-  (log/info (str "Succesfully stored normalized fields for hakemus with id: " id)))
+  (let [contact-person (form-util/find-answer-value answers "applicant-name")
+        contact-email  (form-util/find-answer-value answers "primary-email")
+        contact-phone  (form-util/find-answer-value answers "textField-0")]
+    (if (and contact-person contact-email contact-phone)
+      (do
+        (log/info (str "Storing normalized fields for hakemus: " id))
+        (execute! tx
+                  "INSERT INTO virkailija.normalized_hakemus (
+            hakemus_id,
+            project_name,
+            contact_person,
+            contact_email,
+            contact_phone,
+            organization_name,
+            register_number,
+            trusted_contact_name,
+            trusted_contact_email,
+            trusted_contact_phone
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          ON CONFLICT (hakemus_id) DO UPDATE SET
+            project_name = EXCLUDED.project_name,
+            contact_person = EXCLUDED.contact_person,
+            contact_email = EXCLUDED.contact_email,
+            contact_phone = EXCLUDED.contact_phone,
+            organization_name = EXCLUDED.organization_name,
+            register_number = EXCLUDED.register_number,
+            trusted_contact_name = EXCLUDED.trusted_contact_name,
+            trusted_contact_email = EXCLUDED.trusted_contact_email,
+            trusted_contact_phone = EXCLUDED.trusted_contact_phone"
+                  [id,
+                   (form-util/find-answer-value answers "project-name"),
+                   contact-person,
+                   contact-email,
+                   contact-phone,
+                   (:organization_name hakemus),
+                   (:register_number hakemus)
+                   (form-util/find-answer-value answers "trusted-contact-name")
+                   (form-util/find-answer-value answers "trusted-contact-email")
+                   (form-util/find-answer-value answers "trusted-contact-phone")])
+        (log/info (str "Succesfully stored normalized fields for hakemus with id: " id)))
+      (log/info (str "Skipping normalized_hakemus for incomplete hakemus: " id)))))
+
+(defn- extract-yhteishanke-organizations [answers]
+  (let [fieldset-value (form-util/find-answer-value answers "other-organizations")]
+    (when (seq fieldset-value)
+      (let [find-child-value (fn [children key-suffix]
+                               (->> children
+                                    (filter #(clojure.string/ends-with? (:key %) key-suffix))
+                                    first
+                                    :value))]
+        (->> fieldset-value
+             (map (fn [child]
+                    (let [children (:value child)]
+                      {:organization-name (find-child-value children ".name")
+                       :contact-person    (find-child-value children ".contactperson")
+                       :email             (find-child-value children ".email")})))
+             (filter #(some seq (vals %))))))))
+
+(defn store-yhteishanke-organizations [tx hakemus-id answers]
+  (when (feature-enabled? :enableYhteishankeEmails)
+    (log/info (str "Storing yhteishanke organizations for hakemus: " hakemus-id))
+    (execute! tx
+              "DELETE FROM virkailija.yhteishanke_organization WHERE hakemus_id = ?"
+              [hakemus-id])
+    (let [organizations (extract-yhteishanke-organizations answers)]
+      (when (seq organizations)
+        (doseq [org organizations]
+          (execute! tx
+                    "INSERT INTO virkailija.yhteishanke_organization
+                     (hakemus_id, organization_name, contact_person, email)
+                     VALUES (?, ?, ?, ?)"
+                    [hakemus-id
+                     (:organization-name org)
+                     (:contact-person org)
+                     (:email org)]))))
+    (log/info (str "Successfully stored yhteishanke organizations for hakemus: " hakemus-id))))
 
 (defn update-normalized-hakemus-valiselvitys-emails! [tx hakemus-id answers]
   "Update valiselvitys email columns in normalized_hakemus"

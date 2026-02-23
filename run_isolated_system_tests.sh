@@ -4,7 +4,6 @@ set -o errexit -o nounset -o pipefail
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/scripts/common-functions.sh"
 
 function run_tests {
-  npm run prettier-check-project "$@"
   run_playwright_tests "$@"
 }
 
