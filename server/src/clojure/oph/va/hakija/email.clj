@@ -314,20 +314,22 @@
               end-date-string (datetime/date-string end-date)
               end-time-string (datetime/time-string end-date)
               url (email-utils/generate-url avustushaku-id lang user-key true)
-              subject (format (get-in mail-titles [:yhteishanke-hakemus-submitted lang]) avustushaku)
+              avustushaku-name (get-in avustushaku [:content :name lang])
+              subject (format (get-in mail-titles [:yhteishanke-hakemus-submitted lang]) avustushaku-name)
               template (get-in mail-templates [:yhteishanke-hakemus-submitted lang])
               signature (email-signature-block lang)
-              msg {:avustushaku avustushaku
+              msg {:avustushaku avustushaku-name
                    :start-date start-date-string
                    :start-time start-time-string
                    :end-date end-date-string
                    :end-time end-time-string
                    :url url}
               body (render template msg signature)]
-          (email/try-send-email!
-           (email/message lang :yhteishanke-hakemus-submitted emails subject body)
-           {:hakemus-id     (:id hakemus)
-            :avustushaku-id avustushaku-id}))))))
+          (doseq [recipient emails]
+            (email/try-send-email!
+             (email/message lang :yhteishanke-hakemus-submitted [recipient] subject body)
+             {:hakemus-id     (:id hakemus)
+              :avustushaku-id avustushaku-id})))))))
 
 (defn send-yhteishanke-selvitys-submitted! [avustushaku-id selvitys-user-key selvitys-type lang hakemus hakemus-name register-number]
   (when (feature-enabled? :enableYhteishankeEmails)
@@ -345,7 +347,8 @@
                    :preview-url preview-url
                    :register-number register-number}
               body (render template msg signature)]
-          (email/try-send-email!
-           (email/message lang type emails subject body)
-           {:hakemus-id     (:id hakemus)
-            :avustushaku-id avustushaku-id}))))))
+          (doseq [recipient emails]
+            (email/try-send-email!
+             (email/message lang type [recipient] subject body)
+             {:hakemus-id     (:id hakemus)
+              :avustushaku-id avustushaku-id})))))))

@@ -248,11 +248,12 @@
                    :paatos-url muutoshakemus-paatos-url
                    :attachment-title attachment-title}
               body (render template msg signature)]
-          (email/try-send-email!
-           (email/message lang :yhteishanke-muutoshakemus-paatos emails subject body)
-           {:hakemus-id     (:id hakemus)
-            :muutoshakemus-id muutoshakemus-id
-            :avustushaku-id (:id avustushaku)}))))))
+          (doseq [recipient emails]
+            (email/try-send-email!
+             (email/message lang :yhteishanke-muutoshakemus-paatos [recipient] subject body)
+             {:hakemus-id     (:id hakemus)
+              :muutoshakemus-id muutoshakemus-id
+              :avustushaku-id (:id avustushaku)})))))))
 
 (defn- generate-avustushaku-url [avustushaku-id]
   (str (-> config :server :virkailija-url)
@@ -502,10 +503,11 @@
                    :project-name (:project_name hakemus)
                    :url url}
               body (render template msg signature)]
-          (email/try-send-email!
-           (email/message lang :yhteishanke-paatos emails subject body)
-           {:hakemus-id     (:id hakemus)
-            :avustushaku-id (:id avustushaku)}))))))
+          (doseq [recipient emails]
+            (email/try-send-email!
+             (email/message lang :yhteishanke-paatos [recipient] subject body)
+             {:hakemus-id     (:id hakemus)
+              :avustushaku-id (:id avustushaku)})))))))
 
 (defn send-yhteishanke-paatos-refuse! [avustushaku hakemus]
   (when (feature-enabled? :enableYhteishankeEmails)
@@ -524,10 +526,11 @@
                    :project-name (:project_name hakemus)
                    :url url}
               body (render template msg signature)]
-          (email/try-send-email!
-           (email/message lang :yhteishanke-paatos-refuse emails subject body)
-           {:hakemus-id     (:id hakemus)
-            :avustushaku-id (:id avustushaku)}))))))
+          (doseq [recipient emails]
+            (email/try-send-email!
+             (email/message lang :yhteishanke-paatos-refuse [recipient] subject body)
+             {:hakemus-id     (:id hakemus)
+              :avustushaku-id (:id avustushaku)})))))))
 
 (defn send-paatokset-lahetetty [yhteenveto-url avustushaku-id avustushaku-name to]
   (let [lang (keyword "fi")]
@@ -684,10 +687,11 @@
                    :register-number (:register_number hakemus)
                    :project-name (:project_name hakemus)}
               body (render template msg signature)]
-          (email/try-send-email!
-           (email/message lang type emails subject body)
-           {:hakemus-id     (:id hakemus)
-            :avustushaku-id (:id avustushaku)}))))))
+          (doseq [recipient emails]
+            (email/try-send-email!
+             (email/message lang type [recipient] subject body)
+             {:hakemus-id     (:id hakemus)
+              :avustushaku-id (:id avustushaku)})))))))
 
 (defn send-payments-info! [payments-info]
   (let [lang :fi
