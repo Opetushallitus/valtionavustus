@@ -1,0 +1,9 @@
+Hyvä vastaanottaja,
+
+Avustushakemus: {{ avustushaku }}
+
+Yhteishankkeen {{ register-number }} - {{ project-name }} osapuoli
+
+Hankkeen väliselvitys on käsitelty.
+
+{{>signature}}

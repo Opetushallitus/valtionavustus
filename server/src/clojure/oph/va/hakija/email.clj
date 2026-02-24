@@ -4,7 +4,8 @@
             [oph.common.datetime :as datetime]
             [oph.common.email :as email]
             [oph.common.email-utils :as email-utils]
-            [oph.soresu.common.config :refer [config]]
+            [oph.soresu.common.config :refer [config feature-enabled?]]
+            [oph.va.hakija.db :as va-db]
             [oph.va.virkailija.email :refer [email-signature-block]]))
 
 (def mail-titles
@@ -28,7 +29,13 @@
    :application-refused-presenter
    {:fi "Automaattinen viesti: Avustuksen saajan ilmoitus"}
    :application-refused {:fi "Ilmoitus avustuksenne vastaanottamatta jättämisestä on lähetetty"
-                         :sv "Er anmälan om att ni inte tar emot understödet har lämnats in till"}})
+                         :sv "Er anmälan om att ni inte tar emot understödet har lämnats in till"}
+   :yhteishanke-hakemus-submitted {:fi "Automaattinen viesti: Yhteishankkeen avustushakemus %s on kirjattu vastaanotetuksi"
+                                   :sv "[SV] Automaattinen viesti: Yhteishankkeen avustushakemus %s on kirjattu vastaanotetuksi"}
+   :yhteishanke-valiselvitys-submitted {:fi "Automaattinen viesti: Yhteishankkeen %s väliselvitys on vastaanotettu"
+                                        :sv "[SV] Automaattinen viesti: Yhteishankkeen %s väliselvitys on vastaanotettu"}
+   :yhteishanke-loppuselvitys-submitted {:fi "Automaattinen viesti: Yhteishankkeen %s loppuselvitys on vastaanotettu"
+                                         :sv "[SV] Automaattinen viesti: Yhteishankkeen %s loppuselvitys on vastaanotettu"}})
 
 (def mail-templates
   {:new-hakemus {:fi (email/load-template "email-templates/new-hakemus.plain.fi")
@@ -52,7 +59,13 @@
    :application-refused {:fi (email/load-template
                               "email-templates/application-refused.plain.fi")
                          :sv (email/load-template
-                              "email-templates/application-refused.plain.sv")}})
+                              "email-templates/application-refused.plain.sv")}
+   :yhteishanke-hakemus-submitted {:fi (email/load-template "email-templates/yhteishanke-hakemus-submitted.plain.fi")
+                                   :sv (email/load-template "email-templates/yhteishanke-hakemus-submitted.plain.sv")}
+   :yhteishanke-valiselvitys-submitted {:fi (email/load-template "email-templates/yhteishanke-valiselvitys-submitted.plain.fi")
+                                        :sv (email/load-template "email-templates/yhteishanke-valiselvitys-submitted.plain.sv")}
+   :yhteishanke-loppuselvitys-submitted {:fi (email/load-template "email-templates/yhteishanke-loppuselvitys-submitted.plain.fi")
+                                         :sv (email/load-template "email-templates/yhteishanke-loppuselvitys-submitted.plain.sv")}})
 
 (defn- render-body
   ([msg]
@@ -290,3 +303,49 @@
         body (render-body user-message signature)]
     (log/info "Urls would be: " url)
     (email/enqueue-message-to-be-send user-message body)))
+
+(defn send-yhteishanke-hakemus-submitted! [lang avustushaku-id avustushaku user-key start-date end-date hakemus]
+  (when (feature-enabled? :enableYhteishankeEmails)
+    (let [emails (va-db/get-yhteishanke-organization-emails hakemus)]
+      (when (not-empty emails)
+        (log/info "Sending yhteishanke hakemus submitted email to" emails "for hakemus" (:id hakemus))
+        (let [start-date-string (datetime/date-string start-date)
+              start-time-string (datetime/time-string start-date)
+              end-date-string (datetime/date-string end-date)
+              end-time-string (datetime/time-string end-date)
+              url (email-utils/generate-url avustushaku-id lang user-key true)
+              subject (format (get-in mail-titles [:yhteishanke-hakemus-submitted lang]) avustushaku)
+              template (get-in mail-templates [:yhteishanke-hakemus-submitted lang])
+              signature (email-signature-block lang)
+              msg {:avustushaku avustushaku
+                   :start-date start-date-string
+                   :start-time start-time-string
+                   :end-date end-date-string
+                   :end-time end-time-string
+                   :url url}
+              body (render template msg signature)]
+          (email/try-send-email!
+           (email/message lang :yhteishanke-hakemus-submitted emails subject body)
+           {:hakemus-id     (:id hakemus)
+            :avustushaku-id avustushaku-id}))))))
+
+(defn send-yhteishanke-selvitys-submitted! [avustushaku-id selvitys-user-key selvitys-type lang hakemus hakemus-name register-number]
+  (when (feature-enabled? :enableYhteishankeEmails)
+    (let [emails (va-db/get-yhteishanke-organization-emails hakemus)]
+      (when (not-empty emails)
+        (log/info "Sending yhteishanke selvitys submitted email to" emails "for hakemus" (:id hakemus))
+        (let [type (if (= selvitys-type "loppuselvitys")
+                     :yhteishanke-loppuselvitys-submitted
+                     :yhteishanke-valiselvitys-submitted)
+              subject (format (get-in mail-titles [type lang]) register-number)
+              template (get-in mail-templates [type lang])
+              preview-url (selvitys-preview-url avustushaku-id selvitys-user-key lang selvitys-type)
+              signature (email-signature-block lang)
+              msg {:hakemus-name hakemus-name
+                   :preview-url preview-url
+                   :register-number register-number}
+              body (render template msg signature)]
+          (email/try-send-email!
+           (email/message lang type emails subject body)
+           {:hakemus-id     (:id hakemus)
+            :avustushaku-id avustushaku-id}))))))

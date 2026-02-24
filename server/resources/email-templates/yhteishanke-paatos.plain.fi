@@ -1,0 +1,17 @@
+Hyvä vastaanottaja,
+
+Avustushakemus: {{ avustushaku }}
+
+Yhteishankkeen {{ register-number }} - {{ project-name }} osapuoli
+
+Avustuspäätöstä voitte tarkastella tästä linkistä: {{& url }}
+
+Avustuksen saajan tulee noudattaa avustuspäätöksessä sekä sen liitteissä kuvattuja ehtoja ja rajoituksia.
+
+Yhteishankkeen osapuolten tulee huolehtia siitä, että heidän yhteystietonsa ovat ajan tasalla.
+
+Yhteishankkeen osapuolten yhteystietojen muutokset päivitetään muutoshakulomakkeella päähakijayhteisön kautta.
+
+Päähakijayhteisö vastaa yhteydenpidosta Opetushallituksen kanssa. Linkki muutoshakulomakkeelle sekä avustuksesta kieltäytymiseen on toimitettu päähakijayhteisön yhteyshenkilöille.
+
+{{>signature}}

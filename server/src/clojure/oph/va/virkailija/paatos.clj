@@ -73,6 +73,10 @@
         (email/send-paatos-refuse! emails avustushaku hakemus token)
         (email/send-paatos! emails avustushaku hakemus))
 
+      (if (= (:status arvio) "rejected")
+        (email/send-yhteishanke-paatos-refuse! avustushaku hakemus)
+        (email/send-yhteishanke-paatos! avustushaku hakemus))
+
       (tapahtumaloki/create-paatoksen-lahetys-entry
        avustushaku-id hakemus-id identity batch-id emails true)
 
@@ -98,6 +102,10 @@
         (email/send-paatos-refuse! emails avustushaku hakemus token)
         (email/send-paatos! emails avustushaku hakemus))
 
+      (if (= (:status arvio) "rejected")
+        (email/send-yhteishanke-paatos-refuse! avustushaku hakemus)
+        (email/send-yhteishanke-paatos! avustushaku hakemus))
+
       (tapahtumaloki/create-paatoksen-lahetys-entry
        avustushaku-id hakemus-id identity batch-id emails true)
 
@@ -121,6 +129,10 @@
       (if (and (some? token) (not= (:status arvio) "rejected"))
         (email/send-paatos-refuse! emails avustushaku hakemus token)
         (email/send-paatos! emails avustushaku hakemus))
+
+      (if (= (:status arvio) "rejected")
+        (email/send-yhteishanke-paatos-refuse! avustushaku hakemus)
+        (email/send-yhteishanke-paatos! avustushaku hakemus))
 
       (tapahtumaloki/create-paatoksen-lahetys-entry
        avustushaku-id hakemus-id identity batch-id emails true)
@@ -182,7 +194,8 @@
         roles (hakija-api/get-avustushaku-roles avustushaku-id)
         arvio (virkailija-db/get-arvio hakemus-id)
         emails (emails-for-hakemus-without-signatories hakemus contact-email trusted-contact-email)]
-    (email/send-selvitys-notification! emails avustushaku hakemus selvitys-type arvio roles uuid identity)))
+    (email/send-selvitys-notification! emails avustushaku hakemus selvitys-type arvio roles uuid identity)
+    (email/send-yhteishanke-selvitys-processed! avustushaku hakemus selvitys-type)))
 
 (defn send-selvitys-emails [avustushaku-id selvitys-type uuid identity]
   (let [is-loppuselvitys (= selvitys-type "loppuselvitys")

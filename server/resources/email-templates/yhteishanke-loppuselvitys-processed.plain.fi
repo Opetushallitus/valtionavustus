@@ -1,0 +1,11 @@
+Hyvä vastaanottaja,
+
+Avustushakemus: {{ avustushaku }}
+
+Yhteishankkeen {{ register-number }} - {{ project-name }} osapuoli
+
+Opetushallitus on tarkastanut hankkeen valtionavustusta koskevan loppuselvityksen ja toteaa avustusta koskevan asian käsittelyn päättyneeksi.
+
+Opetushallitus voi asian käsittelyn päättämisestä huolimatta periä avustuksen tai osan siitä takaisin, jos sen tietoon tulee uusi seikka, joka valtionavustuslain 21 tai 22 §:n mukaisesti velvoittaa tai oikeuttaa takaisinperintään.
+
+{{>signature}}

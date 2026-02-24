@@ -1,0 +1,15 @@
+Hyvä vastaanottaja,
+
+Avustushakemus: {{ avustushaku }}
+
+Yhteishankkeen {{ register-number }} - {{ project-name }} osapuoli
+
+Muutoshakemuksenne on käsitelty.
+
+Päätös muutoshakemukseen: {{& paatos-url }}
+
+Liitteet: {{ attachment-title }}
+
+Päähakijayhteisö vastaa yhteydenpidosta Opetushallituksen kanssa.
+
+{{>signature}}

@@ -293,6 +293,14 @@
                                                                  user-key)]
                      (store-normalized-hakemus-and-yhteishanke-organizations tx (:id hakemus) hakemus answers)
                      (va-submit-notification/send-submit-notifications! va-email/send-hakemus-submitted-message! false answers submitted-hakemus avustushaku (:id hakemus))
+                     (va-email/send-yhteishanke-hakemus-submitted!
+                      (keyword (:language submitted-hakemus))
+                      haku-id
+                      avustushaku
+                      (:user_key submitted-hakemus)
+                      (-> avustushaku :content :duration :start datetime/parse)
+                      (-> avustushaku :content :duration :end datetime/parse)
+                      hakemus)
                      (hakemus-ok-response submitted-hakemus saved-submission validation nil))
                    (hakemus-conflict-response hakemus))
                  (bad-request! validation))))))

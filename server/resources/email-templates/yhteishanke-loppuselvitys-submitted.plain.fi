@@ -1,0 +1,13 @@
+Hyvä vastaanottaja,
+
+Avustushakemus: {{ avustushaku }}
+
+Yhteishankkeen {{ register-number }} - {{ project-name }} osapuoli
+
+Olemme vastaanottaneet hankkeen loppuselvityksen.
+
+Loppuselvitystä voitte tarkastella tästä linkistä: {{& preview-url }}
+
+Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan viralliseen sähköpostiosoitteeseen sekä yhteishankkeen osapuolten yhteyshenkilölle.
+
+{{>signature}}

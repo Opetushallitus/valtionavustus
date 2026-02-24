@@ -69,6 +69,24 @@
         },
         {
           "label": {
+            "fi": "Hankkeen nimi",
+            "sv": "Projektets namn"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "project-name",
+          "params": {
+            "size": "large",
+            "maxlength": 200
+          },
+          "required": true,
+          "fieldType": "textField"
+        },
+        {
+          "label": {
             "fi": "Y-tunnus",
             "sv": "Företags- och organisationsnummer"
           },

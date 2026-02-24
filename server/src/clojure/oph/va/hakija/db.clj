@@ -180,7 +180,7 @@
         (log/info (str "Succesfully stored normalized fields for hakemus with id: " id)))
       (log/info (str "Skipping normalized_hakemus for incomplete hakemus: " id)))))
 
-(defn- extract-yhteishanke-organizations [answers]
+(defn extract-yhteishanke-organizations [answers]
   (let [fieldset-value (form-util/find-answer-value answers "other-organizations")]
     (when (seq fieldset-value)
       (let [find-child-value (fn [children key-suffix]
@@ -214,6 +214,35 @@
                      (:contact-person org)
                      (:email org)]))))
     (log/info (str "Successfully stored yhteishanke organizations for hakemus: " hakemus-id))))
+
+(defn get-yhteishanke-organizations [hakemus-id]
+  (query "SELECT organization_name, contact_person, email
+          FROM virkailija.yhteishanke_organization
+          WHERE hakemus_id = ?"
+         [hakemus-id]))
+
+(defn get-or-create-yhteishanke-organizations [hakemus]
+  (let [hakemus-id (:id hakemus)
+        existing (get-yhteishanke-organizations hakemus-id)]
+    (if (seq existing)
+      existing
+      (let [submission-id (or (:form_submission_id hakemus) (:form-submission-id hakemus))
+            answers (when submission-id
+                      (:answers (first (query-original-identifiers
+                                        "SELECT answers FROM hakija.form_submissions WHERE id = ? AND version_closed IS NULL"
+                                        [submission-id]))))
+            organizations (when answers (extract-yhteishanke-organizations answers))]
+        (when (seq organizations)
+          (with-tx (fn [tx]
+                     (store-yhteishanke-organizations tx hakemus-id answers)))
+          (get-yhteishanke-organizations hakemus-id))))))
+
+(defn get-yhteishanke-organization-emails [hakemus]
+  (->> (get-or-create-yhteishanke-organizations hakemus)
+       (map :email)
+       (remove clojure.string/blank?)
+       distinct
+       vec))
 
 (defn update-normalized-hakemus-valiselvitys-emails! [tx hakemus-id answers]
   "Update valiselvitys email columns in normalized_hakemus"

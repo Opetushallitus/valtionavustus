@@ -1,0 +1,9 @@
+Hyvä vastaanottaja,
+
+Avustushakemus: {{ avustushaku }}
+
+{{ register-number }} - {{ project-name }}
+
+Päätöstä voitte tarkastella tästä linkistä: {{& url }}
+
+{{>signature}}

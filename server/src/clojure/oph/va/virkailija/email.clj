@@ -10,7 +10,8 @@
             [oph.common.datetime :as datetime]
             [oph.common.email :as email]
             [oph.common.email-utils :as email-utils]
-            [oph.soresu.common.config :refer [config]]
+            [oph.soresu.common.config :refer [config feature-enabled?]]
+            [oph.va.hakija.db :as hakija-db]
             [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
             [oph.soresu.common.db :refer [query]]
             [oph.va.decision-liitteet :refer [Liitteet]]
@@ -40,7 +41,17 @@
                                  :sv "Påminnelse om att lämna in slutredovisningen"}
    :payments-info-notification
    {:fi "Automaattinen viesti - Valtionavustuserän '%s' maksatus suoritettu"
-    :sv "Automatiskt meddelande - Statsunderstöd '%s' betald"}})
+    :sv "Automatiskt meddelande - Statsunderstöd '%s' betald"}
+   :yhteishanke-paatos {:fi "Automaattinen viesti: Yhteishankkeen avustushakemus %s on käsitelty - Linkki päätösasiakirjaan"
+                        :sv "[SV] Automaattinen viesti: Yhteishankkeen avustushakemus %s on käsitelty - Linkki päätösasiakirjaan"}
+   :yhteishanke-paatos-refuse {:fi "Automaattinen viesti: %s avustushakemus on käsitelty - Linkki päätösasiakirjaan"
+                               :sv "[SV] Automaattinen viesti: %s avustushakemus on käsitelty - Linkki päätösasiakirjaan"}
+   :yhteishanke-muutoshakemus-paatos {:fi "Automaattinen viesti: Yhteishankkeen %s muutoshakemus on käsitelty"
+                                      :sv "[SV] Automaattinen viesti: Yhteishankkeen %s muutoshakemus on käsitelty"}
+   :yhteishanke-valiselvitys-processed {:fi "Automaattinen viesti: Yhteishankkeen %s väliselvitys on käsitelty"
+                                        :sv "[SV] Automaattinen viesti: Yhteishankkeen %s väliselvitys on käsitelty"}
+   :yhteishanke-loppuselvitys-processed {:fi "Automaattinen viesti: Yhteishankkeen %s loppuselvitys on käsitelty"
+                                         :sv "[SV] Automaattinen viesti: Yhteishankkeen %s loppuselvitys on käsitelty"}})
 
 (def mail-templates
   {:taydennyspyynto {:fi (email/load-template "email-templates/taydennyspyynto.plain.fi")
@@ -78,7 +89,17 @@
    :loppuselvitys-palauttamatta {:fi (email/load-template "email-templates/loppuselvitys-palauttamatta.fi")
                                  :sv (email/load-template "email-templates/loppuselvitys-palauttamatta.sv")}
    :email-signature {:fi (email/load-template "email-templates/email-signature.plain.fi")
-                     :sv (email/load-template "email-templates/email-signature.plain.sv")}})
+                     :sv (email/load-template "email-templates/email-signature.plain.sv")}
+   :yhteishanke-paatos {:fi (email/load-template "email-templates/yhteishanke-paatos.plain.fi")
+                        :sv (email/load-template "email-templates/yhteishanke-paatos.plain.sv")}
+   :yhteishanke-paatos-refuse {:fi (email/load-template "email-templates/yhteishanke-paatos-refuse.plain.fi")
+                               :sv (email/load-template "email-templates/yhteishanke-paatos-refuse.plain.sv")}
+   :yhteishanke-muutoshakemus-paatos {:fi (email/load-template "email-templates/yhteishanke-muutoshakemus-paatos.plain.fi")
+                                      :sv (email/load-template "email-templates/yhteishanke-muutoshakemus-paatos.plain.sv")}
+   :yhteishanke-valiselvitys-processed {:fi (email/load-template "email-templates/yhteishanke-valiselvitys-processed.plain.fi")
+                                        :sv (email/load-template "email-templates/yhteishanke-valiselvitys-processed.plain.sv")}
+   :yhteishanke-loppuselvitys-processed {:fi (email/load-template "email-templates/yhteishanke-loppuselvitys-processed.plain.fi")
+                                         :sv (email/load-template "email-templates/yhteishanke-loppuselvitys-processed.plain.sv")}})
 
 (defn email-signature-block [lang]
   (let [sig-template (get-in mail-templates [:email-signature lang])]
@@ -203,6 +224,35 @@
       :avustushaku-id (:id avustushaku)
       :from           from
       :business-id    (:business_id hakemus)})))
+
+(defn send-yhteishanke-muutoshakemus-paatos! [avustushaku hakemus muutoshakemus-id paatos]
+  (when (feature-enabled? :enableYhteishankeEmails)
+    (let [emails (hakija-db/get-yhteishanke-organization-emails hakemus)]
+      (when (not-empty emails)
+        (log/info "Sending yhteishanke muutoshakemus paatos email to" emails "for hakemus" (:id hakemus))
+        (let [lang-str (:language hakemus)
+              lang (keyword lang-str)
+              muutoshakemus-paatos-url (muutoshakemus-paatos-url (:user-key paatos) lang)
+              oikaisuvaatimusosoitus (find-3a-oikaisuvaatimusosoitus-attachment)
+              attachment-title (get (:langs oikaisuvaatimusosoitus) lang)
+              hanke-name (if (str/blank? (:project_name hakemus))
+                           (:organization_name hakemus)
+                           (:project_name hakemus))
+              avustushaku-name (get-in avustushaku [:content :name lang])
+              subject (format (get-in mail-titles [:yhteishanke-muutoshakemus-paatos lang]) (:register_number hakemus))
+              template (get-in mail-templates [:yhteishanke-muutoshakemus-paatos lang])
+              signature (email-signature-block lang)
+              msg {:avustushaku-name avustushaku-name
+                   :register-number (:register_number hakemus)
+                   :project-name hanke-name
+                   :paatos-url muutoshakemus-paatos-url
+                   :attachment-title attachment-title}
+              body (render template msg signature)]
+          (email/try-send-email!
+           (email/message lang :yhteishanke-muutoshakemus-paatos emails subject body)
+           {:hakemus-id     (:id hakemus)
+            :muutoshakemus-id muutoshakemus-id
+            :avustushaku-id (:id avustushaku)}))))))
 
 (defn- generate-avustushaku-url [avustushaku-id]
   (str (-> config :server :virkailija-url)
@@ -435,6 +485,50 @@
       :from           from
       :business-id    (:business_id hakemus)})))
 
+(defn send-yhteishanke-paatos! [avustushaku hakemus]
+  (when (feature-enabled? :enableYhteishankeEmails)
+    (let [emails (hakija-db/get-yhteishanke-organization-emails hakemus)]
+      (when (not-empty emails)
+        (log/info "Sending yhteishanke paatos email to" emails "for hakemus" (:id hakemus))
+        (let [lang-str (:language hakemus)
+              lang (keyword lang-str)
+              url (paatos-url (:id avustushaku) (:user_key hakemus) lang)
+              avustushaku-name (get-in avustushaku [:content :name lang])
+              subject (format (get-in mail-titles [:yhteishanke-paatos lang]) (:register_number hakemus))
+              template (get-in mail-templates [:yhteishanke-paatos lang])
+              signature (email-signature-block lang)
+              msg {:avustushaku-name avustushaku-name
+                   :register-number (:register_number hakemus)
+                   :project-name (:project_name hakemus)
+                   :url url}
+              body (render template msg signature)]
+          (email/try-send-email!
+           (email/message lang :yhteishanke-paatos emails subject body)
+           {:hakemus-id     (:id hakemus)
+            :avustushaku-id (:id avustushaku)}))))))
+
+(defn send-yhteishanke-paatos-refuse! [avustushaku hakemus]
+  (when (feature-enabled? :enableYhteishankeEmails)
+    (let [emails (hakija-db/get-yhteishanke-organization-emails hakemus)]
+      (when (not-empty emails)
+        (log/info "Sending yhteishanke paatos refuse email to" emails "for hakemus" (:id hakemus))
+        (let [lang-str (:language hakemus)
+              lang (keyword lang-str)
+              url (paatos-url (:id avustushaku) (:user_key hakemus) lang)
+              avustushaku-name (get-in avustushaku [:content :name lang])
+              subject (format (get-in mail-titles [:yhteishanke-paatos-refuse lang]) (:register_number hakemus))
+              template (get-in mail-templates [:yhteishanke-paatos-refuse lang])
+              signature (email-signature-block lang)
+              msg {:avustushaku-name avustushaku-name
+                   :register-number (:register_number hakemus)
+                   :project-name (:project_name hakemus)
+                   :url url}
+              body (render template msg signature)]
+          (email/try-send-email!
+           (email/message lang :yhteishanke-paatos-refuse emails subject body)
+           {:hakemus-id     (:id hakemus)
+            :avustushaku-id (:id avustushaku)}))))))
+
 (defn send-paatokset-lahetetty [yhteenveto-url avustushaku-id avustushaku-name to]
   (let [lang (keyword "fi")]
     (email/try-send-msg-once {:email-type :paatokset-lahetetty
@@ -571,6 +665,29 @@
     (log/info "Url would be: " url)
     (tapahtumaloki/create-log-entry type (:id avustushaku) (:id hakemus) identity uuid to nil true)
     (email/enqueue-message-to-be-send msg body)))
+
+(defn send-yhteishanke-selvitys-processed! [avustushaku hakemus selvitys-type]
+  (when (feature-enabled? :enableYhteishankeEmails)
+    (let [emails (hakija-db/get-yhteishanke-organization-emails hakemus)]
+      (when (not-empty emails)
+        (log/info "Sending yhteishanke selvitys processed email to" emails "for hakemus" (:id hakemus))
+        (let [lang-str (:language hakemus)
+              lang (keyword lang-str)
+              type (if (= selvitys-type "loppuselvitys")
+                     :yhteishanke-loppuselvitys-processed
+                     :yhteishanke-valiselvitys-processed)
+              avustushaku-name (get-in avustushaku [:content :name lang])
+              subject (format (get-in mail-titles [type lang]) (:register_number hakemus))
+              template (get-in mail-templates [type lang])
+              signature (email-signature-block lang)
+              msg {:avustushaku-name avustushaku-name
+                   :register-number (:register_number hakemus)
+                   :project-name (:project_name hakemus)}
+              body (render template msg signature)]
+          (email/try-send-email!
+           (email/message lang type emails subject body)
+           {:hakemus-id     (:id hakemus)
+            :avustushaku-id (:id avustushaku)}))))))
 
 (defn send-payments-info! [payments-info]
   (let [lang :fi

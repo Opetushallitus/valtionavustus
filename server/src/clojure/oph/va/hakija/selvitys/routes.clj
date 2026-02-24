@@ -284,6 +284,7 @@
                              tx parent_id answers)))) (catch Exception e
                                                         (log/warn {:error (ex-message e)})))
           (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id hakemus-name register-number (get-hakemus-contact-emails parent_id) is-jotpa business-id)
+          (va-email/send-yhteishanke-selvitys-submitted! haku-id selvitys-user-key selvitys-type lang parent-hakemus hakemus-name register-number)
           (handlers/hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (handlers/hakemus-conflict-response hakemus))
       (http/bad-request! validation))))
