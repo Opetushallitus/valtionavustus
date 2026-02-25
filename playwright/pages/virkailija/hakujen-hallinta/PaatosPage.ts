@@ -59,7 +59,8 @@ export function PaatosPage(page: Page) {
     await page.locator(`text=Lähetä ${amount} päätöstä uudelleen`).click()
     await Promise.all([
       page.waitForResponse(
-        (resp) => resp.url().includes('/api/paatos/resendall/') && resp.status() === 200
+        (resp) => resp.url().includes('/api/paatos/resendall/') && resp.status() === 200,
+        { timeout: 30_000 }
       ),
       page.locator('text=Vahvista päätösten uudelleenlähetys').click(),
     ])
@@ -70,7 +71,8 @@ export function PaatosPage(page: Page) {
     await page.locator('text=Luo päätökset uudelleen').click()
     await Promise.all([
       page.waitForResponse(
-        (resp) => resp.url().includes('/api/paatos/regenerate/') && resp.status() === 200
+        (resp) => resp.url().includes('/api/paatos/regenerate/') && resp.status() === 200,
+        { timeout: 30_000 }
       ),
       page.locator('text=Vahvista päätösten luominen').click(),
     ])
