@@ -78,7 +78,12 @@ selvitysTest.describe('Väliselvitys', () => {
     'väliselvitys submitted notification is sent',
     async ({ page, acceptedHakemus: { hakemusID }, väliselvitysSubmitted }) => {
       expectToBeDefined(väliselvitysSubmitted)
-      const email = lastOrFail(await getValiselvitysSubmittedNotificationEmails(hakemusID))
+      const emails = await waitUntilMinEmails(
+        getValiselvitysSubmittedNotificationEmails,
+        1,
+        hakemusID
+      )
+      const email = lastOrFail(emails)
       expect(email['to-address']).toHaveLength(2)
       expect(email['to-address']).toEqual(['erkki.esimerkki@example.com', 'hakija-1424884@oph.fi'])
       expect(email['from-address']).toEqual('no-reply@valtionavustukset.oph.fi')

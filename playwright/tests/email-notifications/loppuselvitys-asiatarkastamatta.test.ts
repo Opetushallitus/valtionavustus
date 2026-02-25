@@ -2,7 +2,7 @@ import { APIRequestContext, expect } from '@playwright/test'
 
 import { VIRKAILIJA_URL } from '../../utils/constants'
 
-import { getLoppuselvitysAsiatarkastamattaEmails } from '../../utils/emails'
+import { Email, getLoppuselvitysAsiatarkastamattaEmails } from '../../utils/emails'
 import { selvitysTest as test } from '../../fixtures/selvitysTest'
 
 const sendLoppuselvitysAsiatarkastamattaNotifications = (request: APIRequestContext) =>
@@ -19,10 +19,15 @@ test('loppuselvitys-asiatarkastamatta notification is sent to virkailija when lo
   ).length
   await sendLoppuselvitysAsiatarkastamattaNotifications(request)
 
-  const emails = (await getLoppuselvitysAsiatarkastamattaEmails(avustushakuID)).filter((e) =>
-    e['to-address'].includes('santeri.horttanainen@reaktor.com')
-  )
-  expect(emails.length).toEqual(oldEmailCount + 1)
+  let emails: Email[] = []
+  await expect
+    .poll(async () => {
+      emails = (await getLoppuselvitysAsiatarkastamattaEmails(avustushakuID)).filter((e) =>
+        e['to-address'].includes('santeri.horttanainen@reaktor.com')
+      )
+      return emails.length
+    })
+    .toEqual(oldEmailCount + 1)
   const loppuselvitysAsiatarkastamattaNotification = emails.pop()
   expect(loppuselvitysAsiatarkastamattaNotification?.subject).toEqual(
     'Asiatarkastamattomia loppuselvityksiä'

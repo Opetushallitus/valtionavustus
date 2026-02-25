@@ -4,6 +4,7 @@ import {
   getHakemusTokenAndRegisterNumber,
   getLoppuselvitysSubmittedNotificationEmails,
   lastOrFail,
+  waitUntilMinEmails,
 } from '../../utils/emails'
 import { selvitysTest as test } from '../../fixtures/selvitysTest'
 
@@ -13,7 +14,8 @@ test('loppuselvitys submitted notification is sent', async ({
   loppuselvitysSubmitted: { loppuselvitysFormFilled },
 }) => {
   expect(loppuselvitysFormFilled)
-  const email = lastOrFail(await getLoppuselvitysSubmittedNotificationEmails(hakemusID))
+  const emails = await waitUntilMinEmails(getLoppuselvitysSubmittedNotificationEmails, 1, hakemusID)
+  const email = lastOrFail(emails)
   expect(email['to-address']).toEqual(['erkki.esimerkki@example.com', 'hakija-1424884@oph.fi'])
   expect(email.subject).toEqual('Loppuselvityksenne on vastaanotettu')
   const { 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)

@@ -248,7 +248,11 @@ Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avu
   })
   await test.step('hakija receives täydennys received email after creating submission', async () => {
     const { 'register-number': registerNumber } = await getHakemusTokenAndRegisterNumber(hakemusID)
-    const emails = await getLoppuselvitysTaydennysReceivedHakijaNotificationEmails(hakemusID)
+    const emails = await waitUntilMinEmails(
+      getLoppuselvitysTaydennysReceivedHakijaNotificationEmails,
+      1,
+      hakemusID
+    )
     const email = emails[0]
     expect(emails).toHaveLength(1)
     expect(email.subject).toBe(
@@ -314,7 +318,11 @@ Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avu
     await page.getByTestId('open-email-0').nth(1).click()
     await expect(page.getByText(`Vastaanottajat${email1}`)).toBeVisible()
     await expect(page.getByText(`Aihe${subject}`)).toBeVisible()
-    const emailsAfter = await getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails(hakemusID)
+    const emailsAfter = await waitUntilMinEmails(
+      getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails,
+      1,
+      hakemusID
+    )
     expect(emailsAfter).toHaveLength(1)
     expect(emailsAfter[0].subject).toBe(subject)
     expect(emailsAfter[0]['from-address']).toBe('no-reply@valtionavustukset.oph.fi')

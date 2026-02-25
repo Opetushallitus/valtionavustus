@@ -2,7 +2,7 @@ import { APIRequestContext, expect } from '@playwright/test'
 
 import { VIRKAILIJA_URL } from '../../utils/constants'
 
-import { getLoppuselvitysTaloustarkastamattaEmails } from '../../utils/emails'
+import { Email, getLoppuselvitysTaloustarkastamattaEmails } from '../../utils/emails'
 import { selvitysTest as test } from '../../fixtures/selvitysTest'
 
 const sendLoppuselvitysTaloustarkastamattaNotifications = (request: APIRequestContext) =>
@@ -20,8 +20,13 @@ test('loppuselvitys-taloustarkastamatta notification is sent', async ({
   expect(oldEmailCount).toEqual(0)
   await sendLoppuselvitysTaloustarkastamattaNotifications(request)
 
-  const emails = await getLoppuselvitysTaloustarkastamattaEmails(avustushakuID)
-  expect(emails.length).toEqual(1)
+  let emails: Email[] = []
+  await expect
+    .poll(async () => {
+      emails = await getLoppuselvitysTaloustarkastamattaEmails(avustushakuID)
+      return emails.length
+    })
+    .toEqual(1)
 
   const loppuselvitysAsiatarkastamattaNotification = emails.at(0)
   expect(loppuselvitysAsiatarkastamattaNotification).toBeDefined()

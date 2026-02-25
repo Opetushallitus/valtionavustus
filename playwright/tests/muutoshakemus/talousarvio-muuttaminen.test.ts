@@ -4,7 +4,11 @@ import {
   budjettimuutoshakemusTest,
 } from '../../fixtures/budjettimuutoshakemusTest'
 import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusPage'
-import { getAcceptedPäätösEmails, getLinkToMuutoshakemusFromSentEmails } from '../../utils/emails'
+import {
+  getAcceptedPäätösEmails,
+  getLinkToMuutoshakemusFromSentEmails,
+  waitUntilMinEmails,
+} from '../../utils/emails'
 import { Budget, BudgetAmount, expectBudget, fillBudget } from '../../utils/budget'
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import moment from 'moment/moment'
@@ -322,7 +326,7 @@ budjettimuutoshakemusTest(
   'filling muutoshakemus budget',
   async ({ page, acceptedHakemus: { hakemusID } }) => {
     await test.step('email has correct text', async () => {
-      const emails = await getAcceptedPäätösEmails(hakemusID)
+      const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
       expect(emails).toHaveLength(1)
       expect(emails[0].formatted).toContain(
         'Pääsette tekemään muutoshakemuksen sekä muuttamaan yhteyshenkilöä ja hänen yhteystietojaan koko hankekauden ajan tästä linkistä'

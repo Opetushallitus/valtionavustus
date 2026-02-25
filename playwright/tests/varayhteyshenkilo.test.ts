@@ -16,6 +16,7 @@ import {
   Email,
   getSelvitysEmailsWithValiselvitysSubject,
   getSelvitysEmailsWithLoppuselvitysSubject,
+  waitUntilMinEmails,
 } from '../utils/emails'
 import { HakijaMuutoshakemusPage } from '../pages/hakija/hakijaMuutoshakemusPage'
 import { navigate } from '../utils/navigate'
@@ -152,7 +153,7 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
     await test.step('varayhteyshenkilö gets notified about submitted hakemus', async () => {
       await hakemustenArviointiPage.navigate(avustushakuID)
       hakemusID = await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
-      const emails = await getHakemusSubmitted(hakemusID)
+      const emails = await waitUntilMinEmails(getHakemusSubmitted, 1, hakemusID)
       expect(emails).toHaveLength(1)
       expect(emails[0]['to-address']).toContain(answers.trustedContact.email)
     })
@@ -188,7 +189,7 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
       await expect(paatosTab.locators.paatosSentToEmails).toContainText(
         answers.trustedContact.email
       )
-      const emails = await getAcceptedPäätösEmails(hakemusID)
+      const emails = await waitUntilMinEmails(getAcceptedPäätösEmails, 1, hakemusID)
       expect(emails).toHaveLength(1)
       expect(emails[0]['to-address']).toContain(answers.trustedContact.email)
     })
@@ -314,7 +315,7 @@ test('varayhteyshenkilo flow', async ({
     const tapahtumaloki = valiselvitysPage.tapahtumaloki
     await expect(tapahtumaloki.getByTestId('sender-0')).toHaveText(ukotettuValmistelija)
     await expect(tapahtumaloki.getByTestId('sent-0')).toHaveText('1')
-    const emails = await getValiselvitysEmails(acceptedHakemusId)
+    const emails = await waitUntilMinEmails(getValiselvitysEmails, 1, acceptedHakemusId)
     expect(emails).toHaveLength(1)
     expect(emails[0]['to-address']).not.toContain(answers.trustedContact.email)
     expect(emails[0]['to-address']).toContain(newEmail)
@@ -329,7 +330,13 @@ test('varayhteyshenkilo flow', async ({
     await expect(hakijaSelvitysPage.submitButton).toHaveText('Väliselvitys lähetetty')
     await virkailijaValiselvitysPage.navigateToValiselvitysTab(avustushakuID, acceptedHakemusId)
     await virkailijaValiselvitysPage.acceptSelvitys()
-    const emailsAfterAcceptance = await getSelvitysEmailsWithValiselvitysSubject(avustushakuID)
+    let emailsAfterAcceptance: Email[] = []
+    await expect
+      .poll(async () => {
+        emailsAfterAcceptance = await getSelvitysEmailsWithValiselvitysSubject(avustushakuID)
+        return emailsAfterAcceptance.length
+      })
+      .toBeGreaterThanOrEqual(1)
     const latestMail = lastOrFail(emailsAfterAcceptance)
     expect(latestMail['subject']).toContain('Väliselvitys')
     expect(latestMail['to-address']).not.toContain(answers.trustedContact.email)
@@ -341,7 +348,7 @@ test('varayhteyshenkilo flow', async ({
     const tapahtumaloki = loppuselvitysPage.tapahtumaloki
     await expect(tapahtumaloki.getByTestId('sender-0')).toHaveText(ukotettuValmistelija)
     await expect(tapahtumaloki.getByTestId('sent-0')).toHaveText('1')
-    const emails = await getLoppuselvitysEmails(acceptedHakemusId)
+    const emails = await waitUntilMinEmails(getLoppuselvitysEmails, 1, acceptedHakemusId)
     expect(emails).toHaveLength(1)
     expect(emails[0]['to-address']).not.toContain(answers.trustedContact.email)
     expect(emails[0]['to-address']).toContain(newEmail)
@@ -392,7 +399,7 @@ test('varayhteyshenkilö refused avustushaku', async ({
     await refusePage.refuseGrant()
   })
   await test.step('varayhteyshenkilö gets notified about refusing avustushaku', async () => {
-    const emails = await getAvustushakuRefusedEmails(acceptedHakemusId)
+    const emails = await waitUntilMinEmails(getAvustushakuRefusedEmails, 1, acceptedHakemusId)
     expect(emails).toHaveLength(1)
     expect(emails[0]['subject']).toEqual(
       'Ilmoitus avustuksenne vastaanottamatta jättämisestä on lähetetty'
