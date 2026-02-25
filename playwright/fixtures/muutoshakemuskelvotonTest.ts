@@ -51,7 +51,7 @@ export const muutoshakemuskelvotonTest = defaultValues.extend<MuutoshakemusFixtu
       return userKey
     })
     const arkistointitunnus = await page.getByTestId('hakemus-arkistointitunnus').innerText()
-    use({ userKey, arkistointitunnus })
+    await use({ userKey, arkistointitunnus })
   },
   closedAvustushaku: async (
     { page, avustushakuID, submittedHakemus, finalAvustushakuEndDate },
