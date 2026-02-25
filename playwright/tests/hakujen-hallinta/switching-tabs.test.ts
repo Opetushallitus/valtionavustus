@@ -46,7 +46,10 @@ test('switching between avustushaut', async ({ page, hakuProps, userCache }) => 
   await test.step('switch to hauntiedot and avustushaku #1 to get ready to check paatos tab rendering when switching', async () => {
     expectToBeDefined(avustushakuID)
     await hakujenHallintaPage.navigate(avustushakuID)
-    await hakujenHallintaPage.page.click(`text="${avustushakuName}"`)
+    await Promise.all([
+      page.waitForResponse((res) => res.url().includes('/api/avustushaku/') && res.status() === 200),
+      page.locator(`text="${avustushakuName}"`).click(),
+    ])
   })
   await test.step('assert correct paatos paiva values for avustushaku #2', async () => {
     const paatosPage = await hakujenHallintaPage.commonHakujenHallinta.switchToPaatosTab()

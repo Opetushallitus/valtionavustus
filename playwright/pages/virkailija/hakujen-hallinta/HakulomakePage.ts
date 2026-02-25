@@ -100,7 +100,7 @@ export function HakulomakePage(page: Page) {
   async function addKoodisto(koodisto: string) {
     await page.locator('.soresu-field-add-header').first().hover()
     await page.click('text=Koodistokenttä')
-    await page.click(`text="${koodisto}"`)
+    await page.locator(`[role="option"]:text-is("${koodisto}")`).click({ force: true })
     await page.keyboard.press('ArrowDown')
     await page.keyboard.press('Enter')
     await page.locator('label:text-is("Pudotusvalikko")').first().click()
