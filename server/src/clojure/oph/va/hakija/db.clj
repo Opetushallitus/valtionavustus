@@ -212,8 +212,8 @@
                     [hakemus-id
                      (:organization-name org)
                      (:contact-person org)
-                     (:email org)]))))
-    (log/info (str "Successfully stored yhteishanke organizations for hakemus: " hakemus-id))))
+                     (:email org)])))
+      (log/info (str "Successfully stored yhteishanke organizations for hakemus: " hakemus-id)))))
 
 (defn get-yhteishanke-organizations [hakemus-id]
   (query "SELECT organization_name, contact_person, email
