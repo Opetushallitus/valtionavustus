@@ -57,28 +57,37 @@ export function PaatosPage(page: Page) {
 
   async function resendPaatokset(amount: number = 1) {
     await page.locator(`text=Lähetä ${amount} päätöstä uudelleen`).click()
-    await page.locator('text=Vahvista päätösten uudelleenlähetys').click()
+    await Promise.all([
+      page.waitForResponse(
+        (resp) => resp.url().includes('/api/paatos/resendall/') && resp.status() === 200
+      ),
+      page.locator('text=Vahvista päätösten uudelleenlähetys').click(),
+    ])
     await expect(page.locator('text=Päätökset lähetetty uudelleen')).toBeVisible()
   }
 
   async function recreatePaatokset() {
     await page.locator('text=Luo päätökset uudelleen').click()
-    await page.locator('text=Vahvista päätösten luominen').click()
+    await Promise.all([
+      page.waitForResponse(
+        (resp) => resp.url().includes('/api/paatos/regenerate/') && resp.status() === 200
+      ),
+      page.locator('text=Vahvista päätösten luominen').click(),
+    ])
     await expect(page.locator('text=Päätökset luotu uudelleen')).toBeVisible()
   }
 
   async function sendPaatos(amount = 1) {
     await locators.sendPaatokset(amount).click()
-    const sendallResponse = page.waitForResponse(new RegExp('/api/paatos/sendall/\\d+$'), {
-      timeout: 30_000,
-    })
-    const tapahtumalokiResponse = page.waitForResponse(
-      new RegExp('/api/avustushaku/\\d+/tapahtumaloki/paatoksen_lahetys$'),
-      { timeout: 30_000 }
-    )
-    await locators.confirmSending.click()
-    await sendallResponse
-    await tapahtumalokiResponse
+    await Promise.all([
+      page.waitForResponse(new RegExp('/api/paatos/sendall/\\d+$'), {
+        timeout: 30_000,
+      }),
+      page.waitForResponse(new RegExp('/api/avustushaku/\\d+/tapahtumaloki/paatoksen_lahetys$'), {
+        timeout: 30_000,
+      }),
+      locators.confirmSending.click(),
+    ])
     await expect(page.locator('.tapahtumaloki .entry')).toHaveCount(1)
   }
 
