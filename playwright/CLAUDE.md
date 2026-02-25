@@ -14,6 +14,10 @@ Before writing or modifying any Playwright test, read `TESTING_PATTERNS.md` in t
 
 4. **Wait for API responses after actions** — When a click triggers an async API call that updates the DOM, use `Promise.all` with `page.waitForResponse()` and the click.
 
+5. Always use locator-based actions
+
+
+
 ## Anti-Patterns (Do NOT Do These)
 
 - Direct email fetch + assert without polling
