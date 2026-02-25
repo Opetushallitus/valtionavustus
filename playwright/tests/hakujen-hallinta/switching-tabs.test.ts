@@ -47,7 +47,9 @@ test('switching between avustushaut', async ({ page, hakuProps, userCache }) => 
     expectToBeDefined(avustushakuID)
     await hakujenHallintaPage.navigate(avustushakuID)
     await Promise.all([
-      page.waitForResponse((res) => res.url().includes('/api/avustushaku/') && res.status() === 200),
+      page.waitForResponse(
+        (res) => res.url().includes('/api/avustushaku/') && res.status() === 200
+      ),
       page.locator(`text="${avustushakuName}"`).click(),
     ])
   })
