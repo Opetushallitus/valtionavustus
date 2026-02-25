@@ -105,7 +105,7 @@ test('hakija', async ({ page, avustushakuID, submittedHakemus: hakemus }) => {
   await test.step('can not edit hakemus when a change request has been cancelled', async () => {
     await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
     await hakemustenArviointiPage.createChangeRequest('it never happened')
-    await hakemustenArviointiPage.page.waitForSelector('div[class="change-request-title"]')
+    await expect(hakemustenArviointiPage.page.locator('div.change-request-title')).toBeVisible()
 
     await hakemustenArviointiPage.cancelChangeRequest()
 

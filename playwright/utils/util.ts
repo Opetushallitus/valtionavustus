@@ -33,21 +33,23 @@ export function log(...args: any[]) {
 export async function getExistingBudgetTableCells(page: Page, budgetRowSelector?: string) {
   const rowSelector = budgetRowSelector || '[data-test-id="meno-input-row"]'
   await expect(page.locator(rowSelector).nth(0)).toBeVisible()
-  return await page.$$eval(rowSelector, (elements) => {
-    return elements.map((elem) => ({
-      description: elem.querySelector('.meno-description')?.textContent ?? '',
-      amount: elem.querySelector('[data-test-id="current-value"]')?.textContent ?? '',
+  const rows = await page.locator(rowSelector).all()
+  return Promise.all(
+    rows.map(async (row) => ({
+      description: (await row.locator('.meno-description').textContent()) ?? '',
+      amount: (await row.locator('[data-test-id="current-value"]').textContent()) ?? '',
     }))
-  })
+  )
 }
 
 export async function getChangedBudgetTableCells(page: Page, budgetRowSelector?: string) {
   const rowSelector = budgetRowSelector || '[data-test-id="meno-input-row"]'
   await expect(page.locator(rowSelector).nth(0)).toBeVisible()
-  return await page.$$eval(rowSelector, (elements) => {
-    return elements.map((elem) => ({
-      description: elem.querySelector('.meno-description')?.textContent ?? '',
-      amount: elem.querySelector('[data-test-id="muutoshakemus-value"]')?.textContent ?? '',
+  const rows = await page.locator(rowSelector).all()
+  return Promise.all(
+    rows.map(async (row) => ({
+      description: (await row.locator('.meno-description').textContent()) ?? '',
+      amount: (await row.locator('[data-test-id="muutoshakemus-value"]').textContent()) ?? '',
     }))
-  })
+  )
 }

@@ -131,11 +131,12 @@ export function HakijaAvustusHakuPage(page: Page) {
   }
 
   async function fillInBusinessId(businessId: string, lang: 'fi' | 'sv' = 'fi') {
-    await page.fill('#finnish-business-id', businessId)
-    await page.click('input.get-business-id')
-    await page.waitForSelector(`[data-test-id="organisation-selection-${lang}"]`, { timeout: 5000 })
-    await page.click(`[data-test-id="organisation-selection-${lang}"]`)
-    await page.click('[data-test-id="confirm-selection"]')
+    await page.locator('#finnish-business-id').fill(businessId)
+    await page.locator('input.get-business-id').click()
+    const orgSelection = page.locator(`[data-test-id="organisation-selection-${lang}"]`)
+    await expect(orgSelection).toBeVisible({ timeout: 5000 })
+    await orgSelection.click()
+    await page.locator('[data-test-id="confirm-selection"]').click()
   }
 
   const fillSignatories = async (signatories: Signatory[]) => {

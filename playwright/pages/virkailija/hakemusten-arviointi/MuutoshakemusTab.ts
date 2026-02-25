@@ -106,13 +106,14 @@ export function createMuutoshakemusTab(page: Page) {
   }
 
   async function getAcceptedBudgetInputAmounts(): Promise<{ name: string; value: string }[]> {
-    const inputs = await page.$$(
+    const inputs = page.locator(
       '[data-test-id="muutoshakemus-form"] [data-test-id="meno-input"] > input'
     )
+    const allInputs = await inputs.all()
     return Promise.all(
-      inputs.map(async (elem) => {
-        const name = (await elem.getAttribute('name'))?.replace('talousarvio.', '') || ''
-        const value = await elem.inputValue()
+      allInputs.map(async (input) => {
+        const name = ((await input.getAttribute('name')) ?? '').replace('talousarvio.', '')
+        const value = await input.inputValue()
         return { name, value }
       })
     )

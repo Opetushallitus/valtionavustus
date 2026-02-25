@@ -21,7 +21,7 @@ test.describe.parallel('Avustushaku that was marked as muutoshakukelvoton', () =
     const newAvustushakuId = await hakujenHallintaPage.copyCurrentHaku()
 
     expect(page.url()).toContain(String(newAvustushakuId))
-    expect(await page.$('[data-test-id="muutoshakukelvoton-warning"]')).toBeNull()
+    await expect(page.locator('[data-test-id="muutoshakukelvoton-warning"]')).toBeHidden()
   })
 
   test('shows warning on Haun tiedot tab', async ({ avustushakuID, page }) => {
