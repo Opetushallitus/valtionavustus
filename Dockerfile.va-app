@@ -47,6 +47,7 @@ RUN ./lein compile :all
 RUN ./lein pom
 
 COPY entrypoint.sh .
+COPY local_entrypoint.sh .
 COPY server/config/ ./server/config/
 
 COPY --from=web-builder /app/server/resources/public/hakija/js/ server/resources/public/hakija/js/
@@ -79,8 +80,8 @@ FROM eclipse-temurin:21.0.10_7-jre@sha256:05b34d0c037b1b216530d61a131797d2005f3f
 WORKDIR /app
 LABEL org.opencontainers.image.source=https://github.com/opetushallitus/valtionavustus
 COPY --from=uberjar-builder \
-    /app/target/uberjar/valtionavustus-0.1.0-SNAPSHOT-standalone.jar \
-    /app/valtionavustus.jar
+  /app/target/uberjar/valtionavustus-0.1.0-SNAPSHOT-standalone.jar \
+  /app/valtionavustus.jar
 COPY --from=va-base /app/server/config/ \
   /app/server/config/
 COPY entrypoint.sh /app/

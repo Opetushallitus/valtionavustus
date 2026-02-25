@@ -7,11 +7,11 @@ services:
       args:
         - NODE_VERSION
     # run lein for local development to get hot reload
-    command: ./lein with-profile +server-local run -m oph.va.hakija.main
+    command: ./local_entrypoint.sh
     ports:
-      - '127.0.0.1:8080:8080'
-      - '127.0.0.1:8081:8081'
-      - '127.0.0.1:7999:7999'
+      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:8081:8081"
+      - "127.0.0.1:7999:7999"
     volumes:
       - type: bind
         source: ./server/
@@ -25,19 +25,19 @@ services:
 
   db:
     ports:
-      - '127.0.0.1:42042:5432'
+      - "127.0.0.1:42042:5432"
 
   fakesmtp:
     ports:
-      - '127.0.0.1:42069:25'
+      - "127.0.0.1:42069:25"
 
   pagerduty:
     ports:
-      - '127.0.0.1:8888:8080'
+      - "127.0.0.1:8888:8080"
 
   maksatuspalvelu:
     ports:
-      - '127.0.0.1:42022:22'
+      - "127.0.0.1:42022:22"
 
 networks:
   default:
