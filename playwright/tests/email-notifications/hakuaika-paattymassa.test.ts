@@ -116,8 +116,6 @@ Om ni har beslutat att inte lämna in ansökan föranleder detta meddelande inga
         async ({ page, avustushakuID, submittedHakemus, randomEmail }) => {
           expect(submittedHakemus).toBeDefined()
           await sendHakuaikaPaattymassaNotifications(page)
-          await page.waitForTimeout(5000)
-
           await expectEmailNotSent(randomEmail, avustushakuID)
         }
       )
@@ -143,8 +141,6 @@ Om ni har beslutat att inte lämna in ansökan föranleder detta meddelande inga
         async ({ page, filledHakemus, avustushakuID, randomEmail }) => {
           expect(filledHakemus).toBeDefined()
           await sendHakuaikaPaattymassaNotifications(page)
-          await page.waitForTimeout(5000)
-
           await expectEmailNotSent(randomEmail, avustushakuID)
         }
       )
@@ -208,9 +204,13 @@ for (const tz of timezones) {
 }
 
 async function expectEmailNotSent(email: string, avustushakuID: number) {
-  const emails = await getHakuaikaPaattymassaEmails(avustushakuID)
-  const expectedEmail = expect.objectContaining({
-    'to-address': [email],
-  })
-  expect(emails).not.toContainEqual(expectedEmail)
+  await expect
+    .poll(
+      async () => {
+        const emails = await getHakuaikaPaattymassaEmails(avustushakuID)
+        return emails.filter((e) => e['to-address'].includes(email))
+      },
+      { timeout: 5000, intervals: [500, 1000, 1000, 2000] }
+    )
+    .toHaveLength(0)
 }

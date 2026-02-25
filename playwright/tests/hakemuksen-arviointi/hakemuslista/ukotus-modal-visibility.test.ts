@@ -78,10 +78,10 @@ manyApplicationsTest(
       await hakemusListingLocator.evaluate((el) => {
         el.scrollTop = el.scrollHeight
       })
-      await page.waitForTimeout(300)
     })
 
     const lastHakemusRow = hakemusListingLocator.locator('tbody tr').last()
+    await expect(lastHakemusRow).toBeVisible()
 
     await test.step('Click add valmistelija button on last hakemus in scrolled list', async () => {
       const addValmistelijaButton = lastHakemusRow.locator(
