@@ -50,6 +50,7 @@ const HakujenHallintaApp = () => {
     saveStatus.saveInProgress ||
     saveStatus.savingRoles ||
     saveStatus.savingForm ||
+    saveStatus.savingProjects ||
     saveStatus.savingTalousarviotilit ||
     saveStatus.savingManuallyRefactorToOwnActionsAtSomepoint
 

@@ -152,7 +152,11 @@ export const HaunTiedotPage = (page: Page) => {
       if (projectCode !== NoProjectCodeProvided.code) {
         await locators.addProject.last().click()
         await locators.selectProjectWithCode(NoProjectCodeProvided.code).click()
+        const projectsSaved = page.waitForResponse(
+          (resp) => resp.url().includes('/projects') && resp.request().method() === 'POST' && resp.ok()
+        )
         await page.getByTestId(projectCode).click()
+        await projectsSaved
       }
     }
   }

@@ -107,6 +107,7 @@ const saveSuccess = ({ saveStatus }: State, key: ExtraSavingStateKeys): SaveStat
 type ExtraSavingStates = {
   savingRoles: boolean
   savingForm: boolean
+  savingProjects: boolean
   savingTalousarviotilit: boolean
   savingManuallyRefactorToOwnActionsAtSomepoint: boolean
   sendingMaksatuksetAndTasmaytysraportti: boolean
@@ -168,14 +169,20 @@ export const ensureKoodistoLoaded = createAsyncThunk<
   }
 )
 
+let projectUpdateId = 0
+
 export const updateProjects = createAsyncThunk<
   void,
   { avustushakuId: number; projects: VaCodeValue[] },
-  { state: HakujenHallintaRootState }
+  { state: HakujenHallintaRootState; rejectValue: string }
 >('haku/updateProjects', async (payload, thunkAPI) => {
+  const myId = ++projectUpdateId
   thunkAPI.dispatch(updateProject(payload))
   thunkAPI.dispatch(startAutoSaveForAvustushaku(payload.avustushakuId))
   await HttpUtil.post(`/api/avustushaku/${payload.avustushakuId}/projects`, payload.projects)
+  if (myId !== projectUpdateId) {
+    return thunkAPI.rejectWithValue('superseded') as never
+  }
 })
 
 export const startIndicatingThatSendingMaksatuksetAndTasmaytysraporttiFailed = createAsyncThunk<
@@ -726,6 +733,7 @@ const initialState: State = {
     serverError: '',
     savingRoles: false,
     savingForm: false,
+    savingProjects: false,
     savingTalousarviotilit: false,
     savingManuallyRefactorToOwnActionsAtSomepoint: false,
     sendingMaksatuksetAndTasmaytysraportti: false,
@@ -922,6 +930,15 @@ const hakuSlice = createSlice({
       .addCase(saveHaku.rejected, (state, action) => {
         state.saveStatus.serverError = action.payload ?? 'unexpected-save-error'
         state.saveStatus.saveInProgress = false
+      })
+      .addCase(updateProjects.pending, startSaving('savingProjects'))
+      .addCase(updateProjects.fulfilled, (state) => {
+        state.saveStatus = saveSuccess(state, 'savingProjects')
+      })
+      .addCase(updateProjects.rejected, (state, action) => {
+        if (action.payload === 'superseded') return
+        state.saveStatus.savingProjects = false
+        state.saveStatus.serverError = action.payload ?? 'unexpected-save-error'
       })
       .addCase(startAutoSaveForAvustushaku.pending, startSaving('saveInProgress'))
       .addCase(saveHakuImmediately.pending, startSaving('saveInProgress'))
