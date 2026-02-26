@@ -99,17 +99,6 @@ export default function SelvitysTab(page: Page, type: SelvitysType) {
     await expect(page.getByText(`Lähetetty ${expectedAmount} viestiä`)).toBeVisible()
   }
 
-  /*
-    for some reason
-    await page.fill(".form-json-editor textarea", lomakeJson)
-    takes almost 50seconds
-  */
-  async function replaceLomakeJson(lomakeJson: string) {
-    await locators.form.evaluate((textarea, lomakeJson) => {
-      ;(textarea as HTMLTextAreaElement).value = lomakeJson
-    }, lomakeJson)
-  }
-
   async function waitFormToBeLoaded() {
     await expect(locators.form).toContainText('{')
   }
@@ -117,10 +106,7 @@ export default function SelvitysTab(page: Page, type: SelvitysType) {
   async function changeLomakeJson(lomakeJson: string) {
     await waitFormToBeLoaded()
     await expect(locators.saveFormButton).toBeDisabled()
-    await replaceLomakeJson(lomakeJson)
-    await expect(locators.saveFormButton).toBeDisabled()
-    // trigger autosave by typing space in the end
-    await locators.form.pressSequentially(' ')
+    await locators.form.fill(lomakeJson)
     await expect(locators.saveFormButton).toBeEnabled()
   }
 
