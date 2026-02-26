@@ -153,7 +153,8 @@ export const HaunTiedotPage = (page: Page) => {
         await locators.addProject.last().click()
         await locators.selectProjectWithCode(NoProjectCodeProvided.code).click()
         const projectsSaved = page.waitForResponse(
-          (resp) => resp.url().includes('/projects') && resp.request().method() === 'POST' && resp.ok()
+          (resp) =>
+            resp.url().includes('/projects') && resp.request().method() === 'POST' && resp.ok()
         )
         await page.getByTestId(projectCode).click()
         await projectsSaved
