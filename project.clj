@@ -79,7 +79,7 @@
 
                          [org.clojure/core.memoize "1.1.266"]]
 
-  :dependencies [[org.clojure/clojure "1.12.3"]
+  :dependencies [[org.clojure/clojure "1.12.4"]
                  [environ "1.2.0"]
 
                  ;; clojure libs
