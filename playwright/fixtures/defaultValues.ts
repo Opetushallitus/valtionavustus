@@ -50,7 +50,7 @@ const workerScopedDefaultValues = test.extend<{}, WorkerScopedDefaultValueFixtur
       const tatili = {
         name: `TA-tili ${randomString()}`,
         year: 2022,
-        code: `29.10.30.20.${randomInt(0, 99)}.${randomInt(0, 99)}`,
+        code: `29.10.${randomInt(0, 99)}.${randomInt(0, 99)}.${randomInt(0, 99)}.${randomInt(0, 99)}`,
         amount: 420,
       }
       let createdCode: Talousarviotili
@@ -63,9 +63,17 @@ const workerScopedDefaultValues = test.extend<{}, WorkerScopedDefaultValueFixtur
         await taForm.name.input.fill(tatili.name)
         await taForm.amount.input.fill(String(tatili.amount))
         const [res] = await Promise.all([
-          page.waitForResponse(`${VIRKAILIJA_URL}/api/talousarviotilit/`),
+          page.waitForResponse(
+            (response) =>
+              response.url().includes('/api/talousarviotilit/') &&
+              response.request().method() === 'POST'
+          ),
           taForm.submitBtn.click(),
         ])
+        expect(
+          res.ok(),
+          `Talousarviotili creation failed with status ${res.status()} for code ${tatili.code}`
+        ).toBeTruthy()
         createdCode = await res.json()
         expect(createdCode).toEqual(expect.objectContaining(tatili))
         await expect(row).toBeVisible()
