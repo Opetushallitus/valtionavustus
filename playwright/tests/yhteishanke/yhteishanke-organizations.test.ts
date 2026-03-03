@@ -433,9 +433,9 @@ test('yhteishanke muutoshakemus: yhteyshenkilon tiedot voidaan paivittaa osapuol
     await expect(
       locators.originalHakemus.oldAnswers.firstYhteishankeOrganizationContactPerson
     ).toContainText('Eka Henkilö')
-    await expect(locators.originalHakemus.oldAnswers.firstYhteishankeOrganizationEmail).toContainText(
-      'eka@ensimmainen.fi'
-    )
+    await expect(
+      locators.originalHakemus.oldAnswers.firstYhteishankeOrganizationEmail
+    ).toContainText('eka@ensimmainen.fi')
     await expect(
       locators.originalHakemus.oldAnswers.secondYhteishankeOrganizationContactPerson
     ).toContainText('Toka Henkilö')
@@ -446,9 +446,9 @@ test('yhteishanke muutoshakemus: yhteyshenkilon tiedot voidaan paivittaa osapuol
     await expect(
       locators.originalHakemus.newAnswers.firstYhteishankeOrganizationContactPerson
     ).toContainText('Eka Paivitetty')
-    await expect(locators.originalHakemus.newAnswers.firstYhteishankeOrganizationEmail).toContainText(
-      'eka.paivitetty@ensimmainen.fi'
-    )
+    await expect(
+      locators.originalHakemus.newAnswers.firstYhteishankeOrganizationEmail
+    ).toContainText('eka.paivitetty@ensimmainen.fi')
     await expect(
       locators.originalHakemus.newAnswers.secondYhteishankeOrganizationContactPerson
     ).toContainText('Toka Paivitetty')

@@ -81,16 +81,20 @@ export function PaatosPage(page: Page) {
 
   async function sendPaatos(amount = 1) {
     await locators.sendPaatokset(amount).click()
-    await Promise.all([
-      page.waitForResponse(new RegExp('/api/paatos/sendall/\\d+$'), {
-        timeout: 30_000,
-      }),
-      page.waitForResponse(new RegExp('/api/avustushaku/\\d+/tapahtumaloki/paatoksen_lahetys$'), {
-        timeout: 30_000,
-      }),
+    const [sendPaatoksetResponse] = await Promise.all([
+      page.waitForResponse(
+        (resp) => resp.url().includes('/api/paatos/sendall/') && resp.request().method() === 'POST',
+        {
+          timeout: 30_000,
+        }
+      ),
       locators.confirmSending.click(),
     ])
-    await expect(page.locator('.tapahtumaloki .entry')).toHaveCount(1)
+    expect(
+      sendPaatoksetResponse.ok(),
+      `Expected /api/paatos/sendall/ to return success status, got ${sendPaatoksetResponse.status()}`
+    ).toBeTruthy()
+    await expect(page.locator('.tapahtumaloki .entry')).toHaveCount(1, { timeout: 30_000 })
   }
 
   async function setLoppuselvitysDate(value: string) {

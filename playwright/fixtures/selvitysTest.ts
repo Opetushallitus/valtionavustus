@@ -171,7 +171,20 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     const submitButtonText = lang === 'fi' ? 'Lähetä käsiteltäväksi' : 'Sänd för behandling'
     const submittedText = lang === 'fi' ? 'Loppuselvitys lähetetty' : 'Slutredovisning sänd'
     await expect(hakijaSelvitysPage.submitButton).toHaveText(submitButtonText)
-    await hakijaSelvitysPage.submitButton.click()
+    const [submitResponse] = await Promise.all([
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes(`/api/avustushaku/${avustushakuID}/selvitys/loppuselvitys/`) &&
+          resp.url().includes('/submit') &&
+          resp.request().method() === 'POST',
+        { timeout: 30_000 }
+      ),
+      hakijaSelvitysPage.submitButton.click(),
+    ])
+    expect(
+      submitResponse.ok(),
+      `Expected loppuselvitys submit to succeed, got ${submitResponse.status()}`
+    ).toBeTruthy()
     await expect(hakijaSelvitysPage.submitButton).toHaveText(submittedText)
     await hakijaSelvitysPage.submitButton.isDisabled()
 

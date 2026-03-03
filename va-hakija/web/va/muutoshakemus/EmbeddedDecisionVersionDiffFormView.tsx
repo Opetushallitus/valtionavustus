@@ -16,7 +16,9 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null
 
 const isAnswer = (value: unknown): value is Answer =>
-  isRecord(value) && typeof value.key === 'string' && Object.prototype.hasOwnProperty.call(value, 'value')
+  isRecord(value) &&
+  typeof value.key === 'string' &&
+  Object.prototype.hasOwnProperty.call(value, 'value')
 
 const toAnswers = (value: unknown): Answer[] => (Array.isArray(value) ? value.filter(isAnswer) : [])
 
