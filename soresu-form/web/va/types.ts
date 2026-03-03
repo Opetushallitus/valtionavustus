@@ -4,6 +4,7 @@ import {
   MuutoshakemusStatus,
   Talousarvio,
 } from './types/muutoshakemus'
+import { YhteishankeOrganizationContact } from './yhteishankeOrganizations'
 import translations from '../../../server/resources/public/translations.json'
 import { ImmutableObject } from 'seamless-immutable'
 import { HakemusAccessControl, VaCodeValue } from '../../../va-virkailija/web/va/types'
@@ -152,6 +153,7 @@ export interface NormalizedHakemusData {
   'valiselvitys-organization-email'?: string
   'loppuselvitys-contact-email'?: string
   'loppuselvitys-organization-email'?: string
+  'yhteishanke-organizations'?: YhteishankeOrganizationContact[]
   'hakemus-id': number
   id: number
   'organization-name': string

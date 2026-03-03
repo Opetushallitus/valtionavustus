@@ -570,6 +570,14 @@ export class HakemustenArviointiPage {
     const trustedContactName = '#trusted-contact-name'
     const trustedContactEmail = '#trusted-contact-email'
     const trustedContactPhone = '#trusted-contact-phone'
+    const firstYhteishankeOrganizationContactPerson =
+      '[id="other-organizations.other-organizations-1.contactperson"] div'
+    const firstYhteishankeOrganizationEmail =
+      '[id="other-organizations.other-organizations-1.email"] div'
+    const secondYhteishankeOrganizationContactPerson =
+      '[id="other-organizations.other-organizations-2.contactperson"] div'
+    const secondYhteishankeOrganizationEmail =
+      '[id="other-organizations.other-organizations-2.email"] div'
     const koodisto = '#koodistoField-1'
     return {
       printableLink: this.page.locator('text="Tulostusversio"'),
@@ -580,6 +588,14 @@ export class HakemustenArviointiPage {
         trustedContactName: oldAnswer.locator(trustedContactName),
         trustedContactEmail: oldAnswer.locator(trustedContactEmail),
         trustedContactPhone: oldAnswer.locator(trustedContactPhone),
+        firstYhteishankeOrganizationContactPerson: oldAnswer.locator(
+          firstYhteishankeOrganizationContactPerson
+        ),
+        firstYhteishankeOrganizationEmail: oldAnswer.locator(firstYhteishankeOrganizationEmail),
+        secondYhteishankeOrganizationContactPerson: oldAnswer.locator(
+          secondYhteishankeOrganizationContactPerson
+        ),
+        secondYhteishankeOrganizationEmail: oldAnswer.locator(secondYhteishankeOrganizationEmail),
         koodisto: oldAnswer.locator(koodisto),
       },
       newAnswers: {
@@ -589,6 +605,14 @@ export class HakemustenArviointiPage {
         trustedContactName: newAnswer.locator(trustedContactName),
         trustedContactEmail: newAnswer.locator(trustedContactEmail),
         trustedContactPhone: newAnswer.locator(trustedContactPhone),
+        firstYhteishankeOrganizationContactPerson: newAnswer.locator(
+          firstYhteishankeOrganizationContactPerson
+        ),
+        firstYhteishankeOrganizationEmail: newAnswer.locator(firstYhteishankeOrganizationEmail),
+        secondYhteishankeOrganizationContactPerson: newAnswer.locator(
+          secondYhteishankeOrganizationContactPerson
+        ),
+        secondYhteishankeOrganizationEmail: newAnswer.locator(secondYhteishankeOrganizationEmail),
         koodisto: newAnswer.locator(koodisto),
       },
       koodisto: this.page.locator(koodisto),

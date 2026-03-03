@@ -1,6 +1,7 @@
 import { Answer, Avustushaku, NormalizedHakemusData } from './types'
 import { Muutoshakemus } from './types/muutoshakemus'
 import { getProjectEndDate } from './Muutoshakemus'
+import { mapOtherOrganizationsAnswerValue } from './yhteishankeOrganizations'
 
 export function mapAnswersWithMuutoshakemusData(
   avustushaku: Avustushaku,
@@ -27,6 +28,12 @@ export function mapAnswersWithMuutoshakemusData(
       }
       case 'trusted-contact-phone': {
         return normalizedData ? { ...a, value: normalizedData['trusted-contact-phone'] } : a
+      }
+      case 'other-organizations': {
+        const organizations = normalizedData?.['yhteishanke-organizations']
+        return normalizedData && organizations?.length
+          ? { ...a, value: mapOtherOrganizationsAnswerValue(a.value, organizations) }
+          : a
       }
       default:
         return a

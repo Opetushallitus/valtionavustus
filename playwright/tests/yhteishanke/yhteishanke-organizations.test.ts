@@ -322,6 +322,7 @@ test('yhteishanke muutoshakemus: yhteyshenkilon tiedot voidaan paivittaa osapuol
   const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
   const first = otherOrganization(page, 0)
   const second = otherOrganization(page, 1)
+  let hakemusID: number
 
   await test.step('submit yhteishanke hakemus with two organizations', async () => {
     await page.locator("[for='combined-effort.radio.0']").click()
@@ -358,7 +359,7 @@ test('yhteishanke muutoshakemus: yhteyshenkilon tiedot voidaan paivittaa osapuol
     if (!projectName) {
       throw new Error('projectName must be set in order to accept avustushaku')
     }
-    const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
+    hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
       avustushakuID,
       projectName,
       projektikoodi,
@@ -424,6 +425,36 @@ test('yhteishanke muutoshakemus: yhteyshenkilon tiedot voidaan paivittaa osapuol
     await expect(firstOrganizationEmail).toHaveValue('eka.paivitetty@ensimmainen.fi')
     await expect(secondOrganizationContactPerson).toHaveValue('Toka Paivitetty')
     await expect(secondOrganizationEmail).toHaveValue('toka.paivitetty@toinen.fi')
+  })
+
+  await test.step('virkailija preview shows old and new yhteishanke contacts after update', async () => {
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    await hakemustenArviointiPage.navigateToHakemusArviointi(avustushakuID, hakemusID)
+    const sidebar = hakemustenArviointiPage.sidebarLocators()
+    await expect(sidebar.oldAnswers.firstYhteishankeOrganizationContactPerson).toContainText(
+      'Eka Henkilö'
+    )
+    await expect(sidebar.oldAnswers.firstYhteishankeOrganizationEmail).toContainText(
+      'eka@ensimmainen.fi'
+    )
+    await expect(sidebar.oldAnswers.secondYhteishankeOrganizationContactPerson).toContainText(
+      'Toka Henkilö'
+    )
+    await expect(sidebar.oldAnswers.secondYhteishankeOrganizationEmail).toContainText(
+      'toka@toinen.fi'
+    )
+    await expect(sidebar.newAnswers.firstYhteishankeOrganizationContactPerson).toContainText(
+      'Eka Paivitetty'
+    )
+    await expect(sidebar.newAnswers.firstYhteishankeOrganizationEmail).toContainText(
+      'eka.paivitetty@ensimmainen.fi'
+    )
+    await expect(sidebar.newAnswers.secondYhteishankeOrganizationContactPerson).toContainText(
+      'Toka Paivitetty'
+    )
+    await expect(sidebar.newAnswers.secondYhteishankeOrganizationEmail).toContainText(
+      'toka.paivitetty@toinen.fi'
+    )
   })
 })
 

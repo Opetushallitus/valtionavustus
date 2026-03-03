@@ -186,6 +186,12 @@
    :translation-fi s/Str
    :translation-sv (s/maybe  s/Str)})
 
+(s/defschema YhteishankeOrganization
+  "Yhteishanke organization contact data"
+  {(s/optional-key :organization-name) (s/maybe s/Str)
+   (s/optional-key :contact-person) (s/maybe s/Str)
+   (s/optional-key :email) (s/maybe s/Str)})
+
 (s/defschema NormalizedHakemus
   "NormalizedHakemus contains hakemus answers in normalized format"
   {:id Long
@@ -205,6 +211,7 @@
    (s/optional-key :valiselvitys-organization-email) s/Str
    (s/optional-key :loppuselvitys-contact-email) s/Str
    (s/optional-key :loppuselvitys-organization-email) s/Str
+   (s/optional-key :yhteishanke-organizations) [YhteishankeOrganization]
    (s/optional-key :talousarvio) [Meno]})
 
 (s/defschema MuutoshakemusStatus

@@ -26,6 +26,13 @@
                WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
          [id]))
 
+(defn- get-yhteishanke-organizations [hakemus-id]
+  (query "SELECT organization_name, contact_person, email
+          FROM virkailija.yhteishanke_organization
+          WHERE hakemus_id = ?
+          ORDER BY id"
+         [hakemus-id]))
+
 (defn- store-paatos-sisaltomuutos [tx paatos-id status]
   (execute! tx "insert into paatos_sisaltomuutos (paatos_id, status) values (?, ?::virkailija.paatos_type)"
             [paatos-id status]))
@@ -142,10 +149,17 @@
                           WHERE h.version_closed IS NULL
                           AND n.hakemus_id = ?" [hakemus-id])
         hakemus (first hakemukset)
-        talousarvio (get-talousarvio hakemus-id "hakemus")]
+        talousarvio (get-talousarvio hakemus-id "hakemus")
+        yhteishanke-organizations (get-yhteishanke-organizations hakemus-id)]
     (log/info (str "Succesfully fetched hakemus with id: " hakemus-id))
     (if hakemus
-      (into {} (filter (comp some? val) (assoc hakemus :talousarvio talousarvio)))
+      (into
+       {}
+       (filter
+        (comp some? val)
+        (cond-> (assoc hakemus :talousarvio talousarvio)
+          (seq yhteishanke-organizations)
+          (assoc :yhteishanke-organizations yhteishanke-organizations))))
       nil)))
 
 (defn onko-muutoshakukelpoinen-avustushaku-ok [avustushaku-id]

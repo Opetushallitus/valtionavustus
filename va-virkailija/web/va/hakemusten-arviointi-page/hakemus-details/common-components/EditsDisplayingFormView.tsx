@@ -14,6 +14,7 @@ import {
 } from 'soresu-form/web/va/types'
 import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
 import { getProjectEndDate } from 'soresu-form/web/va/Muutoshakemus'
+import { mapOtherOrganizationsAnswerValue } from 'soresu-form/web/va/yhteishankeOrganizations'
 
 function addOrUpdateAnswer(answers: Answer[], key: string, newValue: any): Answer[] {
   const answerIndex = answers.findIndex((a) => a.key === key)
@@ -68,6 +69,15 @@ function mutateDeltaFromNormalizedData(
     'trusted-contact-email',
     normalizedData['trusted-contact-email']
   )
+  const yhteishankeOrganizations = normalizedData['yhteishanke-organizations']
+  if (yhteishankeOrganizations?.length) {
+    const otherOrganizationsAnswer = answers.find((a) => a.key === 'other-organizations')
+    const newOrganizationsValue = mapOtherOrganizationsAnswerValue(
+      otherOrganizationsAnswer?.value,
+      yhteishankeOrganizations
+    )
+    mutateAnswersDeltaWithKey(answersDelta, answers, 'other-organizations', newOrganizationsValue)
+  }
 }
 
 function mutateDeltaFromMuutoshakemukset(
