@@ -22,12 +22,38 @@ import VaPreviewComponentFactory from 'soresu-form/web/va/VaPreviewComponentFact
 import VaBudgetCalculator from 'soresu-form/web/va/VaBudgetCalculator'
 import { initializeStateLoop } from 'soresu-form/web/form/FormStateLoop'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
-import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
+import {
+  Muutoshakemus,
+  YhteishankeOrganizationsResponse,
+} from 'soresu-form/web/va/types/muutoshakemus'
 
 import VaForm from './VaForm'
 import VaUrlCreator from './VaUrlCreator'
 
 const sessionIdentifierForLocalStorageId = new Date().getTime()
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null
+
+const toOptionalString = (value: unknown): string | undefined =>
+  typeof value === 'string' ? value : undefined
+
+const parseYhteishankeOrganizationsResponse = (
+  value: unknown
+): YhteishankeOrganizationsResponse | undefined => {
+  if (!isRecord(value) || !Array.isArray(value.organizations)) {
+    return undefined
+  }
+
+  return {
+    organizations: value.organizations.filter(isRecord).map((organization) => ({
+      'organization-name': toOptionalString(organization['organization-name']),
+      'contact-person': toOptionalString(organization['contact-person']),
+      email: toOptionalString(organization.email),
+    })),
+    'is-yhteishanke': value['is-yhteishanke'] === true,
+  }
+}
 
 function containsExistingEntityId(urlContent: UrlContent) {
   const query = urlContent.parsedQuery
@@ -108,9 +134,29 @@ const environmentP = Bacon.fromPromise<EnvironmentApiResponse>(
   HttpUtil.get(VaUrlCreator.environmentConfigUrl())
 )
 const normalizedHakemusP = Bacon.fromPromise<NormalizedHakemusData>(
-  HttpUtil.get(`/api/avustushaku/${avustusHakuId}/hakemus/${query.hakemus}/normalized`).catch(
-    () => undefined
-  )
+  Promise.all([
+    HttpUtil.get(`/api/avustushaku/${avustusHakuId}/hakemus/${query.hakemus}/normalized`).catch(
+      () => undefined
+    ),
+    HttpUtil.get(
+      `/api/avustushaku/${avustusHakuId}/hakemus/${query.hakemus}/yhteishanke-organizations`
+    ).catch(() => undefined),
+  ]).then(([normalizedHakemus, yhteishankeOrganizationsResponse]) => {
+    if (!normalizedHakemus) {
+      return normalizedHakemus
+    }
+    const organizations =
+      parseYhteishankeOrganizationsResponse(yhteishankeOrganizationsResponse)?.organizations ?? []
+
+    if (!organizations.length) {
+      return normalizedHakemus
+    }
+
+    return {
+      ...normalizedHakemus,
+      'yhteishanke-organizations': organizations,
+    }
+  })
 )
 const muutoshakemuksetP = Bacon.fromPromise<Muutoshakemus[]>(
   HttpUtil.get(`/api/avustushaku/${avustusHakuId}/hakemus/${query.hakemus}/muutoshakemus`).catch(

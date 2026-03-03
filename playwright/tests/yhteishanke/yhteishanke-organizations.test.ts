@@ -427,6 +427,36 @@ test('yhteishanke muutoshakemus: yhteyshenkilon tiedot voidaan paivittaa osapuol
     await expect(secondOrganizationEmail).toHaveValue('toka.paivitetty@toinen.fi')
   })
 
+  await test.step('original hakemus iframe shows old and new yhteishanke contacts', async () => {
+    const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
+    const locators = hakijaMuutoshakemusPage.locators()
+    await expect(
+      locators.originalHakemus.oldAnswers.firstYhteishankeOrganizationContactPerson
+    ).toContainText('Eka Henkilö')
+    await expect(locators.originalHakemus.oldAnswers.firstYhteishankeOrganizationEmail).toContainText(
+      'eka@ensimmainen.fi'
+    )
+    await expect(
+      locators.originalHakemus.oldAnswers.secondYhteishankeOrganizationContactPerson
+    ).toContainText('Toka Henkilö')
+    await expect(
+      locators.originalHakemus.oldAnswers.secondYhteishankeOrganizationEmail
+    ).toContainText('toka@toinen.fi')
+
+    await expect(
+      locators.originalHakemus.newAnswers.firstYhteishankeOrganizationContactPerson
+    ).toContainText('Eka Paivitetty')
+    await expect(locators.originalHakemus.newAnswers.firstYhteishankeOrganizationEmail).toContainText(
+      'eka.paivitetty@ensimmainen.fi'
+    )
+    await expect(
+      locators.originalHakemus.newAnswers.secondYhteishankeOrganizationContactPerson
+    ).toContainText('Toka Paivitetty')
+    await expect(
+      locators.originalHakemus.newAnswers.secondYhteishankeOrganizationEmail
+    ).toContainText('toka.paivitetty@toinen.fi')
+  })
+
   await test.step('virkailija preview shows old and new yhteishanke contacts after update', async () => {
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     await hakemustenArviointiPage.navigateToHakemusArviointi(avustushakuID, hakemusID)

@@ -19,6 +19,7 @@ import { isJotpaAvustushaku } from './jotpa'
 import { changeFaviconIconTo } from './favicon'
 
 import { MuutoshakemusComponent } from './muutoshakemus/Muutoshakemus'
+import EmbeddedDecisionVersionDiffFormView from './muutoshakemus/EmbeddedDecisionVersionDiffFormView'
 import {
   getTranslationContext,
   TranslationContext,
@@ -88,8 +89,12 @@ export default function VaForm<T extends BaseStateLoopState<T>>(props: VaFormPro
 
   const isInApplicantEditMode = 'applicant_edit' === saveStatus.savedObject?.status
   const showOpenContactsEditButton = !showGrantRefuse && modifyApplication
+  const isEmbeddedDecisionVersionPreview =
+    readOnly &&
+    embedForMuutoshakemus &&
+    new URLSearchParams(window.location.search).get('decision-version') === 'true'
 
-  if (!embedForMuutoshakemus && readOnly) {
+  if (!isEmbeddedDecisionVersionPreview && !embedForMuutoshakemus && readOnly) {
     saveStatus.values.value = mapAnswersWithMuutoshakemusData(
       // @ts-ignore
       state.avustushaku,
@@ -104,7 +109,11 @@ export default function VaForm<T extends BaseStateLoopState<T>>(props: VaFormPro
   const showNewMuutos =
     (!embedForMuutoshakemus && !!modifyApplication && !showGrantRefuse) || isInApplicantEditMode
 
-  const form = readOnly ? FormPreview : Form
+  const form = readOnly
+    ? isEmbeddedDecisionVersionPreview
+      ? EmbeddedDecisionVersionDiffFormView
+      : FormPreview
+    : Form
 
   if (showNewMuutos && !!saveStatus.savedObject && state.avustushaku) {
     return (

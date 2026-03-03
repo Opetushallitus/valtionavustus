@@ -143,6 +143,34 @@ export class HakijaMuutoshakemusPage {
       originalHakemus: {
         contactPersonName: originalHakemusIframe.locator('#applicant-name'),
         yTunnus: originalHakemusIframe.locator('#business-id div'),
+        oldAnswers: {
+          firstYhteishankeOrganizationContactPerson: originalHakemusIframe.locator(
+            '.answer-old-value [id="other-organizations.other-organizations-1.contactperson"] div'
+          ),
+          firstYhteishankeOrganizationEmail: originalHakemusIframe.locator(
+            '.answer-old-value [id="other-organizations.other-organizations-1.email"] div'
+          ),
+          secondYhteishankeOrganizationContactPerson: originalHakemusIframe.locator(
+            '.answer-old-value [id="other-organizations.other-organizations-2.contactperson"] div'
+          ),
+          secondYhteishankeOrganizationEmail: originalHakemusIframe.locator(
+            '.answer-old-value [id="other-organizations.other-organizations-2.email"] div'
+          ),
+        },
+        newAnswers: {
+          firstYhteishankeOrganizationContactPerson: originalHakemusIframe.locator(
+            '.answer-new-value [id="other-organizations.other-organizations-1.contactperson"] div'
+          ),
+          firstYhteishankeOrganizationEmail: originalHakemusIframe.locator(
+            '.answer-new-value [id="other-organizations.other-organizations-1.email"] div'
+          ),
+          secondYhteishankeOrganizationContactPerson: originalHakemusIframe.locator(
+            '.answer-new-value [id="other-organizations.other-organizations-2.contactperson"] div'
+          ),
+          secondYhteishankeOrganizationEmail: originalHakemusIframe.locator(
+            '.answer-new-value [id="other-organizations.other-organizations-2.email"] div'
+          ),
+        },
       },
       haenKayttoajanPidennysta: this.page.locator('#checkbox-haenKayttoajanPidennysta'),
       haenKayttoajanPidennystaLabel: this.page.locator(

@@ -14,7 +14,6 @@ import {
 } from 'soresu-form/web/va/types'
 import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
 import { getProjectEndDate } from 'soresu-form/web/va/Muutoshakemus'
-import { mapOtherOrganizationsAnswerValue } from 'soresu-form/web/va/yhteishankeOrganizations'
 
 function addOrUpdateAnswer(answers: Answer[], key: string, newValue: any): Answer[] {
   const answerIndex = answers.findIndex((a) => a.key === key)
@@ -31,7 +30,10 @@ function mutateAnswersDeltaWithKey(
   key: string,
   newValue: any
 ) {
-  const oldValue = answers.find((a) => a.key === key)?.value
+  if (_.isUndefined(newValue)) {
+    return
+  }
+  const oldValue = JsUtil.findFirst(answers, (answer: Answer) => answer?.key === key)?.value
   if (oldValue !== newValue) {
     answersDelta.changedAnswers = addOrUpdateAnswer(answersDelta.changedAnswers, key, oldValue)
     answersDelta.newAnswers = addOrUpdateAnswer(answersDelta.newAnswers, key, newValue)
@@ -71,12 +73,16 @@ function mutateDeltaFromNormalizedData(
   )
   const yhteishankeOrganizations = normalizedData['yhteishanke-organizations']
   if (yhteishankeOrganizations?.length) {
-    const otherOrganizationsAnswer = answers.find((a) => a.key === 'other-organizations')
-    const newOrganizationsValue = mapOtherOrganizationsAnswerValue(
-      otherOrganizationsAnswer?.value,
-      yhteishankeOrganizations
-    )
-    mutateAnswersDeltaWithKey(answersDelta, answers, 'other-organizations', newOrganizationsValue)
+    yhteishankeOrganizations.forEach((organization, index) => {
+      const fieldIdPrefix = `other-organizations.other-organizations-${index + 1}`
+      mutateAnswersDeltaWithKey(
+        answersDelta,
+        answers,
+        `${fieldIdPrefix}.contactperson`,
+        organization['contact-person']
+      )
+      mutateAnswersDeltaWithKey(answersDelta, answers, `${fieldIdPrefix}.email`, organization.email)
+    })
   }
 }
 

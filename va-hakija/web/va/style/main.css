@@ -415,3 +415,41 @@ div.notification-container div.error {
         padding-bottom: 10px;
     }
 }
+
+.muutoshakemus-embedded-diff-preview .answer-old-value .soresu-value,
+.muutoshakemus-embedded-diff-preview .answer-old-value .soresu-money,
+.muutoshakemus-embedded-diff-preview .answer-old-value .soresu-attachment-display,
+.muutoshakemus-embedded-diff-preview .answer-old-value .soresu-attachment-missing,
+.muutoshakemus-embedded-diff-preview .answer-old-value .va-trainee-day-calculator {
+    background-color: #f4cecd;
+    text-decoration: line-through;
+}
+
+.muutoshakemus-embedded-diff-preview .answer-old-value .soresu-attachment-block {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.muutoshakemus-embedded-diff-preview .answer-old-value .soresu-attachment-block .soresu-attachment-display {
+    display: inline-block;
+}
+
+.muutoshakemus-embedded-diff-preview .answer-new-value .soresu-key {
+    display: none;
+}
+
+.muutoshakemus-embedded-diff-preview .answer-new-value .soresu-value,
+.muutoshakemus-embedded-diff-preview .answer-new-value .soresu-money,
+.muutoshakemus-embedded-diff-preview .answer-new-value .soresu-attachment-display,
+.muutoshakemus-embedded-diff-preview .answer-new-value .soresu-attachment-missing,
+.muutoshakemus-embedded-diff-preview .answer-new-value .va-trainee-day-calculator {
+    background-color: #d6f2b5;
+}
+
+.muutoshakemus-embedded-diff-preview .answer-new-value .soresu-attachment-block {
+    border-top: none;
+}
+
+.muutoshakemus-embedded-diff-preview .answer-new-value .soresu-attachment-block .soresu-attachment-display {
+    display: inline-block;
+}
