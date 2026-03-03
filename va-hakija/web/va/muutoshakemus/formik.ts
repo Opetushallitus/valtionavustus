@@ -19,6 +19,8 @@ const initialValues: FormValues = {
   haenMuutostaTaloudenKayttosuunnitelmaan: false,
   taloudenKayttosuunnitelmanPerustelut: '',
   sisaltomuutosPerustelut: '',
+  paivitanYhteishankkeenOsapuoltenYhteystietoja: false,
+  yhteishankkeenOsapuolet: [],
   talousarvio: {
     originalSum: 0,
     currentSum: 0,

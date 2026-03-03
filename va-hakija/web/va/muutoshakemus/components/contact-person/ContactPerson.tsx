@@ -47,6 +47,9 @@ export const ContactPerson = ({
             </div>
           </div>
         </div>
+        <h2 className="muutoshakemus__sub-title" data-test-id="project-contact-details-title">
+          {t.contactPersonEdit.title}
+        </h2>
         <div className="muutoshakemus__form-row">
           <div className="muutoshakemus__form-cell">
             <label className="muutoshakemus__label" htmlFor="muutoshakemus__contact-person">

@@ -3,7 +3,11 @@ import moment from 'moment'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusValues } from 'soresu-form/web/va/MuutoshakemusValues'
-import { Muutoshakemus, MuutoshakemusProps } from 'soresu-form/web/va/types/muutoshakemus'
+import {
+  Muutoshakemus,
+  MuutoshakemusProps,
+  YhteishankeOrganizationsResponse,
+} from 'soresu-form/web/va/types/muutoshakemus'
 import {
   getProjectEndDate,
   getProjectEndMoment,
@@ -17,6 +21,7 @@ import { PerustelutTextArea } from './components/PerustelutTextArea'
 import { AvustuksenKayttoaikaInput } from './components/jatkoaika/AvustuksenKayttoaikaInput'
 import { TalousarvioForm } from './components/talous/TalousarvioForm'
 import { ContactPerson } from './components/contact-person/ContactPerson'
+import { YhteishankeOrganizations } from './components/contact-person/YhteishankeOrganizations'
 import { TopBar } from './components/TopBar'
 import OriginalHakemusIframe from './OriginalHakemusIframe'
 import ErrorBoundary from './ErrorBoundary'
@@ -36,6 +41,34 @@ const initialState: MuutoshakemusProps = {
   avustushaku: undefined,
   hakemus: undefined,
   muutoshakemukset: [],
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null
+
+const toOptionalString = (value: unknown): string | undefined =>
+  typeof value === 'string' ? value : undefined
+
+const parseYhteishankeOrganizationsResponse = (
+  value: unknown
+): YhteishankeOrganizationsResponse => {
+  if (!isRecord(value)) {
+    return { 'is-yhteishanke': false, organizations: [] }
+  }
+
+  const rawOrganizations = value.organizations
+  const organizations = Array.isArray(rawOrganizations)
+    ? rawOrganizations.filter(isRecord).map((organization) => ({
+        'organization-name': toOptionalString(organization['organization-name']),
+        'contact-person': toOptionalString(organization['contact-person']),
+        email: toOptionalString(organization.email),
+      }))
+    : []
+
+  return {
+    'is-yhteishanke': value['is-yhteishanke'] === true,
+    organizations,
+  }
 }
 
 const MuutoshakemusSection = ({
@@ -70,19 +103,34 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
       const muutoshakemuksetP = HttpUtil.get(
         `/api/avustushaku/${avustushakuId}/hakemus/${userKey}/muutoshakemus`
       )
+      const yhteishankeOrganizationsP = HttpUtil.get(
+        `/api/avustushaku/${avustushakuId}/hakemus/${userKey}/yhteishanke-organizations`
+      )
       const results = await Promise.allSettled([
         environmentP,
         avustushakuP,
         hakemusP,
         muutoshakemuksetP,
+        yhteishankeOrganizationsP,
       ])
 
-      const [environment, avustushaku, hakemus, muutoshakemukset] = results.map((result) => {
-        if (result.status === 'fulfilled') {
-          return result.value
-        }
-        return {}
-      })
+      const [environment, avustushaku, hakemus, muutoshakemukset, yhteishankeOrganizations] =
+        results.map((result) => {
+          if (result.status === 'fulfilled') {
+            return result.value
+          }
+          return {}
+        })
+      const yhteishankeOrganizationsResponse =
+        parseYhteishankeOrganizationsResponse(yhteishankeOrganizations)
+      const mappedYhteishankeOrganizations = yhteishankeOrganizationsResponse.organizations.map(
+        (organization) => ({
+          organizationName: organization['organization-name'] || '',
+          contactPerson: organization['contact-person'] || '',
+          email: organization.email || '',
+        })
+      )
+      const isYhteishanke = yhteishankeOrganizationsResponse['is-yhteishanke']
 
       const currentProjectEnd = getProjectEndMoment(avustushaku, muutoshakemukset)
       const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
@@ -108,6 +156,8 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
           sisaltomuutosPerustelut: '',
           kayttoajanPidennysPerustelut: '',
           taloudenKayttosuunnitelmanPerustelut: '',
+          paivitanYhteishankkeenOsapuoltenYhteystietoja: false,
+          yhteishankkeenOsapuolet: mappedYhteishankeOrganizations,
           talousarvio: getTalousarvioValues(talousarvio),
         },
       })
@@ -117,6 +167,8 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
         avustushaku,
         hakemus,
         muutoshakemukset,
+        isYhteishanke,
+        yhteishankeOrganizations: mappedYhteishankeOrganizations,
         status: 'LOADED',
       })
     }
@@ -241,6 +293,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
               </div>
             </div>
           )}
+          {state.isYhteishanke && <YhteishankeOrganizations f={f} />}
           {!existingNewMuutoshakemus && state.avustushaku?.muutoshakukelpoinen && (
             <>
               <h2 className="muutoshakemus__sub-title">{t.applicationEdit.title}</h2>

@@ -221,21 +221,33 @@
           WHERE hakemus_id = ?"
          [hakemus-id]))
 
+(defn- get-current-submission-answers [hakemus]
+  (let [submission-id (or (:form_submission_id hakemus) (:form-submission-id hakemus))]
+    (when submission-id
+      (:answers (first (query-original-identifiers
+                        "SELECT answers FROM hakija.form_submissions WHERE id = ? AND version_closed IS NULL"
+                        [submission-id]))))))
+
 (defn get-or-create-yhteishanke-organizations [hakemus]
   (let [hakemus-id (:id hakemus)
         existing (get-yhteishanke-organizations hakemus-id)]
     (if (seq existing)
       existing
-      (let [submission-id (or (:form_submission_id hakemus) (:form-submission-id hakemus))
-            answers (when submission-id
-                      (:answers (first (query-original-identifiers
-                                        "SELECT answers FROM hakija.form_submissions WHERE id = ? AND version_closed IS NULL"
-                                        [submission-id]))))
+      (let [answers (get-current-submission-answers hakemus)
             organizations (when answers (extract-yhteishanke-organizations answers))]
         (when (seq organizations)
           (with-tx (fn [tx]
                      (store-yhteishanke-organizations tx hakemus-id answers)))
           (get-yhteishanke-organizations hakemus-id))))))
+
+(defn get-yhteishanke-organizations-for-muutoshakemus [user-key]
+  (when-let [hakemus (get-hakemus user-key)]
+    (let [answers (get-current-submission-answers hakemus)
+          is-yhteishanke (boolean (and answers
+                                       (= "yes" (form-util/find-answer-value answers "combined-effort"))))
+          organizations (or (get-or-create-yhteishanke-organizations hakemus) [])]
+      {:is-yhteishanke is-yhteishanke
+       :organizations organizations})))
 
 (defn get-yhteishanke-organization-emails [hakemus]
   (->> (get-or-create-yhteishanke-organizations hakemus)
@@ -527,6 +539,23 @@
               [contact-name contact-email contact-phone hakemus-id]))
   (log/info (str "Successfully changed trusted contact person details with user-key: " user-key)))
 
+(defn- replace-yhteishanke-organizations [tx hakemus-id organizations]
+  (when (feature-enabled? :enableYhteishankeEmails)
+    (log/info (str "Replacing yhteishanke organizations for hakemus: " hakemus-id))
+    (execute! tx
+              "DELETE FROM virkailija.yhteishanke_organization WHERE hakemus_id = ?"
+              [hakemus-id])
+    (doseq [organization organizations]
+      (execute! tx
+                "INSERT INTO virkailija.yhteishanke_organization
+                 (hakemus_id, organization_name, contact_person, email)
+                 VALUES (?, ?, ?, ?)"
+                [hakemus-id
+                 (:organizationName organization)
+                 (:contactPerson organization)
+                 (:email organization)]))
+    (log/info (str "Successfully replaced yhteishanke organizations for hakemus: " hakemus-id))))
+
 (defn on-muutoshakemus [user-key hakemus-id avustushaku-id muutoshakemus]
   (with-tx (fn [tx]
              (when (or (:talousarvio muutoshakemus) (get-in muutoshakemus [:jatkoaika :haenKayttoajanPidennysta]) (get-in muutoshakemus [:sisaltomuutos :haenSisaltomuutosta]))
@@ -536,7 +565,9 @@
              (when (contains? muutoshakemus :yhteyshenkilo)
                (change-normalized-hakemus-contact-person-details tx user-key hakemus-id (get muutoshakemus :yhteyshenkilo)))
              (when (contains? muutoshakemus :varayhteyshenkilo)
-               (change-normalized-hakemus-trusted-contact-person-details tx user-key hakemus-id (get muutoshakemus :varayhteyshenkilo))))))
+               (change-normalized-hakemus-trusted-contact-person-details tx user-key hakemus-id (get muutoshakemus :varayhteyshenkilo)))
+             (when (contains? muutoshakemus :yhteishankkeenOsapuolet)
+               (replace-yhteishanke-organizations tx hakemus-id (get muutoshakemus :yhteishankkeenOsapuolet))))))
 
 (defn update-hakemus-tx [tx avustushaku-id user-key submission-version answers budget-totals hakemus]
   (let [register-number (or (:register_number hakemus)

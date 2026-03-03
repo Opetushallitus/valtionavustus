@@ -59,7 +59,7 @@ async function expectYhteishankeEmails(
   }
 }
 
-test('yhteishanke organizations: fill, submit, and receive emails through lifecycle', async ({
+test('yhteishanke organizations: contact details can be updated in muutoshakemus and emails are sent through lifecycle', async ({
   page,
   avustushakuID,
   submittedHakemusUrl,
@@ -73,6 +73,14 @@ test('yhteishanke organizations: fill, submit, and receive emails through lifecy
   const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
   const first = otherOrganization(page, 0)
   const second = otherOrganization(page, 1)
+  const updatedFirstContact = {
+    contactPerson: 'Eka Paivitetty',
+    email: 'eka.paivitetty@ensimmainen.fi',
+  }
+  const updatedSecondContact = {
+    contactPerson: 'Toka Paivitetty',
+    email: 'toka.paivitetty@toinen.fi',
+  }
 
   await test.step('enable combined-effort', async () => {
     await page.locator("[for='combined-effort.radio.0']").click()
@@ -213,6 +221,35 @@ test('yhteishanke organizations: fill, submit, and receive emails through lifecy
   await test.step('submit and accept muutoshakemus, verify emails', async () => {
     const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
     await hakijaMuutoshakemusPage.navigate(hakemusID)
+    await page.getByTestId('checkbox-update-yhteishanke-organizations').check()
+
+    const firstOrganizationName = page.locator(
+      '[id="other-organizations.other-organizations-1.name"]'
+    )
+    const firstOrganizationContactPerson = page.locator(
+      '[id="other-organizations.other-organizations-1.contactperson"]'
+    )
+    const firstOrganizationEmail = page.locator(
+      '[id="other-organizations.other-organizations-1.email"]'
+    )
+    const secondOrganizationName = page.locator(
+      '[id="other-organizations.other-organizations-2.name"]'
+    )
+    const secondOrganizationContactPerson = page.locator(
+      '[id="other-organizations.other-organizations-2.contactperson"]'
+    )
+    const secondOrganizationEmail = page.locator(
+      '[id="other-organizations.other-organizations-2.email"]'
+    )
+
+    await expect(firstOrganizationName).toHaveAttribute('readonly', '')
+    await expect(secondOrganizationName).toHaveAttribute('readonly', '')
+
+    await firstOrganizationContactPerson.fill(updatedFirstContact.contactPerson)
+    await firstOrganizationEmail.fill(updatedFirstContact.email)
+    await secondOrganizationContactPerson.fill(updatedSecondContact.contactPerson)
+    await secondOrganizationEmail.fill(updatedSecondContact.email)
+
     await hakijaMuutoshakemusPage.fillJatkoaikaValues({
       jatkoaika: moment().add(1, 'year'),
       jatkoaikaPerustelu: 'Tarvitaan lisäaikaa yhteishankkeen toteutukseen',
@@ -230,7 +267,7 @@ test('yhteishanke organizations: fill, submit, and receive emails through lifecy
     await expectYhteishankeEmails(
       avustushakuID,
       'yhteishanke-muutoshakemus-paatos',
-      ['eka@ensimmainen.fi', 'toka@toinen.fi'],
+      [updatedFirstContact.email, updatedSecondContact.email],
       [`Automaattinen viesti: Yhteishankkeen ${registerNumber} muutoshakemus on käsitelty`]
     )
   })
@@ -252,7 +289,7 @@ test('yhteishanke organizations: fill, submit, and receive emails through lifecy
     await expectYhteishankeEmails(
       avustushakuID,
       'yhteishanke-loppuselvitys-submitted',
-      ['eka@ensimmainen.fi', 'toka@toinen.fi'],
+      [updatedFirstContact.email, updatedSecondContact.email],
       [`Automaattinen viesti: Yhteishankkeen ${registerNumber} loppuselvitys on vastaanotettu`]
     )
   })
@@ -266,9 +303,127 @@ test('yhteishanke organizations: fill, submit, and receive emails through lifecy
     await expectYhteishankeEmails(
       avustushakuID,
       'yhteishanke-loppuselvitys-processed',
-      ['eka@ensimmainen.fi', 'toka@toinen.fi'],
+      [updatedFirstContact.email, updatedSecondContact.email],
       [`Automaattinen viesti: Yhteishankkeen ${registerNumber} loppuselvitys on käsitelty`]
     )
+  })
+})
+
+test('yhteishanke muutoshakemus: yhteyshenkilon tiedot voidaan paivittaa osapuolille', async ({
+  page,
+  avustushakuID,
+  submittedHakemusUrl,
+  answers,
+  projektikoodi,
+  codes,
+  ukotettuValmistelija,
+}, testInfo) => {
+  testInfo.setTimeout(testInfo.timeout + 180_000)
+  const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
+  const first = otherOrganization(page, 0)
+  const second = otherOrganization(page, 1)
+
+  await test.step('submit yhteishanke hakemus with two organizations', async () => {
+    await page.locator("[for='combined-effort.radio.0']").click()
+    await expect(first.name).toBeVisible()
+
+    await first.name.fill('Ensimmäinen Organisaatio Oy')
+    await first.contactPerson.fill('Eka Henkilö')
+    await first.email.fill('eka@ensimmainen.fi')
+
+    await expect(second.name).toBeEnabled()
+    await second.name.fill('Toinen Organisaatio Oy')
+    await second.contactPerson.fill('Toka Henkilö')
+    await second.email.fill('toka@toinen.fi')
+
+    await page.locator("[id='project-costs-row.amount']").fill('20000')
+    await page.locator("[for='type-of-organization.radio.0']").click()
+    await page.locator("[id='signature']").fill('Erkki Esimerkki')
+    await page.locator("[id='signature-email']").fill('erkki@example.com')
+    await page.locator('#bank-iban').fill('FI95 6682 9530 0087 65')
+    await page.locator('#bank-bic').fill('OKOYFIHH')
+
+    await hakijaAvustusHakuPage.waitForEditSaved()
+    await hakijaAvustusHakuPage.submitApplication()
+  })
+
+  await test.step('accept hakemus and send paatos to enable muutoshakemus', async () => {
+    const hakujenHallintaPage = new HakujenHallintaPage(page)
+    const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+    await haunTiedotPage.setEndDate(moment().subtract(1, 'year').format('D.M.YYYY H.mm'))
+
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    await hakemustenArviointiPage.navigate(avustushakuID)
+    const projectName = answers.projectName
+    if (!projectName) {
+      throw new Error('projectName must be set in order to accept avustushaku')
+    }
+    const hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
+      avustushakuID,
+      projectName,
+      projektikoodi,
+      codes,
+    })
+    await hakemustenArviointiPage.closeHakemusDetails()
+    await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
+
+    const updateHaunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+    await updateHaunTiedotPage.resolveAvustushaku()
+
+    const paatosPage = PaatosPage(page)
+    await paatosPage.navigateTo(avustushakuID)
+    await paatosPage.sendPaatos()
+
+    const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
+    await hakijaMuutoshakemusPage.navigate(hakemusID)
+  })
+
+  await test.step('update and persist yhteishankkeen osapuolten yhteyshenkilo data', async () => {
+    const updateCheckbox = page.getByTestId('checkbox-update-yhteishanke-organizations')
+    const firstOrganizationName = page.locator(
+      '[id="other-organizations.other-organizations-1.name"]'
+    )
+    const firstOrganizationContactPerson = page.locator(
+      '[id="other-organizations.other-organizations-1.contactperson"]'
+    )
+    const firstOrganizationEmail = page.locator(
+      '[id="other-organizations.other-organizations-1.email"]'
+    )
+    const secondOrganizationName = page.locator(
+      '[id="other-organizations.other-organizations-2.name"]'
+    )
+    const secondOrganizationContactPerson = page.locator(
+      '[id="other-organizations.other-organizations-2.contactperson"]'
+    )
+    const secondOrganizationEmail = page.locator(
+      '[id="other-organizations.other-organizations-2.email"]'
+    )
+
+    await expect(page.getByText('Hankkeen yhteystiedot')).toBeVisible()
+    await expect(updateCheckbox).toBeVisible()
+    await updateCheckbox.check()
+
+    await expect(firstOrganizationName).toHaveAttribute('readonly', '')
+    await expect(secondOrganizationName).toHaveAttribute('readonly', '')
+
+    await firstOrganizationContactPerson.fill('Eka Paivitetty')
+    await firstOrganizationEmail.fill('eka.paivitetty@ensimmainen.fi')
+    await secondOrganizationContactPerson.fill('Toka Paivitetty')
+    await secondOrganizationEmail.fill('toka.paivitetty@toinen.fi')
+
+    const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
+    await hakijaMuutoshakemusPage.clickSaveContacts()
+    await hakijaMuutoshakemusPage.expectMuutoshakemusToBeSubmittedSuccessfully(false)
+
+    await page.reload()
+    await updateCheckbox.check()
+
+    await expect(firstOrganizationName).toHaveValue('Ensimmäinen Organisaatio Oy')
+    await expect(secondOrganizationName).toHaveValue('Toinen Organisaatio Oy')
+    await expect(firstOrganizationContactPerson).toHaveValue('Eka Paivitetty')
+    await expect(firstOrganizationEmail).toHaveValue('eka.paivitetty@ensimmainen.fi')
+    await expect(secondOrganizationContactPerson).toHaveValue('Toka Paivitetty')
+    await expect(secondOrganizationEmail).toHaveValue('toka.paivitetty@toinen.fi')
   })
 })
 

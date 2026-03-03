@@ -43,6 +43,11 @@
     width: 280px;
 }
 
+.muutoshakemus__input--readonly {
+    background-color: #f3f5f7;
+    color: var(--text-black);
+}
+
 .muutoshakemus__input-error {
     border: 2px solid var(--bright-red) !important;
 }
@@ -158,6 +163,15 @@
 .muutoshakemus__form-row {
     display: flex;
     margin: 2rem 0;
+}
+
+.muutoshakemus__yhteishanke-checkbox-row {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.muutoshakemus__yhteishanke-organizations .muutoshakemus__form-row {
+    margin: 1rem 0;
 }
 
 .muutoshakemus__form-cell {

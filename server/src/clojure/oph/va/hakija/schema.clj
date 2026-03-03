@@ -20,6 +20,23 @@
    :email s/Str
    :phone s/Str})
 
+(s/defschema YhteishankkeenOsapuoli
+  "YhteishankkeenOsapuoli contains editable contact details for one organization"
+  {:organizationName s/Str
+   :contactPerson s/Str
+   :email s/Str})
+
+(s/defschema YhteishankeOrganization
+  "YhteishankeOrganization is yhteishanke organization contact data in DB response format"
+  {:organization-name (s/maybe s/Str)
+   :contact-person (s/maybe s/Str)
+   :email (s/maybe s/Str)})
+
+(s/defschema YhteishankeOrganizationsResponse
+  "YhteishankeOrganizationsResponse returns yhteishanke organization metadata for muutoshakemus form"
+  {:is-yhteishanke s/Bool
+   :organizations [YhteishankeOrganization]})
+
 (s/defschema TalousarvioMuutos
   "TalousarvioMuutos contains a list of menoluokka amounts"
   {s/Keyword s/Int})
@@ -31,6 +48,7 @@
    (s/optional-key :talousarvioPerustelut) s/Str
    (s/optional-key :yhteyshenkilo) ContactPersonDetails
    (s/optional-key :varayhteyshenkilo) ContactPersonDetails
+   (s/optional-key :yhteishankkeenOsapuolet) [YhteishankkeenOsapuoli]
    (s/optional-key :sisaltomuutos) Sisaltomuutos})
 
 (s/defschema PaatosStatus

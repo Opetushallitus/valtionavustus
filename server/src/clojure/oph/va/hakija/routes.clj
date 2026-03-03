@@ -186,6 +186,15 @@
     :summary "Get muutoshakemukset"
     (ok (hakija-db/get-muutoshakemukset-by-user-key user-key))))
 
+(defn- get-yhteishanke-organizations []
+  (compojure-api/GET "/:avustushaku-id/hakemus/:user-key/yhteishanke-organizations" [user-key]
+    :path-params [user-key :- s/Str]
+    :return YhteishankeOrganizationsResponse
+    :summary "Get yhteishanke organizations for muutoshakemus contact updates"
+    (if-let [response (hakija-db/get-yhteishanke-organizations-for-muutoshakemus user-key)]
+      (ok response)
+      (not-found))))
+
 (defn- get-attachments []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id]
     :path-params [haku-id :- Long, hakemus-id :- s/Str]
@@ -251,6 +260,7 @@
   (get-id)
   (get-normalized-hakemus)
   (get-muutoshakemukset)
+  (get-yhteishanke-organizations)
   (get-hakemus)
   (selvitys-routes/get-selvitys)
   (selvitys-routes/get-selvitys-init)

@@ -11,6 +11,25 @@ export type MuutoshakemusProps = {
   environment?: EnvironmentApiResponse
   hakemus?: NormalizedHakemusData
   muutoshakemukset: Muutoshakemus[]
+  isYhteishanke?: boolean
+  yhteishankeOrganizations?: YhteishankeOrganization[]
+}
+
+export interface YhteishankeOrganization {
+  organizationName: string
+  contactPerson: string
+  email: string
+}
+
+export interface YhteishankeOrganizationResponse {
+  'organization-name'?: string
+  'contact-person'?: string
+  email?: string
+}
+
+export interface YhteishankeOrganizationsResponse {
+  'is-yhteishanke': boolean
+  organizations: YhteishankeOrganizationResponse[]
 }
 
 export interface MuutoshakemusPaatosResponse {
@@ -120,6 +139,16 @@ export const getTalousarvioSchema = (talousarvio: TalousarvioValues, e: any) => 
 export const getMuutoshakemusSchema = (lang: Language) => {
   const t = translations[lang]
   const e = t.formErrors
+  const requiredYhteishankeOrganizationSchema = yup.object({
+    organizationName: yup.string().required(e.required),
+    contactPerson: yup.string().required(e.required),
+    email: yup.string().email(e.email).required(e.required),
+  })
+  const optionalYhteishankeOrganizationSchema = yup.object({
+    organizationName: yup.string(),
+    contactPerson: yup.string(),
+    email: yup.string(),
+  })
   return yup
     .object({
       name: yup.string().required(e.required),
@@ -174,10 +203,21 @@ export const getMuutoshakemusSchema = (lang: Language) => {
             ? yup.lazy((val) => yup.object(getTalousarvioSchema(val, e)).required(e.required))
             : yup.object()
         }) as yup.Schema<TalousarvioValues | undefined>,
+      paivitanYhteishankkeenOsapuoltenYhteystietoja: yup.boolean().required(),
+      yhteishankkeenOsapuolet: yup.array().when('paivitanYhteishankkeenOsapuoltenYhteystietoja', {
+        is: true,
+        then: (schema) =>
+          schema.of(requiredYhteishankeOrganizationSchema).min(1, e.required).required(e.required),
+        otherwise: (schema) => schema.of(optionalYhteishankeOrganizationSchema),
+      }),
     })
     .required()
 }
 
-export type FormValues = yup.InferType<ReturnType<typeof getMuutoshakemusSchema>>
+type MuutoshakemusSchemaValues = yup.InferType<ReturnType<typeof getMuutoshakemusSchema>>
+
+export type FormValues = Omit<MuutoshakemusSchemaValues, 'yhteishankkeenOsapuolet'> & {
+  yhteishankkeenOsapuolet: YhteishankeOrganization[]
+}
 
 export type FormikHook = FormikProps<FormValues>
