@@ -62,7 +62,7 @@ test('loppuselvitys-asiatarkastamatta notification is sent to virkailija when lo
 
   const { presenterRole } = await getHakemusNotificationContext(request, avustushakuID, hakemusID)
   expect(presenterRole).toBeDefined()
-  if (!presenterRole?.email) {
+  if (!presenterRole?.email && presenterRole?.id) {
     await request.post(
       `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/role/${presenterRole.id}`,
       {

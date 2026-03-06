@@ -43,11 +43,7 @@ export async function postMuutoshakemus(props: MuutoshakemusProps) {
   }
 
   const yhteishankkeenOsapuolet = values.paivitanYhteishankkeenOsapuoltenYhteystietoja
-    ? (values.yhteishankkeenOsapuolet ?? []).map((organization) => ({
-        organizationName: organization.organizationName,
-        contactPerson: organization.contactPerson,
-        email: organization.email,
-      }))
+    ? values.yhteishankkeenOsapuolet
     : undefined
 
   return client.post(url, {
