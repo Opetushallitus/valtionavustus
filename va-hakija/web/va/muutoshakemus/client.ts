@@ -15,6 +15,12 @@ type MuutoshakemusProps = {
 export async function postMuutoshakemus(props: MuutoshakemusProps) {
   const { userKey, values } = props
   const url = `/api/muutoshakemus/${userKey}`
+  const mapOrganizationsForPayload = (organizations: FormValues['yhteishankkeenOsapuolet']) =>
+    organizations.map(({ organizationName, contactPerson, email }) => ({
+      organizationName,
+      contactPerson,
+      email,
+    }))
 
   const jatkoaika = values.haenKayttoajanPidennysta && {
     jatkoaika: {
@@ -35,7 +41,8 @@ export async function postMuutoshakemus(props: MuutoshakemusProps) {
     talousarvioPerustelut: values.taloudenKayttosuunnitelmanPerustelut,
   }
 
-  const sisaltomuutos = values.haenSisaltomuutosta && {
+  const hasSisaltomuutos = values.haenSisaltomuutosta || values.haenYhteishankkeenOsapuolimuutosta
+  const sisaltomuutos = hasSisaltomuutos && {
     sisaltomuutos: {
       haenSisaltomuutosta: true,
       sisaltomuutosPerustelut: values.sisaltomuutosPerustelut,
@@ -43,7 +50,33 @@ export async function postMuutoshakemus(props: MuutoshakemusProps) {
   }
 
   const yhteishankkeenOsapuolet = values.paivitanYhteishankkeenOsapuoltenYhteystietoja
-    ? values.yhteishankkeenOsapuolet
+    ? mapOrganizationsForPayload(values.yhteishankkeenOsapuolet)
+    : undefined
+
+  const updatedContactDetailsByOrganizationName = new Map(
+    (yhteishankkeenOsapuolet ?? []).map((organization) => [
+      organization.organizationName,
+      {
+        contactPerson: organization.contactPerson,
+        email: organization.email,
+      },
+    ])
+  )
+
+  const yhteishankkeenOsapuolimuutokset = values.haenYhteishankkeenOsapuolimuutosta
+    ? mapOrganizationsForPayload(values.yhteishankkeenOsapuolimuutokset).map((organization) => {
+        const updatedDetails = updatedContactDetailsByOrganizationName.get(
+          organization.organizationName
+        )
+        if (!updatedDetails) {
+          return organization
+        }
+        return {
+          ...organization,
+          contactPerson: updatedDetails.contactPerson,
+          email: updatedDetails.email,
+        }
+      })
     : undefined
 
   return client.post(url, {
@@ -51,6 +84,7 @@ export async function postMuutoshakemus(props: MuutoshakemusProps) {
     ...talousarvio,
     ...sisaltomuutos,
     yhteishankkeenOsapuolet,
+    yhteishankkeenOsapuolimuutokset,
     yhteyshenkilo: {
       name: values.name,
       email: values.email,

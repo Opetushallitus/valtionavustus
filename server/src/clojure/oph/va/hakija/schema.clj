@@ -49,6 +49,7 @@
    (s/optional-key :yhteyshenkilo) ContactPersonDetails
    (s/optional-key :varayhteyshenkilo) ContactPersonDetails
    (s/optional-key :yhteishankkeenOsapuolet) [YhteishankkeenOsapuoli]
+   (s/optional-key :yhteishankkeenOsapuolimuutokset) [YhteishankkeenOsapuoli]
    (s/optional-key :sisaltomuutos) Sisaltomuutos})
 
 (s/defschema PaatosStatus

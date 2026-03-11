@@ -19,6 +19,7 @@ export interface YhteishankeOrganization {
   organizationName: string
   contactPerson: string
   email: string
+  isNew?: boolean
 }
 
 export interface YhteishankeOrganizationResponse {
@@ -183,10 +184,20 @@ export const getMuutoshakemusSchema = (lang: Language) => {
         otherwise: (schema) => schema,
       }),
       haenSisaltomuutosta: yup.boolean().required(e.required),
-      sisaltomuutosPerustelut: yup.string().when('haenSisaltomuutosta', {
+      haenYhteishankkeenOsapuolimuutosta: yup.boolean().required(),
+      sisaltomuutosPerustelut: yup
+        .string()
+        .when(['haenSisaltomuutosta', 'haenYhteishankkeenOsapuolimuutosta'], {
+          is: (haenSisaltomuutosta: boolean, haenYhteishankkeenOsapuolimuutosta: boolean) =>
+            haenSisaltomuutosta || haenYhteishankkeenOsapuolimuutosta,
+          then: (schema) => schema.required(e.required),
+          otherwise: (schema) => schema,
+        }),
+      yhteishankkeenOsapuolimuutokset: yup.array().when('haenYhteishankkeenOsapuolimuutosta', {
         is: true,
-        then: (schema) => schema.required(e.required),
-        otherwise: (schema) => schema,
+        then: (schema) =>
+          schema.of(requiredYhteishankeOrganizationSchema).min(1, e.required).required(e.required),
+        otherwise: (schema) => schema.of(optionalYhteishankeOrganizationSchema),
       }),
       taloudenKayttosuunnitelmanPerustelut: yup
         .string()
@@ -216,8 +227,12 @@ export const getMuutoshakemusSchema = (lang: Language) => {
 
 type MuutoshakemusSchemaValues = yup.InferType<ReturnType<typeof getMuutoshakemusSchema>>
 
-export type FormValues = Omit<MuutoshakemusSchemaValues, 'yhteishankkeenOsapuolet'> & {
+export type FormValues = Omit<
+  MuutoshakemusSchemaValues,
+  'yhteishankkeenOsapuolet' | 'yhteishankkeenOsapuolimuutokset'
+> & {
   yhteishankkeenOsapuolet: YhteishankeOrganization[]
+  yhteishankkeenOsapuolimuutokset: YhteishankeOrganization[]
 }
 
 export type FormikHook = FormikProps<FormValues>

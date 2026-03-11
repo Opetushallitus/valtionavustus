@@ -16,6 +16,10 @@
 - TypeScript/JavaScript code uses Prettier defaults (`npm run prettier-check-project`); React components favor PascalCase files, hooks remain camelCase, and CSS modules mirror component names.
 - Keep Docker, script, and YAML files POSIX-compliant with lower-case, hyphenated filenames.
 
+## Agent Gotchas
+- DB result keys from `oph.soresu.common.db/query` are converted from snake_case to kebab-case. Read result maps with keys like `:hakemus-id`, `:organization-name`, `:contact-person` (not `:hakemus_id`, `:organization_name`, `:contact_person`).
+- Real failure seen in VA-477: using underscore keys in `server/src/clojure/oph/va/virkailija/db.clj` caused `java.sql.BatchUpdateException` during muutoshakemus decision save (`POST .../muutoshakemus/:id/paatos`).
+
 ## Testing Guidelines
 - Add or update Speclj specs next to the namespaces they cover in each `spec/` directory; prefer descriptive `describe` blocks over long test names.
 - Playwright specs live under `playwright/tests`; name files by feature (`application-submission.spec.ts`) and capture new fixtures in `playwright/fixtures`.

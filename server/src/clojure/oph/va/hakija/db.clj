@@ -515,6 +515,21 @@
        VALUES ((SELECT id FROM menoluokka WHERE avustushaku_id = ? AND type = ?), ?, ?)"
               [avustushaku-id (name type) muutoshakemus-id amount])))
 
+(defn- add-muutoshakemus-yhteishanke-organizations [tx muutoshakemus-id organizations]
+  (when (and (feature-enabled? :enableYhteishankeEmails) (seq organizations))
+    (log/info (str "Storing yhteishanke organization structure change for muutoshakemus: " muutoshakemus-id))
+    (doseq [[position organization] (map-indexed vector organizations)]
+      (execute! tx
+                "INSERT INTO virkailija.muutoshakemus_yhteishanke_organization
+                 (muutoshakemus_id, position, organization_name, contact_person, email)
+                 VALUES (?, ?, ?, ?, ?)"
+                [muutoshakemus-id
+                 position
+                 (:organizationName organization)
+                 (:contactPerson organization)
+                 (:email organization)]))
+    (log/info (str "Stored yhteishanke organization structure change for muutoshakemus: " muutoshakemus-id))))
+
 (defn- change-normalized-hakemus-contact-person-details [tx user-key hakemus-id contact-person-details]
   (log/info (str "Change normalized contact person details with user-key: " user-key))
   (ensure-normalized-hakemus-exists tx hakemus-id)
@@ -555,10 +570,18 @@
 
 (defn on-muutoshakemus [user-key hakemus-id avustushaku-id muutoshakemus]
   (with-tx (fn [tx]
-             (when (or (:talousarvio muutoshakemus) (get-in muutoshakemus [:jatkoaika :haenKayttoajanPidennysta]) (get-in muutoshakemus [:sisaltomuutos :haenSisaltomuutosta]))
-               (let [muutoshakemus-id (add-muutoshakemus tx user-key hakemus-id muutoshakemus)]
-                 (when (:talousarvio muutoshakemus)
-                   (add-muutoshakemus-menoluokkas tx muutoshakemus-id avustushaku-id (:talousarvio muutoshakemus)))))
+             (let [requires-muutoshakemus? (or (:talousarvio muutoshakemus)
+                                               (get-in muutoshakemus [:jatkoaika :haenKayttoajanPidennysta])
+                                               (get-in muutoshakemus [:sisaltomuutos :haenSisaltomuutosta])
+                                               (contains? muutoshakemus :yhteishankkeenOsapuolimuutokset))
+                   muutoshakemus-id (when requires-muutoshakemus?
+                                      (add-muutoshakemus tx user-key hakemus-id muutoshakemus))]
+               (when (:talousarvio muutoshakemus)
+                 (add-muutoshakemus-menoluokkas tx muutoshakemus-id avustushaku-id (:talousarvio muutoshakemus)))
+               (when (contains? muutoshakemus :yhteishankkeenOsapuolimuutokset)
+                 (add-muutoshakemus-yhteishanke-organizations tx
+                                                              muutoshakemus-id
+                                                              (get muutoshakemus :yhteishankkeenOsapuolimuutokset))))
              (when (contains? muutoshakemus :yhteyshenkilo)
                (change-normalized-hakemus-contact-person-details tx user-key hakemus-id (get muutoshakemus :yhteyshenkilo)))
              (when (contains? muutoshakemus :varayhteyshenkilo)

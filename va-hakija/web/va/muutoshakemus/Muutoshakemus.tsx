@@ -22,6 +22,7 @@ import { AvustuksenKayttoaikaInput } from './components/jatkoaika/AvustuksenKayt
 import { TalousarvioForm } from './components/talous/TalousarvioForm'
 import { ContactPerson } from './components/contact-person/ContactPerson'
 import { YhteishankeOrganizations } from './components/contact-person/YhteishankeOrganizations'
+import { YhteishankeOrganizationChanges } from './components/contact-person/YhteishankeOrganizationChanges'
 import { TopBar } from './components/TopBar'
 import OriginalHakemusIframe from './OriginalHakemusIframe'
 import ErrorBoundary from './ErrorBoundary'
@@ -128,7 +129,11 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
           organizationName: organization['organization-name'] || '',
           contactPerson: organization['contact-person'] || '',
           email: organization.email || '',
+          isNew: false,
         })
+      )
+      const mappedYhteishankeOrganizationChanges = mappedYhteishankeOrganizations.map(
+        (organization) => ({ ...organization, isNew: false })
       )
       const isYhteishanke = yhteishankeOrganizationsResponse['is-yhteishanke']
 
@@ -148,6 +153,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
           trustedContactEmail: hakemus['trusted-contact-email'],
           trustedContactPhone: hakemus['trusted-contact-phone'],
           haenSisaltomuutosta: false,
+          haenYhteishankkeenOsapuolimuutosta: false,
           haenKayttoajanPidennysta: false,
           haenMuutostaTaloudenKayttosuunnitelmaan: false,
           haettuKayttoajanPaattymispaiva: currentProjectEnd.isValid()
@@ -158,6 +164,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
           taloudenKayttosuunnitelmanPerustelut: '',
           paivitanYhteishankkeenOsapuoltenYhteystietoja: false,
           yhteishankkeenOsapuolet: mappedYhteishankeOrganizations,
+          yhteishankkeenOsapuolimuutokset: mappedYhteishankeOrganizationChanges,
           talousarvio: getTalousarvioValues(talousarvio),
         },
       })
@@ -309,6 +316,25 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
                     title={t.sisaltomuutos.title}
                   />
                 </MuutoshakemusFormSection>
+                {state.isYhteishanke && (
+                  <MuutoshakemusFormSection
+                    f={f}
+                    name="haenYhteishankkeenOsapuolimuutosta"
+                    title={t.contactPersonEdit.updateYhteishankeOrganizations}
+                  >
+                    <YhteishankeOrganizationChanges
+                      f={f}
+                      originalOrganizations={state.yhteishankeOrganizations || []}
+                    />
+                    {!f.values.haenSisaltomuutosta && (
+                      <PerustelutTextArea
+                        f={f}
+                        name="sisaltomuutosPerustelut"
+                        title={t.sisaltomuutos.title}
+                      />
+                    )}
+                  </MuutoshakemusFormSection>
+                )}
                 <MuutoshakemusFormSection
                   f={f}
                   name="haenKayttoajanPidennysta"

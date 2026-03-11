@@ -14,6 +14,7 @@ import {
 } from 'soresu-form/web/va/types'
 import { Muutoshakemus } from 'soresu-form/web/va/types/muutoshakemus'
 import { getProjectEndDate } from 'soresu-form/web/va/Muutoshakemus'
+import { mapOtherOrganizationsAnswerValue } from 'soresu-form/web/va/yhteishankeOrganizations'
 
 function addOrUpdateAnswer(answers: Answer[], key: string, newValue: any): Answer[] {
   const answerIndex = answers.findIndex((a) => a.key === key)
@@ -71,18 +72,46 @@ function mutateDeltaFromNormalizedData(
     'trusted-contact-email',
     normalizedData['trusted-contact-email']
   )
+
+  const isRecord = (value: unknown): value is Record<string, unknown> =>
+    typeof value === 'object' && value !== null
+
+  const toGrowingFieldsetChildValueByKey = (value: unknown): Map<string, unknown> => {
+    const childValueByKey = new Map<string, unknown>()
+    if (!Array.isArray(value)) {
+      return childValueByKey
+    }
+    for (const row of value) {
+      if (!isRecord(row) || !Array.isArray(row.value)) {
+        continue
+      }
+      for (const child of row.value) {
+        if (!isRecord(child) || typeof child.key !== 'string') {
+          continue
+        }
+        childValueByKey.set(child.key, child.value)
+      }
+    }
+    return childValueByKey
+  }
+
   const yhteishankeOrganizations = normalizedData['yhteishanke-organizations']
-  if (yhteishankeOrganizations?.length) {
-    yhteishankeOrganizations.forEach((organization, index) => {
-      const fieldIdPrefix = `other-organizations.other-organizations-${index + 1}`
-      mutateAnswersDeltaWithKey(
-        answersDelta,
-        answers,
-        `${fieldIdPrefix}.contactperson`,
-        organization['contact-person']
-      )
-      mutateAnswersDeltaWithKey(answersDelta, answers, `${fieldIdPrefix}.email`, organization.email)
-    })
+  const otherOrganizationsAnswer = answers.find((answer) => answer.key === 'other-organizations')
+  if (Array.isArray(yhteishankeOrganizations) && otherOrganizationsAnswer) {
+    const mappedOtherOrganizationsValue = mapOtherOrganizationsAnswerValue(
+      otherOrganizationsAnswer.value,
+      yhteishankeOrganizations
+    )
+    const oldChildValueByKey = toGrowingFieldsetChildValueByKey(otherOrganizationsAnswer.value)
+    const newChildValueByKey = toGrowingFieldsetChildValueByKey(mappedOtherOrganizationsValue)
+
+    for (const childKey of new Set([...oldChildValueByKey.keys(), ...newChildValueByKey.keys()])) {
+      const oldValue = oldChildValueByKey.get(childKey)
+      const newValue = newChildValueByKey.get(childKey)
+      if (!_.isEqual(oldValue, newValue)) {
+        mutateAnswersDeltaWithKey(answersDelta, answers, childKey, newValue)
+      }
+    }
   }
 }
 

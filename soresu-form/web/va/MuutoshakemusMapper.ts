@@ -31,7 +31,7 @@ export function mapAnswersWithMuutoshakemusData(
       }
       case 'other-organizations': {
         const organizations = normalizedData?.['yhteishanke-organizations']
-        return normalizedData && organizations?.length
+        return normalizedData && Array.isArray(organizations)
           ? { ...a, value: mapOtherOrganizationsAnswerValue(a.value, organizations) }
           : a
       }

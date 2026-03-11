@@ -10,6 +10,7 @@
             [clojure.string :as string]
             [clojure.java.jdbc :as jdbc]
             [clojure.tools.logging :as log]
+            [oph.soresu.common.config :refer [feature-enabled?]]
             [oph.va.budget :as va-budget])
   (:import [java.util Date]))
 
@@ -32,6 +33,27 @@
           WHERE hakemus_id = ?
           ORDER BY id"
          [hakemus-id]))
+
+(defn- get-muutoshakemus-yhteishanke-organizations [tx muutoshakemus-id]
+  (query tx
+         "SELECT organization_name, contact_person, email
+          FROM virkailija.muutoshakemus_yhteishanke_organization
+          WHERE muutoshakemus_id = ?
+          ORDER BY position, id"
+         [muutoshakemus-id]))
+
+(defn- replace-yhteishanke-organizations [tx hakemus-id organizations]
+  (when (feature-enabled? :enableYhteishankeEmails)
+    (execute! tx "DELETE FROM virkailija.yhteishanke_organization WHERE hakemus_id = ?" [hakemus-id])
+    (doseq [organization organizations]
+      (execute! tx
+                "INSERT INTO virkailija.yhteishanke_organization
+                 (hakemus_id, organization_name, contact_person, email)
+                 VALUES (?, ?, ?, ?)"
+                [hakemus-id
+                 (:organization-name organization)
+                 (:contact-person organization)
+                 (:email organization)]))))
 
 (defn- store-paatos-sisaltomuutos [tx paatos-id status]
   (execute! tx "insert into paatos_sisaltomuutos (paatos_id, status) values (?, ?::virkailija.paatos_type)"
@@ -58,6 +80,8 @@
 (defn- store-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
   (with-tx (fn [tx]
              (let [muutoshakemus (first (query tx "SELECT * FROM muutoshakemus WHERE id = ?" [muutoshakemus-id]))
+                   requested-yhteishanke-organizations (get-muutoshakemus-yhteishanke-organizations tx muutoshakemus-id)
+                   sisaltomuutos-status (get-in paatos [:haen-sisaltomuutosta :status])
                    created-paatos (first (query tx
                                                 "INSERT INTO virkailija.paatos (user_key, reason, decider)
                                                  VALUES (?, ?, ?)
@@ -75,7 +99,12 @@
                (when (:talousarvio paatos)
                  (add-paatos-menoluokkas tx paatos-id avustushaku-id (get-in paatos [:talousarvio :talousarvio])))
                (when (some? (:haen-sisaltomuutosta paatos))
-                 (store-paatos-sisaltomuutos tx paatos-id (get-in paatos [:haen-sisaltomuutosta :status])))
+                 (store-paatos-sisaltomuutos tx paatos-id sisaltomuutos-status))
+               (when (and (seq requested-yhteishanke-organizations)
+                          (contains? #{"accepted" "accepted_with_changes"} sisaltomuutos-status))
+                 (replace-yhteishanke-organizations tx
+                                                    (:hakemus-id muutoshakemus)
+                                                    requested-yhteishanke-organizations))
                created-paatos))))
 
 (defn get-hyvaksytty-paattymispaiva [paatos-id]

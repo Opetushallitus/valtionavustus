@@ -18,7 +18,8 @@ export function TopBar({ env, f, isJotpaHakemus, lang }: TopBarProps) {
   const isMuutoshakemus =
     f.values.haenKayttoajanPidennysta ||
     f.values.haenMuutostaTaloudenKayttosuunnitelmaan ||
-    f.values.haenSisaltomuutosta
+    f.values.haenSisaltomuutosta ||
+    f.values.haenYhteishankkeenOsapuolimuutosta
   const buttonText = isMuutoshakemus ? t.sendMuutoshakemus : t.sendContactDetails
   const submitDisabled = f.isSubmitting || f.isValidating || !(f.isValid && f.dirty)
   return (

@@ -14,6 +14,7 @@ const initialValues: FormValues = {
   trustedContactPhone: '',
   haenKayttoajanPidennysta: false,
   haenSisaltomuutosta: false,
+  haenYhteishankkeenOsapuolimuutosta: false,
   haettuKayttoajanPaattymispaiva: new Date(),
   kayttoajanPidennysPerustelut: '',
   haenMuutostaTaloudenKayttosuunnitelmaan: false,
@@ -21,6 +22,7 @@ const initialValues: FormValues = {
   sisaltomuutosPerustelut: '',
   paivitanYhteishankkeenOsapuoltenYhteystietoja: false,
   yhteishankkeenOsapuolet: [],
+  yhteishankkeenOsapuolimuutokset: [],
   talousarvio: {
     originalSum: 0,
     currentSum: 0,
