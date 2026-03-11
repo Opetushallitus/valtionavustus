@@ -12,15 +12,62 @@ type MuutoshakemusProps = {
   values: FormValues
 }
 
+type YhteishankeOrganizationPayload = {
+  organizationName: string
+  contactPerson: string
+  email: string
+}
+
+const mapOrganizationForPayload = ({
+  organizationName,
+  contactPerson,
+  email,
+}: FormValues['yhteishankkeenOsapuolet'][number]): YhteishankeOrganizationPayload => ({
+  organizationName,
+  contactPerson,
+  email,
+})
+
+const mapOrganizationsForPayload = (
+  organizations: FormValues['yhteishankkeenOsapuolet']
+): YhteishankeOrganizationPayload[] => organizations.map(mapOrganizationForPayload)
+
+export const mergeYhteishankkeenOsapuolimuutoksetWithUpdatedContacts = (
+  organizationChanges: FormValues['yhteishankkeenOsapuolimuutokset'],
+  updatedOrganizations: FormValues['yhteishankkeenOsapuolet'] | undefined
+): YhteishankeOrganizationPayload[] => {
+  const updatedContactDetailsBySourceIndex = new Map(
+    (updatedOrganizations ?? []).map((organization, sourceIndex) => [
+      sourceIndex,
+      {
+        contactPerson: organization.contactPerson,
+        email: organization.email,
+      },
+    ])
+  )
+
+  return organizationChanges.map((organizationChange) => {
+    const payloadOrganization = mapOrganizationForPayload(organizationChange)
+    if (typeof organizationChange.sourceIndex !== 'number') {
+      return payloadOrganization
+    }
+
+    const updatedDetails = updatedContactDetailsBySourceIndex.get(organizationChange.sourceIndex)
+    if (!updatedDetails) {
+      return payloadOrganization
+    }
+
+    return {
+      ...payloadOrganization,
+      contactPerson: updatedDetails.contactPerson,
+      email: updatedDetails.email,
+    }
+  })
+}
+
 export async function postMuutoshakemus(props: MuutoshakemusProps) {
   const { userKey, values } = props
   const url = `/api/muutoshakemus/${userKey}`
-  const mapOrganizationsForPayload = (organizations: FormValues['yhteishankkeenOsapuolet']) =>
-    organizations.map(({ organizationName, contactPerson, email }) => ({
-      organizationName,
-      contactPerson,
-      email,
-    }))
 
   const jatkoaika = values.haenKayttoajanPidennysta && {
     jatkoaika: {
@@ -53,30 +100,11 @@ export async function postMuutoshakemus(props: MuutoshakemusProps) {
     ? mapOrganizationsForPayload(values.yhteishankkeenOsapuolet)
     : undefined
 
-  const updatedContactDetailsByOrganizationName = new Map(
-    (yhteishankkeenOsapuolet ?? []).map((organization) => [
-      organization.organizationName,
-      {
-        contactPerson: organization.contactPerson,
-        email: organization.email,
-      },
-    ])
-  )
-
   const yhteishankkeenOsapuolimuutokset = values.haenYhteishankkeenOsapuolimuutosta
-    ? mapOrganizationsForPayload(values.yhteishankkeenOsapuolimuutokset).map((organization) => {
-        const updatedDetails = updatedContactDetailsByOrganizationName.get(
-          organization.organizationName
-        )
-        if (!updatedDetails) {
-          return organization
-        }
-        return {
-          ...organization,
-          contactPerson: updatedDetails.contactPerson,
-          email: updatedDetails.email,
-        }
-      })
+    ? mergeYhteishankkeenOsapuolimuutoksetWithUpdatedContacts(
+        values.yhteishankkeenOsapuolimuutokset,
+        yhteishankkeenOsapuolet
+      )
     : undefined
 
   return client.post(url, {

@@ -218,7 +218,8 @@
 (defn get-yhteishanke-organizations [hakemus-id]
   (query "SELECT organization_name, contact_person, email
           FROM virkailija.yhteishanke_organization
-          WHERE hakemus_id = ?"
+          WHERE hakemus_id = ?
+          ORDER BY id"
          [hakemus-id]))
 
 (defn- get-current-submission-answers [hakemus]
@@ -554,18 +555,35 @@
               [contact-name contact-email contact-phone hakemus-id]))
   (log/info (str "Successfully changed trusted contact person details with user-key: " user-key)))
 
+(defn- get-yhteishanke-organization-ids [tx hakemus-id]
+  (map :id
+       (query tx
+              "SELECT id
+               FROM virkailija.yhteishanke_organization
+               WHERE hakemus_id = ?
+               ORDER BY id"
+              [hakemus-id])))
+
 (defn- update-yhteishanke-organization-contacts [tx hakemus-id organizations]
   (when (feature-enabled? :enableYhteishankeEmails)
     (log/info (str "Updating yhteishanke organization contacts for hakemus: " hakemus-id))
-    (doseq [organization organizations]
-      (execute! tx
-                "UPDATE virkailija.yhteishanke_organization
+    (let [organization-ids (vec (get-yhteishanke-organization-ids tx hakemus-id))]
+      (when (not= (count organization-ids) (count organizations))
+        (log/warn (str "Yhteishanke organization contact update row count mismatch for hakemus: "
+                       hakemus-id
+                       ", expected rows: "
+                       (count organization-ids)
+                       ", got updates: "
+                       (count organizations))))
+      (doseq [[organization-id organization] (map vector organization-ids organizations)]
+        (execute! tx
+                  "UPDATE virkailija.yhteishanke_organization
                  SET contact_person = ?, email = ?
-                 WHERE hakemus_id = ? AND organization_name = ?"
-                [(:contactPerson organization)
-                 (:email organization)
-                 hakemus-id
-                 (:organizationName organization)]))
+                 WHERE id = ? AND hakemus_id = ?"
+                  [(:contactPerson organization)
+                   (:email organization)
+                   organization-id
+                   hakemus-id])))
     (log/info (str "Successfully updated yhteishanke organization contacts for hakemus: " hakemus-id))))
 
 (defn on-muutoshakemus [user-key hakemus-id avustushaku-id muutoshakemus]

@@ -20,6 +20,7 @@ export interface YhteishankeOrganization {
   contactPerson: string
   email: string
   isNew?: boolean
+  sourceIndex?: number
 }
 
 export interface YhteishankeOrganizationResponse {

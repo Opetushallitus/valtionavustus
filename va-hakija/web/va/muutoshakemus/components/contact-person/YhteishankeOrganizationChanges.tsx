@@ -35,6 +35,7 @@ export const YhteishankeOrganizationChanges = ({
         contactPerson: organization.contactPerson,
         email: organization.email,
         isNew: false,
+        sourceIndex: organization.sourceIndex,
       }))
     )
   }

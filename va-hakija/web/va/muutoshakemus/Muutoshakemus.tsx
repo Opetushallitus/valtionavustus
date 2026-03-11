@@ -125,11 +125,12 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
       const yhteishankeOrganizationsResponse =
         parseYhteishankeOrganizationsResponse(yhteishankeOrganizations)
       const mappedYhteishankeOrganizations = yhteishankeOrganizationsResponse.organizations.map(
-        (organization) => ({
+        (organization, sourceIndex) => ({
           organizationName: organization['organization-name'] || '',
           contactPerson: organization['contact-person'] || '',
           email: organization.email || '',
           isNew: false,
+          sourceIndex,
         })
       )
       const mappedYhteishankeOrganizationChanges = mappedYhteishankeOrganizations.map(

@@ -28,7 +28,8 @@
 (defn- should-notify-valimistelija-of-new-muutoshakemus [muutoshakemus]
   (or (:talousarvio muutoshakemus)
       (get-in muutoshakemus [:jatkoaika :haenKayttoajanPidennysta])
-      (get-in muutoshakemus [:sisaltomuutos :haenSisaltomuutosta])))
+      (get-in muutoshakemus [:sisaltomuutos :haenSisaltomuutosta])
+      (contains? muutoshakemus :yhteishankkeenOsapuolimuutokset)))
 
 (defn- on-post-muutoshakemus [user-key muutoshakemus]
   (let [hakemus (hakija-db/get-hakemus user-key)
