@@ -9,6 +9,7 @@
     "baseUrl": ".",
     "noEmit": true,
     "paths": {
+      "va-hakija/*": ["../va-hakija/*"],
       "soresu-form/*": ["../soresu-form/*"]
     }
   },
