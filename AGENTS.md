@@ -19,6 +19,7 @@
 ## Agent Gotchas
 - DB result keys from `oph.soresu.common.db/query` are converted from snake_case to kebab-case. Read result maps with keys like `:hakemus-id`, `:organization-name`, `:contact-person` (not `:hakemus_id`, `:organization_name`, `:contact_person`).
 - Real failure seen in VA-477: using underscore keys in `server/src/clojure/oph/va/virkailija/db.clj` caused `java.sql.BatchUpdateException` during muutoshakemus decision save (`POST .../muutoshakemus/:id/paatos`).
+- CI Playwright tests run inside `Dockerfile.playwright-test-runner`, not directly from repo tree. If a unit test imports code from `va-hakija/`, the image must copy `va-hakija/` and root `tsconfig.json` + `common-tsconfig.json`; otherwise CI fails with `Cannot find module ...` (seen in VA-477 follow-up with `playwright/tests/unit-tests/muutoshakemusClient.test.ts`).
 
 ## Testing Guidelines
 - Add or update Speclj specs next to the namespaces they cover in each `spec/` directory; prefer descriptive `describe` blocks over long test names.
