@@ -2,11 +2,12 @@ ARG PLAYWRIGHT_VERSION
 FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-noble
 
 COPY package.json package-lock.json .
+COPY tsconfig.json common-tsconfig.json ./
 RUN --mount=type=cache,target=/root/.npm npm ci
 
 COPY playwright playwright/
 COPY soresu-form soresu-form/
+COPY va-hakija va-hakija/
 COPY va-virkailija va-virkailija/
 
 ENTRYPOINT ["/usr/bin/npm", "run", "playwright:test"]
-

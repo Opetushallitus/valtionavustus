@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
-import { mergeYhteishankkeenOsapuolimuutoksetWithUpdatedContacts } from 'va-hakija/web/va/muutoshakemus/client'
-import type { YhteishankeOrganization } from 'soresu-form/web/va/types/muutoshakemus'
+import { mergeYhteishankkeenOsapuolimuutoksetWithUpdatedContacts } from '../../../va-hakija/web/va/muutoshakemus/client'
+import type { YhteishankeOrganization } from '../../../soresu-form/web/va/types/muutoshakemus'
 
 test.describe('mergeYhteishankkeenOsapuolimuutoksetWithUpdatedContacts', () => {
   test('maps updated contacts by source index when organization names are duplicated', () => {
