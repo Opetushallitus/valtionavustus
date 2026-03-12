@@ -375,6 +375,32 @@ export const MuutoshakemusForm = ({
                 {muutoshakemus['sisaltomuutos-perustelut']}
               </div>
             </div>
+            {muutoshakemus['yhteishanke-osapuolimuutokset'] &&
+              muutoshakemus['yhteishanke-osapuolimuutokset'].length > 0 && (
+                <div className="muutoshakemus-row" data-test-id="yhteishanke-osapuolimuutokset">
+                  <h4 className="muutoshakemus__header">
+                    {t.sisaltomuutos.yhteishankeOsapuolimuutokset}
+                  </h4>
+                  <table className="muutoshakemus-yhteishanke-table">
+                    <thead>
+                      <tr>
+                        <th>{t.contactPersonEdit.yhteishankeOrganizationName}</th>
+                        <th>{t.contactPersonEdit.yhteishankeContactPerson}</th>
+                        <th>{t.contactPersonEdit.yhteishankeEmail}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {muutoshakemus['yhteishanke-osapuolimuutokset'].map((org, index) => (
+                        <tr key={index} data-test-id={`yhteishanke-org-${index}`}>
+                          <td>{org['organization-name']}</td>
+                          <td>{org['contact-person']}</td>
+                          <td>{org['email']}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             {isAcceptedWithChanges(f.values['haen-sisaltomuutosta']?.status) && (
               <div className="muutoshakemus-notice">
                 Olet tekemässä päätöksen, jossa haetut sisältömuutokset hyväksytään muutettuna.

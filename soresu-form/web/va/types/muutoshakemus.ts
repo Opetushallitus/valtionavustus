@@ -84,6 +84,7 @@ export interface Muutoshakemus {
   'paatos-status-talousarvio': PaatosStatus | null
   'paatos-status-sisaltomuutos': PaatosStatus | null
   'paatos-reason'?: string
+  'yhteishanke-osapuolimuutokset'?: YhteishankeOrganizationResponse[]
 }
 
 export interface Paatos {

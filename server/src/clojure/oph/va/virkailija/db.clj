@@ -34,13 +34,20 @@
           ORDER BY id"
          [hakemus-id]))
 
-(defn- get-muutoshakemus-yhteishanke-organizations [tx muutoshakemus-id]
-  (query tx
-         "SELECT organization_name, contact_person, email
-          FROM virkailija.muutoshakemus_yhteishanke_organization
-          WHERE muutoshakemus_id = ?
-          ORDER BY position, id"
-         [muutoshakemus-id]))
+(defn- get-muutoshakemus-yhteishanke-organizations
+  ([muutoshakemus-id]
+   (query "SELECT organization_name, contact_person, email
+           FROM virkailija.muutoshakemus_yhteishanke_organization
+           WHERE muutoshakemus_id = ?
+           ORDER BY position, id"
+          [muutoshakemus-id]))
+  ([tx muutoshakemus-id]
+   (query tx
+          "SELECT organization_name, contact_person, email
+           FROM virkailija.muutoshakemus_yhteishanke_organization
+           WHERE muutoshakemus_id = ?
+           ORDER BY position, id"
+          [muutoshakemus-id])))
 
 (defn- replace-yhteishanke-organizations [tx hakemus-id organizations]
   (when (feature-enabled? :enableYhteishankeEmails)
@@ -282,7 +289,12 @@
                               ORDER BY id DESC" [hakemus-id])
         muutoshakemukset-talousarvio (map #(assoc % :talousarvio (get-talousarvio (:id %) "muutoshakemus")) basic-muutoshakemukset)
         muutoshakemukset-paatos-talousarvio (map #(assoc % :paatos-talousarvio (get-talousarvio (:paatos-id %) "paatos")) muutoshakemukset-talousarvio)
-        muutoshakemukset (map #(dissoc % :paatos-id) muutoshakemukset-paatos-talousarvio)]
+        muutoshakemukset-yhteishanke (map #(let [orgs (get-muutoshakemus-yhteishanke-organizations (:id %))]
+                                             (if (seq orgs)
+                                               (assoc % :yhteishanke-osapuolimuutokset orgs)
+                                               %))
+                                          muutoshakemukset-paatos-talousarvio)
+        muutoshakemukset (map #(dissoc % :paatos-id) muutoshakemukset-yhteishanke)]
     (log/info (str "Succesfully fetched muutoshakemukset with id: " hakemus-id))
     muutoshakemukset))
 

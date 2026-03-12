@@ -113,3 +113,21 @@ h4.muutoshakemus__header {
     margin-right: 80px;
     flex-grow: 2;
 }
+
+.muutoshakemus-yhteishanke-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+}
+
+.muutoshakemus-yhteishanke-table th,
+.muutoshakemus-yhteishanke-table td {
+    text-align: left;
+    padding: 0.5rem 1rem;
+    border: 1px solid #eaeaea;
+}
+
+.muutoshakemus-yhteishanke-table th {
+    font-weight: 700;
+    font-size: 0.9rem;
+}

@@ -44,6 +44,7 @@ export const translationsFi = {
     title: 'Kuvaile ja perustele hankkeen sisältöön tai toteutustapaan haettavat muutokset',
     appliedChange: 'Haettu muutos hankkeen sisältöön tai toteutustapaan',
     acceptedChanges: 'Hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan',
+    yhteishankeOsapuolimuutokset: 'Haetut muutokset yhteishankkeen osapuoliin',
   },
   muutosTaloudenKayttosuunnitelmaan: {
     checkboxTitle: 'Haen muutosta hankkeen budjettiin',
@@ -353,6 +354,7 @@ const translationsSv: Translations = {
       'Ändring som ansökts om i projektets innehåll eller sättet på vilket projektet genomförs',
     acceptedChanges:
       'Godkända ändringar i projektets innehåll eller sättet på vilket projektet genomförs',
+    yhteishankeOsapuolimuutokset: '[SV] Haetut muutokset yhteishankkeen osapuoliin',
   },
   muutosTaloudenKayttosuunnitelmaan: {
     checkboxTitle: 'Jag ansöker om ändringar i projektets budget',

@@ -166,6 +166,17 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
       avustushakuID,
       hakemusID
     )
+    // Verify org changes are displayed in the pending muutoshakemus form
+    await expect(page.getByTestId('yhteishanke-osapuolimuutokset')).toBeVisible()
+    // Check all columns for first org (existing org kept with updated contacts)
+    await expect(page.getByTestId('yhteishanke-org-0')).toContainText('Ensimmäinen Organisaatio Oy')
+    await expect(page.getByTestId('yhteishanke-org-0')).toContainText(updatedFirst.contactPerson)
+    await expect(page.getByTestId('yhteishanke-org-0')).toContainText(updatedFirst.email)
+    // Check all columns for second org (new org replacing removed one)
+    await expect(page.getByTestId('yhteishanke-org-1')).toContainText(newSecond.name)
+    await expect(page.getByTestId('yhteishanke-org-1')).toContainText(newSecond.contactPerson)
+    await expect(page.getByTestId('yhteishanke-org-1')).toContainText(newSecond.email)
+
     await muutoshakemusTab.setMuutoshakemusSisaltoDecision('accepted')
     await muutoshakemusTab.writePerustelu('Hyväksytään yhteishankkeen osapuolimuutos')
     await muutoshakemusTab.saveMuutoshakemus()
@@ -236,5 +247,27 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     await expect(page.locator('[id="other-organizations.other-organizations-3.name"]')).toHaveCount(
       0
     )
+  })
+
+  await test.step('hakija sees yhteishanke org changes in decided muutoshakemus', async () => {
+    // Page is already on the muutoshakemus page from the previous step
+    const orgChangesLocator = page.locator(
+      '[data-test-class="existing-muutoshakemus"] [data-test-id="yhteishanke-osapuolimuutokset"]'
+    )
+    await expect(orgChangesLocator).toBeVisible()
+
+    const firstOrg = page.locator(
+      '[data-test-class="existing-muutoshakemus"] [data-test-id="yhteishanke-org-0"]'
+    )
+    await expect(firstOrg).toContainText('Ensimmäinen Organisaatio Oy')
+    await expect(firstOrg).toContainText(updatedFirst.contactPerson)
+    await expect(firstOrg).toContainText(updatedFirst.email)
+
+    const secondOrg = page.locator(
+      '[data-test-class="existing-muutoshakemus"] [data-test-id="yhteishanke-org-1"]'
+    )
+    await expect(secondOrg).toContainText(newSecond.name)
+    await expect(secondOrg).toContainText(newSecond.contactPerson)
+    await expect(secondOrg).toContainText(newSecond.email)
   })
 })

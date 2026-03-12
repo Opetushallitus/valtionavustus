@@ -416,6 +416,13 @@
       (assoc paatos :talousarvio talousarvio)
       paatos)))
 
+(defn- get-muutoshakemus-yhteishanke-organizations [muutoshakemus-id]
+  (query "SELECT organization_name, contact_person, email
+          FROM virkailija.muutoshakemus_yhteishanke_organization
+          WHERE muutoshakemus_id = ?
+          ORDER BY position, id"
+         [muutoshakemus-id]))
+
 (defn get-muutoshakemukset [hakemus-id]
   (let [basic-muutoshakemukset (query
                                 "SELECT
@@ -455,7 +462,12 @@
                                 ORDER BY id DESC" [hakemus-id])
         muutoshakemukset-talousarvio (map #(assoc % :talousarvio (get-talousarvio (:id %) "muutoshakemus")) basic-muutoshakemukset)
         muutoshakemukset-paatos-talousarvio (map #(assoc % :paatos-talousarvio (get-talousarvio (:paatos-id %) "paatos")) muutoshakemukset-talousarvio)
-        muutoshakemukset (map #(dissoc % :paatos-id) muutoshakemukset-paatos-talousarvio)]
+        muutoshakemukset-yhteishanke (map #(let [orgs (get-muutoshakemus-yhteishanke-organizations (:id %))]
+                                             (if (seq orgs)
+                                               (assoc % :yhteishanke-osapuolimuutokset orgs)
+                                               %))
+                                          muutoshakemukset-paatos-talousarvio)
+        muutoshakemukset (map #(dissoc % :paatos-id) muutoshakemukset-yhteishanke)]
     muutoshakemukset))
 
 (defn get-muutoshakemukset-by-paatos-user-key [user-key]

@@ -239,6 +239,7 @@
    (s/optional-key :paatos-reason) (s/maybe s/Str)
    :paatos-created-at (s/maybe s/Inst)
    :paatos-sent-at (s/maybe s/Inst)
+   (s/optional-key :yhteishanke-osapuolimuutokset) [YhteishankeOrganization]
    :created-at s/Inst})
 
 (s/defschema HakemusIdList
