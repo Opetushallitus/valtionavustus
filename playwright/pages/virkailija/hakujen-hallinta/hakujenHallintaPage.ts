@@ -213,6 +213,7 @@ export class HakujenHallintaPage {
       await taTili.tili(0).input.fill(talousarviotili.code)
       await this.page.keyboard.press('ArrowDown')
       await this.page.keyboard.press('Enter')
+      await haunTiedotPage.common.waitForSave()
       await taTili.tili(0).koulutusaste(0).input.fill('Ammatillinen koulutus')
       await this.page.keyboard.press('ArrowDown')
       await this.page.keyboard.press('Enter')
