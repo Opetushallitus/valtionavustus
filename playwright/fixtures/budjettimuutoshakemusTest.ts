@@ -36,6 +36,7 @@ export const budjettimuutoshakemusTest = defaultValues.extend<Budjettimuutoshake
       answers,
       budget
     )
+    await hakijaAvustusHakuPage.waitForEditSaved()
     const { userKey } = await hakijaAvustusHakuPage.submitApplication()
     await use({ userKey })
   },
