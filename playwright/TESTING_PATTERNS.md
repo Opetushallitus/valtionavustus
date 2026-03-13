@@ -112,6 +112,28 @@ await maksatuksetPage.luoMaksatukset.click()
 await expect(firstRowHanke).toHaveText(projectName)
 ```
 
+## Localized UI text in shared fixtures
+
+Shared fixtures (e.g., `budjettimuutoshakemusTest`) are extended by Swedish test variants via `swedishHakemusTest.ts`. Any code that waits for or asserts on UI text must handle both languages. Save status messages are "Tallennettu" (Finnish) and "Sparat" (Swedish). Translations are in `server/resources/public/translations.json`.
+
+**Good:**
+
+```typescript
+await page.waitForFunction(() => {
+  const text = document.querySelector('div.save-message')?.textContent
+  return text?.includes('Tallennettu') || text?.includes('Sparat')
+})
+```
+
+**Bad:**
+
+```typescript
+// BAD: breaks Swedish tests that extend this fixture
+await page.waitForFunction(() =>
+  document.querySelector('div.save-message')?.textContent?.includes('Tallennettu')
+)
+```
+
 ## Anti-patterns checklist
 
 - Direct email fetch + assert without polling

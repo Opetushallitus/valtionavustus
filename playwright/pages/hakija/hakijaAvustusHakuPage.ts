@@ -91,9 +91,10 @@ export function HakijaAvustusHakuPage(page: Page) {
   }
 
   async function waitForEditSaved() {
-    return page.waitForFunction(() =>
-      document.querySelector('div.save-message')?.textContent?.includes('Tallennettu')
-    )
+    return page.waitForFunction(() => {
+      const text = document.querySelector('div.save-message')?.textContent
+      return text?.includes('Tallennettu') || text?.includes('Sparat')
+    })
   }
 
   async function waitForPreview() {
