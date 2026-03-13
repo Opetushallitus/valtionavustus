@@ -184,7 +184,12 @@ export class HakemustenArviointiPage {
   async selectValmistelijaForHakemus(hakemusID: number, valmistelijaName: string) {
     await expect(this.saveStatusSaving.or(this.saveStatusLoading)).not.toBeVisible()
     await this.openUkotusModal(hakemusID)
-    await this.page.click(`[aria-label="Lisää ${valmistelijaName} valmistelijaksi"]`)
+    await Promise.all([
+      this.page.waitForResponse(
+        (resp) => resp.url().includes('/arvio') && resp.request().method() === 'POST'
+      ),
+      this.page.click(`[aria-label="Lisää ${valmistelijaName} valmistelijaksi"]`),
+    ])
     await expect(
       this.page.locator(`[aria-label="Poista ${valmistelijaName} valmistelijan roolista"]`)
     ).toBeVisible()
@@ -195,7 +200,12 @@ export class HakemustenArviointiPage {
   async selectArvioijaForHakemus(hakemusID: number, valmistelijaName: string) {
     await expect(this.saveStatusSaving.or(this.saveStatusLoading)).not.toBeVisible()
     await this.openUkotusModal(hakemusID)
-    await this.page.click(`[aria-label="Lisää ${valmistelijaName} arvioijaksi"]`)
+    await Promise.all([
+      this.page.waitForResponse(
+        (resp) => resp.url().includes('/arvio') && resp.request().method() === 'POST'
+      ),
+      this.page.click(`[aria-label="Lisää ${valmistelijaName} arvioijaksi"]`),
+    ])
     await expect(
       this.page.locator(`[aria-label="Poista ${valmistelijaName} arvioijan roolista"]`)
     ).toBeVisible()
