@@ -220,6 +220,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
             muutoshakemus={m}
             hakijaUrl={state.environment?.['hakija-server'].url[lang]}
             projectEndDate={projectEndDate}
+            enableYhteishankeOsapuolimuutokset={state.environment?.['feature-flags']?.includes('enableYhteishankeEmails')}
           />
         </div>
       </MuutoshakemusSection>

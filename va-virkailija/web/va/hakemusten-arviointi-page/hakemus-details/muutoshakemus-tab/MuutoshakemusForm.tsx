@@ -375,7 +375,8 @@ export const MuutoshakemusForm = ({
                 {muutoshakemus['sisaltomuutos-perustelut']}
               </div>
             </div>
-            {muutoshakemus['yhteishanke-osapuolimuutokset'] &&
+            {environment['feature-flags'].includes('enableYhteishankeEmails') &&
+              muutoshakemus['yhteishanke-osapuolimuutokset'] &&
               muutoshakemus['yhteishanke-osapuolimuutokset'].length > 0 && (
                 <div className="muutoshakemus-row" data-test-id="yhteishanke-osapuolimuutokset">
                   <h4 className="muutoshakemus__header">

@@ -69,6 +69,7 @@ export const Muutoshakemus = ({
         muutoshakemus={a}
         hakijaUrl={environment['hakija-server'].url.fi}
         projectEndDate={projectEndDate}
+        enableYhteishankeOsapuolimuutokset={environment['feature-flags'].includes('enableYhteishankeEmails')}
       />
     )
 

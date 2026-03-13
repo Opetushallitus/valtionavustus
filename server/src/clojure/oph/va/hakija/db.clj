@@ -462,11 +462,13 @@
                                 ORDER BY id DESC" [hakemus-id])
         muutoshakemukset-talousarvio (map #(assoc % :talousarvio (get-talousarvio (:id %) "muutoshakemus")) basic-muutoshakemukset)
         muutoshakemukset-paatos-talousarvio (map #(assoc % :paatos-talousarvio (get-talousarvio (:paatos-id %) "paatos")) muutoshakemukset-talousarvio)
-        muutoshakemukset-yhteishanke (map #(let [orgs (get-muutoshakemus-yhteishanke-organizations (:id %))]
-                                             (if (seq orgs)
-                                               (assoc % :yhteishanke-osapuolimuutokset orgs)
-                                               %))
-                                          muutoshakemukset-paatos-talousarvio)
+        muutoshakemukset-yhteishanke (if (feature-enabled? :enableYhteishankeEmails)
+                                       (map #(let [orgs (get-muutoshakemus-yhteishanke-organizations (:id %))]
+                                               (if (seq orgs)
+                                                 (assoc % :yhteishanke-osapuolimuutokset orgs)
+                                                 %))
+                                            muutoshakemukset-paatos-talousarvio)
+                                       muutoshakemukset-paatos-talousarvio)
         muutoshakemukset (map #(dissoc % :paatos-id) muutoshakemukset-yhteishanke)]
     muutoshakemukset))
 
