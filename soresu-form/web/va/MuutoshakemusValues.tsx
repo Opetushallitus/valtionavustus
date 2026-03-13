@@ -24,7 +24,13 @@ type MuutoshakemusValuesProps = {
 }
 
 export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
-  const { currentTalousarvio, muutoshakemus, hakijaUrl, projectEndDate, enableYhteishankeOsapuolimuutokset } = props
+  const {
+    currentTalousarvio,
+    muutoshakemus,
+    hakijaUrl,
+    projectEndDate,
+    enableYhteishankeOsapuolimuutokset,
+  } = props
   const { t, lang } = useTranslations()
   const a = muutoshakemus
   const paatosUrl = `${hakijaUrl}muutoshakemus/paatos?user-key=${a['paatos-user-key']}`
