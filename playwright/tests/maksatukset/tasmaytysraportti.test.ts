@@ -69,18 +69,18 @@ test('tasmaytysraportti is sent when maksatuset are sent', async ({
 
   await test.step('find certain fields in pdf', async () => {
     const code = hakuProps.talousarviotili.code
-    const codeFirstPart = code.slice(0, 10)
-    const codeLastPart = code.slice(10)
-    const separator = ','
     expect(tasmaytysraportti).toContain(lkpTili)
     expect(tasmaytysraportti).toContain(hakuProps.vaCodes.operationalUnit)
     /*
-     these are split to 2 different lines in pdf
-     => separate strings separated by ,
+     PDF text extraction via pdf.js splits wrapped lines into separate text items
+     which getPdfFirstPageTextContent joins with commas. The exact split position
+     depends on pixel width (Helvetica proportional font), not character count,
+     so strip commas before asserting on content that may wrap.
      */
-    expect(tasmaytysraportti).toContain(`${codeFirstPart}${separator}${codeLastPart}`)
-    expect(tasmaytysraportti).toContain(`essi.esittelija@example${separator}.com`)
-    expect(tasmaytysraportti).toContain(`hygge.hyvaksyja@exa${separator}mple.com`)
+    const pdfTextWithoutSeparators = tasmaytysraportti.replaceAll(',', '')
+    expect(pdfTextWithoutSeparators).toContain(code)
+    expect(pdfTextWithoutSeparators).toContain(`essi.esittelija@example.com`)
+    expect(pdfTextWithoutSeparators).toContain(`hygge.hyvaksyja@example.com`)
   })
   await test.step('tasmaytysraportti can also be downloaded from maksatukset page', async () => {
     const lahetetytMaksatukset = await maksatuksetPage.clickLahetetytMaksatuksetTab()
