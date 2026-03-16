@@ -323,10 +323,11 @@ test.describe.parallel('talousarvio select', () => {
       and the test continues in the first browser
      */
     await hakujenHallintaPage.page.reload()
-    await hakujenHallintaPage.fillAvustushaku(hakuProps)
     const haunTiedotPage = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
     const taTili = haunTiedotPage.locators.taTili
     const firstTili = taTili.tili(0)
+    await expect(firstTili.value).toContainText(hakuProps.talousarviotili.code)
+    await expect(firstTili.koulutusaste(0).value).toHaveText(koulutus)
     const { addTiliBtn, removeTiliBtn, input } = firstTili
     const { addKoulutusasteBtn, removeKoulutusasteBtn: removeKoulutusasteBtnFn } =
       firstTili.koulutusaste(0)
