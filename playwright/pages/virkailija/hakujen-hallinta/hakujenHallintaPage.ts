@@ -204,6 +204,8 @@ export class HakujenHallintaPage {
   }: HakuProps) {
     await test.step('Fill in avustushaku details', async () => {
       const haunTiedotPage = HaunTiedotPage(this.page)
+      const firstTaTili = haunTiedotPage.locators.taTili.tili(0)
+      const firstKoulutusaste = firstTaTili.koulutusaste(0)
 
       if (muutoshakuKelpoinen === true || muutoshakuKelpoinen === false) {
         const radioId = muutoshakuKelpoinen
@@ -212,14 +214,32 @@ export class HakujenHallintaPage {
         await this.page.click(`label[for="${radioId}"]`)
       }
 
-      const taTili = haunTiedotPage.locators.taTili
-      await taTili.tili(0).input.fill(talousarviotili.code)
-      await this.page.keyboard.press('ArrowDown')
-      await this.page.keyboard.press('Enter')
-      await haunTiedotPage.common.waitForSave()
-      await taTili.tili(0).koulutusaste(0).input.fill('Ammatillinen koulutus')
-      await this.page.keyboard.press('ArrowDown')
-      await this.page.keyboard.press('Enter')
+      if (!(await firstTaTili.value.filter({ hasText: talousarviotili.code }).isVisible())) {
+        await firstTaTili.input.click()
+        await firstTaTili.input.fill(talousarviotili.code)
+        const taTiliOption = firstTaTili.option.filter({ hasText: talousarviotili.code }).first()
+        await expect(taTiliOption).toBeVisible()
+        await expect(taTiliOption).toBeEnabled()
+        await this.page.keyboard.press('Tab')
+        await this.page.keyboard.press('Enter')
+        await expect(firstTaTili.value).toContainText(talousarviotili.code)
+        await haunTiedotPage.common.waitForSave()
+      }
+      if (
+        !(await firstKoulutusaste.value.filter({ hasText: 'Ammatillinen koulutus' }).isVisible())
+      ) {
+        await firstKoulutusaste.input.click()
+        await firstKoulutusaste.input.fill('Ammatillinen koulutus')
+        const koulutusasteOption = firstKoulutusaste.option
+          .filter({ hasText: 'Ammatillinen koulutus' })
+          .first()
+        await expect(koulutusasteOption).toBeVisible()
+        await expect(koulutusasteOption).toBeEnabled()
+        await this.page.keyboard.press('Tab')
+        await this.page.keyboard.press('Enter')
+        await expect(firstKoulutusaste.value).toHaveText('Ammatillinen koulutus')
+        await haunTiedotPage.common.waitForSave()
+      }
 
       await haunTiedotPage.locators.status.draft.click()
       await haunTiedotPage.locators.registerNumber.fill(registerNumber)

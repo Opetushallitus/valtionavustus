@@ -112,6 +112,34 @@ await maksatuksetPage.luoMaksatukset.click()
 await expect(firstRowHanke).toHaveText(projectName)
 ```
 
+## Make fixture-driven setup idempotent
+
+Shared fixtures often pre-populate the haku before the test body runs. Helpers that "fill" the same field again must check whether the desired value is already selected before trying to select it again.
+
+This matters especially for React Select fields such as TA-tili and koulutusaste: once the current value is already selected, the matching dropdown option may be rendered as disabled. A second `ArrowDown`/`Enter` or option click can then do nothing, and a following `waitForSave()` will hang because no save was triggered.
+
+**Good:**
+
+```typescript
+if (!(await firstTaTili.value.filter({ hasText: talousarviotili.code }).isVisible())) {
+  await firstTaTili.input.fill(talousarviotili.code)
+  await expect(firstTaTili.option.filter({ hasText: talousarviotili.code }).first()).toBeEnabled()
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('Enter')
+  await common.waitForSave()
+}
+```
+
+**Bad:**
+
+```typescript
+// BAD: fails when fixture already selected the same value and the option is disabled
+await firstTaTili.input.fill(talousarviotili.code)
+await page.keyboard.press('ArrowDown')
+await page.keyboard.press('Enter')
+await common.waitForSave()
+```
+
 ## Localized UI text in shared fixtures
 
 Shared fixtures (e.g., `budjettimuutoshakemusTest`) are extended by Swedish test variants via `swedishHakemusTest.ts`. Any code that waits for or asserts on UI text must handle both languages. Save status messages are "Tallennettu" (Finnish) and "Sparat" (Swedish). Translations are in `server/resources/public/translations.json`.
@@ -141,3 +169,4 @@ await page.waitForFunction(() =>
 - Filling inputs or clicking while saves are in progress
 - Missing `failOnStatusCode: true` on test API calls (silent errors cause misleading timeouts)
 - Using `waitForResponse` for only the primary API when the DOM depends on a cascading secondary fetch
+- Re-selecting a value already set by fixtures and assuming it will trigger a save
