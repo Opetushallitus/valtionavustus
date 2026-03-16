@@ -3,7 +3,7 @@ import { expectToBeDefined } from '../utils/util'
 import { dummyPdfPath, VIRKAILIJA_URL } from '../utils/constants'
 import { navigate } from '../utils/navigate'
 import { HakijaSelvitysPage } from '../pages/hakija/hakijaSelvitysPage'
-import { expect, test } from '@playwright/test'
+import { expect, Page, test } from '@playwright/test'
 import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { LoppuselvitysPage } from '../pages/virkailija/hakujen-hallinta/LoppuselvitysPage'
 import { ValiselvitysPage } from '../pages/virkailija/hakujen-hallinta/ValiselvitysPage'
@@ -33,6 +33,13 @@ interface SelvitysFixtures {
     email: string
     name: string
   }
+}
+
+function waitForEditSaved(page: Page) {
+  return page.waitForFunction(() => {
+    const text = document.querySelector('div.save-message')?.textContent
+    return text?.includes('Tallennettu') || text?.includes('Sparat')
+  })
 }
 
 export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
@@ -90,6 +97,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
       await expect(hakijaSelvitysPage.valiselvitysWarning).toBeHidden()
       const submitButtonText = /Lähetä käsiteltäväksi|Sänd för behandling/
       await expect(hakijaSelvitysPage.submitButton).toHaveText(submitButtonText)
+      await waitForEditSaved(page)
       await hakijaSelvitysPage.submitButton.click()
       const selvitysSentText = /Väliselvitys lähetetty|Mellanredovisning sänd/
       await expect(hakijaSelvitysPage.submitButton).toHaveText(selvitysSentText)
@@ -171,6 +179,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     const submitButtonText = lang === 'fi' ? 'Lähetä käsiteltäväksi' : 'Sänd för behandling'
     const submittedText = lang === 'fi' ? 'Loppuselvitys lähetetty' : 'Slutredovisning sänd'
     await expect(hakijaSelvitysPage.submitButton).toHaveText(submitButtonText)
+    await waitForEditSaved(page)
     const [submitResponse] = await Promise.all([
       page.waitForResponse(
         (resp) =>

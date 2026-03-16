@@ -250,6 +250,7 @@ export function HakijaAvustusHakuPage(page: Page) {
       await beforeSubmitFn()
     }
 
+    await waitForEditSaved()
     const submit = page.locator('#submit')
     await expect(submit).toBeVisible()
     await expect(submit).toBeEnabled()
