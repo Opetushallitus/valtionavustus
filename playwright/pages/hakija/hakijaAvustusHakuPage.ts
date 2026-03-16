@@ -250,7 +250,9 @@ export function HakijaAvustusHakuPage(page: Page) {
       await beforeSubmitFn()
     }
 
-    await waitForEditSaved()
+    await page.waitForFunction(
+      () => document.getElementById('pending-changes')?.textContent === 'false'
+    )
     const submit = page.locator('#submit')
     await expect(submit).toBeVisible()
     await expect(submit).toBeEnabled()

@@ -35,11 +35,10 @@ interface SelvitysFixtures {
   }
 }
 
-function waitForEditSaved(page: Page) {
-  return page.waitForFunction(() => {
-    const text = document.querySelector('div.save-message')?.textContent
-    return text?.includes('Tallennettu') || text?.includes('Sparat')
-  })
+function waitForPendingChangesSaved(page: Page) {
+  return page.waitForFunction(
+    () => document.getElementById('pending-changes')?.textContent === 'false'
+  )
 }
 
 export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
@@ -97,7 +96,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
       await expect(hakijaSelvitysPage.valiselvitysWarning).toBeHidden()
       const submitButtonText = /Lähetä käsiteltäväksi|Sänd för behandling/
       await expect(hakijaSelvitysPage.submitButton).toHaveText(submitButtonText)
-      await waitForEditSaved(page)
+      await waitForPendingChangesSaved(page)
       await hakijaSelvitysPage.submitButton.click()
       const selvitysSentText = /Väliselvitys lähetetty|Mellanredovisning sänd/
       await expect(hakijaSelvitysPage.submitButton).toHaveText(selvitysSentText)
@@ -179,7 +178,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     const submitButtonText = lang === 'fi' ? 'Lähetä käsiteltäväksi' : 'Sänd för behandling'
     const submittedText = lang === 'fi' ? 'Loppuselvitys lähetetty' : 'Slutredovisning sänd'
     await expect(hakijaSelvitysPage.submitButton).toHaveText(submitButtonText)
-    await waitForEditSaved(page)
+    await waitForPendingChangesSaved(page)
     const [submitResponse] = await Promise.all([
       page.waitForResponse(
         (resp) =>
