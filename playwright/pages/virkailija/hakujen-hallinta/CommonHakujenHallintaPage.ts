@@ -13,6 +13,11 @@ export async function waitForSave(page: Page) {
     page.getByTestId(saveStatusTestId).getByText('Kaikki tiedot tallennettu')
   ).toBeVisible({ timeout: 10000 })
 }
+export async function waitForAvustushakuReady(page: Page) {
+  const saveStatus = page.getByTestId(saveStatusTestId)
+  await expect(saveStatus.getByText('Ladataan tietoja')).toBeHidden({ timeout: 10000 })
+  await expect(saveStatus.getByText('Tallennetaan')).toBeHidden({ timeout: 10000 })
+}
 export async function waitForSaveWithError(page: Page) {
   await expect(
     page.getByTestId(saveStatusTestId).getByText('Jossain kentässä puutteita. Tarkasta arvot.')
@@ -120,6 +125,9 @@ export const CommonHakujenHallintaPage = (page: Page) => {
       page.getByTestId(saveStatusTestId).locator('text="Kaikki tiedot tallennettu"')
     ).toBeVisible({ timeout: 10000 })
   }
+  async function waitUntilAvustushakuReady() {
+    await waitForAvustushakuReady(page)
+  }
   return {
     locators,
     switchToHaunTiedotTab,
@@ -128,6 +136,7 @@ export const CommonHakujenHallintaPage = (page: Page) => {
     switchToPaatosTab,
     switchToValiselvitysTab,
     switchToLoppuselvitysTab,
+    waitForAvustushakuReady: waitUntilAvustushakuReady,
     waitForSave,
   }
 }

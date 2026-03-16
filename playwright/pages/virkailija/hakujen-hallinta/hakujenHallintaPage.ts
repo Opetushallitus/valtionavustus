@@ -12,6 +12,7 @@ import { HakulomakePage } from './HakulomakePage'
 import {
   CommonHakujenHallintaPage,
   saveStatusTestId,
+  waitForAvustushakuReady,
   waitForSave,
 } from './CommonHakujenHallintaPage'
 import { ValiselvitysPage } from './ValiselvitysPage'
@@ -174,6 +175,8 @@ export class HakujenHallintaPage {
 
   async fillAvustushaku(hakuProps: HakuProps) {
     const haunTiedotPage = HaunTiedotPage(this.page)
+    await waitForAvustushakuReady(this.page)
+    await expect(haunTiedotPage.locators.registerNumber).toBeVisible()
     await this.fillAvustushakuWithoutWaitingForSave(hakuProps)
     await haunTiedotPage.common.waitForSave()
   }
