@@ -2,8 +2,7 @@
   (:require [oph.soresu.common.db.migrations :as migrations]
             [oph.soresu.common.db :as common-db]
             [oph.va.menoluokka.db :as menoluokka-db]
-            [clojure.tools.logging :as log]
-            [yesql.core :refer [defquery]])
+            [clojure.tools.logging :as log])
   (:gen-class))
 
 (defn migrate [& migration-paths]
@@ -16,11 +15,11 @@
 (defn get-avustushaku [id]
   (first (common-db/query "select * from avustushaut where id = ? and status <> 'deleted'" [id])))
 
-(defquery list-used-rahoitusalueet "db/migration/queries/m1_21-list-used-rahoitusalueet.sql")
-(defquery update-avustushaku-content! "db/migration/queries/m1_21-update-avustushaku-content.sql")
 (migrations/defmigration migrate-add-rahoitusalueet-for-avustushaut "1.21"
   "Add used rahoitusalueet to avustushaut"
-  (let [used-rahoitusalueet (common-db/exec list-used-rahoitusalueet {})
+  (let [used-rahoitusalueet (common-db/query-original-identifiers
+                             "select hakemukset.avustushaku, rahoitusalue from virkailija.arviot join hakija.hakemukset on hakemukset.id = arviot.hakemus_id where arviot.rahoitusalue is not null and hakemukset.version_closed is null group by arviot.rahoitusalue, hakemukset.avustushaku order by avustushaku"
+                             [])
         avustushakujen-rahoitusalueet (group-by :avustushaku used-rahoitusalueet)]
     (doseq [avustushaku-id (keys avustushakujen-rahoitusalueet)]
       (let [avustushaku (get-avustushaku avustushaku-id)
@@ -28,7 +27,7 @@
             rahoitusalueet-json (map create-rahoitusalue-json avustushaun-rahoitusalueet)
             new-content (assoc (:content avustushaku) :rahoitusalueet rahoitusalueet-json)
             changed-avustushaku (assoc avustushaku :content new-content)]
-        (common-db/exec update-avustushaku-content! changed-avustushaku)))))
+        (common-db/named-execute! "update hakija.avustushaut set content = :content where id = :id" changed-avustushaku)))))
 
 (defn- parameter-list [list]
   (clojure.string/join ", " (take (count list) (repeat "?"))))

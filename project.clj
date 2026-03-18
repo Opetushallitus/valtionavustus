@@ -37,7 +37,6 @@
                          ;; ... -> [com.google.guava/guava "33.5.0-android"] ->
                          [org.checkerframework/checker-qual "3.52.1"]
 
-                         ;; [yesql "0.5.4"] ->
                          ;; ... -> [clout "2.2.1"] ->
                          [instaparse "1.5.0"]
 
@@ -123,7 +122,7 @@
                  [org.flywaydb/flyway-database-postgresql ~flyway-version]
 
                  [org.postgresql/postgresql "42.7.10"]
-                 [yesql "0.5.4"]
+                 [org.clojure/java.jdbc "0.7.12"]
 
                  ;; emails
                  [org.apache.commons/commons-email "1.6.0"]

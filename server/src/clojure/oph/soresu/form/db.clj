@@ -1,22 +1,18 @@
 (ns oph.soresu.form.db
   (:use [oph.soresu.common.db]
         [clojure.tools.trace :only [trace]])
-  (:require [oph.soresu.form.db.queries :as queries]
-            [ring.util.http-response :as http]))
+  (:require [ring.util.http-response :as http]))
 
 (defn list-forms []
-  (->> {}
-       (exec queries/list-forms)))
+  (query-original-identifiers "select * from forms" []))
 
 (defn get-form [id]
-  (->> (exec queries/get-form {:id id})
-       first))
+  (first (query-original-identifiers "select * from forms where id = ?" [id])))
 
 (defn get-form-tx [tx id]
-  (first (query tx "SELECT * FROM forms WHERE id = ?" [id])))
+  (first (query-original-identifiers tx "SELECT * FROM forms WHERE id = ?" [id])))
 
 (defn update-form! [tx form]
-  ;; NOTE: looks like yesql unwraps sequence parameters, thats why we wrap them one extra time here
   (let [id (:id form)
         content (:content form)
         rules (:rules form)]
@@ -25,42 +21,61 @@
     (execute! tx "UPDATE forms SET content = ?, rules = ? WHERE id = ?" [content rules id])))
 
 (defn submission-exists? [form-id submission-id]
-  (->> {:form_id form-id :submission_id submission-id}
-       (exec queries/submission-exists?)
-       empty?
-       not))
+  (not (empty? (query-original-identifiers
+                "SELECT 1 from form_submissions where id = ? and form = ? and version_closed IS NULL"
+                [submission-id form-id]))))
 
 (defn submission-exists-tx? [tx form-id submission-id]
-  (not (empty? (queries/submission-exists? {:form_id form-id :submission_id submission-id} {:connection tx}))))
+  (not (empty? (query-original-identifiers tx
+                                           "SELECT 1 from form_submissions where id = ? and form = ? and version_closed IS NULL"
+                                           [submission-id form-id]))))
 
 (defn update-submission! [form-id submission-id answers]
-  (let [params {:form_id form-id :submission_id submission-id :answers answers}]
-    (exec-all [queries/lock-submission params
-               queries/close-existing-submission! params
-               queries/update-submission<! params])))
+  (with-tx (fn [tx]
+             (query-original-identifiers tx
+                                         "SELECT 1 FROM form_submissions WHERE id = ? AND form = ? FOR UPDATE NOWAIT"
+                                         [submission-id form-id])
+             (execute! tx
+                       "UPDATE form_submissions SET version_closed = now() WHERE form = ? AND id = ? AND version_closed IS NULL"
+                       [form-id submission-id])
+             (first (query-original-identifiers tx
+                                                "INSERT INTO form_submissions (id, version, form, answers)
+       SELECT ?, max(version) + 1, ?, ? FROM form_submissions WHERE id = ? AND form = ?
+       RETURNING *"
+                                                [submission-id form-id answers submission-id form-id])))))
 
 (defn update-submission-tx! [tx form-id submission-id answers]
-  (let [params {:form_id form-id :submission_id submission-id :answers answers}]
-    (if (zero? (queries/close-existing-submission! params {:connection tx}))
+  (let [close-count (first (execute! tx
+                                     "UPDATE form_submissions SET version_closed = now() WHERE form = ? AND id = ? AND version_closed IS NULL"
+                                     [form-id submission-id]))]
+    (if (zero? close-count)
       (http/not-found!)
-      (if-let [submission (queries/update-submission<! params {:connection tx})]
+      (if-let [submission (first (query-original-identifiers tx
+                                                             "INSERT INTO form_submissions (id, version, form, answers)
+                                   SELECT ?, max(version) + 1, ?, ? FROM form_submissions WHERE id = ? AND form = ?
+                                   RETURNING *"
+                                                             [submission-id form-id answers submission-id form-id]))]
         (http/ok submission)
         (http/internal-server-error)))))
 
 (defn create-submission! [form-id answers]
-  (->> {:form_id form-id :answers answers}
-       (exec queries/create-submission<!)))
+  (first (query-original-identifiers
+          "INSERT INTO form_submissions (id, version, form, answers)
+            VALUES (nextval('form_submissions_id_seq'), 0, ?, ?)
+            RETURNING *"
+          [form-id answers])))
 
 (defn get-form-submission [form-id submission-id]
-  (->> {:form_id form-id :submission_id submission-id}
-       (exec queries/get-form-submission)
-       first))
+  (first (query-original-identifiers
+          "SELECT * FROM form_submissions WHERE id = ? AND form = ? AND version_closed IS NULL"
+          [submission-id form-id])))
 
 (defn get-form-submission-version [form-id submission-id version]
-  (first
-   (exec queries/get-form-submission-version
-         {:form_id form-id :submission_id submission-id :version version})))
+  (first (query-original-identifiers
+          "SELECT * FROM form_submissions WHERE id = ? AND form = ? AND version = ? LIMIT 1"
+          [submission-id form-id version])))
 
 (defn get-form-submission-versions [form-id submission-id]
-  (->> {:form_id form-id :submission_id submission-id}
-       (exec queries/get-form-submission-versions)))
+  (query-original-identifiers
+   "SELECT * FROM form_submissions WHERE id = ? AND form = ? ORDER BY version DESC"
+   [submission-id form-id]))

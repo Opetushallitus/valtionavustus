@@ -6,8 +6,7 @@
             [cheshire.core :as cheshire]
             [clojure.string :as str]
             [oph.soresu.common.db :as db]
-            [oph.common.caller-id :as caller-id]
-            [oph.soresu.common.db.queries :as queries]))
+            [oph.common.caller-id :as caller-id]))
 
 (def koodisto-base-url "https://virkailija.opintopolku.fi:443/koodisto-service/rest/")
 (def all-koodisto-groups-path "codes")
@@ -74,10 +73,10 @@
          (sort-by (fn [x] (-> x :label :fi)) compare-case-insensitively))))
 
 (defn- get-cached-koodisto [koodisto-uri version]
-  (->> {:koodisto_uri koodisto-uri
-        :version version}
-       (db/exec queries/get-koodisto)
-       first))
+  (first
+   (db/query-original-identifiers
+    "select * from koodisto_cache where koodisto_uri = ? and version = ? order by created_at desc limit 1"
+    [koodisto-uri version])))
 
 (defn get-cached-koodi-options [koodisto-uri version]
   (if-let [cached-koodisto (get-cached-koodisto koodisto-uri version)]
@@ -86,8 +85,7 @@
           checksum (-> (cheshire/generate-string koodisto)
                        buddy-hash/sha256
                        buddy-codecs/bytes->hex)]
-      (db/exec queries/create-koodisto<! {:koodisto_uri koodisto-uri
-                                          :version version
-                                          :checksum checksum
-                                          :content [koodisto]})
+      (db/execute!
+       "insert into koodisto_cache (koodisto_uri, version, checksum, content) values (?, ?, ?, ?)"
+       [koodisto-uri version checksum koodisto])
       (get-cached-koodisto koodisto-uri version))))

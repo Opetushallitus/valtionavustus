@@ -1,6 +1,6 @@
 (ns oph.va.virkailija.db
   (:require [oph.soresu.form.formutil :as formutil]
-            [oph.soresu.common.db :refer [escape-like-pattern exec execute! generate-hash-id named-execute! named-query query query-original-identifiers with-tx]]
+            [oph.soresu.common.db :refer [escape-like-pattern execute! generate-hash-id named-execute! named-query query query-original-identifiers with-tx]]
             [clojure.data :as data]
             [oph.va.hakemus.db :as hakemus-copy]
             [oph.va.menoluokka.db :refer [store-menoluokka-hakemus-rows]]

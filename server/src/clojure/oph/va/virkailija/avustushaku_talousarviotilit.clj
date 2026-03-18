@@ -1,5 +1,5 @@
 (ns oph.va.virkailija.avustushaku_talousarviotilit
-  (:require [oph.soresu.common.db :refer [exec query with-tx execute!]]))
+  (:require [oph.soresu.common.db :refer [query with-tx execute!]]))
 
 (defn get-avustushaku-talousarviotilit [avustushaku-id]
   (query "

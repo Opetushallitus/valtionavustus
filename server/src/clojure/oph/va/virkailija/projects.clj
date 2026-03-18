@@ -1,5 +1,5 @@
 (ns oph.va.virkailija.projects
-  (:require [oph.soresu.common.db :refer [exec query with-tx execute!]]
+  (:require [oph.soresu.common.db :refer [query with-tx execute!]]
             [oph.va.virkailija.utils :refer
              [convert-to-dash-keys convert-to-underscore-keys]]))
 

@@ -77,15 +77,6 @@
                                    "check that you run with correct mode. "
                                    "Current config name is " (config-name))))))
 
-(defmacro exec [query params]
-  `(jdbc/with-db-transaction [connection# {:datasource (get-datasource)} {:isolation :repeatable-read}]
-     (~query ~params {:connection connection#})))
-
-(defmacro exec-all [query-list]
-  `(jdbc/with-db-transaction [connection# {:datasource (get-datasource)} {:isolation :repeatable-read}]
-     (last (for [[query# params#] (partition 2 ~query-list)]
-             (query# params# {:connection connection#})))))
-
 (defmacro with-transaction [connection & body]
   `(let [~connection {:datasource (get-datasource)}]
      (jdbc/with-db-transaction [conn# ~connection {:isolation :repeatable-read}]

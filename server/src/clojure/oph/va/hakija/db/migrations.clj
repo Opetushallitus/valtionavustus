@@ -5,8 +5,7 @@
             [oph.va.hakija.db :as va-db]
             [oph.soresu.form.formutil :as formutil]
             [clojure.set :as set]
-            [clojure.tools.trace :refer [trace]]
-            [yesql.core :refer [defquery]])
+            [clojure.tools.trace :refer [trace]])
   (:gen-class))
 
 (defn migrate [& migration-paths]
@@ -34,8 +33,6 @@
                                                           node)))]
     (common-db/with-tx (fn [tx] (db/update-form! tx changed-form)))))
 
-(defquery update-avustushaku-content! "db/migration/queries/m1_15-update-avustushaku-content.sql")
-
 (migrations/defmigration migrate-add-painopistealueet-for-avustushaut "1.15"
   "Add empty painopistealueet to all avustushaut"
   (let [painopiste-alueet {:items []
@@ -44,7 +41,7 @@
     (doseq [avustushaku (va-db/list-avustushaut)]
       (let [new-content (assoc (:content avustushaku) :focus-areas painopiste-alueet)
             changed-avustushaku (assoc avustushaku :content new-content)]
-        (common-db/exec update-avustushaku-content! changed-avustushaku)))))
+        (common-db/named-execute! "update avustushaut set content = :content where id = :id" changed-avustushaku)))))
 
 (migrations/defmigration migrate-field-type-and-fieldType-terms "1.16"
   "Change type to fieldClass and displayAs to fieldType"
@@ -56,12 +53,9 @@
       (let [changed-form (formutil/transform-form-content form rename-attributes)]
         (common-db/with-tx (fn [tx] (db/update-form! tx changed-form)))))))
 
-(defquery list-all-submission-versions "db/migration/queries/m1_18-list-all-submission-versions.sql")
-(defquery update-submission-directly! "db/migration/queries/m1_18-update-submission-directly.sql")
-
 (migrations/defmigration migrate-add-fieldtype-to-submissions "1.18"
   "Add fieldType to each form_submissions value"
-  (let [all-submission-versions (common-db/exec list-all-submission-versions {})
+  (let [all-submission-versions (common-db/query-original-identifiers "select * from form_submissions" [])
         all-forms (db/list-forms)
         id-regexp-type-map {#"language" "radioButton"
                             #"project-description" "growingFieldset"
@@ -101,10 +95,11 @@
       (doseq [submission all-submission-versions]
         (let [my-form-content (->> all-forms (filter #(= (:id %) (:form submission))) first :content formutil/find-fields)
               updated-submission (formutil/transform-tree submission :answers (partial add-field-type my-form-content))]
-          (common-db/exec update-submission-directly! {:answers (updated-submission :answers)
-                                                       :submission_id (:id submission)
-                                                       :version (:version submission)
-                                                       :form_id (:form submission)}))))))
+          (common-db/named-execute! "update form_submissions set answers = :answers where id = :submission_id and version = :version and form = :form_id"
+                                    {:answers (updated-submission :answers)
+                                     :submission_id (:id submission)
+                                     :version (:version submission)
+                                     :form_id (:form submission)}))))))
 
 (migrations/defmigration migrate-add-helptext-to-all-form-fields "1.20"
   "Add empty helpText to all form fields that currently don't have helpText"
@@ -129,17 +124,12 @@
               node))]
     (update-forms! (db/list-forms) remove-helptext)))
 
-(defquery update-avustushaku-decision! "db/migration/queries/m1_42-update-avustushaku-decision.sql")
-
 (migrations/defmigration migrate-rename-avustushaku-decision-json-key-from-esittelija-to-valmistelija "1.42"
   "Rename avustushaku decision json key from \"esittelija\" to \"valmistelija\""
   (doseq [avustushaku (va-db/list-avustushaut)]
     (let [new-decision (set/rename-keys (:decision avustushaku) {:esittelija :valmistelija})
           changed-avustushaku (assoc avustushaku :decision new-decision)]
-      (common-db/exec update-avustushaku-decision! changed-avustushaku))))
-
-(defquery get-hakemukset-with-selvitys-email "db/migration/queries/m1_46-get-hakemukset-with-selvitys-email.sql")
-(defquery update-hakemus-selvitys-email-by-id! "db/migration/queries/m1_46-update-hakemus-selvitys-email-by-id.sql")
+      (common-db/named-execute! "update avustushaut set decision = :decision where id = :id" changed-avustushaku))))
 
 (migrations/defmigration migrate-change-to-field-inside-selvitys-email-to-array "1.46"
   "Change `to` field inside `selvitys_email` jsonb field to be an array of emails"
@@ -150,9 +140,9 @@
                            (some? org-to) [org-to]
                            :else [])]
               (assoc email :to new-to)))]
-    (doseq [hakemus (common-db/exec get-hakemukset-with-selvitys-email {})]
-      (common-db/exec
-       update-hakemus-selvitys-email-by-id!
+    (doseq [hakemus (common-db/query-original-identifiers "select id, selvitys_email from hakemukset where selvitys_email is not null" [])]
+      (common-db/named-execute!
+       "update hakemukset set selvitys_email = :selvitys_email where id = :id"
        {:id             (:id hakemus)
         :selvitys_email (convert-selvitys-email (:selvitys_email hakemus))}))))
 (defn assoc-in-if [m ks value]
@@ -170,8 +160,8 @@
   "Add default values for payment fields `operational-unit`, `project`,
   `operation`. Default value will be empty string."
   (doseq [avustushaku (va-db/list-avustushaut)]
-    (common-db/exec
-     update-avustushaku-content!
+    (common-db/named-execute!
+     "update avustushaut set content = :content where id = :id"
      (set-missing-content-values avustushaku))))
 
 (migrations/defmigration migrate-add-empty-versions-to-avustushaku-decision-attachments "1.50"
@@ -181,6 +171,6 @@
       (when-some [decision-liitteet (:liitteet decision)]
         (let [new-liitteet (map (fn [l] (assoc l :version "")) decision-liitteet)
               new-decision (assoc decision :liitteet new-liitteet)]
-          (common-db/exec update-avustushaku-decision!
-                          {:id       (:id avustushaku)
-                           :decision new-decision}))))))
+          (common-db/named-execute! "update avustushaut set decision = :decision where id = :id"
+                                    {:id       (:id avustushaku)
+                                     :decision new-decision}))))))
