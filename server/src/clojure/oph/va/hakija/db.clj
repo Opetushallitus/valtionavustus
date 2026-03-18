@@ -29,20 +29,30 @@
        (= 1)))
 
 (defn get-avustushaku [id]
-  (->> (exec queries/get-avustushaku {:id id})
-       first))
+  (first
+    (query-original-identifiers
+      "select avustushaut.*, va_code_values.code as operational_unit_code
+       from hakija.avustushaut
+       left join virkailija.va_code_values on avustushaut.operational_unit_id = va_code_values.id
+       where avustushaut.id = ? and status <> 'deleted'"
+      [id])))
 
 (defn get-avustushaku-tx [tx id]
   (first (hakija-queries/get-avustushaku {:id id} {:connection tx})))
 
 (defn get-avustushaku-roles [avustushaku-id]
-  (exec queries/get-avustushaku-roles {:avustushaku avustushaku-id}))
+  (query-original-identifiers
+    "SELECT name, email, role FROM avustushaku_roles
+     WHERE avustushaku = ? ORDER BY id DESC"
+    [avustushaku-id]))
 
 (defn list-avustushaut []
-  (exec queries/list-avustushaut {}))
+  (query-original-identifiers "select * from avustushaut" []))
 
 (defn add-paatos-view [hakemus-id headers remote-addr]
-  (exec queries/create-paatos-view! {:hakemus_id hakemus-id :headers headers :remote_addr remote-addr}))
+  (execute!
+    "insert into hakemus_paatokset_views (hakemus_id,headers,remote_addr) values (?,?,?)"
+    [hakemus-id headers remote-addr]))
 
 (defn- pluck-key [answers key as default]
   (let [value (or (form-util/find-answer-value answers key) default)]
