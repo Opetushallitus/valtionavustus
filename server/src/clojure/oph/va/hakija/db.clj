@@ -215,13 +215,6 @@
                      (:email org)])))
       (log/info (str "Successfully stored yhteishanke organizations for hakemus: " hakemus-id)))))
 
-(defn get-yhteishanke-organizations [hakemus-id]
-  (query "SELECT organization_name, contact_person, email
-          FROM virkailija.yhteishanke_organization
-          WHERE hakemus_id = ?
-          ORDER BY id"
-         [hakemus-id]))
-
 (defn- get-current-submission-answers [hakemus]
   (let [submission-id (or (:form_submission_id hakemus) (:form-submission-id hakemus))]
     (when submission-id
@@ -231,7 +224,7 @@
 
 (defn get-or-create-yhteishanke-organizations [hakemus]
   (let [hakemus-id (:id hakemus)
-        existing (get-yhteishanke-organizations hakemus-id)]
+        existing (hakemus-copy/get-yhteishanke-organizations hakemus-id)]
     (if (seq existing)
       existing
       (let [answers (get-current-submission-answers hakemus)
@@ -239,7 +232,7 @@
         (when (seq organizations)
           (with-tx (fn [tx]
                      (store-yhteishanke-organizations tx hakemus-id answers)))
-          (get-yhteishanke-organizations hakemus-id))))))
+          (hakemus-copy/get-yhteishanke-organizations hakemus-id))))))
 
 (defn get-yhteishanke-organizations-for-muutoshakemus [user-key]
   (when-let [hakemus (get-hakemus user-key)]

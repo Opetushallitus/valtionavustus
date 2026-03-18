@@ -16,6 +16,13 @@
 
                 RETURNING *;" [id old-hakemus-version]))))
 
+(defn get-yhteishanke-organizations [hakemus-id]
+  (query "SELECT organization_name, contact_person, email
+          FROM virkailija.yhteishanke_organization
+          WHERE hakemus_id = ?
+          ORDER BY id"
+         [hakemus-id]))
+
 (defn get-hakemus-id-by-user-key-and-form-submission-id [tx user-key submission-id]
   (let [hakemus-id-rows (query tx "SELECT id FROM hakemukset WHERE user_key = ? AND form_submission_id = ? LIMIT 1" [user-key submission-id])]
     (:id (first hakemus-id-rows))))

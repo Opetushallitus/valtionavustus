@@ -27,13 +27,6 @@
                WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
          [id]))
 
-(defn- get-yhteishanke-organizations [hakemus-id]
-  (query "SELECT organization_name, contact_person, email
-          FROM virkailija.yhteishanke_organization
-          WHERE hakemus_id = ?
-          ORDER BY id"
-         [hakemus-id]))
-
 (defn- get-muutoshakemus-yhteishanke-organizations
   ([muutoshakemus-id]
    (query "SELECT organization_name, contact_person, email
@@ -186,7 +179,7 @@
                           AND n.hakemus_id = ?" [hakemus-id])
         hakemus (first hakemukset)
         talousarvio (get-talousarvio hakemus-id "hakemus")
-        yhteishanke-organizations (get-yhteishanke-organizations hakemus-id)]
+        yhteishanke-organizations (hakemus-copy/get-yhteishanke-organizations hakemus-id)]
     (log/info (str "Succesfully fetched hakemus with id: " hakemus-id))
     (if hakemus
       (into
