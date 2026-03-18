@@ -74,11 +74,15 @@
 
 (defn get-hakemus
   ([user-key]
-   (->> {:user_key user-key}
-        (exec queries/get-hakemus-by-user-key)
-        first))
+   (first
+     (query-original-identifiers
+       "select * from hakemukset where user_key = ? AND version_closed IS NULL and status <> 'cancelled'"
+       [user-key])))
   ([tx user-key]
-   (first (queries/get-hakemus-by-user-key {:user_key user-key} {:connection tx}))))
+   (first
+     (query-original-identifiers tx
+       "select * from hakemukset where user_key = ? AND version_closed IS NULL and status <> 'cancelled'"
+       [user-key]))))
 
 (defn get-locked-hakemus-version-for-update [tx id version]
   (first (query-original-identifiers tx "SELECT * FROM hakemukset WHERE user_key = ? AND version = ?" [id version])))
@@ -91,21 +95,28 @@
 
 (defn get-hakemus-version [user-key version]
   (first
-   (exec queries/get-hakemus-version-by-user-id
-         {:user_key user-key :version version})))
+    (query-original-identifiers
+      "SELECT * FROM hakemukset WHERE user_key = ? AND version = ? AND status <> 'cancelled' LIMIT 1"
+      [user-key version])))
 
 (defn get-hakemus-paatos [hakemus-id]
-  (->> {:hakemus_id hakemus-id}
-       (exec queries/get-hakemus-paatokset)
-       first))
+  (first
+    (query-original-identifiers
+      "select * from hakemus_paatokset where hakemus_id = ?"
+      [hakemus-id])))
 
 (defn list-hakemus-change-requests [user-key]
-  (->> {:user_key user-key}
-       (exec queries/list-hakemus-change-requests-by-user-id)))
+  (query-original-identifiers
+    "select * from hakemukset
+     where user_key = ? and status in ('pending_change_request', 'officer_edit') and last_status_change_at = created_at
+     order by version"
+    [user-key]))
 
 (defn find-hakemus-by-parent-id-and-type [parent-id hakemus-type]
-  (->> {:parent_id parent-id :hakemus_type hakemus-type}
-       (exec queries/find-by-parent-id-and-hakemus-type) first))
+  (first
+    (query-original-identifiers
+      "select * from hakemukset where parent_id = ? and hakemus_type = ? AND version_closed IS NULL"
+      [parent-id hakemus-type])))
 
 (defn- register-number-sequence-exists? [register-number]
   (->> (exec queries/register-number-sequence-exists? {:suffix register-number})
