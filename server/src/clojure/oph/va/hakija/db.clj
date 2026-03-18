@@ -737,10 +737,10 @@
   (exec queries/update-valiselvitys-status<! {:id hakemus-id :status status}))
 
 (defn attachment-exists? [hakemus-id field-id]
-  (->> {:hakemus_id hakemus-id
-        :field_id field-id}
-       (exec queries/attachment-exists?)
-       first))
+  (first
+    (query-original-identifiers
+      "select 1 from attachments where hakemus_id = ? and field_id = ?"
+      [hakemus-id field-id])))
 
 (defn attachment-exists-and-is-not-closed? [hakemus-id field-id]
   (first (query "SELECT true
@@ -762,27 +762,41 @@
    :filename (:filename attachment)})
 
 (defn create-attachment [hakemus-id hakemus-version field-id filename content-type size file]
-  (let [blob (slurp-binary-file! file)
-        params (-> {:hakemus_id hakemus-id
-                    :hakemus_version hakemus-version
-                    :field_id field-id
-                    :filename filename
-                    :content_type content-type
-                    :file_size size
-                    :file_data blob})]
+  (let [blob (slurp-binary-file! file)]
     (if (attachment-exists? hakemus-id field-id)
-      (exec-all [queries/close-existing-attachment! params
-                 queries/update-attachment<! params])
-      (exec queries/create-attachment<! params))))
+      (with-tx (fn [tx]
+        (execute! tx
+          "update attachments set version_closed = now()
+           where hakemus_id = ? and field_id = ? and version_closed is null"
+          [hakemus-id field-id])
+        (first
+          (named-query tx
+            "insert into attachments (id, version, hakemus_id, hakemus_version, field_id, filename, content_type, file_size, file_data)
+             select id, max(version) + 1, :hakemus_id, :hakemus_version, :field_id, :filename, :content_type, :file_size, :file_data
+             from attachments where hakemus_id = :hakemus_id and field_id = :field_id group by id
+             RETURNING *"
+            {:hakemus_id hakemus-id :hakemus_version hakemus-version :field_id field-id
+             :filename filename :content_type content-type :file_size size :file_data blob}))))
+      (first
+        (named-query
+          "insert into attachments (version, hakemus_id, hakemus_version, field_id, filename, content_type, file_size, file_data)
+           values (0, :hakemus_id, :hakemus_version, :field_id, :filename, :content_type, :file_size, :file_data)
+           RETURNING *"
+          {:hakemus_id hakemus-id :hakemus_version hakemus-version :field_id field-id
+           :filename filename :content_type content-type :file_size size :file_data blob})))))
 
 (defn close-existing-attachment! [hakemus-id field-id]
-  (->> {:hakemus_id hakemus-id
-        :field_id field-id}
-       (exec queries/close-existing-attachment!)))
+  (execute!
+    "update attachments set version_closed = now()
+     where hakemus_id = ? and field_id = ? and version_closed is null"
+    [hakemus-id field-id]))
 
 (defn list-attachments [hakemus-id]
-  (->> {:hakemus_id hakemus-id}
-       (exec queries/list-attachments)))
+  (query-original-identifiers
+    "select id, version, hakemus_id, hakemus_version, created_at, field_id, filename, file_size, content_type
+     from attachments
+     where hakemus_id = ? and version_closed is null"
+    [hakemus-id]))
 
 (defn get-attachments [external-hakemus-id hakemus-id]
   (->> (list-attachments hakemus-id)
@@ -791,10 +805,11 @@
        (into {})))
 
 (defn download-attachment [hakemus-id field-id]
-  (let [result (->> {:hakemus_id hakemus-id
-                     :field_id field-id}
-                    (exec queries/download-attachment)
-                    first)]
+  (let [result (first
+                 (query-original-identifiers
+                   "select file_size, content_type, filename, file_data from attachments
+                    where hakemus_id = ? and field_id = ? and version_closed is null"
+                   [hakemus-id field-id]))]
     {:data (io/input-stream (:file_data result))
      :content-type (:content_type result)
      :filename (:filename result)
