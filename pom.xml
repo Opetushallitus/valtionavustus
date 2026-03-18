@@ -327,9 +327,9 @@
       <version>42.7.10</version>
     </dependency>
     <dependency>
-      <groupId>yesql</groupId>
-      <artifactId>yesql</artifactId>
-      <version>0.5.4</version>
+      <groupId>org.clojure</groupId>
+      <artifactId>java.jdbc</artifactId>
+      <version>0.7.12</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
