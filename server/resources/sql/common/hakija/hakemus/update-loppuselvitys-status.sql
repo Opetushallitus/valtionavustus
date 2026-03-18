@@ -1,1 +1,0 @@
-update hakemukset set status_loppuselvitys=:status where id=:id and version_closed is null

@@ -1,1 +1,0 @@
-select * from hakemus_paatokset_views where hakemus_id=:hakemus_id order by view_time desc

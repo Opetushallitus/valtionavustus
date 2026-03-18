@@ -4,7 +4,6 @@
             [clojure.data :as data]
             [oph.va.hakemus.db :as hakemus-copy]
             [oph.va.menoluokka.db :refer [store-menoluokka-hakemus-rows]]
-            [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.hakija.api :as hakija-api]
             [clojure.string :as string]
             [clojure.java.jdbc :as jdbc]
@@ -726,14 +725,18 @@
 
 (defn create-application-token [application-id]
   (let [existing-token
-        (first (exec hakija-queries/get-application-token
-                     {:application_id application-id}))]
+        (first (query-original-identifiers
+                "SELECT token FROM hakija.application_tokens
+                  WHERE application_id = ? AND revoked IS NULL LIMIT 1"
+                [application-id]))]
 
     (if (some? existing-token)
       {:token (:token existing-token)}
       (first
-       (exec hakija-queries/create-application-token
-             {:application_id application-id :token (generate-hash-id)})))))
+       (query-original-identifiers
+        "INSERT INTO hakija.application_tokens (application_id, token)
+          VALUES (?, ?) RETURNING token"
+        [application-id (generate-hash-id)])))))
 
 (defn copy-menoluokka-rows [tx from-application-id to-application-id]
   (execute! tx

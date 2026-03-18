@@ -1,6 +1,5 @@
 (ns oph.soresu.form.db
   (:use [oph.soresu.common.db]
-        [oph.va.hakija.api.queries :as hakija-queries]
         [clojure.tools.trace :only [trace]])
   (:require [oph.soresu.form.db.queries :as queries]
             [ring.util.http-response :as http]))

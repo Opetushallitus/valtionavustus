@@ -10,7 +10,6 @@
             [oph.soresu.common.jdbc.extensions :refer :all]
             [oph.soresu.form.formutil :as form-util]
             [oph.va.hakemus.db :as hakemus-copy]
-            [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.jdbc.extensions :refer :all]
             [oph.soresu.common.config :refer [config feature-enabled?]]))
 
@@ -37,7 +36,12 @@
     [id])))
 
 (defn get-avustushaku-tx [tx id]
-  (first (hakija-queries/get-avustushaku {:id id} {:connection tx})))
+  (first (query-original-identifiers tx
+                                     "select avustushaut.*, va_code_values.code as operational_unit_code
+            from hakija.avustushaut
+            left join virkailija.va_code_values on avustushaut.operational_unit_id = va_code_values.id
+            where avustushaut.id = ?"
+                                     [id])))
 
 (defn get-avustushaku-roles [avustushaku-id]
   (query-original-identifiers
