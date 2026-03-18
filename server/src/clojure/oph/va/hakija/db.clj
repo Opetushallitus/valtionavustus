@@ -6,14 +6,13 @@
             [clojure.string]
             [clojure.tools.logging :as log]
             [ring.util.codec :refer [form-encode]]
-            [oph.soresu.common.db :refer [exec with-tx query query-original-identifiers execute! named-query named-execute!]]
+            [oph.soresu.common.db :refer [with-tx query query-original-identifiers execute! named-query named-execute!]]
             [oph.soresu.common.jdbc.extensions :refer :all]
             [oph.soresu.form.formutil :as form-util]
             [oph.va.hakemus.db :as hakemus-copy]
             [oph.va.hakija.api.queries :as hakija-queries]
             [oph.va.jdbc.extensions :refer :all]
-            [oph.soresu.common.config :refer [config feature-enabled?]]
-            [oph.va.hakija.db.queries :as queries]))
+            [oph.soresu.common.config :refer [config feature-enabled?]]))
 
 (defn slurp-binary-file! [file]
   (io! (with-open [reader (io/input-stream file)]
