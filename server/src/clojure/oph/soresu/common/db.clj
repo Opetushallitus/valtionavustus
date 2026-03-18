@@ -108,3 +108,28 @@
 (defn execute!
   ([sql params] (with-tx (fn [tx] (execute! tx sql params))))
   ([tx sql params] (jdbc/execute! tx (concat [sql] params) {:identifiers #(.replace % \_ \-)})))
+
+(defn- replace-named-params [sql params]
+  (let [param-names (atom [])
+        replaced (string/replace sql #":(\w+)(?!:)"
+                   (fn [[_ name]]
+                     (swap! param-names conj (keyword name))
+                     "?"))]
+    [replaced (mapv params @param-names)]))
+
+(defn named-query
+  "Like query-original-identifiers but with :named_params and a map.
+   Returns a sequence of maps with original (underscore) identifiers."
+  ([sql params] (with-tx (fn [tx] (named-query tx sql params))))
+  ([tx sql params]
+   (let [[replaced-sql values] (replace-named-params sql params)]
+     (jdbc/query tx (concat [replaced-sql] values)))))
+
+(defn named-execute!
+  "Like execute! but with :named_params and a map.
+   For fire-and-forget writes only (return value is row count, not data).
+   For writes that need return values, use named-query with RETURNING."
+  ([sql params] (with-tx (fn [tx] (named-execute! tx sql params))))
+  ([tx sql params]
+   (let [[replaced-sql values] (replace-named-params sql params)]
+     (jdbc/execute! tx (concat [replaced-sql] values)))))
