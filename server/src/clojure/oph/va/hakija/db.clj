@@ -6,7 +6,7 @@
             [clojure.string]
             [clojure.tools.logging :as log]
             [ring.util.codec :refer [form-encode]]
-            [oph.soresu.common.db :refer [exec with-tx query query-original-identifiers execute!]]
+            [oph.soresu.common.db :refer [exec with-tx query query-original-identifiers execute! named-query named-execute!]]
             [oph.soresu.common.jdbc.extensions :refer :all]
             [oph.soresu.form.formutil :as form-util]
             [oph.va.hakemus.db :as hakemus-copy]
@@ -152,7 +152,18 @@
                     :parent_id       parent-id}
                    (merge (convert-budget-totals budget-totals))
                    (merge-calculated-params answers))
-        hakemus (exec queries/create-hakemus<! params)]
+        hakemus (first
+                  (named-query
+                    "INSERT INTO hakemukset (id, avustushaku, version, user_key, form_submission_id,
+                       form_submission_version, budget_total, budget_oph_share, organization_name,
+                       project_name, language, register_number, last_status_change_at, hakemus_type, parent_id)
+                     SELECT nextval('hakemukset_id_seq'), :avustushaku_id, 0, :user_key, submissions.id,
+                       submissions.version, :budget_total, :budget_oph_share, :organization_name,
+                       :project_name, :language, :register_number, now(), :hakemus_type, :parent_id
+                     FROM form_submissions submissions
+                     WHERE id = :form_submission AND version_closed IS NULL
+                     RETURNING *"
+                    params))]
     {:hakemus hakemus :submission submission}))
 
 (defn- get-talousarvio [id entity]
@@ -655,7 +666,21 @@
                     :form_submission_version submission-version}
                    (merge (convert-budget-totals budget-totals))
                    (merge-calculated-params answers))]
-    (queries/update-hakemus-submission<! params {:connection tx})))
+    (first
+      (named-query tx
+        "UPDATE hakemukset SET
+           avustushaku = :avustushaku_id, user_key = :user_key,
+           form_submission_id = :form_submission_id, form_submission_version = :form_submission_version,
+           user_oid = :user_oid, user_first_name = :user_first_name,
+           user_last_name = :user_last_name, user_email = :user_email,
+           budget_total = :budget_total, budget_oph_share = :budget_oph_share,
+           organization_name = :organization_name, project_name = :project_name,
+           language = :language, register_number = :register_number,
+           business_id = :business_id, owner_type = :owner_type
+         WHERE user_key = :user_key AND form_submission_id = :form_submission_id
+           AND version_closed IS NULL AND version = :version
+         RETURNING *"
+        params))))
 
 (defn- update-status
   [tx avustushaku-id user-key submission-id submission-version register-number answers budget-totals status status-change-comment]
@@ -674,7 +699,22 @@
                     :status_change_comment status-change-comment}
                    (merge (convert-budget-totals budget-totals))
                    (merge-calculated-params answers))]
-    (queries/update-hakemus-status<! params {:connection tx})))
+    (first
+      (named-query tx
+        "UPDATE hakemukset SET
+           avustushaku = :avustushaku_id, user_key = :user_key,
+           form_submission_id = :form_submission_id, form_submission_version = :form_submission_version,
+           budget_total = :budget_total, budget_oph_share = :budget_oph_share,
+           organization_name = :organization_name, project_name = :project_name,
+           language = :language, register_number = :register_number,
+           user_oid = :user_oid, user_first_name = :user_first_name,
+           user_last_name = :user_last_name, user_email = :user_email,
+           status = :status, status_change_comment = :status_change_comment,
+           last_status_change_at = now()
+         WHERE user_key = :user_key AND form_submission_id = :form_submission_id
+           AND version_closed IS NULL AND version = :version
+         RETURNING *"
+        params))))
 
 (defn- new-update-status
   [tx avustushaku-id hakemus submission-version answers budget-totals status status-change-comment user-key]
@@ -693,14 +733,32 @@
                     :status_change_comment status-change-comment}
                    (merge (convert-budget-totals budget-totals))
                    (merge-calculated-params answers))]
-    (queries/update-hakemus-status<! params {:connection tx})
+    (named-execute! tx
+      "UPDATE hakemukset SET
+         avustushaku = :avustushaku_id, user_key = :user_key,
+         form_submission_id = :form_submission_id, form_submission_version = :form_submission_version,
+         budget_total = :budget_total, budget_oph_share = :budget_oph_share,
+         organization_name = :organization_name, project_name = :project_name,
+         language = :language, register_number = :register_number,
+         user_oid = :user_oid, user_first_name = :user_first_name,
+         user_last_name = :user_last_name, user_email = :user_email,
+         status = :status, status_change_comment = :status_change_comment,
+         last_status_change_at = now()
+       WHERE user_key = :user_key AND form_submission_id = :form_submission_id
+         AND version_closed IS NULL AND version = :version"
+      params)
     new-hakemus))
 
 (defn open-hakemus-applicant-edit [avustushaku-id hakemus submission-version answers budget-totals hakemus-id]
   (with-tx (fn [tx] (new-update-status tx avustushaku-id hakemus submission-version answers budget-totals :applicant_edit nil hakemus-id))))
 
 (defn set-submitted-version [tx params]
-  (queries/set-application-submitted-version<! params {:connection tx}))
+  (first
+    (query-original-identifiers tx
+      "UPDATE hakemukset SET submitted_version = version
+       WHERE user_key = ? AND form_submission_id = ? AND version = ? AND version_closed IS NULL
+       RETURNING *"
+      [(:user_key params) (:form_submission_id params) (:version params)])))
 
 (defn verify-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
   (with-tx #(update-status % avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :draft nil)))
