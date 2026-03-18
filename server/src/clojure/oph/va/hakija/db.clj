@@ -29,29 +29,29 @@
 
 (defn get-avustushaku [id]
   (first
-    (query-original-identifiers
-      "select avustushaut.*, va_code_values.code as operational_unit_code
+   (query-original-identifiers
+    "select avustushaut.*, va_code_values.code as operational_unit_code
        from hakija.avustushaut
        left join virkailija.va_code_values on avustushaut.operational_unit_id = va_code_values.id
        where avustushaut.id = ? and status <> 'deleted'"
-      [id])))
+    [id])))
 
 (defn get-avustushaku-tx [tx id]
   (first (hakija-queries/get-avustushaku {:id id} {:connection tx})))
 
 (defn get-avustushaku-roles [avustushaku-id]
   (query-original-identifiers
-    "SELECT name, email, role FROM avustushaku_roles
+   "SELECT name, email, role FROM avustushaku_roles
      WHERE avustushaku = ? ORDER BY id DESC"
-    [avustushaku-id]))
+   [avustushaku-id]))
 
 (defn list-avustushaut []
   (query-original-identifiers "select * from avustushaut" []))
 
 (defn add-paatos-view [hakemus-id headers remote-addr]
   (execute!
-    "insert into hakemus_paatokset_views (hakemus_id,headers,remote_addr) values (?,?,?)"
-    [hakemus-id headers remote-addr]))
+   "insert into hakemus_paatokset_views (hakemus_id,headers,remote_addr) values (?,?,?)"
+   [hakemus-id headers remote-addr]))
 
 (defn- pluck-key [answers key as default]
   (let [value (or (form-util/find-answer-value answers key) default)]
@@ -74,14 +74,14 @@
 (defn get-hakemus
   ([user-key]
    (first
-     (query-original-identifiers
-       "select * from hakemukset where user_key = ? AND version_closed IS NULL and status <> 'cancelled'"
-       [user-key])))
+    (query-original-identifiers
+     "select * from hakemukset where user_key = ? AND version_closed IS NULL and status <> 'cancelled'"
+     [user-key])))
   ([tx user-key]
    (first
-     (query-original-identifiers tx
-       "select * from hakemukset where user_key = ? AND version_closed IS NULL and status <> 'cancelled'"
-       [user-key]))))
+    (query-original-identifiers tx
+                                "select * from hakemukset where user_key = ? AND version_closed IS NULL and status <> 'cancelled'"
+                                [user-key]))))
 
 (defn get-locked-hakemus-version-for-update [tx id version]
   (first (query-original-identifiers tx "SELECT * FROM hakemukset WHERE user_key = ? AND version = ?" [id version])))
@@ -94,33 +94,33 @@
 
 (defn get-hakemus-version [user-key version]
   (first
-    (query-original-identifiers
-      "SELECT * FROM hakemukset WHERE user_key = ? AND version = ? AND status <> 'cancelled' LIMIT 1"
-      [user-key version])))
+   (query-original-identifiers
+    "SELECT * FROM hakemukset WHERE user_key = ? AND version = ? AND status <> 'cancelled' LIMIT 1"
+    [user-key version])))
 
 (defn get-hakemus-paatos [hakemus-id]
   (first
-    (query-original-identifiers
-      "select * from hakemus_paatokset where hakemus_id = ?"
-      [hakemus-id])))
+   (query-original-identifiers
+    "select * from hakemus_paatokset where hakemus_id = ?"
+    [hakemus-id])))
 
 (defn list-hakemus-change-requests [user-key]
   (query-original-identifiers
-    "select * from hakemukset
+   "select * from hakemukset
      where user_key = ? and status in ('pending_change_request', 'officer_edit') and last_status_change_at = created_at
      order by version"
-    [user-key]))
+   [user-key]))
 
 (defn find-hakemus-by-parent-id-and-type [parent-id hakemus-type]
   (first
-    (query-original-identifiers
-      "select * from hakemukset where parent_id = ? and hakemus_type = ? AND version_closed IS NULL"
-      [parent-id hakemus-type])))
+   (query-original-identifiers
+    "select * from hakemukset where parent_id = ? and hakemus_type = ? AND version_closed IS NULL"
+    [parent-id hakemus-type])))
 
 (defn- register-number-sequence-exists? [register-number]
   (some? (first (query-original-identifiers
-                  "select 1 from register_number_sequences where suffix = ?"
-                  [register-number]))))
+                 "select 1 from register_number_sequences where suffix = ?"
+                 [register-number]))))
 
 (defn- generate-register-number [avustushaku-id]
   (if-let [avustushaku-register-number (-> (get-avustushaku avustushaku-id) :register_number)]
@@ -128,12 +128,12 @@
       (let [{:keys [seq_number]}
             (if (register-number-sequence-exists? avustushaku-register-number)
               (first (query-original-identifiers
-                       "update register_number_sequences set seq_number = seq_number+1
+                      "update register_number_sequences set seq_number = seq_number+1
                         where suffix = ? RETURNING *"
-                       [avustushaku-register-number]))
+                      [avustushaku-register-number]))
               (first (query-original-identifiers
-                       "insert into register_number_sequences (suffix) values (?) RETURNING *"
-                       [avustushaku-register-number])))]
+                      "insert into register_number_sequences (suffix) values (?) RETURNING *"
+                      [avustushaku-register-number])))]
         (format "%d/%s" seq_number avustushaku-register-number)))))
 
 (defn- convert-budget-totals [budget-totals]
@@ -152,8 +152,8 @@
                    (merge (convert-budget-totals budget-totals))
                    (merge-calculated-params answers))
         hakemus (first
-                  (named-query
-                    "INSERT INTO hakemukset (id, avustushaku, version, user_key, form_submission_id,
+                 (named-query
+                  "INSERT INTO hakemukset (id, avustushaku, version, user_key, form_submission_id,
                        form_submission_version, budget_total, budget_oph_share, organization_name,
                        project_name, language, register_number, last_status_change_at, hakemus_type, parent_id)
                      SELECT nextval('hakemukset_id_seq'), :avustushaku_id, 0, :user_key, submissions.id,
@@ -162,7 +162,7 @@
                      FROM form_submissions submissions
                      WHERE id = :form_submission AND version_closed IS NULL
                      RETURNING *"
-                    params))]
+                  params))]
     {:hakemus hakemus :submission submission}))
 
 (defn- get-talousarvio [id entity]
@@ -666,8 +666,8 @@
                    (merge (convert-budget-totals budget-totals))
                    (merge-calculated-params answers))]
     (first
-      (named-query tx
-        "UPDATE hakemukset SET
+     (named-query tx
+                  "UPDATE hakemukset SET
            avustushaku = :avustushaku_id, user_key = :user_key,
            form_submission_id = :form_submission_id, form_submission_version = :form_submission_version,
            user_oid = :user_oid, user_first_name = :user_first_name,
@@ -679,7 +679,7 @@
          WHERE user_key = :user_key AND form_submission_id = :form_submission_id
            AND version_closed IS NULL AND version = :version
          RETURNING *"
-        params))))
+                  params))))
 
 (defn- update-status
   [tx avustushaku-id user-key submission-id submission-version register-number answers budget-totals status status-change-comment]
@@ -699,8 +699,8 @@
                    (merge (convert-budget-totals budget-totals))
                    (merge-calculated-params answers))]
     (first
-      (named-query tx
-        "UPDATE hakemukset SET
+     (named-query tx
+                  "UPDATE hakemukset SET
            avustushaku = :avustushaku_id, user_key = :user_key,
            form_submission_id = :form_submission_id, form_submission_version = :form_submission_version,
            budget_total = :budget_total, budget_oph_share = :budget_oph_share,
@@ -713,7 +713,7 @@
          WHERE user_key = :user_key AND form_submission_id = :form_submission_id
            AND version_closed IS NULL AND version = :version
          RETURNING *"
-        params))))
+                  params))))
 
 (defn- new-update-status
   [tx avustushaku-id hakemus submission-version answers budget-totals status status-change-comment user-key]
@@ -733,7 +733,7 @@
                    (merge (convert-budget-totals budget-totals))
                    (merge-calculated-params answers))]
     (named-execute! tx
-      "UPDATE hakemukset SET
+                    "UPDATE hakemukset SET
          avustushaku = :avustushaku_id, user_key = :user_key,
          form_submission_id = :form_submission_id, form_submission_version = :form_submission_version,
          budget_total = :budget_total, budget_oph_share = :budget_oph_share,
@@ -745,7 +745,7 @@
          last_status_change_at = now()
        WHERE user_key = :user_key AND form_submission_id = :form_submission_id
          AND version_closed IS NULL AND version = :version"
-      params)
+                    params)
     new-hakemus))
 
 (defn open-hakemus-applicant-edit [avustushaku-id hakemus submission-version answers budget-totals hakemus-id]
@@ -753,11 +753,11 @@
 
 (defn set-submitted-version [tx params]
   (first
-    (query-original-identifiers tx
-      "UPDATE hakemukset SET submitted_version = version
+   (query-original-identifiers tx
+                               "UPDATE hakemukset SET submitted_version = version
        WHERE user_key = ? AND form_submission_id = ? AND version = ? AND version_closed IS NULL
        RETURNING *"
-      [(:user_key params) (:form_submission_id params) (:version params)])))
+                               [(:user_key params) (:form_submission_id params) (:version params)])))
 
 (defn verify-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals]
   (with-tx #(update-status % avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :draft nil)))
@@ -789,19 +789,19 @@
 
 (defn update-loppuselvitys-status [hakemus-id status]
   (execute!
-    "update hakemukset set status_loppuselvitys = ? where id = ? and version_closed is null"
-    [status hakemus-id]))
+   "update hakemukset set status_loppuselvitys = ? where id = ? and version_closed is null"
+   [status hakemus-id]))
 
 (defn update-valiselvitys-status [hakemus-id status]
   (execute!
-    "update hakemukset set status_valiselvitys = ? where id = ? and version_closed is null"
-    [status hakemus-id]))
+   "update hakemukset set status_valiselvitys = ? where id = ? and version_closed is null"
+   [status hakemus-id]))
 
 (defn attachment-exists? [hakemus-id field-id]
   (first
-    (query-original-identifiers
-      "select 1 from attachments where hakemus_id = ? and field_id = ?"
-      [hakemus-id field-id])))
+   (query-original-identifiers
+    "select 1 from attachments where hakemus_id = ? and field_id = ?"
+    [hakemus-id field-id])))
 
 (defn attachment-exists-and-is-not-closed? [hakemus-id field-id]
   (first (query "SELECT true
@@ -826,38 +826,38 @@
   (let [blob (slurp-binary-file! file)]
     (if (attachment-exists? hakemus-id field-id)
       (with-tx (fn [tx]
-        (execute! tx
-          "update attachments set version_closed = now()
+                 (execute! tx
+                           "update attachments set version_closed = now()
            where hakemus_id = ? and field_id = ? and version_closed is null"
-          [hakemus-id field-id])
-        (first
-          (named-query tx
-            "insert into attachments (id, version, hakemus_id, hakemus_version, field_id, filename, content_type, file_size, file_data)
+                           [hakemus-id field-id])
+                 (first
+                  (named-query tx
+                               "insert into attachments (id, version, hakemus_id, hakemus_version, field_id, filename, content_type, file_size, file_data)
              select id, max(version) + 1, :hakemus_id, :hakemus_version, :field_id, :filename, :content_type, :file_size, :file_data
              from attachments where hakemus_id = :hakemus_id and field_id = :field_id group by id
              RETURNING *"
-            {:hakemus_id hakemus-id :hakemus_version hakemus-version :field_id field-id
-             :filename filename :content_type content-type :file_size size :file_data blob}))))
+                               {:hakemus_id hakemus-id :hakemus_version hakemus-version :field_id field-id
+                                :filename filename :content_type content-type :file_size size :file_data blob}))))
       (first
-        (named-query
-          "insert into attachments (version, hakemus_id, hakemus_version, field_id, filename, content_type, file_size, file_data)
+       (named-query
+        "insert into attachments (version, hakemus_id, hakemus_version, field_id, filename, content_type, file_size, file_data)
            values (0, :hakemus_id, :hakemus_version, :field_id, :filename, :content_type, :file_size, :file_data)
            RETURNING *"
-          {:hakemus_id hakemus-id :hakemus_version hakemus-version :field_id field-id
-           :filename filename :content_type content-type :file_size size :file_data blob})))))
+        {:hakemus_id hakemus-id :hakemus_version hakemus-version :field_id field-id
+         :filename filename :content_type content-type :file_size size :file_data blob})))))
 
 (defn close-existing-attachment! [hakemus-id field-id]
   (execute!
-    "update attachments set version_closed = now()
+   "update attachments set version_closed = now()
      where hakemus_id = ? and field_id = ? and version_closed is null"
-    [hakemus-id field-id]))
+   [hakemus-id field-id]))
 
 (defn list-attachments [hakemus-id]
   (query-original-identifiers
-    "select id, version, hakemus_id, hakemus_version, created_at, field_id, filename, file_size, content_type
+   "select id, version, hakemus_id, hakemus_version, created_at, field_id, filename, file_size, content_type
      from attachments
      where hakemus_id = ? and version_closed is null"
-    [hakemus-id]))
+   [hakemus-id]))
 
 (defn get-attachments [external-hakemus-id hakemus-id]
   (->> (list-attachments hakemus-id)
@@ -867,10 +867,10 @@
 
 (defn download-attachment [hakemus-id field-id]
   (let [result (first
-                 (query-original-identifiers
-                   "select file_size, content_type, filename, file_data from attachments
+                (query-original-identifiers
+                 "select file_size, content_type, filename, file_data from attachments
                     where hakemus_id = ? and field_id = ? and version_closed is null"
-                   [hakemus-id field-id]))]
+                 [hakemus-id field-id]))]
     {:data (io/input-stream (:file_data result))
      :content-type (:content_type result)
      :filename (:filename result)
@@ -882,9 +882,9 @@
    (not
     (empty?
      (query-original-identifiers
-       "SELECT id, application_id, token FROM hakija.application_tokens
+      "SELECT id, application_id, token FROM hakija.application_tokens
         WHERE application_id = ? AND token = ? AND revoked IS NOT TRUE"
-       [application-id token])))))
+      [application-id token])))))
 
 (defn valid-user-key-token? [token user-key]
   (let [application (get-hakemus user-key)]
@@ -894,8 +894,8 @@
 
 (defn revoke-token [token]
   (execute!
-    "UPDATE hakija.application_tokens SET revoked = TRUE WHERE token = ?"
-    [token]))
+   "UPDATE hakija.application_tokens SET revoked = TRUE WHERE token = ?"
+   [token]))
 
 (defn get-loppuselvitys-hakemus-id [parent-hakemus-id]
   (let [result (query "

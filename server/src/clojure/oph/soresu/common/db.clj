@@ -112,9 +112,9 @@
 (defn- replace-named-params [sql params]
   (let [param-names (atom [])
         replaced (string/replace sql #":(\w+)(?!:)"
-                   (fn [[_ name]]
-                     (swap! param-names conj (keyword name))
-                     "?"))]
+                                 (fn [[_ name]]
+                                   (swap! param-names conj (keyword name))
+                                   "?"))]
     [replaced (mapv params @param-names)]))
 
 (defn named-query
