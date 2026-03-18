@@ -119,18 +119,22 @@
       [parent-id hakemus-type])))
 
 (defn- register-number-sequence-exists? [register-number]
-  (->> (exec queries/register-number-sequence-exists? {:suffix register-number})
-       first
-       nil?
-       not))
+  (some? (first (query-original-identifiers
+                  "select 1 from register_number_sequences where suffix = ?"
+                  [register-number]))))
 
 (defn- generate-register-number [avustushaku-id]
   (if-let [avustushaku-register-number (-> (get-avustushaku avustushaku-id) :register_number)]
     (when (re-matches #"\d+/\d+" avustushaku-register-number)
-      (let [params {:suffix avustushaku-register-number}
-            {:keys [seq_number]} (if (register-number-sequence-exists? avustushaku-register-number)
-                                   (exec queries/update-register-number-sequence<! params)
-                                   (exec queries/create-register-number-sequence<! params))]
+      (let [{:keys [seq_number]}
+            (if (register-number-sequence-exists? avustushaku-register-number)
+              (first (query-original-identifiers
+                       "update register_number_sequences set seq_number = seq_number+1
+                        where suffix = ? RETURNING *"
+                       [avustushaku-register-number]))
+              (first (query-original-identifiers
+                       "insert into register_number_sequences (suffix) values (?) RETURNING *"
+                       [avustushaku-register-number])))]
         (format "%d/%s" seq_number avustushaku-register-number)))))
 
 (defn- convert-budget-totals [budget-totals]
