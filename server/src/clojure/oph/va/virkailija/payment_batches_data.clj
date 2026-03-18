@@ -1,8 +1,7 @@
 (ns oph.va.virkailija.payment-batches-data
   (:require [clojure.core.async :as a]
-            [oph.soresu.common.db :refer [exec]]
+            [oph.soresu.common.db :refer [named-query query-original-identifiers]]
             [clojure.tools.logging :as log]
-            [oph.va.virkailija.db.queries :as queries]
             [clojure.core.async :refer [<!!]]
             [oph.va.virkailija.utils
              :refer [convert-to-dash-keys convert-to-underscore-keys
@@ -25,20 +24,39 @@
 (def timeout-limit 10000)
 
 (defn find-batches [grant-id]
-  (->> (exec queries/find-batches {:grant_id grant-id})
+  (->> (query-original-identifiers
+        "SELECT id, created_at, batch_number, invoice_date, due_date,
+                receipt_date, currency, partner, grant_id
+         FROM virkailija.payment_batches
+         WHERE created_at >= TIMESTAMP 'today' AND grant_id = ?
+         ORDER BY id DESC"
+        [grant-id])
        (map convert-to-dash-keys)
        (map payments-data/convert-timestamps-from-sql)))
 
 (defn create-batch [values]
   (->> values
        convert-to-underscore-keys
-       (exec queries/create-batch)
+       (named-query
+        "INSERT INTO virkailija.payment_batches
+           (batch_number, invoice_date, due_date, receipt_date, currency, partner, grant_id)
+         VALUES
+           ((SELECT GREATEST(MAX(batch_number), 0) + 1
+             FROM virkailija.payment_batches
+             WHERE date_part('year', created_at) = date_part('year', CURRENT_DATE)),
+            :invoice_date, :due_date, :receipt_date, :currency, :partner, :grant_id)
+         RETURNING id, batch_number, invoice_date, due_date, receipt_date,
+                   currency, partner, grant_id")
        first
        convert-to-dash-keys
        payments-data/convert-timestamps-from-sql))
 
 (defn get-batch [id]
-  (-> (exec queries/get-batch {:batch_id id})
+  (-> (query-original-identifiers
+       "SELECT id, created_at, batch_number, invoice_date, due_date,
+               receipt_date, currency, partner, grant_id
+        FROM virkailija.payment_batches WHERE id = ?"
+       [id])
       first
       convert-to-dash-keys
       payments-data/convert-timestamps-from-sql))
@@ -114,14 +132,22 @@
        (:id application)))))
 
 (defn get-batch-documents [batch-id]
-  (->> (exec queries/get-batch-documents {:batch_id batch-id})
+  (->> (query-original-identifiers
+        "SELECT id, created_at, document_id, phase, presenter_email, acceptor_email
+         FROM virkailija.batch_documents
+         WHERE batch_id = ? AND deleted IS NOT TRUE"
+        [batch-id])
        (map convert-to-dash-keys)
        (map payments-data/convert-timestamps-from-sql)))
 
 (defn create-batch-document [batch-id document]
   (->> (assoc document :batch-id batch-id)
        convert-to-underscore-keys
-       (exec queries/create-batch-document)
+       (named-query
+        "INSERT INTO virkailija.batch_documents
+           (batch_id, document_id, phase, presenter_email, acceptor_email)
+         VALUES (:batch_id, :document_id, :phase, :presenter_email, :acceptor_email)
+         RETURNING id, created_at, document_id, phase, presenter_email, acceptor_email")
        first
        convert-to-dash-keys))
 
@@ -152,7 +178,11 @@
   (assoc batch :documents (get-batch-documents (:id batch))))
 
 (defn get-grant-batches [grant-id]
-  (->> (exec queries/get-grant-batches {:grant_id grant-id})
+  (->> (query-original-identifiers
+        "SELECT id, created_at, batch_number, invoice_date, due_date,
+                receipt_date, currency, partner, grant_id
+         FROM virkailija.payment_batches WHERE grant_id = ?"
+        [grant-id])
        (map convert-to-dash-keys)
        (map payments-data/convert-timestamps-from-sql)
        (map set-batch-documents)))

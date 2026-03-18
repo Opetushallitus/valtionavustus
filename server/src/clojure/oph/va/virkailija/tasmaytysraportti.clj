@@ -3,13 +3,11 @@
    [clj-pdf.core :refer [pdf]]
    [clojure.java.io :refer [output-stream]]
    [clojure.java.jdbc :as jdbc]
-   [oph.soresu.common.db :refer [execute!]]
    [clojure.tools.logging :as log]
    [oph.common.email :as email]
-   [oph.soresu.common.db :refer [exec get-datasource query]]
+   [oph.soresu.common.db :refer [execute! get-datasource query query-original-identifiers]]
    [dk.ative.docjure.spreadsheet :as spreadsheet]
-   [oph.va.virkailija.export :as export]
-   [oph.va.virkailija.db.queries :as virkailija-queries])
+   [oph.va.virkailija.export :as export])
   (:import (java.io ByteArrayOutputStream)
            (org.apache.poi.ss.usermodel Cell CellStyle CellType Sheet Workbook)))
 
@@ -146,8 +144,10 @@ ORDER BY avustushaku DESC"
         (log/error e (str "Failed to send tasmaytysraportti for avustushaku " avustushaku-id))))))
 
 (defn get-tasmaytysraportti-by-avustushaku-id [avustushaku-id]
-  (let [data (exec virkailija-queries/get-tasmaytysraportti-by-avustushaku-id-data
-                   {:avustushaku_id avustushaku-id})
+  (let [data (query-original-identifiers
+              "SELECT *, TO_CHAR((current_date) :: DATE, 'dd.mm.yyyy') AS tasmaytysraportti_date
+               FROM v_tasmaytysraportti_data WHERE avustushaku = ?"
+              [avustushaku-id])
         tasmaytysraportti_date (:tasmaytysraportti_date (first data))
         tmp-file (create-tasmaytysraportti tasmaytysraportti_date data)]
     (get-bytes tmp-file)))

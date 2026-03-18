@@ -1,13 +1,15 @@
 (ns oph.va.virkailija.va-code-values-data
-  (:require [oph.soresu.common.db :refer [exec query]]
-            [oph.va.virkailija.db.queries :as queries]
-            [oph.va.hakija.api.queries :as hakija-queries]
+  (:require [oph.soresu.common.db :refer [execute! named-query query query-original-identifiers]]
             [oph.va.virkailija.utils :refer
              [convert-to-dash-keys convert-to-underscore-keys]]))
 
 (defn get-va-code-value [id]
   (convert-to-dash-keys
-   (first (exec queries/get-va-code-value {:id id}))))
+   (first (query-original-identifiers
+           "SELECT id, value_type, year, code, code_value, hidden
+            FROM virkailija.va_code_values
+            WHERE deleted IS NULL AND id = ?"
+           [id]))))
 
 (defn get-va-code-values
   ([value-type year]
@@ -15,22 +17,40 @@
     convert-to-dash-keys
     (cond
       (and (some? value-type) (some? year))
-      (exec queries/get-va-code-values-by-type-and-year
-            {:value_type value-type :year year})
+      (query-original-identifiers
+       "SELECT id, value_type, year, code, code_value, hidden
+        FROM virkailija.va_code_values
+        WHERE value_type = ? AND year = ? AND deleted IS NULL"
+       [value-type year])
       (some? value-type)
-      (exec queries/get-current-va-code-values-by-type
-            {:value_type value-type})
+      (query-original-identifiers
+       "SELECT DISTINCT ON (code) id, value_type, year, code, code_value, hidden
+        FROM virkailija.va_code_values
+        WHERE value_type = ? AND deleted IS NULL
+        ORDER BY code, year DESC"
+       [value-type])
       (some? year)
-      (exec queries/get-va-code-values-by-year
-            {:year year})
+      (query-original-identifiers
+       "SELECT id, value_type, year, code, code_value, hidden
+        FROM virkailija.va_code_values
+        WHERE year = ? AND deleted IS NULL"
+       [year])
       :else
-      (exec queries/get-current-va-code-values {}))))
+      (query-original-identifiers
+       "SELECT DISTINCT ON (code) id, value_type, year, code, code_value, hidden
+        FROM virkailija.va_code_values
+        WHERE deleted IS NULL
+        ORDER BY code, year DESC"
+       []))))
   ([] (get-va-code-values nil nil)))
 
 (defn create-va-code-value [values]
   (->> values
        convert-to-underscore-keys
-       (exec queries/create-va-code-value)
+       (named-query
+        "INSERT INTO virkailija.va_code_values (value_type, year, code, code_value)
+         VALUES (:value_type, :year, :code, :code_value)
+         RETURNING id, value_type, year, code, code_value")
        first
        convert-to-dash-keys))
 
@@ -47,10 +67,14 @@
       (project-code-used? id)))
 
 (defn delete-va-code-value! [id]
-  (exec queries/delete-va-code-value {:id id}))
+  (query-original-identifiers
+   "UPDATE virkailija.va_code_values SET deleted = TRUE WHERE id = ? RETURNING id"
+   [id]))
 
 (defn edit-va-code-value! [id va-code-value]
-  (exec queries/edit-va-code-value (assoc va-code-value :id id)))
+  (execute!
+   "UPDATE virkailija.va_code_values SET hidden = ? WHERE id = ? RETURNING id"
+   [(:hidden va-code-value) id]))
 
 (defn- find-code-by-id [id va-code-values]
   (some #(when (= (:id %) id) (:code %)) va-code-values))

@@ -1,13 +1,11 @@
 (ns oph.va.virkailija.payments-data
   (:require
-   [oph.soresu.common.db :refer [exec exec-all]]
+   [oph.soresu.common.db :refer [execute! named-query query-original-identifiers with-tx]]
    [oph.va.virkailija.utils
     :refer [convert-to-dash-keys convert-to-underscore-keys update-some]]
    [clj-time.coerce :as c]
-   [oph.va.virkailija.db.queries :as queries]
    [oph.va.virkailija.application-data :as application-data]
    [oph.va.virkailija.grant-data :as grant-data]
-   [oph.soresu.common.db :refer [execute!]]
    [oph.va.virkailija.invoice :as invoice]))
 
 (def system-user
@@ -39,13 +37,26 @@
 (defn get-payment
   ([id]
    (->
-    (exec queries/get-payment {:id id})
+    (query-original-identifiers
+     "SELECT id, version, version_closed, created_at, application_id,
+             application_version, paymentstatus_id, batch_id, payment_sum,
+             phase, pitkaviite, project_code, outgoing_invoice::text
+      FROM virkailija.payments
+      WHERE id = ? AND deleted IS NULL AND version_closed IS NULL
+      ORDER BY version DESC LIMIT 1"
+     [id])
     first
     convert-to-dash-keys
     convert-timestamps-from-sql))
   ([id version]
    (->
-    (exec queries/get-payment-version {:id id :version version})
+    (query-original-identifiers
+     "SELECT id, version, version_closed, created_at, application_id,
+             application_version, paymentstatus_id, batch_id, payment_sum,
+             phase, pitkaviite, project_code, outgoing_invoice::text
+      FROM virkailija.payments p
+      WHERE p.id = ? AND p.version = ? AND p.deleted IS NULL"
+     [id version])
     first
     convert-to-dash-keys
     convert-timestamps-from-sql)))
@@ -67,19 +78,47 @@
                  (merge old-payment payment-data (get-user-info identity))
                  :version :version-closed)
         result
-        (->> payment
-             convert-to-underscore-keys
-             (vector queries/payment-close-version
-                     {:id (:id payment-data) :version (:version payment-data)}
-                     queries/update-payment)
-             (exec-all)
-             first
-             convert-to-dash-keys
-             convert-timestamps-from-sql)]
+        (with-tx (fn [tx]
+                   (query-original-identifiers tx
+                                               "UPDATE virkailija.payments SET version_closed = now()
+            WHERE id = ? AND version = ? AND DELETED IS NULL RETURNING id"
+                                               [(:id payment-data) (:version payment-data)])
+                   (-> (named-query tx
+                                    "INSERT INTO virkailija.payments
+                  (id, version, application_id, application_version,
+                   paymentstatus_id, filename, user_name, user_oid,
+                   batch_id, payment_sum, phase, pitkaviite, project_code,
+                   outgoing_invoice)
+                VALUES(
+                  :id,
+                  (SELECT GREATEST(MAX(version), 0) + 1
+                   FROM virkailija.payments WHERE id = :id AND deleted IS NULL),
+                  :application_id, :application_version, :paymentstatus_id,
+                  :filename, :user_name, :user_oid, :batch_id, :payment_sum,
+                  :phase, :pitkaviite, :project_code,
+                  XMLPARSE (DOCUMENT :outgoing_invoice))
+                RETURNING id, version, version_closed, created_at,
+                  application_id, application_version, paymentstatus_id,
+                  batch_id, payment_sum, phase, pitkaviite, project_code,
+                  CAST(outgoing_invoice AS text)"
+                                    (convert-to-underscore-keys payment))
+                       first
+                       convert-to-dash-keys
+                       convert-timestamps-from-sql)))]
     result))
 
 (defn- store-payment [payment]
-  (exec queries/create-payment payment))
+  (named-query
+   "INSERT INTO virkailija.payments
+      (id, version, application_id, application_version, paymentstatus_id,
+       user_name, user_oid, batch_id, payment_sum, phase, pitkaviite, project_code)
+    VALUES(
+      NEXTVAL('virkailija.payments_id_seq'), 0,
+      :application_id, :application_version, :paymentstatus_id, :user_name,
+      :user_oid, :batch_id, :payment_sum, :phase, :pitkaviite, :project_code)
+    RETURNING id, version, application_id, application_version,
+      paymentstatus_id, batch_id, payment_sum, phase, pitkaviite, project_code"
+   payment))
 
 (defn generate-pitkaviite-for-payment [hakemus payment]
   (let [contact-person (application-data/get-application-contact-person-name (:id hakemus))]
@@ -117,9 +156,14 @@
          (:register-number parsed))]
     (map
      convert-to-dash-keys
-     (exec queries/find-payments-by-application-id-and-invoice-date
-           {:application_id (:id application)
-            :phase (:phase parsed)}))))
+     (query-original-identifiers
+      "SELECT p.id, p.version, p.application_id, p.application_version,
+              p.paymentstatus_id, p.filename, p.user_name, p.user_oid,
+              p.batch_id, p.payment_sum, p.phase, p.pitkaviite, project_code
+       FROM virkailija.payments AS p
+       WHERE p.application_id = ? AND p.phase = ?
+       AND p.deleted IS NULL AND p.version_closed IS NULL"
+      [(:id application) (:phase parsed)]))))
 
 (defn update-paymentstatus-by-response [xml]
   (let [response-values (invoice/read-response-xml xml)
@@ -174,16 +218,38 @@
 (defn get-batch-payments [batch-id]
   (map
    convert-to-dash-keys
-   (exec queries/get-batch-payments {:batch_id batch-id})))
+   (query-original-identifiers
+    "SELECT id, version, version_closed, created_at, application_id,
+            application_version, paymentstatus_id, batch_id, payment_sum,
+            phase, pitkaviite, project_code
+     FROM virkailija.payments
+     WHERE batch_id = ? AND deleted IS NULL AND version_closed IS NULL"
+    [batch-id])))
 
 (defn delete-grant-payments [id]
-  (exec queries/delete-grant-payments {:id id}))
+  (query-original-identifiers
+   "UPDATE virkailija.payments SET deleted = now()
+    WHERE deleted IS NULL AND paymentstatus_id IN ('created', 'waiting')
+    AND application_id IN
+      (SELECT DISTINCT id FROM hakija.hakemukset WHERE avustushaku = ?)
+    RETURNING id"
+   [id]))
 
 (defn delete-all-grant-payments [id]
-  (exec queries/delete-all-grant-payments {:id id}))
+  (query-original-identifiers
+   "UPDATE virkailija.payments SET deleted = now()
+    WHERE deleted IS NULL
+    AND application_id IN
+      (SELECT DISTINCT id FROM hakija.hakemukset WHERE avustushaku = ?)
+    RETURNING id"
+   [id]))
 
 (defn delete-payment [id]
-  (exec queries/delete-payment {:id id}))
+  (query-original-identifiers
+   "UPDATE virkailija.payments SET deleted = now()
+    WHERE deleted IS NULL AND paymentstatus_id = 'waiting' AND id = ?
+    RETURNING id"
+   [id]))
 
 (defn get-first-payment-sum [application grant]
   (int

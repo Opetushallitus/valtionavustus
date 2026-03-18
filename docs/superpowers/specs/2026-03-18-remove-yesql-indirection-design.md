@@ -52,7 +52,7 @@ The helpers go in `oph.soresu.common.db`:
      (jdbc/execute! tx (concat [replaced-sql] values)))))
 ```
 
-**Note on the regex**: `#":(\w+)(?!:)"` uses a negative lookahead `(?!:)` to avoid matching PostgreSQL's `::` type cast syntax (e.g., `created_at::timestamptz`). Without this, `:created_at::timestamptz` would incorrectly replace `:created_at` with `?`.
+**Note on the regex**: `#":(\w+)(?!:)"` uses a negative lookahead `(?!:)` to avoid matching PostgreSQL's `::` type cast syntax (e.g., `created_at::timestamptz`). Without this, `:created_at::timestamptz` would incorrectly replace `:created_at` with `?`. **CAUTION**: the lookahead only protects the *first* colon of `::`. In `column_name::text`, the *second* `:` still matches `:text` as a named parameter. For `named-query`/`named-execute!` SQL, use `CAST(column AS text)` instead of `column::text`.
 
 **Note on IN-list parameters**: Yesql supports passing a list/vector for `IN (:param)` clauses, auto-expanding to the right number of `?` placeholders. Later modules (e.g., `hakija.api.queries`) use this. When migrating those, either: (a) use PostgreSQL's `= ANY(?)` with JDBC arrays instead, or (b) add list expansion logic to `replace-named-params`. Decide per module.
 

@@ -83,18 +83,19 @@ Work through each query, replacing the call site with inline SQL. Commit in logi
 
 2. **ALWAYS wrap `<!` replacements with `(first ...)`** when the return value is used. Yesql's insert-handler returns a single map; `query-original-identifiers`/`named-query` return a sequence.
 
-3. **ALWAYS add `RETURNING *`** (or specific columns) to INSERT/UPDATE SQL when the return value is needed.
+3. **ALWAYS add `RETURNING *`** (or specific columns) to INSERT/UPDATE SQL when the return value is needed. **This includes `<!` queries whose return value is only used indirectly** — e.g., a caller does `(:id (create-foo ...))`. Yesql's `<!` handler returns the full inserted row via `getGeneratedKeys`, so callers may depend on getting a map back even if the immediate call site doesn't obviously use the return value. Trace callers before deciding to use `execute!` (returns row count) vs `query-original-identifiers` with `RETURNING *` (returns the row). When in doubt, use `RETURNING *`.
 
 4. **NEVER delete shared SQL files** until ALL modules referencing them are migrated. Check with: `grep -r "filename.sql" server/src/`
 
-5. **The `named-query` regex uses `(?!:)` negative lookahead** to avoid matching PostgreSQL `::` type casts. This is already handled in the helper — don't work around it.
+5. **The `named-query` regex `(?!:)` does NOT fully protect against `::` type casts.** In `column::text`, the second `:` matches `:text` as a named parameter. Use `CAST(column AS text)` instead of `column::text` in any SQL passed to `named-query` or `named-execute!`. Positional `?` queries (`query-original-identifiers`, `execute!`) are not affected.
 
 6. **Parameter order matters** for positional `?` queries. Match the order of `?` placeholders to the SQL column order, not the order params appear in the original map.
+
+7. **Forward declaration order matters in Clojure.** If you move query call sites earlier in a file (e.g., inlining a query at line 300 that previously called a helper defined at line 700), ensure any helper functions used are defined before the call site. Move helper definitions up or add `(declare helper-fn)` near the top of the file.
 
 ## Remaining Modules
 
 - `oph.va.hakija.api.queries` — has IN-list expansion queries
-- `oph.va.virkailija.db.queries`
 - `oph.va.virkailija.db.external_queries`
 - `oph.soresu.form.db.queries`
 - `oph.soresu.common.db.queries`

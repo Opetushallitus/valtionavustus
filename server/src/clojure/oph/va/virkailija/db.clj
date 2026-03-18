@@ -1,7 +1,6 @@
 (ns oph.va.virkailija.db
   (:require [oph.soresu.form.formutil :as formutil]
-            [oph.va.virkailija.db.queries :as queries]
-            [oph.soresu.common.db :refer [escape-like-pattern exec execute! generate-hash-id query with-transaction with-tx]]
+            [oph.soresu.common.db :refer [escape-like-pattern exec execute! generate-hash-id named-execute! named-query query query-original-identifiers with-tx]]
             [clojure.data :as data]
             [oph.va.hakemus.db :as hakemus-copy]
             [oph.va.menoluokka.db :refer [store-menoluokka-hakemus-rows]]
@@ -13,6 +12,9 @@
             [oph.soresu.common.config :refer [feature-enabled?]]
             [oph.va.budget :as va-budget])
   (:import [java.util Date]))
+
+(defn- parameter-list [list]
+  (clojure.string/join ", " (take (count list) (repeat "?"))))
 
 (defn- add-paatos-menoluokkas [tx paatos-id avustushaku-id talousarvio]
   (doseq [[type amount] (seq talousarvio)]
@@ -296,20 +298,33 @@
 (defn get-arviot [hakemus-ids]
   (if (empty? hakemus-ids)
     []
-    (exec queries/get-arviot {:hakemus_ids hakemus-ids})))
+    (query-original-identifiers
+     (str "select * from arviot where hakemus_id IN (" (parameter-list hakemus-ids) ")")
+     (vec hakemus-ids))))
 
 (defn get-hakemukset-without-valmistelija [hakemus-ids]
-  (map :id (exec queries/get-hakemukset-without-valmistelija {:hakemus_ids hakemus-ids})))
+  (map :id
+       (query-original-identifiers
+        (str "SELECT hakemukset.id
+              FROM hakija.hakemukset
+              LEFT JOIN virkailija.arviot ON (hakemukset.id = arviot.hakemus_id)
+              WHERE hakemukset.id IN (" (parameter-list hakemus-ids) ")
+              AND hakemukset.version_closed IS NULL
+              AND arviot.presenter_role_id IS NULL")
+        (vec hakemus-ids))))
 
 (defn list-arvio-status-and-budget-granted-by-hakemus-ids [hakemus-ids]
   (if (empty? hakemus-ids)
     []
-    (exec queries/list-arvio-status-and-budget-granted-by-hakemus-ids {:hakemus_ids hakemus-ids})))
+    (query-original-identifiers
+     (str "select hakemus_id, status, budget_granted from arviot where hakemus_id IN (" (parameter-list hakemus-ids) ")")
+     (vec hakemus-ids))))
 
 (defn get-arvio [hakemus-id]
-  (->> {:hakemus_id hakemus-id}
-       (exec queries/get-arvio)
-       first))
+  (first
+   (query-original-identifiers
+    "select * from arviot where hakemus_id = ?"
+    [hakemus-id])))
 
 (defn- ->changelog-entry [identity type timestamp data]
   {:type type
@@ -467,7 +482,45 @@
     (if use-detailed-costs
       (store-menoluokka-hakemus-rows (:id avustushaku) hakemus-id overridden-answers)
       (delete-menoluokka-hakemus-rows hakemus-id))
-    (exec queries/upsert-arvio<! arvio-with-changelog)))
+    (first
+     (named-query
+      "insert into virkailija.arviot (
+         hakemus_id, status, overridden_answers, seuranta_answers,
+         budget_granted, costs_granted, use_overridden_detailed_costs,
+         summary_comment, presentercomment, roles, presenter_role_id,
+         rahoitusalue, talousarviotili, academysize, perustelut, tags,
+         oppilaitokset, allow_visibility_in_external_system,
+         should_pay, should_pay_comments, changelog)
+       values (
+         :hakemus_id, :status, :overridden_answers, :seuranta_answers,
+         :budget_granted, :costs_granted, :use_overridden_detailed_costs,
+         :summary_comment, :presentercomment, :roles, :presenter_role_id,
+         :rahoitusalue, :talousarviotili, :academysize, :perustelut, :tags,
+         :oppilaitokset, :allow_visibility_in_external_system,
+         :should_pay, :should_pay_comments, :changelog)
+       ON CONFLICT (hakemus_id) DO UPDATE SET
+         status = EXCLUDED.status,
+         overridden_answers = EXCLUDED.overridden_answers,
+         seuranta_answers = EXCLUDED.seuranta_answers,
+         budget_granted = EXCLUDED.budget_granted,
+         costs_granted = EXCLUDED.costs_granted,
+         use_overridden_detailed_costs = EXCLUDED.use_overridden_detailed_costs,
+         summary_comment = EXCLUDED.summary_comment,
+         presentercomment = EXCLUDED.presentercomment,
+         roles = EXCLUDED.roles,
+         presenter_role_id = EXCLUDED.presenter_role_id,
+         rahoitusalue = EXCLUDED.rahoitusalue,
+         talousarviotili = EXCLUDED.talousarviotili,
+         academysize = EXCLUDED.academysize,
+         perustelut = EXCLUDED.perustelut,
+         tags = EXCLUDED.tags,
+         oppilaitokset = EXCLUDED.oppilaitokset,
+         allow_visibility_in_external_system = EXCLUDED.allow_visibility_in_external_system,
+         should_pay = EXCLUDED.should_pay,
+         should_pay_comments = EXCLUDED.should_pay_comments,
+         changelog = EXCLUDED.changelog
+       RETURNING *"
+      arvio-with-changelog))))
 
 (defn health-check []
   (->> {}
@@ -479,21 +532,28 @@
 (defn get-or-create-arvio [hakemus-id]
   (if-let [arvio (get-arvio hakemus-id)]
     arvio
-    (exec queries/create-empty-arvio<! {:hakemus_id hakemus-id})))
+    (first
+     (query-original-identifiers
+      "INSERT INTO arviot (hakemus_id) VALUES (?) RETURNING *"
+      [hakemus-id]))))
 
 (defn list-comments [hakemus-id]
   (let [arvio-id (:id (get-or-create-arvio hakemus-id))]
-    (exec queries/list-comments {:arvio_id arvio-id})))
+    (query-original-identifiers
+     "select * from comments where arvio_id = ? order by created_at DESC"
+     [arvio-id])))
 
 (defn add-comment [hakemus-id first-name last-name email comment person-oid]
   (let [arvio-id (:id (get-or-create-arvio hakemus-id))]
-    (when (exec queries/create-comment<!
-                {:arvio_id arvio-id
-                 :first_name first-name
-                 :last_name last-name
-                 :email email
-                 :comment comment
-                 :person_oid person-oid})
+    (when (pos? (first (named-execute!
+                        "INSERT INTO comments (arvio_id, first_name, last_name, email, comment, person_oid)
+                         VALUES (:arvio_id, :first_name, :last_name, :email, :comment, :person_oid)"
+                        {:arvio_id arvio-id
+                         :first_name first-name
+                         :last_name last-name
+                         :email email
+                         :comment comment
+                         :person_oid person-oid})))
       (list-comments hakemus-id))))
 
 (defn score->map [score]
@@ -508,63 +568,91 @@
    :modified-at (:modified_at score)})
 
 (defn list-scores [arvio-id]
-  (->> (exec queries/list-scores {:arvio_id arvio-id})
+  (->> (query-original-identifiers
+        "SELECT * FROM scores WHERE arvio_id = ? AND deleted IS NOT TRUE"
+        [arvio-id])
        (map score->map)))
 
 (defn list-avustushaku-scores [avustushaku-id]
-  (->> (exec queries/list-avustushaku-scores {:avustushaku_id avustushaku-id})
+  (->> (query-original-identifiers
+        "SELECT * FROM scores WHERE avustushaku_id = ? AND deleted IS NOT TRUE"
+        [avustushaku-id])
        (map score->map)))
 
 (defn- update-or-create-score [avustushaku-id arvio-id identity selection-criteria-index score]
-  (let [params {:avustushaku_id           avustushaku-id
-                :arvio_id                 arvio-id
-                :person_oid               (:person-oid identity)
-                :first_name               (:first-name identity)
-                :last_name                (:surname identity)
-                :email                    (:email identity)
-                :selection_criteria_index selection-criteria-index
-                :score                    score}]
-    (exec queries/upsert-score<! params)))
+  (named-execute!
+   "INSERT INTO scores (
+      avustushaku_id, arvio_id, person_oid, first_name,
+      last_name, email, selection_criteria_index, score)
+    VALUES (
+      :avustushaku_id, :arvio_id, :person_oid, :first_name,
+      :last_name, :email, :selection_criteria_index, :score)
+    ON CONFLICT ON CONSTRAINT scores_pkey DO UPDATE SET
+      avustushaku_id = EXCLUDED.avustushaku_id,
+      first_name = EXCLUDED.first_name,
+      last_name = EXCLUDED.last_name,
+      email = EXCLUDED.email,
+      score = EXCLUDED.score,
+      modified_at = now(),
+      deleted = FALSE"
+   {:avustushaku_id           avustushaku-id
+    :arvio_id                 arvio-id
+    :person_oid               (:person-oid identity)
+    :first_name               (:first-name identity)
+    :last_name                (:surname identity)
+    :email                    (:email identity)
+    :selection_criteria_index selection-criteria-index
+    :score                    score}))
 
 (defn delete-score [arvio-id selection-criteria-index identity]
-  (exec queries/delete-score!
-        {:arvio_id  arvio-id
-         :person_oid (:person-oid identity)
-         :selection_criteria_index selection-criteria-index}))
+  (execute!
+   "UPDATE scores SET modified_at = now(), deleted = true
+    WHERE arvio_id = ? AND person_oid = ? AND deleted IS NOT TRUE
+    AND selection_criteria_index = ?"
+   [arvio-id (:person-oid identity) selection-criteria-index]))
 
 (defn add-score [avustushaku-id arvio-id identity selection-criteria-index score]
   (update-or-create-score avustushaku-id arvio-id identity selection-criteria-index score))
 
 (defn find-search [avustushaku-id query]
-  (->> {:avustushaku_id avustushaku-id :query query}
-       (exec queries/find-search)
-       first))
+  (first
+   (query-original-identifiers
+    "select * from searches where avustushaku_id = ? and query = ?"
+    [avustushaku-id query])))
 
 (defn create-search! [avustushaku-id query name person-oid]
-  (exec queries/create-search<! {:avustushaku_id avustushaku-id
-                                 :query query
-                                 :name name
-                                 :oid person-oid}))
+  (first
+   (query-original-identifiers
+    "insert into searches (avustushaku_id, query, name, created_by)
+     values (?, ?, ?, ?) RETURNING *"
+    [avustushaku-id query name person-oid])))
 
 (defn get-search [avustushaku-id saved-search-id]
-  (->> {:avustushaku_id avustushaku-id :id saved-search-id}
-       (exec queries/get-search)
-       first))
+  (first
+   (query-original-identifiers
+    "select * from searches where avustushaku_id = ? and id = ?"
+    [avustushaku-id saved-search-id])))
 
 (defn get-finalized-hakemus-ids
   "Filters hakemus-ids so that only 'accepted' and 'rejected' are included (this status is in arviot)"
   [hakemus-ids]
   (if (empty? hakemus-ids)
     []
-    (->> {:hakemus_ids (vec hakemus-ids)}
-         (exec queries/get-accepted-or-rejected-hakemus-ids)
+    (->> (query-original-identifiers
+          (str "select hakemus_id from arviot
+                where hakemus_id in (" (parameter-list hakemus-ids) ")
+                and status in ('accepted', 'rejected')")
+          (vec hakemus-ids))
          (map :hakemus_id))))
 
 (defn get-accepted-hakemus-ids [hakemus-ids]
   (if (empty? hakemus-ids)
     []
-    (->> {:hakemus_ids (vec hakemus-ids)}
-         (exec queries/get-accepted-hakemus-ids)
+    (->> (query-original-identifiers
+          (str "select hakemus_id from arviot
+                where hakemus_id in (" (parameter-list hakemus-ids) ")
+                and status = 'accepted'")
+          (vec hakemus-ids))
          (map :hakemus_id))))
 
 (defn- va-user->db [va-user]
@@ -584,22 +672,34 @@
    :privileges (-> db :content :privileges)})
 
 (defn update-va-users-cache [va-users]
-  (with-transaction connection
-    (let [db-options {:connection connection}]
-      (queries/lock-va-users-cache-exclusively! {} db-options)
-      (doseq [user va-users]
-        (let [db-user     (va-user->db user)
-              num-updated (queries/update-va-user-cache! db-user db-options)]
-          (when (< num-updated 1)
-            (queries/create-va-user-cache<! db-user db-options))))
-      (let [person-oids (into [] (map :person-oid va-users))]
-        (if (seq person-oids)
-          (queries/delete-va-user-cache-by-not-in! {:person_oids person-oids} db-options)
-          (queries/delete-va-user-cache! {} db-options))))))
+  (with-tx (fn [tx]
+             (execute! tx "lock table va_users_cache in exclusive mode" [])
+             (doseq [user va-users]
+               (let [db-user     (va-user->db user)
+                     num-updated (first (named-execute! tx
+                                                        "update va_users_cache
+                                 set first_name = :first_name, surname = :surname,
+                                     email = :email, content = :content, updated_at = now()
+                                 where person_oid = :person_oid"
+                                                        db-user))]
+                 (when (< num-updated 1)
+                   (named-execute! tx
+                                   "insert into va_users_cache (person_oid, first_name, surname, email, content)
+             select :person_oid, :first_name, :surname, :email, :content
+             where not exists (select id from va_users_cache where person_oid = :person_oid)"
+                                   db-user))))
+             (let [person-oids (into [] (map :person-oid va-users))]
+               (if (seq person-oids)
+                 (execute! tx
+                           (str "delete from va_users_cache where person_oid NOT IN (" (parameter-list person-oids) ")")
+                           (vec person-oids))
+                 (execute! tx "delete from va_users_cache" []))))))
 
 (defn get-va-user-cache-by-person-oid [person-oid]
-  (->> {:person_oid person-oid}
-       (exec queries/get-va-user-cache-by-person-oid)
+  (->> (query-original-identifiers
+        "select person_oid, first_name, surname, email, content
+         from va_users_cache where person_oid = ?"
+        [person-oid])
        (map db->va-user)
        first))
 
@@ -614,15 +714,15 @@
         escaped-terms                (map #(str "%" (escape-like-pattern %) "%") terms)
         num-columns-to-search        (count va-users-cache-columns-to-search)
         escaped-terms-for-like-exprs (mapcat #(repeat num-columns-to-search %) escaped-terms)]
-    (with-transaction connection
-      (jdbc/query connection
-                  (cons (string/join " "
-                                     ["select person_oid, first_name, surname, email, content"
-                                      "from va_users_cache"
-                                      "where" like-exprs-for-all-terms
-                                      "order by first_name, surname, email"])
-                        escaped-terms-for-like-exprs)
-                  {:row-fn db->va-user}))))
+    (with-tx (fn [tx]
+               (jdbc/query tx
+                           (cons (string/join " "
+                                              ["select person_oid, first_name, surname, email, content"
+                                               "from va_users_cache"
+                                               "where" like-exprs-for-all-terms
+                                               "order by first_name, surname, email"])
+                                 escaped-terms-for-like-exprs)
+                           {:row-fn db->va-user})))))
 
 (defn create-application-token [application-id]
   (let [existing-token
@@ -634,9 +734,6 @@
       (first
        (exec hakija-queries/create-application-token
              {:application_id application-id :token (generate-hash-id)})))))
-
-(defn- parameter-list [list]
-  (clojure.string/join ", " (take (count list) (repeat "?"))))
 
 (defn copy-menoluokka-rows [tx from-application-id to-application-id]
   (execute! tx

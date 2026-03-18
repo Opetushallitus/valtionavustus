@@ -1,19 +1,23 @@
 (ns oph.va.virkailija.application-data
-  (:require [oph.soresu.common.db :refer [exec query]]
+  (:require [oph.soresu.common.db :refer [exec query query-original-identifiers]]
             [oph.va.virkailija.db :as va-db]
             [oph.va.virkailija.utils :refer [convert-to-dash-keys]]
-            [oph.va.virkailija.db.queries :as virkailija-queries]
             [oph.va.hakija.api.queries :as hakija-queries]))
 
 (defn get-application-evaluation [application-id]
   (convert-to-dash-keys
-   (first (exec virkailija-queries/get-application-evaluation
-                {:application_id application-id}))))
+   (first (query-original-identifiers
+           "SELECT a.budget_granted, a.costs_granted,
+                   replace(a.talousarviotili, '.', '') AS takp_account,
+                   status, should_pay
+            FROM virkailija.arviot a WHERE a.hakemus_id = ?"
+           [application-id]))))
 
 (defn get-application-full-evaluation [application-id]
   (convert-to-dash-keys
-   (first (exec virkailija-queries/get-application-full-evaluation
-                {:application_id application-id}))))
+   (first (query-original-identifiers
+           "SELECT * FROM virkailija.arviot a WHERE a.hakemus_id = ?"
+           [application-id]))))
 
 (defn get-application-contact-person-name [hakemus-id]
   (:contact-person (first (query
@@ -54,12 +58,31 @@
 (defn get-application-unsent-payments [application-id]
   (map
    convert-to-dash-keys
-   (exec virkailija-queries/get-application-unsent-payments
-         {:application_id application-id})))
+   (query-original-identifiers
+    "SELECT * FROM virkailija.payments
+     WHERE application_id = ?
+     AND paymentstatus_id IN ('created', 'waiting')
+     AND version_closed IS NULL AND deleted IS NULL
+     ORDER BY id DESC, version DESC"
+    [application-id])))
 
 (defn get-application-payments [id]
-  (map convert-to-dash-keys (exec virkailija-queries/get-application-payments
-                                  {:application_id id})))
+  (map convert-to-dash-keys
+       (query-original-identifiers
+        "SELECT payments.id, payments.version, payments.version_closed,
+                payments.created_at, payments.application_id,
+                payments.application_version, payments.paymentstatus_id,
+                payments.filename, payments.user_name, payments.batch_id,
+                payments.payment_sum, payments.phase, payments.project_code,
+                coalesce(payments.pitkaviite, hakemukset.register_number) as pitkaviite
+         FROM virkailija.payments
+         JOIN hakija.hakemukset ON (
+           hakemukset.id = payments.application_id
+           AND hakemukset.version = payments.application_version)
+         WHERE application_id = ?
+         AND payments.version_closed IS NULL AND deleted IS NULL
+         ORDER BY id"
+        [id])))
 
 (defn find-applications [search-term order]
   (map
@@ -88,14 +111,20 @@
   (not
    (:has_payments
     (first
-     (exec virkailija-queries/application-has-payments
-           {:application_id application-id})))))
+     (query-original-identifiers
+      "SELECT COUNT(id) > 0 AS has_payments
+       FROM virkailija.payments
+       WHERE application_id = ? AND deleted IS NULL AND version_closed IS NULL
+       LIMIT 1"
+      [application-id])))))
 
 (defn accepted? [application]
   (true?
    (get
-    (first (exec virkailija-queries/is-application-accepted
-                 {:hakemus_id (:id application)}))
+    (first (query-original-identifiers
+            "SELECT status = 'accepted' AS accepted
+             FROM virkailija.arviot WHERE hakemus_id = ?"
+            [(:id application)]))
     :accepted)))
 
 (defn get-open-applications []
