@@ -731,10 +731,14 @@
               WHERE id = ? AND version = ?" [comment (:id new-hakemus) (:version new-hakemus)])))
 
 (defn update-loppuselvitys-status [hakemus-id status]
-  (exec queries/update-loppuselvitys-status<! {:id hakemus-id :status status}))
+  (execute!
+    "update hakemukset set status_loppuselvitys = ? where id = ? and version_closed is null"
+    [status hakemus-id]))
 
 (defn update-valiselvitys-status [hakemus-id status]
-  (exec queries/update-valiselvitys-status<! {:id hakemus-id :status status}))
+  (execute!
+    "update hakemukset set status_valiselvitys = ? where id = ? and version_closed is null"
+    [status hakemus-id]))
 
 (defn attachment-exists? [hakemus-id field-id]
   (first
@@ -820,8 +824,10 @@
    (some? token)
    (not
     (empty?
-     (exec queries/get-application-token
-           {:token token :application_id application-id})))))
+     (query-original-identifiers
+       "SELECT id, application_id, token FROM hakija.application_tokens
+        WHERE application_id = ? AND token = ? AND revoked IS NOT TRUE"
+       [application-id token])))))
 
 (defn valid-user-key-token? [token user-key]
   (let [application (get-hakemus user-key)]
@@ -830,8 +836,9 @@
      (valid-token? token (:id application)))))
 
 (defn revoke-token [token]
-  (exec queries/revoke-application-token!
-        {:token token}))
+  (execute!
+    "UPDATE hakija.application_tokens SET revoked = TRUE WHERE token = ?"
+    [token]))
 
 (defn get-loppuselvitys-hakemus-id [parent-hakemus-id]
   (let [result (query "
