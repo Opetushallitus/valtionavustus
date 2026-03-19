@@ -214,8 +214,9 @@
 }
 
 .muutoshakemus__form-cell--actions {
-    justify-content: flex-end;
+    align-self: flex-end;
     min-width: 130px;
+    padding-bottom: 0.8rem;
 }
 
 .muutoshakemus__form {
