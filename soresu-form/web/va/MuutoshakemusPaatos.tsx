@@ -38,7 +38,7 @@ const Muutospaatos: React.FC<{
         </div>
         <div
           className="muutoshakemus-paatos__section-content"
-          data-test-id="muutospaatos-asia-content"
+          data-test-id={`muutospaatos-${osio}-content`}
         >
           {children}
         </div>

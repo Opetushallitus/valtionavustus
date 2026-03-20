@@ -162,6 +162,34 @@ await page.waitForFunction(() =>
 )
 ```
 
+## Ensure data-test-id locators are unique
+
+Playwright runs in strict mode by default — a locator that matches multiple elements throws a "strict mode violation" error. When adding `data-test-id` attributes to components, verify the ID is unique across the rendered page. Reusable components are especially risky: a `data-test-id` on a wrapper component will appear once per instance.
+
+**Example:** A `data-test-id="muutospaatos-asia-content"` existed on both `ProjectSection` (the "Asia" overview) and the `Muutospaatos` wrapper component. When `YhteishankePaatosSection` was added, it rendered a second `Muutospaatos` instance, causing the locator to resolve to 2 elements.
+
+**Good — unique test IDs on reusable components:**
+
+```typescript
+// Component uses a dynamic test-id based on a prop
+<div data-test-id={`muutospaatos-${osio}-content`}>
+
+// Test targets the specific static instance
+await expect(page.locator('[data-test-id="muutospaatos-asia-content"]')).toContainText(...)
+```
+
+**Bad — same static test-id on a reusable component:**
+
+```typescript
+// Component always renders the same test-id
+<div data-test-id="muutospaatos-asia-content">
+
+// Test breaks with strict mode violation when multiple instances exist
+await expect(page.locator('[data-test-id="muutospaatos-asia-content"]')).toContainText(...)
+```
+
+**Prevention:** When adding `data-test-id` to a component that is rendered multiple times (or could be in the future), parameterize the ID — e.g., include a section name, index, or entity ID.
+
 ## Anti-patterns checklist
 
 - Direct email fetch + assert without polling
@@ -170,3 +198,4 @@ await page.waitForFunction(() =>
 - Missing `failOnStatusCode: true` on test API calls (silent errors cause misleading timeouts)
 - Using `waitForResponse` for only the primary API when the DOM depends on a cascading secondary fetch
 - Re-selecting a value already set by fixtures and assuming it will trigger a save
+- Using a static `data-test-id` on a reusable component that renders multiple times on the page
