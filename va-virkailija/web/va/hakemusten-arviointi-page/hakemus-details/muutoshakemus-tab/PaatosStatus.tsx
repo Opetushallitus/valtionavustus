@@ -69,16 +69,21 @@ interface GroupProps {
   group: keyof Omit<MuutoshakemusPaatosFormValues['values'], 'reason'>
   f: MuutoshakemusPaatosFormValues
   talousarvioValues?: TalousarvioValues
+  excludeStatuses?: string[]
 }
 
 export const PaatosStatusRadioButtonGroup: React.FC<GroupProps> = ({
   talousarvioValues,
   f,
   group,
+  excludeStatuses,
 }) => {
+  const statuses = excludeStatuses
+    ? paatosStatuses.filter((s) => !excludeStatuses.includes(s.value))
+    : paatosStatuses
   return (
     <fieldset className="soresu-radiobutton-group">
-      {paatosStatuses.map((status) => (
+      {statuses.map((status) => (
         <PaatosStatusRadioButton
           key={`${group}-${status.value}`}
           f={f}

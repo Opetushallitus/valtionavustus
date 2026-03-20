@@ -84,54 +84,81 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
           />
         </MuutoshakemusSection>
       )}
-      {muutoshakemus['haen-sisaltomuutosta'] && (
-        <MuutoshakemusSection>
-          <h2 className="muutoshakemus-section-title">
-            {t.muutoshakemus.paatos.sisaltoJaToimitustapa}
-          </h2>
-          <div className="muutoshakemus-row">
-            <h4 className="muutoshakemus__header">{t.sisaltomuutos.appliedChange}</h4>
-            <div className="muutoshakemus-description-box" data-test-id="sisaltomuutos-perustelut">
-              {muutoshakemus['sisaltomuutos-perustelut']}
+      {muutoshakemus['haen-sisaltomuutosta'] &&
+        !(
+          enableYhteishankeOsapuolimuutokset &&
+          muutoshakemus['yhteishanke-osapuolimuutokset'] &&
+          muutoshakemus['yhteishanke-osapuolimuutokset'].length > 0
+        ) && (
+          <MuutoshakemusSection>
+            <h2 className="muutoshakemus-section-title">
+              {t.muutoshakemus.paatos.sisaltoJaToimitustapa}
+            </h2>
+            <div className="muutoshakemus-row">
+              <h4 className="muutoshakemus__header">{t.sisaltomuutos.appliedChange}</h4>
+              <div
+                className="muutoshakemus-description-box"
+                data-test-id="sisaltomuutos-perustelut"
+              >
+                {muutoshakemus['sisaltomuutos-perustelut']}
+              </div>
             </div>
-          </div>
-          {enableYhteishankeOsapuolimuutokset &&
-            muutoshakemus['yhteishanke-osapuolimuutokset'] &&
-            muutoshakemus['yhteishanke-osapuolimuutokset'].length > 0 && (
-              <div className="muutoshakemus-row" data-test-id="yhteishanke-osapuolimuutokset">
-                <h4 className="muutoshakemus__header">
-                  {t.sisaltomuutos.yhteishankeOsapuolimuutokset}
-                </h4>
-                <table className="muutoshakemus-yhteishanke-table">
-                  <thead>
-                    <tr>
-                      <th>{t.contactPersonEdit.yhteishankeOrganizationName}</th>
-                      <th>{t.contactPersonEdit.yhteishankeContactPerson}</th>
-                      <th>{t.contactPersonEdit.yhteishankeEmail}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {muutoshakemus['yhteishanke-osapuolimuutokset'].map((org, index) => (
-                      <tr key={index} data-test-id={`yhteishanke-org-${index}`}>
-                        <td>{org['organization-name']}</td>
-                        <td>{org['contact-person']}</td>
-                        <td>{org['email']}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            {muutoshakemus['paatos-status-sisaltomuutos'] && (
+              <div className="muutoshakemus-row">
+                <OsioPaatos
+                  osio="paatos-sisaltomuutos"
+                  paatosStatus={muutoshakemus['paatos-status-sisaltomuutos']}
+                />
               </div>
             )}
-          {muutoshakemus['paatos-status-sisaltomuutos'] && (
-            <div className="muutoshakemus-row">
-              <OsioPaatos
-                osio="paatos-sisaltomuutos"
-                paatosStatus={muutoshakemus['paatos-status-sisaltomuutos']}
-              />
+          </MuutoshakemusSection>
+        )}
+      {enableYhteishankeOsapuolimuutokset &&
+        muutoshakemus['yhteishanke-osapuolimuutokset'] &&
+        muutoshakemus['yhteishanke-osapuolimuutokset'].length > 0 && (
+          <MuutoshakemusSection>
+            <h2 className="muutoshakemus-section-title">
+              {t.sisaltomuutos.yhteishankeOsapuolimuutokset}
+            </h2>
+            <div className="muutoshakemus-row" data-test-id="yhteishanke-osapuolimuutokset">
+              <table className="muutoshakemus-yhteishanke-table">
+                <thead>
+                  <tr>
+                    <th>{t.contactPersonEdit.yhteishankeOrganizationName}</th>
+                    <th>{t.contactPersonEdit.yhteishankeContactPerson}</th>
+                    <th>{t.contactPersonEdit.yhteishankeEmail}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {muutoshakemus['yhteishanke-osapuolimuutokset'].map((org, index) => (
+                    <tr key={index} data-test-id={`yhteishanke-org-${index}`}>
+                      <td>{org['organization-name']}</td>
+                      <td>{org['contact-person']}</td>
+                      <td>{org['email']}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
-        </MuutoshakemusSection>
-      )}
+            <div className="muutoshakemus-row">
+              <h4 className="muutoshakemus__header">{t.sisaltomuutos.appliedChange}</h4>
+              <div
+                className="muutoshakemus-description-box"
+                data-test-id="sisaltomuutos-perustelut"
+              >
+                {muutoshakemus['sisaltomuutos-perustelut']}
+              </div>
+            </div>
+            {muutoshakemus['paatos-status-sisaltomuutos'] && (
+              <div className="muutoshakemus-row">
+                <OsioPaatos
+                  osio="paatos-sisaltomuutos"
+                  paatosStatus={muutoshakemus['paatos-status-sisaltomuutos']}
+                />
+              </div>
+            )}
+          </MuutoshakemusSection>
+        )}
       {muutoshakemus['paatos-reason'] && (
         <div className="muutoshakemus-paatos-reason">
           <h2 className="muutoshakemus__header">{t.muutoshakemus.paatos.perustelut}</h2>

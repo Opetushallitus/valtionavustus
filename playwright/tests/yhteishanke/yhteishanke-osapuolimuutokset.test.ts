@@ -7,7 +7,11 @@ import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusP
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
-import { getAvustushakuEmails, getHakemusTokenAndRegisterNumber } from '../../utils/emails'
+import {
+  getAvustushakuEmails,
+  getHakemusTokenAndRegisterNumber,
+  parseMuutoshakemusPaatosFromEmails,
+} from '../../utils/emails'
 
 const otherOrganization = (page: Page, index: number) => {
   const indexStartsFromOne = index + 1
@@ -161,6 +165,19 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     await submitMuutoshakemusAndExpectSuccess(page)
   })
 
+  await test.step('accepted_with_changes is not available for yhteishanke osapuolimuutos', async () => {
+    await hakemustenArviointiPage.navigateToLatestMuutoshakemus(avustushakuID, hakemusID)
+    await expect(page.getByTestId('yhteishanke-osapuolimuutokset')).toBeVisible()
+
+    // Hyväksytään and Hylätään should be visible
+    await expect(page.locator('label[for="haen-sisaltomuutosta-accepted"]')).toBeVisible()
+    await expect(page.locator('label[for="haen-sisaltomuutosta-rejected"]')).toBeVisible()
+    // Hyväksytään muutettuna should NOT be visible
+    await expect(
+      page.locator('label[for="haen-sisaltomuutosta-accepted_with_changes"]')
+    ).toHaveCount(0)
+  })
+
   await test.step('accept osapuolimuutos and verify changed values are shown in hakemus diff', async () => {
     const muutoshakemusTab = await hakemustenArviointiPage.navigateToLatestMuutoshakemus(
       avustushakuID,
@@ -219,6 +236,41 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     for (const email of relevantEmails) {
       expect(email['to-address']).toHaveLength(1)
     }
+  })
+
+  await test.step('päätös document shows yhteishanke org changes section', async () => {
+    const links = await parseMuutoshakemusPaatosFromEmails(hakemusID)
+    if (!links.linkToMuutoshakemusPaatos) {
+      throw Error('No linkToMuutoshakemusPaatos found')
+    }
+    await page.goto(links.linkToMuutoshakemusPaatos)
+
+    // "Asia" section lists yhteishanke org change, not sisaltomuutos
+    await expect(page.locator('[data-test-id="muutospaatos-asia-content"]')).toContainText(
+      'Muutoshakemus yhteishankkeen osapuoliin.'
+    )
+    await expect(page.locator('[data-test-id="muutospaatos-asia-content"]')).not.toContainText(
+      'hankesuunnitelman sisältöön tai toteutustapaan'
+    )
+
+    // Yhteishanke org changes table is visible with correct data
+    const firstOrg = page.getByTestId('yhteishanke-org-0')
+    await expect(firstOrg).toContainText('Ensimmäinen Organisaatio Oy')
+    await expect(firstOrg).toContainText(updatedFirst.contactPerson)
+    await expect(firstOrg).toContainText(updatedFirst.email)
+
+    const secondOrg = page.getByTestId('yhteishanke-org-1')
+    await expect(secondOrg).toContainText(newSecond.name)
+    await expect(secondOrg).toContainText(newSecond.contactPerson)
+    await expect(secondOrg).toContainText(newSecond.email)
+
+    // Perustelut are shown
+    await expect(page.getByTestId('yhteishanke-perustelut')).toContainText(
+      'Poistetaan yksi osapuoli ja lisätään uusi'
+    )
+
+    // Decision status is shown
+    await expect(page.getByTestId('paatos-sisaltomuutos-container')).toBeVisible()
   })
 
   await test.step('applicant sees updated organization rows in contact-details section automatically', async () => {

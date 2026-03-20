@@ -28,7 +28,7 @@
                WHERE m.id = mh.menoluokka_id AND mh." entity "_id = ?")
          [id]))
 
-(defn- get-muutoshakemus-yhteishanke-organizations
+(defn get-muutoshakemus-yhteishanke-organizations
   ([muutoshakemus-id]
    (query "SELECT organization_name, contact_person, email
            FROM virkailija.muutoshakemus_yhteishanke_organization

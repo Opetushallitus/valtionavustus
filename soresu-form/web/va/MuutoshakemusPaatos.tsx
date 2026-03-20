@@ -11,6 +11,7 @@ import {
   PaatosState,
   PaatosStatus,
   Talousarvio,
+  YhteishankeOrganizationResponse,
 } from './types/muutoshakemus'
 
 import './MuutoshakemusPaatos.css'
@@ -117,6 +118,47 @@ const SisaltomuutosPaatosSection: React.FC<{ status: PaatosStatus }> = ({ status
   )
 }
 
+const YhteishankePaatosSection: React.FC<{
+  status: PaatosStatus
+  organizations: YhteishankeOrganizationResponse[]
+  perustelut?: string
+}> = ({ status, organizations, perustelut }) => {
+  const { t } = useTranslations()
+  return (
+    <Muutospaatos paatosStatus={status} osio="paatos-sisaltomuutos">
+      <h3 className="muutoshakemus-paatos__change-header">
+        {t.sisaltomuutos.yhteishankeOsapuolimuutokset}
+      </h3>
+      <table className="muutoshakemus-yhteishanke-table">
+        <thead>
+          <tr>
+            <th>{t.contactPersonEdit.yhteishankeOrganizationName}</th>
+            <th>{t.contactPersonEdit.yhteishankeContactPerson}</th>
+            <th>{t.contactPersonEdit.yhteishankeEmail}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {organizations.map((org, index) => (
+            <tr key={index} data-test-id={`yhteishanke-org-${index}`}>
+              <td>{org['organization-name']}</td>
+              <td>{org['contact-person']}</td>
+              <td>{org['email']}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {perustelut && (
+        <div className="muutoshakemus-paatos__perustelut">
+          <h3 className="muutoshakemus-paatos__change-header">
+            {t.muutoshakemus.applicantReasoning}
+          </h3>
+          <div data-test-id="yhteishanke-perustelut">{perustelut}</div>
+        </div>
+      )}
+    </Muutospaatos>
+  )
+}
+
 const ProjectSection: React.FC<{
   muutoshakemus: Muutoshakemus
   projectName: string
@@ -142,9 +184,15 @@ const ProjectSection: React.FC<{
             {t.muutoshakemus.paatos.hakemusKayttoajanPidennykselle}
           </div>
         )}
-        {muutoshakemus['haen-sisaltomuutosta'] && (
-          <div>{t.muutoshakemus.paatos.muutoshakemusSisaltoonTaiToteutustapaan}</div>
-        )}
+        {muutoshakemus['haen-sisaltomuutosta'] &&
+          !(
+            muutoshakemus['yhteishanke-osapuolimuutokset'] &&
+            muutoshakemus['yhteishanke-osapuolimuutokset'].length > 0
+          ) && <div>{t.muutoshakemus.paatos.muutoshakemusSisaltoonTaiToteutustapaan}</div>}
+        {muutoshakemus['yhteishanke-osapuolimuutokset'] &&
+          muutoshakemus['yhteishanke-osapuolimuutokset'].length > 0 && (
+            <div>{t.muutoshakemus.paatos.muutoshakemusYhteishankeenOsapuoliin}</div>
+          )}
         <p>
           <a data-test-id="link-to-muutoshakemus" href={`${muutoshakemusUrl}&lang=${lang}`}>
             {t.muutoshakemus.paatos.linkkiMuutoshakemukseen}
@@ -258,6 +306,7 @@ export const MuutoshakemusPaatos = ({
 
   const projectEndDate = getProjectEndDate(avustushaku, muutoshakemukset, muutoshakemus)
   const currentTalousarvio = getTalousarvio(muutoshakemukset, hakemus?.talousarvio, muutoshakemus)
+  const hasYhteishankeChanges = (muutoshakemus['yhteishanke-osapuolimuutokset']?.length ?? 0) > 0
   return (
     <div className="muutoshakemus-paatos__content">
       <header className="muutoshakemus-paatos__header">
@@ -289,8 +338,17 @@ export const MuutoshakemusPaatos = ({
           paattymispaiva={paattymispaiva}
         />
       )}
-      {muutoshakemus['haen-sisaltomuutosta'] && paatos['paatos-status-sisaltomuutos'] && (
-        <SisaltomuutosPaatosSection status={paatos['paatos-status-sisaltomuutos']} />
+      {muutoshakemus['haen-sisaltomuutosta'] &&
+        paatos['paatos-status-sisaltomuutos'] &&
+        !hasYhteishankeChanges && (
+          <SisaltomuutosPaatosSection status={paatos['paatos-status-sisaltomuutos']} />
+        )}
+      {hasYhteishankeChanges && paatos['paatos-status-sisaltomuutos'] && (
+        <YhteishankePaatosSection
+          status={paatos['paatos-status-sisaltomuutos']}
+          organizations={muutoshakemus['yhteishanke-osapuolimuutokset']!}
+          perustelut={muutoshakemus['sisaltomuutos-perustelut']}
+        />
       )}
       <PerustelutSection reason={paatos.reason} />
       <HyvaksyjaSection

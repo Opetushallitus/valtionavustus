@@ -72,6 +72,9 @@
     (let [identity (authentication/get-request-identity request)]
       (when-not (can-make-muutospaatos? identity hakemus-id)
         (http/forbidden! {:error "Vain hankkeelle osoitettu valmistelija tai pääkäyttäjä voi tehdä muutospäätöksen"}))
+      (when (and (= "accepted_with_changes" (get-in paatos [:haen-sisaltomuutosta :status]))
+                 (seq (virkailija-db/get-muutoshakemus-yhteishanke-organizations muutoshakemus-id)))
+        (http/bad-request! {:error "Yhteishankkeen osapuolimuutoksia sisältävää muutoshakemusta ei voi hyväksyä muutettuna"}))
       (let [{:keys [avustushaku hakemus]} (get-hakemus-and-its-avustushaku avustushaku-id hakemus-id)
             roles (hakija-api/get-avustushaku-roles avustushaku-id)
             arvio (virkailija-db/get-arvio hakemus-id)

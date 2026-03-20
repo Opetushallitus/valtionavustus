@@ -362,7 +362,16 @@ export const MuutoshakemusForm = ({
         {muutoshakemus['haen-sisaltomuutosta'] && (
           <MuutoshakemusSection
             blueMiddleComponent={
-              <PaatosStatusRadioButtonGroup group="haen-sisaltomuutosta" f={f} />
+              <PaatosStatusRadioButtonGroup
+                group="haen-sisaltomuutosta"
+                f={f}
+                excludeStatuses={
+                  muutoshakemus['yhteishanke-osapuolimuutokset'] &&
+                  muutoshakemus['yhteishanke-osapuolimuutokset'].length > 0
+                    ? ['accepted_with_changes']
+                    : undefined
+                }
+              />
             }
           >
             <h2 className="muutoshakemus-section-title">Sisältö ja toteutustapa</h2>
