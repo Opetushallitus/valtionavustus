@@ -274,13 +274,14 @@
           (hakemus-copy/get-yhteishanke-organizations hakemus-id))))))
 
 (defn get-yhteishanke-organizations-for-muutoshakemus [user-key]
-  (when-let [hakemus (get-hakemus user-key)]
-    (let [answers (get-current-submission-answers hakemus)
-          is-yhteishanke (boolean (and answers
-                                       (= "yes" (form-util/find-answer-value answers "combined-effort"))))
-          organizations (or (get-or-create-yhteishanke-organizations hakemus) [])]
-      {:is-yhteishanke is-yhteishanke
-       :organizations organizations})))
+  (when (feature-enabled? :enableYhteishankeEmails)
+    (when-let [hakemus (get-hakemus user-key)]
+      (let [answers (get-current-submission-answers hakemus)
+            is-yhteishanke (boolean (and answers
+                                         (= "yes" (form-util/find-answer-value answers "combined-effort"))))
+            organizations (or (get-or-create-yhteishanke-organizations hakemus) [])]
+        {:is-yhteishanke is-yhteishanke
+         :organizations organizations}))))
 
 (defn get-yhteishanke-organization-emails [hakemus]
   (->> (get-or-create-yhteishanke-organizations hakemus)

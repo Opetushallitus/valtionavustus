@@ -304,7 +304,10 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
               </div>
             </div>
           )}
-          {state.isYhteishanke && <YhteishankeOrganizations f={f} />}
+          {state.isYhteishanke &&
+            state.environment?.['feature-flags']?.includes('enableYhteishankeEmails') && (
+              <YhteishankeOrganizations f={f} />
+            )}
           {!existingNewMuutoshakemus && state.avustushaku?.muutoshakukelpoinen && (
             <>
               <h2 className="muutoshakemus__sub-title">{t.applicationEdit.title}</h2>
@@ -320,25 +323,26 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
                     title={t.sisaltomuutos.title}
                   />
                 </MuutoshakemusFormSection>
-                {state.isYhteishanke && (
-                  <MuutoshakemusFormSection
-                    f={f}
-                    name="haenYhteishankkeenOsapuolimuutosta"
-                    title={t.contactPersonEdit.updateYhteishankeOrganizations}
-                  >
-                    <YhteishankeOrganizationChanges
+                {state.isYhteishanke &&
+                  state.environment?.['feature-flags']?.includes('enableYhteishankeEmails') && (
+                    <MuutoshakemusFormSection
                       f={f}
-                      originalOrganizations={state.yhteishankeOrganizations || []}
-                    />
-                    {!f.values.haenSisaltomuutosta && (
-                      <PerustelutTextArea
+                      name="haenYhteishankkeenOsapuolimuutosta"
+                      title={t.contactPersonEdit.updateYhteishankeOrganizations}
+                    >
+                      <YhteishankeOrganizationChanges
                         f={f}
-                        name="sisaltomuutosPerustelut"
-                        title={t.sisaltomuutos.title}
+                        originalOrganizations={state.yhteishankeOrganizations || []}
                       />
-                    )}
-                  </MuutoshakemusFormSection>
-                )}
+                      {!f.values.haenSisaltomuutosta && (
+                        <PerustelutTextArea
+                          f={f}
+                          name="sisaltomuutosPerustelut"
+                          title={t.sisaltomuutos.title}
+                        />
+                      )}
+                    </MuutoshakemusFormSection>
+                  )}
                 <MuutoshakemusFormSection
                   f={f}
                   name="haenKayttoajanPidennysta"
