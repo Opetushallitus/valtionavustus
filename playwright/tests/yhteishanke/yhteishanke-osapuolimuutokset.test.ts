@@ -46,6 +46,7 @@ async function submitMuutoshakemusAndExpectSuccess(page: Page) {
 test('yhteishanke osapuolimuutos updates recipients and applicant contact rows after accepted decision', async ({
   page,
   avustushakuID,
+  avustushakuName,
   submittedHakemusUrl,
   answers,
   projektikoodi,
@@ -126,6 +127,23 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     await paatosPage.navigateTo(avustushakuID)
     await paatosPage.sendPaatos()
     registerNumber = (await getHakemusTokenAndRegisterNumber(hakemusID))['register-number']
+  })
+
+  await test.step('verify yhteishanke paatos email body contains avustushaku name', async () => {
+    let emails: Awaited<ReturnType<typeof getAvustushakuEmails>> = []
+    await expect
+      .poll(
+        async () => {
+          emails = await getAvustushakuEmails(avustushakuID, 'yhteishanke-paatos')
+          return emails.length
+        },
+        { message: 'Waiting for yhteishanke paatos emails' }
+      )
+      .toBeGreaterThan(0)
+
+    for (const email of emails) {
+      expect(email.formatted).toContain(`Avustushakemus: ${avustushakuName}`)
+    }
   })
 
   await test.step('submit osapuolimuutos that removes one organization and adds a new one', async () => {
@@ -235,6 +253,7 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
 
     for (const email of relevantEmails) {
       expect(email['to-address']).toHaveLength(1)
+      expect(email.formatted).toContain(`Avustushakemus: ${avustushakuName}`)
     }
   })
 

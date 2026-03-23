@@ -1,6 +1,6 @@
 [SV] Bästa mottagare,
 
-Ansökan om understöd: {{ avustushaku }}
+Ansökan om understöd: {{ avustushaku-name }}
 
 Ansökningstid: {{ start-date }} kl. {{ start-time }} — {{ end-date }} kl. {{ end-time }}
 

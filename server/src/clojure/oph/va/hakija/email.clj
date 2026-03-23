@@ -318,7 +318,7 @@
               subject (format (get-in mail-titles [:yhteishanke-hakemus-submitted lang]) avustushaku-name)
               template (get-in mail-templates [:yhteishanke-hakemus-submitted lang])
               signature (email-signature-block lang)
-              msg {:avustushaku avustushaku-name
+              msg {:avustushaku-name avustushaku-name
                    :start-date start-date-string
                    :start-time start-time-string
                    :end-date end-date-string
@@ -331,7 +331,7 @@
              {:hakemus-id     (:id hakemus)
               :avustushaku-id avustushaku-id})))))))
 
-(defn send-yhteishanke-selvitys-submitted! [avustushaku-id selvitys-user-key selvitys-type lang hakemus hakemus-name register-number]
+(defn send-yhteishanke-selvitys-submitted! [avustushaku-id avustushaku selvitys-user-key selvitys-type lang hakemus hakemus-name register-number]
   (when (feature-enabled? :enableYhteishankeEmails)
     (let [emails (va-db/get-yhteishanke-organization-emails hakemus)]
       (when (not-empty emails)
@@ -339,11 +339,13 @@
         (let [type (if (= selvitys-type "loppuselvitys")
                      :yhteishanke-loppuselvitys-submitted
                      :yhteishanke-valiselvitys-submitted)
+              avustushaku-name (get-in avustushaku [:content :name lang])
               subject (format (get-in mail-titles [type lang]) register-number)
               template (get-in mail-templates [type lang])
               preview-url (selvitys-preview-url avustushaku-id selvitys-user-key lang selvitys-type)
               signature (email-signature-block lang)
-              msg {:hakemus-name hakemus-name
+              msg {:avustushaku-name avustushaku-name
+                   :project-name hakemus-name
                    :preview-url preview-url
                    :register-number register-number}
               body (render template msg signature)]

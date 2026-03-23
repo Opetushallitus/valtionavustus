@@ -1,6 +1,6 @@
 [SV] Bästa mottagare,
 
-Ansökan om understöd: {{ avustushaku }}
+Ansökan om understöd: {{ avustushaku-name }}
 
 [SV] Yhteishankkeen {{ register-number }} - {{ project-name }} osapuoli
 
