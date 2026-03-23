@@ -33,7 +33,9 @@ async function expectYhteishankeEmails(
   avustushakuID: number,
   emailType: string,
   expectedRecipients: string[],
-  subjectContains: string[]
+  subjectContains: string[],
+  bodyContains: string[],
+  expectedAttachmentTitle?: string
 ) {
   let emails: Awaited<ReturnType<typeof getAvustushakuEmails>> = []
   await expect
@@ -55,6 +57,12 @@ async function expectYhteishankeEmails(
     expect(email['to-address']).toHaveLength(1)
     for (const text of subjectContains) {
       expect(email.subject).toContain(text)
+    }
+    for (const text of bodyContains) {
+      expect(email.formatted).toContain(text)
+    }
+    if (expectedAttachmentTitle) {
+      expect(email['attachment-title']).toBe(expectedAttachmentTitle)
     }
   }
 }
@@ -122,7 +130,8 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
       ['eka@ensimmainen.fi', 'toka@toinen.fi'],
       [
         `Automaattinen viesti: Yhteishankkeen avustushakemus ${avustushakuName} on kirjattu vastaanotetuksi`,
-      ]
+      ],
+      [`Avustushakemus: ${avustushakuName}`]
     )
   })
 
@@ -176,7 +185,8 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
       ['eka@ensimmainen.fi', 'toka@toinen.fi'],
       [
         `Automaattinen viesti: Yhteishankkeen avustushakemus ${registerNumber} on käsitelty - Linkki päätösasiakirjaan`,
-      ]
+      ],
+      [`Avustushakemus: ${avustushakuName}`]
     )
   })
 
@@ -201,7 +211,8 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
       avustushakuID,
       'yhteishanke-valiselvitys-submitted',
       ['eka@ensimmainen.fi', 'toka@toinen.fi'],
-      [`Automaattinen viesti: Yhteishankkeen ${registerNumber} väliselvitys on vastaanotettu`]
+      [`Automaattinen viesti: Yhteishankkeen ${registerNumber} väliselvitys on vastaanotettu`],
+      [`Avustushakemus: ${avustushakuName}`]
     )
   })
 
@@ -214,7 +225,8 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
       avustushakuID,
       'yhteishanke-valiselvitys-processed',
       ['eka@ensimmainen.fi', 'toka@toinen.fi'],
-      [`Automaattinen viesti: Yhteishankkeen ${registerNumber} väliselvitys on käsitelty`]
+      [`Automaattinen viesti: Yhteishankkeen ${registerNumber} väliselvitys on käsitelty`],
+      [`Avustushakemus: ${avustushakuName}`]
     )
   })
 
@@ -268,7 +280,9 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
       avustushakuID,
       'yhteishanke-muutoshakemus-paatos',
       [updatedFirstContact.email, updatedSecondContact.email],
-      [`Automaattinen viesti: Yhteishankkeen ${registerNumber} muutoshakemus on käsitelty`]
+      [`Automaattinen viesti: Yhteishankkeen ${registerNumber} muutoshakemus on käsitelty`],
+      [`Avustushakemus: ${avustushakuName}`],
+      'Oikaisuvaatimusosoitus'
     )
   })
 
@@ -290,7 +304,8 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
       avustushakuID,
       'yhteishanke-loppuselvitys-submitted',
       [updatedFirstContact.email, updatedSecondContact.email],
-      [`Automaattinen viesti: Yhteishankkeen ${registerNumber} loppuselvitys on vastaanotettu`]
+      [`Automaattinen viesti: Yhteishankkeen ${registerNumber} loppuselvitys on vastaanotettu`],
+      [`Avustushakemus: ${avustushakuName}`]
     )
   })
 
@@ -304,7 +319,8 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
       avustushakuID,
       'yhteishanke-loppuselvitys-processed',
       [updatedFirstContact.email, updatedSecondContact.email],
-      [`Automaattinen viesti: Yhteishankkeen ${registerNumber} loppuselvitys on käsitelty`]
+      [`Automaattinen viesti: Yhteishankkeen ${registerNumber} loppuselvitys on käsitelty`],
+      [`Avustushakemus: ${avustushakuName}`]
     )
   })
 })
@@ -405,7 +421,8 @@ test('yhteishanke rejection: paatos-refuse emails sent separately per organizati
       ['eka@ensimmainen.fi', 'toka@toinen.fi'],
       [
         `Automaattinen viesti: ${registerNumber} avustushakemus on käsitelty - Linkki päätösasiakirjaan`,
-      ]
+      ],
+      [`Avustushakemus: ${avustushakuName}`]
     )
   })
 })
