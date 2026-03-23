@@ -235,6 +235,10 @@
               muutoshakemus-paatos-url (muutoshakemus-paatos-url (:user-key paatos) lang)
               oikaisuvaatimusosoitus (find-3a-oikaisuvaatimusosoitus-attachment)
               attachment-title (get (:langs oikaisuvaatimusosoitus) lang)
+              attachment-contents (read-oikaisuvaatimusosoitus-into-byte-array (:id oikaisuvaatimusosoitus) lang)
+              attachment {:title attachment-title
+                          :description attachment-title
+                          :contents attachment-contents}
               hanke-name (if (str/blank? (:project_name hakemus))
                            (:organization_name hakemus)
                            (:project_name hakemus))
@@ -250,7 +254,7 @@
               body (render template msg signature)]
           (doseq [recipient emails]
             (email/try-send-email!
-             (email/message lang :yhteishanke-muutoshakemus-paatos [recipient] subject body)
+             (email/message lang :yhteishanke-muutoshakemus-paatos [recipient] subject body {:attachment attachment})
              {:hakemus-id     (:id hakemus)
               :muutoshakemus-id muutoshakemus-id
               :avustushaku-id (:id avustushaku)})))))))

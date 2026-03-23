@@ -15,9 +15,9 @@ const emailSchema = yup.object().shape({
   subject: yup.string().optional(),
   'from-address': yup.string().optional(),
   'reply-to': yup.string().optional().nullable(),
-  'attachment-contents': yup.string().optional(),
-  'attachment-title': yup.string().optional(),
-  'attachment-description': yup.string().optional(),
+  'attachment-contents': yup.string().optional().nullable(),
+  'attachment-title': yup.string().optional().nullable(),
+  'attachment-description': yup.string().optional().nullable(),
 })
 
 export const emailsSchema = yup.array().of(emailSchema.required()).defined()

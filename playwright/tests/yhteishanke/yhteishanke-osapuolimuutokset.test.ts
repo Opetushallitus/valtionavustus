@@ -254,6 +254,7 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     for (const email of relevantEmails) {
       expect(email['to-address']).toHaveLength(1)
       expect(email.formatted).toContain(`Avustushakemus: ${avustushakuName}`)
+      expect(email['attachment-title']).toBe('Oikaisuvaatimusosoitus')
     }
   })
 
