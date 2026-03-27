@@ -137,7 +137,9 @@ export function HakijaAvustusHakuPage(page: Page) {
     const orgSelection = page.locator(`[data-test-id="organisation-selection-${lang}"]`)
     await expect(orgSelection).toBeVisible({ timeout: 5000 })
     await orgSelection.click()
-    await page.locator('[data-test-id="confirm-selection"]').click()
+    const confirmButton = page.locator('[data-test-id="confirm-selection"]')
+    await expect(confirmButton).toBeEnabled({ timeout: 10000 })
+    await confirmButton.click()
   }
 
   const fillSignatories = async (signatories: Signatory[]) => {
