@@ -10,7 +10,7 @@
             [ring.swagger.json-schema-dirty]  ; for schema.core/conditional
             [schema.core :as s]
             [oph.common.datetime :as datetime]
-            [oph.soresu.common.config :refer [config-simple-name]]
+            [oph.soresu.common.config :as config :refer [config-simple-name]]
             [oph.soresu.common.routes :refer :all]
             [oph.va.schema :refer :all]
             [oph.soresu.form.schema :refer :all]
@@ -22,7 +22,8 @@
             [oph.va.hakija.handlers :refer :all]
             [oph.va.hakija.selvitys.routes :as selvitys-routes]
             [oph.va.environment :as va-env]
-            [oph.common.organisation-service :as org])
+            [oph.common.organisation-service :as org]
+            [oph.common.tilastokeskus :as tilastokeskus])
   (:import (org.postgresql.util PSQLException)))
 
 (defn- on-healthcheck []
@@ -344,6 +345,17 @@
         (ok organisation-info)
         (not-found)))))
 
+(compojure-api/defroutes organisation-type-routes
+  "API for fetching organisation type from Tilastokeskus"
+
+  (compojure-api/GET "/" []
+    :query-params [organisation-id :- FinnishBusinessId]
+    (if (config/feature-enabled? :enableTilastokeskusOrganisationType)
+      (if-let [owner-type (tilastokeskus/hae-omistajatyyppi organisation-id)]
+        (ok {:owner-type owner-type})
+        (not-found))
+      (not-found))))
+
 (def api-config
   {:formats [:json-kw]
    :exceptions {:handlers {::compojure-ex/response-validation compojure-error-handler
@@ -373,6 +385,8 @@
 
   (compojure-api/context "/api/organisations" [] :tags ["organisations"] organisation-routes)
 
+  (compojure-api/context "/api/organisation-type" [] :tags ["organisation-type"] organisation-type-routes)
+
   (compojure-api/context "/api/v2/applications" [] :tags ["applications"] applications-routes)
 
   va-routes/config-routes
@@ -390,6 +404,8 @@
   (compojure-api/context "/api/avustushaku" [] :tags ["avustushaut"] avustushaku-routes)
 
   (compojure-api/context "/api/organisations" [] :tags ["organisations"] organisation-routes)
+
+  (compojure-api/context "/api/organisation-type" [] :tags ["organisation-type"] organisation-type-routes)
 
   (compojure-api/context "/api/v2/applications" [] :tags ["applications"] applications-routes)
 

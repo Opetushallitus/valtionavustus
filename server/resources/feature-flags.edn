@@ -1,3 +1,4 @@
 {; available environments: [:local :test :aws-dev :aws-qa :aws-prod ]
  :enableYhteishankeEmails [:local :test :aws-dev :aws-qa]
+ :enableTilastokeskusOrganisationType [:local :test :aws-dev :aws-qa]
 }

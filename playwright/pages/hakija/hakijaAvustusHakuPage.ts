@@ -185,13 +185,16 @@ export function HakijaAvustusHakuPage(page: Page) {
       await fillTrustedContact(answers.trustedContact)
     }
 
-    await page
-      .getByText(
-        lang === 'fi'
-          ? 'Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko'
-          : 'Kommun/samkommun, kommunalt ägda bolag, kyrkan'
-      )
-      .click()
+    const kuntaRadio = page.locator('#radioButton-0\\.radio\\.0')
+    if (!(await kuntaRadio.isChecked())) {
+      await page
+        .getByText(
+          lang === 'fi'
+            ? 'Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko'
+            : 'Kommun/samkommun, kommunalt ägda bolag, kyrkan'
+        )
+        .click()
+    }
 
     await page.click("[id='koodistoField-1_input']")
     await selectMaakuntaFromDropdown(lang === 'fi' ? 'Kainuu' : 'Åland')
@@ -323,9 +326,12 @@ export function HakijaAvustusHakuPage(page: Page) {
     await page.fill('#textField-2', 'Hakaniemenranta 6')
     await page.fill('#textField-3', '00531')
     await page.fill('#textField-4', 'Helsinki')
-    await page
-      .locator(`label:has-text("Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko")`)
-      .click()
+    const kuntaRadioKoulutusosio = page.locator('#radioButton-0\\.radio\\.0')
+    if (!(await kuntaRadioKoulutusosio.isChecked())) {
+      await page
+        .locator(`label:has-text("Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko")`)
+        .click()
+    }
     await page.click("[id='koodistoField-1_input']")
     await selectMaakuntaFromDropdown('Kainuu')
     await page.fill("[id='signatories-fieldset-1.name']", 'Erkki Esimerkki')
@@ -416,13 +422,16 @@ export function HakijaAvustusHakuPage(page: Page) {
     await startAndFillApplication(answers, avustushakuID, businessId)
     await page.fill("[id='signatories-fieldset-1.name']", 'Erkki Esimerkki')
     await page.fill("[id='signatories-fieldset-1.email']", 'erkki.esimerkki@example.com')
-    await page
-      .getByText(
-        lang === 'fi'
-          ? 'Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko'
-          : 'Kommun/samkommun, kommunalt ägda bolag, kyrkan'
-      )
-      .click()
+    const kuntaRadioBudjetti = page.locator('#radioButton-0\\.radio\\.0')
+    if (!(await kuntaRadioBudjetti.isChecked())) {
+      await page
+        .getByText(
+          lang === 'fi'
+            ? 'Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko'
+            : 'Kommun/samkommun, kommunalt ägda bolag, kyrkan'
+        )
+        .click()
+    }
     await page.click("[id='koodistoField-1_input']")
     await selectMaakuntaFromDropdown(lang === 'fi' ? 'Kainuu' : 'Åland')
     await locators.form.bank.iban.fill('FI95 6682 9530 0087 65')

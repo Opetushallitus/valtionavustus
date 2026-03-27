@@ -25,6 +25,11 @@ defaultValues(
     )
     await page.goto(hakemusUrl)
 
+    // Stub the owner-type API so it doesn't auto-fill omistajatyyppi
+    await page.route('**/api/organisation-type/**', (route) => {
+      route.fulfill({ status: 404, body: '' })
+    })
+
     // Fill in business ID to dismiss the modal overlay
     await hakijaAvustusHakuPage.fillInBusinessId(TEST_Y_TUNNUS)
 

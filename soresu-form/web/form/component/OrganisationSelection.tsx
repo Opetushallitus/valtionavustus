@@ -9,6 +9,7 @@ import SyntaxValidator from '../SyntaxValidator'
 import { Field, Language, LegacyTranslationDict } from 'soresu-form/web/va/types'
 import { BaseStateLoopState } from 'soresu-form/web/form/types/Form'
 import HttpUtil from 'soresu-form/web/HttpUtil'
+import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 import './OrganisationSelection.css'
 
@@ -39,6 +40,12 @@ interface FormController {
   componentOnChangeListener: (field: Field, value: string) => void
 }
 
+interface OwnerTypeLookup {
+  ytunnus: string
+  ownerType: string | null
+  status: 'loading' | 'done' | 'error'
+}
+
 interface SelectedOrganisation extends OrganizationResponse {
   lang: Language
 }
@@ -55,6 +62,7 @@ export function OrganisationSelection({ state, controller }: OrganisationSelecti
   )
   const [finnishOrganization, setFinnishOrganization] = useState<OrganizationResponse | null>(null)
   const [swedishOrganization, setSwedishOrganization] = useState<OrganizationResponse | null>(null)
+  const [ownerTypeLookup, setOwnerTypeLookup] = useState<OwnerTypeLookup | null>(null)
 
   const lang = state.configuration.lang
   const translations = state.configuration.translations.misc
@@ -64,6 +72,17 @@ export function OrganisationSelection({ state, controller }: OrganisationSelecti
   const handleConfirm = () => {
     if (selectedOrganisation) {
       fillFormFields(selectedOrganisation)
+      if (
+        ownerTypeLookup &&
+        ownerTypeLookup.status === 'done' &&
+        ownerTypeLookup.ownerType &&
+        ownerTypeLookup.ytunnus === selectedOrganisation['organisation-id']
+      ) {
+        const radioButtonField = FormUtil.findField(formContent, 'radioButton-0')
+        if (radioButtonField) {
+          controller.componentOnChangeListener(radioButtonField, ownerTypeLookup.ownerType)
+        }
+      }
       setModalIsOpen(false)
     }
   }
@@ -111,6 +130,8 @@ export function OrganisationSelection({ state, controller }: OrganisationSelecti
           setFinnishOrganization={setFinnishOrganization}
           setSwedishOrganization={setSwedishOrganization}
           setSelectedOrganisation={setSelectedOrganisation}
+          setOwnerTypeLookup={setOwnerTypeLookup}
+          environment={state.configuration.environment}
         />
         {(finnishOrganization || swedishOrganization) && (
           <Selector
@@ -121,6 +142,7 @@ export function OrganisationSelection({ state, controller }: OrganisationSelecti
             setSelectedOrganisation={setSelectedOrganisation}
             handleConfirm={handleConfirm}
             selectedOrganisation={selectedOrganisation}
+            ownerTypeLookupLoading={ownerTypeLookup?.status === 'loading'}
           />
         )}
       </ModalDialog>
@@ -135,6 +157,8 @@ interface BusinessIdSearchProps {
   setFinnishOrganization: (org: OrganizationResponse | null) => void
   setSwedishOrganization: (org: OrganizationResponse | null) => void
   setSelectedOrganisation: (organisation: SelectedOrganisation | null) => void
+  setOwnerTypeLookup: React.Dispatch<React.SetStateAction<OwnerTypeLookup | null>>
+  environment?: EnvironmentApiResponse
 }
 
 function BusinessIdSearch({
@@ -144,6 +168,8 @@ function BusinessIdSearch({
   setFinnishOrganization,
   setSwedishOrganization,
   setSelectedOrganisation,
+  setOwnerTypeLookup,
+  environment,
 }: BusinessIdSearchProps) {
   const [isDisabled, setIsDisabled] = useState(true)
   const [error, setError] = useState('error')
@@ -185,6 +211,25 @@ function BusinessIdSearch({
           setIncorrectBusinessId(false)
         }
       })
+
+    if (environment?.['feature-flags']?.includes('enableTilastokeskusOrganisationType')) {
+      setOwnerTypeLookup({ ytunnus: id, ownerType: null, status: 'loading' })
+      HttpUtil.get<{ 'owner-type': string }>(`/api/organisation-type/?organisation-id=${id}`)
+        .then((response) => {
+          setOwnerTypeLookup((prev) =>
+            prev?.ytunnus === id
+              ? { ytunnus: id, ownerType: response['owner-type'], status: 'done' }
+              : prev
+          )
+        })
+        .catch(() => {
+          setOwnerTypeLookup((prev) =>
+            prev?.ytunnus === id ? { ytunnus: id, ownerType: null, status: 'error' } : prev
+          )
+        })
+    } else {
+      setOwnerTypeLookup(null)
+    }
   }
 
   // events from inputting the organisational id (y-tunnus)
@@ -286,6 +331,7 @@ type SelectorProps = {
   setSelectedOrganisation: (organisation: SelectedOrganisation | null) => void
   selectedOrganisation: SelectedOrganisation | null
   handleConfirm: () => void
+  ownerTypeLookupLoading?: boolean
 }
 
 function Selector({
@@ -296,6 +342,7 @@ function Selector({
   setSelectedOrganisation,
   selectedOrganisation,
   handleConfirm,
+  ownerTypeLookupLoading,
 }: SelectorProps) {
   const organisationInformationIsSameForBothLang =
     finnishOrganization &&
@@ -343,7 +390,7 @@ function Selector({
           className="get-business-id"
           data-test-id="confirm-selection"
           onClick={handleConfirm}
-          disabled={!selectedOrganisation}
+          disabled={!selectedOrganisation || ownerTypeLookupLoading}
           type="button"
         >
           <LocalizedString translations={translations} translationKey="confirm" lang={lang} />
