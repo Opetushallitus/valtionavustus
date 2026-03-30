@@ -43,6 +43,10 @@ JotpaTest(
     })
 
     await test.step('Hakemussivulla', async () => {
+      // Stub owner-type API so the radio button stays editable for Jotpa styling test
+      await page.route('**/api/organisation-type/**', (route) => {
+        route.fulfill({ status: 404, body: '' })
+      })
       hakemusUrl = await hakijaAvustusHakuPage.startApplication(avustushakuID, buffyEmail)
       await page.goto(hakemusUrl)
       await hakijaAvustusHakuPage.fillApplication(answers, TEST_Y_TUNNUS)
