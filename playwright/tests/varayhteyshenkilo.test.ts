@@ -100,6 +100,10 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
     testInfo.setTimeout(testInfo.timeout + 40_000)
     const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     await test.step('fill hakemus without varahenkilö', async () => {
+      // Stub owner-type API so the radio button stays editable for manual selection
+      await page.route('**/api/organisation-type/**', (route) => {
+        route.fulfill({ status: 404, body: '' })
+      })
       await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
       await hakijaAvustusHakuPage.startAndFillApplication(answers, avustushakuID)
 
