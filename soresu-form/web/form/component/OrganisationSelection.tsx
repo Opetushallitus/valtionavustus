@@ -81,6 +81,7 @@ export function OrganisationSelection({ state, controller }: OrganisationSelecti
         const radioButtonField = FormUtil.findField(formContent, 'radioButton-0')
         if (radioButtonField) {
           controller.componentOnChangeListener(radioButtonField, ownerTypeLookup.ownerType)
+          radioButtonField.forceDisabled = true
         }
       }
       setModalIsOpen(false)

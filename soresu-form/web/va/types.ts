@@ -549,6 +549,7 @@ export interface Field {
   label?: LocalizedText
   helpText?: LocalizedText
   text?: LocalizedText
+  forceDisabled?: boolean
 }
 
 export interface Liite {

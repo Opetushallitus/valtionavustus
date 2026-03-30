@@ -103,8 +103,9 @@ test('omistajatyyppi is auto-filled as kunta_kirkko for a municipality', async (
     await selectOrganisationAndConfirm(page)
   })
 
-  await test.step('verify omistajatyyppi radio button is auto-selected', async () => {
+  await test.step('verify omistajatyyppi radio button is auto-selected and disabled', async () => {
     await expect(page.locator('input[type="radio"][value="kunta_kirkko"]')).toBeChecked()
+    await expect(page.locator('input[type="radio"][value="kunta_kirkko"]')).toBeDisabled()
   })
 })
 
@@ -128,8 +129,9 @@ test('omistajatyyppi is auto-filled as valtio for a state agency', async ({
     await selectOrganisationAndConfirm(page)
   })
 
-  await test.step('verify omistajatyyppi radio button is auto-selected', async () => {
+  await test.step('verify omistajatyyppi radio button is auto-selected and disabled', async () => {
     await expect(page.locator('input[type="radio"][value="valtio"]')).toBeChecked()
+    await expect(page.locator('input[type="radio"][value="valtio"]')).toBeDisabled()
   })
 })
 
