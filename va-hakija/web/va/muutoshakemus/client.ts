@@ -135,10 +135,11 @@ export async function postMuutoshakemus(props: MuutoshakemusProps) {
     })
 
     if (!response.ok) {
-      throw new Error(`Request failed with status ${response.status}`)
+      const errorBody = await response.text()
+      throw new Error(`Request failed with status ${response.status}: ${errorBody}`)
     }
 
-    return response
+    await response.json()
   } finally {
     clearTimeout(timeoutId)
   }
