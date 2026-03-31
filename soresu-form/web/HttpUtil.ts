@@ -1,4 +1,7 @@
-async function fetchAndParse(url: string, init?: RequestInit): Promise<{ data: any; response: Response }> {
+async function fetchAndParse(
+  url: string,
+  init?: RequestInit
+): Promise<{ data: any; response: Response }> {
   const response = await fetch(url, init)
   let data: any
   const text = await response.text()
@@ -48,7 +51,11 @@ export default class HttpUtil {
       ...options,
       method: 'PUT',
       headers,
-      body: isFormData ? requestData : requestData !== undefined ? JSON.stringify(requestData) : undefined,
+      body: isFormData
+        ? requestData
+        : requestData !== undefined
+          ? JSON.stringify(requestData)
+          : undefined,
     })
     return data
   }

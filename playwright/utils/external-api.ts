@@ -11,9 +11,7 @@ type ExternalHakemus = {
 }
 
 export const getAvustushautForYear = async (year: number) => {
-  const res = await fetch(
-    `${VIRKAILIJA_URL}/api/v2/external/avustushaut/?year=${year}`
-  )
+  const res = await fetch(`${VIRKAILIJA_URL}/api/v2/external/avustushaut/?year=${year}`)
   if (!res.ok) {
     throw new Error(`Request failed with status ${res.status}`)
   }
@@ -21,9 +19,7 @@ export const getAvustushautForYear = async (year: number) => {
 }
 
 export const getHakemuksetForAvustushaku = async (id: number) => {
-  const res = await fetch(
-    `${VIRKAILIJA_URL}/api/v2/external/avustushaku/${id}/hakemukset`
-  )
+  const res = await fetch(`${VIRKAILIJA_URL}/api/v2/external/avustushaku/${id}/hakemukset`)
   if (!res.ok) {
     throw new Error(`Request failed with status ${res.status}`)
   }
