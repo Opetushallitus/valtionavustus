@@ -1,11 +1,9 @@
-import axios from 'axios'
 import moment from 'moment'
 
 import { FormValues } from 'soresu-form/web/va/types/muutoshakemus'
 import { isoFormat } from 'soresu-form/web/va/i18n/dateformat'
 
 const timeout = 10000 // 10 seconds
-const client = axios.create({ timeout })
 
 type MuutoshakemusProps = {
   userKey: string
@@ -107,23 +105,41 @@ export async function postMuutoshakemus(props: MuutoshakemusProps) {
       )
     : undefined
 
-  return client.post(url, {
-    ...jatkoaika,
-    ...talousarvio,
-    ...sisaltomuutos,
-    yhteishankkeenOsapuolet,
-    yhteishankkeenOsapuolimuutokset,
-    yhteyshenkilo: {
-      name: values.name,
-      email: values.email,
-      phone: values.phone,
-    },
-    varayhteyshenkilo: values.hasTrustedContact
-      ? {
-          name: values.trustedContactName,
-          email: values.trustedContactEmail,
-          phone: values.trustedContactPhone,
-        }
-      : undefined,
-  })
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), timeout)
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...jatkoaika,
+        ...talousarvio,
+        ...sisaltomuutos,
+        yhteishankkeenOsapuolet,
+        yhteishankkeenOsapuolimuutokset,
+        yhteyshenkilo: {
+          name: values.name,
+          email: values.email,
+          phone: values.phone,
+        },
+        varayhteyshenkilo: values.hasTrustedContact
+          ? {
+              name: values.trustedContactName,
+              email: values.trustedContactEmail,
+              phone: values.trustedContactPhone,
+            }
+          : undefined,
+      }),
+      signal: controller.signal,
+    })
+
+    if (!response.ok) {
+      throw new Error(`Request failed with status ${response.status}`)
+    }
+
+    return response
+  } finally {
+    clearTimeout(timeoutId)
+  }
 }

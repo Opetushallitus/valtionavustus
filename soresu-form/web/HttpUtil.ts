@@ -1,23 +1,56 @@
-import axios, { AxiosResponse } from 'axios'
-
-const errorHasResponse = (error: any) => !!error.response && typeof error.response === 'object'
+async function fetchAndParse(url: string, init?: RequestInit): Promise<{ data: any; response: Response }> {
+  const response = await fetch(url, init)
+  let data: any
+  const text = await response.text()
+  try {
+    data = JSON.parse(text)
+  } catch {
+    data = text
+  }
+  if (!response.ok) {
+    throw new HttpResponseError(`Request failed with status ${response.status}`, {
+      status: response.status,
+      statusText: response.statusText,
+      data,
+    })
+  }
+  return { data, response }
+}
 
 export default class HttpUtil {
-  static get<T = any>(url: string) {
-    return HttpUtil.handleResponse(axios.get(url)) as Promise<T>
+  static async get<T = any>(url: string): Promise<T> {
+    const { data } = await fetchAndParse(url)
+    return data as T
   }
 
-  static post(url: string, jsonData?: any, authToken?: string) {
-    const authHeader = authToken ? { Authorization: `Token ${authToken}` } : undefined
-    return HttpUtil.handleResponse(
-      axios.post(url, jsonData, {
-        headers: { ...authHeader },
-      })
-    )
+  static async post(url: string, jsonData?: any, authToken?: string) {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    }
+    if (authToken) {
+      headers['Authorization'] = `Token ${authToken}`
+    }
+    const { data } = await fetchAndParse(url, {
+      method: 'POST',
+      headers,
+      body: jsonData !== undefined ? JSON.stringify(jsonData) : undefined,
+    })
+    return data
   }
 
-  static put(url: string, requestData?: any, options?: any) {
-    return HttpUtil.handleResponse(axios.put(url, requestData, options))
+  static async put(url: string, requestData?: any, options?: RequestInit) {
+    const isFormData = requestData instanceof FormData
+    const headers: Record<string, string> = {
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+      ...((options?.headers as Record<string, string>) ?? {}),
+    }
+    const { data } = await fetchAndParse(url, {
+      ...options,
+      method: 'PUT',
+      headers,
+      body: isFormData ? requestData : requestData !== undefined ? JSON.stringify(requestData) : undefined,
+    })
+    return data
   }
 
   static putFile(url: string, file: string | Blob) {
@@ -26,38 +59,22 @@ export default class HttpUtil {
     return HttpUtil.put(url, formData)
   }
 
-  static delete(url: string) {
-    return HttpUtil.handleResponse(axios.delete(url))
-  }
-
-  static handleResponse(httpCall: Promise<AxiosResponse<any>>) {
-    return Promise.resolve(httpCall)
-      .then((response) => response.data)
-      .catch((error) => {
-        if (errorHasResponse(error)) {
-          const res = error.response
-          throw new HttpResponseError(error.toString(), {
-            status: res.status,
-            statusText: res.statusText,
-            data: res.data,
-          })
-        } else {
-          throw error
-        }
-      })
+  static async delete(url: string) {
+    const { data } = await fetchAndParse(url, { method: 'DELETE' })
+    return data
   }
 }
 
-interface Response {
+interface HttpResponse {
   status: number
   statusText: string
   data: any
 }
 
 export class HttpResponseError extends Error {
-  response: Response
+  response: HttpResponse
 
-  constructor(message: string, response: Response) {
+  constructor(message: string, response: HttpResponse) {
     super(message)
     this.message = message
     this.name = 'HttpResponseError'

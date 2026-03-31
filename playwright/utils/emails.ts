@@ -1,4 +1,3 @@
-import axios from 'axios'
 import * as yup from 'yup'
 import { VIRKAILIJA_URL } from './constants'
 import { log, expectToBeDefined } from './util'
@@ -22,36 +21,41 @@ const emailSchema = yup.object().shape({
 
 export const emailsSchema = yup.array().of(emailSchema.required()).defined()
 
+async function fetchJson(url: string): Promise<any> {
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error(`Request to ${url} failed with status ${response.status}`)
+  }
+  return response.json()
+}
+
 const getEmailsForEmailType = (emailType: string) => (): Promise<Email[]> =>
-  axios
-    .get(`${VIRKAILIJA_URL}/api/test/email/${emailType}`)
-    .then((r) => {
-      console.log(`getEmails(${emailType})`, r.data)
-      return r
+  fetchJson(`${VIRKAILIJA_URL}/api/test/email/${emailType}`)
+    .then((data) => {
+      console.log(`getEmails(${emailType})`, data)
+      return data
     })
-    .then((r) => emailsSchema.validate(r.data))
+    .then((data) => emailsSchema.validate(data))
 
 const getEmails =
   (emailType: string) =>
   (hakemusID: number): Promise<Email[]> =>
-    axios
-      .get(`${VIRKAILIJA_URL}/api/test/hakemus/${hakemusID}/email/${emailType}`)
-      .then((r) => {
-        console.log(`getEmails(${emailType})`, r.data)
-        return r
+    fetchJson(`${VIRKAILIJA_URL}/api/test/hakemus/${hakemusID}/email/${emailType}`)
+      .then((data) => {
+        console.log(`getEmails(${emailType})`, data)
+        return data
       })
-      .then((r) => emailsSchema.validate(r.data))
+      .then((data) => emailsSchema.validate(data))
 
 const getEmailsWithAvustushaku =
   (emailType: string) =>
   (avustushakuID: number): Promise<Email[]> =>
-    axios
-      .get(`${VIRKAILIJA_URL}/api/test/avustushaku/${avustushakuID}/email/${emailType}`)
-      .then((r) => {
-        console.log(`getEmails(${emailType})`, r.data)
-        return r
+    fetchJson(`${VIRKAILIJA_URL}/api/test/avustushaku/${avustushakuID}/email/${emailType}`)
+      .then((data) => {
+        console.log(`getEmails(${emailType})`, data)
+        return data
       })
-      .then((r) => emailsSchema.validate(r.data))
+      .then((data) => emailsSchema.validate(data))
 
 // Emails sent to hakija
 export const getLoppuselvitysMuistutusviestiEmails = getEmails('loppuselvitys-muistutus')
@@ -195,9 +199,10 @@ export async function getAvustushakuEmails(
   avustushakuID: number,
   emailType: string
 ): Promise<Email[]> {
-  return await axios
-    .get(`${VIRKAILIJA_URL}/api/test/avustushaku/${avustushakuID}/email/${emailType}`)
-    .then((r) => emailsSchema.validate(r.data))
+  const data = await fetchJson(
+    `${VIRKAILIJA_URL}/api/test/avustushaku/${avustushakuID}/email/${emailType}`
+  )
+  return emailsSchema.validate(data)
 }
 
 export async function pollUntilNewHakemusEmailArrives(
@@ -310,9 +315,10 @@ export async function getHakemusTokenAndRegisterNumber(
       'register-number': yup.string().required(),
     })
 
-  return await axios
-    .get(`${VIRKAILIJA_URL}/api/test/hakemus/${hakemusId}/token-and-register-number`)
-    .then((r) => applicationGeneratedValuesSchema.validate(r.data))
+  const data = await fetchJson(
+    `${VIRKAILIJA_URL}/api/test/hakemus/${hakemusId}/token-and-register-number`
+  )
+  return applicationGeneratedValuesSchema.validate(data)
 }
 
 export function lastOrFail<T>(xs: ReadonlyArray<T>): T {
