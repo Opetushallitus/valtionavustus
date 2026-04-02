@@ -145,7 +145,8 @@
                           (s/optional-key :operational-unit-code) (s/maybe s/Str)
                           :allow_visibility_in_external_system s/Bool
                           :arvioitu_maksupaiva (s/maybe java.time.LocalDate)
-                          :muutoshakukelpoinen s/Bool})
+                          :muutoshakukelpoinen s/Bool
+                          :loppuselvitys-otantatarkastus-enabled s/Bool})
 
 (s/defschema ListingAvustushaku
   "Avustushaku with extra details for avustushaku listing"

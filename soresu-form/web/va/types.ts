@@ -298,6 +298,7 @@ export interface Hakemus {
   'loppuselvitys-information-verification'?: string
   'loppuselvitys-taloustarkastanut-name'?: string
   'loppuselvitys-taloustarkastettu-at'?: string
+  'loppuselvitys-otanta-polku'?: string
   'loppuselvitys-change-request-pending'?: boolean
   'loppuselvitys-change-request-sent'?: boolean
   project?: VaCodeValue
@@ -426,6 +427,7 @@ export type Avustushaku = {
   'hallinnoiavustuksia-register-number': string | null
   status: AvustushakuStatus
   allow_visibility_in_external_system: boolean
+  'loppuselvitys-otantatarkastus-enabled': boolean
   arvioitu_maksupaiva?: string
 }
 

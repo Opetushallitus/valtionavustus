@@ -195,6 +195,7 @@
                       :loppuselvitys-taloustarkastanut-name (s/maybe s/Str)
                       :loppuselvitys-taloustarkastettu-at (s/maybe s/Inst)
                       :loppuselvitys-information-verification (s/maybe s/Str)
+                      :loppuselvitys-otanta-polku (s/maybe s/Str)
                       :selvitys-email (s/maybe s/Str)
                       :answers [soresu-schema/Answer]
                       (s/optional-key :loppuselvitys-change-request-pending) (s/maybe s/Bool)

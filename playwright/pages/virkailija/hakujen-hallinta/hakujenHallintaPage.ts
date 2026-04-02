@@ -340,10 +340,14 @@ export class HakujenHallintaPage {
     return { avustushakuID }
   }
 
-  async createPublishedAvustushaku(hakuProps: HakuProps, hakulomake: string) {
+  async createPublishedAvustushaku(hakuProps: HakuProps, hakulomake: string, enableOtantatarkastus?: boolean) {
     return await test.step('Create avustushaku', async () => {
       const { avustushakuID } = await this.createHakuWithLomakeJson(hakulomake, hakuProps)
       const haunTiedotPage = await this.commonHakujenHallinta.switchToHaunTiedotTab()
+      
+      if (enableOtantatarkastus) {
+        await this.toggleOtantatarkastus(true)
+      }
       await haunTiedotPage.publishAvustushaku()
       return avustushakuID
     })
@@ -357,6 +361,13 @@ export class HakujenHallintaPage {
   }
   async toggleMuutoshakukelpoisuus(value: boolean) {
     const radioId = value ? 'muutoshakukelpoinen_true' : 'muutoshakukelpoinen_false'
+    await this.page.click(`label[for="${radioId}"]`)
+    await this.waitForSave()
+  }
+  async toggleOtantatarkastus(value: boolean) {
+    const radioId = value
+      ? 'loppuselvitys_otantatarkastus_enabled_true'
+      : 'loppuselvitys_otantatarkastus_enabled_false'
     await this.page.click(`label[for="${radioId}"]`)
     await this.waitForSave()
   }

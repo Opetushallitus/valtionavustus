@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
 
-import { Hakemus, SelvitysEmail } from 'soresu-form/web/va/types'
+import { Avustushaku, Hakemus, SelvitysEmail } from 'soresu-form/web/va/types'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { Language, translations } from 'soresu-form/web/va/i18n/translations'
 
@@ -24,6 +24,31 @@ import {
 import { initialRecipientEmails } from '../emailRecipients'
 import { VerificationBox } from './VerificationBox'
 import { UserInfo } from '../../../types'
+
+const ASIATARKASTUS_CHECKLIST_ITEMS = [
+  {
+    key: 'avustus-kaytetty-paatoksen-mukaisesti' as const,
+    label: 'Avustus on käytetty kokonaan avustuspäätöksen mukaisesti',
+  },
+  {
+    key: 'omarahoitus-kaytetty' as const,
+    label: 'Omarahoitusta on käytetty vähintään avustuspäätöksen osoittama määrä?',
+  },
+  { key: 'avustus-alle-100k' as const, label: 'Avustus on alle 100 000 euroa' },
+  {
+    key: 'ehtojen-mukaisesti-ei-epaselvyyksia' as const,
+    label:
+      'Avustus on käytetty ehtojen mukaisesti eikä sen asiatarkastuksessa ole havaittu epäselvyyksiä',
+  },
+  {
+    key: 'kirjanpidon-paakirja-liitetty' as const,
+    label:
+      'Loppuselvitykseen on liitetty kustannuspaikkakohtainen kirjanpidon pääkirja (ml. yhteishankkeen osapuolten pääkirjat, mikäli kyse on yhteishankkeesta) ja siinä esitetyt kustannukset ovat syntyneet hyväksyttynä käyttöaikana?',
+  },
+] as const
+
+type ChecklistKey = (typeof ASIATARKASTUS_CHECKLIST_ITEMS)[number]['key']
+type ChecklistState = Record<ChecklistKey, boolean>
 
 function createInitialTaydennyspyyntoEmail(
   hakemus: Hakemus,
@@ -61,26 +86,94 @@ function createInitialTaydennyspyyntoEmail(
 }
 
 export function Asiatarkastus({ disabled }: { disabled: boolean }) {
-  const dispatch = useHakemustenArviointiDispatch()
   const hakemus = useHakemus()
+  const dispatch = useHakemustenArviointiDispatch()
+
   const avustushakuId = useAvustushakuId()
+  const userInfo = useUserInfo()
+  const avustushakuFromStore = useHakemustenArviointiSelector(
+    (s) => getLoadedAvustushakuData(s.arviointi).hakuData.avustushaku
+  )
   const [message, setMessage] = useState<string>()
+  const [checklist, setChecklist] = useState<ChecklistState>({
+    'avustus-kaytetty-paatoksen-mukaisesti': false,
+    'omarahoitus-kaytetty': false,
+    'avustus-alle-100k': false,
+    'ehtojen-mukaisesti-ei-epaselvyyksia': false,
+    'kirjanpidon-paakirja-liitetty': false,
+  })
+  const [otantaPolku, setOtantaPolku] = useState<string | undefined>(
+    hakemus['loppuselvitys-otanta-polku'] ?? undefined
+  )
+
   const verifiedBy = hakemus['loppuselvitys-information-verified-by']
   const verifiedAt = hakemus['loppuselvitys-information-verified-at']
   const verification = hakemus['loppuselvitys-information-verification']
+  const isOtantatarkastus = avustushakuFromStore['loppuselvitys-otantatarkastus-enabled'] ?? false
+
+  const lang = hakemus.language
+  const loppuselvitys = hakemus.selvitys?.loppuselvitys
+  const senderName = userInfo['first-name'].split(' ')[0] + ' ' + userInfo['surname']
+  const projectName = loppuselvitys?.['project-name'] || hakemus['project-name'] || ''
+  const registerNumber = loppuselvitys?.['register-number'] || ''
+
+  const [approvalEmail, setApprovalEmail] = useState<Email>(() => ({
+    lang,
+    subject: createEmailSubject(registerNumber)[lang],
+    content: createEmailContent(
+      projectName,
+      avustushakuFromStore.content.name[lang],
+      senderName,
+      userInfo.email
+    )[lang],
+    receivers: initialRecipientEmails(hakemus, hakemus.normalizedData),
+  }))
+
+  const allChecked = Object.values(checklist).every(Boolean)
+  const [approvalError, setApprovalError] = useState<string>()
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     e.stopPropagation()
-    await HttpUtil.post(
-      `/api/avustushaku/${avustushakuId}/hakemus/${hakemus.id}/loppuselvitys/verify-information`,
-      { message }
-    )
-    dispatch(refreshHakemus({ hakemusId: hakemus.id })).unwrap()
+    setApprovalError(undefined)
+    const body: {
+      message: string | undefined
+      checklist?: ChecklistState
+      email?: { to: string[]; subject: string; message: string; 'selvitys-hakemus-id': number }
+    } = { message }
+    if (isOtantatarkastus) {
+      body.checklist = checklist
+      if (allChecked) {
+        body.email = {
+          to: approvalEmail.receivers,
+          subject: approvalEmail.subject,
+          message: approvalEmail.content,
+          'selvitys-hakemus-id': loppuselvitys!.id,
+        }
+      }
+    }
+    let response
+    try {
+      response = await HttpUtil.post(
+        `/api/avustushaku/${avustushakuId}/hakemus/${hakemus.id}/loppuselvitys/verify-information`,
+        body
+      )
+    } catch {
+      setApprovalError('Asiatarkastuksen hyväksyminen epäonnistui')
+      return
+    }
+
+    dispatch(refreshHakemus({ hakemusId: hakemus.id }))
+    setOtantaPolku(response['otanta-polku'])
     setMessage('')
   }
+
   const hakemusLoppuselvitysNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
   const disableAcceptButton = hakemusLoppuselvitysNotSubmitted || !message || disabled
   const asiatarkastusVerified = verifiedAt && verifiedBy
+  const isOtannanUlkopuolella = isOtantatarkastus && otantaPolku === 'otannan-ulkopuolella'
+  const isAccepted = hakemus['status-loppuselvitys'] === 'accepted'
+  const selvitysEmail = loppuselvitys?.['selvitys-email']
   return (
     <>
       <LoppuselvitysTarkastus
@@ -111,7 +204,24 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
         }
       />
       {!asiatarkastusVerified && (
-        <form onSubmit={onSubmit}>
+        <>
+          {isOtantatarkastus && (
+            <div className="verification-checklist" data-test-id="asiatarkastus-checklist">
+              {ASIATARKASTUS_CHECKLIST_ITEMS.map((item) => (
+                <label key={item.key} className="verification-checklist-item">
+                  <input
+                    type="checkbox"
+                    checked={checklist[item.key]}
+                    disabled={disabled}
+                    onChange={(e) =>
+                      setChecklist((prev) => ({ ...prev, [item.key]: e.target.checked }))
+                    }
+                  />
+                  <span>{item.label}</span>
+                </label>
+              ))}
+            </div>
+          )}
           <div className="verification-comment">
             <textarea
               onChange={(e) => setMessage(e.target.value)}
@@ -121,12 +231,61 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
               placeholder="Kirjaa tähän mahdolliset huomiot asiatarkastuksesta"
             />
           </div>
-          <div className="verification-footer">
-            <button type="submit" name="submit-verification" disabled={disableAcceptButton}>
-              Hyväksy asiatarkastus ja lähetä taloustarkastukseen
-            </button>
+          {isOtantatarkastus && allChecked ? (
+            <MultipleRecipentEmailForm
+              onSubmit={onSubmit}
+              disabled={disableAcceptButton}
+              email={approvalEmail}
+              setEmail={setApprovalEmail}
+              formName="asiatarkastus-hyvaksynta"
+              submitText="Hyväksy ja lähetä viesti"
+              heading="Loppuselvityksen hyväksyntä"
+              errorText={approvalError}
+            />
+          ) : (
+            <form onSubmit={onSubmit}>
+              <div className="verification-footer">
+                <button type="submit" name="submit-verification" disabled={disableAcceptButton}>
+                  {'Hyväksy asiatarkastus ja lähetä taloustarkastukseen'}
+                </button>
+              </div>
+            </form>
+          )}
+        </>
+      )}
+      {isOtantatarkastus &&
+        asiatarkastusVerified &&
+        otantaPolku &&
+        otantaPolku !== 'otannan-ulkopuolella' && (
+          <div className="verification-comment">
+            <p>
+              Loppuselvitys on ohjattu taloustarkastukseen (
+              {otantaPolku === 'riskiperusteinen' ? 'riskiperusteinen otanta' : 'satunnaisotanta'}).
+            </p>
           </div>
-        </form>
+        )}
+      {isOtannanUlkopuolella && isAccepted && selvitysEmail && (
+        <ViestiListaRow
+          icon="done"
+          virkailija={hakemus['loppuselvitys-taloustarkastanut-name'] || ''}
+          date={hakemus['loppuselvitys-taloustarkastettu-at'] || ''}
+          onClick={() => {}}
+          heading="Hyväksytty"
+          dataTestId="loppuselvitys-asiatarkastus-hyvaksytty"
+        >
+          <ViestiDetails
+            message={{
+              id: 0,
+              date: hakemus['loppuselvitys-taloustarkastettu-at'] || '',
+              virkailija: hakemus['loppuselvitys-taloustarkastanut-name'] || '',
+              sender: 'no-reply@valtionavustukset.oph.fi',
+              reply_to: userInfo.email,
+              receivers: selvitysEmail.to,
+              message: selvitysEmail.message,
+              subject: selvitysEmail.subject,
+            }}
+          />
+        </ViestiListaRow>
       )}
     </>
   )
@@ -178,7 +337,6 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
 
   const hakemusLoppuselvitysNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
   const disableAcceptButton = hakemusLoppuselvitysNotSubmitted || disabled
-  console.log(selvitysEmail?.to)
   return (
     <>
       <LoppuselvitysTarkastus

@@ -19,6 +19,7 @@ export interface MuutoshakemusFixtures {
   businessId: string | null
   loppuselvitysForm: string | null
   valiselvitysForm: string | null
+  enableOtantatarkastus: boolean
   avustushakuID: number
   closedAvustushaku: {
     id: number
@@ -53,18 +54,20 @@ export const submittedHakemusTest = defaultValues.extend<MuutoshakemusFixtures>(
   businessId: TEST_Y_TUNNUS,
   loppuselvitysForm: null,
   valiselvitysForm: null,
+  enableOtantatarkastus: false,
   avustushakuID: async (
-    { page, hakuProps, userCache, loppuselvitysForm, valiselvitysForm, hakulomake },
+    { page, hakuProps, userCache, loppuselvitysForm, valiselvitysForm, enableOtantatarkastus, hakulomake },
     use,
     testInfo
   ) => {
     expect(userCache).toBeDefined()
     testInfo.setTimeout(testInfo.timeout + 40_000)
-
+    
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     const avustushakuID = await hakujenHallintaPage.createPublishedAvustushaku(
       hakuProps,
-      hakulomake
+      hakulomake,
+      enableOtantatarkastus
     )
 
     if (valiselvitysForm) {

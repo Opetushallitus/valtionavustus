@@ -9,14 +9,16 @@
   "SELECT h.id, h.created_at, h.form, h.status, h.register_number, h.valiselvitysdate,
           h.loppuselvitysdate, h.form_loppuselvitys, h.form_valiselvitys,
           h.is_academysize, h.haku_type, operational_unit_id,
-          h.allow_visibility_in_external_system, h.arvioitu_maksupaiva
+          h.allow_visibility_in_external_system, h.arvioitu_maksupaiva,
+          h.loppuselvitys_otantatarkastus_enabled
    FROM hakija.avustushaut h WHERE h.status != 'deleted'")
 
 (def ^:private get-resolved-grants-with-content-sql
   "SELECT h.id, h.created_at, h.form, h.content, h.status, h.register_number,
           h.valiselvitysdate, h.loppuselvitysdate, h.form_loppuselvitys,
           h.form_valiselvitys, h.is_academysize, h.haku_type, h.operational_unit_id,
-          h.allow_visibility_in_external_system, h.arvioitu_maksupaiva
+          h.allow_visibility_in_external_system, h.arvioitu_maksupaiva,
+          h.loppuselvitys_otantatarkastus_enabled
    FROM hakija.avustushaut h
    WHERE h.status = 'resolved' OR h.status = 'published'
    ORDER BY h.created_at DESC")
@@ -39,7 +41,8 @@
 (def ^:private find-grants-columns
   "SELECT id, created_at, form, content, status, register_number, valiselvitysdate,
           loppuselvitysdate, form_loppuselvitys, form_valiselvitys,
-          is_academysize, haku_type, allow_visibility_in_external_system, arvioitu_maksupaiva
+          is_academysize, haku_type, allow_visibility_in_external_system, arvioitu_maksupaiva,
+          loppuselvitys_otantatarkastus_enabled
    FROM hakija.avustushaut
    WHERE register_number LIKE ? OR LOWER(content#>>'{name,fi}') LIKE ?")
 
@@ -58,7 +61,8 @@
                        "SELECT h.id, h.created_at, h.form, h.content, h.status, h.register_number,
                                h.valiselvitysdate, h.loppuselvitysdate, h.form_loppuselvitys,
                                h.form_valiselvitys, h.is_academysize, h.haku_type, h.operational_unit_id,
-                               h.allow_visibility_in_external_system, h.arvioitu_maksupaiva
+                               h.allow_visibility_in_external_system, h.arvioitu_maksupaiva,
+                               h.loppuselvitys_otantatarkastus_enabled
                         FROM hakija.avustushaut h WHERE h.id = ?"
                        [grant-id])))]
     (merge grant

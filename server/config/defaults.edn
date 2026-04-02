@@ -88,4 +88,5 @@
  :payments                                    {:enabled? true}
  :integration-healthcheck                     {:enabled? false}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
- :test-apis                                   {:enabled? false}}
+ :test-apis                                   {:enabled? false}
+ :otantatarkastus {:satunnaisotanta-prosentti 20}}

@@ -216,6 +216,7 @@ export const selvitysTest = muutoshakemusTest.extend<SelvitysFixtures>({
     const loppuselvitysPage = LoppuselvitysPage(page)
     await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
     await loppuselvitysPage.asiatarkastaLoppuselvitys('Ei kommentoitavaa')
+    
     await expect(loppuselvitysPage.locators.taloustarkastus.accept).toBeEnabled()
     await use({
       asiatarkastettu: true,

@@ -72,4 +72,5 @@
    :operational-unit-code (:operational_unit_code avustushaku)
    :muutoshakukelpoinen (:muutoshakukelpoinen avustushaku)
    :arvioitu_maksupaiva (:arvioitu_maksupaiva avustushaku)
-   :allow_visibility_in_external_system (:allow_visibility_in_external_system avustushaku)})
+   :allow_visibility_in_external_system (:allow_visibility_in_external_system avustushaku)
+   :loppuselvitys-otantatarkastus-enabled (:loppuselvitys_otantatarkastus_enabled avustushaku)})

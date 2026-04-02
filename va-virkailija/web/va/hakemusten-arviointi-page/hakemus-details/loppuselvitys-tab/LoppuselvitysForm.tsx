@@ -16,7 +16,12 @@ type LoppuselvitysFormProps = {
   presenter?: Role
 }
 
-export const LoppuselvitysForm = ({ hakemus, userInfo, presenter }: LoppuselvitysFormProps) => {
+export const LoppuselvitysForm = ({
+  hakemus,
+  userInfo,
+  presenter,
+  avustushaku,
+}: LoppuselvitysFormProps) => {
   const status = hakemus['status-loppuselvitys']
   const showTaydennyspyynto = status !== 'missing'
 
@@ -30,6 +35,14 @@ export const LoppuselvitysForm = ({ hakemus, userInfo, presenter }: Loppuselvity
     !hakemus['loppuselvitys-information-verified-at'] &&
     !hakemus['loppuselvitys-taloustarkastettu-at'] &&
     !hakemus['loppuselvitys-taloustarkastanut-name']
+  const otantaPolku = hakemus['loppuselvitys-otanta-polku']
+  const isOtantatarkastus = avustushaku['loppuselvitys-otantatarkastus-enabled']
+  const showTaloustarkastus =
+    (isOtantatarkastus && otantaPolku !== 'otannan-ulkopuolella') ||
+    status === 'information_verified'
+
+  
+
   const loppuselvitysEmail = hakemus.selvitys?.loppuselvitys?.['selvitys-email']
   if (approvedBeforeAsiatarkastusFeature && loppuselvitysEmail) {
     return (
@@ -59,9 +72,12 @@ export const LoppuselvitysForm = ({ hakemus, userInfo, presenter }: Loppuselvity
   return (
     <div className="information-verification">
       {showTaydennyspyynto && (
-        <Asiatarkastus disabled={!allowedToDoAsiatarkastus || taloustarkastusEnabled} />
+        <Asiatarkastus
+          disabled={!allowedToDoAsiatarkastus || taloustarkastusEnabled}
+          avustushaku={avustushaku}
+        />
       )}
-      {showTaydennyspyynto && (
+      {showTaydennyspyynto && showTaloustarkastus && (
         <Taloustarkastus disabled={asiatarkastusEnabled || status === 'accepted'} />
       )}
     </div>

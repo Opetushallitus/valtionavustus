@@ -33,6 +33,20 @@ export const LoppuselvitysPage = (page: Page) => {
         name: 'Hyväksy asiatarkastus ja lähetä taloustarkastukseen',
       }),
     },
+    otantatarkastus: {
+      checklist: page.getByTestId('asiatarkastus-checklist'),
+      checklistItem: (label: string) =>
+        page.getByTestId('asiatarkastus-checklist').locator('label', { hasText: label }),
+
+      approvalEmailForm: page.getByTestId('asiatarkastus-hyvaksynta-email'),
+      approvalEmailSubject: page.getByTestId('asiatarkastus-hyvaksynta-email-subject'),
+      approvalEmailContent: page.getByTestId('asiatarkastus-hyvaksynta-email-content'),
+      approvalConfirm: page.getByTestId('asiatarkastus-hyvaksynta-submit'),
+      routedToTaloustarkastusMessage: page.getByText(
+        'Loppuselvitys on ohjattu taloustarkastukseen'
+      ),
+      accepted: page.getByTestId('loppuselvitys-asiatarkastus-hyvaksytty'),
+    },
     taloustarkastus: {
       taydennyspyynto: taloustarkastus.getByRole('button', { name: 'Täydennyspyyntö' }),
       cancelTaydennyspyynto: taloustarkastus.getByRole('button', { name: 'Peru täydennyspyyntö' }),
@@ -135,6 +149,16 @@ export const LoppuselvitysPage = (page: Page) => {
     return hakijaSelvitysFormPage
   }
 
+  async function checkAllChecklistItems() {
+    await expect(locators.otantatarkastus.checklist).toBeVisible()
+    const items = locators.otantatarkastus.checklist.locator('input[type="checkbox"]')
+    const count = await items.count()
+    expect(count).toBeGreaterThan(0)
+    for (let i = 0; i < count; i++) {
+      await items.nth(i).check()
+    }
+  }
+
   return {
     page,
     locators,
@@ -146,6 +170,7 @@ export const LoppuselvitysPage = (page: Page) => {
     taloustarkastaLoppuselvitys,
     ensureMuistutusViestiEmailRecipientsContain,
     openLoppuselvitysForm,
+    checkAllChecklistItems,
     ...SelvitysTab(page, 'loppu'),
   }
 }

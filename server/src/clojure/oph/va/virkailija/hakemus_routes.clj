@@ -105,7 +105,16 @@
 
   (compojure-api/POST "/loppuselvitys/verify-information" request
     :path-params [avustushaku-id :- Long hakemus-id :- Long]
-    :body [verify-information {:message s/Str}]
+    :body [verify-information {:message s/Str
+                               (s/optional-key :checklist) (s/maybe {:avustus-kaytetty-paatoksen-mukaisesti s/Bool
+                                                                     :omarahoitus-kaytetty s/Bool
+                                                                     :avustus-alle-100k s/Bool
+                                                                     :ehtojen-mukaisesti-ei-epaselvyyksia s/Bool
+                                                                     :kirjanpidon-paakirja-liitetty s/Bool})
+                               (s/optional-key :email) (s/maybe {:to [s/Str]
+                                                                 :subject s/Str
+                                                                 :message s/Str
+                                                                 :selvitys-hakemus-id Long})}]
     :return s/Any
     :summary "Set loppuselvitys information verified"
     (let [identity (authentication/get-request-identity request)

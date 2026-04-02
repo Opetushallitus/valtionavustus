@@ -694,6 +694,8 @@ export const updateField = createAsyncThunk<
     avustushaku.allow_visibility_in_external_system = update.newValue === 'true'
   } else if (fieldId.startsWith('muutoshakukelpoinen')) {
     avustushaku.muutoshakukelpoinen = update.newValue === 'true'
+  } else if (fieldId.startsWith('loppuselvitys_otantatarkastus_enabled')) {
+    avustushaku['loppuselvitys-otantatarkastus-enabled'] = update.newValue === 'true'
   } else if (fieldId === 'arvioitu_maksupaiva') {
     avustushaku.arvioitu_maksupaiva = update.newValue
   } else if (update.field.name === 'payment-size-limit') {
