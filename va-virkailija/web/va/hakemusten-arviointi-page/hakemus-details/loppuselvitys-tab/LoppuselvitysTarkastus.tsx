@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
 
-import { Avustushaku, Hakemus, SelvitysEmail } from 'soresu-form/web/va/types'
+import { Hakemus, SelvitysEmail } from 'soresu-form/web/va/types'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { Language, translations } from 'soresu-form/web/va/i18n/translations'
 

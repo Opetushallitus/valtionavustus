@@ -340,11 +340,15 @@ export class HakujenHallintaPage {
     return { avustushakuID }
   }
 
-  async createPublishedAvustushaku(hakuProps: HakuProps, hakulomake: string, enableOtantatarkastus?: boolean) {
+  async createPublishedAvustushaku(
+    hakuProps: HakuProps,
+    hakulomake: string,
+    enableOtantatarkastus?: boolean
+  ) {
     return await test.step('Create avustushaku', async () => {
       const { avustushakuID } = await this.createHakuWithLomakeJson(hakulomake, hakuProps)
       const haunTiedotPage = await this.commonHakujenHallinta.switchToHaunTiedotTab()
-      
+
       if (enableOtantatarkastus) {
         await this.toggleOtantatarkastus(true)
       }

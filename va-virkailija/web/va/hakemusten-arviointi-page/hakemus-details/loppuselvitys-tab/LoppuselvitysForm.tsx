@@ -41,8 +41,6 @@ export const LoppuselvitysForm = ({
     (isOtantatarkastus && otantaPolku !== 'otannan-ulkopuolella') ||
     status === 'information_verified'
 
-  
-
   const loppuselvitysEmail = hakemus.selvitys?.loppuselvitys?.['selvitys-email']
   if (approvedBeforeAsiatarkastusFeature && loppuselvitysEmail) {
     return (
@@ -72,10 +70,7 @@ export const LoppuselvitysForm = ({
   return (
     <div className="information-verification">
       {showTaydennyspyynto && (
-        <Asiatarkastus
-          disabled={!allowedToDoAsiatarkastus || taloustarkastusEnabled}
-          avustushaku={avustushaku}
-        />
+        <Asiatarkastus disabled={!allowedToDoAsiatarkastus || taloustarkastusEnabled} />
       )}
       {showTaydennyspyynto && showTaloustarkastus && (
         <Taloustarkastus disabled={asiatarkastusEnabled || status === 'accepted'} />

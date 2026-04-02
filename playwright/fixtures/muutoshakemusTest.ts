@@ -56,13 +56,21 @@ export const submittedHakemusTest = defaultValues.extend<MuutoshakemusFixtures>(
   valiselvitysForm: null,
   enableOtantatarkastus: false,
   avustushakuID: async (
-    { page, hakuProps, userCache, loppuselvitysForm, valiselvitysForm, enableOtantatarkastus, hakulomake },
+    {
+      page,
+      hakuProps,
+      userCache,
+      loppuselvitysForm,
+      valiselvitysForm,
+      enableOtantatarkastus,
+      hakulomake,
+    },
     use,
     testInfo
   ) => {
     expect(userCache).toBeDefined()
     testInfo.setTimeout(testInfo.timeout + 40_000)
-    
+
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     const avustushakuID = await hakujenHallintaPage.createPublishedAvustushaku(
       hakuProps,

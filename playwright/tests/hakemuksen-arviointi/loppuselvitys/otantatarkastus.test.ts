@@ -44,9 +44,8 @@ test.describe.parallel('Otantatarkastus', () => {
     await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
 
     // Check only some items (leave at least one unchecked)
-    const checkboxes = loppuselvitysPage.locators.otantatarkastus.checklist.locator(
-      'input[type="checkbox"]'
-    )
+    const checkboxes =
+      loppuselvitysPage.locators.otantatarkastus.checklist.locator('input[type="checkbox"]')
     await checkboxes.nth(0).check()
     await checkboxes.nth(1).check()
 
