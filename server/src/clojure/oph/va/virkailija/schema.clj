@@ -364,6 +364,7 @@
    :is-academysize s/Bool
    :haku-type GrantType
    :allow-visibility-in-external-system s/Bool
+   :loppuselvitys-otantatarkastus-enabled s/Bool
    (s/optional-key :arvioitu-maksupaiva) (s/maybe LocalDate)
    (s/optional-key :operational-unit-id) (s/maybe s/Int)
    (s/optional-key :operational-unit) (s/maybe s/Str)})
