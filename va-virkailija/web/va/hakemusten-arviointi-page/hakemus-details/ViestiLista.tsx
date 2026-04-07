@@ -51,7 +51,7 @@ export default function ViestiLista(props: Props) {
   return <>{messages}</>
 }
 
-export function ViestiDetails(props: { message: Message }) {
+export function ViestiDetails(props: { message: Omit<Message, 'virkailija' | 'date'> }) {
   const message = props.message
   return (
     <div role="table" className={'messageDetails'}>

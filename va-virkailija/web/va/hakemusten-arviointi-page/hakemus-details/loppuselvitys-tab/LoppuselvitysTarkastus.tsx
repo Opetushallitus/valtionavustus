@@ -276,8 +276,6 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
           <ViestiDetails
             message={{
               id: 0,
-              date: hakemus['loppuselvitys-taloustarkastettu-at'] || '',
-              virkailija: hakemus['loppuselvitys-taloustarkastanut-name'] || '',
               sender: 'no-reply@valtionavustukset.oph.fi',
               reply_to: userInfo.email,
               receivers: selvitysEmail.to,
@@ -357,8 +355,6 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
                   <ViestiDetails
                     message={{
                       id: 123456789,
-                      date: hakemus['loppuselvitys-taloustarkastettu-at'],
-                      virkailija: hakemus['loppuselvitys-taloustarkastanut-name'],
                       sender: 'no-reply@valtionavustukset.oph.fi',
                       reply_to: loggedInUser.email,
                       receivers: selvitysEmail?.to,
