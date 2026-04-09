@@ -509,6 +509,11 @@ div.soresu-field-edit .soresu-edit-properties-line .soresu-edit-property .soresu
     border-top: 0;
 }
 
+@position-try --ukotus-flip-up {
+    top: auto;
+    bottom: anchor(bottom);
+}
+
 .person-panel.person-panel--top {
     position: fixed;
     position-anchor: --ukotus-anchor;
@@ -516,6 +521,7 @@ div.soresu-field-edit .soresu-edit-properties-line .soresu-edit-property .soresu
     right: calc(anchor(left) + 8px);
     left: auto;
     transform: none;
+    position-try-fallbacks: --ukotus-flip-up;
 }
 
 .person-panel.person-panel--top:before,
