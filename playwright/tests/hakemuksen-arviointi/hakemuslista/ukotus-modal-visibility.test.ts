@@ -6,7 +6,7 @@ import { HakijaAvustusHakuPage } from '../../../pages/hakija/hakijaAvustusHakuPa
 import { Answers } from '../../../utils/types'
 import muutoshakemusEnabledHakuLomakeJson from '../../../fixtures/prod.hakulomake.json'
 
-const APPLICATION_COUNT = 15
+const APPLICATION_COUNT = 25
 
 const manyApplicationsTest = defaultValues.extend<{
   avustushakuID: number
@@ -67,21 +67,19 @@ manyApplicationsTest(
       await expect(page.locator('.split-view')).toBeVisible()
     })
 
-    await test.step('Wait for split view to have scrollable list', async () => {
-      const hakemusListing = page.locator('#hakemus-listing')
-      await expect(hakemusListing).toHaveCSS('overflow-y', 'scroll', { timeout: 5000 })
+    await test.step('Close hakemus details so the full list is visible', async () => {
+      await hakemustenArviointiPage.closeHakemusDetails()
+      await expect(page.locator('#hakemus-details')).toBeHidden()
     })
 
     const hakemusListingLocator = page.locator('#hakemus-listing')
+    const lastHakemusRow = hakemusListingLocator.locator('tbody tr').last()
 
     await test.step('Scroll to bottom of hakemus list', async () => {
-      await hakemusListingLocator.evaluate((el) => {
-        el.scrollTop = el.scrollHeight
-      })
+      await lastHakemusRow.scrollIntoViewIfNeeded()
     })
 
-    const lastHakemusRow = hakemusListingLocator.locator('tbody tr').last()
-    await expect(lastHakemusRow).toBeVisible()
+    await expect(lastHakemusRow).toBeInViewport()
 
     await test.step('Click add valmistelija button on last hakemus in scrolled list', async () => {
       const addValmistelijaButton = lastHakemusRow.locator(
@@ -94,36 +92,7 @@ manyApplicationsTest(
     await test.step('Verify ukotus modal is visible in viewport and usable', async () => {
       const ukotusModal = page.getByTestId('ukotusModal')
 
-      await expect(ukotusModal).toBeVisible({ timeout: 5000 })
-
-      const positionInfo = await page.evaluate(() => {
-        const modal = document.querySelector('[data-test-id="ukotusModal"]')!
-        const modalRect = modal.getBoundingClientRect()
-
-        return {
-          modal: {
-            top: modalRect.top,
-            bottom: modalRect.bottom,
-            height: modalRect.height,
-          },
-          isModalVisibleInViewport:
-            modalRect.top >= 0 &&
-            modalRect.bottom <= window.innerHeight &&
-            modalRect.left >= 0 &&
-            modalRect.right <= window.innerWidth,
-          windowHeight: window.innerHeight,
-          windowWidth: window.innerWidth,
-        }
-      })
-
-      console.log('Position info:', JSON.stringify(positionInfo, null, 2))
-
-      expect(
-        positionInfo.isModalVisibleInViewport,
-        `Modal should be fully visible in viewport.\n` +
-          `Modal: top=${positionInfo.modal.top}, bottom=${positionInfo.modal.bottom}, height=${positionInfo.modal.height}\n` +
-          `Viewport: height=${positionInfo.windowHeight}, width=${positionInfo.windowWidth}`
-      ).toBe(true)
+      await expect(ukotusModal).toBeInViewport({ ratio: 1, timeout: 5000 })
 
       const valmistelijaButton = ukotusModal.locator(
         '[aria-label="Lisää _ valtionavustus valmistelijaksi"]'
