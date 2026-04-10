@@ -189,9 +189,9 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
                 date: verifiedAt,
                 heading: 'Asiatarkastettu',
                 component: (
-                  <div className={'messageDetails'}>
+                  <div className="asiatarkastettu-content">
                     {isOtantatarkastus && savedChecklist && (
-                      <div className="verification-checklist" style={{ pointerEvents: 'none' }}>
+                      <div className="verification-checklist verification-checklist-readonly">
                         {ASIATARKASTUS_CHECKLIST_ITEMS.map((item) => (
                           <label key={item.key} className="verification-checklist-item">
                             <input
@@ -205,7 +205,9 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
                         ))}
                       </div>
                     )}
-                    <div className={'rowMessage'}>{verification}</div>
+                    <div className={'messageDetails'}>
+                      <div className={'rowMessage'}>{verification}</div>
+                    </div>
                   </div>
                 ),
               }
@@ -272,11 +274,11 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
         asiatarkastusVerified &&
         otantaPolku &&
         otantaPolku !== 'otannan-ulkopuolella' && (
-          <div className="verification-comment">
-            <p>
+          <div className="viestiListaItem">
+            <div className="otanta-polku-banner">
               Loppuselvitys on ohjattu taloustarkastukseen (
               {otantaPolku === 'riskiperusteinen' ? 'riskiperusteinen otanta' : 'satunnaisotanta'}).
-            </p>
+            </div>
           </div>
         )}
       {isOtannanUlkopuolella && isAccepted && selvitysEmail && (

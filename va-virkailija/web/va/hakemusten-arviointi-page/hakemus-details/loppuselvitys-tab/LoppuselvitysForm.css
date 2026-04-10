@@ -38,3 +38,18 @@
     margin-top: 3px;
     flex-shrink: 0;
 }
+
+.verification-checklist-readonly {
+    pointer-events: none;
+}
+
+.asiatarkastettu-content {
+    padding: 0.5rem;
+}
+
+.otanta-polku-banner {
+    padding: 12px 16px;
+    border: 1px solid var(--light-gray);
+    margin: 4px 8px 8px;
+    border-radius: 4px;
+}
