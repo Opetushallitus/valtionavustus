@@ -28,23 +28,19 @@ import { UserInfo } from '../../../types'
 const ASIATARKASTUS_CHECKLIST_ITEMS = [
   {
     key: 'avustus-kaytetty-paatoksen-mukaisesti' as const,
-    label: 'Avustus on käytetty kokonaan avustuspäätöksen mukaisesti',
+    label: 'Avustus on käytetty avustuspäätöksessä annettujen ehtojen mukaisesti',
   },
   {
     key: 'omarahoitus-kaytetty' as const,
-    label: 'Omarahoitusta on käytetty vähintään avustuspäätöksen osoittama määrä?',
-  },
-  { key: 'avustus-alle-100k' as const, label: 'Avustus on alle 100 000 euroa' },
-  {
-    key: 'ehtojen-mukaisesti-ei-epaselvyyksia' as const,
     label:
-      'Avustus on käytetty ehtojen mukaisesti eikä sen asiatarkastuksessa ole havaittu epäselvyyksiä',
+      'Myönnetty avustus on käytetty kokonaan (ml. mahdollinen omarahoitusosuus) ja mahdollisesti käyttämättä jäänyt avustus on palautettu',
   },
   {
-    key: 'kirjanpidon-paakirja-liitetty' as const,
+    key: 'taloustiedot-kirjattu' as const,
     label:
-      'Loppuselvitykseen on liitetty kustannuspaikkakohtainen kirjanpidon pääkirja (ml. yhteishankkeen osapuolten pääkirjat, mikäli kyse on yhteishankkeesta) ja siinä esitetyt kustannukset ovat syntyneet hyväksyttynä käyttöaikana?',
+      'Avustuksen saaja on kirjannut loppuselvitykseen siinä vaaditut taloustiedot annettujen ohjeiden mukaisesti (ml. mahdolliset talousliitteet)',
   },
+  { key: 'avustus-alle-100k' as const, label: 'Myönnetty avustus on alle 100 000 euroa' },
 ] as const
 
 type ChecklistKey = (typeof ASIATARKASTUS_CHECKLIST_ITEMS)[number]['key']
@@ -98,9 +94,8 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
   const [checklist, setChecklist] = useState<ChecklistState>({
     'avustus-kaytetty-paatoksen-mukaisesti': false,
     'omarahoitus-kaytetty': false,
+    'taloustiedot-kirjattu': false,
     'avustus-alle-100k': false,
-    'ehtojen-mukaisesti-ei-epaselvyyksia': false,
-    'kirjanpidon-paakirja-liitetty': false,
   })
   const [otantaPolku, setOtantaPolku] = useState<string | undefined>(
     hakemus['loppuselvitys-otanta-polku'] ?? undefined
@@ -248,6 +243,7 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
                 <button type="submit" name="submit-verification" disabled={disableAcceptButton}>
                   {'Hyväksy asiatarkastus ja lähetä taloustarkastukseen'}
                 </button>
+                {approvalError && <div className="error">{approvalError}</div>}
               </div>
             </form>
           )}

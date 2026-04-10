@@ -108,9 +108,8 @@
     :body [verify-information {:message s/Str
                                (s/optional-key :checklist) (s/maybe {:avustus-kaytetty-paatoksen-mukaisesti s/Bool
                                                                      :omarahoitus-kaytetty s/Bool
-                                                                     :avustus-alle-100k s/Bool
-                                                                     :ehtojen-mukaisesti-ei-epaselvyyksia s/Bool
-                                                                     :kirjanpidon-paakirja-liitetty s/Bool})
+                                                                     :taloustiedot-kirjattu s/Bool
+                                                                     :avustus-alle-100k s/Bool})
                                (s/optional-key :email) (s/maybe {:to [s/Str]
                                                                  :subject s/Str
                                                                  :message s/Str

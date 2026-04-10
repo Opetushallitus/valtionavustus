@@ -595,9 +595,8 @@ order by upper(h.organization_name), upper(h.project_name)")
 (defn- determine-otanta-polku [checklist]
   (let [all-checked (and (:avustus-kaytetty-paatoksen-mukaisesti checklist)
                          (:omarahoitus-kaytetty checklist)
-                         (:avustus-alle-100k checklist)
-                         (:ehtojen-mukaisesti-ei-epaselvyyksia checklist)
-                         (:kirjanpidon-paakirja-liitetty checklist))]
+                         (:taloustiedot-kirjattu checklist)
+                         (:avustus-alle-100k checklist))]
     (if (not all-checked)
       "riskiperusteinen"
       (let [prosentti (get-in config [:otantatarkastus :satunnaisotanta-prosentti])]
@@ -643,20 +642,18 @@ order by upper(h.organization_name), upper(h.project_name)")
                     tx
                     "INSERT INTO virkailija.loppuselvitys_asiatarkastus_checklist
                      (hakemus_id, avustus_kaytetty_paatoksen_mukaisesti, omarahoitus_kaytetty,
-                      avustus_alle_100k, ehtojen_mukaisesti_ei_epaselvyyksia, kirjanpidon_paakirja_liitetty)
-                     VALUES (?, ?, ?, ?, ?, ?)
+                      taloustiedot_kirjattu, avustus_alle_100k)
+                     VALUES (?, ?, ?, ?, ?)
                      ON CONFLICT (hakemus_id) DO UPDATE SET
                        avustus_kaytetty_paatoksen_mukaisesti = EXCLUDED.avustus_kaytetty_paatoksen_mukaisesti,
                        omarahoitus_kaytetty = EXCLUDED.omarahoitus_kaytetty,
-                       avustus_alle_100k = EXCLUDED.avustus_alle_100k,
-                       ehtojen_mukaisesti_ei_epaselvyyksia = EXCLUDED.ehtojen_mukaisesti_ei_epaselvyyksia,
-                       kirjanpidon_paakirja_liitetty = EXCLUDED.kirjanpidon_paakirja_liitetty"
+                       taloustiedot_kirjattu = EXCLUDED.taloustiedot_kirjattu,
+                       avustus_alle_100k = EXCLUDED.avustus_alle_100k"
                     [hakemus-id
                      (:avustus-kaytetty-paatoksen-mukaisesti checklist)
                      (:omarahoitus-kaytetty checklist)
-                     (:avustus-alle-100k checklist)
-                     (:ehtojen-mukaisesti-ei-epaselvyyksia checklist)
-                     (:kirjanpidon-paakirja-liitetty checklist)]))
+                     (:taloustiedot-kirjattu checklist)
+                     (:avustus-alle-100k checklist)]))
                  (if otannan-ulkopuolella
                    ;; otannan-ulkopuolella: set accepted + taloustarkastanut in one update
                    (do
