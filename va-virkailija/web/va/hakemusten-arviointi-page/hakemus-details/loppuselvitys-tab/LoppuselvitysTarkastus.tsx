@@ -103,6 +103,7 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
   const [otantaPolku, setOtantaPolku] = useState<string | undefined>(
     hakemus['loppuselvitys-otanta-polku'] ?? undefined
   )
+  const [showHyvaksytty, setShowHyvaksytty] = useState(false)
 
   const verifiedBy = hakemus['loppuselvitys-information-verified-by']
   const verifiedAt = hakemus['loppuselvitys-information-verified-at']
@@ -286,20 +287,22 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
           icon="done"
           virkailija={hakemus['loppuselvitys-taloustarkastanut-name'] || ''}
           date={hakemus['loppuselvitys-taloustarkastettu-at'] || ''}
-          onClick={() => {}}
+          onClick={() => setShowHyvaksytty((show) => !show)}
           heading="Hyväksytty"
           dataTestId="loppuselvitys-asiatarkastus-hyvaksytty"
         >
-          <ViestiDetails
-            message={{
-              id: 0,
-              sender: 'no-reply@valtionavustukset.oph.fi',
-              reply_to: userInfo.email,
-              receivers: selvitysEmail.to,
-              message: selvitysEmail.message,
-              subject: selvitysEmail.subject,
-            }}
-          />
+          {showHyvaksytty && (
+            <ViestiDetails
+              message={{
+                id: 0,
+                sender: 'no-reply@valtionavustukset.oph.fi',
+                reply_to: userInfo.email,
+                receivers: selvitysEmail.to,
+                message: selvitysEmail.message,
+                subject: selvitysEmail.subject,
+              }}
+            />
+          )}
         </ViestiListaRow>
       )}
     </>
