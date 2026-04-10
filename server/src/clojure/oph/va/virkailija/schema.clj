@@ -196,6 +196,10 @@
                       :loppuselvitys-taloustarkastettu-at (s/maybe s/Inst)
                       :loppuselvitys-information-verification (s/maybe s/Str)
                       :loppuselvitys-otanta-polku (s/maybe s/Str)
+                      (s/optional-key :asiatarkastus-checklist) (s/maybe {:avustus-kaytetty-paatoksen-mukaisesti s/Bool
+                                                                          :omarahoitus-kaytetty s/Bool
+                                                                          :taloustiedot-kirjattu s/Bool
+                                                                          :avustus-alle-100k s/Bool})
                       :selvitys-email (s/maybe s/Str)
                       :answers [soresu-schema/Answer]
                       (s/optional-key :loppuselvitys-change-request-pending) (s/maybe s/Bool)

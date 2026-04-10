@@ -307,7 +307,12 @@
    :keskeytetty-aloittamatta (:keskeytetty_aloittamatta hakemus)
    :submitted-version (:submitted_version hakemus)
    :loppuselvitys-change-request-pending (:loppuselvitys_change_request_pending hakemus)
-   :loppuselvitys-change-request-sent (:loppuselvitys_change_request_sent hakemus)})
+   :loppuselvitys-change-request-sent (:loppuselvitys_change_request_sent hakemus)
+   :asiatarkastus-checklist (when (some? (:checklist_avustus_kaytetty hakemus))
+                              {:avustus-kaytetty-paatoksen-mukaisesti (:checklist_avustus_kaytetty hakemus)
+                               :omarahoitus-kaytetty (:checklist_omarahoitus hakemus)
+                               :taloustiedot-kirjattu (:checklist_taloustiedot hakemus)
+                               :avustus-alle-100k (:checklist_alle_100k hakemus)})})
 
 (defn- paatos-sent-emails->json [paatos]
   {:id (:id paatos)
@@ -438,9 +443,14 @@
               WHERE status = 'pending_change_request'
               AND hakemus_type='loppuselvitys'
               AND parent_id = h.id) AS loppuselvitys_change_request_sent,
-        submitted_version
+        submitted_version,
+        ac.avustus_kaytetty_paatoksen_mukaisesti as checklist_avustus_kaytetty,
+        ac.omarahoitus_kaytetty as checklist_omarahoitus,
+        ac.taloustiedot_kirjattu as checklist_taloustiedot,
+        ac.avustus_alle_100k as checklist_alle_100k
   from hakija.hakemukset h
   join hakija.form_submissions s on (h.form_submission_id = s.id and h.form_submission_version = s.version)
+  left join virkailija.loppuselvitys_asiatarkastus_checklist ac on ac.hakemus_id = h.id
 where h.avustushaku = ?
       and h.status != 'cancelled'
       and h.status != 'new'

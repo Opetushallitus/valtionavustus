@@ -256,6 +256,16 @@ export interface HakemusSelvitys {
   valiselvitys: Selvitys
 }
 
+export const ASIATARKASTUS_CHECKLIST_KEYS = [
+  'avustus-kaytetty-paatoksen-mukaisesti',
+  'omarahoitus-kaytetty',
+  'taloustiedot-kirjattu',
+  'avustus-alle-100k',
+] as const
+
+export type AsiatarkastusChecklistKey = (typeof ASIATARKASTUS_CHECKLIST_KEYS)[number]
+export type AsiatarkastusChecklist = Record<AsiatarkastusChecklistKey, boolean>
+
 export interface Hakemus {
   id: number
   answers: Answer[]
@@ -299,6 +309,7 @@ export interface Hakemus {
   'loppuselvitys-taloustarkastanut-name'?: string
   'loppuselvitys-taloustarkastettu-at'?: string
   'loppuselvitys-otanta-polku'?: string
+  'asiatarkastus-checklist'?: AsiatarkastusChecklist
   'loppuselvitys-change-request-pending'?: boolean
   'loppuselvitys-change-request-sent'?: boolean
   project?: VaCodeValue

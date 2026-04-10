@@ -1,7 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
 
-import { Hakemus, SelvitysEmail } from 'soresu-form/web/va/types'
+import {
+  AsiatarkastusChecklist,
+  AsiatarkastusChecklistKey,
+  Hakemus,
+  SelvitysEmail,
+} from 'soresu-form/web/va/types'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { Language, translations } from 'soresu-form/web/va/i18n/translations'
 
@@ -25,26 +30,24 @@ import { initialRecipientEmails } from '../emailRecipients'
 import { VerificationBox } from './VerificationBox'
 import { UserInfo } from '../../../types'
 
-const ASIATARKASTUS_CHECKLIST_ITEMS = [
-  {
-    key: 'avustus-kaytetty-paatoksen-mukaisesti' as const,
-    label: 'Avustus on käytetty avustuspäätöksessä annettujen ehtojen mukaisesti',
-  },
-  {
-    key: 'omarahoitus-kaytetty' as const,
-    label:
-      'Myönnetty avustus on käytetty kokonaan (ml. mahdollinen omarahoitusosuus) ja mahdollisesti käyttämättä jäänyt avustus on palautettu',
-  },
-  {
-    key: 'taloustiedot-kirjattu' as const,
-    label:
-      'Avustuksen saaja on kirjannut loppuselvitykseen siinä vaaditut taloustiedot annettujen ohjeiden mukaisesti (ml. mahdolliset talousliitteet)',
-  },
-  { key: 'avustus-alle-100k' as const, label: 'Myönnetty avustus on alle 100 000 euroa' },
-] as const
-
-type ChecklistKey = (typeof ASIATARKASTUS_CHECKLIST_ITEMS)[number]['key']
-type ChecklistState = Record<ChecklistKey, boolean>
+const ASIATARKASTUS_CHECKLIST_ITEMS: readonly { key: AsiatarkastusChecklistKey; label: string }[] =
+  [
+    {
+      key: 'avustus-kaytetty-paatoksen-mukaisesti',
+      label: 'Avustus on käytetty avustuspäätöksessä annettujen ehtojen mukaisesti',
+    },
+    {
+      key: 'omarahoitus-kaytetty',
+      label:
+        'Myönnetty avustus on käytetty kokonaan (ml. mahdollinen omarahoitusosuus) ja mahdollisesti käyttämättä jäänyt avustus on palautettu',
+    },
+    {
+      key: 'taloustiedot-kirjattu',
+      label:
+        'Avustuksen saaja on kirjannut loppuselvitykseen siinä vaaditut taloustiedot annettujen ohjeiden mukaisesti (ml. mahdolliset talousliitteet)',
+    },
+    { key: 'avustus-alle-100k', label: 'Myönnetty avustus on alle 100 000 euroa' },
+  ]
 
 function createInitialTaydennyspyyntoEmail(
   hakemus: Hakemus,
@@ -91,7 +94,7 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
     (s) => getLoadedAvustushakuData(s.arviointi).hakuData.avustushaku
   )
   const [message, setMessage] = useState<string>()
-  const [checklist, setChecklist] = useState<ChecklistState>({
+  const [checklist, setChecklist] = useState<AsiatarkastusChecklist>({
     'avustus-kaytetty-paatoksen-mukaisesti': false,
     'omarahoitus-kaytetty': false,
     'taloustiedot-kirjattu': false,
@@ -105,6 +108,7 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
   const verifiedAt = hakemus['loppuselvitys-information-verified-at']
   const verification = hakemus['loppuselvitys-information-verification']
   const isOtantatarkastus = avustushakuFromStore['loppuselvitys-otantatarkastus-enabled'] ?? false
+  const savedChecklist = hakemus['asiatarkastus-checklist']
 
   const lang = hakemus.language
   const loppuselvitys = hakemus.selvitys?.loppuselvitys
@@ -133,7 +137,7 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
     setApprovalError(undefined)
     const body: {
       message: string | undefined
-      checklist?: ChecklistState
+      checklist?: AsiatarkastusChecklist
       email?: { to: string[]; subject: string; message: string; 'selvitys-hakemus-id': number }
     } = { message }
     if (isOtantatarkastus) {
@@ -186,6 +190,21 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
                 heading: 'Asiatarkastettu',
                 component: (
                   <div className={'messageDetails'}>
+                    {isOtantatarkastus && savedChecklist && (
+                      <div className="verification-checklist" style={{ pointerEvents: 'none' }}>
+                        {ASIATARKASTUS_CHECKLIST_ITEMS.map((item) => (
+                          <label key={item.key} className="verification-checklist-item">
+                            <input
+                              type="checkbox"
+                              checked={savedChecklist[item.key]}
+                              disabled
+                              readOnly
+                            />
+                            <span>{item.label}</span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
                     <div className={'rowMessage'}>{verification}</div>
                   </div>
                 ),

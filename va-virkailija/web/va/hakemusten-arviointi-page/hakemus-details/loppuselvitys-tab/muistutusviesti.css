@@ -71,7 +71,7 @@
     padding: 0.5rem;
     margin: 0.5rem;
     background-color: white;
-    color: var(--middle-gray);
+    color: var(--form-label-black);
     max-height: 242px;
     overflow-y: scroll;
 }
