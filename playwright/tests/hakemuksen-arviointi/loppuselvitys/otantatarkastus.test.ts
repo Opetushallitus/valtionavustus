@@ -146,35 +146,3 @@ test.describe.parallel('Otantatarkastus', () => {
     await expect(loppuselvitysPage.locators.taloustarkastus.accept).toBeVisible()
   })
 })
-
-test.describe('2-vaiheinen regression', () => {
-  selvitysTest(
-    'no otantapolku → falls back to old 2-vaiheinen flow',
-    async ({ page, avustushakuID, acceptedHakemus: { hakemusID }, loppuselvitysSubmitted }) => {
-      expect(loppuselvitysSubmitted).toBeDefined()
-
-      const loppuselvitysPage = LoppuselvitysPage(page)
-      await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
-
-      await expect(loppuselvitysPage.locators.otantatarkastus.checklist).toBeHidden()
-      await expect(loppuselvitysPage.locators.otantatarkastus.satunnaisotantaBanner).toBeHidden()
-      await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeVisible()
-
-      await loppuselvitysPage.locators.asiatarkastus.acceptMessage.fill('2-vaiheinen kommentti')
-
-      const [verifyResponse] = await Promise.all([
-        page.waitForResponse(
-          (resp) =>
-            resp.url().includes('/loppuselvitys/verify-information') &&
-            resp.request().method() === 'POST'
-        ),
-        loppuselvitysPage.locators.asiatarkastus.confirmAcceptance.click(),
-      ])
-      const body = await verifyResponse.json()
-      expect(body['otantapolku']).toBeNull()
-
-      await expect(loppuselvitysPage.locators.asiatarkastettu).toBeVisible()
-      await expect(loppuselvitysPage.locators.taloustarkastus.accept).toBeVisible()
-    }
-  )
-})

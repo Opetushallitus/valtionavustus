@@ -675,6 +675,35 @@ order by upper(h.organization_name), upper(h.project_name)")
 
     :else nil))
 
+(defn- mark-information-verified!
+  [tx hakemus-id message verifier riskiperusteinen?]
+  (execute!
+   tx
+   "UPDATE hakemukset
+    SET status_loppuselvitys = 'information_verified',
+        loppuselvitys_information_verification = ?,
+        loppuselvitys_information_verified_by = ?,
+        loppuselvitys_information_verified_at = now(),
+        loppuselvitys_riskiperusteinen = ?
+    WHERE id = ? AND version_closed IS NULL"
+   [message verifier riskiperusteinen? hakemus-id]))
+
+(defn- accept-with-taloustarkastus!
+  [tx hakemus-id message verifier verifier-oid]
+  (execute!
+   tx
+   "UPDATE hakemukset
+    SET status_loppuselvitys = 'accepted',
+        loppuselvitys_information_verification = ?,
+        loppuselvitys_information_verified_by = ?,
+        loppuselvitys_information_verified_at = now(),
+        loppuselvitys_taloustarkastanut_oid = ?,
+        loppuselvitys_taloustarkastanut_name = ?,
+        loppuselvitys_taloustarkastettu_at = now(),
+        loppuselvitys_riskiperusteinen = FALSE
+    WHERE id = ? AND version_closed IS NULL"
+   [message verifier verifier-oid verifier hakemus-id]))
+
 (defn verify-loppuselvitys-information [hakemus-id verify-information identity]
   (try
     (with-tx
@@ -719,54 +748,20 @@ order by upper(h.organization_name), upper(h.project_name)")
                                    :otantapolku otantapolku))
                   (bad-request shape-err))
               (cond
-                ;; Path A: 2-vaiheinen (otanta off / submitted before feature)
                 (nil? otantapolku)
-                (do
-                  (execute!
-                   tx
-                   "UPDATE hakemukset
-                    SET status_loppuselvitys = 'information_verified',
-                        loppuselvitys_information_verification = ?,
-                        loppuselvitys_information_verified_by = ?,
-                        loppuselvitys_information_verified_at = now()
-                    WHERE id = ? AND version_closed IS NULL"
-                   [message verifier hakemus-id])
-                  (ok response-data))
+                (do (mark-information-verified! tx hakemus-id message verifier false)
+                    (ok response-data))
 
-                ;; Path B: satunnaisotanta — straight to information_verified
                 (= otantapolku "satunnaisotanta")
-                (do
-                  (execute!
-                   tx
-                   "UPDATE hakemukset
-                    SET status_loppuselvitys = 'information_verified',
-                        loppuselvitys_information_verification = ?,
-                        loppuselvitys_information_verified_by = ?,
-                        loppuselvitys_information_verified_at = now()
-                    WHERE id = ? AND version_closed IS NULL"
-                   [message verifier hakemus-id])
-                  (ok response-data))
+                (do (mark-information-verified! tx hakemus-id message verifier false)
+                    (ok response-data))
 
-                ;; Path C: otannan-ulkopuolella — branch on checklist outcome
                 (= otantapolku "otannan-ulkopuolella")
-                (let [all-checked (all-checklist-items-checked? checklist)]
+                (do
                   (save-checklist! tx hakemus-id checklist)
-                  (if all-checked
-                    ;; C1: combo — accept + send email atomically
+                  (if (all-checklist-items-checked? checklist)
                     (do
-                      (execute!
-                       tx
-                       "UPDATE hakemukset
-                        SET status_loppuselvitys = 'accepted',
-                            loppuselvitys_information_verification = ?,
-                            loppuselvitys_information_verified_by = ?,
-                            loppuselvitys_information_verified_at = now(),
-                            loppuselvitys_taloustarkastanut_oid = ?,
-                            loppuselvitys_taloustarkastanut_name = ?,
-                            loppuselvitys_taloustarkastettu_at = now(),
-                            loppuselvitys_riskiperusteinen = FALSE
-                        WHERE id = ? AND version_closed IS NULL"
-                       [message verifier verifier-oid verifier hakemus-id])
+                      (accept-with-taloustarkastus! tx hakemus-id message verifier verifier-oid)
                       (let [selvitys-hakemus-id (:selvitys-hakemus-id email-data)
                             today-date (datetime/date-string (datetime/now))
                             email-json {:message (:message email-data)
@@ -785,19 +780,8 @@ order by upper(h.organization_name), upper(h.project_name)")
                                                 (:message email-data)
                                                 is-jotpa)))
                       (ok response-data))
-                    ;; C2: risk — set riskiperusteinen, route to taloustarkastus
-                    (do
-                      (execute!
-                       tx
-                       "UPDATE hakemukset
-                        SET status_loppuselvitys = 'information_verified',
-                            loppuselvitys_information_verification = ?,
-                            loppuselvitys_information_verified_by = ?,
-                            loppuselvitys_information_verified_at = now(),
-                            loppuselvitys_riskiperusteinen = TRUE
-                        WHERE id = ? AND version_closed IS NULL"
-                       [message verifier hakemus-id])
-                      (ok response-data))))))))))
+                    (do (mark-information-verified! tx hakemus-id message verifier true)
+                        (ok response-data))))))))))
     (catch java.sql.BatchUpdateException e
       (log/warn {:error (ex-message (ex-cause e))
                  :in "verify-loppuselvitys-information"
