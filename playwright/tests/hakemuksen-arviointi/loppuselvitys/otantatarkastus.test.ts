@@ -55,7 +55,7 @@ test.describe.parallel('Otantatarkastus', () => {
     await expect(loppuselvitysPage.locators.taloustarkastus.accept).toBeVisible()
   })
 
-  test('otannan-ulkopuolella + all checked: combo accepts atomically and sends email', async ({
+  test('otannan-ulkopuolella + all checked: asiatarkasta and accept atomically and sends email', async ({
     page,
     request,
     avustushakuID,
@@ -73,10 +73,11 @@ test.describe.parallel('Otantatarkastus', () => {
     await expect(loppuselvitysPage.locators.otantatarkastus.approvalEmailForm).toBeHidden()
 
     await loppuselvitysPage.checkAllChecklistItems()
-    await loppuselvitysPage.locators.asiatarkastus.acceptMessage.fill('Kaikki kunnossa')
 
     await expect(loppuselvitysPage.locators.otantatarkastus.approvalEmailForm).toBeVisible()
     await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeHidden()
+    await expect(loppuselvitysPage.locators.asiatarkastus.acceptMessage).toBeVisible()
+    await expect(loppuselvitysPage.locators.otantatarkastus.approvalConfirm).toBeEnabled()
 
     const [verifyResponse] = await Promise.all([
       page.waitForResponse(
@@ -129,6 +130,7 @@ test.describe.parallel('Otantatarkastus', () => {
     ).toBeVisible()
     await expect(loppuselvitysPage.locators.otantatarkastus.approvalEmailForm).toBeHidden()
     await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeVisible()
+    await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeDisabled()
 
     await loppuselvitysPage.locators.asiatarkastus.acceptMessage.fill('Riskiperusteinen huomio')
 

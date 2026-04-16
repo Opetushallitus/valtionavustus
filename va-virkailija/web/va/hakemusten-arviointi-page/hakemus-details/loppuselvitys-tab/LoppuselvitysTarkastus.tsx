@@ -315,7 +315,8 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
 
   const allChecked = Object.values(checklist).every(Boolean)
   const loppuselvitysNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
-  const disableSubmit = loppuselvitysNotSubmitted || !message || disabled
+  const disableRiskiSubmit = loppuselvitysNotSubmitted || !message || disabled
+  const disableAsiatarkastaAndAcceptSubmit = loppuselvitysNotSubmitted || disabled
 
   const onSubmitRiski = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -334,7 +335,7 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
     setMessage('')
   }
 
-  const onSubmitCombo = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitAsiatarkastaAndAccept = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     e.stopPropagation()
     setError(undefined)
@@ -342,7 +343,7 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
       await HttpUtil.post(
         `/api/avustushaku/${avustushakuId}/hakemus/${hakemus.id}/loppuselvitys/verify-information`,
         {
-          message,
+          message: message ?? '',
           checklist,
           email: {
             to: approvalEmail.receivers,
@@ -397,8 +398,8 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
           <CommentTextarea message={message} setMessage={setMessage} disabled={disabled} />
           {allChecked ? (
             <MultipleRecipentEmailForm
-              onSubmit={onSubmitCombo}
-              disabled={disableSubmit}
+              onSubmit={onSubmitAsiatarkastaAndAccept}
+              disabled={disableAsiatarkastaAndAcceptSubmit}
               email={approvalEmail}
               setEmail={setApprovalEmail}
               formName="asiatarkastus-hyvaksynta"
@@ -409,7 +410,7 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
           ) : (
             <form onSubmit={onSubmitRiski}>
               <div className="verification-footer">
-                <button type="submit" name="submit-verification" disabled={disableSubmit}>
+                <button type="submit" name="submit-verification" disabled={disableRiskiSubmit}>
                   Hyväksy asiatarkastus ja lähetä taloustarkastukseen
                 </button>
                 {error && <div className="error">{error}</div>}
