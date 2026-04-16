@@ -264,6 +264,16 @@
     (virkailija-notifications/send-loppuselvitys-asiatarkastamatta-notifications)
     (ok {:ok "ok"}))
 
+  (compojure-api/POST "/set-loppuselvitys-otantapolku" []
+    :body [body {:hakemus-id Long
+                 :otantapolku (s/enum "satunnaisotanta" "otannan-ulkopuolella")}]
+    :return {:ok s/Str}
+    (execute!
+     "UPDATE hakija.hakemukset SET loppuselvitys_otantapolku = ?
+      WHERE id = ? AND version_closed IS NULL"
+     [(:otantapolku body) (:hakemus-id body)])
+    (ok {:ok "ok"}))
+
   (compojure-api/POST "/send-loppuselvitys-taloustarkastamatta-notifications" []
     :return {:ok s/Str}
     (virkailija-notifications/send-loppuselvitys-taloustarkastamatta-notifications)

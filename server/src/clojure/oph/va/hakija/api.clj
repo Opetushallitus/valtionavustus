@@ -23,7 +23,7 @@
    [oph.va.routes :refer :all]
    [oph.va.virkailija.authorization :as authorization]
    [oph.va.virkailija.email :as email]
-   [ring.util.http-response :refer [conflict! ok]])
+   [ring.util.http-response :refer [bad-request conflict! ok]])
   (:import
    (oph.va.jdbc.enums HakuRole HakuStatus HakuType)))
 
@@ -297,7 +297,8 @@
    :loppuselvitys-information-verification (:loppuselvitys_information_verification hakemus)
    :loppuselvitys-taloustarkastanut-name (:loppuselvitys_taloustarkastanut_name hakemus)
    :loppuselvitys-taloustarkastettu-at (:loppuselvitys_taloustarkastettu_at hakemus)
-   :loppuselvitys-otanta-polku (:loppuselvitys_otanta_polku hakemus)
+   :loppuselvitys-otantapolku (:loppuselvitys_otantapolku hakemus)
+   :loppuselvitys-riskiperusteinen (:loppuselvitys_riskiperusteinen hakemus)
    :status-valiselvitys (:status_valiselvitys hakemus)
    :status-muutoshakemus (:status_muutoshakemus hakemus)
    :answers (:answer_values hakemus)
@@ -413,7 +414,8 @@
         h.loppuselvitys_information_verification,
         h.loppuselvitys_taloustarkastettu_at,
         h.loppuselvitys_taloustarkastanut_name,
-        h.loppuselvitys_otanta_polku,
+        h.loppuselvitys_otantapolku,
+        h.loppuselvitys_riskiperusteinen,
         (select
           (CASE
             WHEN m.paatos_id IS NULL
@@ -602,120 +604,205 @@ order by upper(h.organization_name), upper(h.project_name)")
         true)
       false)))
 
-(defn- determine-otanta-polku [checklist]
-  (let [all-checked (and (:avustus-kaytetty-paatoksen-mukaisesti checklist)
-                         (:omarahoitus-kaytetty checklist)
-                         (:taloustiedot-kirjattu checklist)
-                         (:avustus-alle-100k checklist))]
-    (if (not all-checked)
-      "riskiperusteinen"
-      (let [prosentti (get-in config [:otantatarkastus :satunnaisotanta-prosentti])]
-        (if (< (rand-int 100) prosentti)
-          "satunnaisotanta"
-          "otannan-ulkopuolella")))))
+(defn- roll-otantapolku []
+  (let [prosentti (get-in config [:otantatarkastus :satunnaisotanta-prosentti])]
+    (if (< (rand-int 100) prosentti)
+      "satunnaisotanta"
+      "otannan-ulkopuolella")))
+
+(defn assign-loppuselvitys-otantapolku-if-enabled!
+  "Called at loppuselvitys submission. No-op unless the haku has otantatarkastus
+   enabled. Idempotent: skips when otantapolku is already set so täydennyspyyntö
+   resubmission doesn't re-roll."
+  [tx parent-hakemus-id]
+  (let [hakemus (get-hakemus-by-id-tx tx parent-hakemus-id)
+        avustushaku (get-avustushaku-tx tx (:avustushaku hakemus))]
+    (when (and (:loppuselvitys_otantatarkastus_enabled avustushaku)
+               (nil? (:loppuselvitys-otantapolku hakemus)))
+      (execute!
+       tx
+       "UPDATE hakija.hakemukset
+         SET loppuselvitys_otantapolku = ?
+         WHERE id = ? AND version_closed IS NULL"
+       [(roll-otantapolku) parent-hakemus-id]))))
+
+(defn- save-checklist! [tx hakemus-id checklist]
+  (execute!
+   tx
+   "INSERT INTO virkailija.loppuselvitys_asiatarkastus_checklist
+    (hakemus_id, avustus_kaytetty_paatoksen_mukaisesti, omarahoitus_kaytetty,
+     taloustiedot_kirjattu, avustus_alle_100k)
+    VALUES (?, ?, ?, ?, ?)
+    ON CONFLICT (hakemus_id) DO UPDATE SET
+      avustus_kaytetty_paatoksen_mukaisesti = EXCLUDED.avustus_kaytetty_paatoksen_mukaisesti,
+      omarahoitus_kaytetty = EXCLUDED.omarahoitus_kaytetty,
+      taloustiedot_kirjattu = EXCLUDED.taloustiedot_kirjattu,
+      avustus_alle_100k = EXCLUDED.avustus_alle_100k"
+   [hakemus-id
+    (:avustus-kaytetty-paatoksen-mukaisesti checklist)
+    (:omarahoitus-kaytetty checklist)
+    (:taloustiedot-kirjattu checklist)
+    (:avustus-alle-100k checklist)]))
+
+(defn- all-checklist-items-checked? [checklist]
+  (and (:avustus-kaytetty-paatoksen-mukaisesti checklist)
+       (:omarahoitus-kaytetty checklist)
+       (:taloustiedot-kirjattu checklist)
+       (:avustus-alle-100k checklist)))
+
+(defn- verify-payload-shape!
+  "Returns nil when payload matches the otantapolku, or a 400 response map when it doesn't."
+  [otantapolku checklist email]
+  (cond
+    (and (nil? otantapolku) (or checklist email))
+    {:error "2-vaiheinen path must not include checklist or email"}
+
+    (and (= otantapolku "satunnaisotanta") (or checklist email))
+    {:error "satunnaisotanta path must not include checklist or email"}
+
+    (and (= otantapolku "otannan-ulkopuolella") (nil? checklist))
+    {:error "otannan-ulkopuolella path requires checklist"}
+
+    (and (= otantapolku "otannan-ulkopuolella")
+         (all-checklist-items-checked? checklist)
+         (nil? email))
+    {:error "otannan-ulkopuolella + all checked requires email"}
+
+    (and (= otantapolku "otannan-ulkopuolella")
+         (not (all-checklist-items-checked? checklist))
+         (some? email))
+    {:error "otannan-ulkopuolella + risk path must not include email"}
+
+    :else nil))
 
 (defn verify-loppuselvitys-information [hakemus-id verify-information identity]
-  (try (with-tx
-         (fn [tx]
-           (let [hakemus  (get-hakemus-by-id-tx tx hakemus-id)
-                 role     (get-avustushaku-role-by-avustushaku-id-and-person-oid-tx tx (:avustushaku hakemus) (:person-oid identity))
-                 allowed-to-verify (or (authorization/is-pääkäyttäjä? identity) (authorization/is-valmistelija? role))
-                 status   (:status-loppuselvitys hakemus)
-                 haku-id  (:avustushaku-id hakemus)
-                 message  (:message verify-information)
-                 verifier (str (:first-name identity) " " (:surname identity))
-                 verifier-oid (:person-oid identity)
-                 avustushaku (get-avustushaku-tx tx (:avustushaku hakemus))
-                 otantatarkastus-enabled (:loppuselvitys_otantatarkastus_enabled avustushaku)
-                 checklist (:checklist verify-information)
-                 email-data (:email verify-information)]
-             (cond
-               (not (= status "submitted"))
-               (log/warn {:error "Status is not submitted"
-                          :in "verify-loppuselvitys-information"
-                          :hakemus-id hakemus-id
-                          :haku-id haku-id})
-               (not allowed-to-verify)
-               (log/warn {:error "User not allowed to verify"
-                          :in "verify-loppuselvitys-information"
-                          :hakemus-id hakemus-id
-                          :haku-id haku-id})
-               :else
-               (let [otanta-polku (when otantatarkastus-enabled
-                                    (determine-otanta-polku checklist))
-                     otannan-ulkopuolella (= otanta-polku "otannan-ulkopuolella")
-                     response-data {:loppuselvitys-information-verified-by verifier
-                                    :loppuselvitys-information-verification message}]
-                 ;; Save checklist and otanta-polku when otantatarkastus is enabled
-                 (when (and otantatarkastus-enabled checklist)
-                   (execute!
-                    tx
-                    "INSERT INTO virkailija.loppuselvitys_asiatarkastus_checklist
-                     (hakemus_id, avustus_kaytetty_paatoksen_mukaisesti, omarahoitus_kaytetty,
-                      taloustiedot_kirjattu, avustus_alle_100k)
-                     VALUES (?, ?, ?, ?, ?)
-                     ON CONFLICT (hakemus_id) DO UPDATE SET
-                       avustus_kaytetty_paatoksen_mukaisesti = EXCLUDED.avustus_kaytetty_paatoksen_mukaisesti,
-                       omarahoitus_kaytetty = EXCLUDED.omarahoitus_kaytetty,
-                       taloustiedot_kirjattu = EXCLUDED.taloustiedot_kirjattu,
-                       avustus_alle_100k = EXCLUDED.avustus_alle_100k"
-                    [hakemus-id
-                     (:avustus-kaytetty-paatoksen-mukaisesti checklist)
-                     (:omarahoitus-kaytetty checklist)
-                     (:taloustiedot-kirjattu checklist)
-                     (:avustus-alle-100k checklist)]))
-                 (if otannan-ulkopuolella
-                   ;; otannan-ulkopuolella: set accepted + taloustarkastanut in one update
-                   (do
-                     (execute!
-                      tx
-                      "UPDATE hakemukset
-                       SET
-                         status_loppuselvitys = 'accepted',
-                         loppuselvitys_information_verification = ?,
-                         loppuselvitys_information_verified_by = ?,
-                         loppuselvitys_information_verified_at = now(),
-                         loppuselvitys_otanta_polku = ?,
-                         loppuselvitys_taloustarkastanut_oid = ?,
-                         loppuselvitys_taloustarkastanut_name = ?,
-                         loppuselvitys_taloustarkastettu_at = now()
-                       WHERE id = ? and version_closed is null"
-                      [message verifier otanta-polku verifier-oid verifier hakemus-id])
-                     ;; Save selvitys_email on the selvitys hakemus and send approval email
-                     (when email-data
-                       (let [selvitys-hakemus-id (:selvitys-hakemus-id email-data)
-                             today-date (datetime/date-string (datetime/now))
-                             email-json {:message (:message email-data)
-                                         :subject (:subject email-data)
-                                         :send today-date
-                                         :to (distinct (:to email-data))}]
-                         (execute!
-                          tx
-                          "UPDATE hakija.hakemukset SET selvitys_email = ? WHERE id = ? AND status = 'submitted'"
-                          [email-json selvitys-hakemus-id])
-                         (let [selvitys-hakemus (get-hakemus selvitys-hakemus-id)
-                               is-jotpa-hakemus (is-jotpa-avustushaku avustushaku)]
-                           (email/send-selvitys! (distinct (:to email-data)) selvitys-hakemus (:subject email-data) (:message email-data) is-jotpa-hakemus)))))
-                   ;; riskiperusteinen/satunnaisotanta/non-otanta: just set information_verified
-                   (execute!
-                    tx
-                    "UPDATE hakemukset
-                     SET
-                       status_loppuselvitys = 'information_verified',
-                       loppuselvitys_information_verification = ?,
-                       loppuselvitys_information_verified_by = ?,
-                       loppuselvitys_information_verified_at = now(),
-                       loppuselvitys_otanta_polku = ?
-                     WHERE id = ? and version_closed is null"
-                    [message verifier otanta-polku hakemus-id]))
-                 (ok (if otanta-polku
-                       (assoc response-data :otanta-polku otanta-polku)
-                       response-data)))))))
-       (catch java.sql.BatchUpdateException e
-         (log/warn {:error (ex-message (ex-cause e))
-                    :in "verify-loppuselvitys-information"
-                    :hakemus-id hakemus-id})
-         (conflict!))))
+  (try
+    (with-tx
+      (fn [tx]
+        (let [hakemus      (get-hakemus-by-id-tx tx hakemus-id)
+              role         (get-avustushaku-role-by-avustushaku-id-and-person-oid-tx
+                            tx (:avustushaku hakemus) (:person-oid identity))
+              allowed?     (or (authorization/is-pääkäyttäjä? identity)
+                               (authorization/is-valmistelija? role))
+              status       (:status-loppuselvitys hakemus)
+              haku-id      (:avustushaku-id hakemus)
+              message      (:message verify-information)
+              checklist    (:checklist verify-information)
+              email-data   (:email verify-information)
+              otantapolku (:loppuselvitys-otantapolku hakemus)
+              verifier     (str (:first-name identity) " " (:surname identity))
+              verifier-oid (:person-oid identity)
+              avustushaku  (get-avustushaku-tx tx (:avustushaku hakemus))
+              response-data {:loppuselvitys-information-verified-by verifier
+                             :loppuselvitys-information-verification message
+                             :otantapolku otantapolku}]
+          (cond
+            (not= status "submitted")
+            (do (log/warn {:error "Status is not submitted"
+                           :in "verify-loppuselvitys-information"
+                           :hakemus-id hakemus-id
+                           :haku-id haku-id})
+                nil)
+
+            (not allowed?)
+            (do (log/warn {:error "User not allowed to verify"
+                           :in "verify-loppuselvitys-information"
+                           :hakemus-id hakemus-id
+                           :haku-id haku-id})
+                nil)
+
+            :else
+            (if-let [shape-err (verify-payload-shape! otantapolku checklist email-data)]
+              (do (log/warn (assoc shape-err
+                                   :in "verify-loppuselvitys-information"
+                                   :hakemus-id hakemus-id
+                                   :otantapolku otantapolku))
+                  (bad-request shape-err))
+              (cond
+                ;; Path A: 2-vaiheinen (otanta off / submitted before feature)
+                (nil? otantapolku)
+                (do
+                  (execute!
+                   tx
+                   "UPDATE hakemukset
+                    SET status_loppuselvitys = 'information_verified',
+                        loppuselvitys_information_verification = ?,
+                        loppuselvitys_information_verified_by = ?,
+                        loppuselvitys_information_verified_at = now()
+                    WHERE id = ? AND version_closed IS NULL"
+                   [message verifier hakemus-id])
+                  (ok response-data))
+
+                ;; Path B: satunnaisotanta — straight to information_verified
+                (= otantapolku "satunnaisotanta")
+                (do
+                  (execute!
+                   tx
+                   "UPDATE hakemukset
+                    SET status_loppuselvitys = 'information_verified',
+                        loppuselvitys_information_verification = ?,
+                        loppuselvitys_information_verified_by = ?,
+                        loppuselvitys_information_verified_at = now()
+                    WHERE id = ? AND version_closed IS NULL"
+                   [message verifier hakemus-id])
+                  (ok response-data))
+
+                ;; Path C: otannan-ulkopuolella — branch on checklist outcome
+                (= otantapolku "otannan-ulkopuolella")
+                (let [all-checked (all-checklist-items-checked? checklist)]
+                  (save-checklist! tx hakemus-id checklist)
+                  (if all-checked
+                    ;; C1: combo — accept + send email atomically
+                    (do
+                      (execute!
+                       tx
+                       "UPDATE hakemukset
+                        SET status_loppuselvitys = 'accepted',
+                            loppuselvitys_information_verification = ?,
+                            loppuselvitys_information_verified_by = ?,
+                            loppuselvitys_information_verified_at = now(),
+                            loppuselvitys_taloustarkastanut_oid = ?,
+                            loppuselvitys_taloustarkastanut_name = ?,
+                            loppuselvitys_taloustarkastettu_at = now(),
+                            loppuselvitys_riskiperusteinen = FALSE
+                        WHERE id = ? AND version_closed IS NULL"
+                       [message verifier verifier-oid verifier hakemus-id])
+                      (let [selvitys-hakemus-id (:selvitys-hakemus-id email-data)
+                            today-date (datetime/date-string (datetime/now))
+                            email-json {:message (:message email-data)
+                                        :subject (:subject email-data)
+                                        :send today-date
+                                        :to (distinct (:to email-data))}]
+                        (execute!
+                         tx
+                         "UPDATE hakija.hakemukset SET selvitys_email = ? WHERE id = ? AND status = 'submitted'"
+                         [email-json selvitys-hakemus-id])
+                        (let [selvitys-hakemus (get-hakemus selvitys-hakemus-id)
+                              is-jotpa (is-jotpa-avustushaku avustushaku)]
+                          (email/send-selvitys! (distinct (:to email-data))
+                                                selvitys-hakemus
+                                                (:subject email-data)
+                                                (:message email-data)
+                                                is-jotpa)))
+                      (ok response-data))
+                    ;; C2: risk — set riskiperusteinen, route to taloustarkastus
+                    (do
+                      (execute!
+                       tx
+                       "UPDATE hakemukset
+                        SET status_loppuselvitys = 'information_verified',
+                            loppuselvitys_information_verification = ?,
+                            loppuselvitys_information_verified_by = ?,
+                            loppuselvitys_information_verified_at = now(),
+                            loppuselvitys_riskiperusteinen = TRUE
+                        WHERE id = ? AND version_closed IS NULL"
+                       [message verifier hakemus-id])
+                      (ok response-data))))))))))
+    (catch java.sql.BatchUpdateException e
+      (log/warn {:error (ex-message (ex-cause e))
+                 :in "verify-loppuselvitys-information"
+                 :hakemus-id hakemus-id})
+      (conflict!))))
 
 (defn get-hakemusdata [hakemus-id]
   (let [hakemus (first (query-original-identifiers

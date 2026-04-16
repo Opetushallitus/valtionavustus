@@ -35,10 +35,9 @@ export const LoppuselvitysForm = ({
     !hakemus['loppuselvitys-information-verified-at'] &&
     !hakemus['loppuselvitys-taloustarkastettu-at'] &&
     !hakemus['loppuselvitys-taloustarkastanut-name']
-  const otantaPolku = hakemus['loppuselvitys-otanta-polku']
+  const otantapolku = hakemus['loppuselvitys-otantapolku']
   const isOtantatarkastus = avustushaku['loppuselvitys-otantatarkastus-enabled']
-  const routedToTaloustarkastus =
-    otantaPolku === 'riskiperusteinen' || otantaPolku === 'satunnaisotanta'
+  const routedToTaloustarkastus = otantapolku === 'satunnaisotanta'
   const showTaloustarkastus =
     !isOtantatarkastus || routedToTaloustarkastus || status === 'information_verified'
 

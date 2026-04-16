@@ -8,6 +8,7 @@
             [oph.soresu.form.schema :as soresu-schema]
             [oph.soresu.form.validation :as validation]
             [oph.va.budget :as va-budget]
+            [oph.va.hakija.api :as va-api]
             [oph.va.hakija.db :as va-db]
             [oph.va.hakija.email :as va-email]
             [oph.va.hakija.handlers :as handlers]
@@ -274,7 +275,10 @@
               business-id (:business_id parent-hakemus)
               is-jotpa (is-jotpa-avustushaku avustushaku)]
           (if (= selvitys-type "loppuselvitys")
-            (va-db/update-loppuselvitys-status parent_id "submitted")
+            (do
+              (va-db/update-loppuselvitys-status parent_id "submitted")
+              (with-tx (fn [tx]
+                         (va-api/assign-loppuselvitys-otantapolku-if-enabled! tx parent_id))))
             (va-db/update-valiselvitys-status parent_id "submitted"))
           (try (with-tx (fn [tx]
                           (if (= selvitys-type "valiselvitys")

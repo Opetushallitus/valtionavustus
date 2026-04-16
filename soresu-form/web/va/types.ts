@@ -266,6 +266,8 @@ export const ASIATARKASTUS_CHECKLIST_KEYS = [
 export type AsiatarkastusChecklistKey = (typeof ASIATARKASTUS_CHECKLIST_KEYS)[number]
 export type AsiatarkastusChecklist = Record<AsiatarkastusChecklistKey, boolean>
 
+export type LoppuselvitysOtantapolku = 'satunnaisotanta' | 'otannan-ulkopuolella'
+
 export interface Hakemus {
   id: number
   answers: Answer[]
@@ -308,7 +310,8 @@ export interface Hakemus {
   'loppuselvitys-information-verification'?: string
   'loppuselvitys-taloustarkastanut-name'?: string
   'loppuselvitys-taloustarkastettu-at'?: string
-  'loppuselvitys-otanta-polku'?: string
+  'loppuselvitys-otantapolku'?: LoppuselvitysOtantapolku | null
+  'loppuselvitys-riskiperusteinen': boolean
   'asiatarkastus-checklist'?: AsiatarkastusChecklist
   'loppuselvitys-change-request-pending'?: boolean
   'loppuselvitys-change-request-sent'?: boolean

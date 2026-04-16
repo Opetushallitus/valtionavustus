@@ -195,7 +195,8 @@
                       :loppuselvitys-taloustarkastanut-name (s/maybe s/Str)
                       :loppuselvitys-taloustarkastettu-at (s/maybe s/Inst)
                       :loppuselvitys-information-verification (s/maybe s/Str)
-                      :loppuselvitys-otanta-polku (s/maybe s/Str)
+                      :loppuselvitys-otantapolku (s/maybe (s/enum "otannan-ulkopuolella" "satunnaisotanta"))
+                      :loppuselvitys-riskiperusteinen s/Bool
                       (s/optional-key :asiatarkastus-checklist) (s/maybe {:avustus-kaytetty-paatoksen-mukaisesti s/Bool
                                                                           :omarahoitus-kaytetty s/Bool
                                                                           :taloustiedot-kirjattu s/Bool

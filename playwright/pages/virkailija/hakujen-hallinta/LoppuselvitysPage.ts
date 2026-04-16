@@ -38,13 +38,13 @@ export const LoppuselvitysPage = (page: Page) => {
       checklistItem: (label: string) =>
         page.getByTestId('asiatarkastus-checklist').locator('label', { hasText: label }),
 
+      satunnaisotantaBanner: page.getByTestId('satunnaisotanta-banner'),
+      otannanUlkopuolellaRiskiBanner: page.getByTestId('otannan-ulkopuolella-riski-banner'),
+
       approvalEmailForm: page.getByTestId('asiatarkastus-hyvaksynta-email'),
       approvalEmailSubject: page.getByTestId('asiatarkastus-hyvaksynta-email-subject'),
       approvalEmailContent: page.getByTestId('asiatarkastus-hyvaksynta-email-content'),
       approvalConfirm: page.getByTestId('asiatarkastus-hyvaksynta-submit'),
-      routedToTaloustarkastusMessage: page.getByText(
-        'Loppuselvitys on ohjattu taloustarkastukseen'
-      ),
       accepted: page.getByTestId('loppuselvitys-asiatarkastus-hyvaksytty'),
     },
     taloustarkastus: {
