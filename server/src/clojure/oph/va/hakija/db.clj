@@ -792,15 +792,30 @@
                 refused_at = now()
               WHERE id = ? AND version = ?" [comment (:id new-hakemus) (:version new-hakemus)])))
 
-(defn update-loppuselvitys-status [hakemus-id status]
-  (execute!
-   "update hakemukset set status_loppuselvitys = ? where id = ? and version_closed is null"
-   [status hakemus-id]))
+(defn update-loppuselvitys-status
+  ([hakemus-id status]
+   (execute!
+    "update hakemukset set status_loppuselvitys = ? where id = ? and version_closed is null"
+    [status hakemus-id]))
+  ([tx hakemus-id status]
+   (execute!
+    tx
+    "update hakemukset set status_loppuselvitys = ? where id = ? and version_closed is null"
+    [status hakemus-id])))
 
-(defn update-valiselvitys-status [hakemus-id status]
-  (execute!
-   "update hakemukset set status_valiselvitys = ? where id = ? and version_closed is null"
-   [status hakemus-id]))
+(defn update-valiselvitys-status
+  "Updates status_valiselvitys. Call the 3-arity when the caller already
+   holds a transaction and needs this update to commit atomically with other
+   writes; the 2-arity opens its own transaction."
+  ([hakemus-id status]
+   (execute!
+    "update hakemukset set status_valiselvitys = ? where id = ? and version_closed is null"
+    [status hakemus-id]))
+  ([tx hakemus-id status]
+   (execute!
+    tx
+    "update hakemukset set status_valiselvitys = ? where id = ? and version_closed is null"
+    [status hakemus-id])))
 
 (defn attachment-exists? [hakemus-id field-id]
   (first

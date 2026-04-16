@@ -274,19 +274,23 @@
               register-number (:register-number parent-hakemus)
               business-id (:business_id parent-hakemus)
               is-jotpa (is-jotpa-avustushaku avustushaku)]
-          (if (= selvitys-type "loppuselvitys")
-            (do
-              (va-db/update-loppuselvitys-status parent_id "submitted")
-              (with-tx (fn [tx]
-                         (va-api/assign-loppuselvitys-otantapolku-if-enabled! tx parent_id))))
-            (va-db/update-valiselvitys-status parent_id "submitted"))
-          (try (with-tx (fn [tx]
-                          (if (= selvitys-type "valiselvitys")
-                            (va-db/update-normalized-hakemus-valiselvitys-emails!
-                             tx parent_id answers)
-                            (va-db/update-normalized-hakemus-loppuselvitys-emails!
-                             tx parent_id answers)))) (catch Exception e
-                                                        (log/warn {:error (ex-message e)})))
+          (with-tx (fn [tx]
+                     (case selvitys-type
+                       "loppuselvitys"
+                       (do
+                         (va-db/update-loppuselvitys-status tx parent_id "submitted")
+                         (va-api/assign-loppuselvitys-otantapolku-if-enabled! tx parent_id))
+                       "valiselvitys"
+                       (va-db/update-valiselvitys-status tx parent_id "submitted"))))
+          (try
+            (with-tx (fn [tx]
+                       (case selvitys-type
+                         "loppuselvitys"
+                         (va-db/update-normalized-hakemus-loppuselvitys-emails! tx parent_id answers)
+                         "valiselvitys"
+                         (va-db/update-normalized-hakemus-valiselvitys-emails! tx parent_id answers))))
+            (catch Exception e
+              (log/warn {:error (ex-message e)})))
           (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id hakemus-name register-number (get-hakemus-contact-emails parent_id) is-jotpa business-id)
           (va-email/send-yhteishanke-selvitys-submitted! haku-id avustushaku selvitys-user-key selvitys-type lang parent-hakemus hakemus-name register-number)
           (handlers/hakemus-ok-response submitted-hakemus saved-submission validation nil))
