@@ -236,12 +236,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
     state.avustushaku && isJotpaAvustushaku(state.avustushaku['operational-unit-code'])
   return (
     <form className="muutoshakemus__form" onSubmit={f.handleSubmit}>
-      <TopBar
-        env={state.environment?.name || ''}
-        f={f}
-        isJotpaHakemus={isJotpaHakemus}
-        lang={lang}
-      />
+      <TopBar f={f} isJotpaHakemus={isJotpaHakemus} lang={lang} />
       <ErrorBoundary>
         <MuutoshakemusSection className="muutoshakemus__top-form">
           {state.avustushaku && (

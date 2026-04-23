@@ -7,13 +7,12 @@ import { TopBarNotification } from './TopBarNotification'
 import { Logo } from '../../Logo'
 
 type TopBarProps = {
-  env: string
   f: FormikHook
   lang: 'fi' | 'sv'
   isJotpaHakemus?: boolean
 }
 
-export function TopBar({ env, f, isJotpaHakemus, lang }: TopBarProps) {
+export function TopBar({ f, isJotpaHakemus, lang }: TopBarProps) {
   const { t } = useTranslations()
   const isMuutoshakemus =
     f.values.haenKayttoajanPidennysta ||
@@ -29,13 +28,6 @@ export function TopBar({ env, f, isJotpaHakemus, lang }: TopBarProps) {
         <div className="topbar-right">
           <div className="topbar-title-and-save-status">
             <h1 id="topic">{t.hakemus}</h1>
-          </div>
-          <div>
-            <div className="important-info">
-              <div className="environment-info">
-                <div className="environment-info__name">{env}</div>
-              </div>
-            </div>
           </div>
         </div>
         <div className="muutospyynto-button-container">
