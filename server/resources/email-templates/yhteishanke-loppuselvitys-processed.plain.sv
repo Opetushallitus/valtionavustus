@@ -1,6 +1,6 @@
 Bästa mottagare,
 
-Statsunderstöd: {{ avustushaku }}
+Statsunderstöd: {{ avustushaku-name }}
 
 Part i samprojektet:  {{ register-number }} - {{ project-name }}
 

@@ -13,6 +13,7 @@ import { navigate } from '../../utils/navigate'
 import { swedishAnswers } from '../../utils/constants'
 import { Answers } from '../../utils/types'
 import moment from 'moment'
+import { expectToBeDefined } from 'utils/util'
 
 const otherOrganization = (page: Page, index: number) => {
   const indexStartsFromOne = index + 1
@@ -76,9 +77,20 @@ const swedishYhteishankeTest = test.extend<{ answers: Answers }>({
 swedishYhteishankeTest(
   'yhteishanke organizations: swedish email bodies are sent through lifecycle',
   async (
-    { page, avustushakuID, answers, avustushakuNameSv, projektikoodi, codes, ukotettuValmistelija },
+    {
+      page,
+      avustushakuID,
+      submittedHakemusUrl,
+      answers,
+      avustushakuNameSv,
+      projektikoodi,
+      codes,
+      ukotettuValmistelija,
+    },
     testInfo
   ) => {
+    await expectToBeDefined(submittedHakemusUrl)
+
     testInfo.setTimeout(testInfo.timeout + 300_000)
     const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     const first = otherOrganization(page, 0)
@@ -377,6 +389,8 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
   codes,
   ukotettuValmistelija,
 }, testInfo) => {
+  await expectToBeDefined(submittedHakemusUrl)
+
   testInfo.setTimeout(testInfo.timeout + 300_000)
   const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
   const first = otherOrganization(page, 0)
@@ -640,6 +654,8 @@ swedishYhteishankeTest(
     },
     testInfo
   ) => {
+    await expectToBeDefined(submittedHakemusUrl)
+
     testInfo.setTimeout(testInfo.timeout + 120_000)
     const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     const first = otherOrganization(page, 0)
@@ -746,6 +762,8 @@ test('yhteishanke rejection: paatos-refuse emails sent separately per organizati
   codes,
   ukotettuValmistelija,
 }, testInfo) => {
+  await expectToBeDefined(submittedHakemusUrl)
+
   testInfo.setTimeout(testInfo.timeout + 120_000)
   const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
   const first = otherOrganization(page, 0)
