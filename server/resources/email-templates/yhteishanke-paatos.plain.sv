@@ -1,17 +1,17 @@
-[SV] Bästa mottagare,
+Bästa mottagare,
 
-Ansökan om understöd: {{ avustushaku-name }}
+Ansökan om statsunderstöd: {{ avustushaku-name }}
 
-[SV] Yhteishankkeen {{ register-number }} - {{ project-name }} osapuoli
+Part i samprojektet: {{ register-number }} - {{ project-name }}
 
-[SV] Avustuspäätöstä voitte tarkastella tästä linkistä: {{& url }}
+Beslutet om statsunderstöd kan läsas via den här länken: {{& url }}
 
-[SV] Avustuksen saajan tulee noudattaa avustuspäätöksessä sekä sen liitteissä kuvattuja ehtoja ja rajoituksia.
+Mottagaren av statsunderstöd ska följa de villkor och begränsningar som ingår i beslutet om statsunderstöd och bilagorna till det.
 
-[SV] Yhteishankkeen osapuolten tulee huolehtia siitä, että heidän yhteystietonsa ovat ajan tasalla.
+Parterna i samprojektet ska se till att deras kontaktuppgifter är uppdaterade.
 
-[SV] Yhteishankkeen osapuolten yhteystietojen muutokset päivitetään muutoshakulomakkeella päähakijayhteisön kautta.
+Ändringar i kontaktuppgifterna för parterna i samprojektet uppdateras på blanketten för ändringsansökan via den huvudansvariga organisationen.
 
-[SV] Päähakijayhteisö vastaa yhteydenpidosta Opetushallituksen kanssa.
+Den huvudansvariga organisationen ansvarar för kontakten till Utbildningsstyrelsen. Länken till blanketten för ändringsansökan samt länken till uppgiften om att man inte tar emot statsunderstödet har skickats till kontaktpersonerna för den huvudansvariga organisationen.
 
 {{>signature}}

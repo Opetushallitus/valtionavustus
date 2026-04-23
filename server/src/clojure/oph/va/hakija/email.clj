@@ -31,11 +31,11 @@
    :application-refused {:fi "Ilmoitus avustuksenne vastaanottamatta jättämisestä on lähetetty"
                          :sv "Er anmälan om att ni inte tar emot understödet har lämnats in till"}
    :yhteishanke-hakemus-submitted {:fi "Automaattinen viesti: Yhteishankkeen avustushakemus %s on kirjattu vastaanotetuksi"
-                                   :sv "[SV] Automaattinen viesti: Yhteishankkeen avustushakemus %s on kirjattu vastaanotetuksi"}
+                                   :sv "Automatiskt meddelande: Samprojektets ansökan om statsunderstöd %s har registrerats som mottagen"}
    :yhteishanke-valiselvitys-submitted {:fi "Automaattinen viesti: Yhteishankkeen %s väliselvitys on vastaanotettu"
-                                        :sv "[SV] Automaattinen viesti: Yhteishankkeen %s väliselvitys on vastaanotettu"}
+                                        :sv "Automatiskt meddelande: Samprojektets mellanredovisning %s  har tagits emot"}
    :yhteishanke-loppuselvitys-submitted {:fi "Automaattinen viesti: Yhteishankkeen %s loppuselvitys on vastaanotettu"
-                                         :sv "[SV] Automaattinen viesti: Yhteishankkeen %s loppuselvitys on vastaanotettu"}})
+                                         :sv "Automatiskt meddelande: Samprojektets slutredovisning %s har tagits emot"}})
 
 (def mail-templates
   {:new-hakemus {:fi (email/load-template "email-templates/new-hakemus.plain.fi")

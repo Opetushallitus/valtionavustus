@@ -17,6 +17,7 @@ export type DefaultValueFixtures = {
   talousarviotili: Talousarviotili
   randomName: string
   avustushakuName: string
+  avustushakuNameSv: string
   hakuProps: HakuProps
   answers: Answers
   swedishAnswers: Answers
@@ -116,6 +117,9 @@ export const defaultValues = workerScopedDefaultValues.extend<DefaultValueFixtur
         'YYYY-MM-DD HH:mm:ss.SSSS'
       )}`
     )
+  },
+  avustushakuNameSv: async ({ avustushakuName }, use) => {
+    await use(`${avustushakuName} på svenska`)
   },
   hakuProps: async ({ codes, talousarviotili, avustushakuName, randomName }, use) => {
     const nextYear = new Date().getFullYear() + 1

@@ -43,15 +43,15 @@
    {:fi "Automaattinen viesti - Valtionavustuserän '%s' maksatus suoritettu"
     :sv "Automatiskt meddelande - Statsunderstöd '%s' betald"}
    :yhteishanke-paatos {:fi "Automaattinen viesti: Yhteishankkeen avustushakemus %s on käsitelty - Linkki päätösasiakirjaan"
-                        :sv "[SV] Automaattinen viesti: Yhteishankkeen avustushakemus %s on käsitelty - Linkki päätösasiakirjaan"}
-   :yhteishanke-paatos-refuse {:fi "Automaattinen viesti: %s avustushakemus on käsitelty - Linkki päätösasiakirjaan"
-                               :sv "[SV] Automaattinen viesti: %s avustushakemus on käsitelty - Linkki päätösasiakirjaan"}
+                        :sv "Automatiskt meddelande: Samprojektets ansökan om statsunderstöd %s har behandlats - Länk till beslutsdokumentet"}
+   :yhteishanke-paatos-refuse {:fi "Automaattinen viesti: Yhteishankkeen %s avustushakemus on käsitelty - Linkki päätösasiakirjaan"
+                               :sv "Automatiskt meddelande: Ansökan  om statsunderstöd %s har behandlats - Länk till beslutsdokumentet"}
    :yhteishanke-muutoshakemus-paatos {:fi "Automaattinen viesti: Yhteishankkeen %s muutoshakemus on käsitelty"
-                                      :sv "[SV] Automaattinen viesti: Yhteishankkeen %s muutoshakemus on käsitelty"}
+                                      :sv "Automatiskt meddelande: Samprojektets ändringsansökan %s har behandlats"}
    :yhteishanke-valiselvitys-processed {:fi "Automaattinen viesti: Yhteishankkeen %s väliselvitys on käsitelty"
-                                        :sv "[SV] Automaattinen viesti: Yhteishankkeen %s väliselvitys on käsitelty"}
+                                        :sv "Automatiskt meddelande: Samprojektets mellanredovisning %s har behandlats"}
    :yhteishanke-loppuselvitys-processed {:fi "Automaattinen viesti: Yhteishankkeen %s loppuselvitys on käsitelty"
-                                         :sv "[SV] Automaattinen viesti: Yhteishankkeen %s loppuselvitys on käsitelty"}})
+                                         :sv "Automatiskt meddelande: Samprojektets slutredovisning %s har behandlats"}})
 
 (def mail-templates
   {:taydennyspyynto {:fi (email/load-template "email-templates/taydennyspyynto.plain.fi")
@@ -225,7 +225,7 @@
       :from           from
       :business-id    (:business_id hakemus)})))
 
-(defn send-yhteishanke-muutoshakemus-paatos! [avustushaku hakemus muutoshakemus-id paatos]
+(defn send-yhteishanke-muutoshakemus-paatos! [avustushaku hakemus arvio roles muutoshakemus-id paatos]
   (when (feature-enabled? :enableYhteishankeEmails)
     (let [emails (hakija-db/get-yhteishanke-organization-emails hakemus)]
       (when (not-empty emails)
@@ -233,9 +233,12 @@
         (let [lang-str (:language hakemus)
               lang (keyword lang-str)
               muutoshakemus-paatos-url (muutoshakemus-paatos-url (:user-key paatos) lang)
+              presenter-role-id (:presenter_role_id arvio)
               oikaisuvaatimusosoitus (find-3a-oikaisuvaatimusosoitus-attachment)
               attachment-title (get (:langs oikaisuvaatimusosoitus) lang)
               attachment-contents (read-oikaisuvaatimusosoitus-into-byte-array (:id oikaisuvaatimusosoitus) lang)
+              selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
+              presenter (if (nil? selected-presenter) (first roles) selected-presenter)
               attachment {:title attachment-title
                           :description attachment-title
                           :contents attachment-contents}
@@ -250,7 +253,8 @@
                    :register-number (:register_number hakemus)
                    :project-name hanke-name
                    :paatos-url muutoshakemus-paatos-url
-                   :attachment-title attachment-title}
+                   :attachment-title attachment-title
+                   :presenter-name (:name presenter)}
               body (render template msg signature)]
           (doseq [recipient emails]
             (email/try-send-email!
@@ -673,7 +677,7 @@
     (tapahtumaloki/create-log-entry type (:id avustushaku) (:id hakemus) identity uuid to nil true)
     (email/enqueue-message-to-be-send msg body)))
 
-(defn send-yhteishanke-selvitys-processed! [avustushaku hakemus selvitys-type]
+(defn send-yhteishanke-selvitys-processed! [avustushaku hakemus selvitys-type arvio roles]
   (when (feature-enabled? :enableYhteishankeEmails)
     (let [emails (hakija-db/get-yhteishanke-organization-emails hakemus)]
       (when (not-empty emails)
@@ -685,11 +689,15 @@
                      :yhteishanke-valiselvitys-processed)
               avustushaku-name (get-in avustushaku [:content :name lang])
               subject (format (get-in mail-titles [type lang]) (:register_number hakemus))
+              presenter-role-id (:presenter_role_id arvio)
+              selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
+              presenter (if (nil? selected-presenter) (first roles) selected-presenter)
               template (get-in mail-templates [type lang])
               signature (email-signature-block lang)
               msg {:avustushaku-name avustushaku-name
                    :register-number (:register_number hakemus)
-                   :project-name (:project_name hakemus)}
+                   :project-name (:project_name hakemus)
+                   :presenter-name (:name presenter)}
               body (render template msg signature)]
           (doseq [recipient emails]
             (email/try-send-email!

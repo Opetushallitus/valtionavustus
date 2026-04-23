@@ -1,13 +1,13 @@
-[SV] Bästa mottagare,
+Bästa mottagare,
 
-Ansökan om understöd: {{ avustushaku-name }}
+Statsunderstöd: {{ avustushaku-name }}
 
-[SV] Yhteishankkeen {{ register-number }} - {{ project-name }} osapuoli
+Part i samprojektet: {{ register-number }} - {{ project-name }}
 
-[SV] Olemme vastaanottaneet hankkeen väliselvityksen.
+Vi har tagit emot samprojektets mellanredovisning.
 
-[SV] Väliselvitystä voitte tarkastella tästä linkistä: {{& preview-url }}
+Mellanredovisningen kan läsas via den här länken: {{& preview-url }}
 
-[SV] Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan viralliseen sähköpostiosoitteeseen sekä yhteishankkeen osapuolten yhteyshenkilölle.
+Då redovisningen har behandlats får den huvudsakliga organisationen och kontaktpersonerna för parterna i samprojektet ett meddelande per e-post.
 
 {{>signature}}

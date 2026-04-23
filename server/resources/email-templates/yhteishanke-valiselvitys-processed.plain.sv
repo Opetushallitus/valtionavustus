@@ -1,9 +1,12 @@
-[SV] Bästa mottagare,
+Bästa mottagare,
 
-Ansökan om understöd: {{ avustushaku-name }}
+Statsunderstöd: {{ avustushaku-name }}
 
-[SV] Yhteishankkeen {{ register-number }} - {{ project-name }} osapuoli
+Part i samprojektet: {{ register-number }} - {{ project-name }}
 
-[SV] Hankkeen väliselvitys on käsitelty.
+Mellanredovisningen för projektet har behandlats.
 
+Hälsningar
+
+{{ presenter-name }}
 {{>signature}}

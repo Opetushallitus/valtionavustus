@@ -1,9 +1,12 @@
 Hyvä vastaanottaja,
 
-Avustushakemus: {{ avustushaku-name }}
+Valtionavustus:  {{ avustushaku-name }}
 
 Yhteishankkeen {{ register-number }} - {{ project-name }} osapuoli
 
-Hankkeen väliselvitys on käsitelty.
+Yhteishankkeen väliselvitys on käsitelty.
 
+Terveisin,
+
+{{ presenter-name }}
 {{>signature}}

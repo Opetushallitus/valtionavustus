@@ -1,15 +1,15 @@
-[SV] Bästa mottagare,
+Bästa mottagare,
 
-Ansökan om understöd: {{ avustushaku-name }}
+Ansökan om statsunderstöd: {{ avustushaku-name }}
 
 Ansökningstid: {{ start-date }} kl. {{ start-time }} — {{ end-date }} kl. {{ end-time }}
 
-Ni kan granska ansökan via denna länk: {{& url }}
+Ansökan kan läsas via den här länken: {{& url }}
 
-[SV] Hakija voi muokata jo lähetettyä hakemusta alkuperäisen hakemuslinkin kautta hakuajan päättymiseen asti.
+Den sökande kan via länken uppdatera sin ansökan så länge ansökningstiden pågår.
 
-[SV] Alkuperäinen hakemuslinkki on toimitettu yhteishankkeen päähakijayhteisön viralliseen sähköpostiosoitteeseen ja yhteyshenkilöille.
+Den ursprungliga länken till ansökan har skickats till den huvudansvariga organisationens officiella e-postadress och till kontaktpersonerna.
 
-[SV] Päähakijayhteisö vastaa yhteydenpidosta Opetushallituksen kanssa.
+Den huvudansvariga organisationen ansvarar för kontakten till Utbildningsstyrelsen.
 
 {{>signature}}

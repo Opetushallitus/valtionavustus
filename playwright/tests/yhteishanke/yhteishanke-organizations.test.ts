@@ -10,6 +10,8 @@ import { LoppuselvitysPage } from '../../pages/virkailija/hakujen-hallinta/Loppu
 import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
 import { getAvustushakuEmails, getHakemusTokenAndRegisterNumber } from '../../utils/emails'
 import { navigate } from '../../utils/navigate'
+import { swedishAnswers } from '../../utils/constants'
+import { Answers } from '../../utils/types'
 import moment from 'moment'
 
 const otherOrganization = (page: Page, index: number) => {
@@ -66,6 +68,304 @@ async function expectYhteishankeEmails(
     }
   }
 }
+
+const swedishYhteishankeTest = test.extend<{ answers: Answers }>({
+  answers: swedishAnswers,
+})
+
+swedishYhteishankeTest(
+  'yhteishanke organizations: swedish email bodies are sent through lifecycle',
+  async ({
+    page,
+    avustushakuID,
+    submittedHakemusUrl,
+    answers,
+    avustushakuNameSv,
+    projektikoodi,
+    codes,
+    ukotettuValmistelija,
+  }, testInfo) => {
+    testInfo.setTimeout(testInfo.timeout + 300_000)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
+    const first = otherOrganization(page, 0)
+    const second = otherOrganization(page, 1)
+    const updatedFirstContact = {
+      contactPerson: 'Första Uppdaterad',
+      email: 'eka.paivitetty@ensimmainen.fi',
+    }
+    const updatedSecondContact = {
+      contactPerson: 'Andra Uppdaterad',
+      email: 'toka.paivitetty@toinen.fi',
+    }
+
+    await test.step('enable combined-effort', async () => {
+      await page.locator("[for='combined-effort.radio.0']").click()
+      await expect(first.name).toBeVisible()
+    })
+
+    await test.step('fill first organization', async () => {
+      await first.name.fill('Ensimmäinen Organisaatio Oy')
+      await first.contactPerson.fill('Eka Henkilö')
+      await first.email.fill('eka@ensimmainen.fi')
+    })
+
+    await test.step('second organization row becomes enabled', async () => {
+      await expect(second.name).toBeEnabled()
+    })
+
+    await test.step('fill second organization', async () => {
+      await second.name.fill('Toinen Organisaatio Oy')
+      await second.contactPerson.fill('Toka Henkilö')
+      await second.email.fill('toka@toinen.fi')
+    })
+
+    await test.step('fill remaining required fields and submit', async () => {
+      await page.locator("[id='project-costs-row.amount']").fill('20000')
+      await page.locator("[for='type-of-organization.radio.0']").click()
+      await page.locator("[id='signature']").fill('Erkki Esimerkki')
+      await page.locator("[id='signature-email']").fill('erkki@example.com')
+      await page.locator('#bank-iban').fill('FI95 6682 9530 0087 65')
+      await page.locator('#bank-bic').fill('OKOYFIHH')
+
+      await hakijaAvustusHakuPage.waitForEditSaved()
+      await hakijaAvustusHakuPage.submitApplication()
+    })
+
+    await test.step('verify swedish yhteishanke hakemus submitted emails', async () => {
+      await expectYhteishankeEmails(
+        avustushakuID,
+        'yhteishanke-hakemus-submitted',
+        ['eka@ensimmainen.fi', 'toka@toinen.fi'],
+        [
+          `Automatiskt meddelande: Samprojektets ansökan om statsunderstöd ${avustushakuNameSv} har registrerats som mottagen`,
+        ],
+        [
+          `Ansökan om statsunderstöd: ${avustushakuNameSv}`,
+          `Ansökan kan läsas via den här länken:`,
+          `Den sökande kan via länken uppdatera sin ansökan så länge ansökningstiden pågår.`,
+        ]
+      )
+    })
+
+    await test.step('close avustushaku', async () => {
+      const hakujenHallintaPage = new HakujenHallintaPage(page)
+      const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+      await haunTiedotPage.setEndDate(moment().subtract(1, 'year').format('D.M.YYYY H.mm'))
+    })
+
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    let hakemusID: number
+    let registerNumber: string
+
+    await test.step('accept hakemus', async () => {
+      const projectName = answers.projectName
+      if (!projectName) {
+        throw new Error('projectName must be set in order to accept avustushaku')
+      }
+      await hakemustenArviointiPage.navigate(avustushakuID)
+      hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
+        avustushakuID,
+        projectName,
+        projektikoodi,
+        codes,
+      })
+    })
+
+    await test.step('add valmistelija for hakemus', async () => {
+      await hakemustenArviointiPage.closeHakemusDetails()
+      await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
+    })
+
+    await test.step('resolve avustushaku', async () => {
+      const hakujenHallintaPage = new HakujenHallintaPage(page)
+      const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+      await haunTiedotPage.resolveAvustushaku()
+    })
+
+    await test.step('send paatos', async () => {
+      const paatosPage = PaatosPage(page)
+      await paatosPage.navigateTo(avustushakuID)
+      await paatosPage.sendPaatos()
+      const tokenAndRegister = await getHakemusTokenAndRegisterNumber(hakemusID)
+      registerNumber = tokenAndRegister['register-number']
+    })
+
+    await test.step('verify swedish yhteishanke paatos emails', async () => {
+      await expectYhteishankeEmails(
+        avustushakuID,
+        'yhteishanke-paatos',
+        ['eka@ensimmainen.fi', 'toka@toinen.fi'],
+        [
+          `Automatiskt meddelande: Samprojektets ansökan om statsunderstöd ${registerNumber} har behandlats - Länk till beslutsdokumentet`,
+        ],
+        [
+          `Ansökan om statsunderstöd: ${avustushakuNameSv}`,
+          `Part i samprojektet: ${registerNumber} - ${answers.projectName}`,
+          `Beslutet om statsunderstöd kan läsas via den här länken:`,
+          `Den huvudansvariga organisationen ansvarar för kontakten till Utbildningsstyrelsen.`,
+        ]
+      )
+    })
+
+    await test.step('send väliselvityspyynnöt, submit väliselvitys, and verify swedish emails', async () => {
+      const hakujenHallintaPage = new HakujenHallintaPage(page)
+      const valiselvitysPage = await hakujenHallintaPage.navigateToValiselvitys(avustushakuID)
+
+      await valiselvitysPage.sendValiselvitys()
+
+      await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, hakemusID)
+      const valiselvitysFormUrl = await valiselvitysPage.linkToHakemus.getAttribute('href')
+      if (!valiselvitysFormUrl) {
+        throw new Error('Väliselvitys form URL not found')
+      }
+      await navigate(page, valiselvitysFormUrl)
+      const hakijaSelvitysPage = HakijaSelvitysPage(page, 'sv')
+      await hakijaSelvitysPage.fillCommonValiselvitysForm()
+      await hakijaSelvitysPage.submitButton.click()
+      await expect(hakijaSelvitysPage.submitButton).toHaveText('Mellanredovisning sänd')
+
+      await expectYhteishankeEmails(
+        avustushakuID,
+        'yhteishanke-valiselvitys-submitted',
+        ['eka@ensimmainen.fi', 'toka@toinen.fi'],
+        [`Automatiskt meddelande: Samprojektets mellanredovisning ${registerNumber}  har tagits emot`],
+        [
+          `Statsunderstöd: ${avustushakuNameSv}`,
+          `Vi har tagit emot samprojektets mellanredovisning.`,
+          `Mellanredovisningen kan läsas via den här länken:`,
+        ]
+      )
+    })
+
+    await test.step('process väliselvitys and verify swedish emails', async () => {
+      const valiselvitysPage = ValiselvitysPage(page)
+      await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, hakemusID)
+      await valiselvitysPage.acceptSelvitys()
+
+      await expectYhteishankeEmails(
+        avustushakuID,
+        'yhteishanke-valiselvitys-processed',
+        ['eka@ensimmainen.fi', 'toka@toinen.fi'],
+        [`Automatiskt meddelande: Samprojektets mellanredovisning ${registerNumber} har behandlats`],
+        [
+          `Statsunderstöd: ${avustushakuNameSv}`,
+          `Part i samprojektet: ${registerNumber} - ${answers.projectName}`,
+          `Mellanredovisningen för projektet har behandlats.`,
+          `Hälsningar`,
+        ]
+      )
+    })
+
+    await test.step('submit and accept muutoshakemus, verify swedish emails', async () => {
+      const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
+      await hakijaMuutoshakemusPage.navigate(hakemusID)
+      await page.getByTestId('checkbox-update-yhteishanke-organizations').check()
+
+      const firstOrganizationName = page.locator(
+        '[id="other-organizations.other-organizations-1.name"]'
+      )
+      const firstOrganizationContactPerson = page.locator(
+        '[id="other-organizations.other-organizations-1.contactperson"]'
+      )
+      const firstOrganizationEmail = page.locator(
+        '[id="other-organizations.other-organizations-1.email"]'
+      )
+      const secondOrganizationName = page.locator(
+        '[id="other-organizations.other-organizations-2.name"]'
+      )
+      const secondOrganizationContactPerson = page.locator(
+        '[id="other-organizations.other-organizations-2.contactperson"]'
+      )
+      const secondOrganizationEmail = page.locator(
+        '[id="other-organizations.other-organizations-2.email"]'
+      )
+
+      await expect(firstOrganizationName).toHaveAttribute('readonly', '')
+      await expect(secondOrganizationName).toHaveAttribute('readonly', '')
+
+      await firstOrganizationContactPerson.fill(updatedFirstContact.contactPerson)
+      await firstOrganizationEmail.fill(updatedFirstContact.email)
+      await secondOrganizationContactPerson.fill(updatedSecondContact.contactPerson)
+      await secondOrganizationEmail.fill(updatedSecondContact.email)
+
+      await hakijaMuutoshakemusPage.fillJatkoaikaValues({
+        jatkoaika: moment().add(1, 'year'),
+        jatkoaikaPerustelu: 'Tarvitaan lisäaikaa yhteishankkeen toteutukseen',
+      })
+      await hakijaMuutoshakemusPage.sendMuutoshakemus(true, true)
+
+      const muutoshakemusTab = await hakemustenArviointiPage.navigateToLatestMuutoshakemus(
+        avustushakuID,
+        hakemusID
+      )
+      await muutoshakemusTab.setMuutoshakemusJatkoaikaDecision('accepted')
+      await muutoshakemusTab.writePerustelu('Hyväksytään yhteishankkeen jatkoaika')
+      await muutoshakemusTab.saveMuutoshakemus()
+
+      await expectYhteishankeEmails(
+        avustushakuID,
+        'yhteishanke-muutoshakemus-paatos',
+        [updatedFirstContact.email, updatedSecondContact.email],
+        [`Automatiskt meddelande: Samprojektets ändringsansökan ${registerNumber} har behandlats`],
+        [
+          `Statsunderstöd: ${avustushakuNameSv}`,
+          `Part i samprojektet: ${registerNumber} - ${answers.projectName}`,
+          `Er ändringsansökan har behandlats.`,
+          `Beslut om ändringsansökan:`,
+          `Bilagor:`,
+          `Den huvudansvariga organisationen ansvarar för kontakten till Utbildningsstyrelsen.`,
+          `Hälsningar`,
+        ],
+        'Rättelseyrkande'
+      )
+    })
+
+    await test.step('send loppuselvityspyynnöt, submit loppuselvitys, and verify swedish emails', async () => {
+      const hakujenHallintaPage = new HakujenHallintaPage(page)
+      const loppuselvitysPage = await hakujenHallintaPage.navigateToLoppuselvitys(avustushakuID)
+
+      await loppuselvitysPage.sendLoppuselvitys()
+
+      await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
+      const loppuselvitysFormUrl = await loppuselvitysPage.getSelvitysFormUrl()
+      await navigate(page, loppuselvitysFormUrl)
+      const hakijaSelvitysPage = HakijaSelvitysPage(page, 'sv')
+      await hakijaSelvitysPage.fillCommonLoppuselvitysForm()
+      await hakijaSelvitysPage.submitButton.click()
+      await expect(hakijaSelvitysPage.submitButton).toHaveText('Slutredovisning sänd')
+
+      await expectYhteishankeEmails(
+        avustushakuID,
+        'yhteishanke-loppuselvitys-submitted',
+        [updatedFirstContact.email, updatedSecondContact.email],
+        [`Automatiskt meddelande: Samprojektets slutredovisning ${registerNumber} har tagits emot`],
+        [
+          `Statsunderstöd: ${avustushakuNameSv}`,
+          `Vi har tagit emot samprojektets slutredovisning.`,
+          `Slutredovisningen kan ni läsa via den här länken:`,
+        ]
+      )
+    })
+
+    await test.step('process loppuselvitys and verify swedish emails', async () => {
+      const loppuselvitysPage = LoppuselvitysPage(page)
+      await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
+      await loppuselvitysPage.asiatarkastaLoppuselvitys('Näyttää hyvältä, hyväksytään asiatarkastus')
+      await loppuselvitysPage.taloustarkastaLoppuselvitys()
+
+      await expectYhteishankeEmails(
+        avustushakuID,
+        'yhteishanke-loppuselvitys-processed',
+        [updatedFirstContact.email, updatedSecondContact.email],
+        [`Automatiskt meddelande: Samprojektets slutredovisning ${registerNumber} har behandlats`],
+        [
+          `Statsunderstöd: ${avustushakuNameSv}`,
+          `Utbildningsstyrelsen har granskat slutredovisningen för statsunderstödet och bekräftar att ärendet är slutbehandlat.`,
+        ]
+      )
+    })
+  }
+)
 
 test('yhteishanke organizations: contact details can be updated in muutoshakemus and emails are sent through lifecycle', async ({
   page,
@@ -131,7 +431,7 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
       [
         `Automaattinen viesti: Yhteishankkeen avustushakemus ${avustushakuName} on kirjattu vastaanotetuksi`,
       ],
-      [`Avustushakemus: ${avustushakuName}`]
+      [`Valtionavustushaku: ${avustushakuName}`]
     )
   })
 
@@ -186,7 +486,7 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
       [
         `Automaattinen viesti: Yhteishankkeen avustushakemus ${registerNumber} on käsitelty - Linkki päätösasiakirjaan`,
       ],
-      [`Avustushakemus: ${avustushakuName}`]
+      [`Valtionavustushaku: ${avustushakuName}`]
     )
   })
 
@@ -212,7 +512,7 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
       'yhteishanke-valiselvitys-submitted',
       ['eka@ensimmainen.fi', 'toka@toinen.fi'],
       [`Automaattinen viesti: Yhteishankkeen ${registerNumber} väliselvitys on vastaanotettu`],
-      [`Avustushakemus: ${avustushakuName}`]
+      [`Valtionavustus: ${avustushakuName}`]
     )
   })
 
@@ -226,7 +526,7 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
       'yhteishanke-valiselvitys-processed',
       ['eka@ensimmainen.fi', 'toka@toinen.fi'],
       [`Automaattinen viesti: Yhteishankkeen ${registerNumber} väliselvitys on käsitelty`],
-      [`Avustushakemus: ${avustushakuName}`]
+      [`Valtionavustus:  ${avustushakuName}`, `Terveisin,`, ukotettuValmistelija]
     )
   })
 
@@ -281,7 +581,7 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
       'yhteishanke-muutoshakemus-paatos',
       [updatedFirstContact.email, updatedSecondContact.email],
       [`Automaattinen viesti: Yhteishankkeen ${registerNumber} muutoshakemus on käsitelty`],
-      [`Avustushakemus: ${avustushakuName}`],
+      [`Valtionavustus: ${avustushakuName}`, `Terveisin,`, ukotettuValmistelija],
       'Oikaisuvaatimusosoitus'
     )
   })
@@ -305,7 +605,7 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
       'yhteishanke-loppuselvitys-submitted',
       [updatedFirstContact.email, updatedSecondContact.email],
       [`Automaattinen viesti: Yhteishankkeen ${registerNumber} loppuselvitys on vastaanotettu`],
-      [`Avustushakemus: ${avustushakuName}`]
+      [`Valtionavustus: ${avustushakuName}`]
     )
   })
 
@@ -320,10 +620,118 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
       'yhteishanke-loppuselvitys-processed',
       [updatedFirstContact.email, updatedSecondContact.email],
       [`Automaattinen viesti: Yhteishankkeen ${registerNumber} loppuselvitys on käsitelty`],
-      [`Avustushakemus: ${avustushakuName}`]
+      [`Valtionavustus:  ${avustushakuName}`]
     )
   })
 })
+
+swedishYhteishankeTest(
+  'yhteishanke rejection: swedish paatos-refuse emails sent separately per organization',
+  async ({
+    page,
+    avustushakuID,
+    submittedHakemusUrl,
+    answers,
+    avustushakuNameSv,
+    projektikoodi,
+    codes,
+    ukotettuValmistelija,
+  }, testInfo) => {
+    testInfo.setTimeout(testInfo.timeout + 120_000)
+    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
+    const first = otherOrganization(page, 0)
+    const second = otherOrganization(page, 1)
+
+    await test.step('enable combined-effort', async () => {
+      await page.locator("[for='combined-effort.radio.0']").click()
+      await expect(first.name).toBeVisible()
+    })
+
+    await test.step('fill first organization', async () => {
+      await first.name.fill('Ensimmäinen Organisaatio Oy')
+      await first.contactPerson.fill('Eka Henkilö')
+      await first.email.fill('eka@ensimmainen.fi')
+    })
+
+    await test.step('second organization row becomes enabled', async () => {
+      await expect(second.name).toBeEnabled()
+    })
+
+    await test.step('fill second organization', async () => {
+      await second.name.fill('Toinen Organisaatio Oy')
+      await second.contactPerson.fill('Toka Henkilö')
+      await second.email.fill('toka@toinen.fi')
+    })
+
+    await test.step('fill remaining required fields and submit', async () => {
+      await page.locator("[id='project-costs-row.amount']").fill('20000')
+      await page.locator("[for='type-of-organization.radio.0']").click()
+      await page.locator("[id='signature']").fill('Erkki Esimerkki')
+      await page.locator("[id='signature-email']").fill('erkki@example.com')
+      await page.locator('#bank-iban').fill('FI95 6682 9530 0087 65')
+      await page.locator('#bank-bic').fill('OKOYFIHH')
+
+      await hakijaAvustusHakuPage.waitForEditSaved()
+      await hakijaAvustusHakuPage.submitApplication()
+    })
+
+    await test.step('close avustushaku', async () => {
+      const hakujenHallintaPage = new HakujenHallintaPage(page)
+      const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+      await haunTiedotPage.setEndDate(moment().subtract(1, 'year').format('D.M.YYYY H.mm'))
+    })
+
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    let hakemusID: number
+    let registerNumber: string
+
+    await test.step('reject hakemus', async () => {
+      const projectName = answers.projectName
+      if (!projectName) {
+        throw new Error('projectName must be set in order to reject avustushaku')
+      }
+      await hakemustenArviointiPage.navigate(avustushakuID)
+      await hakemustenArviointiPage.selectHakemusFromList(projectName)
+      hakemusID = await hakemustenArviointiPage.getHakemusID()
+      await hakemustenArviointiPage.selectProject(projektikoodi, codes)
+      await hakemustenArviointiPage.rejectHakemus()
+    })
+
+    await test.step('add valmistelija for hakemus', async () => {
+      await hakemustenArviointiPage.closeHakemusDetails()
+      await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
+    })
+
+    await test.step('resolve avustushaku', async () => {
+      const hakujenHallintaPage = new HakujenHallintaPage(page)
+      const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+      await haunTiedotPage.resolveAvustushaku()
+    })
+
+    await test.step('send paatos', async () => {
+      const paatosPage = PaatosPage(page)
+      await paatosPage.navigateTo(avustushakuID)
+      await paatosPage.sendPaatos()
+      const tokenAndRegister = await getHakemusTokenAndRegisterNumber(hakemusID)
+      registerNumber = tokenAndRegister['register-number']
+    })
+
+    await test.step('verify swedish yhteishanke paatos-refuse emails', async () => {
+      await expectYhteishankeEmails(
+        avustushakuID,
+        'yhteishanke-paatos-refuse',
+        ['eka@ensimmainen.fi', 'toka@toinen.fi'],
+        [
+          `Automatiskt meddelande: Ansökan  om statsunderstöd ${registerNumber} har behandlats - Länk till beslutsdokumentet`,
+        ],
+        [
+          `Ansökan om statsunderstöd: ${avustushakuNameSv}`,
+          `Beslutet om statsunderstödet kan läsas via den här länken:`,
+        ]
+      )
+    })
+  }
+)
 
 test('yhteishanke rejection: paatos-refuse emails sent separately per organization', async ({
   page,
@@ -420,9 +828,9 @@ test('yhteishanke rejection: paatos-refuse emails sent separately per organizati
       'yhteishanke-paatos-refuse',
       ['eka@ensimmainen.fi', 'toka@toinen.fi'],
       [
-        `Automaattinen viesti: ${registerNumber} avustushakemus on käsitelty - Linkki päätösasiakirjaan`,
+        `Automaattinen viesti: Yhteishankkeen ${registerNumber} avustushakemus on käsitelty - Linkki päätösasiakirjaan`,
       ],
-      [`Avustushakemus: ${avustushakuName}`]
+      [`Valtionavustushaku: ${avustushakuName}`]
     )
   })
 })

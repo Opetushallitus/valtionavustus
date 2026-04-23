@@ -1,15 +1,18 @@
-[SV] Bästa mottagare,
+Bästa mottagare,
 
-Ansökan om understöd: {{ avustushaku-name }}
+Statsunderstöd: {{ avustushaku-name }}
 
-[SV] Yhteishankkeen {{ register-number }} - {{ project-name }} osapuoli
+Part i samprojektet: {{ register-number }} - {{ project-name }}
 
-[SV] Muutoshakemuksenne on käsitelty.
+Er ändringsansökan har behandlats.
 
-[SV] Päätös muutoshakemukseen: {{& paatos-url }}
+Beslut om ändringsansökan: {{& paatos-url }}
 
-[SV] Liitteet: {{ attachment-title }}
+Bilagor: {{ attachment-title }}
 
-[SV] Päähakijayhteisö vastaa yhteydenpidosta Opetushallituksen kanssa.
+Den huvudansvariga organisationen ansvarar för kontakten till Utbildningsstyrelsen.
 
+Hälsningar
+
+{{ presenter-name }}
 {{>signature}}

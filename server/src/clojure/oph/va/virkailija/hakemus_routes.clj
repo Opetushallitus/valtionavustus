@@ -86,7 +86,7 @@
             paatos (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)
             token (virkailija-db/create-application-token (:id hakemus))]
         (email/send-muutoshakemus-paatos to avustushaku hakemus arvio roles token muutoshakemus-id paatos)
-        (email/send-yhteishanke-muutoshakemus-paatos! avustushaku hakemus muutoshakemus-id paatos)
+        (email/send-yhteishanke-muutoshakemus-paatos! avustushaku hakemus arvio roles muutoshakemus-id paatos)
         (http/ok (virkailija-db/get-muutoshakemukset hakemus-id)))))
 
   (compojure-api/POST "/project" [avustushaku-id hakemus-id]

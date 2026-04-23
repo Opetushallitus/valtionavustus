@@ -129,7 +129,7 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     registerNumber = (await getHakemusTokenAndRegisterNumber(hakemusID))['register-number']
   })
 
-  await test.step('verify yhteishanke paatos email body contains avustushaku name', async () => {
+  await test.step('verify yhteishanke paatos email body contains updated avustushaku label', async () => {
     let emails: Awaited<ReturnType<typeof getAvustushakuEmails>> = []
     await expect
       .poll(
@@ -142,7 +142,7 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
       .toBeGreaterThan(0)
 
     for (const email of emails) {
-      expect(email.formatted).toContain(`Avustushakemus: ${avustushakuName}`)
+      expect(email.formatted).toContain(`Valtionavustushaku: ${avustushakuName}`)
     }
   })
 
@@ -253,7 +253,9 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
 
     for (const email of relevantEmails) {
       expect(email['to-address']).toHaveLength(1)
-      expect(email.formatted).toContain(`Avustushakemus: ${avustushakuName}`)
+      expect(email.formatted).toContain(`Valtionavustus: ${avustushakuName}`)
+      expect(email.formatted).toContain(`Terveisin,`)
+      expect(email.formatted).toContain(ukotettuValmistelija)
       expect(email['attachment-title']).toBe('Oikaisuvaatimusosoitus')
     }
   })

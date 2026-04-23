@@ -1,6 +1,6 @@
 Hyvä vastaanottaja,
 
-Avustushakemus: {{ avustushaku-name }}
+Valtionavustus: {{ avustushaku-name }}
 
 Yhteishankkeen {{ register-number }} - {{ project-name }} osapuoli
 
@@ -12,4 +12,7 @@ Liitteet: {{ attachment-title }}
 
 Päähakijayhteisö vastaa yhteydenpidosta Opetushallituksen kanssa.
 
+Terveisin,
+
+{{ presenter-name }}
 {{>signature}}

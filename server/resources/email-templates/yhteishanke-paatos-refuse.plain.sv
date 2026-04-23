@@ -1,9 +1,9 @@
-[SV] Bästa mottagare,
+Bästa mottagare,
 
-Ansökan om understöd: {{ avustushaku-name }}
+Ansökan om statsunderstöd: {{ avustushaku-name }}
 
 {{ register-number }} - {{ project-name }}
 
-[SV] Päätöstä voitte tarkastella tästä linkistä: {{& url }}
+Beslutet om statsunderstödet kan läsas via den här länken: {{& url }}
 
 {{>signature}}

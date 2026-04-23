@@ -1,6 +1,6 @@
 Hyvä vastaanottaja,
 
-Avustushakemus: {{ avustushaku-name }}
+Valtionavustushaku: {{ avustushaku-name }}
 
 {{ register-number }} - {{ project-name }}
 

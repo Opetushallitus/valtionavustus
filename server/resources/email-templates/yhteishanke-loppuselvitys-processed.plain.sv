@@ -1,11 +1,11 @@
-[SV] Bästa mottagare,
+Bästa mottagare,
 
-Ansökan om understöd: {{ avustushaku-name }}
+Statsunderstöd: {{ avustushaku }}
 
-[SV] Yhteishankkeen {{ register-number }} - {{ project-name }} osapuoli
+Part i samprojektet:  {{ register-number }} - {{ project-name }}
 
-[SV] Opetushallitus on tarkastanut hankkeen valtionavustusta koskevan loppuselvityksen ja toteaa avustusta koskevan asian käsittelyn päättyneeksi.
+Utbildningsstyrelsen har granskat slutredovisningen för statsunderstödet och bekräftar att ärendet är slutbehandlat.
 
-[SV] Opetushallitus voi asian käsittelyn päättämisestä huolimatta periä avustuksen tai osan siitä takaisin, jos sen tietoon tulee uusi seikka, joka valtionavustuslain 21 tai 22 §:n mukaisesti velvoittaa tai oikeuttaa takaisinperintään.
+Utbildningsstyrelsen kan trots att behandlingen av ärendet har avslutats kräva att hela eller en del av understödet ska återbetalas om Utbildningsstyrelsen får kännedom om nya uppgifter som förpliktar eller berättigar till att återkräva understödet i enlighet med 21 § eller 22 § i statsunderstödslagen.
 
 {{>signature}}
