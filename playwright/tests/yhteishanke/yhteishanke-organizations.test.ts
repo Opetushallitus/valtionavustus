@@ -75,16 +75,10 @@ const swedishYhteishankeTest = test.extend<{ answers: Answers }>({
 
 swedishYhteishankeTest(
   'yhteishanke organizations: swedish email bodies are sent through lifecycle',
-  async ({
-    page,
-    avustushakuID,
-    submittedHakemusUrl,
-    answers,
-    avustushakuNameSv,
-    projektikoodi,
-    codes,
-    ukotettuValmistelija,
-  }, testInfo) => {
+  async (
+    { page, avustushakuID, answers, avustushakuNameSv, projektikoodi, codes, ukotettuValmistelija },
+    testInfo
+  ) => {
     testInfo.setTimeout(testInfo.timeout + 300_000)
     const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     const first = otherOrganization(page, 0)
@@ -228,7 +222,9 @@ swedishYhteishankeTest(
         avustushakuID,
         'yhteishanke-valiselvitys-submitted',
         ['eka@ensimmainen.fi', 'toka@toinen.fi'],
-        [`Automatiskt meddelande: Samprojektets mellanredovisning ${registerNumber}  har tagits emot`],
+        [
+          `Automatiskt meddelande: Samprojektets mellanredovisning ${registerNumber}  har tagits emot`,
+        ],
         [
           `Statsunderstöd: ${avustushakuNameSv}`,
           `Vi har tagit emot samprojektets mellanredovisning.`,
@@ -246,7 +242,9 @@ swedishYhteishankeTest(
         avustushakuID,
         'yhteishanke-valiselvitys-processed',
         ['eka@ensimmainen.fi', 'toka@toinen.fi'],
-        [`Automatiskt meddelande: Samprojektets mellanredovisning ${registerNumber} har behandlats`],
+        [
+          `Automatiskt meddelande: Samprojektets mellanredovisning ${registerNumber} har behandlats`,
+        ],
         [
           `Statsunderstöd: ${avustushakuNameSv}`,
           `Part i samprojektet: ${registerNumber} - ${answers.projectName}`,
@@ -350,7 +348,9 @@ swedishYhteishankeTest(
     await test.step('process loppuselvitys and verify swedish emails', async () => {
       const loppuselvitysPage = LoppuselvitysPage(page)
       await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
-      await loppuselvitysPage.asiatarkastaLoppuselvitys('Näyttää hyvältä, hyväksytään asiatarkastus')
+      await loppuselvitysPage.asiatarkastaLoppuselvitys(
+        'Näyttää hyvältä, hyväksytään asiatarkastus'
+      )
       await loppuselvitysPage.taloustarkastaLoppuselvitys()
 
       await expectYhteishankeEmails(
@@ -627,16 +627,19 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
 
 swedishYhteishankeTest(
   'yhteishanke rejection: swedish paatos-refuse emails sent separately per organization',
-  async ({
-    page,
-    avustushakuID,
-    submittedHakemusUrl,
-    answers,
-    avustushakuNameSv,
-    projektikoodi,
-    codes,
-    ukotettuValmistelija,
-  }, testInfo) => {
+  async (
+    {
+      page,
+      avustushakuID,
+      submittedHakemusUrl,
+      answers,
+      avustushakuNameSv,
+      projektikoodi,
+      codes,
+      ukotettuValmistelija,
+    },
+    testInfo
+  ) => {
     testInfo.setTimeout(testInfo.timeout + 120_000)
     const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     const first = otherOrganization(page, 0)
