@@ -19,6 +19,8 @@ import { SmtpStack } from '../lib/smtp-stack'
 const HAKIJA_DOMAIN = 'valtionavustukset.oph.fi'
 const HAKIJA_DOMAIN_SV = 'statsunderstod.oph.fi'
 const VIRKAILIJA_DOMAIN = 'virkailija.valtionavustukset.oph.fi'
+const GOOGLE_SITE_VERIFICATION_HAKIJA = 'B_v2esbWM2SlV5lpGhfARu47cbqXpA9iZtb-uv4AMxw'
+const GOOGLE_SITE_VERIFICATION_HAKIJA_SV = 'aUYL4sGFeY8qKp66L0UKVd-Q9RhEMGuIXnxP1gyXA7c'
 
 const app = new cdk.App()
 {
@@ -227,6 +229,10 @@ const app = new cdk.App()
     hakijaDomainSv: HAKIJA_DOMAIN_SV,
     virkailijaDomain: VIRKAILIJA_DOMAIN,
     databaseHostname: dbStack.clusterWriterEndpointHostname,
+    googleSiteVerification: {
+      hakija: GOOGLE_SITE_VERIFICATION_HAKIJA,
+      hakijaSv: GOOGLE_SITE_VERIFICATION_HAKIJA_SV,
+    },
   })
   const smtpStack = new SmtpStack(prod, 'smtp', {
     emailDomain: {

@@ -11,6 +11,7 @@ import {
   CnameRecord,
   CrossAccountZoneDelegationRecord,
   PublicHostedZone,
+  TxtRecord,
 } from 'aws-cdk-lib/aws-route53'
 import { Environment } from './va-env-stage'
 import { ValtionavustusEnvironment, getAccountId, getEnv } from './va-context'
@@ -28,6 +29,11 @@ interface DnsStackProps extends cdk.StackProps {
     hakijaDomain: string
     hakijaDomainSv: string
     virkailijaDomain: string
+  }
+
+  googleSiteVerification?: {
+    hakija: string
+    hakijaSv: string
   }
 }
 
@@ -120,6 +126,19 @@ export class DnsStack extends cdk.Stack {
         ),
       })
       allowDelegationPolicy.attachToRole(delegationRole)
+
+      if (props.googleSiteVerification) {
+        new TxtRecord(this, 'GoogleSiteVerificationHakija', {
+          zone: hakijaZone,
+          values: [`google-site-verification=${props.googleSiteVerification.hakija}`],
+          comment: 'Google Search Console domain property verification',
+        })
+        new TxtRecord(this, 'GoogleSiteVerificationHakijaSv', {
+          zone: hakijaZoneSv,
+          values: [`google-site-verification=${props.googleSiteVerification.hakijaSv}`],
+          comment: 'Google Search Console domain property verification',
+        })
+      }
     }
 
     //

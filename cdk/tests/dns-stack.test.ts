@@ -82,6 +82,10 @@ describe('Delegation', () => {
     it('should not have any delegation records', () => {
       template.resourcePropertiesCountIs('AWS::Route53::RecordSet', { Type: 'NS' }, 0)
     })
+
+    it('should not have any Google site verification TXT records', () => {
+      template.resourcePropertiesCountIs('AWS::Route53::RecordSet', { Type: 'TXT' }, 0)
+    })
   })
 
   describe('in prod', () => {
@@ -92,6 +96,10 @@ describe('Delegation', () => {
         hakijaDomainSv: 'va.oph.fi',
         virkailijaDomain: 'virkailija.va.oph.fi',
         databaseHostname: 'va-aurora-cluster.cluster-9asdfkjewoidfn.eu-west-1.rds.amazonaws.com',
+        googleSiteVerification: {
+          hakija: 'test-token-hakija',
+          hakijaSv: 'test-token-hakija-sv',
+        },
       })
     )
 
@@ -108,6 +116,22 @@ describe('Delegation', () => {
         AssumeRolePolicyDocument: Match.objectLike({
           Statement: [allowAccountPrincipal(DEV_ACCOUNT), allowAccountPrincipal(QA_ACCOUNT)],
         }),
+      })
+    })
+
+    it('should have Google site verification TXT record for hakija apex', () => {
+      template.hasResourceProperties('AWS::Route53::RecordSet', {
+        Name: 'va.oph.fi.',
+        Type: 'TXT',
+        ResourceRecords: ['"google-site-verification=test-token-hakija"'],
+      })
+    })
+
+    it('should have Google site verification TXT record for hakija SV apex', () => {
+      template.hasResourceProperties('AWS::Route53::RecordSet', {
+        Name: 'va.oph.fi.',
+        Type: 'TXT',
+        ResourceRecords: ['"google-site-verification=test-token-hakija-sv"'],
       })
     })
   })
