@@ -29,6 +29,15 @@ declare global {
   }
 }
 
+function applyOmistajatyyppiLock<T extends BaseStateLoopState<T>>(state: T) {
+  if (state.saveStatus.savedObject?.['omistajatyyppi-locked']) {
+    const radioField = FormUtil.findField(state.form.content, 'radioButton-0')
+    if (radioField) {
+      radioField.forceDisabled = true
+    }
+  }
+}
+
 const TEXT_INPUT_FIELD_TYPES = new Set([
   'textField',
   'textArea',
@@ -94,7 +103,8 @@ export default class FormStateTransitions {
       'onAttachmentRemovalCompleted',
       'pushSaveCompletedEvent',
       'refreshStateFromServer',
-      'onRefuseApplication'
+      'onRefuseApplication',
+      'onApplyServerHakemus'
     )
   }
 
@@ -130,6 +140,7 @@ export default class FormStateTransitions {
       realInitialState.saveStatus.values,
       !realInitialState.configuration.preview
     )
+    applyOmistajatyyppiLock(realInitialState)
     if (_.isFunction(onInitialStateLoaded)) {
       onInitialStateLoaded(realInitialState)
     }
@@ -463,6 +474,15 @@ export default class FormStateTransitions {
 
   onInitAutoSave<T extends BaseStateLoopState<T>>(state: T) {
     this.startAutoSave(state)
+    return state
+  }
+
+  onApplyServerHakemus<T extends BaseStateLoopState<T>>(state: T, hakemus: any) {
+    state.saveStatus.savedObject = hakemus
+    if (hakemus?.submission?.answers) {
+      state.saveStatus.values = hakemus.submission.answers
+    }
+    applyOmistajatyyppiLock(state)
     return state
   }
 

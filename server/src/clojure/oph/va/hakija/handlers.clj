@@ -2,7 +2,8 @@
   (:require
    [clojure.tools.logging :as log]
    [oph.common.datetime :as datetime]
-   [oph.soresu.common.config :refer [config]]
+   [oph.common.tilastokeskus :as tilastokeskus]
+   [oph.soresu.common.config :as config :refer [config]]
    [oph.soresu.common.db :refer [with-tx]]
    [oph.soresu.form.db :as form-db]
    [oph.soresu.form.formutil :refer :all]
@@ -55,6 +56,7 @@
    :refused (:refused hakemus)
    :refused-at (:refused_at hakemus)
    :refused-comment (:refused_comment hakemus)
+   :omistajatyyppi-locked (:omistajatyyppi_locked hakemus)
    :loppuselvitys-information-verified-at (:loppuselvitys-information-verified-at parent-hakemus)})
 
 (defn hakemus-ok-response [hakemus submission validation parent-hakemus]
@@ -233,6 +235,25 @@
        (catch java.sql.BatchUpdateException e
          (log/warn {:error (ex-message (ex-cause e)) :in "on-hakemus-update" :user-key user-key})
          (conflict!))))
+
+(defn on-vahvista-organisaatio [haku-id user-key base-version organisation]
+  (let [owner-type (when (config/feature-enabled? :enableTilastokeskusOrganisationType)
+                     (tilastokeskus/hae-omistajatyyppi (:organisation-id organisation)))]
+    (try
+      (with-tx
+        (fn [tx]
+          (let [hakemus (va-db/get-locked-hakemus-version-for-update tx user-key base-version)]
+            (if (and hakemus (nil? (:version_closed hakemus)))
+              (let [_avustushaku (get-open-avustushaku-tx tx haku-id hakemus)
+                    result (va-db/vahvista-organisaatio-tx tx haku-id user-key base-version
+                                                           organisation owner-type)]
+                (if result
+                  (hakemus-ok-response (:hakemus result) (:submission result) {} nil)
+                  (hakemus-conflict-response hakemus)))
+              (hakemus-conflict-response (or hakemus {:user_key user-key :version base-version}))))))
+      (catch java.sql.BatchUpdateException e
+        (log/warn {:error (ex-message (ex-cause e)) :in "on-vahvista-organisaatio" :user-key user-key})
+        (conflict!)))))
 
 (defn- get-valmistelijas-for-avustushaku [avustushaku-id]
   (filter authorization/is-valmistelija? (va-db/get-avustushaku-roles avustushaku-id)))

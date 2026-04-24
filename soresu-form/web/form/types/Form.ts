@@ -54,6 +54,7 @@ export interface HakijaHakemus {
   refused?: boolean
   'refused-comment'?: string
   'refused-at'?: string
+  'omistajatyyppi-locked'?: boolean
 }
 
 export interface SavedObject extends HakijaHakemus {

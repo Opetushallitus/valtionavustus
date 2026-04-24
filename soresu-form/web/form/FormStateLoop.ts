@@ -194,6 +194,7 @@ export function initializeStateLoop<T extends BaseStateLoopState<T>>(
     [dispatcher.stream(events.save), stateTransitions.onSave],
     [dispatcher.stream(events.initAutoSave), stateTransitions.onInitAutoSave],
     [dispatcher.stream(events.saveCompleted), stateTransitions.onSaveCompleted],
+    [dispatcher.stream(events.applyServerHakemus), stateTransitions.onApplyServerHakemus],
     [dispatcher.stream(events.serverError), stateTransitions.onServerError],
     [dispatcher.stream(events.submit), stateTransitions.onSubmit],
     [dispatcher.stream(events.removeField), stateTransitions.onRemoveField],

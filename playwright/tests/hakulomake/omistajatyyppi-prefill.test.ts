@@ -275,3 +275,38 @@ test('confirm button is disabled while owner-type lookup is loading', async ({
     await expect(page.locator('input[type="radio"][value="kunta_kirkko"]')).toBeChecked()
   })
 })
+
+test('omistajatyyppi remains locked after page reload', async ({ hakijaAvustusHakuPage }) => {
+  const { page } = hakijaAvustusHakuPage
+
+  await test.step('stub owner-type API to return kunta_kirkko', async () => {
+    await stubOwnerTypeApi(page, {
+      status: 200,
+      body: JSON.stringify({ 'owner-type': 'kunta_kirkko' }),
+    })
+  })
+
+  await test.step('enter Y-tunnus and fetch organization data', async () => {
+    await enterBusinessIdAndFetch(page, AKAAN_KAUPUNKI_BUSINESS_ID)
+  })
+
+  await test.step('select organization and confirm', async () => {
+    await selectOrganisationAndConfirm(page)
+  })
+
+  await test.step('verify omistajatyyppi is auto-selected and disabled before reload', async () => {
+    await expect(page.locator('input[type="radio"][value="kunta_kirkko"]')).toBeChecked()
+    await expect(page.locator('input[type="radio"][value="kunta_kirkko"]')).toBeDisabled()
+  })
+
+  await test.step('reload the page', async () => {
+    await page.reload()
+    await expect(page.locator('label[for="radioButton-0.radio.0"]')).toBeVisible()
+  })
+
+  await test.step('clicking another omistajatyyppi must not change the selection', async () => {
+    await page.locator('label[for="radioButton-0.radio.1"]').click({ force: true })
+    await expect(page.locator('input[type="radio"][value="liiketalous"]')).not.toBeChecked()
+    await expect(page.locator('input[type="radio"][value="kunta_kirkko"]')).toBeChecked()
+  })
+})

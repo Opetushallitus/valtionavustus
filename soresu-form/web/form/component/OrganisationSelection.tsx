@@ -27,8 +27,6 @@ interface OrganizationResponse {
   county: string | null
 }
 
-type OrganizationFieldName = keyof typeof organizationToFormFieldIds
-
 const organizationToFormFieldIds = {
   name: 'organization',
   email: 'organization-email',
@@ -38,6 +36,7 @@ const organizationToFormFieldIds = {
 
 interface FormController {
   componentOnChangeListener: (field: Field, value: string) => void
+  applyServerHakemus: (hakemus: unknown) => void
 }
 
 interface OwnerTypeLookup {
@@ -67,57 +66,34 @@ export function OrganisationSelection({ state, controller }: OrganisationSelecti
   const lang = state.configuration.lang
   const translations = state.configuration.translations.misc
   const translator = new Translator(state.configuration.translations.misc)
-  const formContent = state.form.content
 
   const handleConfirm = () => {
-    if (selectedOrganisation) {
-      fillFormFields(selectedOrganisation)
-      if (
-        ownerTypeLookup &&
-        ownerTypeLookup.status === 'done' &&
-        ownerTypeLookup.ownerType &&
-        ownerTypeLookup.ytunnus === selectedOrganisation['organisation-id']
-      ) {
-        const radioButtonField = FormUtil.findField(formContent, 'radioButton-0')
-        if (radioButtonField) {
-          controller.componentOnChangeListener(radioButtonField, ownerTypeLookup.ownerType)
-          radioButtonField.forceDisabled = true
-        }
-      }
+    if (!selectedOrganisation) {
+      return
+    }
+    const postalAddress = _.trim(
+      `${selectedOrganisation.contact.address || ''} ${selectedOrganisation.contact['postal-number'] || ''} ${selectedOrganisation.contact.city || ''}`
+    )
+    const avustushakuId = state.avustushaku?.id
+    const userKey = state.saveStatus.hakemusId
+    const baseVersion = state.saveStatus.savedObject?.version
+    if (avustushakuId === undefined || !userKey || baseVersion === undefined) {
+      return
+    }
+    const body = {
+      organisation: {
+        name: selectedOrganisation.name,
+        email: selectedOrganisation.email,
+        'organisation-id': selectedOrganisation['organisation-id'],
+        'postal-address': postalAddress,
+      },
+    }
+    HttpUtil.post(
+      `/api/avustushaku/${avustushakuId}/hakemus/${userKey}/${baseVersion}/vahvista-organisaatio`,
+      body
+    ).then((updated) => {
+      controller.applyServerHakemus(updated)
       setModalIsOpen(false)
-    }
-  }
-
-  function changeFieldValue(
-    data: OrganizationResponse,
-    fieldId: string,
-    organizationFieldName: string
-  ) {
-    const field = FormUtil.findField(formContent, fieldId)
-
-    if (!field) {
-      return // nothing to change
-    }
-
-    const fieldValue =
-      organizationFieldName === 'contact'
-        ? _.trim(
-            `${data.contact.address || ''} ${data.contact['postal-number'] || ''} ${
-              data.contact.city || ''
-            }`
-          )
-        : data[organizationFieldName as keyof OrganizationResponse]
-
-    if (!_.isEmpty(fieldValue)) {
-      controller.componentOnChangeListener(field, String(fieldValue))
-    }
-  }
-
-  function fillFormFields(data: OrganizationResponse) {
-    _.each(organizationToFormFieldIds, (formFieldId, organizationFieldName) => {
-      if (!_.isEmpty(data[organizationFieldName as OrganizationFieldName])) {
-        changeFieldValue(data, formFieldId, organizationFieldName)
-      }
     })
   }
 

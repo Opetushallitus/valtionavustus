@@ -11,7 +11,8 @@
             [oph.soresu.form.formutil :as form-util]
             [oph.va.hakemus.db :as hakemus-copy]
             [oph.va.jdbc.extensions :refer :all]
-            [oph.soresu.common.config :refer [config feature-enabled?]]))
+            [oph.soresu.common.config :refer [config feature-enabled?]]
+            [oph.va.budget :as va-budget]))
 
 (defn slurp-binary-file! [file]
   (io! (with-open [reader (io/input-stream file)]
@@ -74,6 +75,29 @@
          (get-language answers)
          (get-owner-type answers)
          (get-business-id answers)))
+
+(defn- upsert-answer [answers-value key value field-type]
+  (let [existing-idx (first (keep-indexed
+                             (fn [i x] (when (= (:key x) key) i))
+                             answers-value))
+        entry {:key key :value value :fieldType field-type}]
+    (if existing-idx
+      (assoc (vec answers-value) existing-idx entry)
+      (conj (vec answers-value) entry))))
+
+(defn- merge-organisation-answers
+  "Returns a new :answers map with organisation-confirm fields upserted.
+   answers is the full submission answers map with :value vector.
+   owner-type may be nil; when nil, radioButton-0 is not written."
+  [answers organisation owner-type]
+  (let [writes (cond-> [["organization"                (:name organisation)            "textField"]
+                        ["organization-email"          (:email organisation)           "emailField"]
+                        ["business-id"                 (:organisation-id organisation) "finnishBusinessIdField"]
+                        ["organization-postal-address" (:postal-address organisation)  "textArea"]]
+                 owner-type (conj ["radioButton-0" owner-type "radioButton"]))]
+    (reduce (fn [acc [k v ft]] (update acc :value upsert-answer k v ft))
+            answers
+            writes)))
 
 (defn get-hakemus
   ([user-key]
@@ -925,3 +949,30 @@
                             version_closed IS NULL
                     " [parent-hakemus-id])]
     (:id (first result))))
+
+(defn vahvista-organisaatio-tx
+  "Atomically writes organisation-confirm fields into the hakemus answers,
+   updates denormalised columns, and stamps omistajatyyppi_locked when
+   owner-type is present. Returns {:hakemus <row> :submission <submission-body>}
+   or nil on version mismatch / closed version."
+  [tx avustushaku-id user-key base-version organisation owner-type]
+  (let [hakemus (get-locked-hakemus-version-for-update tx user-key base-version)]
+    (when (and hakemus (nil? (:version_closed hakemus)))
+      (let [avustushaku (get-avustushaku-tx tx avustushaku-id)
+            form-id (:form avustushaku)
+            submission (form-db/get-form-submission form-id (:form_submission_id hakemus))
+            new-answers (merge-organisation-answers (:answers submission) organisation owner-type)
+            updated-submission (:body (form-db/update-submission-tx! tx form-id (:id submission) new-answers))
+            budget-totals (va-budget/calculate-totals-hakija
+                           new-answers avustushaku (form-db/get-form-tx tx form-id))
+            updated-hakemus (update-hakemus-tx tx avustushaku-id user-key
+                                               (:version updated-submission)
+                                               new-answers budget-totals hakemus)]
+        (when updated-hakemus
+          {:hakemus (if owner-type
+                      (first (named-query tx
+                                          "UPDATE hakemukset SET omistajatyyppi_locked = TRUE
+                                             WHERE id = :id RETURNING *"
+                                          {:id (:id updated-hakemus)}))
+                      updated-hakemus)
+           :submission updated-submission})))))

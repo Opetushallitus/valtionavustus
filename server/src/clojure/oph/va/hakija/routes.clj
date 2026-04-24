@@ -125,6 +125,16 @@
                                    (bad-request! {:error "can not update hakemus"}))))
       (bad-request! {:error "can not update hakemus"}))))
 
+(defn- post-vahvista-organisaatio []
+  (compojure-api/POST "/:haku-id/hakemus/:hakemus-id/:base-version/vahvista-organisaatio" [haku-id hakemus-id base-version :as request]
+    :path-params [haku-id :- Long, hakemus-id :- s/Str, base-version :- Long]
+    :body    [body (compojure-api/describe VahvistaOrganisaatio "Organisation confirm payload")]
+    :return  Hakemus
+    :summary "Apply organisation selection atomically (incl. API-fetched omistajatyyppi)"
+    (if (can-update-hakemus haku-id hakemus-id (:identity request))
+      (on-vahvista-organisaatio haku-id hakemus-id base-version (:organisation body))
+      (bad-request! {:error "can not update hakemus"}))))
+
 (defn- post-hakemus-submit []
   (compojure-api/POST "/:haku-id/hakemus/:user-key/:base-version/submit" [haku-id user-key base-version :as request]
     :path-params [haku-id :- Long, user-key :- s/Str, base-version :- Long]
@@ -272,6 +282,7 @@
   (put-refuse-hakemus)
   (applicant-edit-open)
   (post-hakemus)
+  (post-vahvista-organisaatio)
   (post-hakemus-submit)
   (post-change-request-response)
   (officer-edit-submit)

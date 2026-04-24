@@ -31,6 +31,7 @@ export const events = {
   onApplicationRefused: 'onApplicationRefused',
   onModifyApplicationContacts: 'onModifyApplicationContacts',
   modifyApplicationContacts: 'modifyApplicationContacts',
+  applyServerHakemus: 'applyServerHakemus',
 } as const
 
 export type FormEvents = typeof events
@@ -62,6 +63,7 @@ export default class FormController<T extends BaseStateLoopState<T>> {
     this.componentOnChangeListener = this.componentOnChangeListener.bind(this)
     this.initFieldValidation = this.initFieldValidation.bind(this)
     this.getCustomFieldSyntaxValidator = this.getCustomFieldSyntaxValidator.bind(this)
+    this.applyServerHakemus = this.applyServerHakemus.bind(this)
   }
 
   // Public API
@@ -87,6 +89,10 @@ export default class FormController<T extends BaseStateLoopState<T>> {
       events.updateField,
       createFieldUpdate(field, newValue, this.customFieldSyntaxValidator)
     )
+  }
+
+  applyServerHakemus(hakemus: unknown) {
+    dispatcher.push(events.applyServerHakemus, hakemus)
   }
 
   createAttachmentDownloadUrl(state: T, field: Field) {

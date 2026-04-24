@@ -107,7 +107,8 @@
    (s/optional-key :submitted-version) (s/maybe s/Int)
    (s/optional-key :refused) (s/maybe s/Bool)
    (s/optional-key :refused-comment) (s/maybe s/Str)
-   (s/optional-key :refused-at) (s/maybe s/Inst)})
+   (s/optional-key :refused-at) (s/maybe s/Inst)
+   (s/optional-key :omistajatyyppi-locked) (s/maybe s/Bool)})
 
 (s/defschema HakemusInfo
   "Hakemus with user key and language"
@@ -129,3 +130,10 @@
 (s/defschema TokenValidity
   "Application token validity"
   {:valid s/Bool})
+
+(s/defschema VahvistaOrganisaatio
+  "Organisation confirm payload — atomic write of organisation fields. Server resolves owner-type from Tilastokeskus."
+  {:organisation {:name s/Str
+                  :email s/Str
+                  :organisation-id s/Str
+                  :postal-address s/Str}})
