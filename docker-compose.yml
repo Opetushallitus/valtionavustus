@@ -14,6 +14,8 @@ services:
         condition: service_started
       pagerduty:
         condition: service_started
+      org-mock:
+        condition: service_started
     environment:
       JAVA_TOOL_OPTIONS: '-Duser.timezone="Europe/Helsinki"'
       config: '/app/server/config/local.edn'
@@ -79,6 +81,21 @@ services:
     hostname: pagerduty
     environment:
       ECHO_BACK_TO_CLIENT: false
+
+  org-mock:
+    image: wiremock/wiremock:3.10.0
+    hostname: org-mock
+    command:
+      - "--port"
+      - "8080"
+      - "--root-dir"
+      - "/home/wiremock"
+      - "--global-response-templating"
+    volumes:
+      - ./playwright/fixtures/wiremock:/home/wiremock
+    logging:
+      options:
+        mode: 'non-blocking'
 
   maksatuspalvelu:
     image: atmoz/sftp@sha256:0960390462a4441dbb63698d7c185b76a41ffcee7b78ff4adf275f3e66f9c475

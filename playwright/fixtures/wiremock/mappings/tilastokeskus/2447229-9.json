@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/tilastokeskus/api/v2/enterprises/2447229-9"
+  },
+  "response": {
+    "status": 200,
+    "headers": { "Content-Type": "application/json" },
+    "jsonBody": [
+      {
+        "ytunnus": "2447229-9",
+        "nimi": "Reaktor Group Oy",
+        "toimiala": "62",
+        "toimiala2025": "62",
+        "sektori": "S11102",
+        "pks": "4",
+        "oikmuoto": "12"
+      }
+    ]
+  }
+}

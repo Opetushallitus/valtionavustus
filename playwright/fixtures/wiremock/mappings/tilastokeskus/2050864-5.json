@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/tilastokeskus/api/v2/enterprises/2050864-5"
+  },
+  "response": {
+    "status": 200,
+    "headers": { "Content-Type": "application/json" },
+    "jsonBody": [
+      {
+        "ytunnus": "2050864-5",
+        "nimi": "Akaan kaupunki",
+        "toimiala": "84",
+        "toimiala2025": "84",
+        "sektori": "S13122",
+        "pks": "0",
+        "oikmuoto": "41"
+      }
+    ]
+  }
+}

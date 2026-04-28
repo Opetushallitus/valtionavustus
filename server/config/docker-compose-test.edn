@@ -37,4 +37,5 @@
 
  :test-apis                                   {:enabled? true}
  :applications-ui                             {:enabled? true}
- :officer-edit-jwt-secret                     "playwright-test-secret"}
+ :officer-edit-jwt-secret                     "playwright-test-secret"
+ :tilastokeskus                               {:url "http://org-mock:8080/tilastokeskus/api/v2/enterprises/"}}

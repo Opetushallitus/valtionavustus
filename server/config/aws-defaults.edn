@@ -35,6 +35,7 @@
  :opintopolku                                 {:cas-login          "/cas/login?service="
                                                :cas-logout         "/cas/logout?service="
                                                :permission-request "/henkilo-ui/omattiedot"}
+ :tilastokeskus                               {:url "https://vastapuolitunnistaminen.stat.fi/api/v2/enterprises/"}
  :ui                                          {:show-environment? true
                                                :paatos-path       "/public/api/avustushaku/paatos/"}
  :api                                         {:restricted-routes? true}

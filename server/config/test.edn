@@ -29,6 +29,7 @@
                :cas-login "/cas/login?service="
                :cas-logout "/cas/logout?service="
                :permission-request "/henkilo-ui/omattiedot"}
+ :tilastokeskus {:url "http://org-mock:8080/tilastokeskus/api/v2/enterprises/"}
  :kayttooikeus-service {:va-service-name "VALTIONAVUSTUS"
                         :admin-privilege-name "ADMIN"
                         :user-privilege-name "USER"}

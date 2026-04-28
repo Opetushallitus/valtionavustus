@@ -2,9 +2,12 @@
   (:require [org.httpkit.client :as http]
             [cheshire.core :as cheshire]
             [clojure.string :as str]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [oph.soresu.common.config :refer [config]]))
 
-(def ^:private api-base-url "https://vastapuolitunnistaminen.stat.fi/api/v2/enterprises/")
+(def ^:private api-base-url
+  (when-not *compile-files*
+    (get-in config [:tilastokeskus :url])))
 
 (defn- json->vec [body]
   (cheshire/parse-string body true))

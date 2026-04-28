@@ -100,16 +100,9 @@ const test = defaultValues.extend<VarayhteyshenkiloFixtures>({
     testInfo.setTimeout(testInfo.timeout + 40_000)
     const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     await test.step('fill hakemus without varahenkilö', async () => {
-      // Stub owner-type API so the radio button stays editable for manual selection
-      await page.route('**/api/organisation-type/**', (route) => {
-        route.fulfill({ status: 404, body: '' })
-      })
       await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
-      await hakijaAvustusHakuPage.startAndFillApplication(answers, avustushakuID)
+      await hakijaAvustusHakuPage.startAndFillApplication(answers, avustushakuID, '2447229-9')
 
-      await hakijaAvustusHakuPage.page
-        .getByText('Liiketaloudellisin perustein toimiva yhtiö')
-        .click()
       await hakijaAvustusHakuPage.fillSignatories(answers.signatories!)
       await hakijaAvustusHakuPage.selectMaakuntaFromDropdown('Kainuu')
       await hakijaAvustusHakuPage.form.bank.iban.fill('FI95 6682 9530 0087 65')
@@ -367,7 +360,7 @@ test('varayhteyshenkilo flow', async ({
     await expect(hakijaSelvitysPage.submitButton).toHaveText('Loppuselvitys lähetetty')
     await virkailijaLoppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, acceptedHakemusId)
     await loppuselvitysPage.ensureMuistutusViestiEmailRecipientsContain([
-      'hakija-1424884@oph.fi',
+      'hakija-2234263@oph.fi',
       answers.contactPersonEmail,
       newEmail,
     ])
@@ -412,6 +405,6 @@ test('varayhteyshenkilö refused avustushaku', async ({
     expect(to).toHaveLength(3)
     expect(to).toContain(answers.contactPersonEmail)
     expect(to).toContain(answers.trustedContact.email)
-    expect(to).toContain('hakija-1424884@oph.fi')
+    expect(to).toContain('hakija-2234263@oph.fi')
   })
 })

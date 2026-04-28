@@ -49,11 +49,12 @@ function rename_panes_to_match_the_script_they_run {
   tmux select-pane -t 3 -T run_fakesmtp
   tmux select-pane -t 4 -T run_maksatuspalvelu
   tmux select-pane -t 5 -T run_pagerduty
+  tmux select-pane -t 6 -T run_org_mock
 }
 
 init
 
-$compose create --build -- va db fakesmtp maksatuspalvelu pagerduty
+$compose create --build -- va db fakesmtp maksatuspalvelu pagerduty org-mock
 
 session="valtionavustus"
 
@@ -90,6 +91,10 @@ tmux send-keys "$up_cmd maksatuspalvelu" C-m
 tmux splitw
 tmux select-pane -t 6
 tmux send-keys "$up_cmd pagerduty" C-m
+
+tmux splitw
+tmux select-pane -t 7
+tmux send-keys "$up_cmd org-mock" C-m
 
 rename_panes_to_match_the_script_they_run
 
