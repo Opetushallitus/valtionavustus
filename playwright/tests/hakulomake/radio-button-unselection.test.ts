@@ -3,7 +3,7 @@ import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
 import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { expect } from '@playwright/test'
 import { expectToBeDefined } from '../../utils/util'
-import { TEST_Y_TUNNUS } from '../../utils/constants'
+const YTunnusNotFoundFromTilastokeskus = '0187690-1'
 
 defaultValues(
   'user can unselect a radio button by clicking it again',
@@ -25,13 +25,8 @@ defaultValues(
     )
     await page.goto(hakemusUrl)
 
-    // Stub the owner-type API so it doesn't auto-fill omistajatyyppi
-    await page.route('**/api/organisation-type/**', (route) => {
-      route.fulfill({ status: 404, body: '' })
-    })
-
     // Fill in business ID to dismiss the modal overlay
-    await hakijaAvustusHakuPage.fillInBusinessId(TEST_Y_TUNNUS)
+    await hakijaAvustusHakuPage.fillInBusinessId(YTunnusNotFoundFromTilastokeskus)
 
     // Test radio button unselection on "Omistajatyyppi" (radioButton-0)
     const radioOption1Label = page.locator('label[for="radioButton-0.radio.0"]')

@@ -69,8 +69,7 @@ JotpaTest(
       })
 
       await test.step('Näyttää aktiivisen nappulan jotpan väreissä', async () => {
-        const yliopistoButton = page.getByText('Yliopisto')
-        await yliopistoButton.click()
+        const yliopistoButton = page.getByText('Kunta/kuntayhtymä, kunnan omistamat yhtiöt, kirkko')
         await expect(yliopistoButton).toHaveCSS('border-color', jotpaColour)
       })
 
