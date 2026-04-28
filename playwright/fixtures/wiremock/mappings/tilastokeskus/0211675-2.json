@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/tilastokeskus/api/v2/enterprises/0211675-2"
+  },
+  "response": {
+    "status": 200,
+    "headers": { "Content-Type": "application/json" },
+    "jsonBody": [
+      {
+        "ytunnus": "0211675-2",
+        "nimi": "Suomen Valtio/Alv",
+        "toimiala": "84",
+        "toimiala2025": "84",
+        "sektori": "S13111",
+        "pks": "0",
+        "oikmuoto": "40"
+      }
+    ]
+  }
+}
