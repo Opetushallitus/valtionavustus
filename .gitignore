@@ -43,3 +43,4 @@ deploy-scripts/dist/
 /tmp
 /.lsp
 /.clj-kondo
+docs/superpowers/

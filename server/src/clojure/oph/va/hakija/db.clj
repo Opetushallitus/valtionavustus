@@ -99,6 +99,36 @@
             answers
             writes)))
 
+(defn- walk-form-fields [node]
+  (cons node (mapcat walk-form-fields (:children node))))
+
+(defn- field-initial-value
+  "Mirrors soresu-form FormStateLoop.determineInitialValue.
+   Returns string when field has an :initialValue, nil otherwise."
+  [field lang]
+  (let [iv (:initialValue field)]
+    (cond
+      (nil? iv) nil
+      (number? iv) (str iv)
+      (map? iv) (get iv (keyword (or lang "fi")) "")
+      :else nil)))
+
+(defn- merge-form-defaults
+  "Upserts each form field's :initialValue into answers for ids that are
+   missing, so frontend (initDefaultValues) and backend stay in sync."
+  [answers form lang]
+  (let [fields (mapcat walk-form-fields (:content form))
+        existing-keys (set (map :key (:value answers)))]
+    (reduce (fn [acc f]
+              (let [id (:id f)]
+                (if (or (nil? id) (contains? existing-keys id))
+                  acc
+                  (if-let [iv (field-initial-value f lang)]
+                    (update acc :value upsert-answer id iv (:fieldType f))
+                    acc))))
+            answers
+            fields)))
+
 (defn get-hakemus
   ([user-key]
    (first
@@ -678,37 +708,42 @@
              (when (contains? muutoshakemus :yhteishankkeenOsapuolet)
                (update-yhteishanke-organization-contacts tx hakemus-id (get muutoshakemus :yhteishankkeenOsapuolet))))))
 
-(defn update-hakemus-tx [tx avustushaku-id user-key submission-version answers budget-totals hakemus]
-  (let [register-number (or (:register_number hakemus)
-                            (generate-register-number avustushaku-id))
-        new-hakemus (hakemus-copy/create-new-hakemus-version tx (:id hakemus))
-        params (-> {:avustushaku_id avustushaku-id
-                    :user_key user-key
-                    :version (:version new-hakemus)
-                    :user_oid nil
-                    :user_first_name nil
-                    :user_last_name nil
-                    :user_email nil
-                    :register_number register-number
-                    :form_submission_id (:form_submission_id hakemus)
-                    :form_submission_version submission-version}
-                   (merge (convert-budget-totals budget-totals))
-                   (merge-calculated-params answers))]
-    (first
-     (named-query tx
-                  "UPDATE hakemukset SET
-           avustushaku = :avustushaku_id, user_key = :user_key,
-           form_submission_id = :form_submission_id, form_submission_version = :form_submission_version,
-           user_oid = :user_oid, user_first_name = :user_first_name,
-           user_last_name = :user_last_name, user_email = :user_email,
-           budget_total = :budget_total, budget_oph_share = :budget_oph_share,
-           organization_name = :organization_name, project_name = :project_name,
-           language = :language, register_number = :register_number,
-           business_id = :business_id, owner_type = :owner_type
-         WHERE user_key = :user_key AND form_submission_id = :form_submission_id
-           AND version_closed IS NULL AND version = :version
-         RETURNING *"
-                  params))))
+(defn update-hakemus-tx
+  ([tx avustushaku-id user-key submission-version answers budget-totals hakemus]
+   (update-hakemus-tx tx avustushaku-id user-key submission-version answers budget-totals hakemus false))
+  ([tx avustushaku-id user-key submission-version answers budget-totals hakemus lock-omistajatyyppi?]
+   (let [register-number (or (:register_number hakemus)
+                             (generate-register-number avustushaku-id))
+         new-hakemus (hakemus-copy/create-new-hakemus-version tx (:id hakemus))
+         params (-> {:avustushaku_id avustushaku-id
+                     :user_key user-key
+                     :version (:version new-hakemus)
+                     :user_oid nil
+                     :user_first_name nil
+                     :user_last_name nil
+                     :user_email nil
+                     :register_number register-number
+                     :form_submission_id (:form_submission_id hakemus)
+                     :form_submission_version submission-version
+                     :lock_omistajatyyppi (boolean lock-omistajatyyppi?)}
+                    (merge (convert-budget-totals budget-totals))
+                    (merge-calculated-params answers))]
+     (first
+      (named-query tx
+                   "UPDATE hakemukset SET
+            avustushaku = :avustushaku_id, user_key = :user_key,
+            form_submission_id = :form_submission_id, form_submission_version = :form_submission_version,
+            user_oid = :user_oid, user_first_name = :user_first_name,
+            user_last_name = :user_last_name, user_email = :user_email,
+            budget_total = :budget_total, budget_oph_share = :budget_oph_share,
+            organization_name = :organization_name, project_name = :project_name,
+            language = :language, register_number = :register_number,
+            business_id = :business_id, owner_type = :owner_type,
+            omistajatyyppi_locked = (omistajatyyppi_locked OR :lock_omistajatyyppi)
+          WHERE user_key = :user_key AND form_submission_id = :form_submission_id
+            AND version_closed IS NULL AND version = :version
+          RETURNING *"
+                   params)))))
 
 (defn- update-status
   [tx avustushaku-id user-key submission-id submission-version register-number answers budget-totals status status-change-comment]
@@ -960,19 +995,17 @@
     (when (and hakemus (nil? (:version_closed hakemus)))
       (let [avustushaku (get-avustushaku-tx tx avustushaku-id)
             form-id (:form avustushaku)
+            form (form-db/get-form-tx tx form-id)
             submission (form-db/get-form-submission form-id (:form_submission_id hakemus))
-            new-answers (merge-organisation-answers (:answers submission) organisation owner-type)
+            new-answers (-> (:answers submission)
+                            (merge-organisation-answers organisation owner-type)
+                            (merge-form-defaults form (:language hakemus)))
             updated-submission (:body (form-db/update-submission-tx! tx form-id (:id submission) new-answers))
-            budget-totals (va-budget/calculate-totals-hakija
-                           new-answers avustushaku (form-db/get-form-tx tx form-id))
+            budget-totals (va-budget/calculate-totals-hakija new-answers avustushaku form)
             updated-hakemus (update-hakemus-tx tx avustushaku-id user-key
                                                (:version updated-submission)
-                                               new-answers budget-totals hakemus)]
+                                               new-answers budget-totals hakemus
+                                               (some? owner-type))]
         (when updated-hakemus
-          {:hakemus (if owner-type
-                      (first (named-query tx
-                                          "UPDATE hakemukset SET omistajatyyppi_locked = TRUE
-                                             WHERE id = :id RETURNING *"
-                                          {:id (:id updated-hakemus)}))
-                      updated-hakemus)
+          {:hakemus updated-hakemus
            :submission updated-submission})))))
