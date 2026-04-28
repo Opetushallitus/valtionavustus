@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import _ from 'lodash'
 
-import ModalDialog from './ModalDialog'
 import FormUtil from '../FormUtil'
 import LocalizedString from './LocalizedString'
 import Translator from '../Translator'
@@ -99,30 +98,32 @@ export function OrganisationSelection({ state, controller }: OrganisationSelecti
 
   return (
     <div>
-      <ModalDialog isOpen={modalIsOpen} className="organisation-modal" overlayClassName="overlay">
-        <BusinessIdSearch
-          translator={translator}
-          lang={lang}
-          translations={translations}
-          setFinnishOrganization={setFinnishOrganization}
-          setSwedishOrganization={setSwedishOrganization}
-          setSelectedOrganisation={setSelectedOrganisation}
-          setOwnerTypeLookup={setOwnerTypeLookup}
-          environment={state.configuration.environment}
-        />
-        {(finnishOrganization || swedishOrganization) && (
-          <Selector
-            translations={translations}
+      <dialog open={modalIsOpen} className="overlay">
+        <div className="organisation-modal">
+          <BusinessIdSearch
+            translator={translator}
             lang={lang}
-            finnishOrganization={finnishOrganization}
-            swedishOrganization={swedishOrganization}
+            translations={translations}
+            setFinnishOrganization={setFinnishOrganization}
+            setSwedishOrganization={setSwedishOrganization}
             setSelectedOrganisation={setSelectedOrganisation}
-            handleConfirm={handleConfirm}
-            selectedOrganisation={selectedOrganisation}
-            ownerTypeLookupLoading={ownerTypeLookup?.status === 'loading'}
+            setOwnerTypeLookup={setOwnerTypeLookup}
+            environment={state.configuration.environment}
           />
-        )}
-      </ModalDialog>
+          {(finnishOrganization || swedishOrganization) && (
+            <Selector
+              translations={translations}
+              lang={lang}
+              finnishOrganization={finnishOrganization}
+              swedishOrganization={swedishOrganization}
+              setSelectedOrganisation={setSelectedOrganisation}
+              handleConfirm={handleConfirm}
+              selectedOrganisation={selectedOrganisation}
+              ownerTypeLookupLoading={ownerTypeLookup?.status === 'loading'}
+            />
+          )}
+        </div>
+      </dialog>
     </div>
   )
 }

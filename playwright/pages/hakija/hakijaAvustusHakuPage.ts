@@ -140,6 +140,7 @@ export function HakijaAvustusHakuPage(page: Page) {
     const confirmButton = page.locator('[data-test-id="confirm-selection"]')
     await expect(confirmButton).toBeEnabled({ timeout: 10000 })
     await confirmButton.click()
+    await expect(page.getByRole('dialog')).toBeHidden({ timeout: 5000 })
   }
 
   const fillSignatories = async (signatories: Signatory[]) => {
