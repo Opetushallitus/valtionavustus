@@ -34,6 +34,7 @@ function applyOmistajatyyppiLock<T extends BaseStateLoopState<T>>(state: T) {
     const radioField = FormUtil.findField(state.form.content, 'radioButton-0')
     if (radioField) {
       radioField.forceDisabled = true
+      radioField.prefilledLock = true
     }
   }
 }

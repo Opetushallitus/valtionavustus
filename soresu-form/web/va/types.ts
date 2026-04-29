@@ -566,6 +566,7 @@ export interface Field {
   helpText?: LocalizedText
   text?: LocalizedText
   forceDisabled?: boolean
+  prefilledLock?: boolean
 }
 
 export interface Liite {

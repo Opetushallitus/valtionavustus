@@ -45,8 +45,11 @@ export default class RadioButton extends BasicFieldComponent<RadioButtonProps> {
         )
       }
     }
+    const wrapperClassName = props.field?.prefilledLock
+      ? 'soresu-radio soresu-radio--prefilled'
+      : 'soresu-radio'
     return (
-      <div className="soresu-radio">
+      <div className={wrapperClassName}>
         {this.label()}
         {radiobuttons}
       </div>

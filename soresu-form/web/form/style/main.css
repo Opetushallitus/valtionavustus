@@ -774,6 +774,16 @@ fieldset.soresu-fieldset {
     background-color: var(--lightest-gray);
 }
 
+.soresu-radio--prefilled input[disabled]+label {
+    cursor: not-allowed;
+}
+
+.soresu-radio--prefilled input[disabled]:checked+label {
+    color: var(--text-black);
+    background: var(--off-white) url('../img/checkmark.png') no-repeat 10px 19px;
+    border: solid 4px var(--light-green);
+}
+
 
 .soresu-table {
     border-collapse: separate;
