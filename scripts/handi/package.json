@@ -7,7 +7,7 @@
   },
   "license": "EUPL-1.1",
   "dependencies": {
-    "@aws-sdk/client-ecs": "3.1028.0",
+    "@aws-sdk/client-ecs": "3.1039.0",
     "typescript": "5.9.3"
   },
   "devDependencies": {
