@@ -1,5 +1,6 @@
 # Valtionavustukset
 
+
 Opetushallituksen (OPH) valtionavustusten hakemiseen, käsittelyyn ja
 myöntämiseen tarkoitetut palvelut.
 
@@ -180,7 +181,7 @@ cd va-hakija
 
 Clojuren formatterin käyttö
 ``` shell
-lein cljfmt check 
+lein cljfmt check
 lein cljfmt fix
 ```
 
