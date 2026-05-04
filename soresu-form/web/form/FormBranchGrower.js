@@ -12,17 +12,13 @@ export default class FormBranchGrower {
     answers,
     addPlaceHolders
   ) {
-    function populateRepeatingItem(baseObject, key, valueOfElement) {
+    function populateRepeatingItem(baseObject, key) {
+      const prototypeId = baseObject.id
       _.assign(baseObject, { id: key })
       baseObject.children = baseObject.children
         ? baseObject.children.map((c) => {
             const primitiveElement = _.cloneDeep(c)
-            const distinguisherOfElement = _.last(primitiveElement.id.split('.')) // e.g. "email"
-            _.forEach(valueOfElement, (primitiveElementValueObject) => {
-              if (_.endsWith(primitiveElementValueObject.key, '.' + distinguisherOfElement)) {
-                primitiveElement.id = primitiveElementValueObject.key
-              }
-            })
+            primitiveElement.id = primitiveElement.id.replace(prototypeId, key)
             return primitiveElement
           })
         : []
@@ -33,7 +29,7 @@ export default class FormBranchGrower {
       growingParentElement.children = _.map(valuesTreeOfElement, (itemValueObject) => {
         const o = {}
         _.assign(o, childPrototype)
-        populateRepeatingItem(o, itemValueObject.key, itemValueObject.value)
+        populateRepeatingItem(o, itemValueObject.key)
         return o
       })
       growingParentElement.children.sort((firstChild, secondChild) => {
