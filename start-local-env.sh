@@ -44,12 +44,13 @@ function init {
 
 function rename_panes_to_match_the_script_they_run {
   tmux select-pane -t 0 -T run_database
-  tmux select-pane -t 1 -T run_frontend
-  tmux select-pane -t 2 -T run_hakija_server
-  tmux select-pane -t 3 -T run_fakesmtp
-  tmux select-pane -t 4 -T run_maksatuspalvelu
-  tmux select-pane -t 5 -T run_pagerduty
-  tmux select-pane -t 6 -T run_org_mock
+  tmux select-pane -t 1 -T run_playwright
+  tmux select-pane -t 2 -T run_frontend
+  tmux select-pane -t 3 -T run_hakija_server
+  tmux select-pane -t 4 -T run_fakesmtp
+  tmux select-pane -t 5 -T run_maksatuspalvelu
+  tmux select-pane -t 6 -T run_pagerduty
+  tmux select-pane -t 7 -T run_org_mock
 }
 
 init
