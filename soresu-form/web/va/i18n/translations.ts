@@ -251,7 +251,7 @@ const translationsSv: Translations = {
         'Ändringsansökan som gäller projektplanens innehåll eller genomförande',
       muutoshakemusTaloudenKayttosuunnitelmaan: 'Ändringsansökan som gäller projektets budget',
       hakemusKayttoajanPidennykselle: 'Ändringsansökan som gäller understödets användningstid',
-      muutoshakemusYhteishankeenOsapuoliin: '[SV] Muutoshakemus yhteishankkeen osapuoliin.',
+      muutoshakemusYhteishankeenOsapuoliin: 'Ändringsansökan för parterna i ett samprojekt',
       perustelut: 'Motiveringar för beslutet',
       paatoksenTekija: 'Har godkänts av',
       esittelija: 'Föredragande',
@@ -321,7 +321,7 @@ const translationsSv: Translations = {
     haku: 'Statsunderstöd',
     registerNumberTitle: 'Ärendenummer',
     hanke: 'Projekt',
-    title: '[SV] Hankkeen yhteystiedot',
+    title: 'Projektets kontaktuppgifter',
     contactPerson: 'Kontaktperson',
     email: 'Kontaktpersonens e-postadress',
     phone: 'Kontaktpersonens telefonnummer',
@@ -356,7 +356,7 @@ const translationsSv: Translations = {
       'Ändring som ansökts om i projektets innehåll eller sättet på vilket projektet genomförs',
     acceptedChanges:
       'Godkända ändringar i projektets innehåll eller sättet på vilket projektet genomförs',
-    yhteishankeOsapuolimuutokset: '[SV] Haetut muutokset yhteishankkeen osapuoliin',
+    yhteishankeOsapuolimuutokset: 'Ansökta ändringar för parterna i samprojektet',
   },
   muutosTaloudenKayttosuunnitelmaan: {
     checkboxTitle: 'Jag ansöker om ändringar i projektets budget',
