@@ -43,7 +43,6 @@ This is a **monorepo** with shared code. Both services (va-hakija and va-virkail
   - `server/src/clojure/oph/soresu/` - Shared form library backend
   - `server/src/clojure/oph/common/` - Common utilities
   - `server/config/` - Environment-specific EDN configuration files
-  - `server/spec/` - Clojure tests using speclj
 
 - **va-hakija/** - Applicant frontend (public-facing)
   - `va-hakija/web/va/` - React/TypeScript components
@@ -64,7 +63,6 @@ This is a **monorepo** with shared code. Both services (va-hakija and va-virkail
 - **Backend**: Clojure 1.12.3, Leiningen 2.11.2
 - **Frontend**: React 19.2.3, TypeScript 5.9.3, Webpack 5
 - **Database**: PostgreSQL 18.1 (with Flyway migrations)
-- **Testing**: Speclj (Clojure), Playwright (E2E)
 - **Server**: http-kit
 - **Routing**: Compojure/compojure-api
 
@@ -125,12 +123,6 @@ Run backend (migrations run automatically on startup):
 
 ### Testing
 
-**Backend tests** (uses speclj):
-```bash
-./lein with-profile test spec -f d        # Run all tests once
-./lein with-profile test spec -a          # Watch mode (re-run on changes)
-./lein with-profile test spec -a -t tag   # Run only tests tagged with 'tag'
-```
 
 **Running tests for a specific namespace:**
 Tests are in `server/spec/` directory. Run from project root:
@@ -217,7 +209,7 @@ GitHub Actions workflows in `.github/workflows/`:
 - `run-tests-on-pr.yaml` - PR validation
 - Build pipeline runs:
   1. `01-build.sh` - Build Docker image
-  2. `02-other-tests.sh` - Run speclj and CDK tests
+  2. `02-other-tests.sh` - Run CDK tests
   3. `03-playwright-tests.sh` - E2E tests (sharded 1-6)
   4. `04-lint.sh` - Prettier and cljfmt checks
 

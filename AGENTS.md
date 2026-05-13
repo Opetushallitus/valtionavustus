@@ -8,7 +8,6 @@
 ## Build, Test, and Development Commands
 - `./start-local-env.sh` spins up tmux panes that build frontends, run the VA service stack, fakes SMTP, maksatuspalvelu, and pagerduty containers.
 - `npm run build` (or `build-watch`) bundles front-end assets for both UIs; run inside each service directory when editing JS/TS.
-- `../lein with-profile test spec -f d` (from within a service dir) executes Speclj unit/integration suites once; add `-a` to watch.
 - `npm run playwright:test` executes end-to-end checks with the repo Playwright config; choose `:smoketest-qa` or `:smoketest-prod` before promoting changes.
 
 ## Coding Style & Naming Conventions
@@ -22,7 +21,6 @@
 - CI Playwright tests run inside `Dockerfile.playwright-test-runner`, not directly from repo tree. If a unit test imports code from `va-hakija/`, the image must copy `va-hakija/` and root `tsconfig.json` + `common-tsconfig.json`; otherwise CI fails with `Cannot find module ...` (seen in VA-477 follow-up with `playwright/tests/unit-tests/muutoshakemusClient.test.ts`).
 
 ## Testing Guidelines
-- Add or update Speclj specs next to the namespaces they cover in each `spec/` directory; prefer descriptive `describe` blocks over long test names.
 - Playwright specs live under `playwright/tests`; name files by feature (`application-submission.spec.ts`) and capture new fixtures in `playwright/fixtures`.
 - E2E runs require frontends built via `npm run build` and a running local stack; rely on `docker-compose.local-dev.yml` for dependencies.
 

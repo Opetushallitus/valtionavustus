@@ -26,6 +26,8 @@ import {
   selectLoadedInitialData,
   startAutoSaveForAvustushaku,
   updateField,
+  dismissOtantatarkastusBackfillToast,
+  selectOtantatarkastusBackfillToast,
 } from '../hakuReducer'
 import { Talousarviotilit } from './Talousarviotilit'
 import { tryToUseCurrentAvustushaku, useCurrentAvustushaku } from '../useAvustushaku'
@@ -34,6 +36,7 @@ import ChooseAvustushaku from './ChooseAvustushaku'
 import { avustushakuStatusDescription } from '../status'
 import { ScrollAwareValidationContainer } from './ValidationContainer'
 import * as validationContainerStyles from './ValidationContainer.module.css'
+import { OtantatarkastusBackfillModal } from './OtantatarkastusBackfillModal'
 export const HakuEdit = () => {
   const avustushaku = tryToUseCurrentAvustushaku()
   if (!avustushaku) {
@@ -52,6 +55,9 @@ const HakuEditor = () => {
   )
   const hasPayments = !!avustushaku.payments?.length
   const dispatch = useHakujenHallintaDispatch()
+  const backfillToast = useHakujenHallintaSelector(selectOtantatarkastusBackfillToast)
+  const [backfillPreview, setBackfillPreview] = React.useState<number | null>(null)
+  const pendingChangeRef = React.useRef<{ target: HTMLInputElement; value: string } | null>(null)
   const isAllPaymentsPaid =
     hasPayments && !avustushaku.payments?.find((p) => p['paymentstatus-id'] !== 'paid')
   const userHasEditPrivilege = !!avustushaku.privileges?.['edit-haku']
@@ -128,6 +134,30 @@ const HakuEditor = () => {
     dispatch(
       updateField({ avustushaku, field: e.target, newValue: e.target.value, immediate: true })
     )
+  }
+
+  const onTogglingOtantatarkastusOn = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (avustushaku['loppuselvitys-otantatarkastus-enabled']) {
+      return
+    }
+    const target = event.currentTarget
+    const value = target.value
+    try {
+      const resp = await fetch(
+        `/api/avustushaku/${avustushaku.id}/loppuselvitys-otantapolku-backfill-preview`,
+        { credentials: 'include' }
+      )
+      const json = await resp.json()
+      const eligibleCount: number = json['eligible-count'] ?? 0
+      if (eligibleCount === 0) {
+        dispatch(updateField({ avustushaku, field: target, newValue: value, immediate: true }))
+        return
+      }
+      pendingChangeRef.current = { target, value }
+      setBackfillPreview(eligibleCount)
+    } catch (e) {
+      console.error('Failed to fetch backfill preview', e)
+    }
   }
 
   const mainHelp = {
@@ -403,7 +433,7 @@ const HakuEditor = () => {
                     type="radio"
                     name="loppuselvitys-otantatarkastus-enabled"
                     value="true"
-                    onChange={onChangeImmediate}
+                    onChange={onTogglingOtantatarkastusOn}
                     checked={avustushaku['loppuselvitys-otantatarkastus-enabled']}
                     disabled={!allowAllHakuEdits}
                   />
@@ -641,6 +671,40 @@ const HakuEditor = () => {
         onChange={onChange}
         helpTexts={helpTexts}
       />
+      {backfillPreview !== null && (
+        <OtantatarkastusBackfillModal
+          eligibleCount={backfillPreview}
+          onCancel={() => {
+            setBackfillPreview(null)
+            pendingChangeRef.current = null
+          }}
+          onConfirm={() => {
+            const pending = pendingChangeRef.current
+            if (pending) {
+              dispatch(
+                updateField({
+                  avustushaku,
+                  field: pending.target,
+                  newValue: pending.value,
+                  immediate: true,
+                })
+              )
+            }
+            setBackfillPreview(null)
+            pendingChangeRef.current = null
+          }}
+        />
+      )}
+      {backfillToast && (
+        <div data-test-id="backfill-toast" role="status">
+          Otantamalli käytössä. {backfillToast.drawn} jo lähetettyä loppuselvitystä jaettiin:{' '}
+          {backfillToast.satunnaisotanta} satunnaisotanta, {backfillToast.otannanUlkopuolella}{' '}
+          otannan ulkopuolella.
+          <button type="button" onClick={() => dispatch(dismissOtantatarkastusBackfillToast())}>
+            Sulje
+          </button>
+        </div>
+      )}
     </div>
   )
 }

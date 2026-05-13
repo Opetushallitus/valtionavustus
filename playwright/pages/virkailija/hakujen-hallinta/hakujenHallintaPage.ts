@@ -68,6 +68,16 @@ export class HakujenHallintaPage {
   readonly loppuselvitysUpdatedAt: Locator
   readonly loadingAvustushaku: Locator
   readonly commonHakujenHallinta: ReturnType<typeof CommonHakujenHallintaPage>
+  readonly locators: {
+    otantatarkastus: {
+      enableRadio: Locator
+      disableRadio: Locator
+      backfillConfirmModal: Locator
+      backfillConfirmButton: Locator
+      backfillCancelButton: Locator
+      backfillToast: Locator
+    }
+  }
 
   constructor(page: Page) {
     this.page = page
@@ -77,6 +87,16 @@ export class HakujenHallintaPage {
       .getByTestId(saveStatusTestId)
       .locator('text=Ladataan tietoja')
     this.commonHakujenHallinta = CommonHakujenHallintaPage(this.page)
+    this.locators = {
+      otantatarkastus: {
+        enableRadio: page.getByText('Otantatarkastus', { exact: true }),
+        disableRadio: page.getByText('2-vaiheinen tarkastus', { exact: true }),
+        backfillConfirmModal: page.getByTestId('backfill-confirm-modal'),
+        backfillConfirmButton: page.getByTestId('backfill-confirm-button'),
+        backfillCancelButton: page.getByTestId('backfill-cancel-button'),
+        backfillToast: page.getByTestId('backfill-toast'),
+      },
+    }
   }
 
   async navigateFromHeader() {

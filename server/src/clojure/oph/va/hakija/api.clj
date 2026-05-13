@@ -109,6 +109,8 @@
   (data/diff (dissoc old :updatedAt)
              (dissoc new :updatedAt)))
 
+(declare backfill-loppuselvitys-otantapolku!)
+
 (defn update-avustushaku [avustushaku]
   (let [haku-status (if (= (:status avustushaku) "new")
                       (new HakuStatus "draft")
@@ -127,10 +129,11 @@
                                    :muutoshakukelpoinen (:muutoshakukelpoinen avustushaku)
                                    :loppuselvitys_otantatarkastus_enabled (:loppuselvitys-otantatarkastus-enabled avustushaku))]
 
-    (with-transaction connection
-      (let [previous-avustushaku-version
-            (first (query-original-identifiers connection
-                                               "INSERT INTO archived_avustushaut
+    (let [backfill-result
+          (with-transaction connection
+            (let [previous-avustushaku-version
+                  (first (query-original-identifiers connection
+                                                     "INSERT INTO archived_avustushaut
                       (avustushaku_id, form_id, created_at, status, haku_type, register_number,
                        is_academysize, content, decision, operational_unit_id,
                        hankkeen_alkamispaiva, hankkeen_paattymispaiva, muutoshakukelpoinen,
@@ -141,12 +144,14 @@
                        loppuselvitys_otantatarkastus_enabled
                       FROM avustushaut WHERE id = ?
                       RETURNING *"
-                                               [(:id avustushaku-to-save)]))
-            previous-paatos-version (:decision previous-avustushaku-version)
-            new-paatos-version (:decision avustushaku)
-            diff-result (diff-paatos previous-paatos-version new-paatos-version)
-            update-sql
-            "UPDATE avustushaut
+                                                     [(:id avustushaku-to-save)]))
+                  previous-paatos-version (:decision previous-avustushaku-version)
+                  new-paatos-version (:decision avustushaku)
+                  diff-result (diff-paatos previous-paatos-version new-paatos-version)
+                  was-enabled (:loppuselvitys_otantatarkastus_enabled previous-avustushaku-version)
+                  now-enabled (:loppuselvitys-otantatarkastus-enabled avustushaku)
+                  update-sql
+                  "UPDATE avustushaut
              SET content = :content, form = :form, status = :status,
              haku_type = :haku_type, register_number = :register_number,
              hallinnoiavustuksia_register_number = :hallinnoiavustuksia_register_number,
@@ -160,14 +165,19 @@
              allow_visibility_in_external_system = :allow_visibility_in_external_system,
              arvioitu_maksupaiva = :arvioitu_maksupaiva
              WHERE id = :id"]
-        (if (and (= nil (first diff-result)) (= nil (first (rest diff-result))))
-          (named-execute! connection update-sql avustushaku-to-save)
-          (let [updated-paatos (merge new-paatos-version {:updatedAt (clj-time/now)})
-                avustushaku-with-updated-decision (merge avustushaku-to-save {:decision updated-paatos})]
-            (named-execute! connection update-sql avustushaku-with-updated-decision)))))
-    (->> (query-original-identifiers get-avustushaku-sql [(:id avustushaku-to-save)])
-         (map avustushaku-response-content)
-         first)))
+              (if (and (= nil (first diff-result)) (= nil (first (rest diff-result))))
+                (named-execute! connection update-sql avustushaku-to-save)
+                (let [updated-paatos (merge new-paatos-version {:updatedAt (clj-time/now)})
+                      avustushaku-with-updated-decision (merge avustushaku-to-save {:decision updated-paatos})]
+                  (named-execute! connection update-sql avustushaku-with-updated-decision)))
+              (when (and (not was-enabled) now-enabled)
+                (backfill-loppuselvitys-otantapolku! connection (:id avustushaku-to-save)))))
+          response (->> (query-original-identifiers get-avustushaku-sql [(:id avustushaku-to-save)])
+                        (map avustushaku-response-content)
+                        first)]
+      (if backfill-result
+        (assoc response :retroactive-otantapolku-draws backfill-result)
+        response))))
 
 (defn get-avustushaku [id]
   (first (query-original-identifiers get-avustushaku-sql [id])))
@@ -519,6 +529,8 @@ order by upper(h.organization_name), upper(h.project_name)")
        order by h.version"
     [hakemus-id])))
 
+(declare assign-loppuselvitys-otantapolku-if-enabled!)
+
 (def ^:private get-by-type-and-parent-id-sql
   "select *, s.answers->'value' as answer_values
    from hakija.hakemukset h
@@ -529,6 +541,14 @@ order by upper(h.organization_name), upper(h.project_name)")
          and h.version_closed is null")
 
 (defn get-selvitysdata [avustushaku-id hakemus-id]
+  (try
+    (with-tx
+      (fn [tx]
+        (assign-loppuselvitys-otantapolku-if-enabled! tx hakemus-id)))
+    (catch Exception e
+      (log/warn {:error (ex-message e)
+                 :in "get-selvitysdata/lazy-mop-up"
+                 :hakemus-id hakemus-id})))
   (let [avustushaku (get-avustushaku avustushaku-id)
         loppuselvitys-form-id (:form_loppuselvitys avustushaku)
         loppuselvitys-form (get-form-by-id loppuselvitys-form-id)
@@ -626,6 +646,48 @@ order by upper(h.organization_name), upper(h.project_name)")
          SET loppuselvitys_otantapolku = ?
          WHERE id = ? AND version_closed IS NULL"
        [(roll-otantapolku) parent-hakemus-id]))))
+
+(defn backfill-loppuselvitys-otantapolku!
+  "Draws otantapolku for every in-flight loppuselvitys in the haku that doesn't
+   have one yet. Called when otantatarkastus is toggled from false to true.
+   Returns {:drawn N :satunnaisotanta N :otannan-ulkopuolella N}."
+  [tx avustushaku-id]
+  (let [eligible-ids (map :id
+                          (query-original-identifiers
+                           tx
+                           "SELECT id FROM hakija.hakemukset
+                             WHERE avustushaku = ?
+                               AND status_loppuselvitys IN ('submitted', 'pending_change_request')
+                               AND loppuselvitys_otantapolku IS NULL
+                               AND version_closed IS NULL"
+                           [avustushaku-id]))
+        draws (mapv (fn [id] [id (roll-otantapolku)]) eligible-ids)
+        counts (frequencies (map second draws))]
+    (doseq [[id otantapolku] draws]
+      (execute!
+       tx
+       "UPDATE hakija.hakemukset
+         SET loppuselvitys_otantapolku = ?
+         WHERE id = ? AND version_closed IS NULL"
+       [otantapolku id]))
+    {:drawn (count draws)
+     :satunnaisotanta (get counts "satunnaisotanta" 0)
+     :otannan-ulkopuolella (get counts "otannan-ulkopuolella" 0)}))
+
+(defn loppuselvitys-otantapolku-backfill-preview
+  "Returns the count of in-flight loppuselvityses that would be drawn if
+   otantatarkastus were toggled on for this haku now. Filter must match
+   backfill-loppuselvitys-otantapolku!'s UPDATE filter."
+  [avustushaku-id]
+  (let [rows (query-original-identifiers
+              "SELECT count(*) AS n
+                 FROM hakija.hakemukset
+                WHERE avustushaku = ?
+                  AND status_loppuselvitys IN ('submitted', 'pending_change_request')
+                  AND loppuselvitys_otantapolku IS NULL
+                  AND version_closed IS NULL"
+              [avustushaku-id])]
+    {:eligible-count (or (:n (first rows)) 0)}))
 
 (defn- save-checklist! [tx hakemus-id checklist]
   (execute!

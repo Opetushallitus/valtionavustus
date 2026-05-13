@@ -146,7 +146,11 @@
                           :allow_visibility_in_external_system s/Bool
                           :arvioitu_maksupaiva (s/maybe java.time.LocalDate)
                           :muutoshakukelpoinen s/Bool
-                          :loppuselvitys-otantatarkastus-enabled s/Bool})
+                          :loppuselvitys-otantatarkastus-enabled s/Bool
+                          (s/optional-key :retroactive-otantapolku-draws)
+                          {:drawn s/Int
+                           :satunnaisotanta s/Int
+                           :otannan-ulkopuolella s/Int}})
 
 (s/defschema ListingAvustushaku
   "Avustushaku with extra details for avustushaku listing"

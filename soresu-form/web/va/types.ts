@@ -443,6 +443,11 @@ export type Avustushaku = {
   allow_visibility_in_external_system: boolean
   'loppuselvitys-otantatarkastus-enabled': boolean
   arvioitu_maksupaiva?: string
+  'retroactive-otantapolku-draws'?: {
+    drawn: number
+    satunnaisotanta: number
+    'otannan-ulkopuolella': number
+  }
 }
 
 export interface Raportointivelvoite {

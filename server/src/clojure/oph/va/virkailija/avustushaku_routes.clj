@@ -94,6 +94,13 @@
     :summary "Palauta lista avustushaun hakemus-id:stä, joille on joskus lähetetty täydennyspyyntö"
     (http/ok (virkailija-db/get-hakemus-ids-having-taydennyspyynto avustushaku-id))))
 
+(defn- get-loppuselvitys-otantapolku-backfill-preview []
+  (compojure-api/GET "/:avustushaku-id/loppuselvitys-otantapolku-backfill-preview" []
+    :path-params [avustushaku-id :- Long]
+    :return {:eligible-count Long}
+    :summary "Count of in-flight loppuselvityses that would be drawn on toggle ON."
+    (http/ok (hakija-api/loppuselvitys-otantapolku-backfill-preview avustushaku-id))))
+
 (defn- get-onko-muutoshakukelpoinen-avustushaku-ok []
   (compojure-api/GET "/:avustushaku-id/onko-muutoshakukelpoinen-avustushaku-ok" []
     :path-params [avustushaku-id :- Long]
@@ -407,6 +414,7 @@
   (post-avustushaku)
   (get-avustushaku)
   (get-hakemus-ids-having-taydennyspyynto)
+  (get-loppuselvitys-otantapolku-backfill-preview)
   (get-onko-muutoshakukelpoinen-avustushaku-ok)
   (send-selvitys)
   (send-selvitys-email)
