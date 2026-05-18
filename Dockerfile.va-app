@@ -37,10 +37,17 @@ RUN ./lein
 
 # fetch dependencies
 COPY project.clj .
-# Retry on transient Maven Central rate limits (HTTP 429) via Aether's retry handler
+# Retry the whole `lein deps` on transient Maven Central 429s.
+# The cache mount persists across retries within this RUN, so each retry
+# only fetches whatever the previous attempt didn't already cache.
 RUN --mount=type=cache,target=/root/.m2 \
-    LEIN_JVM_OPTS="-Daether.connector.http.retryHandler.count=5 -Daether.connector.http.retryHandler.requestSentEnabled=true" \
-    ./lein deps
+    for i in 1 2 3 4 5; do \
+        ./lein deps && exit 0; \
+        echo "lein deps failed (attempt $i), backing off $((i*20))s..."; \
+        sleep $((i*20)); \
+    done; \
+    echo "lein deps failed after 5 attempts"; \
+    exit 1
 
 # add project code
 COPY server/src/ ./server/src/
