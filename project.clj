@@ -158,7 +158,14 @@
                                 :configdefaults "server/config/defaults.edn"}}
 
              :server-test {:env {:config "server/config/docker-compose-test.edn"
-                                 :configdefaults "server/config/defaults.edn"}}}
+                                 :configdefaults "server/config/defaults.edn"}}
+
+             ;; CI fallback: route Maven Central requests through Google's
+             ;; rate-limit-friendly mirror. Activated by Dockerfile.va-app
+             ;; when direct central access fails (typically a 429).
+             :central-mirror-google
+             {:mirrors {"central" {:name "Google Maven Central mirror"
+                                   :url "https://maven-central.storage-download.googleapis.com/maven2/"}}}}
 
   :aot [oph.va.jdbc.enums oph.va.hakija.db.migrations oph.va.virkailija.db.migrations clj-time.core]
 

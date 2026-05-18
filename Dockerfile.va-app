@@ -37,17 +37,15 @@ RUN ./lein
 
 # fetch dependencies
 COPY project.clj .
-# Retry the whole `lein deps` on transient Maven Central 429s.
-# The cache mount persists across retries within this RUN, so each retry
-# only fetches whatever the previous attempt didn't already cache.
+# Try Maven Central directly. If it fails (typically a 429), fall back to
+# Google's Maven Central mirror, which has friendlier rate limits. The
+# cache mount persists across attempts so the fallback only needs to
+# fetch whatever central didn't already cache.
 RUN --mount=type=cache,target=/root/.m2 \
-    for i in 1 2 3 4 5; do \
-        ./lein deps && exit 0; \
-        echo "lein deps failed (attempt $i), backing off $((i*20))s..."; \
-        sleep $((i*20)); \
-    done; \
-    echo "lein deps failed after 5 attempts"; \
-    exit 1
+    ./lein deps || ( \
+        echo "Maven Central failed, falling back to Google mirror..." && \
+        ./lein with-profile +central-mirror-google deps \
+    )
 
 # add project code
 COPY server/src/ ./server/src/
