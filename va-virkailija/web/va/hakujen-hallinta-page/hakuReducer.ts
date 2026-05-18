@@ -135,11 +135,6 @@ interface State {
   valiselvitysFormDraftsJson: Record<number, string>
   koodistos: Koodistos
   loadingProjects: boolean
-  otantatarkastusBackfillToast: {
-    drawn: number
-    satunnaisotanta: number
-    otannanUlkopuolella: number
-  } | null
 }
 
 function appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing(
@@ -757,7 +752,6 @@ const initialState: State = {
     loading: false,
   },
   loadingProjects: false,
-  otantatarkastusBackfillToast: null,
 }
 
 const hakuSlice = createSlice({
@@ -881,9 +875,6 @@ const hakuSlice = createSlice({
       const selectedHaku = selectAvustushaku(state, payload.avustushakuId)
       selectedHaku!.talousarviotilit = payload.talousarviotilit
     },
-    dismissOtantatarkastusBackfillToast: (state) => {
-      state.otantatarkastusBackfillToast = null
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -926,7 +917,6 @@ const hakuSlice = createSlice({
         }
         state.loadStatus.loadingAvustushaku = false
         state.loadStatus.error = false
-        state.otantatarkastusBackfillToast = null
       })
       .addCase(saveHaku.fulfilled, (state, action) => {
         const response = action.payload
@@ -937,14 +927,6 @@ const hakuSlice = createSlice({
         state.saveStatus = saveSuccess(state, 'saveInProgress')
         if (!oldHaku.projects || oldHaku.projects.length === 0) {
           state.saveStatus.serverError = 'validation-error'
-        }
-        const draws = response['retroactive-otantapolku-draws']
-        if (draws) {
-          state.otantatarkastusBackfillToast = {
-            drawn: draws.drawn,
-            satunnaisotanta: draws.satunnaisotanta,
-            otannanUlkopuolella: draws['otannan-ulkopuolella'],
-          }
         }
       })
       .addCase(saveHaku.rejected, (state, action) => {
@@ -1060,7 +1042,6 @@ export const {
   removeSelectionCriteria,
   startSendingMaksatuksetAndTasmaytysraportti,
   stopSendingMaksatuksetAndTasmaytysraportti,
-  dismissOtantatarkastusBackfillToast,
 } = hakuSlice.actions
 
 export default hakuSlice.reducer
@@ -1100,6 +1081,3 @@ export const selectLoadedInitialData = (state: HakujenHallintaRootState) => {
 }
 
 export const selectHakuState = (state: HakujenHallintaRootState) => state.haku
-
-export const selectOtantatarkastusBackfillToast = (state: HakujenHallintaRootState) =>
-  state.haku.otantatarkastusBackfillToast

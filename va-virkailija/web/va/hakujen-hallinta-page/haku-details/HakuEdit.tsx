@@ -26,8 +26,6 @@ import {
   selectLoadedInitialData,
   startAutoSaveForAvustushaku,
   updateField,
-  dismissOtantatarkastusBackfillToast,
-  selectOtantatarkastusBackfillToast,
 } from '../hakuReducer'
 import { Talousarviotilit } from './Talousarviotilit'
 import { tryToUseCurrentAvustushaku, useCurrentAvustushaku } from '../useAvustushaku'
@@ -55,7 +53,6 @@ const HakuEditor = () => {
   )
   const hasPayments = !!avustushaku.payments?.length
   const dispatch = useHakujenHallintaDispatch()
-  const backfillToast = useHakujenHallintaSelector(selectOtantatarkastusBackfillToast)
   const [backfillCount, setBackfillCount] = React.useState(0)
   const backfillDialogRef = React.useRef<HTMLDialogElement>(null)
   const isAllPaymentsPaid =
@@ -693,16 +690,6 @@ const HakuEditor = () => {
         eligibleCount={backfillCount}
         onClose={onBackfillDialogClose}
       />
-      {backfillToast && (
-        <div data-test-id="backfill-toast" role="status">
-          Otantamalli käytössä. {backfillToast.drawn} jo lähetettyä loppuselvitystä jaettiin:{' '}
-          {backfillToast.satunnaisotanta} satunnaisotanta, {backfillToast.otannanUlkopuolella}{' '}
-          otannan ulkopuolella.
-          <button type="button" onClick={() => dispatch(dismissOtantatarkastusBackfillToast())}>
-            Sulje
-          </button>
-        </div>
-      )}
     </div>
   )
 }

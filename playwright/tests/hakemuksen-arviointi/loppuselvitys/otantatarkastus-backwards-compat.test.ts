@@ -21,14 +21,11 @@ selvitysTest.describe('Otantatarkastus backwards-compat', () => {
       await hakujenHallinta.locators.otantatarkastus.enableRadio.click()
 
       await expect(hakujenHallinta.locators.otantatarkastus.backfillConfirmModal).toContainText('1')
-
       await hakujenHallinta.locators.otantatarkastus.backfillConfirmButton.click()
 
       // Restore haku lifecycle: julkaistu -> ratkaistu.
       await haunTiedot.publishAvustushaku()
       await haunTiedot.resolveAvustushaku()
-
-      await expect(hakujenHallinta.locators.otantatarkastus.backfillToast).toBeVisible()
 
       const lops = LoppuselvitysPage(page)
       await lops.navigateToLoppuselvitysTab(avustushakuID, hakemusID)

@@ -75,7 +75,6 @@ export class HakujenHallintaPage {
       backfillConfirmModal: Locator
       backfillConfirmButton: Locator
       backfillCancelButton: Locator
-      backfillToast: Locator
     }
   }
 
@@ -94,7 +93,6 @@ export class HakujenHallintaPage {
         backfillConfirmModal: page.getByTestId('backfill-confirm-modal'),
         backfillConfirmButton: page.getByTestId('backfill-confirm-button'),
         backfillCancelButton: page.getByTestId('backfill-cancel-button'),
-        backfillToast: page.getByTestId('backfill-toast'),
       },
     }
   }
