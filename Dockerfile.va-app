@@ -51,7 +51,9 @@ RUN --mount=type=cache,target=/root/.m2 \
 COPY server/src/ ./server/src/
 COPY server/resources/ ./server/resources/
 
-RUN ./lein compile :all
+
+RUN --mount=type=cache,target=/root/.m2 \
+    ./lein compile :all
 RUN ./lein pom
 
 COPY entrypoint.sh .
