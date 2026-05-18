@@ -56,7 +56,8 @@ const HakuEditor = () => {
   const hasPayments = !!avustushaku.payments?.length
   const dispatch = useHakujenHallintaDispatch()
   const backfillToast = useHakujenHallintaSelector(selectOtantatarkastusBackfillToast)
-  const [backfillPreview, setBackfillPreview] = React.useState<number | null>(null)
+  const [backfillCount, setBackfillCount] = React.useState(0)
+  const backfillDialogRef = React.useRef<HTMLDialogElement>(null)
   const pendingChangeRef = React.useRef<{ target: HTMLInputElement; value: string } | null>(null)
   const isAllPaymentsPaid =
     hasPayments && !avustushaku.payments?.find((p) => p['paymentstatus-id'] !== 'paid')
@@ -154,10 +155,29 @@ const HakuEditor = () => {
         return
       }
       pendingChangeRef.current = { target, value }
-      setBackfillPreview(eligibleCount)
+      setBackfillCount(eligibleCount)
+      backfillDialogRef.current?.showModal()
     } catch (e) {
       console.error('Failed to fetch backfill preview', e)
     }
+  }
+
+  const onBackfillDialogClose = () => {
+    const dialog = backfillDialogRef.current
+    const confirmed = dialog?.returnValue === 'confirm'
+    const pending = pendingChangeRef.current
+    if (confirmed && pending) {
+      dispatch(
+        updateField({
+          avustushaku,
+          field: pending.target,
+          newValue: pending.value,
+          immediate: true,
+        })
+      )
+    }
+    pendingChangeRef.current = null
+    if (dialog) dialog.returnValue = ''
   }
 
   const mainHelp = {
@@ -671,30 +691,11 @@ const HakuEditor = () => {
         onChange={onChange}
         helpTexts={helpTexts}
       />
-      {backfillPreview !== null && (
-        <OtantatarkastusBackfillModal
-          eligibleCount={backfillPreview}
-          onCancel={() => {
-            setBackfillPreview(null)
-            pendingChangeRef.current = null
-          }}
-          onConfirm={() => {
-            const pending = pendingChangeRef.current
-            if (pending) {
-              dispatch(
-                updateField({
-                  avustushaku,
-                  field: pending.target,
-                  newValue: pending.value,
-                  immediate: true,
-                })
-              )
-            }
-            setBackfillPreview(null)
-            pendingChangeRef.current = null
-          }}
-        />
-      )}
+      <OtantatarkastusBackfillModal
+        ref={backfillDialogRef}
+        eligibleCount={backfillCount}
+        onClose={onBackfillDialogClose}
+      />
       {backfillToast && (
         <div data-test-id="backfill-toast" role="status">
           Otantamalli käytössä. {backfillToast.drawn} jo lähetettyä loppuselvitystä jaettiin:{' '}

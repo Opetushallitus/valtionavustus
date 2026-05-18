@@ -448,11 +448,15 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
 
 export function Asiatarkastus({ disabled }: { disabled: boolean }) {
   const hakemus = useHakemus()
+  const avustushaku = useHakemustenArviointiSelector(
+    (s) => getLoadedAvustushakuData(s.arviointi).hakuData.avustushaku
+  )
+  const otantatarkastusEnabled = avustushaku['loppuselvitys-otantatarkastus-enabled']
   const otantapolku = hakemus['loppuselvitys-otantapolku']
-  if (otantapolku === 'satunnaisotanta') {
+  if (otantatarkastusEnabled && otantapolku === 'satunnaisotanta') {
     return <AsiatarkastusSatunnaisotanta disabled={disabled} />
   }
-  if (otantapolku === 'otannan-ulkopuolella') {
+  if (otantatarkastusEnabled && otantapolku === 'otannan-ulkopuolella') {
     return <AsiatarkastusOtannanUlkopuolella disabled={disabled} />
   }
   return <Asiatarkastus2Vaiheinen disabled={disabled} />
