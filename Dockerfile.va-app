@@ -68,7 +68,8 @@ COPY --from=web-builder /app/server/resources/public/version.txt server/resource
 # uberjar builder
 #
 FROM va-base AS uberjar-builder
-RUN ./lein uberjar
+RUN --mount=type=cache,target=/root/.m2 \
+    ./lein uberjar
 
 
 #
