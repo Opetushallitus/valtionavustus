@@ -58,7 +58,6 @@ const HakuEditor = () => {
   const backfillToast = useHakujenHallintaSelector(selectOtantatarkastusBackfillToast)
   const [backfillCount, setBackfillCount] = React.useState(0)
   const backfillDialogRef = React.useRef<HTMLDialogElement>(null)
-  const pendingChangeRef = React.useRef<{ target: HTMLInputElement; value: string } | null>(null)
   const isAllPaymentsPaid =
     hasPayments && !avustushaku.payments?.find((p) => p['paymentstatus-id'] !== 'paid')
   const userHasEditPrivilege = !!avustushaku.privileges?.['edit-haku']
@@ -137,12 +136,21 @@ const HakuEditor = () => {
     )
   }
 
-  const onTogglingOtantatarkastusOn = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const enableOtantatarkastus = () => {
+    dispatch(
+      updateField({
+        avustushaku,
+        field: { id: 'loppuselvitys_otantatarkastus_enabled_true' },
+        newValue: 'true',
+        immediate: true,
+      })
+    )
+  }
+
+  const onTogglingOtantatarkastusOn = async () => {
     if (avustushaku['loppuselvitys-otantatarkastus-enabled']) {
       return
     }
-    const target = event.currentTarget
-    const value = target.value
     try {
       const resp = await fetch(
         `/api/avustushaku/${avustushaku.id}/loppuselvitys-otantapolku-backfill-preview`,
@@ -151,10 +159,9 @@ const HakuEditor = () => {
       const json = await resp.json()
       const eligibleCount: number = json['eligible-count'] ?? 0
       if (eligibleCount === 0) {
-        dispatch(updateField({ avustushaku, field: target, newValue: value, immediate: true }))
+        enableOtantatarkastus()
         return
       }
-      pendingChangeRef.current = { target, value }
       setBackfillCount(eligibleCount)
       backfillDialogRef.current?.showModal()
     } catch (e) {
@@ -164,19 +171,9 @@ const HakuEditor = () => {
 
   const onBackfillDialogClose = () => {
     const dialog = backfillDialogRef.current
-    const confirmed = dialog?.returnValue === 'confirm'
-    const pending = pendingChangeRef.current
-    if (confirmed && pending) {
-      dispatch(
-        updateField({
-          avustushaku,
-          field: pending.target,
-          newValue: pending.value,
-          immediate: true,
-        })
-      )
+    if (dialog?.returnValue === 'confirm') {
+      enableOtantatarkastus()
     }
-    pendingChangeRef.current = null
     if (dialog) dialog.returnValue = ''
   }
 
