@@ -37,7 +37,10 @@ RUN ./lein
 
 # fetch dependencies
 COPY project.clj .
-RUN --mount=type=cache,target=/root/.m2 ./lein deps
+# Retry on transient Maven Central rate limits (HTTP 429) via Aether's retry handler
+RUN --mount=type=cache,target=/root/.m2 \
+    LEIN_JVM_OPTS="-Daether.connector.http.retryHandler.count=5 -Daether.connector.http.retryHandler.requestSentEnabled=true" \
+    ./lein deps
 
 # add project code
 COPY server/src/ ./server/src/

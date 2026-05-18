@@ -19,11 +19,14 @@ function main {
 
   start_gh_actions_group "Building $image_tag"
   export VA_SERVER_TAG="$image_tag"
-  docker build \
+  docker buildx build \
       --build-arg "REVISION=${revision}" \
       --build-arg "NODE_VERSION=${NODE_VERSION}" \
       --tag "$image_tag" \
       --file Dockerfile.va-app \
+      ${BUILDX_CACHE_FROM:+--cache-from "$BUILDX_CACHE_FROM"} \
+      ${BUILDX_CACHE_TO:+--cache-to "$BUILDX_CACHE_TO"} \
+      --load \
       "$repo"
 
   tags_to_push+=("$image_tag")
