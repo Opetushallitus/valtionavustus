@@ -76,7 +76,7 @@
                          ;; other
                          [metosin/ring-swagger-ui "5.32.1"]
 
-                         [org.clojure/core.memoize "1.1.266"]]
+                         [org.clojure/core.memoize "1.2.281"]]
 
   :dependencies [[org.clojure/clojure "1.12.5"]
                  [environ "1.2.0"]
