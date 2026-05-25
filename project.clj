@@ -35,7 +35,7 @@
 
                          ;; [org.postgresql/postgresql "42.7.11"] ->
                          ;; ... -> [com.google.guava/guava "33.6.0-android"] ->
-                         [org.checkerframework/checker-qual "3.52.1"]
+                         [org.checkerframework/checker-qual "3.55.1"]
 
                          ;; ... -> [clout "2.2.1"] ->
                          [instaparse "1.5.0"]
