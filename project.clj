@@ -28,7 +28,7 @@
                          [com.github.java-json-tools/json-schema-validator "2.2.14"]
                          ;; ... -> [com.github.java-json-tools/json-schema-core "1.2.14"] ->
                          ;; fixes CVE-2025-66453 (DoS via toFixed())
-                         [org.mozilla/rhino "1.7.15.1"]
+                         [org.mozilla/rhino "1.9.1"]
                          ;; ... -> [com.github.java-json-tools/json-schema-validator "2.2.14"] ->
                          ;; fixes https://nvd.nist.gov/vuln/detail/cve-2020-8908
                          [com.google.guava/guava "33.6.0-android"]
