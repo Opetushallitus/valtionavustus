@@ -2,4 +2,5 @@
  :enableYhteishankeEmails [:local :test :aws-dev :aws-qa]
  :enableTilastokeskusOrganisationType [:local :test :aws-dev :aws-qa]
  :enableOtantatarkastus [:local :test :aws-dev :aws-qa]
+ :useEsikatseluEmailLink [:local :test :aws-dev :aws-qa] ; VA-488
 }
