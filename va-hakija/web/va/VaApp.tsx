@@ -124,9 +124,23 @@ function isFieldEnabled(state: VaAppStateLoopState, fieldId: string): boolean {
   return !fieldValue || !fieldValue.value || fieldValue.value.trim() === ''
 }
 
+function parseEsikatseluPath(): string | undefined {
+  const match = location.pathname.match(/\/(?:esikatselu|forhandsvisning)\/([^/]+)$/)
+  return match?.[1]
+}
+
+function toStringParam(value: string | (string | null)[] | null | undefined): string | undefined {
+  return typeof value === 'string' ? value : undefined
+}
+
 const query = queryString.parse(location.search)
+const esikatseluHakemusId = parseEsikatseluPath()
+if (esikatseluHakemusId) {
+  query.hakemus = esikatseluHakemusId
+}
 const urlContent = { parsedQuery: query, location: location }
 const avustusHakuId = VaUrlCreator.parseAvustusHakuId(urlContent)
+const hakemusId = toStringParam(query.hakemus)
 const avustusHakuP = Bacon.fromPromise<HakijaAvustusHaku>(
   HttpUtil.get(VaUrlCreator.avustusHakuApiUrl(avustusHakuId))
 )
@@ -135,11 +149,11 @@ const environmentP = Bacon.fromPromise<EnvironmentApiResponse>(
 )
 const normalizedHakemusP = Bacon.fromPromise<NormalizedHakemusData>(
   Promise.all([
-    HttpUtil.get(`/api/avustushaku/${avustusHakuId}/hakemus/${query.hakemus}/normalized`).catch(
+    HttpUtil.get(`/api/avustushaku/${avustusHakuId}/hakemus/${hakemusId}/normalized`).catch(
       () => undefined
     ),
     HttpUtil.get(
-      `/api/avustushaku/${avustusHakuId}/hakemus/${query.hakemus}/yhteishanke-organizations`
+      `/api/avustushaku/${avustusHakuId}/hakemus/${hakemusId}/yhteishanke-organizations`
     ).catch(() => undefined),
   ]).then(([normalizedHakemus, yhteishankeOrganizationsResponse]) => {
     if (!normalizedHakemus) {
@@ -159,7 +173,7 @@ const normalizedHakemusP = Bacon.fromPromise<NormalizedHakemusData>(
   })
 )
 const muutoshakemuksetP = Bacon.fromPromise<Muutoshakemus[]>(
-  HttpUtil.get(`/api/avustushaku/${avustusHakuId}/hakemus/${query.hakemus}/muutoshakemus`).catch(
+  HttpUtil.get(`/api/avustushaku/${avustusHakuId}/hakemus/${hakemusId}/muutoshakemus`).catch(
     () => []
   )
 )
@@ -169,8 +183,11 @@ function initialStateTemplateTransformation(template: InitialStateTemplate<VaApp
   template.normalizedHakemus = normalizedHakemusP
   template.muutoshakemukset = muutoshakemuksetP
   template.configuration.environment = environmentP
-  template.saveStatus.hakemusId = query.hakemus as string
+  template.saveStatus.hakemusId = hakemusId
   template.token = query.token as string
+  if (esikatseluHakemusId) {
+    template.configuration.preview = true
+  }
 }
 
 function isOfficerEdit(savedObject: SavedObject) {
@@ -246,12 +263,13 @@ function initVaFormController() {
         return isFieldEnabled(state, fieldId)
       }
 
-      const realPreview = Boolean(location.pathname.includes('esikatselu'))
+      const isHakulomakeEsikatselu =
+        !esikatseluHakemusId && location.pathname.includes('esikatselu')
       const selvitysType =
         location.pathname.indexOf('loppuselvitys') !== -1 ? 'loppuselvitys' : 'valiselvitys'
       const preview = state.configuration.preview
       const readOnly =
-        !realPreview &&
+        !isHakulomakeEsikatselu &&
         (preview ||
           (selvitysType === 'loppuselvitys' &&
             !state.saveStatus.savedObject?.['selvitys-updatable']))

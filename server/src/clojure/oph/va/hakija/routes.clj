@@ -317,6 +317,7 @@
    (compojure/GET "/avustushaku/:avustushaku-id/" [] (return-html "hakija/login.html"))
 
    (compojure/GET "/avustushaku/:avustushaku-id/esikatselu" [] (return-html "hakija/index.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/esikatselu/:hakemus" [] (return-html "hakija/index.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys/esikatselu" [] (return-html "hakija/selvitys.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys/esikatselu" [] (return-html "hakija/selvitys.html"))
 
@@ -338,6 +339,7 @@
 
    ;;; Swedish subcontext
    (compojure/GET "/statsunderstod/:avustushaku-id/visa" [] (return-html "hakija/index.html"))
+   (compojure/GET "/statsunderstod/:avustushaku-id/forhandsvisning/:hakemus" [] (return-html "hakija/index.html"))
    (compojure/GET "/statsunderstod/:avustushaku-id/" [] (return-html "hakija/login.html"))
 
    va-routes/logo-route

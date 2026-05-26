@@ -58,6 +58,20 @@ export function HakijaAvustusHakuPage(page: Page) {
     await navigateHakija(page, `/avustushaku/${avustushakuID}/nayta?hakemus=${userKey}`)
   }
 
+  async function navigateToEsikatseluPage(
+    avustushakuID: number,
+    userKey: string,
+    lang: 'fi' | 'sv' = 'fi',
+    additionalParams: Record<string, string> = {}
+  ) {
+    const params = new URLSearchParams({ lang, ...additionalParams })
+    const path =
+      lang === 'sv'
+        ? `/statsunderstod/${avustushakuID}/forhandsvisning/${userKey}?${params.toString()}`
+        : `/avustushaku/${avustushakuID}/esikatselu/${userKey}?${params.toString()}`
+    await navigateHakija(page, path)
+  }
+
   async function getHakemusID(avustushakuID: number, userKey: string): Promise<number> {
     const normalizedHakemus = await getNormalizedHakemus(page, avustushakuID, userKey)
     return normalizedHakemus['hakemus-id']
@@ -488,6 +502,7 @@ export function HakijaAvustusHakuPage(page: Page) {
     getUserKey,
     getHakemusID,
     navigate,
+    navigateToEsikatseluPage,
     navigateToExistingHakemusPage,
     navigateToYhteyshenkilöChangePage,
     selectMaakuntaFromDropdown,

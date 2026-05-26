@@ -25,6 +25,22 @@
 (defn refuse-url [avustushaku-id user-key lang token]
   (url-generator (va-url lang) avustushaku-id user-key lang token "refuse"))
 
+(defn generate-esikatselu-url [avustushaku-id lang user-key]
+  (let [lang-str (or (clojure.core/name lang) "fi")]
+    (str (va-url lang)
+         (if (= lang :sv)
+           "statsunderstod/"
+           "avustushaku/")
+         avustushaku-id
+         "/"
+         (if (= lang :sv)
+           "forhandsvisning"
+           "esikatselu")
+         "/"
+         user-key
+         "?lang="
+         lang-str)))
+
 (defn generate-url [avustushaku-id lang user-key preview?]
   (let [lang-str (or (clojure.core/name lang) "fi")]
     (str (va-url lang)
