@@ -15,6 +15,15 @@ export const HakemusHakijaSidePreviewLink = ({
     <span className="preview-links">
       <span className="preview-links">Hakemus:</span>
       <a
+        href={previewUrl + '/readonly'}
+        className="preview-links"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Esikatselu
+      </a>
+      |
+      <a
         href={previewUrl}
         className="preview-links"
         target="_blank"

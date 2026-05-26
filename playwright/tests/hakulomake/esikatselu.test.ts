@@ -2,7 +2,8 @@ import { expect, Page } from '@playwright/test'
 import { defaultValues as test } from '../../fixtures/defaultValues'
 import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
-import { expectToBeDefined } from '../../utils/util'
+import { expectToBeDefined, waitForNewTab } from '../../utils/util'
+import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { getHakemusSubmitted, waitUntilMinEmails } from '../../utils/emails'
 import { HAKIJA_URL, swedishAnswers } from '../../utils/constants'
 import { Answers } from '../../utils/types'
@@ -174,3 +175,33 @@ swedishTest(
     )
   }
 )
+
+test('Esikatselu button in virkailija opens esikatselu path in new tab', async ({
+  page,
+  hakuProps,
+  answers,
+  userCache,
+}) => {
+  expectToBeDefined(userCache)
+  const hakujenHallintaPage = new HakujenHallintaPage(page)
+  const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
+  const hakijaPage = HakijaAvustusHakuPage(page)
+
+  await hakijaPage.navigate(avustushakuID, answers.lang)
+  const { userKey } = await hakijaPage.fillAndSendMuutoshakemusEnabledHakemus(
+    avustushakuID,
+    answers
+  )
+
+  const hakemusID = await hakijaPage.getHakemusID(avustushakuID, userKey)
+  const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+  await hakemustenArviointiPage.navigateToHakemusArviointi(avustushakuID, hakemusID)
+
+  const [newTab] = await Promise.all([
+    waitForNewTab(page),
+    page.locator('text="Esikatselu"').click(),
+  ])
+  await newTab.waitForLoadState()
+
+  expect(newTab.url()).toContain(`/avustushaku/${avustushakuID}/esikatselu/${userKey}`)
+})

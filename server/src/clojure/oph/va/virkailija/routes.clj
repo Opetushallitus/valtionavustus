@@ -79,6 +79,23 @@
                      "&preview=true")]
     (resp/redirect preview-url)))
 
+(defn- on-hakemus-preview-readonly [avustushaku-id hakemus-user-key]
+  (let [hakemus (hakija-api/get-hakemus-by-user-key hakemus-user-key)
+        language (keyword (:language hakemus))
+        hakija-app-url (-> config :server :url language)
+        esikatselu-url (str
+                        hakija-app-url
+                        (if (= language :sv)
+                          "statsunderstod/"
+                          "avustushaku/")
+                        avustushaku-id
+                        (if (= language :sv)
+                          "/forhandsvisning/"
+                          "/esikatselu/")
+                        hakemus-user-key
+                        "?lang=" (name language))]
+    (resp/redirect esikatselu-url)))
+
 (defn- on-hakemus-edit [avustushaku-id hakemus-user-key]
   (let [hakemus (hakija-api/get-hakemus-by-user-key hakemus-user-key)
         language (keyword (:language hakemus))
@@ -139,6 +156,10 @@
      :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
      :query-params [{decision-version :- s/Bool false}]
      (on-hakemus-preview avustushaku-id hakemus-user-key decision-version))
+
+   (compojure-api/GET "/hakemus-preview/:avustushaku-id/:hakemus-user-key/readonly" []
+     :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
+     (on-hakemus-preview-readonly avustushaku-id hakemus-user-key))
 
    (compojure-api/GET "/hakemus-edit/:avustushaku-id/:hakemus-user-key" request
      :path-params [avustushaku-id :- Long, hakemus-user-key :- s/Str]
