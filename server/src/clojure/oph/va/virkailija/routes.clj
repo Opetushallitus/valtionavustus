@@ -6,6 +6,7 @@
             [compojure.core :as compojure]
             [compojure.route :as compojure-route]
             [oph.common.email :as common-email]
+            [oph.common.email-utils :as email-utils]
             [oph.soresu.common.config :refer [config]]
             [oph.soresu.common.db :refer [query execute!]]
             [oph.soresu.common.koodisto :as koodisto]
@@ -81,20 +82,8 @@
 
 (defn- on-hakemus-preview-readonly [avustushaku-id hakemus-user-key]
   (let [hakemus (hakija-api/get-hakemus-by-user-key hakemus-user-key)
-        language (keyword (:language hakemus))
-        hakija-app-url (-> config :server :url language)
-        esikatselu-url (str
-                        hakija-app-url
-                        (if (= language :sv)
-                          "statsunderstod/"
-                          "avustushaku/")
-                        avustushaku-id
-                        (if (= language :sv)
-                          "/forhandsvisning/"
-                          "/esikatselu/")
-                        hakemus-user-key
-                        "?lang=" (name language))]
-    (resp/redirect esikatselu-url)))
+        language (keyword (:language hakemus))]
+    (resp/redirect (email-utils/generate-esikatselu-url avustushaku-id language hakemus-user-key))))
 
 (defn- on-hakemus-edit [avustushaku-id hakemus-user-key]
   (let [hakemus (hakija-api/get-hakemus-by-user-key hakemus-user-key)

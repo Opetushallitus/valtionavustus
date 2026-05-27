@@ -19,6 +19,7 @@ export const HakemusHakijaSidePreviewLink = ({
         className="preview-links"
         target="_blank"
         rel="noopener noreferrer"
+        data-test-id="hakemus-esikatselu-link"
       >
         Esikatselu
       </a>

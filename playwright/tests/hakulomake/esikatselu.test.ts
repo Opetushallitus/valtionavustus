@@ -199,9 +199,15 @@ test('Esikatselu button in virkailija opens esikatselu path in new tab', async (
 
   const [newTab] = await Promise.all([
     waitForNewTab(page),
-    page.locator('text="Esikatselu"').click(),
+    page.getByTestId('hakemus-esikatselu-link').click(),
   ])
   await newTab.waitForLoadState()
 
   expect(newTab.url()).toContain(`/avustushaku/${avustushakuID}/esikatselu/${userKey}`)
+
+  await test.step('opened tab shows submitted hakemus in read-only mode', async () => {
+    await expectReadOnly(newTab)
+    expectToBeDefined(answers.projectName)
+    await expect(newTab.locator('#project-name')).toContainText(answers.projectName)
+  })
 })
