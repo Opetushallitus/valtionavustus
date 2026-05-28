@@ -320,6 +320,17 @@ input[type="radio"] {
     color: var(--light-gray);
 }
 
+.soresu-radiobutton-group:has(input:disabled) {
+    border-color: var(--light-gray);
+}
+
+.soresu-radiobutton-group input[type="radio"]:disabled:checked+label,
+.soresu-form .soresu-radiobutton-group input[type="radio"]:disabled:checked+label {
+    background-color: var(--light-gray);
+    border-color: var(--light-gray);
+    color: black;
+}
+
 .soresu-radiobutton-group input[type="radio"]:checked+label,
 .soresu-form .soresu-radiobutton-group input[type="radio"]:checked+label {
     color: white;

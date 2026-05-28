@@ -165,13 +165,12 @@ function VerifiedDrawer({ hakemus, showChecklist }: { hakemus: Hakemus; showChec
   return (
     <div className="asiatarkastettu-content">
       {showChecklist && savedChecklist && (
-        <div className="verification-checklist verification-checklist-readonly">
-          {ASIATARKASTUS_CHECKLIST_ITEMS.map((item) => (
-            <label key={item.key} className="verification-checklist-item">
-              <input type="checkbox" checked={savedChecklist[item.key]} disabled readOnly />
-              <span>{item.label}</span>
-            </label>
-          ))}
+        <div className="verification-checklist-readonly">
+          <AsiatarkastusChecklistInput
+            checklist={savedChecklist}
+            disabled={true}
+            onChange={() => {}}
+          />
         </div>
       )}
       <div className={'messageDetails'}>
@@ -301,7 +300,7 @@ function AsiatarkastusSatunnaisotanta({ disabled }: { disabled: boolean }) {
         heading="Loppuselvityksen asiatarkastus"
         taydennyspyyntoHeading="Asiatarkastuksen täydennyspyyntö"
         confirmButton={<></>}
-        completedBy={buildVerifiedCompletedBy(hakemus, false)}
+        completedBy={buildVerifiedCompletedBy(hakemus, true)}
         showCancelButton={showCancelTaydennyspyynto(hakemus)}
       />
       {!isVerified && (
