@@ -33,13 +33,15 @@ test.describe.parallel('Otantatarkastus', () => {
     const loppuselvitysPage = LoppuselvitysPage(page)
     await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
 
-    await expect(loppuselvitysPage.locators.otantatarkastus.satunnaisotantaBanner).toBeVisible()
     await expect(loppuselvitysPage.locators.otantatarkastus.checklist).toBeVisible()
+    await expect(loppuselvitysPage.locators.otantatarkastus.satunnaisotantaBanner).toBeHidden()
     await expect(loppuselvitysPage.locators.otantatarkastus.approvalEmailForm).toBeHidden()
     await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeHidden()
 
     await loppuselvitysPage.checkAllChecklistItems()
 
+    // banner appears only after all checklist items answered
+    await expect(loppuselvitysPage.locators.otantatarkastus.satunnaisotantaBanner).toBeVisible()
     // approval email form must never appear for satunnaisotanta regardless of checklist answers
     await expect(loppuselvitysPage.locators.otantatarkastus.approvalEmailForm).toBeHidden()
     // still disabled without message

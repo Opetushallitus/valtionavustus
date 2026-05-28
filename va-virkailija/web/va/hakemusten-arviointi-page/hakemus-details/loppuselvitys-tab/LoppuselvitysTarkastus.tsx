@@ -306,11 +306,6 @@ function AsiatarkastusSatunnaisotanta({ disabled }: { disabled: boolean }) {
       />
       {!isVerified && (
         <>
-          <div className="otantapolku-banner" data-test-id="satunnaisotanta-banner">
-            Tämä loppuselvitys on valittu satunnaisotannalla taloustarkastukseen. Kirjaa
-            tarvittaessa asiatarkastusta koskevat huomiosi taloustarkastajalle ja lähetä
-            loppuselvitys taloustarkastukseen.
-          </div>
           <AsiatarkastusChecklistInput
             checklist={checklist}
             disabled={disabled}
@@ -318,6 +313,11 @@ function AsiatarkastusSatunnaisotanta({ disabled }: { disabled: boolean }) {
           />
           {allAnswered && (
             <>
+              <div className="otantapolku-banner" data-test-id="satunnaisotanta-banner">
+                Tämä loppuselvitys on valittu satunnaisotannalla taloustarkastukseen. Kirjaa
+                tarvittaessa asiatarkastusta koskevat huomiosi taloustarkastajalle ja lähetä
+                loppuselvitys taloustarkastukseen.
+              </div>
               <CommentTextarea message={message} setMessage={setMessage} disabled={disabled} />
               <form onSubmit={onSubmit}>
                 <div className="verification-footer">
