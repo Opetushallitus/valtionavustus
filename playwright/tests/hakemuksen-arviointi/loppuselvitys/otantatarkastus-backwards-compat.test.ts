@@ -29,9 +29,8 @@ selvitysTest.describe('Otantatarkastus backwards-compat', () => {
 
       const lops = LoppuselvitysPage(page)
       await lops.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
-      const banner = lops.locators.otantatarkastus.satunnaisotantaBanner
       const checklist = lops.locators.otantatarkastus.checklist
-      await expect(banner.or(checklist)).toBeVisible()
+      await expect(checklist).toBeVisible()
     }
   )
 

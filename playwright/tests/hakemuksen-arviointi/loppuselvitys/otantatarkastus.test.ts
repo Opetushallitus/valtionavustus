@@ -20,7 +20,7 @@ async function setOtantapolku(
 }
 
 test.describe.parallel('Otantatarkastus', () => {
-  test('satunnaisotanta: shows banner, no checklist, sends to taloustarkastus', async ({
+  test('satunnaisotanta: shows banner and checklist, always sends to taloustarkastus', async ({
     page,
     request,
     avustushakuID,
@@ -34,12 +34,19 @@ test.describe.parallel('Otantatarkastus', () => {
     await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
 
     await expect(loppuselvitysPage.locators.otantatarkastus.satunnaisotantaBanner).toBeVisible()
-    await expect(loppuselvitysPage.locators.otantatarkastus.checklist).toBeHidden()
+    await expect(loppuselvitysPage.locators.otantatarkastus.checklist).toBeVisible()
     await expect(loppuselvitysPage.locators.otantatarkastus.approvalEmailForm).toBeHidden()
-    await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeVisible()
+    await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeDisabled()
+
+    await loppuselvitysPage.checkAllChecklistItems()
+
+    // approval email form must never appear for satunnaisotanta regardless of checklist answers
+    await expect(loppuselvitysPage.locators.otantatarkastus.approvalEmailForm).toBeHidden()
+    // still disabled without message
     await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeDisabled()
 
     await loppuselvitysPage.locators.asiatarkastus.acceptMessage.fill('Satunnaisotanta - kommentti')
+    await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeEnabled()
 
     const [verifyResponse] = await Promise.all([
       page.waitForResponse(
@@ -71,8 +78,6 @@ test.describe.parallel('Otantatarkastus', () => {
     await expect(loppuselvitysPage.locators.otantatarkastus.checklist).toBeVisible()
     await expect(loppuselvitysPage.locators.otantatarkastus.satunnaisotantaBanner).toBeHidden()
     await expect(loppuselvitysPage.locators.otantatarkastus.approvalEmailForm).toBeHidden()
-
-    throw new Error()
 
     await loppuselvitysPage.checkAllChecklistItems()
 

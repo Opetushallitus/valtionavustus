@@ -84,6 +84,55 @@ const ASIATARKASTUS_CHECKLIST_ITEMS: readonly { key: AsiatarkastusChecklistKey; 
     { key: 'avustus-alle-100k', label: 'Myönnetty avustus on alle 100 000 euroa' },
   ]
 
+const INITIAL_ASIATARKASTUS_CHECKLIST: AsiatarkastusChecklist = {
+  'avustus-kaytetty-paatoksen-mukaisesti': undefined,
+  'omarahoitus-kaytetty': undefined,
+  'taloustiedot-kirjattu': undefined,
+  'avustus-alle-100k': undefined,
+}
+
+function AsiatarkastusChecklistInput({
+  checklist,
+  disabled,
+  onChange,
+}: {
+  checklist: AsiatarkastusChecklist
+  disabled: boolean
+  onChange: (key: AsiatarkastusChecklistKey, value: boolean) => void
+}) {
+  return (
+    <div className="verification-checklist" data-test-id="asiatarkastus-checklist">
+      {ASIATARKASTUS_CHECKLIST_ITEMS.map((item) => (
+        <div key={item.key} className="verification-checklist-item">
+          <fieldset className="soresu-radiobutton-group">
+            <input
+              id={`${item.key}-true`}
+              type="radio"
+              name={item.key}
+              value="true"
+              checked={checklist[item.key] === true}
+              disabled={disabled}
+              onChange={() => onChange(item.key, true)}
+            />
+            <label htmlFor={`${item.key}-true`}>Kyllä</label>
+            <input
+              id={`${item.key}-false`}
+              type="radio"
+              name={item.key}
+              value="false"
+              checked={checklist[item.key] === false}
+              disabled={disabled}
+              onChange={() => onChange(item.key, false)}
+            />
+            <label htmlFor={`${item.key}-false`}>Ei</label>
+          </fieldset>
+          <span>{item.label}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function CommentTextarea({
   message,
   setMessage,
@@ -215,12 +264,16 @@ function AsiatarkastusSatunnaisotanta({ disabled }: { disabled: boolean }) {
   const dispatch = useHakemustenArviointiDispatch()
   const avustushakuId = useAvustushakuId()
   const [message, setMessage] = useState<string>()
+  const [checklist, setChecklist] = useState<AsiatarkastusChecklist>(
+    INITIAL_ASIATARKASTUS_CHECKLIST
+  )
   const [error, setError] = useState<string>()
   const verifiedBy = hakemus['loppuselvitys-information-verified-by']
   const verifiedAt = hakemus['loppuselvitys-information-verified-at']
   const isVerified = !!verifiedBy && !!verifiedAt
+  const allAnswered = Object.values(checklist).every((v) => v !== undefined)
   const loppuselvitysNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
-  const disableSubmit = loppuselvitysNotSubmitted || !message || disabled
+  const disableSubmit = loppuselvitysNotSubmitted || !message || disabled || !allAnswered
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -229,7 +282,7 @@ function AsiatarkastusSatunnaisotanta({ disabled }: { disabled: boolean }) {
     try {
       await HttpUtil.post(
         `/api/avustushaku/${avustushakuId}/hakemus/${hakemus.id}/loppuselvitys/verify-information`,
-        { message }
+        { message, checklist }
       )
     } catch {
       setError('Asiatarkastuksen hyväksyminen epäonnistui')
@@ -258,6 +311,11 @@ function AsiatarkastusSatunnaisotanta({ disabled }: { disabled: boolean }) {
             tarvittaessa asiatarkastusta koskevat huomiosi taloustarkastajalle ja lähetä
             loppuselvitys taloustarkastukseen.
           </div>
+          <AsiatarkastusChecklistInput
+            checklist={checklist}
+            disabled={disabled}
+            onChange={(key, value) => setChecklist((prev) => ({ ...prev, [key]: value }))}
+          />
           <CommentTextarea message={message} setMessage={setMessage} disabled={disabled} />
           <form onSubmit={onSubmit}>
             <div className="verification-footer">
@@ -282,12 +340,9 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
     (s) => getLoadedAvustushakuData(s.arviointi).hakuData.avustushaku
   )
   const [message, setMessage] = useState<string>()
-  const [checklist, setChecklist] = useState<AsiatarkastusChecklist>({
-    'avustus-kaytetty-paatoksen-mukaisesti': undefined,
-    'omarahoitus-kaytetty': undefined,
-    'taloustiedot-kirjattu': undefined,
-    'avustus-alle-100k': undefined,
-  })
+  const [checklist, setChecklist] = useState<AsiatarkastusChecklist>(
+    INITIAL_ASIATARKASTUS_CHECKLIST
+  )
   const [error, setError] = useState<string>()
   const [showHyvaksytty, setShowHyvaksytty] = useState(false)
 
@@ -377,35 +432,11 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
       />
       {!isVerified && (
         <>
-          <div className="verification-checklist" data-test-id="asiatarkastus-checklist">
-            {ASIATARKASTUS_CHECKLIST_ITEMS.map((item) => (
-              <div key={item.key} className="verification-checklist-item">
-                <fieldset className="soresu-radiobutton-group">
-                  <input
-                    id={`${item.key}-true`}
-                    type="radio"
-                    name={item.key}
-                    value="true"
-                    checked={checklist[item.key] === true}
-                    disabled={disabled}
-                    onChange={() => setChecklist((prev) => ({ ...prev, [item.key]: true }))}
-                  />
-                  <label htmlFor={`${item.key}-true`}>Kyllä</label>
-                  <input
-                    id={`${item.key}-false`}
-                    type="radio"
-                    name={item.key}
-                    value="false"
-                    checked={checklist[item.key] === false}
-                    disabled={disabled}
-                    onChange={() => setChecklist((prev) => ({ ...prev, [item.key]: false }))}
-                  />
-                  <label htmlFor={`${item.key}-false`}>Ei</label>
-                </fieldset>
-                <span>{item.label}</span>
-              </div>
-            ))}
-          </div>
+          <AsiatarkastusChecklistInput
+            checklist={checklist}
+            disabled={disabled}
+            onChange={(key, value) => setChecklist((prev) => ({ ...prev, [key]: value }))}
+          />
           {allAnswered && !allChecked && (
             <div className="otantapolku-banner" data-test-id="otannan-ulkopuolella-riski-banner">
               Loppuselvityksen asiatarkastuksessa havaittiin taloustarkastusta edellyttävä riski.

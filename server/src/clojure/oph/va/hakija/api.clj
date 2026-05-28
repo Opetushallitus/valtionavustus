@@ -720,8 +720,11 @@ order by upper(h.organization_name), upper(h.project_name)")
     (and (nil? otantapolku) (or checklist email))
     {:error "2-vaiheinen path must not include checklist or email"}
 
-    (and (= otantapolku "satunnaisotanta") (or checklist email))
-    {:error "satunnaisotanta path must not include checklist or email"}
+    (and (= otantapolku "satunnaisotanta") email)
+    {:error "satunnaisotanta path must not include email"}
+
+    (and (= otantapolku "satunnaisotanta") (nil? checklist))
+    {:error "satunnaisotanta path requires checklist"}
 
     (and (= otantapolku "otannan-ulkopuolella") (nil? checklist))
     {:error "otannan-ulkopuolella path requires checklist"}
@@ -816,7 +819,8 @@ order by upper(h.organization_name), upper(h.project_name)")
                     (ok response-data))
 
                 (= otantapolku "satunnaisotanta")
-                (do (mark-information-verified! tx hakemus-id message verifier false)
+                (do (save-checklist! tx hakemus-id checklist)
+                    (mark-information-verified! tx hakemus-id message verifier false)
                     (ok response-data))
 
                 (= otantapolku "otannan-ulkopuolella")
