@@ -36,7 +36,7 @@ test.describe.parallel('Otantatarkastus', () => {
     await expect(loppuselvitysPage.locators.otantatarkastus.satunnaisotantaBanner).toBeVisible()
     await expect(loppuselvitysPage.locators.otantatarkastus.checklist).toBeVisible()
     await expect(loppuselvitysPage.locators.otantatarkastus.approvalEmailForm).toBeHidden()
-    await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeDisabled()
+    await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeHidden()
 
     await loppuselvitysPage.checkAllChecklistItems()
 

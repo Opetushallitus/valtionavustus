@@ -316,15 +316,19 @@ function AsiatarkastusSatunnaisotanta({ disabled }: { disabled: boolean }) {
             disabled={disabled}
             onChange={(key, value) => setChecklist((prev) => ({ ...prev, [key]: value }))}
           />
-          <CommentTextarea message={message} setMessage={setMessage} disabled={disabled} />
-          <form onSubmit={onSubmit}>
-            <div className="verification-footer">
-              <button type="submit" name="submit-verification" disabled={disableSubmit}>
-                Hyväksy asiatarkastus ja lähetä taloustarkastukseen
-              </button>
-              {error && <div className="error">{error}</div>}
-            </div>
-          </form>
+          {allAnswered && (
+            <>
+              <CommentTextarea message={message} setMessage={setMessage} disabled={disabled} />
+              <form onSubmit={onSubmit}>
+                <div className="verification-footer">
+                  <button type="submit" name="submit-verification" disabled={disableSubmit}>
+                    Hyväksy asiatarkastus ja lähetä taloustarkastukseen
+                  </button>
+                  {error && <div className="error">{error}</div>}
+                </div>
+              </form>
+            </>
+          )}
         </>
       )}
     </>
@@ -443,27 +447,31 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
               Selvitys siirtyy automaattisesti taloustarkastukseen jatkokäsittelyä varten.
             </div>
           )}
-          <CommentTextarea message={message} setMessage={setMessage} disabled={disabled} />
-          {allAnswered && allChecked ? (
-            <MultipleRecipentEmailForm
-              onSubmit={onSubmitAsiatarkastaAndAccept}
-              disabled={disableAsiatarkastaAndAcceptSubmit}
-              email={approvalEmail}
-              setEmail={setApprovalEmail}
-              formName="asiatarkastus-hyvaksynta"
-              submitText="Hyväksy ja lähetä viesti"
-              heading="Loppuselvityksen hyväksyntä"
-              errorText={error}
-            />
-          ) : (
-            <form onSubmit={onSubmitRiski}>
-              <div className="verification-footer">
-                <button type="submit" name="submit-verification" disabled={disableRiskiSubmit}>
-                  Hyväksy asiatarkastus ja lähetä taloustarkastukseen
-                </button>
-                {error && <div className="error">{error}</div>}
-              </div>
-            </form>
+          {allAnswered && (
+            <>
+              <CommentTextarea message={message} setMessage={setMessage} disabled={disabled} />
+              {allChecked ? (
+                <MultipleRecipentEmailForm
+                  onSubmit={onSubmitAsiatarkastaAndAccept}
+                  disabled={disableAsiatarkastaAndAcceptSubmit}
+                  email={approvalEmail}
+                  setEmail={setApprovalEmail}
+                  formName="asiatarkastus-hyvaksynta"
+                  submitText="Hyväksy ja lähetä viesti"
+                  heading="Loppuselvityksen hyväksyntä"
+                  errorText={error}
+                />
+              ) : (
+                <form onSubmit={onSubmitRiski}>
+                  <div className="verification-footer">
+                    <button type="submit" name="submit-verification" disabled={disableRiskiSubmit}>
+                      Hyväksy asiatarkastus ja lähetä taloustarkastukseen
+                    </button>
+                    {error && <div className="error">{error}</div>}
+                  </div>
+                </form>
+              )}
+            </>
           )}
         </>
       )}
