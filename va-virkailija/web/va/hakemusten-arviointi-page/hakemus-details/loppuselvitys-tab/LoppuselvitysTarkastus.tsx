@@ -441,14 +441,18 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
             disabled={disabled}
             onChange={(key, value) => setChecklist((prev) => ({ ...prev, [key]: value }))}
           />
-          {allAnswered && !allChecked && (
-            <div className="otantapolku-banner" data-test-id="otannan-ulkopuolella-riski-banner">
-              Loppuselvityksen asiatarkastuksessa havaittiin taloustarkastusta edellyttävä riski.
-              Selvitys siirtyy automaattisesti taloustarkastukseen jatkokäsittelyä varten.
-            </div>
-          )}
           {allAnswered && (
             <>
+              {!allChecked && (
+                <div
+                  className="otantapolku-banner"
+                  data-test-id="otannan-ulkopuolella-riski-banner"
+                >
+                  Loppuselvityksen asiatarkastuksessa havaittiin taloustarkastusta edellyttävä
+                  riski. Selvitys siirtyy automaattisesti taloustarkastukseen jatkokäsittelyä
+                  varten.
+                </div>
+              )}
               <CommentTextarea message={message} setMessage={setMessage} disabled={disabled} />
               {allChecked ? (
                 <MultipleRecipentEmailForm
