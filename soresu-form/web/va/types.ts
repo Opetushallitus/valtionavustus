@@ -264,7 +264,7 @@ export const ASIATARKASTUS_CHECKLIST_KEYS = [
 ] as const
 
 export type AsiatarkastusChecklistKey = (typeof ASIATARKASTUS_CHECKLIST_KEYS)[number]
-export type AsiatarkastusChecklist = Record<AsiatarkastusChecklistKey, boolean>
+export type AsiatarkastusChecklist = Record<AsiatarkastusChecklistKey, boolean | undefined>
 
 export type LoppuselvitysOtantapolku = 'satunnaisotanta' | 'otannan-ulkopuolella'
 

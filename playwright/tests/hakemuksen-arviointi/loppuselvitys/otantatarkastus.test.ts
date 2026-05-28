@@ -1,4 +1,4 @@
-import { expect, APIRequestContext } from '@playwright/test'
+import { APIRequestContext, expect } from '@playwright/test'
 import { selvitysTest } from '../../../fixtures/selvitysTest'
 import { LoppuselvitysPage } from '../../../pages/virkailija/hakujen-hallinta/LoppuselvitysPage'
 import { getSelvitysEmailsWithLoppuselvitysSubject } from '../../../utils/emails'
@@ -72,6 +72,8 @@ test.describe.parallel('Otantatarkastus', () => {
     await expect(loppuselvitysPage.locators.otantatarkastus.satunnaisotantaBanner).toBeHidden()
     await expect(loppuselvitysPage.locators.otantatarkastus.approvalEmailForm).toBeHidden()
 
+    throw new Error()
+
     await loppuselvitysPage.checkAllChecklistItems()
 
     await expect(loppuselvitysPage.locators.otantatarkastus.approvalEmailForm).toBeVisible()
@@ -119,11 +121,13 @@ test.describe.parallel('Otantatarkastus', () => {
 
     await expect(loppuselvitysPage.locators.otantatarkastus.checklist).toBeVisible()
 
-    const checkboxes =
-      loppuselvitysPage.locators.otantatarkastus.checklist.locator('input[type="checkbox"]')
-    await checkboxes.nth(0).check()
-    await checkboxes.nth(1).check()
-    await checkboxes.nth(2).check()
+    const checklist = loppuselvitysPage.locators.otantatarkastus.checklist
+    const kyllaLabels = checklist.locator('label', { hasText: 'Kyllä' })
+    await kyllaLabels.nth(0).click()
+    await kyllaLabels.nth(1).click()
+    await kyllaLabels.nth(2).click()
+    const eiLabels = checklist.locator('label', { hasText: 'Ei' })
+    await eiLabels.nth(3).click()
 
     await expect(
       loppuselvitysPage.locators.otantatarkastus.otannanUlkopuolellaRiskiBanner

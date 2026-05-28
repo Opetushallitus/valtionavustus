@@ -26,8 +26,8 @@
 
 .verification-checklist-item {
     display: flex;
-    align-items: flex-start;
-    gap: 8px;
+    align-items: center;
+    gap: 16px;
     padding: 8px 0;
     border-bottom: 1px solid #eee;
     cursor: pointer;
@@ -37,8 +37,7 @@
     border-bottom: none;
 }
 
-.verification-checklist-item input[type="checkbox"] {
-    margin-top: 3px;
+.verification-checklist-item .soresu-radiobutton-group {
     flex-shrink: 0;
 }
 

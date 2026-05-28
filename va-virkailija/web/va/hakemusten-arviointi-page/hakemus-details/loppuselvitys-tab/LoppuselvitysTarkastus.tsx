@@ -254,8 +254,9 @@ function AsiatarkastusSatunnaisotanta({ disabled }: { disabled: boolean }) {
       {!isVerified && (
         <>
           <div className="otantapolku-banner" data-test-id="satunnaisotanta-banner">
-            Tämä loppuselvitys on valittu satunnaisotannalla taloustarkastukseen. Kirjoita kommentti
-            ja lähetä taloustarkastukseen.
+            Tämä loppuselvitys on valittu satunnaisotannalla taloustarkastukseen. Kirjaa
+            tarvittaessa asiatarkastusta koskevat huomiosi taloustarkastajalle ja lähetä
+            loppuselvitys taloustarkastukseen.
           </div>
           <CommentTextarea message={message} setMessage={setMessage} disabled={disabled} />
           <form onSubmit={onSubmit}>
@@ -282,10 +283,10 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
   )
   const [message, setMessage] = useState<string>()
   const [checklist, setChecklist] = useState<AsiatarkastusChecklist>({
-    'avustus-kaytetty-paatoksen-mukaisesti': false,
-    'omarahoitus-kaytetty': false,
-    'taloustiedot-kirjattu': false,
-    'avustus-alle-100k': false,
+    'avustus-kaytetty-paatoksen-mukaisesti': undefined,
+    'omarahoitus-kaytetty': undefined,
+    'taloustiedot-kirjattu': undefined,
+    'avustus-alle-100k': undefined,
   })
   const [error, setError] = useState<string>()
   const [showHyvaksytty, setShowHyvaksytty] = useState(false)
@@ -313,9 +314,10 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
     receivers: initialRecipientEmails(hakemus, hakemus.normalizedData),
   }))
 
-  const allChecked = Object.values(checklist).every(Boolean)
+  const allAnswered = Object.values(checklist).every((v) => v !== undefined)
+  const allChecked = allAnswered && Object.values(checklist).every(Boolean)
   const loppuselvitysNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
-  const disableRiskiSubmit = loppuselvitysNotSubmitted || !message || disabled
+  const disableRiskiSubmit = loppuselvitysNotSubmitted || !message || disabled || !allAnswered
   const disableAsiatarkastaAndAcceptSubmit = loppuselvitysNotSubmitted || disabled
 
   const onSubmitRiski = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -377,26 +379,41 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
         <>
           <div className="verification-checklist" data-test-id="asiatarkastus-checklist">
             {ASIATARKASTUS_CHECKLIST_ITEMS.map((item) => (
-              <label key={item.key} className="verification-checklist-item">
-                <input
-                  type="checkbox"
-                  checked={checklist[item.key]}
-                  disabled={disabled}
-                  onChange={(e) =>
-                    setChecklist((prev) => ({ ...prev, [item.key]: e.target.checked }))
-                  }
-                />
+              <div key={item.key} className="verification-checklist-item">
+                <fieldset className="soresu-radiobutton-group">
+                  <input
+                    id={`${item.key}-true`}
+                    type="radio"
+                    name={item.key}
+                    value="true"
+                    checked={checklist[item.key] === true}
+                    disabled={disabled}
+                    onChange={() => setChecklist((prev) => ({ ...prev, [item.key]: true }))}
+                  />
+                  <label htmlFor={`${item.key}-true`}>Kyllä</label>
+                  <input
+                    id={`${item.key}-false`}
+                    type="radio"
+                    name={item.key}
+                    value="false"
+                    checked={checklist[item.key] === false}
+                    disabled={disabled}
+                    onChange={() => setChecklist((prev) => ({ ...prev, [item.key]: false }))}
+                  />
+                  <label htmlFor={`${item.key}-false`}>Ei</label>
+                </fieldset>
                 <span>{item.label}</span>
-              </label>
+              </div>
             ))}
           </div>
-          {!allChecked && (
+          {allAnswered && !allChecked && (
             <div className="otantapolku-banner" data-test-id="otannan-ulkopuolella-riski-banner">
-              Tarkistuslistassa on puutteita. Loppuselvitys ohjataan taloustarkastukseen.
+              Loppuselvityksen asiatarkastuksessa havaittiin taloustarkastusta edellyttävä riski.
+              Selvitys siirtyy automaattisesti taloustarkastukseen jatkokäsittelyä varten.
             </div>
           )}
           <CommentTextarea message={message} setMessage={setMessage} disabled={disabled} />
-          {allChecked ? (
+          {allAnswered && allChecked ? (
             <MultipleRecipentEmailForm
               onSubmit={onSubmitAsiatarkastaAndAccept}
               disabled={disableAsiatarkastaAndAcceptSubmit}

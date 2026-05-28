@@ -151,11 +151,11 @@ export const LoppuselvitysPage = (page: Page) => {
 
   async function checkAllChecklistItems() {
     await expect(locators.otantatarkastus.checklist).toBeVisible()
-    const items = locators.otantatarkastus.checklist.locator('input[type="checkbox"]')
-    const count = await items.count()
+    const kyllaLabels = locators.otantatarkastus.checklist.locator('label', { hasText: 'Kyllä' })
+    const count = await kyllaLabels.count()
     expect(count).toBeGreaterThan(0)
     for (let i = 0; i < count; i++) {
-      await items.nth(i).check()
+      await kyllaLabels.nth(i).click()
     }
   }
 
