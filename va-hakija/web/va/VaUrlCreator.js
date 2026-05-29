@@ -150,6 +150,11 @@ export default class VaUrlCreator extends UrlCreator {
         : 'fi'
   }
 
+  static parseEsikatseluUserKey(pathname = location.pathname) {
+    const match = pathname.match(/\/(?:esikatselu|forhandsvisning)\/([^/]+)$/)
+    return match?.[1]
+  }
+
   static parseAvustusHakuId(urlContent) {
     const location = urlContent.location
     const pathname = location.pathname

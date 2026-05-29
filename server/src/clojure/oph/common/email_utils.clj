@@ -41,6 +41,18 @@
          "?lang="
          lang-str)))
 
+(defn generate-selvitys-esikatselu-url [avustushaku-id lang user-key selvitys-type]
+  (let [lang-str (or (clojure.core/name lang) "fi")]
+    (str (va-url lang)
+         "avustushaku/"
+         avustushaku-id
+         "/"
+         selvitys-type
+         "/esikatselu/"
+         user-key
+         "?lang="
+         lang-str)))
+
 (defn generate-url [avustushaku-id lang user-key preview?]
   (let [lang-str (or (clojure.core/name lang) "fi")]
     (str (va-url lang)

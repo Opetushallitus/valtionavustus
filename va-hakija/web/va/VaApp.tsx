@@ -124,17 +124,12 @@ function isFieldEnabled(state: VaAppStateLoopState, fieldId: string): boolean {
   return !fieldValue || !fieldValue.value || fieldValue.value.trim() === ''
 }
 
-function parseEsikatseluPath(): string | undefined {
-  const match = location.pathname.match(/\/(?:esikatselu|forhandsvisning)\/([^/]+)$/)
-  return match?.[1]
-}
-
 function toStringParam(value: string | (string | null)[] | null | undefined): string | undefined {
   return typeof value === 'string' ? value : undefined
 }
 
 const query = queryString.parse(location.search)
-const esikatseluHakemusId = parseEsikatseluPath()
+const esikatseluHakemusId = VaUrlCreator.parseEsikatseluUserKey()
 if (esikatseluHakemusId) {
   query.hakemus = esikatseluHakemusId
 }

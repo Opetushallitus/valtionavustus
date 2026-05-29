@@ -319,7 +319,9 @@
    (compojure/GET "/avustushaku/:avustushaku-id/esikatselu" [] (return-html "hakija/index.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/esikatselu/:hakemus" [] (return-html "hakija/index.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys/esikatselu" [] (return-html "hakija/selvitys.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys/esikatselu/:selvitys" [] (return-html "hakija/selvitys.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys/esikatselu" [] (return-html "hakija/selvitys.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys/esikatselu/:selvitys" [] (return-html "hakija/selvitys.html"))
 
    (compojure-api/GET "/paatos/avustushaku/:avustushaku-id/hakemus/:user-key" [avustushaku-id user-key :as request]
      :path-params [avustushaku-id :- Long user-key :- s/Str]

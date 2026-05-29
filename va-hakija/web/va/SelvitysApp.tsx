@@ -29,11 +29,16 @@ import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 const sessionIdentifierForLocalStorageId = new Date().getTime()
 const selvitysType =
   location.pathname.indexOf('loppuselvitys') !== -1 ? 'loppuselvitys' : 'valiselvitys'
+
+const esikatseluSelvitysId = VaUrlCreator.parseEsikatseluUserKey()
 const query = queryString.parse(location.search)
+if (esikatseluSelvitysId) {
+  query[selvitysType] = esikatseluSelvitysId
+}
 const selvitysId = query[selvitysType]
 const showPreview = query.preview as string
 const lang = query.lang
-const realPreview = Boolean(location.pathname.includes('esikatselu'))
+const isSelvitysFormEsikatselu = !esikatseluSelvitysId && location.pathname.includes('esikatselu')
 
 function containsExistingEntityId(urlContent: UrlContent): boolean {
   const query = urlContent.parsedQuery
@@ -195,6 +200,9 @@ function initialStateTemplateTransformation(template: SelvitysAppStateTemplate) 
   template.avustushaku = avustusHakuP
   template.configuration.environment = environmentP
   template.saveStatus.hakemusId = query[selvitysType] as string
+  if (esikatseluSelvitysId) {
+    template.configuration.preview = true
+  }
 }
 
 function onInitialStateLoaded(initialState: SelvitysAppStateLoopState) {
@@ -250,7 +258,7 @@ function initFormController() {
       const selvitysUpdateable =
         state.saveStatus.savedObject && state.saveStatus.savedObject['selvitys-updatable']
       const valiselvitysNotUpdateable = isValiselvitys && selvitysUpdateable === false
-      if (!showPreview && valiselvitysNotUpdateable) {
+      if (!esikatseluSelvitysId && !showPreview && valiselvitysNotUpdateable) {
         const previewUrl = formOperations.urlCreator.existingSubmissionPreviewUrl(
           state.avustushaku?.id,
           state.saveStatus.hakemusId,
@@ -262,7 +270,7 @@ function initFormController() {
 
       const preview = state.configuration.preview
       const readOnly =
-        !realPreview &&
+        !isSelvitysFormEsikatselu &&
         (preview ||
           (selvitysType === 'loppuselvitys' &&
             !state.saveStatus.savedObject?.['selvitys-updatable']))

@@ -97,7 +97,9 @@
                :valiselvitys-submitted-notification)
         subject (get-in mail-titles [type lang])
         template (get-in mail-templates [type lang])
-        preview-url (selvitys-preview-url avustushaku-id selvitys-user-key lang selvitys-type)
+        preview-url (if (feature-enabled? :useEsikatseluEmailLink)
+                      (email-utils/generate-selvitys-esikatselu-url avustushaku-id lang selvitys-user-key selvitys-type)
+                      (selvitys-preview-url avustushaku-id selvitys-user-key lang selvitys-type))
         msg {:hakemus-name hakemus-name
              :preview-url preview-url
              :register-number register-number
@@ -346,7 +348,9 @@
               avustushaku-name (get-in avustushaku [:content :name lang])
               subject (format (get-in mail-titles [type lang]) register-number)
               template (get-in mail-templates [type lang])
-              preview-url (selvitys-preview-url avustushaku-id selvitys-user-key lang selvitys-type)
+              preview-url (if (feature-enabled? :useEsikatseluEmailLink)
+                            (email-utils/generate-selvitys-esikatselu-url avustushaku-id lang selvitys-user-key selvitys-type)
+                            (selvitys-preview-url avustushaku-id selvitys-user-key lang selvitys-type))
               signature (email-signature-block lang)
               msg {:avustushaku-name avustushaku-name
                    :project-name hakemus-name
