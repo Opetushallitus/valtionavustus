@@ -67,7 +67,7 @@
                          [com.fasterxml.jackson.core/jackson-annotations ~jackson-annotations-version]
 
 
-                         ;; [cheshire "6.1.0"] -> [com.fasterxml.jackson.core/jackson-core ~jackson-version]
+                         ;; [cheshire "6.2.0"] -> [com.fasterxml.jackson.core/jackson-core ~jackson-version]
                          [com.fasterxml.jackson.core/jackson-core ~jackson-version]
                          [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor ~jackson-version]
                          [com.fasterxml.jackson.dataformat/jackson-dataformat-smile ~jackson-version]
@@ -113,7 +113,7 @@
                  [org.bouncycastle/bcprov-jdk18on "1.83"] ;; CVE-2024-29857, CVE-2024-30171, CVE-2024-30172
 
                  ;; json
-                 [cheshire "6.1.0"]
+                 [cheshire "6.2.0"]
                  [org.clojure/data.json "2.5.2"]
 
                  ;; database
