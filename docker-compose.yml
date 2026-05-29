@@ -83,7 +83,7 @@ services:
       ECHO_BACK_TO_CLIENT: false
 
   org-mock:
-    image: wiremock/wiremock:3.10.0@sha256:052f7d05b585d5cc956ecf2f1543b1a721858ec83baf0d11b507a113e3b023ee
+    image: wiremock/wiremock:3.13.2@sha256:fd27e46090916e85326229e5102ee169ae729059f3374549615bd20a35fee1f2
     hostname: org-mock
     command:
       - "--port"
