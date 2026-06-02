@@ -69,6 +69,11 @@
       "versioning": "regex:^(?<major>\\d+)(\\.(?<minor>\\d+))?(\\.(?<patch>\\d+))?(-(?<compatibility>.*))?$"
     },
     {
+      "matchManagers": ["leiningen"],
+      "matchPackageNames": ["nrepl", "cider/cider-nrepl"],
+      "groupName": "nREPL"
+    },
+    {
       "matchManagers": ["npm"],
       "matchPackageNames": ["pdfjs-dist"],
       "matchUpdateTypes": ["major"],
