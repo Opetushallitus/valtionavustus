@@ -44,10 +44,7 @@ test.describe.parallel('Otantatarkastus', () => {
     await expect(loppuselvitysPage.locators.otantatarkastus.satunnaisotantaBanner).toBeVisible()
     // approval email form must never appear for satunnaisotanta regardless of checklist answers
     await expect(loppuselvitysPage.locators.otantatarkastus.approvalEmailForm).toBeHidden()
-    // still disabled without message
-    await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeDisabled()
-
-    await loppuselvitysPage.locators.asiatarkastus.acceptMessage.fill('Satunnaisotanta - kommentti')
+    // comment is optional for satunnaisotanta: button is enabled without a message
     await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeEnabled()
 
     const [verifyResponse] = await Promise.all([
@@ -83,9 +80,13 @@ test.describe.parallel('Otantatarkastus', () => {
 
     await loppuselvitysPage.checkAllChecklistItems()
 
+    await expect(
+      loppuselvitysPage.locators.otantatarkastus.otannanUlkopuolellaSuoraHyvaksyntaBanner
+    ).toBeVisible()
     await expect(loppuselvitysPage.locators.otantatarkastus.approvalEmailForm).toBeVisible()
     await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeHidden()
     await expect(loppuselvitysPage.locators.asiatarkastus.acceptMessage).toBeVisible()
+    // comment is optional here: approval button is enabled without a message
     await expect(loppuselvitysPage.locators.otantatarkastus.approvalConfirm).toBeEnabled()
 
     const [verifyResponse] = await Promise.all([
@@ -139,6 +140,9 @@ test.describe.parallel('Otantatarkastus', () => {
     await expect(
       loppuselvitysPage.locators.otantatarkastus.otannanUlkopuolellaRiskiBanner
     ).toBeVisible()
+    await expect(
+      loppuselvitysPage.locators.otantatarkastus.otannanUlkopuolellaSuoraHyvaksyntaBanner
+    ).toBeHidden()
     await expect(loppuselvitysPage.locators.otantatarkastus.approvalEmailForm).toBeHidden()
     await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeVisible()
     await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeDisabled()

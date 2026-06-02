@@ -272,7 +272,7 @@ function AsiatarkastusSatunnaisotanta({ disabled }: { disabled: boolean }) {
   const isVerified = !!verifiedBy && !!verifiedAt
   const allAnswered = Object.values(checklist).every((v) => v !== undefined)
   const loppuselvitysNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
-  const disableSubmit = loppuselvitysNotSubmitted || !message || disabled || !allAnswered
+  const disableSubmit = loppuselvitysNotSubmitted || disabled || !allAnswered
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -281,7 +281,7 @@ function AsiatarkastusSatunnaisotanta({ disabled }: { disabled: boolean }) {
     try {
       await HttpUtil.post(
         `/api/avustushaku/${avustushakuId}/hakemus/${hakemus.id}/loppuselvitys/verify-information`,
-        { message, checklist }
+        { message: message ?? '', checklist }
       )
     } catch {
       setError('Asiatarkastuksen hyväksyminen epäonnistui')
@@ -450,6 +450,16 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
                   Loppuselvityksen asiatarkastuksessa havaittiin taloustarkastusta edellyttävä
                   riski. Selvitys siirtyy automaattisesti taloustarkastukseen jatkokäsittelyä
                   varten.
+                </div>
+              )}
+              {allChecked && (
+                <div
+                  className="otantapolku-banner"
+                  data-test-id="otannan-ulkopuolella-suora-hyvaksynta-banner"
+                >
+                  Loppuselvityksessä ei havaittu taloustarkastusta edellyttäviä riskejä eikä sitä
+                  valittu satunnaisotantaan. Hyväksy loppuselvitys ja lähetä hyväksyntäviesti
+                  avustuksen saajalle.
                 </div>
               )}
               <CommentTextarea message={message} setMessage={setMessage} disabled={disabled} />

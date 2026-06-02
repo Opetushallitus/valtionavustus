@@ -40,6 +40,9 @@ export const LoppuselvitysPage = (page: Page) => {
 
       satunnaisotantaBanner: page.getByTestId('satunnaisotanta-banner'),
       otannanUlkopuolellaRiskiBanner: page.getByTestId('otannan-ulkopuolella-riski-banner'),
+      otannanUlkopuolellaSuoraHyvaksyntaBanner: page.getByTestId(
+        'otannan-ulkopuolella-suora-hyvaksynta-banner'
+      ),
 
       approvalEmailForm: page.getByTestId('asiatarkastus-hyvaksynta-email'),
       approvalEmailSubject: page.getByTestId('asiatarkastus-hyvaksynta-email-subject'),
