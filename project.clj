@@ -20,7 +20,7 @@
 
   :pedantic? :abort
 
-  :plugins [[lein-environ "1.2.0"][dev.weavejester/lein-cljfmt "0.15.6"]]
+  :plugins [[lein-environ "1.2.0"][dev.weavejester/lein-cljfmt "0.16.4"]]
 
   :managed-dependencies [
 
