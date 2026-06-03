@@ -271,8 +271,11 @@ function AsiatarkastusSatunnaisotanta({ disabled }: { disabled: boolean }) {
   const verifiedAt = hakemus['loppuselvitys-information-verified-at']
   const isVerified = !!verifiedBy && !!verifiedAt
   const allAnswered = Object.values(checklist).every((v) => v !== undefined)
+  const allChecked = allAnswered && Object.values(checklist).every(Boolean)
   const loppuselvitysNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
-  const disableSubmit = loppuselvitysNotSubmitted || disabled || !allAnswered
+  // comment is optional unless a risk was found (not all checklist items checked)
+  const disableSubmit =
+    loppuselvitysNotSubmitted || disabled || !allAnswered || (!allChecked && !message)
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

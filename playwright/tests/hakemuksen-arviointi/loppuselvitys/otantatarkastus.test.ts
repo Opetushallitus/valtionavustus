@@ -61,6 +61,50 @@ test.describe.parallel('Otantatarkastus', () => {
     await expect(loppuselvitysPage.locators.taloustarkastus.accept).toBeVisible()
   })
 
+  test('satunnaisotanta + risk: comment is required when not all checklist items are checked', async ({
+    page,
+    request,
+    avustushakuID,
+    acceptedHakemus: { hakemusID },
+    loppuselvitysSubmitted,
+  }) => {
+    expect(loppuselvitysSubmitted).toBeDefined()
+    await setOtantapolku(request, hakemusID, 'satunnaisotanta')
+
+    const loppuselvitysPage = LoppuselvitysPage(page)
+    await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
+
+    await expect(loppuselvitysPage.locators.otantatarkastus.checklist).toBeVisible()
+
+    const checklist = loppuselvitysPage.locators.otantatarkastus.checklist
+    const kyllaLabels = checklist.locator('label', { hasText: 'Kyllä' })
+    await kyllaLabels.nth(0).click()
+    await kyllaLabels.nth(1).click()
+    await kyllaLabels.nth(2).click()
+    const eiLabels = checklist.locator('label', { hasText: 'Ei' })
+    await eiLabels.nth(3).click()
+
+    await expect(loppuselvitysPage.locators.otantatarkastus.satunnaisotantaBanner).toBeVisible()
+    // a risk was found, so the comment is required: button stays disabled without a message
+    await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeDisabled()
+
+    await loppuselvitysPage.locators.asiatarkastus.acceptMessage.fill('Satunnaisotanta - riski')
+    await expect(loppuselvitysPage.locators.asiatarkastus.confirmAcceptance).toBeEnabled()
+
+    const [verifyResponse] = await Promise.all([
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes('/loppuselvitys/verify-information') &&
+          resp.request().method() === 'POST'
+      ),
+      loppuselvitysPage.locators.asiatarkastus.confirmAcceptance.click(),
+    ])
+    expect((await verifyResponse.json())['otantapolku']).toBe('satunnaisotanta')
+
+    await expect(loppuselvitysPage.locators.asiatarkastettu).toBeVisible()
+    await expect(loppuselvitysPage.locators.taloustarkastus.accept).toBeVisible()
+  })
+
   test('otannan-ulkopuolella + all checked: asiatarkasta and accept atomically and sends email', async ({
     page,
     request,
