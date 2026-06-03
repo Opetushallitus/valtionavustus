@@ -150,8 +150,8 @@
 
                  ]
 
-  :profiles {:dev {:dependencies [[nrepl "1.5.2"]
-                                   [cider/cider-nrepl "0.58.0"]]}
+  :profiles {:dev {:dependencies [[nrepl "1.7.0"]
+                                   [cider/cider-nrepl "0.59.0"]]}
              :uberjar {:aot [oph.va.hakija.main]
                         :main oph.va.hakija.main}
              :server-local {:env {:config "server/config/local.edn"

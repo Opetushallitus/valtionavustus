@@ -7,27 +7,26 @@ import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakuje
   selvitykset are not actually updated at the same time as paatos
   and there can be a one-minute difference between the timestamps
 */
-test.fixme(
-  'Shows the same updated date on the Päätös tab as on the Väliselvitys and Loppuselvitys tabs',
-  async ({ page, avustushakuID }) => {
-    const hakujenHallintaPage = new HakujenHallintaPage(page)
+test.fixme('Shows the same updated date on the Päätös tab as on the Väliselvitys and Loppuselvitys tabs', async ({
+  page,
+  avustushakuID,
+}) => {
+  const hakujenHallintaPage = new HakujenHallintaPage(page)
 
-    const paatosPage = PaatosPage(page)
-    await paatosPage.navigateTo(avustushakuID)
-    const paatosUpdatedAt = await paatosPage.locators.paatosUpdatedAt.locator('.date').textContent()
+  const paatosPage = PaatosPage(page)
+  await paatosPage.navigateTo(avustushakuID)
+  const paatosUpdatedAt = await paatosPage.locators.paatosUpdatedAt.locator('.date').textContent()
 
-    const valiselvitysPage =
-      await hakujenHallintaPage.commonHakujenHallinta.switchToValiselvitysTab()
-    const valiselvitysUpdatedAt = await valiselvitysPage.locators.updatedAt
-      .locator('.date')
-      .textContent()
+  const valiselvitysPage = await hakujenHallintaPage.commonHakujenHallinta.switchToValiselvitysTab()
+  const valiselvitysUpdatedAt = await valiselvitysPage.locators.updatedAt
+    .locator('.date')
+    .textContent()
 
-    await hakujenHallintaPage.switchToLoppuselvitysTab()
-    const loppuselvitysUpdatedAt = await hakujenHallintaPage.loppuselvitysUpdatedAt
-      .locator('.date')
-      .textContent()
+  await hakujenHallintaPage.switchToLoppuselvitysTab()
+  const loppuselvitysUpdatedAt = await hakujenHallintaPage.loppuselvitysUpdatedAt
+    .locator('.date')
+    .textContent()
 
-    expect(paatosUpdatedAt).toEqual(valiselvitysUpdatedAt)
-    expect(paatosUpdatedAt).toEqual(loppuselvitysUpdatedAt)
-  }
-)
+  expect(paatosUpdatedAt).toEqual(valiselvitysUpdatedAt)
+  expect(paatosUpdatedAt).toEqual(loppuselvitysUpdatedAt)
+})
