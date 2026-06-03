@@ -118,7 +118,7 @@
                  [org.clojure/data.json "2.5.2"]
 
                  ;; database
-                 [hikari-cp "3.3.0"]
+                 [hikari-cp "4.0.0"]
                  [org.flywaydb/flyway-core ~flyway-version]
                  [org.flywaydb/flyway-database-postgresql ~flyway-version]
 
