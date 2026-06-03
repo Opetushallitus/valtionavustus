@@ -1,4 +1,4 @@
-(def log4j-version "2.25.3")
+(def log4j-version "2.26.0")
 (def jackson-version "2.21.4")
 (def jackson-annotations-version "2.21")
 (def http4s-version "0.16.6")
@@ -58,7 +58,8 @@
 
                          ; dependencies under compojure-api -> explicitly updated for security patches
                          [ring-middleware-format "0.7.5"]
-                         [org.yaml/snakeyaml "1.33"]
+                         [clj-commons/clj-yaml "1.0.29"]
+                         [org.yaml/snakeyaml "2.6"]
 
                          ;; [metosin/compojure-api "1.1.14"] ->
                          ;;   ... -> [com.fasterxml.jackson.core/jackson-databind ~jackson-version] ->
