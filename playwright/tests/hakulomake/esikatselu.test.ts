@@ -14,74 +14,18 @@ async function expectReadOnly(page: Page) {
   await expect(page.locator('input#bank-iban')).toHaveCount(0)
 }
 
-test('esikatselu path shows submitted hakemus in read-only mode', async ({
-  page,
-  hakuProps,
-  answers,
-  userCache,
-}) => {
-  expectToBeDefined(userCache)
-  const hakujenHallintaPage = new HakujenHallintaPage(page)
-  const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
-  const hakijaPage = HakijaAvustusHakuPage(page)
-
-  await hakijaPage.navigate(avustushakuID, answers.lang)
-  const { userKey } = await hakijaPage.fillAndSendMuutoshakemusEnabledHakemus(
-    avustushakuID,
-    answers
-  )
-
-  await hakijaPage.navigateToEsikatseluPage(avustushakuID, userKey)
-
-  await test.step('form is shown in read-only preview mode', async () => {
-    await expectReadOnly(page)
-  })
-
-  await test.step('submitted project name is visible', async () => {
-    expectToBeDefined(answers.projectName)
-    await expect(page.locator('#project-name')).toContainText(answers.projectName)
-  })
-})
-
-test('esikatselu path stays read-only regardless of preview query param', async ({
-  page,
-  hakuProps,
-  answers,
-  userCache,
-}) => {
-  expectToBeDefined(userCache)
-  const hakujenHallintaPage = new HakujenHallintaPage(page)
-  const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
-  const hakijaPage = HakijaAvustusHakuPage(page)
-
-  await hakijaPage.navigate(avustushakuID, answers.lang)
-  const { userKey } = await hakijaPage.fillAndSendMuutoshakemusEnabledHakemus(
-    avustushakuID,
-    answers
-  )
-
-  await test.step('preview=true does not change read-only mode', async () => {
-    await hakijaPage.navigateToEsikatseluPage(avustushakuID, userKey, 'fi', { preview: 'true' })
-    await expectReadOnly(page)
-  })
-
-  await test.step('preview=false does not enable edit mode', async () => {
-    await hakijaPage.navigateToEsikatseluPage(avustushakuID, userKey, 'fi', { preview: 'false' })
-    await expectReadOnly(page)
-  })
-})
-
 const swedishTest = test.extend<{ answers: Answers }>({
   answers: swedishAnswers,
 })
 
-test('hakemus-submitted email contains esikatselu URL', async ({
+test('esikatselu shows submitted hakemus read-only and is linked from email and virkailija', async ({
   page,
   hakuProps,
   answers,
   userCache,
 }) => {
   expectToBeDefined(userCache)
+  expectToBeDefined(answers.projectName)
   const hakujenHallintaPage = new HakujenHallintaPage(page)
   const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
   const hakijaPage = HakijaAvustusHakuPage(page)
@@ -91,123 +35,89 @@ test('hakemus-submitted email contains esikatselu URL', async ({
     avustushakuID,
     answers
   )
-
   const hakemusID = await hakijaPage.getHakemusID(avustushakuID, userKey)
-  const emails = await waitUntilMinEmails(getHakemusSubmitted, 1, hakemusID)
 
-  expect(emails[0].formatted).toContain(
-    `${HAKIJA_URL}/avustushaku/${avustushakuID}/esikatselu/${userKey}?lang=fi`
-  )
-})
+  await test.step('esikatselu path shows submitted hakemus in read-only mode', async () => {
+    await hakijaPage.navigateToEsikatseluPage(avustushakuID, userKey)
+    await expectReadOnly(page)
+    await expect(page.locator('#project-name')).toContainText(answers.projectName!)
+  })
 
-swedishTest(
-  'forhandsvisning path shows submitted hakemus in read-only mode',
-  async ({ page, hakuProps, answers, userCache }) => {
-    expectToBeDefined(userCache)
-    const hakujenHallintaPage = new HakujenHallintaPage(page)
-    const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
-    const hakijaPage = HakijaAvustusHakuPage(page)
+  await test.step('esikatselu path stays read-only regardless of preview query param', async () => {
+    await hakijaPage.navigateToEsikatseluPage(avustushakuID, userKey, 'fi', { preview: 'true' })
+    await expectReadOnly(page)
+    await hakijaPage.navigateToEsikatseluPage(avustushakuID, userKey, 'fi', { preview: 'false' })
+    await expectReadOnly(page)
+  })
 
-    await hakijaPage.navigate(avustushakuID, answers.lang)
-    const { userKey } = await hakijaPage.fillAndSendMuutoshakemusEnabledHakemus(
-      avustushakuID,
-      answers
-    )
-
-    await hakijaPage.navigateToEsikatseluPage(avustushakuID, userKey, 'sv')
-
-    await swedishTest.step('form is shown in read-only preview mode', async () => {
-      await expectReadOnly(page)
-    })
-
-    await swedishTest.step('submitted project name is visible', async () => {
-      expectToBeDefined(answers.projectName)
-      await expect(page.locator('#project-name')).toContainText(answers.projectName)
-    })
-  }
-)
-
-swedishTest(
-  'forhandsvisning path stays read-only regardless of preview query param',
-  async ({ page, hakuProps, answers, userCache }) => {
-    expectToBeDefined(userCache)
-    const hakujenHallintaPage = new HakujenHallintaPage(page)
-    const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
-    const hakijaPage = HakijaAvustusHakuPage(page)
-
-    await hakijaPage.navigate(avustushakuID, answers.lang)
-    const { userKey } = await hakijaPage.fillAndSendMuutoshakemusEnabledHakemus(
-      avustushakuID,
-      answers
-    )
-
-    await swedishTest.step('preview=true does not change read-only mode', async () => {
-      await hakijaPage.navigateToEsikatseluPage(avustushakuID, userKey, 'sv', { preview: 'true' })
-      await expectReadOnly(page)
-    })
-
-    await swedishTest.step('preview=false does not enable edit mode', async () => {
-      await hakijaPage.navigateToEsikatseluPage(avustushakuID, userKey, 'sv', { preview: 'false' })
-      await expectReadOnly(page)
-    })
-  }
-)
-
-swedishTest(
-  'hakemus-submitted email contains Swedish forhandsvisning URL',
-  async ({ page, hakuProps, answers, userCache }) => {
-    expectToBeDefined(userCache)
-    const hakujenHallintaPage = new HakujenHallintaPage(page)
-    const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
-    const hakijaPage = HakijaAvustusHakuPage(page)
-
-    await hakijaPage.navigate(avustushakuID, answers.lang)
-    const { userKey } = await hakijaPage.fillAndSendMuutoshakemusEnabledHakemus(
-      avustushakuID,
-      answers
-    )
-
-    const hakemusID = await hakijaPage.getHakemusID(avustushakuID, userKey)
+  await test.step('hakemus-submitted email contains esikatselu URL', async () => {
     const emails = await waitUntilMinEmails(getHakemusSubmitted, 1, hakemusID)
-
     expect(emails[0].formatted).toContain(
-      `${HAKIJA_URL}/statsunderstod/${avustushakuID}/forhandsvisning/${userKey}?lang=sv`
+      `${HAKIJA_URL}/avustushaku/${avustushakuID}/esikatselu/${userKey}?lang=fi`
     )
-  }
-)
+  })
 
-test('Esikatselu button in virkailija opens esikatselu path in new tab', async ({
-  page,
-  hakuProps,
-  answers,
-  userCache,
-}) => {
-  expectToBeDefined(userCache)
-  const hakujenHallintaPage = new HakujenHallintaPage(page)
-  const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
-  const hakijaPage = HakijaAvustusHakuPage(page)
+  await test.step('Esikatselu button in virkailija opens esikatselu path in new tab', async () => {
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    await hakemustenArviointiPage.navigateToHakemusArviointi(avustushakuID, hakemusID)
 
-  await hakijaPage.navigate(avustushakuID, answers.lang)
-  const { userKey } = await hakijaPage.fillAndSendMuutoshakemusEnabledHakemus(
-    avustushakuID,
-    answers
-  )
+    const [newTab] = await Promise.all([
+      waitForNewTab(page),
+      page.getByTestId('hakemus-esikatselu-link').click(),
+    ])
+    await newTab.waitForLoadState()
 
-  const hakemusID = await hakijaPage.getHakemusID(avustushakuID, userKey)
-  const hakemustenArviointiPage = new HakemustenArviointiPage(page)
-  await hakemustenArviointiPage.navigateToHakemusArviointi(avustushakuID, hakemusID)
-
-  const [newTab] = await Promise.all([
-    waitForNewTab(page),
-    page.getByTestId('hakemus-esikatselu-link').click(),
-  ])
-  await newTab.waitForLoadState()
-
-  expect(newTab.url()).toContain(`/avustushaku/${avustushakuID}/esikatselu/${userKey}`)
-
-  await test.step('opened tab shows submitted hakemus in read-only mode', async () => {
+    expect(newTab.url()).toContain(`/avustushaku/${avustushakuID}/esikatselu/${userKey}`)
     await expectReadOnly(newTab)
-    expectToBeDefined(answers.projectName)
-    await expect(newTab.locator('#project-name')).toContainText(answers.projectName)
+    await expect(newTab.locator('#project-name')).toContainText(answers.projectName!)
   })
 })
+
+swedishTest(
+  'forhandsvisning shows submitted hakemus read-only and is linked from email',
+  async ({ page, hakuProps, answers, userCache }) => {
+    expectToBeDefined(userCache)
+    expectToBeDefined(answers.projectName)
+    const hakujenHallintaPage = new HakujenHallintaPage(page)
+    const avustushakuID = await hakujenHallintaPage.createMuutoshakemusEnabledHaku(hakuProps)
+    const hakijaPage = HakijaAvustusHakuPage(page)
+
+    await hakijaPage.navigate(avustushakuID, answers.lang)
+    const { userKey } = await hakijaPage.fillAndSendMuutoshakemusEnabledHakemus(
+      avustushakuID,
+      answers
+    )
+
+    await swedishTest.step(
+      'forhandsvisning path shows submitted hakemus in read-only mode',
+      async () => {
+        await hakijaPage.navigateToEsikatseluPage(avustushakuID, userKey, 'sv')
+        await expectReadOnly(page)
+        await expect(page.locator('#project-name')).toContainText(answers.projectName!)
+      }
+    )
+
+    await swedishTest.step(
+      'forhandsvisning path stays read-only regardless of preview query param',
+      async () => {
+        await hakijaPage.navigateToEsikatseluPage(avustushakuID, userKey, 'sv', { preview: 'true' })
+        await expectReadOnly(page)
+        await hakijaPage.navigateToEsikatseluPage(avustushakuID, userKey, 'sv', {
+          preview: 'false',
+        })
+        await expectReadOnly(page)
+      }
+    )
+
+    await swedishTest.step(
+      'hakemus-submitted email contains Swedish forhandsvisning URL',
+      async () => {
+        const hakemusID = await hakijaPage.getHakemusID(avustushakuID, userKey)
+        const emails = await waitUntilMinEmails(getHakemusSubmitted, 1, hakemusID)
+        expect(emails[0].formatted).toContain(
+          `${HAKIJA_URL}/statsunderstod/${avustushakuID}/forhandsvisning/${userKey}?lang=sv`
+        )
+      }
+    )
+  }
+)
