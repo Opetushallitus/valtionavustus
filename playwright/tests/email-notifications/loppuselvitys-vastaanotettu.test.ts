@@ -39,11 +39,12 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
   if (!previewUrl) {
     throw new Error('No preview url found')
   }
-  expect(previewUrl).toMatch(
-    new RegExp(
-      `^${HAKIJA_URL}/avustushaku/${avustushakuID}/loppuselvitys/esikatselu/[^/?]+\\?lang=fi$`
-    )
+  const url = new URL(previewUrl)
+  expect(`${url.protocol}//${url.host}`).toBe(HAKIJA_URL)
+  expect(url.pathname).toMatch(
+    new RegExp(`^/avustushaku/${avustushakuID}/loppuselvitys/esikatselu/[^/]+$`)
   )
+  expect(url.searchParams.get('lang')).toBe('fi')
 
   await page.goto(previewUrl)
   await expect(page.locator('div.soresu-preview > h1')).toContainText(
