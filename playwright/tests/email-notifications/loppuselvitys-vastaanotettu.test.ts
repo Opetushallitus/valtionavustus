@@ -7,9 +7,11 @@ import {
   waitUntilMinEmails,
 } from '../../utils/emails'
 import { selvitysTest as test } from '../../fixtures/selvitysTest'
+import { HAKIJA_URL } from '../../utils/constants'
 
 test('loppuselvitys submitted notification is sent', async ({
   page,
+  avustushakuID,
   acceptedHakemus: { hakemusID },
   loppuselvitysSubmitted: { loppuselvitysFormFilled },
 }) => {
@@ -37,6 +39,11 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
   if (!previewUrl) {
     throw new Error('No preview url found')
   }
+  expect(previewUrl).toMatch(
+    new RegExp(
+      `^${HAKIJA_URL}/avustushaku/${avustushakuID}/loppuselvitys/esikatselu/[^/?]+\\?lang=fi$`
+    )
+  )
 
   await page.goto(previewUrl)
   await expect(page.locator('div.soresu-preview > h1')).toContainText(
@@ -44,4 +51,11 @@ Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan
   )
   await expect(page.locator('#textArea-0 > div')).toContainText('Yhteenveto')
   await expect(page.locator('#textArea-2 > div')).toContainText('Työn jako')
+  await expect(page.locator('#submit')).toBeHidden()
+
+  await test.step('preview=false does not enable edit mode', async () => {
+    await page.goto(`${previewUrl}&preview=false`)
+    await expect(page.locator('div.soresu-preview')).toBeVisible()
+    await expect(page.locator('#submit')).toBeHidden()
+  })
 })

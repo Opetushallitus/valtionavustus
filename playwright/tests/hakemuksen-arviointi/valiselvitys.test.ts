@@ -76,8 +76,12 @@ selvitysTest.describe('Väliselvitys', () => {
   )
   selvitysTest(
     'väliselvitys submitted notification is sent',
-    async ({ page, acceptedHakemus: { hakemusID }, väliselvitysSubmitted }) => {
-      expectToBeDefined(väliselvitysSubmitted)
+    async ({
+      page,
+      avustushakuID,
+      acceptedHakemus: { hakemusID },
+      väliselvitysSubmitted: { userKey },
+    }) => {
       const emails = await waitUntilMinEmails(
         getValiselvitysSubmittedNotificationEmails,
         1,
@@ -105,16 +109,21 @@ Lisätietoja saatte tarvittaessa avustuspäätöksessä mainitulta lisätietojen
 
 Kun selvitys on käsitelty, ilmoitetaan siitä sähköpostitse avustuksen saajan viralliseen sähköpostiosoitteeseen sekä yhteyshenkilölle.`)
 
-      const previewUrl = email.formatted.match(/(https?:\/\/\S+)/gi)?.[0]
-      if (!previewUrl) {
-        throw new Error('No preview url found')
-      }
+      const esikatseluUrl = `${HAKIJA_URL}/avustushaku/${avustushakuID}/valiselvitys/esikatselu/${userKey}?lang=fi`
+      expect(email.formatted).toContain(esikatseluUrl)
 
-      await page.goto(previewUrl)
+      await page.goto(esikatseluUrl)
       await expect(page.locator('div.soresu-preview > h1')).toContainText(
         'väliselvitys submitted notification is sent'
       )
       await expect(page.locator('#organization > div')).toContainText('Avustuksen saajan nimi')
+      await expect(page.locator('#submit')).toBeHidden()
+
+      await test.step('preview=false does not enable edit mode', async () => {
+        await page.goto(`${esikatseluUrl}&preview=false`)
+        await expect(page.locator('div.soresu-preview')).toBeVisible()
+        await expect(page.locator('#submit')).toBeHidden()
+      })
     }
   )
 
