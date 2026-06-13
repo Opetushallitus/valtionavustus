@@ -154,7 +154,7 @@
       <dependency>
         <groupId>metosin</groupId>
         <artifactId>ring-swagger-ui</artifactId>
-        <version>5.32.1</version>
+        <version>5.32.6</version>
       </dependency>
       <dependency>
         <groupId>org.clojure</groupId>
