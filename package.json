@@ -53,7 +53,7 @@
     "babel-plugin-webpack-alias-7": "0.1.1",
     "css-loader": "7.1.4",
     "fork-ts-checker-webpack-plugin": "9.1.0",
-    "less": "4.6.5",
+    "less": "4.6.6",
     "less-loader": "13.0.0",
     "pdfjs-dist": "4.10.38",
     "postcss": "8.5.15",
