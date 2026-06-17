@@ -137,6 +137,67 @@ await expect(page.locator('[data-test-id="muutospaatos-asia-content"]')).toConta
 
 **Prevention:** When adding `data-test-id` to a component that is rendered multiple times (or could be in the future), parameterize the ID — e.g., include a section name, index, or entity ID.
 
+## Official Playwright best practices
+
+Condensed from https://playwright.dev/docs/best-practices.
+### Test user-visible behavior
+
+Assert on what the user sees (rendered text, roles), not implementation details (function names, CSS classes, data structures).
+
+### Keep tests isolated
+
+Each test should be independent — own storage, cookies, data. Use `beforeEach` for shared setup, or a setup project to reuse signed-in state, rather than chaining tests that depend on each other.
+
+### Mock third-party dependencies
+
+Don't test external links or third-party servers. Mock their responses with `page.route()`:
+
+```typescript
+await page.route('**/api/some_third_party', (route) =>
+  route.fulfill({ status: 200, body: testData })
+)
+```
+
+### Use locators with user-facing attributes
+
+Prefer role/text/label locators over CSS/XPath, which break on DOM changes. Chain and filter to narrow scope.
+
+**Good:**
+
+```typescript
+await page
+  .getByRole('listitem')
+  .filter({ hasText: 'Product 2' })
+  .getByRole('button', { name: 'Add to cart' })
+  .click()
+```
+
+**Bad:**
+
+```typescript
+page.locator('button.buttonIcon.episode-actions-later')
+```
+
+`npx playwright codegen <url>` generates resilient locators (Pick Locator mode).
+
+### Use web-first assertions
+
+Web-first assertions auto-wait and retry. Manual assertions return immediately and don't retry.
+
+**Good:**
+
+```typescript
+await expect(page.getByText('welcome')).toBeVisible()
+```
+
+**Bad:**
+
+```typescript
+expect(await page.getByText('welcome').isVisible()).toBe(true)
+```
+
+
+
 ## Anti-patterns checklist
 
 - Direct email fetch + assert without polling

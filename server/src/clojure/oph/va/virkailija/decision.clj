@@ -63,10 +63,9 @@
       (ks/format-number payment-sum) " "
       (decision-field
        (:decision grant) :maksu (keyword (:language application)))
-      (if (not= payment-sum (get-in application [:arvio :budget-granted]))
+      (when (not= payment-sum (get-in application [:arvio :budget-granted]))
         (str " " (translate :ja-loppuera-viimeistaan)
-             " " (get-in grant [:decision :maksudate]))
-        ".")]
+             " " (get-in grant [:decision :maksudate])))]
      (when-some [account (get-in application [:arvio :talousarviotili])]
        [:p
         (translate "talousarviotili") ": " account])]))

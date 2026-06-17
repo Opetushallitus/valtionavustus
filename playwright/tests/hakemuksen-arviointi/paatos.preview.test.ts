@@ -5,6 +5,7 @@ import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arvio
 import { expectToBeDefined } from '../../utils/util'
 import { HaunTiedotPage } from '../../pages/virkailija/hakujen-hallinta/HaunTiedotPage'
 
+const maksuaikaText = 'Maksu suoritetaan hakijan ilmoittamalle tilille.'
 const lisatekstiDefault = 'myönteinenlisäteksti default'
 const lisatekstiAmmatillinenKoulutus = `myönteinenlisäteksti
 monella rivillä
@@ -31,6 +32,9 @@ const test = submittedHakemusTest.extend({
     })
     await test.step('add lisäteksti for only first koulutusaste', async () => {
       await paatos.locators.lisatekstiAmmatillinenKoulutus.fill(lisatekstiAmmatillinenKoulutus)
+    })
+    await test.step('add maksuaika text ending with a period', async () => {
+      await paatos.locators.maksuaika.fill(maksuaikaText)
     })
     await test.step('publish avustushaku', async () => {
       const haunTiedotPage = await hakujenHallintaPage.commonHakujenHallinta.switchToHaunTiedotTab()
@@ -67,6 +71,16 @@ test('paatos lisäteksti', async ({ closedAvustushaku, context, avustushakuID, p
     await expect(taTili.value).toContainText('Muut')
     await hakemustenArviointiPage.waitForSave()
     await openLuonnosAndExpectToContainText(page, context, lisatekstiDefault)
+  })
+  await test.step('maksuaika text does not get an extra period appended', async () => {
+    const [paatosPage] = await Promise.all([
+      context.waitForEvent('page'),
+      page.click('a:text-is("Luonnos")'),
+    ])
+    const maksuSection = paatosPage.locator('section.section').filter({ hasText: maksuaikaText })
+    await expect(maksuSection).toContainText(maksuaikaText, { useInnerText: true })
+    await expect(maksuSection).not.toContainText(`${maksuaikaText}.`, { useInnerText: true })
+    await paatosPage.close()
   })
 })
 

@@ -32,6 +32,7 @@ export function PaatosPage(page: Page) {
     pakoteOhjeCheckbox: page.locator(
       'text=Pakotteiden huomioon ottaminen valtionavustustoiminnassa'
     ),
+    maksuaika: page.locator('[id="decision.maksu.fi"]'),
     lisatekstiDefault: page.locator('[id="decision.myonteinenlisateksti.fi"]'),
     lisatekstiAmmatillinenKoulutus: page.locator(
       '[id="decision.myonteinenlisateksti-Ammatillinen_koulutus.fi"]'
