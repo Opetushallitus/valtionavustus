@@ -17,17 +17,6 @@
         (get-in [:server :session-timeout-in-s])
         (+ 5)  ; ensure backend session timeout happens after browser session timeout
         (* 1000))))
-
-(defn add-authentication [authentication]
-  (when (and (not= environment "local") (not= environment "test"))
-    (throw (Exception. "Function is only for testing")))
-  (swap! session-store assoc (:cas-ticket authentication) authentication))
-
-(defn remove-authentication [authentication]
-  (when (and (not= environment "local") (not= environment "test"))
-    (throw (Exception. "Function is only for testing")))
-  (swap! session-store dissoc (:cas-ticket authentication)))
-
 (defn- remove-timed-out-sessions [sessions]
   (let [now-time-ms (System/currentTimeMillis)]
     (reduce-kv (fn [acc cas-ticket session-data]

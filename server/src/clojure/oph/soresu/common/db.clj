@@ -59,24 +59,6 @@
        (catch IllegalArgumentException iae
          original-exception)))
 
-(defn clear-db-and-grant! [schema-name grant-user]
-  (if (:allow-db-clear? (:server config))
-    (try
-      (jdbc/db-do-commands
-       {:datasource (get-datasource)}
-       (into []
-             (concat
-              [(if (= schema-name "virkailija") "delete from hakija.hakemukset" "")
-               (str "drop schema if exists " schema-name " cascade")
-               (str "create schema " schema-name)]
-              (if grant-user
-                [(str "grant usage on schema " schema-name " to " grant-user)
-                 (str "alter default privileges in schema " schema-name " grant select on tables to " grant-user)]))))
-      (catch Exception e (log/error (get-next-exception-or-original e) (.toString e))))
-    (throw (RuntimeException. (str "Clearing database is not allowed! "
-                                   "check that you run with correct mode. "
-                                   "Current config name is " (config-name))))))
-
 (defmacro with-transaction [connection & body]
   `(let [~connection {:datasource (get-datasource)}]
      (jdbc/with-db-transaction [conn# ~connection {:isolation :repeatable-read}]

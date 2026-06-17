@@ -86,31 +86,3 @@
 
 (defn find-wrapper-elements [node-list]
   (find-fields* is-wrapper-element? node-list))
-
-(defn decorate-matching [form lookup-table]
-  (let [field-list (find-fields (:content form))]
-    (letfn [(find-match [field]
-              (->> lookup-table
-                   keys
-                   (map (fn [r] {:match (r field)
-                                 :result (get lookup-table r)}))
-                   (filter :match)
-                   (map (fn [match-object] {:field field :result (:result match-object)}))
-                   first))]
-      (map find-match field-list))))
-
-(defn- recursively-generate [value value-fn include-fn?]
-  (letfn [(convert [value]
-            (if (is-form-field? value)
-              (when (include-fn? value)
-                {:key (:id value)
-                 :value (value-fn value)
-                 :fieldType (:fieldType value)})
-              (when (is-wrapper-element? value)
-                (recursively-generate (:children value) value-fn include-fn?))))]
-    (->> (mapv convert value)
-         (flatten)
-         (filterv identity))))
-
-(defn generate-answers [form value-fn include-fn?]
-  {:value (recursively-generate (:content form) value-fn include-fn?)})

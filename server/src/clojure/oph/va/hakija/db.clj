@@ -1,7 +1,6 @@
 (ns oph.va.hakija.db
   (:use [oph.soresu.common.db]
-        [oph.soresu.form.db :as form-db]
-        [clojure.tools.trace :only [trace]])
+        [oph.soresu.form.db :as form-db])
   (:require [clojure.java.io :as io]
             [clojure.string]
             [clojure.tools.logging :as log]
@@ -832,9 +831,6 @@
        (assoc {:user_key user-key :form_submission_id (:form_submission_id hakemus)} :version)
        (set-submitted-version tx)))
 
-(defn cancel-hakemus [avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals comment]
-  (with-tx #(update-status % avustushaku-id hakemus-id submission-id submission-version register-number answers budget-totals :cancelled comment)))
-
 (defn unrefuse-application [tx id]
   (let [new-hakemus (hakemus-copy/create-new-hakemus-version tx id)]
     (execute! tx "UPDATE hakemukset SET
@@ -970,11 +966,6 @@
     (and
      (some? application)
      (valid-token? token (:id application)))))
-
-(defn revoke-token [token]
-  (execute!
-   "UPDATE hakija.application_tokens SET revoked = TRUE WHERE token = ?"
-   [token]))
 
 (defn get-loppuselvitys-hakemus-id [parent-hakemus-id]
   (let [result (query "

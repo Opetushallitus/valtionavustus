@@ -1,6 +1,5 @@
 (ns oph.va.hakija.officer-edit-auth
   (:require [buddy.auth.backends.token :refer [jws-backend]]
-            [clojure.tools.trace :refer [trace]]
             [buddy.sign.jwt :refer [sign]]
             [clj-time.core :as time]
             [oph.soresu.common.config :refer [config]]))

@@ -25,11 +25,6 @@
                 "SELECT 1 from form_submissions where id = ? and form = ? and version_closed IS NULL"
                 [submission-id form-id]))))
 
-(defn submission-exists-tx? [tx form-id submission-id]
-  (not (empty? (query-original-identifiers tx
-                                           "SELECT 1 from form_submissions where id = ? and form = ? and version_closed IS NULL"
-                                           [submission-id form-id]))))
-
 (defn update-submission! [form-id submission-id answers]
   (with-tx (fn [tx]
              (query-original-identifiers tx
