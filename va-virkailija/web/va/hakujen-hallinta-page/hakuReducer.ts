@@ -400,7 +400,9 @@ export const createHaku = createAsyncThunk<number, number, { state: HakujenHalli
     const newAvustushaku = await HttpUtil.put('/api/avustushaku', {
       baseHakuId,
     })
-    thunkAPI.dispatch(addAvustushaku(newAvustushaku))
+    thunkAPI.dispatch(
+      addAvustushaku(appendDefaultAvustuksenAlkamisAndPaattymispaivaIfMissing(newAvustushaku))
+    )
     return newAvustushaku.id
   }
 )
