@@ -19,9 +19,15 @@ sequenceDiagram
     VA-->>App: new-jotpa-hakemus.plain.{fi,sv} (JOTPA grants)<br/>"Linkki organisaationne avustushakemukseen"
     Note right of App: new-hakemus and new-jotpa-hakemus are mutually exclusive - only one fires per create
 
+    Sched->>VA: Hakuaika ends tomorrow (scheduled, drafts only)
+    VA-->>App: hakuaika-paattymassa.{fi,sv}<br/>"Hakuaika on päättymässä"
+
     Hakija->>VA: Submit application
     VA-->>App: hakemus-submitted.plain.{fi,sv}<br/>"...avustushakemus on kirjattu vastaanotetuksi"
     VA-->>Partner: yhteishanke-hakemus-submitted.plain.{fi,sv} (if flag)<br/>"...Yhteishankkeen avustushakemus %s on kirjattu vastaanotetuksi"
+
+    Sched->>VA: Hakuaika ended yesterday (scheduled)
+    VA-->>Pres: hakuaika-paattynyt.fi<br/>"Hakuaika on päättynyt"
 
     Note over Virkailija,VA: PROCESSING PHASE
 
@@ -43,10 +49,18 @@ sequenceDiagram
     VA-->>App: application-refused.plain.{fi,sv}<br/>"Ilmoitus avustuksenne vastaanottamatta jättämisestä on lähetetty"
     VA-->>Pres: application-refused-presenter.plain.fi<br/>"Automaattinen viesti: Avustuksen saajan ilmoitus"
 
+    Note over Virkailija,VA: PAYMENT PHASE
+
+    Virkailija->>VA: Mark payment batch sent
+    VA-->>Pay: payments-info.fi<br/>"...Valtionavustuserän '%s' maksatus suoritettu"
+
     Note over Hakija,VA: MUUTOSHAKEMUS (change to approved grant)
 
     Hakija->>VA: Submit muutoshakemus
     VA-->>Pres: notify-valmistelija-of-new-muutoshakemus.plain.fi<br/>"Automaattinen viesti: saapunut muutoshakemus" (if talousarvio/jatkoaika/sisältö/osapuoli)
+
+    Sched->>VA: Undecided muutoshakemus reminder (scheduled)
+    VA-->>Pres: muutoshakemuksia-kasittelematta.fi
 
     Virkailija->>VA: Decide muutoshakemus
     VA-->>App: muutoshakemus-paatos.plain.{fi,sv}<br/>"...muutoshakemus on käsitelty - Linkki päätösasiakirjaan" (+oikaisuvaatimus PDF)
@@ -54,14 +68,27 @@ sequenceDiagram
 
     Note over Virkailija,VA: SELVITYS PHASE
 
+    Sched->>VA: Reminder to send selvitys requests (scheduled)
+    VA-->>Pres: laheta-valiselvityspyynnot.fi
+    VA-->>Pres: laheta-loppuselvityspyynnot.fi
+
     Virkailija->>VA: Send selvitys requests
     VA-->>App: valiselvitys-notification.plain.{fi,sv} (bcc to virkailija unless disabled)<br/>"Väliselvitys täytettävissä haulle"
     VA-->>App: loppuselvitys-notification.plain.{fi,sv} (bcc to virkailija unless disabled)<br/>"Loppuselvitys täytettävissä haulle"
+
+    Sched->>VA: Selvitys not returned reminder (scheduled)
+    VA-->>App: valiselvitys-palauttamatta.{fi,sv}<br/>"Muistutus väliselvityksen palauttamisesta"
+    VA-->>App: loppuselvitys-palauttamatta.{fi,sv}<br/>"Muistutus loppuselvityksen palauttamisesta"
 
     Hakija->>VA: Submit väliselvitys / loppuselvitys
     VA-->>App: valiselvitys-submitted-notification.plain.{fi,sv}<br/>"Väliselvityksenne on vastaanotettu"
     VA-->>App: loppuselvitys-submitted-notification.plain.{fi,sv}<br/>"Loppuselvityksenne on vastaanotettu"
     VA-->>Partner: yhteishanke-vali-/loppuselvitys-submitted.plain.{fi,sv} (if flag)<br/>"...Yhteishankkeen %s väli-/loppuselvitys on vastaanotettu"
+
+    Sched->>VA: Selvitys unreviewed reminder (scheduled)
+    VA-->>Pres: valiselvitys-tarkastamatta.fi
+    VA-->>Pres: loppuselvitys-asiatarkastamatta.fi
+    VA-->>Admin: loppuselvitys-taloustarkastamatta.fi
 
     Virkailija->>VA: Mark selvitys processed
     VA-->>App: selvitys.plain.{fi,sv}<br/>subject entered by virkailija (default "Väliselvitys käsitelty")
@@ -74,36 +101,17 @@ sequenceDiagram
     VA-->>Virkailija: loppuselvitys-change-request-responded.plain.fi<br/>"...avustushakemuksen loppuselvitystä on täydennetty"
     VA-->>App: loppuselvitys-change-request-received.plain.{fi,sv}<br/>"Organisaationne loppuselvitystä on täydennetty:"
 
-    Note over Virkailija,VA: PAYMENT PHASE
+    Note over Sched,VA: REPORTING OBLIGATION (raportointivelvoite)
 
-    Virkailija->>VA: Mark payment batch sent
-    VA-->>Pay: payments-info.fi<br/>"...Valtionavustuserän '%s' maksatus suoritettu"
+    Sched->>VA: MuistutusJob (every 60 min, deadline < 30 days)
+    VA-->>Pres: raportointivelvoite-muistutus.fi<br/>"Muistutus valtionavustuksen raportoinnista"
 
-    Note over Sched,VA: SCHEDULED / AUTOMATED (cron jobs - most also triggerable manually via POST)
-
-    Sched->>VA: MuistutusJob (every 60 min)
-    VA-->>Pres: raportointivelvoite-muistutus.fi<br/>"Muistutus valtionavustuksen raportoinnista" (deadline < 30 days)
+    Note over Virkailija,Admin: NOT TIED TO A SINGLE HAKEMUS LIFECYCLE
 
     Sched->>VA: Monthly reconciliation
     VA-->>Admin: kuukausittainen-tasmaytysraportti.fi<br/>"Edellisen kuukauden VA-täsmäytysraportti" (+xlsx)
 
-    Sched->>VA: Applicant selvitys / hakuaika reminders
-    VA-->>App: valiselvitys-palauttamatta.{fi,sv}<br/>"Muistutus väliselvityksen palauttamisesta"
-    VA-->>App: loppuselvitys-palauttamatta.{fi,sv}<br/>"Muistutus loppuselvityksen palauttamisesta"
-    VA-->>App: hakuaika-paattymassa.{fi,sv} (drafts, hakuaika ends tomorrow)<br/>"Hakuaika on päättymässä"
-    VA-->>Pres: hakuaika-paattynyt.fi (hakuaika ended yesterday)<br/>"Hakuaika on päättynyt"
-
-    Sched->>VA: Virkailija report / reminder digests (no subject in mail-titles)
-    VA-->>Pres: valiselvitys-tarkastamatta.fi
-    VA-->>Pres: loppuselvitys-asiatarkastamatta.fi
-    VA-->>Admin: loppuselvitys-taloustarkastamatta.fi
-    VA-->>Pres: muutoshakemuksia-kasittelematta.fi
-    VA-->>Pres: laheta-valiselvityspyynnot.fi
-    VA-->>Pres: laheta-loppuselvityspyynnot.fi
-
-    Note over Virkailija,VA: MANUAL VIRKAILIJA MESSAGES TO APPLICANT
-
-    Virkailija->>VA: Send free message / loppuselvitys reminder (POST /send-email)
+    Virkailija->>VA: Send free message / loppuselvitys reminder (POST /send-email, any time)
     VA-->>App: vapaa-viesti<br/>subject + body entered by virkailija (reply-to = virkailija)
     VA-->>App: loppuselvitys-muistutus<br/>subject + body entered by virkailija (reply-to = virkailija)
 ```
