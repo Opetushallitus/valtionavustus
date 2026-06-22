@@ -194,8 +194,7 @@
         roles (hakija-api/get-avustushaku-roles avustushaku-id)
         arvio (virkailija-db/get-arvio hakemus-id)
         emails (emails-for-hakemus-without-signatories hakemus contact-email trusted-contact-email)]
-    (email/send-selvitys-notification! emails avustushaku hakemus selvitys-type arvio roles uuid identity)
-    (email/send-yhteishanke-selvitys-processed! avustushaku hakemus selvitys-type arvio roles)))
+    (email/send-selvitys-notification! emails avustushaku hakemus selvitys-type arvio roles uuid identity)))
 
 (defn send-selvitys-emails [avustushaku-id selvitys-type uuid identity]
   (let [is-loppuselvitys (= selvitys-type "loppuselvitys")

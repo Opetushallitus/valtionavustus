@@ -593,6 +593,13 @@ order by upper(h.organization_name), upper(h.project_name)")
           "update hakemukset set status_valiselvitys = ? where id = ? and version_closed is null RETURNING *"
           [status hakemus-id])))
 
+;; Copy of virkailija-db/get-arvio; this namespace can't require virkailija.db (it
+;; requires this one). Used to pick the esittelijä for the yhteishanke selvitys email.
+(defn- get-arvio-for-hakemus [hakemus-id]
+  (first (query-original-identifiers
+          "select * from arviot where hakemus_id = ?"
+          [hakemus-id])))
+
 (defn set-selvitys-accepted [selvitys-type selvitys-email identity]
   (let [validated-email         (assoc selvitys-email :to (distinct (:to selvitys-email)))
         selvitys-hakemus-id     (:selvitys-hakemus-id selvitys-email)
@@ -609,6 +616,13 @@ order by upper(h.organization_name), upper(h.project_name)")
     (if can-set-selvitys
       (do
         (email/send-selvitys! (:to validated-email) hakemus (:subject validated-email) (:message validated-email) is-jotpa-hakemus)
+        (try
+          (email/send-yhteishanke-selvitys-processed!
+           avustushaku parent-hakemus selvitys-type
+           (get-arvio-for-hakemus parent-id)
+           (get-avustushaku-roles (:avustushaku hakemus)))
+          (catch Exception e
+            (log/error e "Failed to send yhteishanke selvitys processed email")))
         (update-selvitys-message validated-email)
         (if is-loppuselvitys
           (do
@@ -846,6 +860,13 @@ order by upper(h.organization_name), upper(h.project_name)")
                                                 (:subject email-data)
                                                 (:message email-data)
                                                 is-jotpa)))
+                      (try
+                        (email/send-yhteishanke-selvitys-processed!
+                         avustushaku (get-hakemus hakemus-id) "loppuselvitys"
+                         (get-arvio-for-hakemus hakemus-id)
+                         (get-avustushaku-roles (:avustushaku hakemus)))
+                        (catch Exception e
+                          (log/error e "Failed to send yhteishanke selvitys processed email")))
                       (ok response-data))
                     (do (mark-information-verified! tx hakemus-id message verifier true)
                         (ok response-data))))))))))

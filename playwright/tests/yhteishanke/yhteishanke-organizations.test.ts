@@ -70,6 +70,17 @@ async function expectYhteishankeEmails(
   }
 }
 
+// Asserts no emails of this type exist yet. Call this only after a later
+// email (e.g. the -submitted mail) has been confirmed via expectYhteishankeEmails,
+// which guarantees earlier async sends have flushed their email_event rows.
+async function expectNoYhteishankeEmails(avustushakuID: number, emailType: string) {
+  const emails = await getAvustushakuEmails(avustushakuID, emailType)
+  expect(
+    emails,
+    `No ${emailType} emails should be sent before the selvitys is approved`
+  ).toHaveLength(0)
+}
+
 const swedishYhteishankeTest = test.extend<{ answers: Answers }>({
   answers: swedishAnswers,
 })
@@ -243,6 +254,8 @@ swedishYhteishankeTest(
           `Mellanredovisningen kan läsas via den här länken:`,
         ]
       )
+
+      await expectNoYhteishankeEmails(avustushakuID, 'yhteishanke-valiselvitys-processed')
     })
 
     await test.step('process väliselvitys and verify swedish emails', async () => {
@@ -335,6 +348,7 @@ swedishYhteishankeTest(
       const loppuselvitysPage = await hakujenHallintaPage.navigateToLoppuselvitys(avustushakuID)
 
       await loppuselvitysPage.sendLoppuselvitys()
+      await expectNoYhteishankeEmails(avustushakuID, 'yhteishanke-loppuselvitys-processed')
 
       await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
       const loppuselvitysFormUrl = await loppuselvitysPage.getSelvitysFormUrl()
@@ -509,6 +523,7 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
     const valiselvitysPage = await hakujenHallintaPage.navigateToValiselvitys(avustushakuID)
 
     await valiselvitysPage.sendValiselvitys()
+    await expectNoYhteishankeEmails(avustushakuID, 'yhteishanke-valiselvitys-processed')
 
     await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, hakemusID)
     const valiselvitysFormUrl = await valiselvitysPage.linkToHakemus.getAttribute('href')
@@ -621,6 +636,8 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
       [`Automaattinen viesti: Yhteishankkeen ${registerNumber} loppuselvitys on vastaanotettu`],
       [`Valtionavustus: ${avustushakuName}`]
     )
+
+    await expectNoYhteishankeEmails(avustushakuID, 'yhteishanke-loppuselvitys-processed')
   })
 
   await test.step('process loppuselvitys and verify emails', async () => {
