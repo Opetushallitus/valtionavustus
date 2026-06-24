@@ -60,9 +60,9 @@ This is a **monorepo** with shared code. Both services (va-hakija and va-virkail
 
 ### Key Technologies
 
-- **Backend**: Clojure 1.12.3, Leiningen 2.11.2
-- **Frontend**: React 19.2.3, TypeScript 5.9.3, Webpack 5
-- **Database**: PostgreSQL 18.1 (with Flyway migrations)
+- **Backend**: Clojure + Leiningen (versions in `project.clj` and the `lein` script)
+- **Frontend**: React + TypeScript + Webpack 5 (versions in `package.json`)
+- **Database**: PostgreSQL with Flyway migrations (version in `docker-compose.yml`)
 - **Server**: http-kit
 - **Routing**: Compojure/compojure-api
 
@@ -76,12 +76,17 @@ Both services run from the same main entry point (`oph.va.hakija.main`) but expo
 
 ### Prerequisites
 
-- Node.js 24.13.0 (see `.nvmrc`)
-- Leiningen 2.11.2 (use included `./lein` script)
-- Java 8
-- PostgreSQL 18+ or Docker
+Docker runs the backend, database, and supporting services, so their toolchain (Java, Leiningen, PostgreSQL) isn't needed on the host.
+
+**Required (`task dev`):**
 - Docker and Docker Compose
-- tmux (for `start-local-env.sh` script)
+- [Task](https://taskfile.dev/) (go-task) — runs the dev environment and tests
+- tmux — `start-local-env.sh` uses a tmux session
+- Node.js — for the host-side webpack build and Playwright; auto-installed from `.nvmrc` by the dev scripts
+
+**Optional (backend outside Docker, or REPL/IDE):**
+- OpenJDK + Leiningen — only for running the backend on the host (`./lein … run`) or a REPL/CIDER; bundled in Docker. Use `./lein` (pinned version); JDK version matches `Dockerfile.va-app`. [SDKMAN!](https://sdkman.io/) eases JDK installs.
+- PostgreSQL client — for `pg_restore` / manual DB ops; the server runs in Docker.
 
 ### Database
 
@@ -97,22 +102,13 @@ pg_restore --user va -h localhost -v --clean --if-exists --no-acl --no-owner --d
 
 ### Frontend Development
 
-Build frontend assets (run in separate terminals):
-```bash
-# Hakija
-cd va-hakija
-npm run build-watch
-
-# Virkailija
-cd va-virkailija
-npm run build-watch
-```
-
-Or build all at once from root:
+A single root `package.json` builds both frontends. Run from the project root:
 ```bash
 npm run build         # Production build
 npm run build-watch   # Watch mode
 ```
+
+`task dev` runs the watch build automatically.
 
 ### Backend Development
 
@@ -123,23 +119,15 @@ Run backend (migrations run automatically on startup):
 
 ### Testing
 
+Automated tests are **Playwright E2E** (`playwright/tests/`) and **CDK unit tests** (`cdk/tests/`). No Clojure backend spec tests exist.
 
-**Running tests for a specific namespace:**
-Tests are in `server/spec/` directory. Run from project root:
 ```bash
-./lein with-profile test spec -f d server/spec/oph/va/hakija/api_spec.clj
+task test                # CDK tests + Playwright E2E (needs `task dev` running; aborts with a hint if not)
+npm run playwright:test  # Playwright only (against a running local env)
+./cdk/run-tests.sh       # CDK only (no env needed)
 ```
 
-Important: **va-virkailija tests require va-hakija tests to have been run first** due to shared test data setup.
-
-**Frontend unit tests** are included in backend test runs.
-
-**Playwright E2E tests**:
-```bash
-npm run playwright:test
-```
-
-**IMPORTANT — Playwright testing patterns**: When writing or modifying Playwright tests, you **must** read and follow `playwright/TESTING_PATTERNS.md`. It documents required patterns for avoiding race conditions — including waiting for cascading API responses, email assertion polling, stabilizing UI before interaction, and waiting for API responses after triggering actions. Failing to follow these patterns produces flaky tests.
+**IMPORTANT — Playwright testing patterns**: Before writing or modifying Playwright tests, read and follow `playwright/TESTING_PATTERNS.md`. It documents required patterns for avoiding race conditions (cascading API responses, email assertion polling, UI stabilization, awaiting API responses); skipping them produces flaky tests.
 
 **Linting**:
 ```bash
@@ -151,18 +139,10 @@ npm run prettier-fix             # Fix formatting
 
 ### Docker Compose
 
-Full local development environment with tmux (recommended):
+Full local environment (recommended). `task dev` wraps `start-local-env.sh`, which runs each service in its own tmux pane: database, Playwright type watcher, frontend watch build, VA server (hakija + virkailija), FakeSMTP, Maksatuspalvelu, PagerDuty mock, and Org-mock.
 ```bash
-./start-local-env.sh
+task dev
 ```
-
-This script starts a tmux session with 6 panes running:
-1. Database (PostgreSQL)
-2. Frontend build (webpack watch)
-3. VA server (hakija + virkailija)
-4. FakeSMTP (email testing)
-5. Maksatuspalvelu
-6. PagerDuty mock
 
 Manual Docker Compose (without tmux):
 ```bash
@@ -180,13 +160,11 @@ cd va-hakija
 
 ### Running Single Service Profile
 
-Use Leiningen profiles to configure environment:
 ```bash
 ./lein with-profile server-local run -m oph.va.hakija.main
-./lein with-profile test trampoline run
 ```
 
-Available profiles: `server-local`, `server-test`, `test`, `test-legacy`
+Profiles in `project.clj`: `server-local`, `server-test`, `dev`, `uberjar`, and the CI-only `central-mirror-google`. The runtime config file is chosen via the `config` env var, pointing at an EDN file in `server/config/`.
 
 ### Configuration
 
@@ -430,9 +408,8 @@ General technical terms (e.g., "user", "session", "token") can remain in English
 
 ## Important Notes
 
-- Backend tests include frontend unit test execution
-- **va-virkailija tests require va-hakija tests to have been run first**
-- Use `./lein` script to ensure consistent Leiningen version (2.11.2)
+- Tests are Playwright E2E (`playwright/tests/`) and CDK unit tests (`cdk/tests/`); run with `task test`. Playwright needs `task dev` running.
+- Use the `./lein` script for a consistent, pinned Leiningen version
 - Project expects `valtionavustus-secret` repo as **sibling directory** for secrets
 - Secrets are loaded from `../valtionavustus-secret/config/secret-dev.edn`
 - Main branch is `master`

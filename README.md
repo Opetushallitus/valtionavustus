@@ -5,14 +5,15 @@ Opetushallituksen (OPH) valtionavustusten hakemiseen, käsittelyyn ja
 myöntämiseen tarkoitetut palvelut.
 
 Projekti koostuu kahdesta web-palvelusta: va-hakija ja
-va-virkailija. Näillä on omat Leiningen-projektit tämän git-repositoryn
-juurihakemistossa. Web-sovelluksien yhteinen koodi on
-Leiningen-projektissa soresu-form.
+va-virkailija. Molemmat palvelut ajetaan samasta Clojure-backendista,
+joka on yksi Leiningen-projekti repositoryn juuressa (lähdekoodi
+hakemistossa `server/`). Frontendien koodi on hakemistoissa
+`va-hakija/web/` ja `va-virkailija/web/`, ja niiden yhteinen koodi
+hakemistossa `soresu-form/web/`.
 
-Tässä README:ssä on yleiskuvaus palveluista, lisää dokumentaatiota:
+Tässä README:ssä on yleiskuvaus palveluista. Lisää dokumentaatiota:
 
-* [Tekninen yleiskuvaus](doc/technical_overview.md)
-* [Tietokantaoperaatiot](doc/database_operations.md)
+* [Sähköpostien lähetyksen kulku](docs/emails-flow.md)
 
 ## Käsitteitä ja käyttäjärooleja
 
@@ -53,12 +54,25 @@ Haun roolista huolimatta kuka tahansa VA-käyttäjä voi kommentoida hakemuksia.
 
 ## Riippuvuudet
 
-* [Node.js](https://nodejs.org/)
-  * asennus esim. [nvm](https://github.com/creationix/nvm):n tai [nodenv](https://github.com/nodenv/nodenv):n kautta
-* [npm](https://www.npmjs.com/)
-* [Leiningen](https://leiningen.org/), versio 2.8.1
-* [Java SE Development Kit](http://www.oracle.com/technetwork/java/javase/index.html), versio 8
-* [PostgreSQL](https://www.postgresql.org/), vähintään versio 12.2
+Docker ajaa backendin, tietokannan ja muut palvelut, joten niiden työkaluketjua
+(Java, Leiningen, PostgreSQL) ei tarvita isäntäkoneella.
+
+**Pakolliset (`task dev`):**
+
+* [Docker](https://www.docker.com/) ja Docker Compose
+* [Task](https://taskfile.dev/) (go-task) – ajaa kehitysympäristön ja testit
+* tmux – `start-local-env.sh` käyttää tmux-sessiota
+* [Node.js](https://nodejs.org/) – isäntäkoneen webpack-buildiin ja Playwrightiin;
+  asentuu automaattisesti [`.nvmrc`](.nvmrc):n mukaan kehitysskripteissä
+
+**Valinnaiset (backend Dockerin ulkopuolella tai REPL/editori):**
+
+* OpenJDK + [Leiningen](https://leiningen.org/) – vain backendin ajamiseen
+  isäntäkoneella (`./lein … run`) tai REPL:iin/CIDER:iin; Dockerissa valmiina.
+  Käytä `lein`-skriptiä (lukittu versio); JDK-versio vastaa `Dockerfile.va-app`:ia.
+  [SDKMAN!](https://sdkman.io/) helpottaa JDK:n asennusta.
+* PostgreSQL-client – `pg_restore`/manuaalisiin tietokantaoperaatioihin; palvelin
+  ajetaan Dockerissa.
 
 ## Trivy
 
@@ -68,8 +82,9 @@ https://trivy.util.yleiskayttoiset.opintopolku.fi/muut.html
 
 Kehitystyössä hyödyllisiä työkaluja:
 
-Juurihakemisto sisältää `lein`-skriptin, jota voi käyttää Leiningenin
-ajamiseen. Tämä takaa staattisen version käytön Leiningenistä.
+Kehitysympäristö ja testit ajetaan [Taskilla](https://taskfile.dev); komennot
+näkee komennolla `task --list` (ks. [`Taskfile.yml`](Taskfile.yml)). Repositoryn
+`lein`-skripti takaa lukitun Leiningen-version.
 
 ### Suositeltu hakemistojärjestely
 
@@ -86,89 +101,48 @@ Missä `valtionavustus` ja `valtionavustus-secret` ovat projektin git-repository
 
 ### Tietokanta
 
-#### Ajaminen Dockerilla
-
-Docker-imagen luonti:
-
-``` shell
-cd valtionavustus/script/postgres-docker
-docker build -t va-postgres:12.2 .
-```
-
-Data-hakemiston luonti:
+Tietokanta ajetaan Docker Composella osana kehitysympäristöä (`task dev`),
+tai yksinään:
 
 ``` shell
-mkdir -p postgres-data
+docker compose up db
 ```
 
-Tietokannan ajaminen Dockerissa:
+Kun web-sovellus käynnistyy, ajaa se tarvittavat migraatiot tietokantaan.
 
-``` shell
-run_database.sh
-```
-
-Tietokannan palauttaminen, esim Lammen backupista:
+Tietokannan palauttaminen backupista:
 
 ``` shell
 pg_restore --user va -h localhost -v --clean --if-exists --no-acl --no-owner --dbname va-dev ./valtionavustukset-2.backup
 ```
 
-#### Ajaminen manuaalisesti
-
-Kun web-sovellus käynnistyy, ajaa se tarvittavat migraatiot tietokantaan.
-
 ### Frontend
 
-Käynnistä frontendin assettien buildi webpackilla. Tällöin webpack
-generoi selaimen käyttämät JavaScript-tiedostot. Webpack buildaa
-tarvittaessa uudelleen, jos lähdekoodi yllä olevissa hakemistoissa
-muuttuu:
+Frontendin assetit buildataan webpackilla. `task dev` käynnistää buildin
+automaattisesti ja buildaa uudelleen lähdekoodin muuttuessa. Buildin voi
+ajaa myös käsin repositoryn juuressa:
 
 ``` shell
-cd va-hakija
-npm run build-watch
-
-cd va-virkailija
 npm run build-watch
 ```
 
 ### Backend
 
 Backendin käynnistys ajaa tietokannan migraatiot automaattisesti.
-
-#### Yksittäisen Leiningen-projektin testien ajaminen, esimerkkinä va-hakija:
+Backendin voi käynnistää suoraan Leiningenillä:
 
 ``` shell
-cd va-hakija
-../lein with-profile test spec -f d       # kerta-ajo
-../lein with-profile test spec -a         # monitorointi ja ajo muutoksista
-../lein with-profile test spec -a -t tag  # monitorointi ja ajo vain testeille, jotka merkitty tägillä `tag`
+./lein with-profile server-local run -m oph.va.hakija.main
 ```
-
-Backendin testit sisältävät myös frontendin yksikkötestien ajon
-
-Mikäli muutat frontendin koodia, pitää frontendin buildi ajaa uudelleen
-(katso ylhäältä).
-
-Huom! va-virkailijan testien ajaminen edellyttää, että va-hakijan testit on ajettu aiemmin.
 
 ### Ajoympäristöt
 
 Sovelluksen ajoympäristön voi asettaa Leiningenin komennolla
-`with-profile PROFILE`. Esimerkiksi `test`-ympäristön käyttö
-web-sovelluksen ajamiseen:
-
-``` shell
-cd va-hakija
-../lein with-profile test trampoline run
-```
-
-Ajoympäristojen konfiguraatiot ovat Leiningen-projektien
-`config`-hakemistossa
+`with-profile PROFILE` (esim. `server-local`, `server-test`).
+Ajoympäristöjen konfiguraatiot ovat hakemistossa `server/config/`
 [`.edn`](https://github.com/edn-format/edn)-tiedostoissa.
 
-Komento `lein test` käyttää `test`-ympäristöä
-automaattisesti. [Lisätietoja Leiningenin profiileista](https://github.com/technomancy/leiningen/blob/master/doc/PROFILES.md).
+[Lisätietoja Leiningenin profiileista](https://github.com/technomancy/leiningen/blob/master/doc/PROFILES.md).
 
 ### Yleisiä komentoja
 
@@ -233,7 +207,7 @@ Esimerkiksi Emacsin
 
 3. Käynnistä REPL hakijan tai virkailijan moduulissa: avaa moduulissa
    oleva clj-lähdekoodi puskuriin (esim. tiedosto
-   `va-virkailija/src/oph/va/virkailija/routes.clj`) ja suorita
+   `server/src/clojure/oph/va/virkailija/routes.clj`) ja suorita
    Emacs-komento `cider-jack-in`
 
 4. Kun REPL on käynnistynyt, käynnistä sovelluspalvelin REPL:ssä:
@@ -250,7 +224,7 @@ Esimerkiksi Emacsin
 ## Tuetut selaimet
 
 Hakijan käyttöliittymä: viimeisin stabiili Google Chrome ja Mozilla
-Firefox, IE11.
+Firefox.
 
 Virkailijan käyttöliittymä: viimeisin stabiili Google Chrome ja Mozilla
 Firefox.

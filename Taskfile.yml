@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+tasks:
+  test:
+    desc: Run tests
+    cmd: ./run-tests.sh
+  test:pw-ui:
+    desc: Open playwright test UI
+    cmd: npx playwright test --config=playwright/playwright.config.ts --project=Default --ui
+  dev:
+    desc: Run local environment
+    cmd: ./start-local-env.sh
