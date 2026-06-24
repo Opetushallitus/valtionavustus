@@ -22,6 +22,9 @@ services:
       - type: bind
         source: ./tmp/version.txt
         target: /app/server/resources/public/version.txt
+      - type: volume
+        source: va-m2-cache
+        target: /root/.m2
 
   db:
     ports:
@@ -42,6 +45,9 @@ services:
   maksatuspalvelu:
     ports:
       - "127.0.0.1:42022:22"
+
+volumes:
+  va-m2-cache:
 
 networks:
   default:
