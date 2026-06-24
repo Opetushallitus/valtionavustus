@@ -56,7 +56,7 @@ services:
       PGDATA: '/tmp/'
       TZ: "Europe/Helsinki"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
+      test: ["CMD-SHELL", "pg_isready -U va -d va"]
       interval: 10s
       timeout: 5s
       retries: 5
