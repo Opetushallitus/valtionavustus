@@ -314,7 +314,7 @@
     <dependency>
       <groupId>hikari-cp</groupId>
       <artifactId>hikari-cp</artifactId>
-      <version>4.0.0</version>
+      <version>4.1.0</version>
     </dependency>
     <dependency>
       <groupId>org.flywaydb</groupId>
