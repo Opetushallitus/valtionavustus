@@ -2,7 +2,7 @@
 (def jackson-version "2.22.0")
 (def jackson-annotations-version "2.22")
 (def http4s-version "0.16.6")
-(def flyway-version "12.8.1")
+(def flyway-version "12.9.0")
 
 (defproject oph-va/valtionavustus "0.1.0-SNAPSHOT"
 
