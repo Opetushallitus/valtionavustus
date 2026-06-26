@@ -50,6 +50,7 @@
    (s/optional-key :varayhteyshenkilo) ContactPersonDetails
    (s/optional-key :yhteishankkeenOsapuolet) [YhteishankkeenOsapuoli]
    (s/optional-key :yhteishankkeenOsapuolimuutokset) [YhteishankkeenOsapuoli]
+   (s/optional-key :yhteishankkeenOsapuolimuutostenPerustelut) s/Str
    (s/optional-key :sisaltomuutos) Sisaltomuutos})
 
 (s/defschema PaatosStatus
@@ -69,6 +70,7 @@
    (s/optional-key :paatos-status-jatkoaika) (s/maybe PaatosStatus)
    (s/optional-key :paatos-status-talousarvio) (s/maybe PaatosStatus)
    (s/optional-key :paatos-status-sisaltomuutos) (s/maybe PaatosStatus)
+   (s/optional-key :paatos-status-yhteishanke-osapuoli) (s/maybe PaatosStatus)
    :decider s/Str})
 
 (s/defschema Presenter

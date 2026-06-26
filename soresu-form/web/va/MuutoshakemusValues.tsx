@@ -40,7 +40,8 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
   const hasAnyPaatos =
     !!muutoshakemus['paatos-status-jatkoaika'] ||
     !!muutoshakemus['paatos-status-talousarvio'] ||
-    !!muutoshakemus['paatos-status-sisaltomuutos']
+    !!muutoshakemus['paatos-status-sisaltomuutos'] ||
+    !!muutoshakemus['paatos-status-yhteishanke-osapuoli']
   return (
     <React.Fragment>
       {hasAnyPaatos && (
@@ -84,35 +85,27 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
           />
         </MuutoshakemusSection>
       )}
-      {muutoshakemus['haen-sisaltomuutosta'] &&
-        !(
-          enableYhteishankeOsapuolimuutokset &&
-          muutoshakemus['yhteishanke-osapuolimuutokset'] &&
-          muutoshakemus['yhteishanke-osapuolimuutokset'].length > 0
-        ) && (
-          <MuutoshakemusSection>
-            <h2 className="muutoshakemus-section-title">
-              {t.muutoshakemus.paatos.sisaltoJaToimitustapa}
-            </h2>
-            <div className="muutoshakemus-row">
-              <h4 className="muutoshakemus__header">{t.sisaltomuutos.appliedChange}</h4>
-              <div
-                className="muutoshakemus-description-box"
-                data-test-id="sisaltomuutos-perustelut"
-              >
-                {muutoshakemus['sisaltomuutos-perustelut']}
-              </div>
+      {muutoshakemus['haen-sisaltomuutosta'] && (
+        <MuutoshakemusSection>
+          <h2 className="muutoshakemus-section-title">
+            {t.muutoshakemus.paatos.sisaltoJaToimitustapa}
+          </h2>
+          <div className="muutoshakemus-row">
+            <h4 className="muutoshakemus__header">{t.sisaltomuutos.appliedChange}</h4>
+            <div className="muutoshakemus-description-box" data-test-id="sisaltomuutos-perustelut">
+              {muutoshakemus['sisaltomuutos-perustelut']}
             </div>
-            {muutoshakemus['paatos-status-sisaltomuutos'] && (
-              <div className="muutoshakemus-row">
-                <OsioPaatos
-                  osio="paatos-sisaltomuutos"
-                  paatosStatus={muutoshakemus['paatos-status-sisaltomuutos']}
-                />
-              </div>
-            )}
-          </MuutoshakemusSection>
-        )}
+          </div>
+          {muutoshakemus['paatos-status-sisaltomuutos'] && (
+            <div className="muutoshakemus-row">
+              <OsioPaatos
+                osio="paatos-sisaltomuutos"
+                paatosStatus={muutoshakemus['paatos-status-sisaltomuutos']}
+              />
+            </div>
+          )}
+        </MuutoshakemusSection>
+      )}
       {enableYhteishankeOsapuolimuutokset &&
         muutoshakemus['yhteishanke-osapuolimuutokset'] &&
         muutoshakemus['yhteishanke-osapuolimuutokset'].length > 0 && (
@@ -141,19 +134,19 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
               </table>
             </div>
             <div className="muutoshakemus-row">
-              <h4 className="muutoshakemus__header">{t.sisaltomuutos.appliedChange}</h4>
+              <h4 className="muutoshakemus__header">{t.muutoshakemus.applicantReasoning}</h4>
               <div
                 className="muutoshakemus-description-box"
-                data-test-id="sisaltomuutos-perustelut"
+                data-test-id="yhteishanke-osapuoli-perustelut"
               >
-                {muutoshakemus['sisaltomuutos-perustelut']}
+                {muutoshakemus['yhteishanke-osapuoli-perustelut']}
               </div>
             </div>
-            {muutoshakemus['paatos-status-sisaltomuutos'] && (
+            {muutoshakemus['paatos-status-yhteishanke-osapuoli'] && (
               <div className="muutoshakemus-row">
                 <OsioPaatos
-                  osio="paatos-sisaltomuutos"
-                  paatosStatus={muutoshakemus['paatos-status-sisaltomuutos']}
+                  osio="paatos-yhteishanke-osapuoli"
+                  paatosStatus={muutoshakemus['paatos-status-yhteishanke-osapuoli']}
                 />
               </div>
             )}

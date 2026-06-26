@@ -431,13 +431,14 @@
             WHEN m.paatos_id IS NULL
             THEN 'new'
             ELSE
-              coalesce(pj.status, pt.status, ps.status)::text
+              coalesce(pj.status, pt.status, ps.status, pyo.status)::text
           END) as status_muutoshakemus
           from  virkailija.muutoshakemus m
           LEFT JOIN virkailija.paatos ON m.paatos_id = virkailija.paatos.id
           LEFT JOIN virkailija.paatos_jatkoaika pj ON pj.paatos_id = paatos.id
           LEFT JOIN virkailija.paatos_talousarvio pt ON pt.paatos_id = paatos.id
           LEFT JOIN virkailija.paatos_sisaltomuutos ps ON ps.paatos_id = paatos.id
+          LEFT JOIN virkailija.paatos_yhteishanke_osapuoli pyo ON pyo.paatos_id = paatos.id
           where m.hakemus_id = h.id
           order by m.created_at desc limit 1),
         h.refused,

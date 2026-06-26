@@ -71,6 +71,7 @@ export interface Muutoshakemus {
   'kayttoajan-pidennys-perustelut'?: string
   'haen-sisaltomuutosta': boolean
   'sisaltomuutos-perustelut'?: string
+  'yhteishanke-osapuoli-perustelut'?: string
   'talousarvio-perustelut'?: string
   talousarvio: Talousarvio
   'haettu-kayttoajan-paattymispaiva'?: string
@@ -83,6 +84,7 @@ export interface Muutoshakemus {
   'paatos-talousarvio'?: Talousarvio
   'paatos-status-talousarvio': PaatosStatus | null
   'paatos-status-sisaltomuutos': PaatosStatus | null
+  'paatos-status-yhteishanke-osapuoli': PaatosStatus | null
   'paatos-reason'?: string
   'yhteishanke-osapuolimuutokset'?: YhteishankeOrganizationResponse[]
 }
@@ -100,6 +102,7 @@ export interface Paatos {
   'paatos-status-jatkoaika'?: PaatosStatus
   'paatos-status-talousarvio'?: PaatosStatus
   'paatos-status-sisaltomuutos'?: PaatosStatus
+  'paatos-status-yhteishanke-osapuoli'?: PaatosStatus
 }
 
 export interface Meno {
@@ -187,14 +190,16 @@ export const getMuutoshakemusSchema = (lang: Language) => {
       }),
       haenSisaltomuutosta: yup.boolean().required(e.required),
       haenYhteishankkeenOsapuolimuutosta: yup.boolean().required(),
-      sisaltomuutosPerustelut: yup
-        .string()
-        .when(['haenSisaltomuutosta', 'haenYhteishankkeenOsapuolimuutosta'], {
-          is: (haenSisaltomuutosta: boolean, haenYhteishankkeenOsapuolimuutosta: boolean) =>
-            haenSisaltomuutosta || haenYhteishankkeenOsapuolimuutosta,
-          then: (schema) => schema.required(e.required),
-          otherwise: (schema) => schema,
-        }),
+      sisaltomuutosPerustelut: yup.string().when('haenSisaltomuutosta', {
+        is: true,
+        then: (schema) => schema.required(e.required),
+        otherwise: (schema) => schema,
+      }),
+      yhteishankeOsapuoliPerustelut: yup.string().when('haenYhteishankkeenOsapuolimuutosta', {
+        is: true,
+        then: (schema) => schema.required(e.required),
+        otherwise: (schema) => schema,
+      }),
       yhteishankkeenOsapuolimuutokset: yup.array().when('haenYhteishankkeenOsapuolimuutosta', {
         is: true,
         then: (schema) =>

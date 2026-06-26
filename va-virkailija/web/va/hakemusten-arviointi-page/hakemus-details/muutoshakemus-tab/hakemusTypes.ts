@@ -9,6 +9,9 @@ export interface MuutoshakemusPaatosRequest {
   'haen-sisaltomuutosta'?: {
     status: PaatosStatus
   }
+  'haen-yhteishanke-osapuolimuutosta'?: {
+    status: PaatosStatus
+  }
   talousarvio?: {
     status: PaatosStatus
     talousarvio?: TalousarvioValues

@@ -1,4 +1,4 @@
-import { expect, Page } from '@playwright/test'
+import { expect } from '@playwright/test'
 import { yhteishankeTest as test } from '../../fixtures/yhteishankeTest'
 import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
 import { HakijaSelvitysPage } from '../../pages/hakija/hakijaSelvitysPage'
@@ -14,23 +14,7 @@ import { swedishAnswers } from '../../utils/constants'
 import { Answers } from '../../utils/types'
 import moment from 'moment'
 import { expectToBeDefined } from 'utils/util'
-
-const otherOrganization = (page: Page, index: number) => {
-  const indexStartsFromOne = index + 1
-  const baseLocator = page.locator(`[id="other-organizations-${indexStartsFromOne}"]`)
-  return {
-    name: baseLocator.locator(
-      `[id="other-organizations.other-organizations-${indexStartsFromOne}.name"]`
-    ),
-    contactPerson: baseLocator.locator(
-      `[id="other-organizations.other-organizations-${indexStartsFromOne}.contactperson"]`
-    ),
-    email: baseLocator.locator(
-      `[id="other-organizations.other-organizations-${indexStartsFromOne}.email"]`
-    ),
-    remove: baseLocator.getByTitle('poista'),
-  }
-}
+import { otherOrganization } from '../../utils/yhteishanke'
 
 async function expectYhteishankeEmails(
   avustushakuID: number,

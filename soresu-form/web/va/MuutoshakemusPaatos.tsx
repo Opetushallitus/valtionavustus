@@ -125,7 +125,7 @@ const YhteishankePaatosSection: React.FC<{
 }> = ({ status, organizations, perustelut }) => {
   const { t } = useTranslations()
   return (
-    <Muutospaatos paatosStatus={status} osio="paatos-sisaltomuutos">
+    <Muutospaatos paatosStatus={status} osio="paatos-yhteishanke-osapuoli">
       <h3 className="muutoshakemus-paatos__change-header">
         {t.sisaltomuutos.yhteishankeOsapuolimuutokset}
       </h3>
@@ -184,11 +184,9 @@ const ProjectSection: React.FC<{
             {t.muutoshakemus.paatos.hakemusKayttoajanPidennykselle}
           </div>
         )}
-        {muutoshakemus['haen-sisaltomuutosta'] &&
-          !(
-            muutoshakemus['yhteishanke-osapuolimuutokset'] &&
-            muutoshakemus['yhteishanke-osapuolimuutokset'].length > 0
-          ) && <div>{t.muutoshakemus.paatos.muutoshakemusSisaltoonTaiToteutustapaan}</div>}
+        {muutoshakemus['haen-sisaltomuutosta'] && (
+          <div>{t.muutoshakemus.paatos.muutoshakemusSisaltoonTaiToteutustapaan}</div>
+        )}
         {muutoshakemus['yhteishanke-osapuolimuutokset'] &&
           muutoshakemus['yhteishanke-osapuolimuutokset'].length > 0 && (
             <div>{t.muutoshakemus.paatos.muutoshakemusYhteishankeenOsapuoliin}</div>
@@ -338,16 +336,14 @@ export const MuutoshakemusPaatos = ({
           paattymispaiva={paattymispaiva}
         />
       )}
-      {muutoshakemus['haen-sisaltomuutosta'] &&
-        paatos['paatos-status-sisaltomuutos'] &&
-        !hasYhteishankeChanges && (
-          <SisaltomuutosPaatosSection status={paatos['paatos-status-sisaltomuutos']} />
-        )}
-      {hasYhteishankeChanges && paatos['paatos-status-sisaltomuutos'] && (
+      {muutoshakemus['haen-sisaltomuutosta'] && paatos['paatos-status-sisaltomuutos'] && (
+        <SisaltomuutosPaatosSection status={paatos['paatos-status-sisaltomuutos']} />
+      )}
+      {hasYhteishankeChanges && paatos['paatos-status-yhteishanke-osapuoli'] && (
         <YhteishankePaatosSection
-          status={paatos['paatos-status-sisaltomuutos']}
+          status={paatos['paatos-status-yhteishanke-osapuoli']}
           organizations={muutoshakemus['yhteishanke-osapuolimuutokset']!}
-          perustelut={muutoshakemus['sisaltomuutos-perustelut']}
+          perustelut={muutoshakemus['yhteishanke-osapuoli-perustelut']}
         />
       )}
       <PerustelutSection reason={paatos.reason} />

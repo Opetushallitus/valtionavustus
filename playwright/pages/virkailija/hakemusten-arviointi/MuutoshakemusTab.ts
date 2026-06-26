@@ -38,6 +38,7 @@ export function createMuutoshakemusTab(page: Page) {
       jatkoaikaPaatos: page.getByTestId('paatos-jatkoaika'),
       jatkoaikaValue: page.getByTestId('paattymispaiva-value'),
       sisaltoPaatos: page.getByTestId('paatos-sisaltomuutos'),
+      yhteishankeOsapuoliPaatos: page.getByTestId('paatos-yhteishanke-osapuoli'),
       talousarvioPaatos: page.getByTestId('paatos-talousarvio'),
       esittelija: page.getByTestId('paatos-esittelija'),
       lisatietoja: page.getByTestId('paatos-additional-info'),
@@ -101,6 +102,10 @@ export function createMuutoshakemusTab(page: Page) {
     await page.click(`label[for="haen-sisaltomuutosta-${status}"]`)
   }
 
+  async function setMuutoshakemusYhteishankeOsapuoliDecision(status: PaatosStatus) {
+    await page.click(`label[for="haen-yhteishanke-osapuolimuutosta-${status}"]`)
+  }
+
   async function selectVakioperusteluInFinnish() {
     await page.getByText('Lisää vakioperustelu suomeksi').click()
   }
@@ -159,6 +164,7 @@ export function createMuutoshakemusTab(page: Page) {
     setMuutoshakemusJatkoaikaDecision,
     setMuutoshakemusBudgetDecision,
     setMuutoshakemusSisaltoDecision,
+    setMuutoshakemusYhteishankeOsapuoliDecision,
     getAcceptedBudgetInputAmounts,
     selectVakioperusteluInFinnish,
     validateMuutoshakemusValues,

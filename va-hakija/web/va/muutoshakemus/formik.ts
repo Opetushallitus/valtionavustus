@@ -20,6 +20,7 @@ const initialValues: FormValues = {
   haenMuutostaTaloudenKayttosuunnitelmaan: false,
   taloudenKayttosuunnitelmanPerustelut: '',
   sisaltomuutosPerustelut: '',
+  yhteishankeOsapuoliPerustelut: '',
   paivitanYhteishankkeenOsapuoltenYhteystietoja: false,
   yhteishankkeenOsapuolet: [],
   yhteishankkeenOsapuolimuutokset: [],

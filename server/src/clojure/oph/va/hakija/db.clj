@@ -481,10 +481,11 @@
                             id,
                             -- Tää toimii ns. oikein eli wanhalla tavalla kun kaikille osioille on
                             -- annettu sama hyväksytty/hylätty päätös
-                            coalesce(pj.status, pt.status, ps.status) as status,
+                            coalesce(pj.status, pt.status, ps.status, pyo.status) as status,
                             pj.status as paatos_status_jatkoaika,
                             pt.status as paatos_status_talousarvio,
                             ps.status as paatos_status_sisaltomuutos,
+                            pyo.status as paatos_status_yhteishanke_osapuoli,
                             user_key,
                             reason,
                             created_at,
@@ -495,6 +496,7 @@
                           LEFT JOIN virkailija.paatos_jatkoaika pj ON (pj.paatos_id = paatos.id)
                           LEFT JOIN virkailija.paatos_talousarvio pt ON (pt.paatos_id = paatos.id)
                           LEFT JOIN virkailija.paatos_sisaltomuutos ps ON (ps.paatos_id = paatos.id)
+                          LEFT JOIN virkailija.paatos_yhteishanke_osapuoli pyo ON (pyo.paatos_id = paatos.id)
                           WHERE user_key = ?" [user-key])
         paatos (first paatokset)
         talousarvio (when paatos (get-talousarvio (:id paatos) "paatos"))]
@@ -520,15 +522,17 @@
                                     ELSE
                                       -- Tää toimii ns. oikein eli wanhalla tavalla kun kaikille osioille on
                                       -- annettu sama hyväksytty/hylätty päätös
-                                      coalesce(pj.status, ps.status, pt.status)::text
+                                      coalesce(pj.status, ps.status, pt.status, pyo.status)::text
                                   END) as status,
                                   pj.status as paatos_status_jatkoaika,
                                   pt.status as paatos_status_talousarvio,
                                   ps.status as paatos_status_sisaltomuutos,
+                                  pyo.status as paatos_status_yhteishanke_osapuoli,
                                   haen_kayttoajan_pidennysta,
                                   kayttoajan_pidennys_perustelut,
                                   haen_sisaltomuutosta,
                                   sisaltomuutos_perustelut,
+                                  yhteishanke_osapuoli_perustelut,
                                   m.created_at,
                                   to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva,
                                   talousarvio_perustelut,
@@ -543,6 +547,7 @@
                                 LEFT JOIN virkailija.paatos_jatkoaika pj ON pj.paatos_id = p.id
                                 LEFT JOIN virkailija.paatos_talousarvio pt ON pt.paatos_id = p.id
                                 LEFT JOIN virkailija.paatos_sisaltomuutos ps ON ps.paatos_id = p.id
+                                LEFT JOIN virkailija.paatos_yhteishanke_osapuoli pyo ON pyo.paatos_id = p.id
                                 LEFT JOIN virkailija.email_event ee ON m.id = ee.muutoshakemus_id AND ee.email_type = 'muutoshakemus-paatos' AND success = true
                                 WHERE m.hakemus_id = ?
                                 ORDER BY id DESC" [hakemus-id])
@@ -601,12 +606,13 @@
         kayttoajan-pidennys-perustelut (get-in muutoshakemus [:jatkoaika :kayttoajanPidennysPerustelut])
         haettu-kayttoajan-paattymispaiva (get-in muutoshakemus [:jatkoaika :haettuKayttoajanPaattymispaiva])
         talousarvio-perustelut (:talousarvioPerustelut muutoshakemus)
+        yhteishanke-osapuoli-perustelut (:yhteishankkeenOsapuolimuutostenPerustelut muutoshakemus)
         id-rows (query tx
                        "INSERT INTO virkailija.muutoshakemus
-                            (hakemus_id, haen_kayttoajan_pidennysta, kayttoajan_pidennys_perustelut, haettu_kayttoajan_paattymispaiva, talousarvio_perustelut, haen_sisaltomuutosta, sisaltomuutos_perustelut)
-                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                            (hakemus_id, haen_kayttoajan_pidennysta, kayttoajan_pidennys_perustelut, haettu_kayttoajan_paattymispaiva, talousarvio_perustelut, haen_sisaltomuutosta, sisaltomuutos_perustelut, yhteishanke_osapuoli_perustelut)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                         RETURNING id"
-                       [hakemus-id haen-kayttoajan-pidennysta kayttoajan-pidennys-perustelut haettu-kayttoajan-paattymispaiva talousarvio-perustelut, haen-sisaltomuutosta, sisaltomuutos-perustelut])]
+                       [hakemus-id haen-kayttoajan-pidennysta kayttoajan-pidennys-perustelut haettu-kayttoajan-paattymispaiva talousarvio-perustelut, haen-sisaltomuutosta, sisaltomuutos-perustelut, yhteishanke-osapuoli-perustelut])]
     (:id (first id-rows))))
 
 (defn- add-muutoshakemus-menoluokkas [tx muutoshakemus-id avustushaku-id talousarvio]

@@ -64,6 +64,14 @@
   (let [rows (query "SELECT status FROM paatos_sisaltomuutos WHERE paatos_id = ?" [id])]
     (:status (first rows))))
 
+(defn- store-paatos-yhteishanke-osapuoli [tx paatos-id status]
+  (execute! tx "insert into paatos_yhteishanke_osapuoli (paatos_id, status) values (?, ?::virkailija.paatos_type)"
+            [paatos-id status]))
+
+(defn- get-yhteishanke-osapuoli-paatos-status [id]
+  (let [rows (query "SELECT status FROM paatos_yhteishanke_osapuoli WHERE paatos_id = ?" [id])]
+    (:status (first rows))))
+
 (defn store-paatos-jatkoaika [tx paatos-id status paattymispaiva]
   (execute! tx "INSERT INTO paatos_jatkoaika (paatos_id, status, paattymispaiva)
                 VALUES (?, ?::virkailija.paatos_type, ?)"
@@ -83,6 +91,7 @@
              (let [muutoshakemus (first (query tx "SELECT * FROM muutoshakemus WHERE id = ?" [muutoshakemus-id]))
                    requested-yhteishanke-organizations (get-muutoshakemus-yhteishanke-organizations tx muutoshakemus-id)
                    sisaltomuutos-status (get-in paatos [:haen-sisaltomuutosta :status])
+                   yhteishanke-osapuoli-status (get-in paatos [:haen-yhteishanke-osapuolimuutosta :status])
                    created-paatos (first (query tx
                                                 "INSERT INTO virkailija.paatos (user_key, reason, decider)
                                                  VALUES (?, ?, ?)
@@ -101,8 +110,10 @@
                  (add-paatos-menoluokkas tx paatos-id avustushaku-id (get-in paatos [:talousarvio :talousarvio])))
                (when (some? (:haen-sisaltomuutosta paatos))
                  (store-paatos-sisaltomuutos tx paatos-id sisaltomuutos-status))
+               (when (some? (:haen-yhteishanke-osapuolimuutosta paatos))
+                 (store-paatos-yhteishanke-osapuoli tx paatos-id yhteishanke-osapuoli-status))
                (when (and (seq requested-yhteishanke-organizations)
-                          (contains? #{"accepted" "accepted_with_changes"} sisaltomuutos-status))
+                          (= "accepted" yhteishanke-osapuoli-status))
                  (replace-yhteishanke-organizations tx
                                                     (:hakemus-id muutoshakemus)
                                                     requested-yhteishanke-organizations))
@@ -147,6 +158,7 @@
         (assoc :paatos-hyvaksytty-paattymispaiva (get-hyvaksytty-paattymispaiva (:id created-paatos)))
         (assoc :status-jatkoaika (get-jatkoaika-paatos-status (:id created-paatos)))
         (assoc :status-sisaltomuutos (get-sisaltomuutos-paatos-status (:id created-paatos)))
+        (assoc :status-yhteishanke-osapuoli (get-yhteishanke-osapuoli-paatos-status (:id created-paatos)))
         (assoc :status-talousarvio (get-talousarvio-paatos-status (:id created-paatos)))
         (assoc :talousarvio (get-talousarvio (:id created-paatos) "paatos")))))
 
@@ -254,15 +266,17 @@
                                   ELSE
                                     -- Tää toimii ns. oikein eli wanhalla tavalla kun kaikille osioille on
                                     -- annettu sama hyväksytty/hylätty päätös
-                                    coalesce(pj.status, ps.status, pt.status)::text
+                                    coalesce(pj.status, ps.status, pt.status, pyo.status)::text
                                 END) as status,
                                 pj.status as paatos_status_jatkoaika,
                                 pt.status as paatos_status_talousarvio,
                                 ps.status as paatos_status_sisaltomuutos,
+                                pyo.status as paatos_status_yhteishanke_osapuoli,
                                 haen_kayttoajan_pidennysta,
                                 kayttoajan_pidennys_perustelut,
                                 haen_sisaltomuutosta,
                                 sisaltomuutos_perustelut,
+                                yhteishanke_osapuoli_perustelut,
                                 m.created_at,
                                 to_char(haettu_kayttoajan_paattymispaiva, 'YYYY-MM-DD') as haettu_kayttoajan_paattymispaiva,
                                 talousarvio_perustelut,
@@ -277,6 +291,7 @@
                               LEFT JOIN virkailija.paatos_jatkoaika pj ON pj.paatos_id = p.id
                               LEFT JOIN virkailija.paatos_talousarvio pt ON pt.paatos_id = p.id
                               LEFT JOIN virkailija.paatos_sisaltomuutos ps ON ps.paatos_id = p.id
+                              LEFT JOIN virkailija.paatos_yhteishanke_osapuoli pyo ON pyo.paatos_id = p.id
                               LEFT JOIN virkailija.email_event ee
                                 ON ee.id = (SELECT max(id) FROM virkailija.email_event WHERE muutoshakemus_id = m.id AND email_type = 'muutoshakemus-paatos' AND success = true)
                               WHERE m.hakemus_id = ?

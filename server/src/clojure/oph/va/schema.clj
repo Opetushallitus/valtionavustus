@@ -232,6 +232,7 @@
    :haettu-kayttoajan-paattymispaiva (s/maybe java.time.LocalDate)
    :haen-sisaltomuutosta s/Bool
    :sisaltomuutos-perustelut (s/maybe s/Str)
+   :yhteishanke-osapuoli-perustelut (s/maybe s/Str)
    :talousarvio [Meno]
    :talousarvio-perustelut (s/maybe s/Str)
    :status MuutoshakemusStatus
@@ -241,6 +242,7 @@
    (s/optional-key :paatos-status-jatkoaika) (s/maybe s/Str)
    (s/optional-key :paatos-status-talousarvio) (s/maybe s/Str)
    (s/optional-key :paatos-status-sisaltomuutos) (s/maybe s/Str)
+   (s/optional-key :paatos-status-yhteishanke-osapuoli) (s/maybe s/Str)
    (s/optional-key :paatos-reason) (s/maybe s/Str)
    :paatos-created-at (s/maybe s/Inst)
    :paatos-sent-at (s/maybe s/Inst)

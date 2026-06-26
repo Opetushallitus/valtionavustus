@@ -45,6 +45,7 @@ export const translationsFi = {
     appliedChange: 'Haettu muutos hankkeen sisältöön tai toteutustapaan',
     acceptedChanges: 'Hyväksytyt muutokset hankkeen sisältöön tai toteutustapaan',
     yhteishankeOsapuolimuutokset: 'Haetut muutokset yhteishankkeen osapuoliin',
+    yhteishankeOsapuoliPerustelutTitle: 'Perustele yhteishankkeen osapuoliin haettavat muutokset',
   },
   muutosTaloudenKayttosuunnitelmaan: {
     checkboxTitle: 'Haen muutosta hankkeen budjettiin',
@@ -117,6 +118,14 @@ export const translationsFi = {
           rejected: 'Hylätään haetut muutokset sisältöön ja toteutustapaan',
           accepted_with_changes:
             'Hyväksytään haetut muutokset sisältöön ja toteutustapaan muutettuna',
+        },
+      },
+      'paatos-yhteishanke-osapuoli': {
+        status: {
+          accepted: 'Hyväksytään haetut muutokset yhteishankkeen osapuoliin',
+          rejected: 'Hylätään haetut muutokset yhteishankkeen osapuoliin',
+          accepted_with_changes:
+            'Hyväksytään haetut muutokset yhteishankkeen osapuoliin muutettuna',
         },
       },
       vakioperustelut: {
@@ -292,6 +301,14 @@ const translationsSv: Translations = {
             'De ändringar som ni ansökt om i projektets innehåll och genomförande godkänns med vissa ändringar',
         },
       },
+      'paatos-yhteishanke-osapuoli': {
+        status: {
+          accepted: 'De ändringar som ni ansökt om gällande parterna i samprojektet godkänns',
+          rejected: 'De ändringar som ni ansökt om gällande parterna i samprojektet godkänns inte',
+          accepted_with_changes:
+            'De ändringar som ni ansökt om gällande parterna i samprojektet godkänns med vissa ändringar',
+        },
+      },
       vakioperustelut: {
         accepted:
           'Utbildningsstyrelsen har bedömt ansökan. Utbildningsstyrelsen har utifrån en bedömning som gjorts av sakkunniga och efter övervägande beslutat att godkänna ändringarna i enlighet med ändringsansökan.',
@@ -357,6 +374,8 @@ const translationsSv: Translations = {
     acceptedChanges:
       'Godkända ändringar i projektets innehåll eller sättet på vilket projektet genomförs',
     yhteishankeOsapuolimuutokset: 'Ansökta ändringar för parterna i samprojektet',
+    yhteishankeOsapuoliPerustelutTitle:
+      'Motivera de ändringar som söks gällande parterna i samprojektet',
   },
   muutosTaloudenKayttosuunnitelmaan: {
     checkboxTitle: 'Jag ansöker om ändringar i projektets budget',

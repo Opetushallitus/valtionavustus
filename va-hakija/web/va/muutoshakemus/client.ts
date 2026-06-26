@@ -86,8 +86,7 @@ export async function postMuutoshakemus(props: MuutoshakemusProps) {
     talousarvioPerustelut: values.taloudenKayttosuunnitelmanPerustelut,
   }
 
-  const hasSisaltomuutos = values.haenSisaltomuutosta || values.haenYhteishankkeenOsapuolimuutosta
-  const sisaltomuutos = hasSisaltomuutos && {
+  const sisaltomuutos = values.haenSisaltomuutosta && {
     sisaltomuutos: {
       haenSisaltomuutosta: true,
       sisaltomuutosPerustelut: values.sisaltomuutosPerustelut,
@@ -105,6 +104,10 @@ export async function postMuutoshakemus(props: MuutoshakemusProps) {
       )
     : undefined
 
+  const yhteishankkeenOsapuolimuutostenPerustelut = values.haenYhteishankkeenOsapuolimuutosta
+    ? values.yhteishankeOsapuoliPerustelut
+    : undefined
+
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), timeout)
 
@@ -118,6 +121,7 @@ export async function postMuutoshakemus(props: MuutoshakemusProps) {
         ...sisaltomuutos,
         yhteishankkeenOsapuolet,
         yhteishankkeenOsapuolimuutokset,
+        yhteishankkeenOsapuolimuutostenPerustelut,
         yhteyshenkilo: {
           name: values.name,
           email: values.email,

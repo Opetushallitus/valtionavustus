@@ -157,6 +157,14 @@ const getPaatosSchema = (muutoshakemus: Muutoshakemus) =>
           })
         : Yup.string()
     }),
+    'haen-yhteishanke-osapuolimuutosta': Yup.lazy((haenYhteishankeOsapuolimuutosta) => {
+      const status = haenYhteishankeOsapuolimuutosta?.status
+      return isAccepted(status) || isRejected(status)
+        ? Yup.object({
+            status: Yup.string().oneOf(PAATOS_STATUSES).required(),
+          })
+        : Yup.string()
+    }),
   })
 
 interface MuutoshakemusFormProps {
@@ -174,7 +182,11 @@ interface MuutoshakemusFormProps {
 }
 
 const getInitialValues =
-  (talousarvioValues: TalousarvioValues | undefined, muutoshakemus: Muutoshakemus) =>
+  (
+    talousarvioValues: TalousarvioValues | undefined,
+    muutoshakemus: Muutoshakemus,
+    yhteishankeOsapuolimuutoksetEnabled: boolean
+  ) =>
   (): MuutoshakemusPaatosRequest => {
     const initialTalousarvio: MuutoshakemusPaatosRequest['talousarvio'] = talousarvioValues
       ? {
@@ -195,10 +207,17 @@ const getInitialValues =
             status: 'accepted',
           }
         : undefined
+    const initialYhteishankeOsapuoli: MuutoshakemusPaatosRequest['haen-yhteishanke-osapuolimuutosta'] =
+      yhteishankeOsapuolimuutoksetEnabled && muutoshakemus['yhteishanke-osapuolimuutokset']?.length
+        ? {
+            status: 'accepted',
+          }
+        : undefined
     return {
       talousarvio: initialTalousarvio,
       'haen-kayttoajan-pidennysta': initialPidennys,
       'haen-sisaltomuutosta': initialSisaltomuutokset,
+      'haen-yhteishanke-osapuolimuutosta': initialYhteishankeOsapuoli,
       reason: '',
     }
   }
@@ -208,6 +227,9 @@ const formToPayload = (values: MuutoshakemusPaatosRequest) => {
     reason: values.reason,
     'haen-sisaltomuutosta': values['haen-sisaltomuutosta'] && {
       status: values['haen-sisaltomuutosta']?.status,
+    },
+    'haen-yhteishanke-osapuolimuutosta': values['haen-yhteishanke-osapuolimuutosta'] && {
+      status: values['haen-yhteishanke-osapuolimuutosta']?.status,
     },
     talousarvio: values.talousarvio && {
       talousarvio: omit(values.talousarvio.talousarvio, ['currentSum', 'originalSum']),
@@ -244,7 +266,12 @@ export const MuutoshakemusForm = ({
     ? getTalousarvioValues(muutoshakemus.talousarvio)
     : undefined
   const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
-  const initialValues = useMemo(getInitialValues(talousarvioValues, muutoshakemus), [])
+  const yhteishankeOsapuolimuutoksetEnabled =
+    environment['feature-flags'].includes('enableYhteishankeEmails')
+  const initialValues = useMemo(
+    getInitialValues(talousarvioValues, muutoshakemus, yhteishankeOsapuolimuutoksetEnabled),
+    []
+  )
   const f = useFormik<MuutoshakemusPaatosRequest>({
     initialValues,
     validationSchema: getPaatosSchema(muutoshakemus),
@@ -266,6 +293,7 @@ export const MuutoshakemusForm = ({
       'paatos-status-jatkoaika': f.values['haen-kayttoajan-pidennysta']?.status,
       paattymispaiva: f.values['haen-kayttoajan-pidennysta']?.paattymispaiva,
       'paatos-status-sisaltomuutos': f.values['haen-sisaltomuutosta']?.status,
+      'paatos-status-yhteishanke-osapuoli': f.values['haen-yhteishanke-osapuolimuutosta']?.status,
       'paatos-status-talousarvio': f.values.talousarvio?.status,
       reason: f.values.reason,
       'created-at': new Date().toISOString(),
@@ -362,16 +390,7 @@ export const MuutoshakemusForm = ({
         {muutoshakemus['haen-sisaltomuutosta'] && (
           <MuutoshakemusSection
             blueMiddleComponent={
-              <PaatosStatusRadioButtonGroup
-                group="haen-sisaltomuutosta"
-                f={f}
-                excludeStatuses={
-                  muutoshakemus['yhteishanke-osapuolimuutokset'] &&
-                  muutoshakemus['yhteishanke-osapuolimuutokset'].length > 0
-                    ? ['accepted_with_changes']
-                    : undefined
-                }
-              />
+              <PaatosStatusRadioButtonGroup group="haen-sisaltomuutosta" f={f} />
             }
           >
             <h2 className="muutoshakemus-section-title">Sisältö ja toteutustapa</h2>
@@ -384,33 +403,6 @@ export const MuutoshakemusForm = ({
                 {muutoshakemus['sisaltomuutos-perustelut']}
               </div>
             </div>
-            {environment['feature-flags'].includes('enableYhteishankeEmails') &&
-              muutoshakemus['yhteishanke-osapuolimuutokset'] &&
-              muutoshakemus['yhteishanke-osapuolimuutokset'].length > 0 && (
-                <div className="muutoshakemus-row" data-test-id="yhteishanke-osapuolimuutokset">
-                  <h4 className="muutoshakemus__header">
-                    {t.sisaltomuutos.yhteishankeOsapuolimuutokset}
-                  </h4>
-                  <table className="muutoshakemus-yhteishanke-table">
-                    <thead>
-                      <tr>
-                        <th>{t.contactPersonEdit.yhteishankeOrganizationName}</th>
-                        <th>{t.contactPersonEdit.yhteishankeContactPerson}</th>
-                        <th>{t.contactPersonEdit.yhteishankeEmail}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {muutoshakemus['yhteishanke-osapuolimuutokset'].map((org, index) => (
-                        <tr key={index} data-test-id={`yhteishanke-org-${index}`}>
-                          <td>{org['organization-name']}</td>
-                          <td>{org['contact-person']}</td>
-                          <td>{org['email']}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
             {isAcceptedWithChanges(f.values['haen-sisaltomuutosta']?.status) && (
               <div className="muutoshakemus-notice">
                 Olet tekemässä päätöksen, jossa haetut sisältömuutokset hyväksytään muutettuna.
@@ -420,6 +412,51 @@ export const MuutoshakemusForm = ({
             )}
           </MuutoshakemusSection>
         )}
+        {yhteishankeOsapuolimuutoksetEnabled &&
+          !!muutoshakemus['yhteishanke-osapuolimuutokset']?.length && (
+            <MuutoshakemusSection
+              blueMiddleComponent={
+                <PaatosStatusRadioButtonGroup
+                  group="haen-yhteishanke-osapuolimuutosta"
+                  f={f}
+                  excludeStatuses={['accepted_with_changes']}
+                />
+              }
+            >
+              <h2 className="muutoshakemus-section-title">
+                {t.sisaltomuutos.yhteishankeOsapuolimuutokset}
+              </h2>
+              <div className="muutoshakemus-row" data-test-id="yhteishanke-osapuolimuutokset">
+                <table className="muutoshakemus-yhteishanke-table">
+                  <thead>
+                    <tr>
+                      <th>{t.contactPersonEdit.yhteishankeOrganizationName}</th>
+                      <th>{t.contactPersonEdit.yhteishankeContactPerson}</th>
+                      <th>{t.contactPersonEdit.yhteishankeEmail}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {muutoshakemus['yhteishanke-osapuolimuutokset'].map((org, index) => (
+                      <tr key={index} data-test-id={`yhteishanke-org-${index}`}>
+                        <td>{org['organization-name']}</td>
+                        <td>{org['contact-person']}</td>
+                        <td>{org['email']}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="muutoshakemus-row">
+                <h4 className="muutoshakemus__header">{t.muutoshakemus.applicantReasoning}</h4>
+                <div
+                  className="muutoshakemus-description-box"
+                  data-test-id="yhteishanke-osapuoli-perustelut"
+                >
+                  {muutoshakemus['yhteishanke-osapuoli-perustelut']}
+                </div>
+              </div>
+            </MuutoshakemusSection>
+          )}
         <MuutoshakemusSection
           blueMiddleComponent={
             <button
@@ -483,6 +520,7 @@ function setDefaultReason(f: MuutoshakemusPaatosFormValues, lang: 'fi' | 'sv') {
     f.values.talousarvio?.status,
     f.values['haen-kayttoajan-pidennysta']?.status,
     f.values['haen-sisaltomuutosta']?.status,
+    f.values['haen-yhteishanke-osapuolimuutosta']?.status,
   ].filter((status) => status !== undefined)
   if (currentStatuses.some(isAcceptedWithChanges)) {
     return f.setFieldValue('reason', paatosStatuses[1].defaultReason[lang])

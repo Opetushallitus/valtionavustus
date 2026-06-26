@@ -1,69 +1,28 @@
-import { expect, Page } from '@playwright/test'
-import moment from 'moment'
+import { expect } from '@playwright/test'
 
-import { yhteishankeTest as test } from '../../fixtures/yhteishankeTest'
-import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
+import {
+  yhteishankeMuutoshakemusTest as test,
+  yhteishankeInitialOrgs,
+} from '../../fixtures/yhteishankeMuutoshakemusTest'
 import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusPage'
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
-import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
-import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
 import {
   getAvustushakuEmails,
-  getHakemusTokenAndRegisterNumber,
   getLinkToMuutoshakemusFromSentEmails,
   parseMuutoshakemusPaatosFromEmails,
 } from '../../utils/emails'
 import { VIRKAILIJA_URL } from '../../utils/constants'
 import { isSetupScenario, printSetupLinks } from '../../utils/setupLinks'
-
-const otherOrganization = (page: Page, index: number) => {
-  const indexStartsFromOne = index + 1
-  const baseLocator = page.locator(`[id="other-organizations-${indexStartsFromOne}"]`)
-  return {
-    name: baseLocator.locator(
-      `[id="other-organizations.other-organizations-${indexStartsFromOne}.name"]`
-    ),
-    contactPerson: baseLocator.locator(
-      `[id="other-organizations.other-organizations-${indexStartsFromOne}.contactperson"]`
-    ),
-    email: baseLocator.locator(
-      `[id="other-organizations.other-organizations-${indexStartsFromOne}.email"]`
-    ),
-  }
-}
-
-async function submitMuutoshakemusAndExpectSuccess(page: Page) {
-  const submitMuutoshakemusResponse = page.waitForResponse(
-    (response) =>
-      response.request().method() === 'POST' && /\/api\/muutoshakemus\//.test(response.url())
-  )
-  await page.locator('#send-muutospyynto-button').click()
-  const response = await submitMuutoshakemusResponse
-  const responseText = await response.text()
-  expect(
-    response.ok(),
-    `Muutoshakemus submit failed with ${response.status()}: ${responseText}`
-  ).toBeTruthy()
-}
+import { submitMuutoshakemusAndExpectSuccess } from '../../utils/yhteishanke'
 
 test('yhteishanke osapuolimuutos updates recipients and applicant contact rows after accepted decision', async ({
   page,
   avustushakuID,
   avustushakuName,
-  submittedHakemusUrl,
-  answers,
-  projektikoodi,
-  codes,
+  acceptedYhteishankeHakemus,
   ukotettuValmistelija,
 }) => {
-  const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
-  const first = otherOrganization(page, 0)
-  const second = otherOrganization(page, 1)
-  const initialSecond = {
-    name: 'Toinen Organisaatio Oy',
-    contactPerson: 'Toka Henkilö',
-    email: 'toka@toinen.fi',
-  }
+  const { hakemusID, registerNumber } = acceptedYhteishankeHakemus
   const updatedFirst = {
     contactPerson: 'Eka Paivitetty',
     email: 'eka.paivitetty@ensimmainen.fi',
@@ -74,66 +33,8 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     email: 'kolmas@kolmas.fi',
   }
 
-  await test.step('create and submit an accepted yhteishanke hakemus with two organizations', async () => {
-    await page.goto(submittedHakemusUrl)
-    await page.locator("[for='combined-effort.radio.0']").click()
-    await expect(first.name).toBeVisible()
-
-    await first.name.fill('Ensimmäinen Organisaatio Oy')
-    await first.contactPerson.fill('Eka Henkilö')
-    await first.email.fill('eka@ensimmainen.fi')
-
-    await expect(second.name).toBeEnabled()
-    await second.name.fill(initialSecond.name)
-    await second.contactPerson.fill(initialSecond.contactPerson)
-    await second.email.fill(initialSecond.email)
-
-    await page.locator("[id='project-costs-row.amount']").fill('20000')
-    await page.locator("[for='type-of-organization.radio.0']").click()
-    await page.locator("[id='signature']").fill('Erkki Esimerkki')
-    await page.locator("[id='signature-email']").fill('erkki@example.com')
-    await page.locator('#bank-iban').fill('FI95 6682 9530 0087 65')
-    await page.locator('#bank-bic').fill('OKOYFIHH')
-
-    await hakijaAvustusHakuPage.waitForEditSaved()
-    await hakijaAvustusHakuPage.submitApplication()
-  })
-
-  const hakemustenArviointiPage = new HakemustenArviointiPage(page)
-  let hakemusID = 0
-  let registerNumber = ''
-
-  await test.step('accept hakemus and send paatos so muutoshakemus link is available', async () => {
-    const hakujenHallintaPage = new HakujenHallintaPage(page)
-    const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
-    await haunTiedotPage.setEndDate(moment().subtract(1, 'year').format('D.M.YYYY H.mm'))
-
-    await hakemustenArviointiPage.navigate(avustushakuID)
-    const projectName = answers.projectName
-    if (!projectName) {
-      throw new Error('projectName must be set in order to accept avustushaku')
-    }
-    hakemusID = await hakemustenArviointiPage.acceptAvustushaku({
-      avustushakuID,
-      projectName,
-      projektikoodi,
-      codes,
-    })
-
-    await hakemustenArviointiPage.closeHakemusDetails()
-    await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
-
-    const resolvedHaunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
-    await resolvedHaunTiedotPage.resolveAvustushaku()
-
-    const paatosPage = PaatosPage(page)
-    await paatosPage.navigateTo(avustushakuID)
-    await paatosPage.sendPaatos()
-    registerNumber = (await getHakemusTokenAndRegisterNumber(hakemusID))['register-number']
-  })
-
-  // `task setup:yhteishanke-muutoshakemus` — accepted yhteishanke with päätös sent,
-  // muutoshakemus/osapuolimuutos form ready to test.
+  // `task setup:yhteishanke-muutoshakemus` — accepted yhteishanke with päätös sent (produced
+  // by the fixture), muutoshakemus/osapuolimuutos form ready to test.
   if (isSetupScenario('yhteishanke-muutoshakemus')) {
     const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(hakemusID)
     printSetupLinks('yhteishanke-muutoshakemus', {
@@ -142,6 +43,8 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     })
     return
   }
+
+  const hakemustenArviointiPage = new HakemustenArviointiPage(page)
 
   await test.step('verify yhteishanke paatos email body contains updated avustushaku label', async () => {
     let emails: Awaited<ReturnType<typeof getAvustushakuEmails>> = []
@@ -190,7 +93,7 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
       .fill(newSecond.contactPerson)
     await page.locator('#yhteishankkeen-osapuolimuutokset-2-email').fill(newSecond.email)
     await page
-      .locator('#perustelut-sisaltomuutosPerustelut')
+      .locator('#perustelut-yhteishankeOsapuoliPerustelut')
       .fill('Poistetaan yksi osapuoli ja lisätään uusi')
 
     await expect(page.locator('#send-muutospyynto-button')).toHaveText('Lähetä käsiteltäväksi')
@@ -202,11 +105,15 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     await expect(page.getByTestId('yhteishanke-osapuolimuutokset')).toBeVisible()
 
     // Hyväksytään and Hylätään should be visible
-    await expect(page.locator('label[for="haen-sisaltomuutosta-accepted"]')).toBeVisible()
-    await expect(page.locator('label[for="haen-sisaltomuutosta-rejected"]')).toBeVisible()
+    await expect(
+      page.locator('label[for="haen-yhteishanke-osapuolimuutosta-accepted"]')
+    ).toBeVisible()
+    await expect(
+      page.locator('label[for="haen-yhteishanke-osapuolimuutosta-rejected"]')
+    ).toBeVisible()
     // Hyväksytään muutettuna should NOT be visible
     await expect(
-      page.locator('label[for="haen-sisaltomuutosta-accepted_with_changes"]')
+      page.locator('label[for="haen-yhteishanke-osapuolimuutosta-accepted_with_changes"]')
     ).toHaveCount(0)
   })
 
@@ -218,7 +125,9 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     // Verify org changes are displayed in the pending muutoshakemus form
     await expect(page.getByTestId('yhteishanke-osapuolimuutokset')).toBeVisible()
     // Check all columns for first org (existing org kept with updated contacts)
-    await expect(page.getByTestId('yhteishanke-org-0')).toContainText('Ensimmäinen Organisaatio Oy')
+    await expect(page.getByTestId('yhteishanke-org-0')).toContainText(
+      yhteishankeInitialOrgs.first.name
+    )
     await expect(page.getByTestId('yhteishanke-org-0')).toContainText(updatedFirst.contactPerson)
     await expect(page.getByTestId('yhteishanke-org-0')).toContainText(updatedFirst.email)
     // Check all columns for second org (new org replacing removed one)
@@ -226,17 +135,17 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     await expect(page.getByTestId('yhteishanke-org-1')).toContainText(newSecond.contactPerson)
     await expect(page.getByTestId('yhteishanke-org-1')).toContainText(newSecond.email)
 
-    await muutoshakemusTab.setMuutoshakemusSisaltoDecision('accepted')
+    await muutoshakemusTab.setMuutoshakemusYhteishankeOsapuoliDecision('accepted')
     await muutoshakemusTab.writePerustelu('Hyväksytään yhteishankkeen osapuolimuutos')
     await muutoshakemusTab.saveMuutoshakemus()
 
     await hakemustenArviointiPage.navigateToHakemusArviointi(avustushakuID, hakemusID)
     const sidebar = hakemustenArviointiPage.sidebarLocators()
     await expect(sidebar.oldAnswers.secondYhteishankeOrganizationContactPerson).toHaveText(
-      initialSecond.contactPerson
+      yhteishankeInitialOrgs.second.contactPerson
     )
     await expect(sidebar.oldAnswers.secondYhteishankeOrganizationEmail).toHaveText(
-      initialSecond.email
+      yhteishankeInitialOrgs.second.email
     )
     await expect(sidebar.newAnswers.secondYhteishankeOrganizationContactPerson).toHaveText(
       newSecond.contactPerson
@@ -263,7 +172,7 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     const recipients = relevantEmails.flatMap((email) => email['to-address'])
     expect(recipients).toContain(updatedFirst.email)
     expect(recipients).toContain(newSecond.email)
-    expect(recipients).not.toContain(initialSecond.email)
+    expect(recipients).not.toContain(yhteishankeInitialOrgs.second.email)
 
     for (const email of relevantEmails) {
       expect(email['to-address']).toHaveLength(1)
@@ -291,7 +200,7 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
 
     // Yhteishanke org changes table is visible with correct data
     const firstOrg = page.getByTestId('yhteishanke-org-0')
-    await expect(firstOrg).toContainText('Ensimmäinen Organisaatio Oy')
+    await expect(firstOrg).toContainText(yhteishankeInitialOrgs.first.name)
     await expect(firstOrg).toContainText(updatedFirst.contactPerson)
     await expect(firstOrg).toContainText(updatedFirst.email)
 
@@ -306,7 +215,7 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     )
 
     // Decision status is shown
-    await expect(page.getByTestId('paatos-sisaltomuutos-container')).toBeVisible()
+    await expect(page.getByTestId('paatos-yhteishanke-osapuoli-container')).toBeVisible()
   })
 
   await test.step('applicant sees updated organization rows in contact-details section automatically', async () => {
@@ -315,7 +224,7 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
 
     await page.getByTestId('checkbox-update-yhteishanke-organizations').check()
     await expect(page.locator('[id="other-organizations.other-organizations-1.name"]')).toHaveValue(
-      'Ensimmäinen Organisaatio Oy'
+      yhteishankeInitialOrgs.first.name
     )
     await expect(
       page.locator('[id="other-organizations.other-organizations-1.contactperson"]')
@@ -347,7 +256,7 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     const firstOrg = page.locator(
       '[data-test-class="existing-muutoshakemus"] [data-test-id="yhteishanke-org-0"]'
     )
-    await expect(firstOrg).toContainText('Ensimmäinen Organisaatio Oy')
+    await expect(firstOrg).toContainText(yhteishankeInitialOrgs.first.name)
     await expect(firstOrg).toContainText(updatedFirst.contactPerson)
     await expect(firstOrg).toContainText(updatedFirst.email)
 
@@ -357,5 +266,93 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     await expect(secondOrg).toContainText(newSecond.name)
     await expect(secondOrg).toContainText(newSecond.contactPerson)
     await expect(secondOrg).toContainText(newSecond.email)
+  })
+})
+
+test('sisaltomuutos and yhteishanke osapuolimuutos can be accepted and rejected independently', async ({
+  page,
+  avustushakuID,
+  acceptedYhteishankeHakemus,
+}) => {
+  const { hakemusID } = acceptedYhteishankeHakemus
+  const newSecond = {
+    name: 'Kolmas Organisaatio Ry',
+    contactPerson: 'Kolmas Henkilö',
+    email: 'kolmas@kolmas.fi',
+  }
+
+  const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+
+  await test.step('applicant requests both a sisaltomuutos and an osapuolimuutos', async () => {
+    const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
+    await hakijaMuutoshakemusPage.navigate(hakemusID)
+
+    await page.locator('#checkbox-haenSisaltomuutosta').check()
+    await page.locator('#perustelut-sisaltomuutosPerustelut').fill('Muutetaan hankkeen sisältöä')
+
+    await page.locator('#checkbox-haenYhteishankkeenOsapuolimuutosta').check()
+    await page.getByTestId('remove-yhteishanke-organization-change-2').click()
+    await page.getByTestId('add-yhteishanke-organization-change').click()
+    await page.locator('#yhteishankkeen-osapuolimuutokset-2-name').fill(newSecond.name)
+    await page
+      .locator('#yhteishankkeen-osapuolimuutokset-2-contactperson')
+      .fill(newSecond.contactPerson)
+    await page.locator('#yhteishankkeen-osapuolimuutokset-2-email').fill(newSecond.email)
+    await page
+      .locator('#perustelut-yhteishankeOsapuoliPerustelut')
+      .fill('Korvataan osapuoli uudella')
+
+    await expect(page.locator('#send-muutospyynto-button')).toHaveText('Lähetä käsiteltäväksi')
+    await submitMuutoshakemusAndExpectSuccess(page)
+  })
+
+  await test.step('accept sisaltomuutos but reject osapuolimuutos in the same paatos', async () => {
+    const muutoshakemusTab = await hakemustenArviointiPage.navigateToLatestMuutoshakemus(
+      avustushakuID,
+      hakemusID
+    )
+    await expect(page.getByTestId('sisaltomuutos-perustelut')).toContainText(
+      'Muutetaan hankkeen sisältöä'
+    )
+    await expect(page.getByTestId('yhteishanke-osapuolimuutokset')).toBeVisible()
+    await expect(page.getByTestId('yhteishanke-osapuoli-perustelut')).toContainText(
+      'Korvataan osapuoli uudella'
+    )
+
+    await muutoshakemusTab.setMuutoshakemusSisaltoDecision('accepted')
+    await muutoshakemusTab.setMuutoshakemusYhteishankeOsapuoliDecision('rejected')
+    await muutoshakemusTab.writePerustelu('Sisältömuutos hyväksytään, osapuolimuutos hylätään')
+    await muutoshakemusTab.saveMuutoshakemus()
+  })
+
+  await test.step('paatos document shows both sections with independent statuses', async () => {
+    const links = await parseMuutoshakemusPaatosFromEmails(hakemusID)
+    if (!links.linkToMuutoshakemusPaatos) {
+      throw Error('No linkToMuutoshakemusPaatos found')
+    }
+    await page.goto(links.linkToMuutoshakemusPaatos)
+
+    await expect(page.getByTestId('paatos-sisaltomuutos-container')).toBeVisible()
+    await expect(page.getByTestId('paatos-sisaltomuutos')).toContainText(
+      'Hyväksytään haetut muutokset sisältöön ja toteutustapaan'
+    )
+
+    await expect(page.getByTestId('paatos-yhteishanke-osapuoli-container')).toBeVisible()
+    await expect(page.getByTestId('paatos-yhteishanke-osapuoli')).toContainText(
+      'Hylätään haetut muutokset yhteishankkeen osapuoliin'
+    )
+  })
+
+  await test.step('rejected osapuolimuutos does not update applicant organization rows', async () => {
+    const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
+    await hakijaMuutoshakemusPage.navigate(hakemusID)
+
+    await page.getByTestId('checkbox-update-yhteishanke-organizations').check()
+    await expect(page.locator('[id="other-organizations.other-organizations-2.name"]')).toHaveValue(
+      yhteishankeInitialOrgs.second.name
+    )
+    await expect(
+      page.locator('[id="other-organizations.other-organizations-2.email"]')
+    ).toHaveValue(yhteishankeInitialOrgs.second.email)
   })
 })

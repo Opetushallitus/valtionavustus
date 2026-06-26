@@ -22,6 +22,7 @@
    :decider s/Str
    :muutoshakemusUrl s/Str
    (s/optional-key :status-sisaltomuutos) (s/maybe s/Str)
+   (s/optional-key :status-yhteishanke-osapuoli) (s/maybe s/Str)
    (s/optional-key :paatos-hyvaksytty-paattymispaiva) (s/maybe java.time.LocalDate)
    (s/optional-key :status-jatkoaika) (s/maybe s/Str)
    (s/optional-key :talousarvio) (s/maybe [va-schema/Meno])
@@ -45,6 +46,7 @@
   "Muutoshakemus paatos"
   {:reason s/Str
    (s/optional-key :haen-sisaltomuutosta) (s/maybe {:status s/Str})
+   (s/optional-key :haen-yhteishanke-osapuolimuutosta) (s/maybe {:status s/Str})
    (s/optional-key :haen-kayttoajan-pidennysta) (s/maybe {(s/optional-key :paattymispaiva) (s/maybe java.time.LocalDate)
                                                           :status s/Str})
    (s/optional-key :talousarvio) (s/maybe {:talousarvio TalousarvioMuutos

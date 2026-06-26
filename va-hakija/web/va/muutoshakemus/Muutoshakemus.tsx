@@ -161,6 +161,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
             ? currentProjectEnd.toDate()
             : new Date(),
           sisaltomuutosPerustelut: '',
+          yhteishankeOsapuoliPerustelut: '',
           kayttoajanPidennysPerustelut: '',
           taloudenKayttosuunnitelmanPerustelut: '',
           paivitanYhteishankkeenOsapuoltenYhteystietoja: false,
@@ -329,13 +330,11 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
                         f={f}
                         originalOrganizations={state.yhteishankeOrganizations || []}
                       />
-                      {!f.values.haenSisaltomuutosta && (
-                        <PerustelutTextArea
-                          f={f}
-                          name="sisaltomuutosPerustelut"
-                          title={t.sisaltomuutos.title}
-                        />
-                      )}
+                      <PerustelutTextArea
+                        f={f}
+                        name="yhteishankeOsapuoliPerustelut"
+                        title={t.sisaltomuutos.yhteishankeOsapuoliPerustelutTitle}
+                      />
                     </MuutoshakemusFormSection>
                   )}
                 <MuutoshakemusFormSection
