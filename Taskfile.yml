@@ -12,3 +12,15 @@ tasks:
   dev:
     desc: Run local environment
     cmd: ./start-local-env.sh
+  setup:hakemus:
+    desc: Seed a published avustushaku + open application form, print links for manual testing
+    cmd: ./scripts/setup-manual-test.sh hakemus
+  setup:muutoshakemus:
+    desc: Seed an accepted hakemus with päätös sent + muutoshakemus link, print links
+    cmd: ./scripts/setup-manual-test.sh muutoshakemus
+  setup:yhteishanke-muutoshakemus:
+    desc: Seed an accepted yhteishanke hakemus ready for osapuolimuutos, print links
+    cmd: ./scripts/setup-manual-test.sh yhteishanke-muutoshakemus
+  setup:paatos:
+    desc: Seed an accepted haku with päätös + submitted loppuselvitys, print links
+    cmd: ./scripts/setup-manual-test.sh paatos

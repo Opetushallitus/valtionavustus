@@ -7,7 +7,10 @@ import loppuselvitysWithEmail from '../selvitysForms/loppuselvitys-with-email.js
 import {
   waitUntilMinEmails,
   getLoppuselvitysSubmittedNotificationEmails,
+  getLinkToPaatosFromEmails,
 } from '../../../utils/emails'
+import { VIRKAILIJA_URL } from '../../../utils/constants'
+import { isSetupScenario, printSetupLinks } from '../../../utils/setupLinks'
 
 const emailFieldTest = test.extend({
   loppuselvitysForm: JSON.stringify(loppuselvitysWithEmail),
@@ -17,7 +20,23 @@ const emailFieldTest = test.extend({
 emailFieldTest(
   'Loppuselvityksen hyväksymis sähköposti autotäydentää sähköpostin vastaanottajan loppuselvitys formista',
 
-  async ({ page, acceptedHakemus, asiatarkastus: { asiatarkastettu } }) => {
+  async ({
+    page,
+    avustushakuID,
+    acceptedHakemus,
+    asiatarkastus: { asiatarkastettu },
+    loppuselvitysSubmitted,
+  }) => {
+    // `task setup:paatos` — accepted haku with päätös sent + submitted loppuselvitys.
+    if (isSetupScenario('paatos')) {
+      const linkToPaatos = await getLinkToPaatosFromEmails(acceptedHakemus.hakemusID)
+      printSetupLinks('paatos', {
+        'Päätös (hakija)': linkToPaatos,
+        'Loppuselvitys (hakija)': loppuselvitysSubmitted.loppuselvitysFormUrl,
+        'Loppuselvitys (virkailija)': `${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${acceptedHakemus.hakemusID}/loppuselvitys/`,
+      })
+      return
+    }
     expect(asiatarkastettu)
     let emailSendApiCalled = 0
     const loppuselvitysPage = LoppuselvitysPage(page)

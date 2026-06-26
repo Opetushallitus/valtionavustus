@@ -10,8 +10,11 @@ import { PaatosPage } from '../../pages/virkailija/hakujen-hallinta/PaatosPage'
 import {
   getAvustushakuEmails,
   getHakemusTokenAndRegisterNumber,
+  getLinkToMuutoshakemusFromSentEmails,
   parseMuutoshakemusPaatosFromEmails,
 } from '../../utils/emails'
+import { VIRKAILIJA_URL } from '../../utils/constants'
+import { isSetupScenario, printSetupLinks } from '../../utils/setupLinks'
 
 const otherOrganization = (page: Page, index: number) => {
   const indexStartsFromOne = index + 1
@@ -128,6 +131,17 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     await paatosPage.sendPaatos()
     registerNumber = (await getHakemusTokenAndRegisterNumber(hakemusID))['register-number']
   })
+
+  // `task setup:yhteishanke-muutoshakemus` — accepted yhteishanke with päätös sent,
+  // muutoshakemus/osapuolimuutos form ready to test.
+  if (isSetupScenario('yhteishanke-muutoshakemus')) {
+    const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(hakemusID)
+    printSetupLinks('yhteishanke-muutoshakemus', {
+      'Muutoshakemus (hakija)': linkToMuutoshakemus,
+      'Arviointi (virkailija)': `${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/`,
+    })
+    return
+  }
 
   await test.step('verify yhteishanke paatos email body contains updated avustushaku label', async () => {
     let emails: Awaited<ReturnType<typeof getAvustushakuEmails>> = []
