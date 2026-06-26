@@ -18,6 +18,7 @@ import { MuutoshakemusValues } from '../../utils/types'
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusPage'
 import { randomString } from '../../utils/random'
+import { setupBreakpoint } from '../../utils/setupLinks'
 import * as xlsx from 'xlsx'
 
 const sendMuutoshakemuksiaKasittelemattaNotifications = (request: APIRequestContext) =>
@@ -60,6 +61,15 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
   hakuProps,
   answers,
 }) => {
+  // `task setup:muutoshakemus` — accepted hakemus with päätös sent, muutoshakemus link ready.
+  if (
+    setupBreakpoint('muutoshakemus', {
+      'Muutoshakemus (hakija)': `${HAKIJA_URL}/muutoshakemus?lang=fi&user-key=${userKey}&avustushaku-id=${avustushakuID}`,
+      'Arviointi (virkailija)': `${VIRKAILIJA_URL}/avustushaku/${avustushakuID}/hakemus/${hakemusID}/muutoshakemukset/`,
+    })
+  )
+    return
+
   const hakemustenArviointiPage = new HakemustenArviointiPage(page)
   await test.step('expect excel to contain original info', async () => {
     await hakemustenArviointiPage.navigate(avustushakuID)
