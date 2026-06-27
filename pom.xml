@@ -402,7 +402,7 @@
     <dependency>
       <groupId>cider</groupId>
       <artifactId>cider-nrepl</artifactId>
-      <version>0.59.0</version>
+      <version>0.60.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
