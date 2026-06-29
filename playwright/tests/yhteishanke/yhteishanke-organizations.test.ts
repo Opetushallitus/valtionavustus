@@ -54,15 +54,23 @@ async function expectYhteishankeEmails(
   }
 }
 
-// Asserts no emails of this type exist yet. Call this only after a later
-// email (e.g. the -submitted mail) has been confirmed via expectYhteishankeEmails,
-// which guarantees earlier async sends have flushed their email_event rows.
-async function expectNoYhteishankeEmails(avustushakuID: number, emailType: string) {
-  const emails = await getAvustushakuEmails(avustushakuID, emailType)
-  expect(
-    emails,
-    `No ${emailType} emails should be sent before the selvitys is approved`
-  ).toHaveLength(0)
+// Polls until `confirmedType` (sent by the same flow) has flushed, then asserts
+// that at that point no `absentType` email has been sent.
+async function expectNoYhteishankeEmails(
+  avustushakuID: number,
+  absentType: string,
+  confirmedType: string,
+  expectedConfirmed: number
+) {
+  await expect
+    .poll(async () => (await getAvustushakuEmails(avustushakuID, confirmedType)).length, {
+      timeout: 30_000,
+      message: `Waiting for ${confirmedType} emails to flush`,
+    })
+    .toBeGreaterThanOrEqual(expectedConfirmed)
+
+  const emails = await getAvustushakuEmails(avustushakuID, absentType)
+  expect(emails, `No ${absentType} emails should be sent before ${confirmedType}`).toHaveLength(0)
 }
 
 const swedishYhteishankeTest = test.extend<{ answers: Answers }>({
@@ -239,7 +247,12 @@ swedishYhteishankeTest(
         ]
       )
 
-      await expectNoYhteishankeEmails(avustushakuID, 'yhteishanke-valiselvitys-processed')
+      await expectNoYhteishankeEmails(
+        avustushakuID,
+        'yhteishanke-valiselvitys-processed',
+        'yhteishanke-valiselvitys-submitted',
+        2
+      )
     })
 
     await test.step('process väliselvitys and verify swedish emails', async () => {
@@ -332,7 +345,6 @@ swedishYhteishankeTest(
       const loppuselvitysPage = await hakujenHallintaPage.navigateToLoppuselvitys(avustushakuID)
 
       await loppuselvitysPage.sendLoppuselvitys()
-      await expectNoYhteishankeEmails(avustushakuID, 'yhteishanke-loppuselvitys-processed')
 
       await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
       const loppuselvitysFormUrl = await loppuselvitysPage.getSelvitysFormUrl()
@@ -352,6 +364,13 @@ swedishYhteishankeTest(
           `Vi har tagit emot samprojektets slutredovisning.`,
           `Slutredovisningen kan ni läsa via den här länken:`,
         ]
+      )
+
+      await expectNoYhteishankeEmails(
+        avustushakuID,
+        'yhteishanke-loppuselvitys-processed',
+        'yhteishanke-loppuselvitys-submitted',
+        2
       )
     })
 
@@ -507,7 +526,6 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
     const valiselvitysPage = await hakujenHallintaPage.navigateToValiselvitys(avustushakuID)
 
     await valiselvitysPage.sendValiselvitys()
-    await expectNoYhteishankeEmails(avustushakuID, 'yhteishanke-valiselvitys-processed')
 
     await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, hakemusID)
     const valiselvitysFormUrl = await valiselvitysPage.linkToHakemus.getAttribute('href')
@@ -526,6 +544,13 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
       ['eka@ensimmainen.fi', 'toka@toinen.fi'],
       [`Automaattinen viesti: Yhteishankkeen ${registerNumber} väliselvitys on vastaanotettu`],
       [`Valtionavustus: ${avustushakuName}`]
+    )
+
+    await expectNoYhteishankeEmails(
+      avustushakuID,
+      'yhteishanke-valiselvitys-processed',
+      'yhteishanke-valiselvitys-submitted',
+      2
     )
   })
 
@@ -621,7 +646,12 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
       [`Valtionavustus: ${avustushakuName}`]
     )
 
-    await expectNoYhteishankeEmails(avustushakuID, 'yhteishanke-loppuselvitys-processed')
+    await expectNoYhteishankeEmails(
+      avustushakuID,
+      'yhteishanke-loppuselvitys-processed',
+      'yhteishanke-loppuselvitys-submitted',
+      2
+    )
   })
 
   await test.step('process loppuselvitys and verify emails', async () => {
