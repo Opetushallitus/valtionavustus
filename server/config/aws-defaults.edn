@@ -66,4 +66,4 @@
                                                :interval-minutes 15}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
  :test-apis                                   {:enabled? false}
- :otantatarkastus                             {:satunnaisotanta-prosentti 20}}
+ :otantatarkastus                             {:satunnaisotanta-prosentti 10}}
