@@ -38,9 +38,9 @@
     "yup": "1.7.1"
   },
   "devDependencies": {
-    "@babel/core": "7.29.7",
-    "@babel/preset-env": "7.29.7",
-    "@babel/preset-react": "7.29.7",
+    "@babel/core": "8.0.1",
+    "@babel/preset-env": "8.0.2",
+    "@babel/preset-react": "8.0.1",
     "@playwright/test": "1.61.1",
     "@types/big.js": "7.0.0",
     "@types/chai": "5.2.3",
