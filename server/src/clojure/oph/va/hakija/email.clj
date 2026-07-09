@@ -90,7 +90,7 @@
         lang-str (or (clojure.core/name lang) "fi")]
     (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?" selvitys-type "=" selvitys-user-key "&lang=" lang-str "&preview=true")))
 
-(defn send-selvitys-submitted-message! [avustushaku-id selvitys-user-key selvitys-type lang hakemus-id hakemus-name register-number to is-jotpa business-id]
+(defn send-selvitys-submitted-message! [avustushaku-id selvitys-user-key selvitys-type lang hakemus-id hakemus-name register-number to is-jotpa]
   (log/info "Sending notification for a submitted selvitys of type " selvitys-type)
   (let [type (if (= selvitys-type "loppuselvitys")
                :loppuselvitys-submitted-notification
@@ -110,8 +110,7 @@
      (email/message lang type to subject body)
      {:hakemus-id     hakemus-id
       :avustushaku-id avustushaku-id
-      :from           (if is-jotpa (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
-      :business-id    business-id})))
+      :from           (if is-jotpa (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))})))
 
 (defn send-new-jotpa-hakemus-message! [lang to avustushaku-id avustushaku user-key start-date end-date business-id]
   (let [start-date-string (datetime/date-string start-date)
@@ -254,11 +253,10 @@
     (log/info "Url would be: " url)
     (email/enqueue-message-to-be-send msg body)))
 
-(defn send-loppuselvitys-change-request-received-message-to-hakija! [to parent-hakemus-id lang register-number project-name email-of-virkailija virkailija-first-name virkailija-last-name is-jotpa-hakemus? business-id]
+(defn send-loppuselvitys-change-request-received-message-to-hakija! [to parent-hakemus-id lang register-number project-name email-of-virkailija virkailija-first-name virkailija-last-name is-jotpa-hakemus?]
   (let [subject (format "%s %s %s" (get-in mail-titles [:loppuselvitys-change-request-response-received lang]) register-number project-name)
         signature (email-signature-block lang)
         from            (if is-jotpa-hakemus? (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
-        enriched-to (email/get-recipients-with-org-email business-id to)
         msg {:operation :send
              :email-type :loppuselvitys-change-request-response-received
              :lang lang
@@ -267,7 +265,7 @@
              :from from
              :sender (-> email/smtp-config :sender)
              :subject subject
-             :to enriched-to
+             :to to
              :project-name project-name
              :register-number register-number
              :email-of-virkailija email-of-virkailija

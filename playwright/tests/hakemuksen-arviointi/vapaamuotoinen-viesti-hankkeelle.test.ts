@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test'
 
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
+import { setHakemusOrganization } from '../../utils/hakemus'
 
 // Assumes that the hakemus is first one in avustushaku, so it gets asianumero 1
 const message = (content: string, hakuAsianumero: string) =>
@@ -115,5 +116,54 @@ muutoshakemusTest(
       await expect(messageRow.recipients(row)).toContainText(extraRecipient)
       await expect(messageRow.subject(row)).toHaveText(message2.subject)
     })
+  }
+)
+
+muutoshakemusTest(
+  'Viesti hankkeelle -lomake lisää hakemukselle tallennetun osoitteen ja näyttää varoituksen kun organisaatiopalvelusta ei saada sähköpostia',
+  async ({ page, answers, avustushakuID, acceptedHakemus }) => {
+    await page.route('**/organisation-email', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ email: null }),
+      })
+    )
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    const viestiTab = await hakemustenArviointiPage.navigateToViestiHankkeelleTab(
+      avustushakuID,
+      acceptedHakemus.hakemusID
+    )
+
+    await expect(page.getByTestId('viestihankkeelle-recipients-warning')).toBeVisible()
+    await expect(page.getByTestId('viestihankkeelle-submit')).toBeEnabled()
+    const { addressInputs } = viestiTab.locators.sendMessageForm.recipients
+    await expect(addressInputs).toHaveCount(2)
+    await expect(addressInputs.nth(0)).toHaveValue('hakija-1424884@oph.fi')
+    await expect(addressInputs.nth(1)).toHaveValue(answers.contactPersonEmail)
+  }
+)
+
+muutoshakemusTest(
+  'Viesti hankkeelle -lomake näyttää varoituksen eikä lisää vastaanottajaa kun organisaatiolle ei ole tallennettu sähköpostia',
+  async ({ page, request, answers, avustushakuID, acceptedHakemus }) => {
+    await setHakemusOrganization(request, acceptedHakemus.hakemusID, { orgEmail: '' })
+    await page.route('**/organisation-email', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ email: null }),
+      })
+    )
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    const viestiTab = await hakemustenArviointiPage.navigateToViestiHankkeelleTab(
+      avustushakuID,
+      acceptedHakemus.hakemusID
+    )
+
+    await expect(page.getByTestId('viestihankkeelle-recipients-warning')).toBeVisible()
+    const { addressInputs } = viestiTab.locators.sendMessageForm.recipients
+    await expect(addressInputs).toHaveCount(1)
+    await expect(addressInputs.nth(0)).toHaveValue(answers.contactPersonEmail)
   }
 )

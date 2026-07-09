@@ -1,21 +1,11 @@
 (ns oph.va.virkailija.cas
   (:require [clojure.data.json :as json]
             [oph.common.caller-id :as caller-id]
+            [oph.common.retry :as retry]
             [oph.soresu.common.config :refer [config]]
             [org.httpkit.client :as hk-client]
             [clojure.tools.logging :as log]
             [clojure.xml :as xml]))
-
-(defn try-n-times [f n]
-  (try
-    (f)
-    (catch Throwable t
-      (if (pos? n)
-        (try-n-times f (dec n))
-        (throw t)))))
-
-(defmacro try3 [& body]
-  `(try-n-times (fn [] ~@body) 3))
 
 (defn get-tgt []
   (let [opintopolku-url (-> config :opintopolku :url)
@@ -60,4 +50,4 @@
       parsed-ticket)))
 
 (defn validate-service-ticket [^String service ^String cas-ticket]
-  (try3 (validateServiceTicketWithVirkailijaUsername service cas-ticket)))
+  (retry/try3 (validateServiceTicketWithVirkailijaUsername service cas-ticket)))

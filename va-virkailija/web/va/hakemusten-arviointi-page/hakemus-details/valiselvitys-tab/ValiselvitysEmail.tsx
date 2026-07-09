@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ClassNames from 'classnames'
 
 import HttpUtil from 'soresu-form/web/HttpUtil'
@@ -13,6 +13,14 @@ import { UserInfo } from '../../../types'
 import { useHakemustenArviointiDispatch } from '../../arviointiStore'
 import { refreshHakemus } from '../../arviointiReducer'
 import { initialRecipientEmails } from '../emailRecipients'
+import {
+  fetchCurrentOrgEmail,
+  getStoredOrgEmail,
+  getValiselvitysOrgEmail,
+  ORG_EMAIL_FALLBACK_WARNING,
+  ORG_EMAIL_MISSING_WARNING,
+  resolveOrgEmailFallback,
+} from '../useCurrentOrganisationEmail'
 
 interface ValiselvitysEmailProps {
   avustushaku: Avustushaku
@@ -64,6 +72,41 @@ export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
   const [recipientEmails, setRecipientEmails] = useState<Email[]>(
     initialRecipientEmails(hakemus, hakemus.normalizedData).map(makeFormRecipientEmail)
   )
+  const [orgEmailState, setOrgEmailState] = useState<{
+    loading: boolean
+    email: string | undefined
+    fallback: boolean
+  }>({ loading: true, email: undefined, fallback: false })
+  const fallbackOrgEmail = resolveOrgEmailFallback(
+    getValiselvitysOrgEmail(hakemus),
+    getStoredOrgEmail(hakemus)
+  )
+  useEffect(() => {
+    let cancelled = false
+    setOrgEmailState({ loading: true, email: undefined, fallback: false })
+    const applyResult = (liveEmail: string | undefined) => {
+      if (cancelled) return
+      const orgEmail = liveEmail ?? fallbackOrgEmail
+      if (orgEmail) {
+        setRecipientEmails((prev) =>
+          prev.some((e) => e.value === orgEmail)
+            ? prev
+            : [makeFormRecipientEmail(orgEmail), ...prev]
+        )
+      }
+      setOrgEmailState({
+        loading: false,
+        email: orgEmail,
+        fallback: !liveEmail && !!fallbackOrgEmail,
+      })
+    }
+    fetchCurrentOrgEmail(avustushaku.id, hakemus.id)
+      .then(applyResult)
+      .catch(() => applyResult(undefined))
+    return () => {
+      cancelled = true
+    }
+  }, [avustushaku.id, hakemus.id, fallbackOrgEmail])
 
   function onRecipientEmailChange(index: number, event: React.ChangeEvent<HTMLInputElement>) {
     const value = event.target.value
@@ -104,6 +147,9 @@ export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
     ? 'Lähetetty väliselvityksen hyväksyntä'
     : `Lähetä väliselvityksen hyväksyntä${lang === 'sv' ? ' ruotsiksi' : ''}`
   const areAllEmailsValid = !recipientEmails.some((email) => !email.isValid)
+  const orgEmailPending = orgEmailState.loading
+  const orgEmailMissing = !orgEmailState.loading && !orgEmailState.email
+  const orgEmailFallback = !orgEmailState.loading && orgEmailState.fallback
 
   return (
     <div data-test-id="selvitys-email">
@@ -136,26 +182,36 @@ export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
                   ))}
                 </a>
               ) : (
-                recipientEmails.concat(makeEmptyRecipientEmail()).map((email, index) => (
-                  <div key={index} className="selvitys-email-header__value-input-container">
-                    <input
-                      type="text"
-                      className={ClassNames('selvitys-email-header__value-input', {
-                        'selvitys-email-header__value-input--error': !email.isValid,
-                      })}
-                      value={email.value}
-                      onChange={(e) => onRecipientEmailChange(index, e)}
-                    />
-                    {index < recipientEmails.length && (
-                      <button
-                        type="button"
-                        className="selvitys-email-header__remove-value-input-button soresu-remove"
-                        tabIndex={-1}
-                        onClick={() => onRecipientEmailRemove(index)}
+                <>
+                  {recipientEmails.concat(makeEmptyRecipientEmail()).map((email, index) => (
+                    <div key={index} className="selvitys-email-header__value-input-container">
+                      <input
+                        type="text"
+                        className={ClassNames('selvitys-email-header__value-input', {
+                          'selvitys-email-header__value-input--error': !email.isValid,
+                        })}
+                        value={email.value}
+                        onChange={(e) => onRecipientEmailChange(index, e)}
                       />
-                    )}
-                  </div>
-                ))
+                      {index < recipientEmails.length && (
+                        <button
+                          type="button"
+                          className="selvitys-email-header__remove-value-input-button soresu-remove"
+                          tabIndex={-1}
+                          onClick={() => onRecipientEmailRemove(index)}
+                        />
+                      )}
+                    </div>
+                  ))}
+                  {(orgEmailFallback || orgEmailMissing) && (
+                    <div
+                      data-test-id="selvitys-email-org-email-warning"
+                      className="selvitys-email-header__org-email-warning"
+                    >
+                      {orgEmailFallback ? ORG_EMAIL_FALLBACK_WARNING : ORG_EMAIL_MISSING_WARNING}
+                    </div>
+                  )}
+                </>
               )}
             </td>
           </tr>
@@ -191,7 +247,7 @@ export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
           <button
             id="submit-selvitys"
             onClick={onSendMessage}
-            disabled={!recipientEmails.length || !areAllEmailsValid}
+            disabled={!recipientEmails.length || !areAllEmailsValid || orgEmailPending}
           >
             Lähetä viesti
           </button>

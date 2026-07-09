@@ -206,4 +206,28 @@ test.describe.parallel('Otantatarkastus', () => {
     await expect(loppuselvitysPage.locators.asiatarkastettu).toBeVisible()
     await expect(loppuselvitysPage.locators.taloustarkastus.accept).toBeVisible()
   })
+
+  test('otannan-ulkopuolella: hyväksymislomake näyttää varoituksen kun organisaation sähköpostia ei saada', async ({
+    page,
+    request,
+    avustushakuID,
+    acceptedHakemus: { hakemusID },
+    loppuselvitysSubmitted,
+  }) => {
+    expect(loppuselvitysSubmitted).toBeDefined()
+    await setOtantapolku(request, hakemusID, 'otannan-ulkopuolella')
+    await page.route('**/organisation-email', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ email: null }),
+      })
+    )
+    const loppuselvitysPage = LoppuselvitysPage(page)
+    await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, hakemusID)
+    await loppuselvitysPage.checkAllChecklistItems()
+
+    await expect(loppuselvitysPage.locators.otantatarkastus.approvalEmailForm).toBeVisible()
+    await expect(page.getByTestId('asiatarkastus-hyvaksynta-recipients-warning')).toBeVisible()
+  })
 })

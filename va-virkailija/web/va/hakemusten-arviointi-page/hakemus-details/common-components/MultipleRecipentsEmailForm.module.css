@@ -90,3 +90,12 @@ pre.emailFixedContent {
   color: var(--bright-red);
   padding-left: 1rem;
 }
+
+.recipientsWarning {
+  margin: 1rem 0;
+  padding: 8px 12px;
+  color: #7a5c00;
+  background: #fff6e0;
+  border: 1px solid #e6c860;
+  border-radius: 4px;
+}

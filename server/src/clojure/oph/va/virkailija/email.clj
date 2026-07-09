@@ -654,7 +654,6 @@
         selvitysdate-unformatted ((keyword (str selvitys-type "date")) avustushaku)
         selvitysdate (if (nil? selvitysdate-unformatted) "" (datetime/java8-date-string selvitysdate-unformatted))
         signature (email-signature-block lang)
-        enriched-to (email/get-recipients-with-org-email (:business_id hakemus) to)
         msg {:operation :send
              :hakemus-id (:id hakemus)
              :avustushaku-id (:id avustushaku)
@@ -667,7 +666,7 @@
              :selvitysdate selvitysdate
              :presenter-name (:name presenter)
              :avustushaku-name avustushaku-name
-             :to enriched-to
+             :to to
              :bcc (when-not disable-selvitysmail-to-virkailija (:email identity))
              :url url
              :register-number (:register_number hakemus)

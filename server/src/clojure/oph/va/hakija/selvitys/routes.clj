@@ -1,6 +1,8 @@
 (ns oph.va.hakija.selvitys.routes
-  (:require [clojure.tools.logging :as log]
+  (:require [clojure.string :as string]
+            [clojure.tools.logging :as log]
             [compojure.api.sweet :as compojure-api]
+            [oph.common.email :as common-email]
             [oph.soresu.common.db :refer [query with-tx]]
             [oph.soresu.form.db :as form-db]
             [oph.soresu.form.routes
@@ -155,26 +157,32 @@
         rows (query sql [hakemus-id])]
     (first rows)))
 
-(defn- get-hakemus-contact-emails [hakemus-id]
+(defn- get-hakemus-contact-emails [hakemus-id business-id selvitys-type]
   (let [normalized-hakemus (va-db/get-normalized-hakemus-by-id hakemus-id)
-        ;; Hakemus emails
         contact-email (:contact-email normalized-hakemus)
         trusted-contact-email (:trusted-contact-email normalized-hakemus)
         answer-email (find-contact-person-email-from-last-hakemus-version hakemus-id)
-        organization-email (find-organization-email-from-last-hakemus-version hakemus-id)
-        ;; Selvitys emails from normalized_hakemus
         valiselvitys-contact (:valiselvitys-contact-email normalized-hakemus)
-        valiselvitys-org (:valiselvitys-organization-email normalized-hakemus)
         loppuselvitys-contact (:loppuselvitys-contact-email normalized-hakemus)
-        loppuselvitys-org (:loppuselvitys-organization-email normalized-hakemus)
         primary-contact-email (or contact-email answer-email)
+        stored-organization-email (find-organization-email-from-last-hakemus-version hakemus-id)
+        selvitys-org-emails (case selvitys-type
+                              "valiselvitys"  [(:valiselvitys-organization-email normalized-hakemus)]
+                              "loppuselvitys" [(:loppuselvitys-organization-email normalized-hakemus)
+                                               (:valiselvitys-organization-email normalized-hakemus)]
+                              [])
+        org-email (first (remove string/blank?
+                                 (concat [(common-email/get-current-org-email business-id)]
+                                         selvitys-org-emails
+                                         [stored-organization-email])))
         all-emails (remove nil? (concat [primary-contact-email
                                          trusted-contact-email
-                                         organization-email
                                          valiselvitys-contact
-                                         valiselvitys-org
                                          loppuselvitys-contact
-                                         loppuselvitys-org]))]
+                                         org-email]))]
+    (when (and (not (string/blank? business-id)) (nil? org-email))
+      (log/warn "No organisation email resolved for business-id" business-id
+                "hakemus-id" hakemus-id "- notification not sent to organisation email"))
     (distinct all-emails)))
 
 (defn- on-loppuselvitys-change-request-response [avustushaku-id selvitys-user-key base-version answers]
@@ -212,7 +220,7 @@
               register-number (-> hakemus :register_number)
               parent-hakemus (va-db/get-hakemus-by-id parent-hakemus-id)
               project-name (-> parent-hakemus :project-name)
-              business-id (:business_id parent-hakemus)]
+              business-id (:business-id parent-hakemus)]
 
           (va-db/update-loppuselvitys-status id "submitted")
           (with-tx (fn [tx]
@@ -222,7 +230,7 @@
                                                                                        avustushaku-id
                                                                                        avustushaku-name-fi
                                                                                        parent-hakemus-id)
-          (va-email/send-loppuselvitys-change-request-received-message-to-hakija! (get-hakemus-contact-emails parent-hakemus-id)
+          (va-email/send-loppuselvitys-change-request-received-message-to-hakija! (get-hakemus-contact-emails parent-hakemus-id business-id "loppuselvitys")
                                                                                   parent-hakemus-id
                                                                                   lang
                                                                                   register-number
@@ -230,8 +238,7 @@
                                                                                   email-of-virkailija
                                                                                   virkailija-first-name
                                                                                   virkailija-last-name
-                                                                                  is-jotpa-avustushaku
-                                                                                  business-id)
+                                                                                  is-jotpa-avustushaku)
           (handlers/hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (handlers/hakemus-conflict-response hakemus))
       (http/bad-request! validation))))
@@ -272,7 +279,7 @@
               parent-hakemus (va-db/get-hakemus-by-id parent_id)
               hakemus-name (:project-name parent-hakemus)
               register-number (:register-number parent-hakemus)
-              business-id (:business_id parent-hakemus)
+              business-id (:business-id parent-hakemus)
               is-jotpa (is-jotpa-avustushaku avustushaku)]
           (with-tx (fn [tx]
                      (case selvitys-type
@@ -291,7 +298,7 @@
                          (va-db/update-normalized-hakemus-valiselvitys-emails! tx parent_id answers))))
             (catch Exception e
               (log/warn {:error (ex-message e)})))
-          (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id hakemus-name register-number (get-hakemus-contact-emails parent_id) is-jotpa business-id)
+          (va-email/send-selvitys-submitted-message! haku-id selvitys-user-key selvitys-type lang parent_id hakemus-name register-number (get-hakemus-contact-emails parent_id business-id selvitys-type) is-jotpa)
           (va-email/send-yhteishanke-selvitys-submitted! haku-id avustushaku selvitys-user-key selvitys-type lang parent-hakemus hakemus-name register-number)
           (handlers/hakemus-ok-response submitted-hakemus saved-submission validation nil))
         (handlers/hakemus-conflict-response hakemus))

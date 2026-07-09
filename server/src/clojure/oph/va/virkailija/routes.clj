@@ -284,6 +284,35 @@
      [(:otantapolku body) (:hakemus-id body)])
     (ok {:ok "ok"}))
 
+  (compojure-api/POST "/set-hakemus-organization" []
+    :body [body {:hakemus-id Long
+                 (s/optional-key :business-id) (s/maybe s/Str)
+                 (s/optional-key :org-email) s/Str}]
+    :return {:ok s/Str}
+    (when (contains? body :business-id)
+      (execute!
+       "UPDATE hakija.hakemukset SET business_id = ?
+        WHERE id = ? AND version_closed IS NULL"
+       [(:business-id body) (:hakemus-id body)]))
+    (when (contains? body :org-email)
+      (execute!
+       "UPDATE hakija.form_submissions fs
+        SET answers = jsonb_set(
+          fs.answers, '{value}',
+          (SELECT jsonb_agg(
+             CASE WHEN elem->>'key' = 'organization-email'
+                  THEN jsonb_set(elem, '{value}', to_jsonb(?::text))
+                  ELSE elem
+             END)
+           FROM jsonb_array_elements(fs.answers->'value') AS elem))
+        FROM hakija.hakemukset h
+        WHERE h.form_submission_id = fs.id
+          AND h.form_submission_version = fs.version
+          AND h.id = ?
+          AND h.version_closed IS NULL"
+       [(:org-email body) (:hakemus-id body)]))
+    (ok {:ok "ok"}))
+
   (compojure-api/POST "/send-loppuselvitys-taloustarkastamatta-notifications" []
     :return {:ok s/Str}
     (virkailija-notifications/send-loppuselvitys-taloustarkastamatta-notifications)

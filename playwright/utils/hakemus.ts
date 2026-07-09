@@ -1,5 +1,17 @@
-import { Page } from '@playwright/test'
-import { HAKIJA_URL } from './constants'
+import { APIRequestContext, expect, Page } from '@playwright/test'
+import { HAKIJA_URL, VIRKAILIJA_URL } from './constants'
+
+export async function setHakemusOrganization(
+  request: APIRequestContext,
+  hakemusID: number,
+  fields: { businessId?: string | null; orgEmail?: string }
+) {
+  const data: Record<string, unknown> = { 'hakemus-id': hakemusID }
+  if ('businessId' in fields) data['business-id'] = fields.businessId
+  if ('orgEmail' in fields) data['org-email'] = fields.orgEmail
+  const res = await request.post(`${VIRKAILIJA_URL}/api/test/set-hakemus-organization`, { data })
+  expect(res.ok()).toBeTruthy()
+}
 
 export async function getNormalizedHakemus(
   page: Page,

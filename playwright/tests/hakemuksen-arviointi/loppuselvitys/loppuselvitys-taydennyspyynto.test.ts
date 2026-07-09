@@ -3,17 +3,18 @@ import { expect } from '@playwright/test'
 import { selvitysTest as test } from '../../../fixtures/selvitysTest'
 import { HakemustenArviointiPage } from '../../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import {
+  getHakemusTokenAndRegisterNumber,
   getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails,
   getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails,
-  getLoppuselvitysTaydennysReceivedHakijaNotificationEmails,
   getLoppuselvitysTaydennysReceivedEmails,
-  waitUntilMinEmails,
-  getHakemusTokenAndRegisterNumber,
+  getLoppuselvitysTaydennysReceivedHakijaNotificationEmails,
   getSelvitysEmailsWithLoppuselvitysSubject,
+  waitUntilMinEmails,
 } from '../../../utils/emails'
 import { HakijaSelvitysPage } from '../../../pages/hakija/hakijaSelvitysPage'
 import { navigate } from '../../../utils/navigate'
-import { VIRKAILIJA_URL, swedishAnswers } from '../../../utils/constants'
+import { swedishAnswers, VIRKAILIJA_URL } from '../../../utils/constants'
+import { setHakemusOrganization } from '../../../utils/hakemus'
 import { Answers } from '../../../utils/types'
 import { expectIsFinnishOphEmail } from '../../../utils/email-signature'
 
@@ -175,17 +176,19 @@ test('can send taydennyspyynto for loppuselvitys', async ({
     await expect(formHeading).toBeHidden()
     await loppuselvitysPage.locators.asiatarkastus.taydennyspyynto.click()
     await expect(formHeading).toBeVisible()
-    const email1 = 'hakija-1424884@oph.fi'
+    const orgEmail = 'hakija-1424884@oph.fi'
     await expect(
       page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-receiver-0')
-    ).toHaveValue(email1)
-    const email2 = 'erkki.esimerkki@example.com'
+    ).toHaveValue(orgEmail)
+    const contactEmail = 'erkki.esimerkki@example.com'
     await expect(
       page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-receiver-1')
-    ).toHaveValue(email2)
+    ).toHaveValue(contactEmail)
     await page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-add-receiver').click()
-    const email3 = 'erkki.esimerkki2@example.com'
-    await page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-receiver-2').fill(email3)
+    const extraEmail = 'erkki.esimerkki2@example.com'
+    await page
+      .getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-receiver-2')
+      .fill(extraEmail)
     const subject = 'Täydennyspyyntö avustushaulle'
     await page
       .getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-email-subject')
@@ -196,7 +199,9 @@ test('can send taydennyspyynto for loppuselvitys', async ({
     await page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-submit').click()
     await expect(formHeading).toBeHidden()
     await page.getByTestId('open-email-0').click()
-    await expect(page.getByText(`Vastaanottajat${email1}, ${email2}, ${email3}`)).toBeVisible()
+    await expect(
+      page.getByText(`Vastaanottajat${orgEmail}, ${contactEmail}, ${extraEmail}`)
+    ).toBeVisible()
     await expect(page.getByText(`Aihe${subject}`)).toBeVisible()
     const emailsAfterSending = await waitUntilMinEmails(
       getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails,
@@ -298,14 +303,14 @@ Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avu
     await expect(formHeading).toBeHidden()
     await loppuselvitysPage.locators.taloustarkastus.taydennyspyynto.click()
     await expect(formHeading).toBeVisible()
-    const email1 = 'hakija-1424884@oph.fi'
+    const orgEmail = 'hakija-1424884@oph.fi'
     await expect(
       page.getByTestId('loppuselvitys-taydennyspyynto-taloustarkastus-receiver-0')
-    ).toHaveValue(email1)
-    const email2 = 'erkki.esimerkki@example.com'
+    ).toHaveValue(orgEmail)
+    const contactEmail = 'erkki.esimerkki@example.com'
     await expect(
       page.getByTestId('loppuselvitys-taydennyspyynto-taloustarkastus-receiver-1')
-    ).toHaveValue(email2)
+    ).toHaveValue(contactEmail)
     const subject = 'Täydennyspyyntö koskien avustushaun budjettia'
     await page
       .getByTestId('loppuselvitys-taydennyspyynto-taloustarkastus-email-subject')
@@ -316,7 +321,7 @@ Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avu
     await page.getByTestId('loppuselvitys-taydennyspyynto-taloustarkastus-submit').click()
     await expect(formHeading).toBeHidden()
     await page.getByTestId('open-email-0').nth(1).click()
-    await expect(page.getByText(`Vastaanottajat${email1}`)).toBeVisible()
+    await expect(page.getByText(`Vastaanottajat${orgEmail}, ${contactEmail}`)).toBeVisible()
     await expect(page.getByText(`Aihe${subject}`)).toBeVisible()
     const emailsAfter = await waitUntilMinEmails(
       getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails,
@@ -400,4 +405,91 @@ Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avu
     await hakemustenArviointiPage.navigate(avustushakuID)
     await expect(taydennykseenVastattu).toBeVisible()
   })
+})
+
+test('loppuselvityksen automaattiviesti käyttää org-servicen sähköpostia eikä hakemukselle tallennettua', async ({
+  page,
+  request,
+  avustushakuID,
+  acceptedHakemus: { hakemusID },
+  loppuselvitysSubmitted: { loppuselvitysFormUrl },
+}) => {
+  const staleOrgEmail = 'vanha-organisaatio@example.com'
+  const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+  const loppuselvitysPage = await hakemustenArviointiPage.navigateToHakemusArviointiLoppuselvitys(
+    avustushakuID,
+    hakemusID
+  )
+  await loppuselvitysPage.locators.asiatarkastus.taydennyspyynto.click()
+  await page
+    .getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-email-subject')
+    .fill('Täydennyspyyntö')
+  await page
+    .getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-email-content')
+    .fill('Tiedot puuttuvat')
+  await page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-submit').click()
+  await waitUntilMinEmails(getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails, 1, hakemusID)
+
+  // hakemukselle tallennettu org-sähköposti vanhentuu; org-service palauttaa yhä oikean
+  await setHakemusOrganization(request, hakemusID, { orgEmail: staleOrgEmail })
+
+  await navigate(page, loppuselvitysFormUrl)
+  const hakijaSelvitysPage = HakijaSelvitysPage(page)
+  await page
+    .locator('[id="project-description.project-description-1.goal"]')
+    .fill('Tavoite täydennetty')
+  await page.locator('[id="textArea-0"]').fill('Yhteenveto täydennetty')
+  await hakijaSelvitysPage.taydennysButton.click()
+  await expect(hakijaSelvitysPage.submitButton).toHaveText('Loppuselvitys lähetetty')
+
+  const emails = await waitUntilMinEmails(
+    getLoppuselvitysTaydennysReceivedHakijaNotificationEmails,
+    1,
+    hakemusID
+  )
+  const toAddress = emails[0]['to-address']
+  expect(toAddress).toContain('hakija-1424884@oph.fi')
+  expect(toAddress).not.toContain(staleOrgEmail)
+})
+
+test('loppuselvityksen automaattiviesti putoaa hakemukselle tallennettuun sähköpostiin kun org-service ei palauta osoitetta', async ({
+  page,
+  request,
+  avustushakuID,
+  acceptedHakemus: { hakemusID },
+  loppuselvitysSubmitted: { loppuselvitysFormUrl },
+}) => {
+  const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+  const loppuselvitysPage = await hakemustenArviointiPage.navigateToHakemusArviointiLoppuselvitys(
+    avustushakuID,
+    hakemusID
+  )
+  await loppuselvitysPage.locators.asiatarkastus.taydennyspyynto.click()
+  await page
+    .getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-email-subject')
+    .fill('Täydennyspyyntö')
+  await page
+    .getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-email-content')
+    .fill('Tiedot puuttuvat')
+  await page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-submit').click()
+  await waitUntilMinEmails(getLoppuselvitysTaydennyspyyntoAsiatarkastusEmails, 1, hakemusID)
+
+  // org-service ei tunnista tätä y-tunnusta -> viestin on pudottava tallennettuun osoitteeseen
+  await setHakemusOrganization(request, hakemusID, { businessId: '0000000-0' })
+
+  await navigate(page, loppuselvitysFormUrl)
+  const hakijaSelvitysPage = HakijaSelvitysPage(page)
+  await page
+    .locator('[id="project-description.project-description-1.goal"]')
+    .fill('Tavoite täydennetty')
+  await page.locator('[id="textArea-0"]').fill('Yhteenveto täydennetty')
+  await hakijaSelvitysPage.taydennysButton.click()
+  await expect(hakijaSelvitysPage.submitButton).toHaveText('Loppuselvitys lähetetty')
+
+  const emails = await waitUntilMinEmails(
+    getLoppuselvitysTaydennysReceivedHakijaNotificationEmails,
+    1,
+    hakemusID
+  )
+  expect(emails[0]['to-address']).toContain('hakija-1424884@oph.fi')
 })

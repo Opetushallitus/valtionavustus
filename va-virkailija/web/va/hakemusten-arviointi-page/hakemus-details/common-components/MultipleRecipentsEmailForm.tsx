@@ -42,9 +42,11 @@ type Props = {
   submitText: string
   formName: string
   disabled?: boolean
+  submitDisabled?: boolean
   disabledSubmitButton?: ReactElement
   cancelButton?: CancelButton
   errorText?: string
+  warning?: string
   preview?: boolean
 }
 
@@ -52,6 +54,7 @@ function MultipleRecipentEmailForm(
   {
     heading,
     disabled: disabledProp = false,
+    submitDisabled = false,
     email,
     onSubmit: onSubmitProp,
     setEmail,
@@ -60,6 +63,7 @@ function MultipleRecipentEmailForm(
     disabledSubmitButton,
     cancelButton: cancelButtonProp,
     errorText,
+    warning,
     preview,
   }: Props,
   ref: ForwardedRef<HTMLDivElement>
@@ -116,6 +120,11 @@ function MultipleRecipentEmailForm(
             setEmail={setEmail}
             formName={formName}
           />
+          {warning && (
+            <p data-test-id={`${formName}-recipients-warning`} className={styles.recipientsWarning}>
+              {warning}
+            </p>
+          )}
           <fieldset disabled={disabled}>
             <label htmlFor={subjectId}>Aihe</label>
             <input
@@ -138,6 +147,7 @@ function MultipleRecipentEmailForm(
         <SubmitContainer
           submitText={preview && !isPreviewing ? 'Esikatsele' : submitText}
           disabled={disabledProp}
+          submitDisabled={submitDisabled}
           disabledComponent={disabledSubmitButton}
           formName={formName}
           cancelButton={cancelButton}
@@ -151,6 +161,7 @@ function MultipleRecipentEmailForm(
 function SubmitContainer({
   submitText,
   disabled,
+  submitDisabled,
   formName,
   disabledComponent,
   cancelButton,
@@ -158,6 +169,7 @@ function SubmitContainer({
 }: {
   submitText: string
   disabled: boolean
+  submitDisabled: boolean
   formName: string
   disabledComponent?: ReactElement
   cancelButton?: CancelButton
@@ -172,7 +184,7 @@ function SubmitContainer({
         <div className={styles.formFooter}>
           <div>
             <button
-              disabled={disabled}
+              disabled={disabled || submitDisabled}
               data-test-id={`${formName}-submit`}
               type="submit"
               name={`submit-${formName}`}

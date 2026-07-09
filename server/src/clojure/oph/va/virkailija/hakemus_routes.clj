@@ -283,6 +283,14 @@
       (http/ok normalized-hakemus)
       (http/not-found)))
 
+  (compojure-api/GET "/organisation-email" []
+    :path-params [avustushaku-id :- Long, hakemus-id :- Long]
+    :return {:email (s/maybe s/Str)}
+    :summary "Get the organisation's current official email from organisaatiopalvelu"
+    (let [hakemus (hakija-api/get-hakemus hakemus-id)
+          business-id (:business_id hakemus)]
+      (http/ok {:email (common-email/get-current-org-email business-id)})))
+
   (compojure-api/GET "/change-requests" []
     :path-params [avustushaku-id :- Long, hakemus-id :- Long]
     :return [virkailija-schema/Hakemus]

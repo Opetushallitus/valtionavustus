@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test'
+import { expect, Page } from '@playwright/test'
 
 import { HakemustenArviointiPage } from '../../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { selvitysTest as test } from '../../../fixtures/selvitysTest'
@@ -11,6 +11,14 @@ import {
 } from '../../../utils/emails'
 import { VIRKAILIJA_URL } from '../../../utils/constants'
 import { isSetupScenario, printSetupLinks } from '../../../utils/setupLinks'
+
+const CURRENT_ORG_EMAIL = 'hakija-1424884@oph.fi'
+
+function taloustarkastusReceiverValues(page: Page) {
+  return page
+    .locator('input[data-test-id^="taloustarkastus-receiver-"]')
+    .evaluateAll((inputs) => (inputs as HTMLInputElement[]).map((input) => input.value))
+}
 
 const emailFieldTest = test.extend({
   loppuselvitysForm: JSON.stringify(loppuselvitysWithEmail),
@@ -46,6 +54,9 @@ emailFieldTest(
       route.continue()
     })
     await loppuselvitysPage.locators.taloustarkastus.accept.click()
+    await expect
+      .poll(() => taloustarkastusReceiverValues(page))
+      .toEqual([CURRENT_ORG_EMAIL, 'LSyhteyshenkilo@example.com', 'erkki.esimerkki@example.com'])
     await loppuselvitysPage.locators.taloustarkastus.confirmAcceptance.click()
     await expect(loppuselvitysPage.locators.taloustarkastus.confirmAcceptance).toBeHidden()
     await expect(loppuselvitysPage.locators.taloustarkastettu).toBeVisible()
@@ -96,6 +107,9 @@ test('virkailija can accept loppuselvitys', async ({
       route.continue()
     })
     await loppuselvitysPage.locators.taloustarkastus.accept.click()
+    await expect
+      .poll(() => taloustarkastusReceiverValues(page))
+      .toEqual([CURRENT_ORG_EMAIL, 'erkki.esimerkki@example.com'])
     await page.click('[data-test-id="taloustarkastus-add-receiver"]')
     await page.getByTestId('taloustarkastus-receiver-2').fill(additionalReceiver)
     await page.getByTestId('taloustarkastus-email-subject').fill(subject)
@@ -130,4 +144,25 @@ test('virkailija can accept loppuselvitys', async ({
       'Hyväksytty'
     )
   })
+})
+
+test('taloustarkastuksen sähköpostilomake näyttää varoituksen kun organisaation sähköpostia ei saada', async ({
+  page,
+  avustushakuID,
+  asiatarkastus: { asiatarkastettu },
+  acceptedHakemus,
+}) => {
+  expect(asiatarkastettu)
+  await page.route('**/organisation-email', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ email: null }),
+    })
+  )
+  const loppuselvitysPage = LoppuselvitysPage(page)
+  await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, acceptedHakemus.hakemusID)
+  await loppuselvitysPage.locators.taloustarkastus.accept.click()
+
+  await expect(page.getByTestId('taloustarkastus-recipients-warning')).toBeVisible()
 })

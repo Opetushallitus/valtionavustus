@@ -13,6 +13,16 @@ import { fetchSentEmails, sendEmail } from '../sentEmails'
 
 import './muistutusviesti.css'
 import { useEnvironment, useUserInfo } from '../../../initial-data-context'
+import {
+  getLoppuselvitysOrgEmail,
+  getStoredOrgEmail,
+  getValiselvitysOrgEmail,
+  ORG_EMAIL_FALLBACK_WARNING,
+  ORG_EMAIL_MISSING_WARNING,
+  prependOrgEmailToReceivers,
+  resolveOrgEmailFallback,
+  usePrependCurrentOrgEmailToReceivers,
+} from '../useCurrentOrganisationEmail'
 
 type MuistutusviestiProps = {
   hakemus: Hakemus
@@ -52,6 +62,22 @@ export default function MuistutusViesti({ avustushaku, hakemus }: Muistutusviest
   }
 
   const [email, setEmail] = useState(reminderEmail)
+  const {
+    pending: orgEmailPending,
+    currentOrgEmail,
+    orgEmailMissing,
+    orgEmailFallback,
+  } = usePrependCurrentOrgEmailToReceivers(
+    avustushaku.id,
+    hakemus.id,
+    setEmail,
+    true,
+    resolveOrgEmailFallback(
+      getLoppuselvitysOrgEmail(hakemus),
+      getValiselvitysOrgEmail(hakemus),
+      getStoredOrgEmail(hakemus)
+    )
+  )
 
   useEffect(() => {
     async function fetchEmails() {
@@ -107,7 +133,7 @@ ${footer}`.trim()
   }
 
   function cancelForm() {
-    setEmail(reminderEmail)
+    setEmail(prependOrgEmailToReceivers(reminderEmail, currentOrgEmail))
     setShowEmailForm(false)
     setFormErrorMessage(undefined)
   }
@@ -128,6 +154,14 @@ ${footer}`.trim()
         <MultipleRecipentEmailForm
           ref={emailFormRef}
           onSubmit={onSubmit}
+          submitDisabled={orgEmailPending}
+          warning={
+            orgEmailFallback
+              ? ORG_EMAIL_FALLBACK_WARNING
+              : orgEmailMissing
+                ? ORG_EMAIL_MISSING_WARNING
+                : undefined
+          }
           email={email}
           setEmail={setEmail}
           formName="muistutusviesti"

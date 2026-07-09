@@ -2,11 +2,14 @@
   (:require [org.httpkit.client :as http]
             [cheshire.core :as cheshire]
             [oph.common.caller-id :as caller-id]
+            [oph.common.retry :as retry]
             [oph.soresu.common.config :refer [config]]))
 
 (def service-url
   (when-not *compile-files*
     (str (get-in config [:opintopolku :url]) "/organisaatio-service/rest/")))
+
+(def ^:private request-timeout-ms 1500)
 
 (def languages {:fi "kieli_fi#1" :sv "kieli_sv#1" :en "kieli_en#1"})
 
@@ -32,16 +35,16 @@
 (defn find-by-id
   "Fetch organisation data by organisation id (Y-tunnus in Finnish)."
   [organisation-id]
-  (let [url
-        (str service-url "organisaatio/" organisation-id "?includeImage=false")
-        {:keys [status body error headers]}
-        @(http/get url {:headers caller-id/headers})]
-    (case status
-      200 (json->map body)
-      404 nil
-      (throw (ex-info "Error while fetching organisation info"
-                      {:status status :url url :body body
-                       :error error :headers headers})))))
+  (let [url (str service-url "organisaatio/" organisation-id "?includeImage=false")]
+    (retry/try3
+     (let [{:keys [status body error headers]}
+           @(http/get url {:headers caller-id/headers :timeout request-timeout-ms})]
+       (cond
+         (= status 200) (json->map body)
+         (= status 404) nil
+         :else (throw (ex-info "Error while fetching organisation info"
+                               {:status status :url url :body body
+                                :error error :headers headers})))))))
 
 (defn compact-address
   "Convert full address info to compact one:

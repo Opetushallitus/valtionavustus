@@ -27,6 +27,16 @@ import {
   useHakemustenArviointiSelector,
 } from '../../arviointiStore'
 import { initialRecipientEmails } from '../emailRecipients'
+import {
+  getLoppuselvitysOrgEmail,
+  getStoredOrgEmail,
+  getValiselvitysOrgEmail,
+  ORG_EMAIL_FALLBACK_WARNING,
+  ORG_EMAIL_MISSING_WARNING,
+  prependOrgEmailToReceivers,
+  resolveOrgEmailFallback,
+  usePrependCurrentOrgEmailToReceivers,
+} from '../useCurrentOrganisationEmail'
 import { VerificationBox } from './VerificationBox'
 import { UserInfo } from '../../../types'
 
@@ -374,6 +384,21 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
     )[lang],
     receivers: initialRecipientEmails(hakemus, hakemus.normalizedData),
   }))
+  const {
+    pending: orgEmailPending,
+    orgEmailMissing,
+    orgEmailFallback,
+  } = usePrependCurrentOrgEmailToReceivers(
+    avustushakuId,
+    hakemus.id,
+    setApprovalEmail,
+    true,
+    resolveOrgEmailFallback(
+      getLoppuselvitysOrgEmail(hakemus),
+      getValiselvitysOrgEmail(hakemus),
+      getStoredOrgEmail(hakemus)
+    )
+  )
 
   const allAnswered = Object.values(checklist).every((v) => v !== undefined)
   const allChecked = allAnswered && Object.values(checklist).every(Boolean)
@@ -470,6 +495,14 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
                 <MultipleRecipentEmailForm
                   onSubmit={onSubmitAsiatarkastaAndAccept}
                   disabled={disableAsiatarkastaAndAcceptSubmit}
+                  submitDisabled={orgEmailPending}
+                  warning={
+                    orgEmailFallback
+                      ? ORG_EMAIL_FALLBACK_WARNING
+                      : orgEmailMissing
+                        ? ORG_EMAIL_MISSING_WARNING
+                        : undefined
+                  }
                   email={approvalEmail}
                   setEmail={setApprovalEmail}
                   formName="asiatarkastus-hyvaksynta"
@@ -566,6 +599,21 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
           receivers: initialRecipientEmails(hakemus, hakemus.normalizedData),
         }
   )
+  const {
+    pending: orgEmailPending,
+    orgEmailMissing,
+    orgEmailFallback,
+  } = usePrependCurrentOrgEmailToReceivers(
+    avustushaku.id,
+    hakemus.id,
+    setEmail,
+    !isTaloustarkastettu,
+    resolveOrgEmailFallback(
+      getLoppuselvitysOrgEmail(hakemus),
+      getValiselvitysOrgEmail(hakemus),
+      getStoredOrgEmail(hakemus)
+    )
+  )
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     e.stopPropagation()
@@ -632,6 +680,14 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
           <MultipleRecipentEmailForm
             onSubmit={onSubmit}
             disabled={isTaloustarkastettu}
+            submitDisabled={orgEmailPending}
+            warning={
+              orgEmailFallback
+                ? ORG_EMAIL_FALLBACK_WARNING
+                : orgEmailMissing
+                  ? ORG_EMAIL_MISSING_WARNING
+                  : undefined
+            }
             email={email}
             setEmail={setEmail}
             formName="taloustarkastus"
@@ -699,6 +755,22 @@ function LoppuselvitysTarkastus({
   const [email, setEmail] = useState(
     createInitialTaydennyspyyntoEmail(hakemus, avustushakuId, userInfo, hakijaServerUrl)
   )
+  const {
+    pending: orgEmailPending,
+    currentOrgEmail,
+    orgEmailMissing,
+    orgEmailFallback,
+  } = usePrependCurrentOrgEmailToReceivers(
+    avustushakuId,
+    hakemus.id,
+    setEmail,
+    true,
+    resolveOrgEmailFallback(
+      getLoppuselvitysOrgEmail(hakemus),
+      getValiselvitysOrgEmail(hakemus),
+      getStoredOrgEmail(hakemus)
+    )
+  )
   const revealEmailForm = () => emailFormRef.current?.scrollIntoView({ behavior: 'smooth' })
   const [showMessage, setShowMessage] = useState(false)
   const [cancellingTaydennys, setCancellingTaydennys] = useState(false)
@@ -716,7 +788,12 @@ function LoppuselvitysTarkastus({
   }
 
   function cancelForm() {
-    setEmail(createInitialTaydennyspyyntoEmail(hakemus, avustushakuId, userInfo, hakijaServerUrl))
+    setEmail(
+      prependOrgEmailToReceivers(
+        createInitialTaydennyspyyntoEmail(hakemus, avustushakuId, userInfo, hakijaServerUrl),
+        currentOrgEmail
+      )
+    )
     setShowEmailForm(false)
     setFormErrorMessage(undefined)
   }
@@ -824,6 +901,14 @@ ${email.footer}`,
         <MultipleRecipentEmailForm
           ref={emailFormRef}
           onSubmit={onSubmit}
+          submitDisabled={orgEmailPending}
+          warning={
+            orgEmailFallback
+              ? ORG_EMAIL_FALLBACK_WARNING
+              : orgEmailMissing
+                ? ORG_EMAIL_MISSING_WARNING
+                : undefined
+          }
           email={email}
           setEmail={setEmail}
           formName={`loppuselvitys-${taydennyspyyntoType}`}

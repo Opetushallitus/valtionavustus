@@ -53,6 +53,18 @@
                   "- sending to original recipients only")
         recipients))))
 
+(defn get-current-org-email
+  "Fetch the organisation's current email from organisaatiopalvelu by business-id.
+   Returns the email string, or nil if business-id is blank, the org has no email,
+   or the lookup fails."
+  [business-id]
+  (when-not (string/blank? business-id)
+    (try
+      (:email (org-service/get-compact-translated-info business-id))
+      (catch Exception e
+        (log/warn e "Failed to fetch current org email for business-id:" business-id)
+        nil))))
+
 (defn- trim-ws-or-nil [str]
   (when str
     (common-string/trim-ws str)))

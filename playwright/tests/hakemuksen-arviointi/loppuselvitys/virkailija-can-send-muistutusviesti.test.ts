@@ -77,11 +77,14 @@ ${footer}`)
     expect(email.bcc).toBeNull()
     expect(email.cc).toEqual([])
     expect(email['reply-to']).toBe('santeri.horttanainen@reaktor.com')
-    expect(email['to-address']).toEqual([
-      'hakija-1424884@oph.fi',
-      answers.contactPersonEmail,
-      additionalReceiver,
-    ])
+    expect(email['to-address']).toHaveLength(3)
+    expect(email['to-address']).toEqual(
+      expect.arrayContaining([
+        'hakija-1424884@oph.fi',
+        answers.contactPersonEmail,
+        additionalReceiver,
+      ])
+    )
   })
 
   await test.step('sent muistutusviesti is shown in list', async () => {

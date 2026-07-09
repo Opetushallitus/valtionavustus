@@ -83,13 +83,15 @@ export const LoppuselvitysPage = (page: Page) => {
 
   async function ensureMuistutusViestiEmailRecipientsContain(recipients: string[]) {
     await page.getByRole('button', { name: 'Kirjoita' }).click()
-    await Promise.all(
-      recipients.map(async (recipent, i) => {
-        await expect(page.locator(`[data-test-id="muistutusviesti-receiver-${i}"]`)).toHaveValue(
-          recipent
-        )
-      })
-    )
+    await expect
+      .poll(() =>
+        page
+          .locator('[data-test-id^="muistutusviesti-receiver-"]')
+          .evaluateAll((inputs) =>
+            (inputs as HTMLInputElement[]).map((input) => input.value).sort()
+          )
+      )
+      .toEqual([...recipients].sort())
   }
 
   async function getSelvitysFormUrl() {

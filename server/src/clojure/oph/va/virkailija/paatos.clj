@@ -6,7 +6,7 @@
    [oph.soresu.form.formutil :as formutil]
    [oph.va.decision-liitteet :as decision-liitteet]
    [oph.va.virkailija.email :as email]
-   [oph.common.email :refer [legacy-email-field-ids legacy-email-field-ids-without-contact-email]]
+   [oph.common.email :refer [legacy-email-field-ids legacy-email-field-ids-without-contact-email get-current-org-email]]
    [oph.common.email-utils :as email-utils]
    [oph.va.virkailija.db :as virkailija-db]
    [oph.va.virkailija.saved-search :as saved-search]
@@ -36,8 +36,13 @@
 
 (defn- emails-for-hakemus-without-signatories [hakemus contact-email trusted-contact-email]
   (let [submission (hakija-api/get-hakemus-submission hakemus)
-        emails (emails-from-answers (get-in submission [:answers :value]) (some? contact-email))]
-    (remove nil? (concat [contact-email trusted-contact-email] emails))))
+        answers (:answers submission)
+        answer-emails (emails-from-answers (:value answers) (some? contact-email))
+        stored-org-email (formutil/find-answer-value answers "organization-email")
+        org-email (or (get-current-org-email (:business_id hakemus))
+                      stored-org-email)
+        contact-emails (remove #(= % stored-org-email) answer-emails)]
+    (distinct (remove nil? (concat [contact-email trusted-contact-email] contact-emails [org-email])))))
 
 (defn- emails-for-hakemus-with-signatories [hakemus contact-email trusted-contact-email]
   (let [submission (hakija-api/get-hakemus-submission hakemus)

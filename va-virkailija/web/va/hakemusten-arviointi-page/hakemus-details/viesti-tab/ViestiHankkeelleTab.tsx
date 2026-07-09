@@ -12,6 +12,13 @@ import { getLoadedAvustushakuData } from '../../arviointiReducer'
 import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 import { useUserInfo } from '../../../initial-data-context'
 import type { UserInfo } from '../../../types'
+import {
+  getStoredOrgEmail,
+  prependOrgEmailToReceivers,
+  ORG_EMAIL_FALLBACK_WARNING,
+  ORG_EMAIL_MISSING_WARNING,
+  usePrependCurrentOrgEmailToReceivers,
+} from '../useCurrentOrganisationEmail'
 
 function generateEmailWithHeaderAndFooter(hakemus: Hakemus, userInfo: UserInfo): Email {
   const email = generateInitialEmail(hakemus)
@@ -62,6 +69,18 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
   )
 
   const [email, setEmail] = useState<Email>(generateEmailWithHeaderAndFooter(hakemus, userInfo))
+  const {
+    pending: orgEmailPending,
+    currentOrgEmail,
+    orgEmailMissing,
+    orgEmailFallback,
+  } = usePrependCurrentOrgEmailToReceivers(
+    avustushaku.id,
+    hakemus.id,
+    setEmail,
+    true,
+    getStoredOrgEmail(hakemus)
+  )
 
   const [formErrorMessage, setFormErrorMessage] = useState<string | undefined>(undefined)
 
@@ -81,7 +100,12 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
           email.subject,
           email.receivers
         )
-        setEmail(generateEmailWithHeaderAndFooter(hakemus, userInfo))
+        setEmail(
+          prependOrgEmailToReceivers(
+            generateEmailWithHeaderAndFooter(hakemus, userInfo),
+            currentOrgEmail
+          )
+        )
       } catch (err: any) {
         if (err?.name === 'HttpResponseError' && err?.response?.status === 400) {
           setFormErrorMessage(err.response.data.error)
@@ -112,6 +136,14 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
         <h2 id={emailFormHeading}>Lähetä viesti hankkeelle</h2>
         <MultipleRecipentEmailForm
           onSubmit={handleSubmit}
+          submitDisabled={orgEmailPending}
+          warning={
+            orgEmailFallback
+              ? ORG_EMAIL_FALLBACK_WARNING
+              : orgEmailMissing
+                ? ORG_EMAIL_MISSING_WARNING
+                : undefined
+          }
           email={email}
           setEmail={setEmail}
           formName="viestihankkeelle"

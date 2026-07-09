@@ -415,6 +415,17 @@
     border-color: var(--bright-red);
 }
 
+#hakemus-details #hakemus-arviointi .selvitys-email-header__org-email-warning {
+    box-sizing: border-box;
+    width: 508px;
+    margin-top: 8px;
+    padding: 8px;
+    color: #7a5c00;
+    background: #fff6e0;
+    border: 1px solid #e6c860;
+    border-radius: 4px;
+}
+
 #hakemus-details #hakemus-arviointi .selvitys-email-header__remove-value-input-button {
     position: absolute;
     margin: 0;
