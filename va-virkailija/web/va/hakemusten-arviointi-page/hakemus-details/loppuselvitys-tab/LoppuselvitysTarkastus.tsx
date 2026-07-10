@@ -387,6 +387,7 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
     pending: orgEmailPending,
     currentOrgEmail,
     orgEmailFallback,
+    orgEmailMissing,
   } = usePrependCurrentOrgEmailToReceivers(
     avustushakuId,
     hakemus.id,
@@ -496,7 +497,9 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
                   disabled={disableAsiatarkastaAndAcceptSubmit}
                   submitDisabled={orgEmailPending}
                   warning={
-                    orgEmailFallback ? getOrgEmailWarningMessage(currentOrgEmail ?? '') : undefined
+                    orgEmailFallback || orgEmailMissing
+                      ? getOrgEmailWarningMessage(currentOrgEmail ?? '')
+                      : undefined
                   }
                   email={approvalEmail}
                   setEmail={setApprovalEmail}
@@ -598,6 +601,7 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
     pending: orgEmailPending,
     currentOrgEmail,
     orgEmailFallback,
+    orgEmailMissing,
   } = usePrependCurrentOrgEmailToReceivers(
     avustushaku.id,
     hakemus.id,
@@ -677,7 +681,9 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
             disabled={isTaloustarkastettu}
             submitDisabled={orgEmailPending}
             warning={
-              orgEmailFallback ? getOrgEmailWarningMessage(currentOrgEmail ?? '') : undefined
+              orgEmailFallback || orgEmailMissing
+                ? getOrgEmailWarningMessage(currentOrgEmail ?? '')
+                : undefined
             }
             email={email}
             setEmail={setEmail}
@@ -750,6 +756,7 @@ function LoppuselvitysTarkastus({
     pending: orgEmailPending,
     currentOrgEmail,
     orgEmailFallback,
+    orgEmailMissing,
   } = usePrependCurrentOrgEmailToReceivers(
     avustushakuId,
     hakemus.id,
@@ -892,7 +899,11 @@ ${email.footer}`,
           ref={emailFormRef}
           onSubmit={onSubmit}
           submitDisabled={orgEmailPending}
-          warning={orgEmailFallback ? getOrgEmailWarningMessage(currentOrgEmail ?? '') : undefined}
+          warning={
+            orgEmailFallback || orgEmailMissing
+              ? getOrgEmailWarningMessage(currentOrgEmail ?? '')
+              : undefined
+          }
           email={email}
           setEmail={setEmail}
           formName={`loppuselvitys-${taydennyspyyntoType}`}

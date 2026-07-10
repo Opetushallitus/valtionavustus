@@ -65,6 +65,7 @@ export default function MuistutusViesti({ avustushaku, hakemus }: Muistutusviest
     pending: orgEmailPending,
     currentOrgEmail,
     orgEmailFallback,
+    orgEmailMissing,
   } = usePrependCurrentOrgEmailToReceivers(
     avustushaku.id,
     hakemus.id,
@@ -153,7 +154,11 @@ ${footer}`.trim()
           ref={emailFormRef}
           onSubmit={onSubmit}
           submitDisabled={orgEmailPending}
-          warning={orgEmailFallback ? getOrgEmailWarningMessage(currentOrgEmail ?? '') : undefined}
+          warning={
+            orgEmailFallback || orgEmailMissing
+              ? getOrgEmailWarningMessage(currentOrgEmail ?? '')
+              : undefined
+          }
           email={email}
           setEmail={setEmail}
           formName="muistutusviesti"

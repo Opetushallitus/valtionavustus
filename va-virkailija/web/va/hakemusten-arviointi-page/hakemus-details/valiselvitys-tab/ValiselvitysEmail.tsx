@@ -148,6 +148,7 @@ export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
   const areAllEmailsValid = !recipientEmails.some((email) => !email.isValid)
   const orgEmailPending = orgEmailState.loading
   const orgEmailFallback = !orgEmailState.loading && orgEmailState.fallback
+  const orgEmailMissing = !orgEmailState.loading && !orgEmailState.email
 
   return (
     <div data-test-id="selvitys-email">
@@ -201,7 +202,7 @@ export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
                       )}
                     </div>
                   ))}
-                  {orgEmailFallback && (
+                  {(orgEmailFallback || orgEmailMissing) && (
                     <div
                       data-test-id="selvitys-email-org-email-warning"
                       className="selvitys-email-header__org-email-warning"

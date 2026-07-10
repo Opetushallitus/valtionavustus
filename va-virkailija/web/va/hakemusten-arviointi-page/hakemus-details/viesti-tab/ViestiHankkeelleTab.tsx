@@ -72,6 +72,7 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
     pending: orgEmailPending,
     currentOrgEmail,
     orgEmailFallback,
+    orgEmailMissing,
   } = usePrependCurrentOrgEmailToReceivers(
     avustushaku.id,
     hakemus.id,
@@ -135,7 +136,11 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
         <MultipleRecipentEmailForm
           onSubmit={handleSubmit}
           submitDisabled={orgEmailPending}
-          warning={orgEmailFallback ? getOrgEmailWarningMessage(currentOrgEmail ?? '') : undefined}
+          warning={
+            orgEmailFallback || orgEmailMissing
+              ? getOrgEmailWarningMessage(currentOrgEmail ?? '')
+              : undefined
+          }
           email={email}
           setEmail={setEmail}
           formName="viestihankkeelle"
