@@ -15,10 +15,9 @@ import { refreshHakemus } from '../../arviointiReducer'
 import { initialRecipientEmails } from '../emailRecipients'
 import {
   fetchCurrentOrgEmail,
+  getOrgEmailWarningMessage,
   getStoredOrgEmail,
   getValiselvitysOrgEmail,
-  ORG_EMAIL_FALLBACK_WARNING,
-  ORG_EMAIL_MISSING_WARNING,
   resolveOrgEmailFallback,
 } from '../useCurrentOrganisationEmail'
 
@@ -148,7 +147,6 @@ export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
     : `Lähetä väliselvityksen hyväksyntä${lang === 'sv' ? ' ruotsiksi' : ''}`
   const areAllEmailsValid = !recipientEmails.some((email) => !email.isValid)
   const orgEmailPending = orgEmailState.loading
-  const orgEmailMissing = !orgEmailState.loading && !orgEmailState.email
   const orgEmailFallback = !orgEmailState.loading && orgEmailState.fallback
 
   return (
@@ -203,12 +201,12 @@ export const ValiselvitysEmail = (props: ValiselvitysEmailProps) => {
                       )}
                     </div>
                   ))}
-                  {(orgEmailFallback || orgEmailMissing) && (
+                  {orgEmailFallback && (
                     <div
                       data-test-id="selvitys-email-org-email-warning"
                       className="selvitys-email-header__org-email-warning"
                     >
-                      {orgEmailFallback ? ORG_EMAIL_FALLBACK_WARNING : ORG_EMAIL_MISSING_WARNING}
+                      {getOrgEmailWarningMessage(orgEmailState.email ?? '')}
                     </div>
                   )}
                 </>

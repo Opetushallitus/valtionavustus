@@ -13,10 +13,9 @@ import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 import { useUserInfo } from '../../../initial-data-context'
 import type { UserInfo } from '../../../types'
 import {
+  getOrgEmailWarningMessage,
   getStoredOrgEmail,
   prependOrgEmailToReceivers,
-  ORG_EMAIL_FALLBACK_WARNING,
-  ORG_EMAIL_MISSING_WARNING,
   usePrependCurrentOrgEmailToReceivers,
 } from '../useCurrentOrganisationEmail'
 
@@ -72,7 +71,6 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
   const {
     pending: orgEmailPending,
     currentOrgEmail,
-    orgEmailMissing,
     orgEmailFallback,
   } = usePrependCurrentOrgEmailToReceivers(
     avustushaku.id,
@@ -137,13 +135,7 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
         <MultipleRecipentEmailForm
           onSubmit={handleSubmit}
           submitDisabled={orgEmailPending}
-          warning={
-            orgEmailFallback
-              ? ORG_EMAIL_FALLBACK_WARNING
-              : orgEmailMissing
-                ? ORG_EMAIL_MISSING_WARNING
-                : undefined
-          }
+          warning={orgEmailFallback ? getOrgEmailWarningMessage(currentOrgEmail ?? '') : undefined}
           email={email}
           setEmail={setEmail}
           formName="viestihankkeelle"

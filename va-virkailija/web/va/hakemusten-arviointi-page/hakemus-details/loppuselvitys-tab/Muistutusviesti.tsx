@@ -15,10 +15,9 @@ import './muistutusviesti.css'
 import { useEnvironment, useUserInfo } from '../../../initial-data-context'
 import {
   getLoppuselvitysOrgEmail,
+  getOrgEmailWarningMessage,
   getStoredOrgEmail,
   getValiselvitysOrgEmail,
-  ORG_EMAIL_FALLBACK_WARNING,
-  ORG_EMAIL_MISSING_WARNING,
   prependOrgEmailToReceivers,
   resolveOrgEmailFallback,
   usePrependCurrentOrgEmailToReceivers,
@@ -65,7 +64,6 @@ export default function MuistutusViesti({ avustushaku, hakemus }: Muistutusviest
   const {
     pending: orgEmailPending,
     currentOrgEmail,
-    orgEmailMissing,
     orgEmailFallback,
   } = usePrependCurrentOrgEmailToReceivers(
     avustushaku.id,
@@ -155,13 +153,7 @@ ${footer}`.trim()
           ref={emailFormRef}
           onSubmit={onSubmit}
           submitDisabled={orgEmailPending}
-          warning={
-            orgEmailFallback
-              ? ORG_EMAIL_FALLBACK_WARNING
-              : orgEmailMissing
-                ? ORG_EMAIL_MISSING_WARNING
-                : undefined
-          }
+          warning={orgEmailFallback ? getOrgEmailWarningMessage(currentOrgEmail ?? '') : undefined}
           email={email}
           setEmail={setEmail}
           formName="muistutusviesti"

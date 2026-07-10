@@ -3,11 +3,8 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import { Hakemus } from 'soresu-form/web/va/types'
 import { Email } from './common-components/MultipleRecipentsEmailForm'
 
-export const ORG_EMAIL_MISSING_WARNING =
-  'Organisaation voimassa olevaa sähköpostiosoitetta ei ole saatavilla. Tarkista ja lisää vastaanottaja tarvittaessa manuaalisesti.'
-
-export const ORG_EMAIL_FALLBACK_WARNING =
-  'Organisaation voimassa olevaa sähköpostiosoitetta ei saatu haettua organisaatiopalvelusta. Vastaanottajaksi on lisätty hakemukselle tallennettu osoite – tarkista ennen lähettämistä.'
+export const getOrgEmailWarningMessage = (email: string): string =>
+  `Organisaation voimassa olevaa sähköpostiosoitetta ei saatu haettua organisaatiopalvelusta. Varmista, että "${email}" on oikein.`
 
 export function getStoredOrgEmail(hakemus: Hakemus): string | undefined {
   return hakemus.answers.find((a) => a.key === 'organization-email')?.value || undefined

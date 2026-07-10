@@ -29,10 +29,9 @@ import {
 import { initialRecipientEmails } from '../emailRecipients'
 import {
   getLoppuselvitysOrgEmail,
+  getOrgEmailWarningMessage,
   getStoredOrgEmail,
   getValiselvitysOrgEmail,
-  ORG_EMAIL_FALLBACK_WARNING,
-  ORG_EMAIL_MISSING_WARNING,
   prependOrgEmailToReceivers,
   resolveOrgEmailFallback,
   usePrependCurrentOrgEmailToReceivers,
@@ -386,7 +385,7 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
   }))
   const {
     pending: orgEmailPending,
-    orgEmailMissing,
+    currentOrgEmail,
     orgEmailFallback,
   } = usePrependCurrentOrgEmailToReceivers(
     avustushakuId,
@@ -497,11 +496,7 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
                   disabled={disableAsiatarkastaAndAcceptSubmit}
                   submitDisabled={orgEmailPending}
                   warning={
-                    orgEmailFallback
-                      ? ORG_EMAIL_FALLBACK_WARNING
-                      : orgEmailMissing
-                        ? ORG_EMAIL_MISSING_WARNING
-                        : undefined
+                    orgEmailFallback ? getOrgEmailWarningMessage(currentOrgEmail ?? '') : undefined
                   }
                   email={approvalEmail}
                   setEmail={setApprovalEmail}
@@ -601,7 +596,7 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
   )
   const {
     pending: orgEmailPending,
-    orgEmailMissing,
+    currentOrgEmail,
     orgEmailFallback,
   } = usePrependCurrentOrgEmailToReceivers(
     avustushaku.id,
@@ -682,11 +677,7 @@ export function Taloustarkastus({ disabled }: { disabled: boolean }) {
             disabled={isTaloustarkastettu}
             submitDisabled={orgEmailPending}
             warning={
-              orgEmailFallback
-                ? ORG_EMAIL_FALLBACK_WARNING
-                : orgEmailMissing
-                  ? ORG_EMAIL_MISSING_WARNING
-                  : undefined
+              orgEmailFallback ? getOrgEmailWarningMessage(currentOrgEmail ?? '') : undefined
             }
             email={email}
             setEmail={setEmail}
@@ -758,7 +749,6 @@ function LoppuselvitysTarkastus({
   const {
     pending: orgEmailPending,
     currentOrgEmail,
-    orgEmailMissing,
     orgEmailFallback,
   } = usePrependCurrentOrgEmailToReceivers(
     avustushakuId,
@@ -902,13 +892,7 @@ ${email.footer}`,
           ref={emailFormRef}
           onSubmit={onSubmit}
           submitDisabled={orgEmailPending}
-          warning={
-            orgEmailFallback
-              ? ORG_EMAIL_FALLBACK_WARNING
-              : orgEmailMissing
-                ? ORG_EMAIL_MISSING_WARNING
-                : undefined
-          }
+          warning={orgEmailFallback ? getOrgEmailWarningMessage(currentOrgEmail ?? '') : undefined}
           email={email}
           setEmail={setEmail}
           formName={`loppuselvitys-${taydennyspyyntoType}`}
