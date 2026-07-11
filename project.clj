@@ -1,5 +1,5 @@
 (def log4j-version "2.26.1")
-(def jackson-version "2.22.0")
+(def jackson-version "2.22.1")
 (def jackson-annotations-version "2.22")
 (def http4s-version "0.16.6")
 (def flyway-version "12.9.0")
