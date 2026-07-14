@@ -1,2 +1,14 @@
+# Googlebot and Bingbot are allowed to crawl on purpose: they must reach the
+# pages to read the X-Robots-Tag: noindex header and drop them from their index.
+# Do NOT change these to "Disallow: /" — that blocks crawling, which prevents
+# de-indexing (see OPHY-240 / VA-486). All other crawlers are blocked entirely.
+# https://developers.google.com/search/docs/crawling-indexing/block-indexing
+# https://developers.google.com/search/docs/crawling-indexing/remove-information
+User-agent: Googlebot
+Disallow:
+
+User-agent: Bingbot
+Disallow:
+
 User-agent: *
 Disallow: /

@@ -56,6 +56,10 @@
                                     "no-cache, must-revalidate, max-age=0"
                                     "no-store, max-age=0"))))))
 
+(defn wrap-x-robots-tag [handler]
+  (fn [request]
+    (header (handler request) "X-Robots-Tag" "noindex")))
+
 (defn wrap-csp-when-enabled [handler default-src connect-src]
   (if (-> config :server :enable-csp?)
     (fn [request]

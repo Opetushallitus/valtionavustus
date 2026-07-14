@@ -50,6 +50,7 @@
                   (server/wrap-cache-control h)
                   (server/wrap-csp-when-enabled h csp-url nil)
                   (server/wrap-hsts-when-enabled h)
+                  (server/wrap-x-robots-tag h)
                   (wrap-authentication h officer-edit-auth-backend)
                   (wrap-not-modified h)
                   (if auto-reload?
