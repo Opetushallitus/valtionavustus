@@ -151,6 +151,7 @@
                   (server/wrap-cache-control h)
                   (server/wrap-csp-when-enabled h (-> config :server :virkailija-url) hakija-url)
                   (server/wrap-hsts-when-enabled h)
+                  (server/wrap-x-robots-tag h)
                   (wrap-not-modified h)
                   (if auto-reload?
                     (wrap-reload h {:dirs ["server/src"]})
