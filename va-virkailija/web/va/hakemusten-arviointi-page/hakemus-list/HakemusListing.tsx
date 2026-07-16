@@ -713,7 +713,7 @@ function HakemusTable({
       </tbody>
       <tfoot>
         <tr>
-          <td colSpan={4}>
+          <td colSpan={5}>
             {filteredList.length}/{list.length} hakemusta
             <a
               className={styles.yhteenveto}
