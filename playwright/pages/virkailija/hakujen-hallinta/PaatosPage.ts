@@ -29,6 +29,12 @@ export function PaatosPage(page: Page) {
     yleisOhjeCheckbox: page.locator('label').locator('text="Valtionavustusten yleisohje"'),
     jotpaOhjeCheckbox: page.locator('input[value="jotpa_vakioehdot"]'),
     yleisOhjeLiite: page.locator('[data-liite=va_yleisohje]'),
+    oikaisuvaatimus3aCheckbox: page.locator(
+      'input[value="3a_oikaisuvaatimusosoitus_valtionavustuslaki"]'
+    ),
+    oikaisuvaatimus3aVersion2026: page.locator(
+      '[data-liite="3a_oikaisuvaatimusosoitus_valtionavustuslaki"][value="_2026"]'
+    ),
     pakoteOhjeCheckbox: page.locator(
       'text=Pakotteiden huomioon ottaminen valtionavustustoiminnassa'
     ),

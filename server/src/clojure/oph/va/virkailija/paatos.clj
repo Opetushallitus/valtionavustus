@@ -5,6 +5,7 @@
    [oph.va.hakija.api :as hakija-api]
    [oph.soresu.form.formutil :as formutil]
    [oph.va.decision-liitteet :as decision-liitteet]
+   [oph.va.schema :as va-schema]
    [oph.va.virkailija.email :as email]
    [oph.common.email :refer [legacy-email-field-ids legacy-email-field-ids-without-contact-email get-current-org-email]]
    [oph.common.email-utils :as email-utils]
@@ -224,6 +225,7 @@
   paatos-routes "Paatos routes"
 
   (compojure-api/GET "/liitteet" []
+    :return [va-schema/LiiteGroup]
     (ok decision-liitteet/Liitteet))
 
   (compojure-api/POST "/sendall/:avustushaku-id" [:as request]

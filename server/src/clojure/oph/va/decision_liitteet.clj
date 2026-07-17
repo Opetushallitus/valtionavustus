@@ -9,16 +9,18 @@
                                :description "Alkuperäinen"}
                               {:id          "_2026"
                                :description "Versio 2026"}]}
-                  {:id       "3b_oikaisuvaatimusosoitus_laki_vapaasta_sivistystyosta"
-                   :langs    {:fi "Oikaisuvaatimusosoitus"
-                              :sv "Rättelseyrkande"}
-                   :versions [{:id          ""
-                               :description "Alkuperäinen"}]}
-                  {:id       "3c_oikaisuvaatimusosoitus_laki_opetus_ja_kulttuuritoimen_rahoituksesta"
-                   :langs    {:fi "Oikaisuvaatimusosoitus"
-                              :sv "Rättelseyrkande"}
-                   :versions [{:id          ""
-                               :description "Alkuperäinen"}]}]}
+                  {:id         "3b_oikaisuvaatimusosoitus_laki_vapaasta_sivistystyosta"
+                   :deprecated true
+                   :langs      {:fi "Oikaisuvaatimusosoitus"
+                                :sv "Rättelseyrkande"}
+                   :versions   [{:id          ""
+                                 :description "Alkuperäinen"}]}
+                  {:id         "3c_oikaisuvaatimusosoitus_laki_opetus_ja_kulttuuritoimen_rahoituksesta"
+                   :deprecated true
+                   :langs      {:fi "Oikaisuvaatimusosoitus"
+                                :sv "Rättelseyrkande"}
+                   :versions   [{:id          ""
+                                 :description "Alkuperäinen"}]}]}
    {:group "Valtionavustusten yleisohje"
     :attachments [{:id       "va_yleisohje"
                    :langs    {:fi "Valtionavustusten yleisohje"

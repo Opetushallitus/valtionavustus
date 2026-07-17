@@ -586,6 +586,7 @@ export interface LiiteAttachment {
     sv: string
   }
   versions: LiiteAttachmentVersion[]
+  deprecated?: boolean
 }
 
 export interface LiiteAttachmentVersion {

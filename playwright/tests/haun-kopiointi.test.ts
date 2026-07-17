@@ -35,6 +35,13 @@ defaultValues('Copying haku', async ({ page }) => {
     await expect(paatosPage.locators.yleisOhjeCheckbox).not.toBeChecked()
   })
 
+  await test.step('Oikaisuvaatimusosoitus 3a is selected automatically with its newest version', async () => {
+    const paatosPage = PaatosPage(hakujenHallinta.page)
+    await paatosPage.navigateTo(copiedHakuID)
+    await expect(paatosPage.locators.oikaisuvaatimus3aCheckbox).toBeChecked()
+    await expect(paatosPage.locators.oikaisuvaatimus3aVersion2026).toBeChecked()
+  })
+
   await test.step('changing väliselvitys and loppuselvitys on the copied avustushaku does not change the original selvitys values', async () => {
     await setValiselvitysTitleTo(hakujenHallinta, `Uudelleen ${valiselvitysTitle.toLowerCase()}`)
     await setLoppuselvitysTitleTo(hakujenHallinta, `Uudelleen ${loppuselvitysTitle.toLowerCase()}`)

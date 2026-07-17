@@ -80,6 +80,17 @@
                     :id s/Str
                     :version s/Str})
 
+(s/defschema LiiteAttachmentVersion {:id s/Str
+                                     :description s/Str})
+
+(s/defschema LiiteAttachment {:id s/Str
+                              :langs {:fi s/Str :sv s/Str}
+                              :versions [LiiteAttachmentVersion]
+                              (s/optional-key :deprecated) s/Bool})
+
+(s/defschema LiiteGroup {:group s/Str
+                         :attachments [LiiteAttachment]})
+
 (defn myonteinen-lisateksti-schema-key [rahoitusalue]
   (s/optional-key (keyword (str "myonteinenlisateksti-" rahoitusalue))))
 

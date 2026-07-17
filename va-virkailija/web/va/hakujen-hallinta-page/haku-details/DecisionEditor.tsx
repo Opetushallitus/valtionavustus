@@ -319,6 +319,9 @@ const LiiteComponent = ({
   disabled: boolean
 }) => {
   const isSelected = selectedLiitteet[groupId] === attachment.id
+  // Deprecated liitteet (e.g. 3b/3c) stay visible and checked on old hakus
+  // but cannot be newly selected.
+  const isDeprecated = attachment.deprecated === true
   return (
     <div key={attachment.id} className="decision-liite-selection__liite">
       <label>
@@ -330,7 +333,7 @@ const LiiteComponent = ({
           value={attachment.id}
           checked={isSelected}
           onChange={onChangeLiite}
-          disabled={disabled}
+          disabled={disabled || (isDeprecated && !isSelected)}
         />
         {attachment.langs.fi}{' '}
         <span className="decision-liite-selection__liite-id">{attachment.id}</span>
