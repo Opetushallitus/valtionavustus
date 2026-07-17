@@ -7,6 +7,7 @@
             [oph.va.routes :as va-routes]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.authorization :as authorization]
+            [oph.va.decision-liitteet :as decision-liitteet]
             [clj-time.core :as clj-time]))
 
 (defn arvio-json [arvio]
@@ -184,6 +185,14 @@
   {:fi (str (:fi nameField) " (kopio)")
    :sv (str (:sv nameField) " (kopia)")})
 
+(defn- default-liitteet []
+  (let [group (first (filter #(= (:group %) "Oikaisuvaatimusosoitus")
+                             decision-liitteet/Liitteet))
+        attachment (first (:attachments group))]
+    [{:group   (:group group)
+      :id      (:id attachment)
+      :version (:id (last (:versions attachment)))}]))
+
 (defn create-new-avustushaku [tx base-haku-id identity]
   (let [created-at (clj-time/now)
         base-haku (-> base-haku-id
@@ -192,7 +201,9 @@
         {:keys [name selection-criteria self-financing-percentage focus-areas]} (:content base-haku)
         haku-type (:haku-type base-haku)
         form-id (:form base-haku)
-        decision (merge (dissoc (:decision base-haku) :liitteet) {:updatedAt created-at})
+        decision (merge (dissoc (:decision base-haku) :liitteet)
+                        {:updatedAt created-at
+                         :liitteet (default-liitteet)})
         operational-unit-id (:operational-unit-id base-haku)
         avustushaku (hakija-api/get-avustushaku base-haku-id)
         loppuselvitys-id (:form_loppuselvitys avustushaku)
