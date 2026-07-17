@@ -269,7 +269,9 @@ const AttachmentLiite = ({
   disabled?: boolean
 }) => {
   const { environment } = useHakujenHallintaSelector(selectLoadedInitialData)
-  const disableOldVersions = attachment.id === 'va_yleisohje'
+  const disableOldVersions =
+    attachment.id === 'va_yleisohje' ||
+    attachment.id === '3a_oikaisuvaatimusosoitus_valtionavustuslaki'
   const showAllAvailableVersions = attachment.id === 'jotpa_vakioehdot'
   const amountOfVersions = attachment.versions.length
   if (attachment.versions.length > 1 || showAllAvailableVersions) {

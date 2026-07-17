@@ -6,7 +6,9 @@
                    :langs    {:fi "Oikaisuvaatimusosoitus"
                               :sv "Rättelseyrkande"}
                    :versions [{:id          ""
-                               :description "Alkuperäinen"}]}
+                               :description "Alkuperäinen"}
+                              {:id          "_2026"
+                               :description "Versio 2026"}]}
                   {:id       "3b_oikaisuvaatimusosoitus_laki_vapaasta_sivistystyosta"
                    :langs    {:fi "Oikaisuvaatimusosoitus"
                               :sv "Rättelseyrkande"}
