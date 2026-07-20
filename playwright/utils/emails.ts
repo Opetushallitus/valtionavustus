@@ -163,6 +163,14 @@ export async function getEmailAttachmentBytes(emailId: number): Promise<Buffer> 
   return Buffer.from(await response.arrayBuffer())
 }
 
+export async function getLiiteBytes(fileName: string): Promise<Buffer> {
+  const response = await fetch(`${VIRKAILIJA_URL}/liitteet/${fileName}`)
+  if (!response.ok) {
+    throw new Error(`Failed to fetch liite ${fileName}: ${response.status}`)
+  }
+  return Buffer.from(await response.arrayBuffer())
+}
+
 async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }

@@ -1,6 +1,4 @@
 import { expect } from '@playwright/test'
-import fs from 'fs'
-import path from 'path'
 
 import {
   BudjettimuutoshakemusFixtures,
@@ -13,6 +11,7 @@ import { Budget, BudgetAmount, sortedFormTable } from '../../utils/budget'
 import {
   getEmailAttachmentBytes,
   getHakemusTokenAndRegisterNumber,
+  getLiiteBytes,
   getMuutoshakemusPaatosEmails,
   parseMuutoshakemusPaatosFromEmails,
   waitUntilMinEmails,
@@ -243,13 +242,10 @@ test('Hakija views muutoshakemus page', async ({
     const emails = await waitUntilMinEmails(getMuutoshakemusPaatosEmails, 1, hakemusID)
     const attachment = await getEmailAttachmentBytes(emails[0].id)
 
-    const liitteetDir = path.resolve(__dirname, '../../../server/resources/public/liitteet')
-    const selectedVersion = fs.readFileSync(
-      path.join(liitteetDir, '3a_oikaisuvaatimusosoitus_valtionavustuslaki_2026_fi.pdf')
+    const selectedVersion = await getLiiteBytes(
+      '3a_oikaisuvaatimusosoitus_valtionavustuslaki_2026_fi.pdf'
     )
-    const oldVersion = fs.readFileSync(
-      path.join(liitteetDir, '3a_oikaisuvaatimusosoitus_valtionavustuslaki_fi.pdf')
-    )
+    const oldVersion = await getLiiteBytes('3a_oikaisuvaatimusosoitus_valtionavustuslaki_fi.pdf')
 
     expect(attachment.equals(oldVersion)).toBe(false)
     expect(attachment.equals(selectedVersion)).toBe(true)
