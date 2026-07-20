@@ -545,11 +545,7 @@ export type BudgetFieldType =
   | 'vaSummingBudgetElement'
   | 'vaProjectDescription'
 export type FieldType =
-  | AddableFieldType
-  | NonAddableFieldType
-  | BudgetFieldType
-  | 'endOfDateRange'
-  | 'bulletList'
+  AddableFieldType | NonAddableFieldType | BudgetFieldType | 'endOfDateRange' | 'bulletList'
 export type FieldClass = 'formField' | 'infoElement' | 'wrapperElement'
 
 export interface Option {

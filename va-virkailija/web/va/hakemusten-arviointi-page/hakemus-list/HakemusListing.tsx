@@ -1377,10 +1377,7 @@ const PersonTableLabel: React.FC<PersonTableLabel> = ({
 }
 
 type Statuses =
-  | HakemusArviointiStatus
-  | MuutoshakemusStatuses
-  | ValiselvitysStatuses
-  | LoppuselvitysStatuses
+  HakemusArviointiStatus | MuutoshakemusStatuses | ValiselvitysStatuses | LoppuselvitysStatuses
 
 interface StatusTableLabelProps<Status extends Statuses> extends TableLabelProps {
   statuses: readonly Status[]

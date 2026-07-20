@@ -11,10 +11,7 @@ import './OsioPaatos.css'
 const black = '#1A1919'
 
 export type PaatosOsio =
-  | 'paatos-talousarvio'
-  | 'paatos-jatkoaika'
-  | 'paatos-sisaltomuutos'
-  | 'paatos-yhteishanke-osapuoli'
+  'paatos-talousarvio' | 'paatos-jatkoaika' | 'paatos-sisaltomuutos' | 'paatos-yhteishanke-osapuoli'
 
 interface Props {
   osio: PaatosOsio
