@@ -87,7 +87,7 @@ COPY --from=va-base /app/pom.xml /pom.xml
 #
 # va-server
 #
-FROM eclipse-temurin:21.0.11_10-jre@sha256:d2b9f8f12212cadcfdf889461531784e8fd097feade954d65b31ee7a71c473ec as va-server
+FROM eclipse-temurin:21.0.11_10-jre@sha256:273396ed5998598ed1091e8d72711c2d36980a0e65103859c55a4e977a41ffd3 as va-server
 WORKDIR /app
 LABEL org.opencontainers.image.source=https://github.com/opetushallitus/valtionavustus
 COPY --from=uberjar-builder \
