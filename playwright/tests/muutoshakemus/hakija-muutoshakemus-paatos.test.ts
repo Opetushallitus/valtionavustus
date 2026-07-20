@@ -1,4 +1,6 @@
 import { expect } from '@playwright/test'
+import fs from 'fs'
+import path from 'path'
 
 import {
   BudjettimuutoshakemusFixtures,
@@ -9,8 +11,11 @@ import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arvio
 import moment from 'moment'
 import { Budget, BudgetAmount, sortedFormTable } from '../../utils/budget'
 import {
+  getEmailAttachmentBytes,
   getHakemusTokenAndRegisterNumber,
+  getMuutoshakemusPaatosEmails,
   parseMuutoshakemusPaatosFromEmails,
+  waitUntilMinEmails,
 } from '../../utils/emails'
 import { HakijaMuutoshakemusPaatosPage } from '../../pages/hakija/hakijaMuutoshakemusPaatosPage'
 import { svBudjettimuutoshakemusTest } from '../../fixtures/swedishHakemusTest'
@@ -143,7 +148,10 @@ const test = budjettimuutoshakemusTest.extend<
 
 test.setTimeout(180000)
 
-test('Hakija views muutoshakemus page', async ({ hakijaMuutoshakemusPaatosPage }) => {
+test('Hakija views muutoshakemus page', async ({
+  hakijaMuutoshakemusPaatosPage,
+  acceptedHakemus: { hakemusID },
+}) => {
   await test.step('Decision title is shown in finnish', async () => {
     const title = await hakijaMuutoshakemusPaatosPage.title()
     expect(title).toEqual('Päätös')
@@ -229,6 +237,22 @@ test('Hakija views muutoshakemus page', async ({ hakijaMuutoshakemusPaatosPage }
     expect(
       hakijaMuutoshakemusPaatosPage.page.getByRole('link', { name: 'Oikaisuvaatimusosoitus' })
     ).toBeVisible()
+  })
+
+  await test.step('email attaches the oikaisuvaatimusosoitus version selected in the haku', async () => {
+    const emails = await waitUntilMinEmails(getMuutoshakemusPaatosEmails, 1, hakemusID)
+    const attachment = await getEmailAttachmentBytes(emails[0].id)
+
+    const liitteetDir = path.resolve(__dirname, '../../../server/resources/public/liitteet')
+    const selectedVersion = fs.readFileSync(
+      path.join(liitteetDir, '3a_oikaisuvaatimusosoitus_valtionavustuslaki_2026_fi.pdf')
+    )
+    const oldVersion = fs.readFileSync(
+      path.join(liitteetDir, '3a_oikaisuvaatimusosoitus_valtionavustuslaki_fi.pdf')
+    )
+
+    expect(attachment.equals(oldVersion)).toBe(false)
+    expect(attachment.equals(selectedVersion)).toBe(true)
   })
 })
 

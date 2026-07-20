@@ -154,6 +154,15 @@ export const getMuutoshakemuksetKasittelemattaEmails = async (
   return emails.filter((e) => e['to-address'].includes(ukotettuEmailAddress))
 }
 
+// The excel endpoint streams attachment_contents regardless of file type
+export async function getEmailAttachmentBytes(emailId: number): Promise<Buffer> {
+  const response = await fetch(`${VIRKAILIJA_URL}/api/test/email/${emailId}/attachment/excel`)
+  if (!response.ok) {
+    throw new Error(`Failed to fetch attachment for email ${emailId}: ${response.status}`)
+  }
+  return Buffer.from(await response.arrayBuffer())
+}
+
 async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }

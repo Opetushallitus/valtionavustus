@@ -169,8 +169,8 @@
     (let [bytearray (.toByteArray baos)]
       bytearray)))
 
-(defn read-oikaisuvaatimusosoitus-into-byte-array [attachment-id lang]
-  (let [oikaisuvaatimus-pdf (resource  (str "public/liitteet/" attachment-id "_" (name lang) ".pdf"))]
+(defn read-oikaisuvaatimusosoitus-into-byte-array [attachment-id version lang]
+  (let [oikaisuvaatimus-pdf (resource (str "public/liitteet/" attachment-id version "_" (name lang) ".pdf"))]
     (with-open [in (input-stream oikaisuvaatimus-pdf)]
       (stream-to-bytearray in))))
 
@@ -179,6 +179,19 @@
 
 (defn find-3a-oikaisuvaatimusosoitus-attachment []
   (first (filter #(= (:id %1) "3a_oikaisuvaatimusosoitus_valtionavustuslaki") (find-oikaisuvaatimusosoitus-attachments))))
+
+(defn oikaisuvaatimusosoitus-attachment [avustushaku lang]
+  (let [selected (first (filter #(= (:group %) "Oikaisuvaatimusosoitus")
+                                (-> avustushaku :decision :liitteet)))
+        catalogue (or (first (filter #(= (:id %) (:id selected))
+                                     (find-oikaisuvaatimusosoitus-attachments)))
+                      (find-3a-oikaisuvaatimusosoitus-attachment))
+        attachment-id (:id catalogue)
+        version (or (:version selected) "")
+        title (get (:langs catalogue) lang)]
+    {:title title
+     :description title
+     :contents (read-oikaisuvaatimusosoitus-into-byte-array attachment-id version lang)}))
 
 (defn muutoshakemus-paatos-url [user-key lang]
   (let [va-url (-> config :server :url lang)
@@ -197,14 +210,10 @@
         mail-template (get-in mail-templates [:muutoshakemus-paatos lang])
         signature (email-signature-block lang)
         presenter-role-id (:presenter_role_id arvio)
-        oikaisuvaatimusosoitus (find-3a-oikaisuvaatimusosoitus-attachment)
-        attachment-title (get (:langs oikaisuvaatimusosoitus) lang)
-        attachment-contents (read-oikaisuvaatimusosoitus-into-byte-array (:id oikaisuvaatimusosoitus) lang)
+        attachment (oikaisuvaatimusosoitus-attachment avustushaku lang)
+        attachment-title (:title attachment)
         selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
         presenter (if (nil? selected-presenter) (first roles) selected-presenter)
-        attachment {:title attachment-title
-                    :description attachment-title
-                    :contents attachment-contents}
         hanke-name (if (str/blank? (:project_name hakemus))
                      (:organization_name hakemus)
                      (:project_name hakemus))
@@ -234,14 +243,10 @@
               lang (keyword lang-str)
               muutoshakemus-paatos-url (muutoshakemus-paatos-url (:user-key paatos) lang)
               presenter-role-id (:presenter_role_id arvio)
-              oikaisuvaatimusosoitus (find-3a-oikaisuvaatimusosoitus-attachment)
-              attachment-title (get (:langs oikaisuvaatimusosoitus) lang)
-              attachment-contents (read-oikaisuvaatimusosoitus-into-byte-array (:id oikaisuvaatimusosoitus) lang)
+              attachment (oikaisuvaatimusosoitus-attachment avustushaku lang)
+              attachment-title (:title attachment)
               selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
               presenter (if (nil? selected-presenter) (first roles) selected-presenter)
-              attachment {:title attachment-title
-                          :description attachment-title
-                          :contents attachment-contents}
               hanke-name (if (str/blank? (:project_name hakemus))
                            (:organization_name hakemus)
                            (:project_name hakemus))
