@@ -69,10 +69,6 @@ export class HakijaMuutoshakemusPaatosPage {
     return this.page.innerText('[data-test-id="paatos-esittelija"]')
   }
 
-  async clickLinkToMuutoshakemus() {
-    await this.page.click('[data-test-id="link-to-muutoshakemus"]')
-  }
-
   async infoSection() {
     return await this.page.textContent('[data-test-id="budget-change"]')
   }

@@ -5,7 +5,6 @@ import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusP
 import { HakijaMuutoshakemusPaatosPage } from '../../pages/hakija/hakijaMuutoshakemusPaatosPage'
 import { parseMuutoshakemusPaatosFromEmails } from '../../utils/emails'
 import { expect, test } from '@playwright/test'
-import { HAKIJA_URL } from '../../utils/constants'
 
 test.setTimeout(180000)
 
@@ -53,12 +52,8 @@ budjettimuutoshakemusTest.extend<Pick<DefaultValueFixtures, 'ukotettuValmistelij
       const hakemusLisatietoja = await hakijaMuutoshakemusPaatosPage.lisatietoja()
       expect(hakemusLisatietoja).toContain(user)
     })
-    await test.step('clicking link in asia section navigates to muutoshakemus', async () => {
-      await hakijaMuutoshakemusPaatosPage.clickLinkToMuutoshakemus()
-      const urlRegex = new RegExp(
-        `${HAKIJA_URL}/muutoshakemus\\?user-key=.*&avustushaku-id=${avustushakuID}&lang=fi`
-      )
-      await page.waitForURL(urlRegex)
+    await test.step('asia section does not link to muutoshakemus', async () => {
+      await expect(page.getByTestId('link-to-muutoshakemus')).toHaveCount(0)
     })
   }
 )

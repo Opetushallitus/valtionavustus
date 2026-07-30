@@ -323,7 +323,6 @@ export const MuutoshakemusForm = ({
           isDecidedByUkotettuValmistelija={isCurrentUserHakemukselleUkotettuValmistelija}
           muutoshakemukset={muutoshakemukset}
           environment={environment}
-          muutoshakemusUrl={hakemusVersion.muutoshakemusUrl}
         />
       </TranslationContext.Provider>
     )

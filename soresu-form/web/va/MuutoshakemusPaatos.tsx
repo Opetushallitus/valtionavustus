@@ -18,9 +18,8 @@ import './MuutoshakemusPaatos.css'
 import { Role } from '../../../va-virkailija/web/va/types'
 import { OsioPaatos, PaatosOsio } from './OsioPaatos'
 
-type MuutoshakemusPaatosProps = Omit<PaatosState, 'paatos' | 'presenter'> & {
+type MuutoshakemusPaatosProps = Omit<PaatosState, 'paatos' | 'presenter' | 'muutoshakemusUrl'> & {
   paatos: Omit<Paatos, 'id' | 'user-key' | 'updated-at'>
-  muutoshakemusUrl: string
   presenter: Role | undefined
 }
 
@@ -162,9 +161,8 @@ const YhteishankePaatosSection: React.FC<{
 const ProjectSection: React.FC<{
   muutoshakemus: Muutoshakemus
   projectName: string
-  muutoshakemusUrl: string
-}> = ({ projectName, muutoshakemus, muutoshakemusUrl }) => {
-  const { t, lang } = useTranslations()
+}> = ({ projectName, muutoshakemus }) => {
+  const { t } = useTranslations()
   return (
     <section className="muutoshakemus-paatos__section no-border-top">
       <div data-test-id="muutospaatos-asia-title" className="muutoshakemus-paatos__title">
@@ -191,11 +189,6 @@ const ProjectSection: React.FC<{
           muutoshakemus['yhteishanke-osapuolimuutokset'].length > 0 && (
             <div>{t.muutoshakemus.paatos.muutoshakemusYhteishankeenOsapuoliin}</div>
           )}
-        <p>
-          <a data-test-id="link-to-muutoshakemus" href={`${muutoshakemusUrl}&lang=${lang}`}>
-            {t.muutoshakemus.paatos.linkkiMuutoshakemukseen}
-          </a>
-        </p>
       </div>
     </section>
   )
@@ -291,7 +284,6 @@ export const MuutoshakemusPaatos = ({
   avustushaku,
   muutoshakemukset,
   isDecidedByUkotettuValmistelija,
-  muutoshakemusUrl,
 }: MuutoshakemusPaatosProps) => {
   const { t } = useTranslations()
 
@@ -317,11 +309,7 @@ export const MuutoshakemusPaatos = ({
         <div data-test-id="paatos-register-number">{hakemus['register-number']}</div>
       </header>
       <h1 className="muutoshakemus-paatos__org">{hakemus['organization-name']}</h1>
-      <ProjectSection
-        muutoshakemus={muutoshakemus}
-        projectName={hakemus['project-name']}
-        muutoshakemusUrl={muutoshakemusUrl}
-      />
+      <ProjectSection muutoshakemus={muutoshakemus} projectName={hakemus['project-name']} />
       {!!newTalousarvio.length && paatos['paatos-status-talousarvio'] && (
         <TalousarvioPaatosSection
           currentTalousarvio={currentTalousarvio}
