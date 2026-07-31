@@ -42,7 +42,7 @@
 
                          ;; [clj-pdf "2.8.0"] ->
                          ;; [buddy/buddy-sign "3.6.1-359"] -> [buddy/buddy-core "1.12.0-430"] ->
-                         [commons-codec "1.22.0"]
+                         [commons-codec "1.22.1"]
 
                          ;; [ring/ring-core "1.15.5"] -> [commons-io "2.22.0"]
                          ;; [org.apache.tika/tika-core "3.3.2"] -> [commons-io "2.22.0"]
