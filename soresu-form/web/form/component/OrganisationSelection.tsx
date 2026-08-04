@@ -8,7 +8,6 @@ import SyntaxValidator from '../SyntaxValidator'
 import { Field, Language, LegacyTranslationDict } from 'soresu-form/web/va/types'
 import { BaseStateLoopState } from 'soresu-form/web/form/types/Form'
 import HttpUtil from 'soresu-form/web/HttpUtil'
-import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 import './OrganisationSelection.css'
 
@@ -108,7 +107,6 @@ export function OrganisationSelection({ state, controller }: OrganisationSelecti
             setSwedishOrganization={setSwedishOrganization}
             setSelectedOrganisation={setSelectedOrganisation}
             setOwnerTypeLookup={setOwnerTypeLookup}
-            environment={state.configuration.environment}
           />
           {(finnishOrganization || swedishOrganization) && (
             <Selector
@@ -136,7 +134,6 @@ interface BusinessIdSearchProps {
   setSwedishOrganization: (org: OrganizationResponse | null) => void
   setSelectedOrganisation: (organisation: SelectedOrganisation | null) => void
   setOwnerTypeLookup: React.Dispatch<React.SetStateAction<OwnerTypeLookup | null>>
-  environment?: EnvironmentApiResponse
 }
 
 function BusinessIdSearch({
@@ -147,7 +144,6 @@ function BusinessIdSearch({
   setSwedishOrganization,
   setSelectedOrganisation,
   setOwnerTypeLookup,
-  environment,
 }: BusinessIdSearchProps) {
   const [isDisabled, setIsDisabled] = useState(true)
   const [error, setError] = useState('error')
@@ -190,24 +186,20 @@ function BusinessIdSearch({
         }
       })
 
-    if (environment?.['feature-flags']?.includes('enableTilastokeskusOrganisationType')) {
-      setOwnerTypeLookup({ ytunnus: id, ownerType: null, status: 'loading' })
-      HttpUtil.get<{ 'owner-type': string }>(`/api/organisation-type/?organisation-id=${id}`)
-        .then((response) => {
-          setOwnerTypeLookup((prev) =>
-            prev?.ytunnus === id
-              ? { ytunnus: id, ownerType: response['owner-type'], status: 'done' }
-              : prev
-          )
-        })
-        .catch(() => {
-          setOwnerTypeLookup((prev) =>
-            prev?.ytunnus === id ? { ytunnus: id, ownerType: null, status: 'error' } : prev
-          )
-        })
-    } else {
-      setOwnerTypeLookup(null)
-    }
+    setOwnerTypeLookup({ ytunnus: id, ownerType: null, status: 'loading' })
+    HttpUtil.get<{ 'owner-type': string }>(`/api/organisation-type/?organisation-id=${id}`)
+      .then((response) => {
+        setOwnerTypeLookup((prev) =>
+          prev?.ytunnus === id
+            ? { ytunnus: id, ownerType: response['owner-type'], status: 'done' }
+            : prev
+        )
+      })
+      .catch(() => {
+        setOwnerTypeLookup((prev) =>
+          prev?.ytunnus === id ? { ytunnus: id, ownerType: null, status: 'error' } : prev
+        )
+      })
   }
 
   // events from inputting the organisational id (y-tunnus)

@@ -3,7 +3,7 @@
    [clojure.tools.logging :as log]
    [oph.common.datetime :as datetime]
    [oph.common.tilastokeskus :as tilastokeskus]
-   [oph.soresu.common.config :as config :refer [config]]
+   [oph.soresu.common.config :refer [config]]
    [oph.soresu.common.db :refer [with-tx]]
    [oph.soresu.form.db :as form-db]
    [oph.soresu.form.formutil :refer :all]
@@ -237,8 +237,7 @@
          (conflict!))))
 
 (defn on-vahvista-organisaatio [haku-id user-key base-version organisation]
-  (let [owner-type (when (config/feature-enabled? :enableTilastokeskusOrganisationType)
-                     (tilastokeskus/hae-omistajatyyppi (:organisation-id organisation)))]
+  (let [owner-type (tilastokeskus/hae-omistajatyyppi (:organisation-id organisation))]
     (try
       (with-tx
         (fn [tx]

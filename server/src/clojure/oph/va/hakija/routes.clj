@@ -10,7 +10,7 @@
             [ring.swagger.json-schema-dirty]  ; for schema.core/conditional
             [schema.core :as s]
             [oph.common.datetime :as datetime]
-            [oph.soresu.common.config :as config :refer [config-simple-name]]
+            [oph.soresu.common.config :refer [config-simple-name]]
             [oph.soresu.common.routes :refer :all]
             [oph.va.schema :refer :all]
             [oph.soresu.form.schema :refer :all]
@@ -365,10 +365,8 @@
 
   (compojure-api/GET "/" []
     :query-params [organisation-id :- FinnishBusinessId]
-    (if (config/feature-enabled? :enableTilastokeskusOrganisationType)
-      (if-let [owner-type (tilastokeskus/hae-omistajatyyppi organisation-id)]
-        (ok {:owner-type owner-type})
-        (not-found))
+    (if-let [owner-type (tilastokeskus/hae-omistajatyyppi organisation-id)]
+      (ok {:owner-type owner-type})
       (not-found))))
 
 (def api-config
