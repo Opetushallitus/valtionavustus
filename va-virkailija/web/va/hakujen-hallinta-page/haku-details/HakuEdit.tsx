@@ -45,9 +45,8 @@ export const HakuEdit = () => {
 
 const HakuEditor = () => {
   const avustushaku = useCurrentAvustushaku()
-  const { codeOptions, lainsaadantoOptions, helpTexts, userInfo, environment } =
+  const { codeOptions, lainsaadantoOptions, helpTexts, userInfo } =
     useHakujenHallintaSelector(selectLoadedInitialData)
-  const isOtantatarkastusEnabled = environment['feature-flags']?.includes('enableOtantatarkastus')
   const loadingAvustushaku = useHakujenHallintaSelector(
     (state) => state.haku.loadStatus.loadingAvustushaku
   )
@@ -423,41 +422,37 @@ const HakuEditor = () => {
               </span>
             </fieldset>
           </div>
-          {isOtantatarkastusEnabled && (
-            <div>
-              <h3>Loppuselvitysten tarkastus</h3>
-              <fieldset className="soresu-radiobutton-group">
-                <span>
-                  <input
-                    id="loppuselvitys_otantatarkastus_enabled_false"
-                    type="radio"
-                    name="loppuselvitys-otantatarkastus-enabled"
-                    value="false"
-                    onChange={onChangeImmediate}
-                    checked={!avustushaku['loppuselvitys-otantatarkastus-enabled']}
-                    disabled={!allowAllHakuEdits}
-                  />
-                  <label htmlFor="loppuselvitys_otantatarkastus_enabled_false">
-                    2-vaiheinen tarkastus
-                  </label>
-                </span>
-                <span>
-                  <input
-                    id="loppuselvitys_otantatarkastus_enabled_true"
-                    type="radio"
-                    name="loppuselvitys-otantatarkastus-enabled"
-                    value="true"
-                    onChange={onTogglingOtantatarkastusOn}
-                    checked={avustushaku['loppuselvitys-otantatarkastus-enabled']}
-                    disabled={!allowAllHakuEdits}
-                  />
-                  <label htmlFor="loppuselvitys_otantatarkastus_enabled_true">
-                    Otantatarkastus
-                  </label>
-                </span>
-              </fieldset>
-            </div>
-          )}
+          <div>
+            <h3>Loppuselvitysten tarkastus</h3>
+            <fieldset className="soresu-radiobutton-group">
+              <span>
+                <input
+                  id="loppuselvitys_otantatarkastus_enabled_false"
+                  type="radio"
+                  name="loppuselvitys-otantatarkastus-enabled"
+                  value="false"
+                  onChange={onChangeImmediate}
+                  checked={!avustushaku['loppuselvitys-otantatarkastus-enabled']}
+                  disabled={!allowAllHakuEdits}
+                />
+                <label htmlFor="loppuselvitys_otantatarkastus_enabled_false">
+                  2-vaiheinen tarkastus
+                </label>
+              </span>
+              <span>
+                <input
+                  id="loppuselvitys_otantatarkastus_enabled_true"
+                  type="radio"
+                  name="loppuselvitys-otantatarkastus-enabled"
+                  value="true"
+                  onChange={onTogglingOtantatarkastusOn}
+                  checked={avustushaku['loppuselvitys-otantatarkastus-enabled']}
+                  disabled={!allowAllHakuEdits}
+                />
+                <label htmlFor="loppuselvitys_otantatarkastus_enabled_true">Otantatarkastus</label>
+              </span>
+            </fieldset>
+          </div>
         </div>
       </div>
       <Lainsaadanto
