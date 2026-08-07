@@ -55,11 +55,11 @@ test.extend({
 
     const { yleisOhjeCheckbox, yleisOhjeLiite, pakoteOhjeCheckbox, jotpaOhjeCheckbox } =
       paatosPage.locators
-    const amountOfYleisohjeet = 6
+    const amountOfYleisohjeet = 7
     const yleisohjeAmountStartingFromZero = amountOfYleisohjeet - 1
     await expect(yleisOhjeLiite).toHaveCount(amountOfYleisohjeet)
 
-    const yleisohjeCount = 5
+    const yleisohjeCount = 6
     await test.step('newest ohje is preselected and all are disabled', async () => {
       await expect(yleisOhjeLiite).toHaveCount(yleisohjeCount + 1)
       for (let i = 0; i <= yleisohjeCount; i++) {
@@ -102,13 +102,13 @@ test.extend({
       await paatosPage.navigateToLatestHakijaPaatos(hakemusID)
 
       const yleisohjeLink = page.locator('a').locator('text=Valtionavustusten yleisohje')
-      const href = '/liitteet/va_yleisohje_2023-05_fi.pdf'
+      const href = '/liitteet/va_yleisohje_2026-08_fi.pdf'
       expect(await yleisohjeLink.getAttribute('href')).toBe(href)
 
       await test.step('Make sure user can download yleisohje PDF', async () => {
         const blob = await downloadPdfFromLocator(yleisohjeLink)
         const pdfText = await getPdfFirstPageTextContent(blob)
-        expect(pdfText).toContain('12.5.2023')
+        expect(pdfText).toContain('3.8.2026')
         expect(pdfText).toContain('YLEISOHJE')
       })
     })
@@ -278,7 +278,7 @@ test.extend({
     await paatosPage.navigateTo(avustushakuID)
 
     const { yleisOhjeCheckbox } = paatosPage.locators
-    const newestVersionRadio = page.locator('[data-liite=va_yleisohje][value="_2023-05"]')
+    const newestVersionRadio = page.locator('[data-liite=va_yleisohje][value="_2026-08"]')
 
     await test.step('select yleisohje to save it to database', async () => {
       await yleisOhjeCheckbox.click()
@@ -322,7 +322,7 @@ test.extend({
     })
 
     await test.step('old versions are disabled', async () => {
-      const olderVersions = page.locator('[data-liite=va_yleisohje]:not([value="_2023-05"])')
+      const olderVersions = page.locator('[data-liite=va_yleisohje]:not([value="_2026-08"])')
       const count = await olderVersions.count()
       for (let i = 0; i < count; i++) {
         await expect(olderVersions.nth(i)).toBeDisabled()
@@ -338,7 +338,7 @@ test.extend({
       await paatosPage.navigateToLatestHakijaPaatos(hakemusID)
 
       const yleisohjeLink = page.locator('a').locator('text=Valtionavustusten yleisohje')
-      const href = '/liitteet/va_yleisohje_2023-05_fi.pdf'
+      const href = '/liitteet/va_yleisohje_2026-08_fi.pdf'
       expect(await yleisohjeLink.getAttribute('href')).toBe(href)
     })
   }

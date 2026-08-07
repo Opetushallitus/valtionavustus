@@ -36,7 +36,9 @@
                               {:id          "_2022-09"
                                :description "Voimassa 13.9.2022 alkaen"}
                               {:id          "_2023-05"
-                               :description "Voimassa 15.5.2023 alkaen"}]}
+                               :description "Voimassa 15.5.2023 alkaen"}
+                              {:id          "_2026-08"
+                               :description "Voimassa 4.8.2026 alkaen"}]}
 
                   {:id       "jotpa_vakioehdot"
                    :langs    {:fi "JOTPA: Valtionavustusten vakioehdot"
