@@ -8,7 +8,7 @@
                    :versions [{:id          ""
                                :description "Alkuperäinen"}
                               {:id          "_2026"
-                               :description "Versio 2026"}]}
+                               :description "Voimassa 30.7.2026 alkaen"}]}
                   {:id         "3b_oikaisuvaatimusosoitus_laki_vapaasta_sivistystyosta"
                    :deprecated true
                    :langs      {:fi "Oikaisuvaatimusosoitus"
