@@ -105,7 +105,7 @@
                  [ring/ring-defaults "0.7.1"]
                  [ring/ring-session-timeout "0.3.0"]
                  [ring/ring-ssl "0.4.0"]
-                 [prismatic/schema "1.4.1"]
+                 [prismatic/schema "1.4.2"]
                  [org.apache.tika/tika-core "3.3.2"] ; attachment handling
 
                  ;; auth
