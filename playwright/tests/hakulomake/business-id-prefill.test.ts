@@ -17,6 +17,9 @@ const EXPECTED_VAASA_FINNISH_NAME = 'Vaasan kaupunki'
 const EXPECTED_VAASA_SWEDISH_NAME = 'Vasa stad'
 const EXPECTED_VAASA_ORGANIZATION_EMAIL = 'hakija-8248263@oph.fi'
 
+// valid business id format, but no organisation is found for it in either language
+const UNKNOWN_BUSINESS_ID = '1572860-0'
+
 async function searchBusinessId(page: Page, businessId: string) {
   await page.locator('#finnish-business-id').fill(businessId)
   // the modal fires one request per language plus the omistajatyyppi lookup, and the confirm button
@@ -99,8 +102,19 @@ test('business ID prefill shows confirmation and fills organization details', as
     await expect(page.locator('input.get-business-id')).toBeEnabled()
   })
 
+  await test.step('business ID that is not found in either language shows an error', async () => {
+    await searchBusinessId(page, UNKNOWN_BUSINESS_ID)
+
+    await expect(page.locator('#not-found-business-id')).toBeVisible()
+    await expect(page.locator('#other-error-business-id')).toBeHidden()
+    await expect(page.locator('[data-test-id="organisation-selection-fi"]')).toBeHidden()
+    await expect(page.locator('[data-test-id="organisation-selection-sv"]')).toBeHidden()
+  })
+
   await test.step('clicking fetch shows language selection with organization details', async () => {
     await searchBusinessId(page, AKAAN_KAUPUNKI_BUSINESS_ID)
+
+    await expect(page.locator('#not-found-business-id')).toBeHidden()
 
     await expect(page.locator('[data-test-id="organisation-selection-fi"]')).toBeVisible({
       timeout: 5000,

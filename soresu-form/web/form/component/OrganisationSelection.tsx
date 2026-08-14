@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import _ from 'lodash'
 
 import FormUtil from '../FormUtil'
@@ -45,6 +45,10 @@ interface OwnerTypeLookup {
 
 interface SelectedOrganisation extends OrganizationResponse {
   lang: Language
+}
+
+interface OrganisationRequestError {
+  response: { status: number }
 }
 
 interface OrganisationSelectionProps {
@@ -158,37 +162,34 @@ function BusinessIdSearch({
   // actions that happen after user has submitted their organisation-id, calls backend organisaton api
   const fetchOrganizationData = (id: string) => {
     setSelectedOrganisation(null)
-    HttpUtil.get<OrganizationResponse>(`/api/organisations/?organisation-id=${id}&lang=fi`)
-      .then((response) => {
-        setFinnishOrganization(response)
-        setIncorrectBusinessId(false)
-        setOtherErrorOnBusinessId(false)
-      })
-      .catch((error: { response: { status: number } }) => {
-        setFinnishOrganization(null)
-        if (error.response.status === 404) {
-          setIncorrectBusinessId(true)
-        } else {
-          setOtherErrorOnBusinessId(true)
-          setIncorrectBusinessId(false)
-        }
-      })
 
-    HttpUtil.get<OrganizationResponse>(`/api/organisations/?organisation-id=${id}&lang=sv`)
-      .then((response) => {
-        setSwedishOrganization(response)
-        setIncorrectBusinessId(false)
-        setOtherErrorOnBusinessId(false)
-      })
-      .catch((error: { response: { status: number } }) => {
-        setSwedishOrganization(null)
-        if (error.response.status === 404) {
-          setIncorrectBusinessId(true)
-        } else {
-          setOtherErrorOnBusinessId(true)
-          setIncorrectBusinessId(false)
-        }
-      })
+    const fetchOrganisation = (lang: Language) =>
+      HttpUtil.get<OrganizationResponse>(`/api/organisations/?organisation-id=${id}&lang=${lang}`)
+        .then((organisation) => ({ organisation, error: null }))
+        .catch((error: OrganisationRequestError) => ({ organisation: null, error }))
+
+    // both languages are awaited together: a single arrived organisation would otherwise look like
+    // the only search result and get preselected even though the other language is still coming
+    Promise.all([fetchOrganisation('fi'), fetchOrganisation('sv')]).then(([finnish, swedish]) => {
+      setFinnishOrganization(finnish.organisation)
+      setSwedishOrganization(swedish.organisation)
+
+      // a single organisation leaves nothing to choose between, so preselect it. when both a finnish
+      // and a swedish organisation are found the hakija has to pick one of them.
+      const selectableOrganisations = getSelectableOrganisations(
+        finnish.organisation,
+        swedish.organisation
+      )
+      setSelectedOrganisation(
+        selectableOrganisations.length === 1 ? selectableOrganisations[0] : null
+      )
+
+      const errors = [finnish.error, swedish.error].filter((error) => error !== null)
+      const noOrganisationFound = errors.length === 2
+      const someErrorIsNotNotFound = errors.some((error) => error.response.status !== 404)
+      setIncorrectBusinessId(noOrganisationFound && !someErrorIsNotNotFound)
+      setOtherErrorOnBusinessId(noOrganisationFound && someErrorIsNotNotFound)
+    })
 
     setOwnerTypeLookup({ ytunnus: id, ownerType: null, status: 'loading' })
     HttpUtil.get<{ 'owner-type': string }>(`/api/organisation-type/?organisation-id=${id}`)
