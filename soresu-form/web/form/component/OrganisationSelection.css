@@ -38,14 +38,47 @@
 .organisation-selection {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: 4px;
     border-radius: 8px;
-    border-color: var(--lightest-gray);
+    border-color: var(--light-gray);
+    border-style: solid;
     border-width: 2px;
+    background-color: #fff;
     padding: 8px;
     min-width: 340px;
 }
 
-.organisation-selection:hover {
+/* when both a finnish and a swedish organisation are found, the hakija has to pick one of them */
+.organisation-selection.choosable {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    border-color: var(--silver);
+    cursor: pointer;
+}
+
+.organisation-selection.choosable.selected {
+    border-style: solid;
+    border-color: var(--light-green);
+}
+
+.organisation-selection-radio {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    accent-color: var(--light-green);
+    cursor: pointer;
+}
+
+.selection-fields {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.organisation-selection.choosable:hover {
     background-color: var(--lightest-gray);
 }
 

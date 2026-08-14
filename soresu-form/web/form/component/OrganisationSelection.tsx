@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
 
 import FormUtil from '../FormUtil'
@@ -65,6 +65,19 @@ export function OrganisationSelection({ state, controller }: OrganisationSelecti
   const translations = state.configuration.translations.misc
   const translator = new Translator(state.configuration.translations.misc)
 
+  const selectableOrganisations = getSelectableOrganisations(
+    finnishOrganization,
+    swedishOrganization
+  )
+
+  // a single organisation leaves nothing to choose between, so preselect it. when the search finds
+  // both a finnish and a swedish organisation the hakija has to pick one of them.
+  useEffect(() => {
+    if (selectableOrganisations.length === 1) {
+      setSelectedOrganisation(selectableOrganisations[0])
+    }
+  }, [finnishOrganization, swedishOrganization])
+
   const handleConfirm = () => {
     if (!selectedOrganisation) {
       return
@@ -108,12 +121,11 @@ export function OrganisationSelection({ state, controller }: OrganisationSelecti
             setSelectedOrganisation={setSelectedOrganisation}
             setOwnerTypeLookup={setOwnerTypeLookup}
           />
-          {(finnishOrganization || swedishOrganization) && (
+          {selectableOrganisations.length > 0 && (
             <Selector
               translations={translations}
               lang={lang}
-              finnishOrganization={finnishOrganization}
-              swedishOrganization={swedishOrganization}
+              selectableOrganisations={selectableOrganisations}
               setSelectedOrganisation={setSelectedOrganisation}
               handleConfirm={handleConfirm}
               selectedOrganisation={selectedOrganisation}
@@ -296,8 +308,7 @@ function BusinessIdSearch({
 type SelectorProps = {
   translations: LegacyTranslationDict
   lang: Language
-  finnishOrganization: OrganizationResponse | null
-  swedishOrganization: OrganizationResponse | null
+  selectableOrganisations: SelectedOrganisation[]
   setSelectedOrganisation: (organisation: SelectedOrganisation | null) => void
   selectedOrganisation: SelectedOrganisation | null
   handleConfirm: () => void
@@ -307,14 +318,126 @@ type SelectorProps = {
 function Selector({
   translations,
   lang,
-  finnishOrganization,
-  swedishOrganization,
+  selectableOrganisations,
   setSelectedOrganisation,
   selectedOrganisation,
   handleConfirm,
   ownerTypeLookupLoading,
 }: SelectorProps) {
-  const organisationInformationIsSameForBothLang =
+  const hakijaHasToChoose = selectableOrganisations.length > 1
+
+  return (
+    <div className="selector-wrapper">
+      <LocalizedString
+        translations={translations}
+        translationKey="confirm-business-id-info"
+        lang={lang}
+      />
+      <div className="selector">
+        {selectableOrganisations.map((organisation) => (
+          <Selection
+            key={organisation.lang}
+            translations={translations}
+            lang={lang}
+            organisation={organisation}
+            setSelectedOrganisation={setSelectedOrganisation}
+            selectedOrganisation={selectedOrganisation}
+            hakijaHasToChoose={hakijaHasToChoose}
+          />
+        ))}
+      </div>
+      <button
+        className="get-business-id"
+        data-test-id="confirm-selection"
+        onClick={handleConfirm}
+        disabled={!selectedOrganisation || ownerTypeLookupLoading}
+        type="button"
+      >
+        <LocalizedString translations={translations} translationKey="confirm" lang={lang} />
+      </button>
+    </div>
+  )
+}
+
+type SelectionProps = {
+  translations: LegacyTranslationDict
+  lang: Language
+  selectedOrganisation: SelectedOrganisation | null
+  organisation: SelectedOrganisation
+  setSelectedOrganisation: (organisation: SelectedOrganisation | null) => void
+  hakijaHasToChoose: boolean
+}
+
+function Selection({
+  translations,
+  lang,
+  selectedOrganisation,
+  organisation,
+  setSelectedOrganisation,
+  hakijaHasToChoose,
+}: SelectionProps) {
+  const isSelected = selectedOrganisation?.lang === organisation.lang
+
+  return (
+    <label
+      className={`organisation-selection${hakijaHasToChoose ? ' choosable' : ''}${isSelected ? ' selected' : ''}`}
+      data-test-id={`organisation-selection-${organisation.lang}`}
+    >
+      {hakijaHasToChoose && (
+        <input
+          type="radio"
+          className="organisation-selection-radio"
+          name="organisation-selection"
+          value={organisation.lang}
+          checked={isSelected}
+          onChange={() => setSelectedOrganisation(organisation)}
+        />
+      )}
+      <div className="selection-fields">
+        <div className="selection-field">
+          <span className="selection-field-label">
+            <strong>
+              <LocalizedString translations={translations} translationKey="hakija" lang={lang} />:
+            </strong>
+          </span>
+          <span className="selection-field-value">{organisation.name}</span>
+        </div>
+        <div className="selection-field">
+          <span className="selection-field-label">
+            <strong>
+              <LocalizedString
+                translations={translations}
+                translationKey="organization-email"
+                lang={lang}
+              />
+              :
+            </strong>
+          </span>
+          <span className="selection-field-value">{organisation.email}</span>
+        </div>
+        <div className="selection-field">
+          <span className="selection-field-label">
+            <strong>
+              <LocalizedString
+                translations={translations}
+                translationKey="business-id"
+                lang={lang}
+              />
+              :
+            </strong>
+          </span>
+          <span className="selection-field-value">{organisation['organisation-id']}</span>
+        </div>
+      </div>
+    </label>
+  )
+}
+
+function organisationInformationIsSameForBothLang(
+  finnishOrganization: OrganizationResponse | null,
+  swedishOrganization: OrganizationResponse | null
+) {
+  return Boolean(
     finnishOrganization &&
     swedishOrganization &&
     finnishOrganization.name === swedishOrganization.name &&
@@ -325,108 +448,25 @@ function Selector({
     finnishOrganization.contact.city === swedishOrganization.contact.city &&
     finnishOrganization.contact.address === swedishOrganization.contact.address &&
     finnishOrganization.contact['postal-number'] === swedishOrganization.contact['postal-number']
-
-  return (
-    <div className="selector-wrapper">
-      <LocalizedString
-        translations={translations}
-        translationKey="confirm-business-id-info"
-        lang={lang}
-      />
-      <div className="selector">
-        {finnishOrganization && (
-          <Selection
-            translations={translations}
-            lang={lang}
-            organisation={finnishOrganization}
-            setSelectedOrganisation={setSelectedOrganisation}
-            selectedOrganisation={selectedOrganisation}
-            organisationLang="fi"
-          />
-        )}
-        {swedishOrganization && !organisationInformationIsSameForBothLang && (
-          <Selection
-            translations={translations}
-            lang={lang}
-            organisation={swedishOrganization}
-            setSelectedOrganisation={setSelectedOrganisation}
-            selectedOrganisation={selectedOrganisation}
-            organisationLang="sv"
-          />
-        )}
-      </div>
-      {(finnishOrganization || swedishOrganization) && (
-        <button
-          className="get-business-id"
-          data-test-id="confirm-selection"
-          onClick={handleConfirm}
-          disabled={!selectedOrganisation || ownerTypeLookupLoading}
-          type="button"
-        >
-          <LocalizedString translations={translations} translationKey="confirm" lang={lang} />
-        </button>
-      )}
-    </div>
   )
 }
 
-type SelectionProps = {
-  translations: LegacyTranslationDict
-  lang: Language
-  selectedOrganisation: SelectedOrganisation | null
-  organisation: OrganizationResponse
-  setSelectedOrganisation: (organisation: SelectedOrganisation | null) => void
-  organisationLang: Language
-}
-
-function Selection({
-  translations,
-  lang,
-  selectedOrganisation,
-  organisation,
-  setSelectedOrganisation,
-  organisationLang,
-}: SelectionProps) {
-  const isSelected = selectedOrganisation && selectedOrganisation.lang === organisationLang
-
-  return (
-    <button
-      className={`organisation-selection${isSelected ? ' selected' : ''}`}
-      data-test-id={`organisation-selection-${organisationLang}`}
-      onClick={() => setSelectedOrganisation({ lang: organisationLang, ...organisation })}
-    >
-      <div className="selection-field">
-        <span className="selection-field-label">
-          <strong>
-            <LocalizedString translations={translations} translationKey="hakija" lang={lang} />:
-          </strong>
-        </span>
-        <span className="selection-field-value">{organisation.name}</span>
-      </div>
-      <div className="selection-field">
-        <span className="selection-field-label">
-          <strong>
-            <LocalizedString
-              translations={translations}
-              translationKey="organization-email"
-              lang={lang}
-            />
-            :
-          </strong>
-        </span>
-        <span className="selection-field-value">{organisation.email}</span>
-      </div>
-      <div className="selection-field">
-        <span className="selection-field-label">
-          <strong>
-            <LocalizedString translations={translations} translationKey="business-id" lang={lang} />
-            :
-          </strong>
-        </span>
-        <span className="selection-field-value">{organisation['organisation-id']}</span>
-      </div>
-    </button>
-  )
+// the swedish organisation is only offered when it actually differs from the finnish one
+function getSelectableOrganisations(
+  finnishOrganization: OrganizationResponse | null,
+  swedishOrganization: OrganizationResponse | null
+): SelectedOrganisation[] {
+  const selectable: SelectedOrganisation[] = []
+  if (finnishOrganization) {
+    selectable.push({ ...finnishOrganization, lang: 'fi' })
+  }
+  if (
+    swedishOrganization &&
+    !organisationInformationIsSameForBothLang(finnishOrganization, swedishOrganization)
+  ) {
+    selectable.push({ ...swedishOrganization, lang: 'sv' })
+  }
+  return selectable
 }
 
 function findFieldAnswerValue(answers: Array<{ key: string; value: string }>, fieldId: string) {

@@ -1,7 +1,7 @@
 import path from 'node:path'
 import fs from 'node:fs/promises'
 
-import { expect } from '@playwright/test'
+import { expect, Page, Response } from '@playwright/test'
 import { defaultValues } from '../../fixtures/defaultValues'
 import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
 import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
@@ -10,6 +10,26 @@ const AKAAN_KAUPUNKI_BUSINESS_ID = '2050864-5'
 const EXPECTED_ORGANIZATION_NAME = 'Akaan kaupunki'
 const EXPECTED_ORGANIZATION_EMAIL = 'hakija-1424884@oph.fi'
 const EXPECTED_ORGANIZATION_ADDRESS = 'PL 34 37801 AKAA'
+
+// Vaasa has separate finnish and swedish organisation details, so both are offered to the hakija
+const VAASAN_KAUPUNKI_BUSINESS_ID = '0209602-6'
+const EXPECTED_VAASA_FINNISH_NAME = 'Vaasan kaupunki'
+const EXPECTED_VAASA_SWEDISH_NAME = 'Vasa stad'
+const EXPECTED_VAASA_ORGANIZATION_EMAIL = 'hakija-8248263@oph.fi'
+
+async function searchBusinessId(page: Page, businessId: string) {
+  await page.locator('#finnish-business-id').fill(businessId)
+  // the modal fires one request per language plus the omistajatyyppi lookup, and the confirm button
+  // stays disabled until the omistajatyyppi lookup has settled
+  const organisationResponse = (lang: 'fi' | 'sv') => (r: Response) =>
+    r.url().includes('/api/organisations/') && r.url().includes(`lang=${lang}`)
+  await Promise.all([
+    page.waitForResponse(organisationResponse('fi')),
+    page.waitForResponse(organisationResponse('sv')),
+    page.waitForResponse((r) => r.url().includes('/api/organisation-type/')),
+    page.locator('input.get-business-id').click(),
+  ])
+}
 
 const test = defaultValues.extend<{
   hakijaAvustusHakuPage: ReturnType<typeof HakijaAvustusHakuPage>
@@ -80,7 +100,7 @@ test('business ID prefill shows confirmation and fills organization details', as
   })
 
   await test.step('clicking fetch shows language selection with organization details', async () => {
-    await page.click('input.get-business-id')
+    await searchBusinessId(page, AKAAN_KAUPUNKI_BUSINESS_ID)
 
     await expect(page.locator('[data-test-id="organisation-selection-fi"]')).toBeVisible({
       timeout: 5000,
@@ -96,11 +116,14 @@ test('business ID prefill shows confirmation and fills organization details', as
     )
   })
 
-  await test.step('selecting Finnish organization and confirming closes modal and prefills fields', async () => {
-    await page.click('[data-test-id="organisation-selection-fi"]')
+  await test.step('the only organization found is preselected without radio buttons', async () => {
     await expect(page.locator('[data-test-id="organisation-selection-fi"]')).toHaveClass(/selected/)
-
+    await expect(page.locator('[data-test-id="organisation-selection-sv"]')).toBeHidden()
+    await expect(page.getByRole('radio')).toHaveCount(0)
     await expect(page.locator('[data-test-id="confirm-selection"]')).toBeEnabled()
+  })
+
+  await test.step('confirming closes modal and prefills fields', async () => {
     await page.click('[data-test-id="confirm-selection"]')
 
     await expect(page.locator('[data-test-id="organisation-selection-fi"]')).not.toBeVisible()
@@ -139,6 +162,47 @@ test('business ID prefill shows confirmation and fills organization details', as
     await expect(page.locator('#organization-email')).toBeDisabled()
     await expect(page.locator('#business-id')).toBeDisabled()
     await expect(page.locator('#organization-postal-address')).toBeDisabled()
+  })
+})
+
+test('business ID prefill requires choosing between Finnish and Swedish organization', async ({
+  hakijaAvustusHakuPage,
+}) => {
+  const { page } = hakijaAvustusHakuPage
+  const finnishSelection = page.locator('[data-test-id="organisation-selection-fi"]')
+  const swedishSelection = page.locator('[data-test-id="organisation-selection-sv"]')
+  const confirmButton = page.locator('[data-test-id="confirm-selection"]')
+
+  await test.step('both organizations are offered as unselected radio buttons', async () => {
+    await searchBusinessId(page, VAASAN_KAUPUNKI_BUSINESS_ID)
+
+    await expect(finnishSelection).toContainText(EXPECTED_VAASA_FINNISH_NAME)
+    await expect(swedishSelection).toContainText(EXPECTED_VAASA_SWEDISH_NAME)
+
+    await expect(page.getByRole('radio')).toHaveCount(2)
+    await expect(finnishSelection.getByRole('radio')).not.toBeChecked()
+    await expect(swedishSelection.getByRole('radio')).not.toBeChecked()
+  })
+
+  await test.step('confirming is not possible before choosing', async () => {
+    await expect(confirmButton).toBeDisabled()
+  })
+
+  await test.step('choosing the Swedish organization enables confirming', async () => {
+    await swedishSelection.click()
+
+    await expect(swedishSelection.getByRole('radio')).toBeChecked()
+    await expect(finnishSelection.getByRole('radio')).not.toBeChecked()
+    await expect(confirmButton).toBeEnabled()
+  })
+
+  await test.step('confirming prefills the chosen Swedish organization details', async () => {
+    await confirmButton.click()
+
+    await expect(page.getByRole('dialog')).toBeHidden()
+    await expect(page.locator('#organization')).toHaveValue(EXPECTED_VAASA_SWEDISH_NAME)
+    await expect(page.locator('#organization-email')).toHaveValue(EXPECTED_VAASA_ORGANIZATION_EMAIL)
+    await expect(page.locator('#business-id')).toHaveValue(VAASAN_KAUPUNKI_BUSINESS_ID)
   })
 })
 
