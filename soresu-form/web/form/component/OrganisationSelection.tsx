@@ -70,14 +70,6 @@ export function OrganisationSelection({ state, controller }: OrganisationSelecti
     swedishOrganization
   )
 
-  // a single organisation leaves nothing to choose between, so preselect it. when the search finds
-  // both a finnish and a swedish organisation the hakija has to pick one of them.
-  useEffect(() => {
-    if (selectableOrganisations.length === 1) {
-      setSelectedOrganisation(selectableOrganisations[0])
-    }
-  }, [finnishOrganization, swedishOrganization])
-
   const handleConfirm = () => {
     if (!selectedOrganisation) {
       return
