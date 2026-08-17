@@ -73,7 +73,7 @@
 
 (defn- paatostiedot-muuttuneet? [tallennettu paivitetty]
   (let [[vain-tallennetussa vain-paivitetyssa] (hakija-api/diff-paatos (:decision tallennettu)
-                                                                      (:decision paivitetty))]
+                                                                       (:decision paivitetty))]
     (or (some? vain-tallennetussa)
         (some? vain-paivitetyssa)
         (not= (mapv #(get tallennettu %) paatoksen-paivamaarakentat)
