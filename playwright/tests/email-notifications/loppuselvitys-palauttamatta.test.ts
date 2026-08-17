@@ -318,7 +318,5 @@ const sendLoppuselvitysPalauttamattaNotifications = (page: Page) =>
 
 async function setLoppuselvitysDate(page: Page, avustushakuID: number, value: string) {
   const paatosPage = PaatosPage(page)
-  await paatosPage.navigateTo(avustushakuID)
-  await paatosPage.setLoppuselvitysDate(value)
-  await paatosPage.waitForSave()
+  await paatosPage.editPaatos(avustushakuID, () => paatosPage.setLoppuselvitysDate(value))
 }
