@@ -7,6 +7,7 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 
 import PaatosUrl from '../../PaatosUrl'
 import HelpTooltip from '../../common-components/HelpTooltip'
+import WarningBanner from '../../WarningBanner'
 import { Kayttoaika } from './Kayttoaika'
 import { SelvityksienAikarajat } from './SelvityksienAikarajat'
 import { Lahetys, Tapahtumaloki } from './Tapahtumaloki'
@@ -24,6 +25,18 @@ import { VirkailijaAvustushaku, selectLoadedInitialData, updateField } from '../
 import { useHakujenHallintaDispatch, useHakujenHallintaSelector } from '../hakujenHallintaStore'
 import { tryToUseCurrentAvustushaku, useCurrentAvustushaku } from '../useAvustushaku'
 import ChooseAvustushaku from './ChooseAvustushaku'
+
+const onPaatosLukittu = (avustushaku: VirkailijaAvustushaku) => avustushaku.status === 'resolved'
+
+const PaatosLukittuIlmoitus = () => (
+  <div data-test-id="paatos-lukittu-ilmoitus" className="decision-locked-notice">
+    <WarningBanner>
+      Haku on ratkaistu, joten päätöseditori on lukittu eikä päätöksen tietoja voi muokata. Jos
+      haluat tehdä muutoksia, palauta haku Haun tiedot -välilehdellä tilaan Julkaistu, tee muutokset
+      ja aseta haku sen jälkeen takaisin tilaan Ratkaistu.
+    </WarningBanner>
+  </div>
+)
 
 interface DecisionProps {
   title: string
@@ -226,7 +239,7 @@ const PakoteLiite = () => {
             type="checkbox"
             className="decision-liite-selection__liite-input"
             checked={!dontIncludePakoteOhje}
-            disabled={loadingAvustushaku}
+            disabled={loadingAvustushaku || onPaatosLukittu(avustushaku)}
             onChange={() =>
               dispatch(
                 updateField({
@@ -1161,6 +1174,8 @@ const DecisionEditorPage = () => {
   const loadingAvustushaku = useHakujenHallintaSelector(
     (state) => state.haku.loadStatus.loadingAvustushaku
   )
+  const paatosLukittu = onPaatosLukittu(avustushaku)
+  const fieldsDisabled = loadingAvustushaku || paatosLukittu
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(updateField({ avustushaku, field: e.target, newValue: e.target.value }))
   }
@@ -1215,6 +1230,7 @@ const DecisionEditorPage = () => {
   return (
     <div className="decision-editor">
       <div data-test-id="paatos-ohje" dangerouslySetInnerHTML={mainHelp} />
+      {paatosLukittu && <PaatosLukittuIlmoitus />}
       <LastUpdated updatedAt={updatedAt} id={'paatosUpdatedAt'} />
       <DecisionFields
         key="taustaa"
@@ -1222,7 +1238,7 @@ const DecisionEditorPage = () => {
         avustushaku={avustushaku}
         id="taustaa"
         onChange={onChange}
-        disabled={loadingAvustushaku}
+        disabled={fieldsDisabled}
         helpText={helpTexts['hakujen_hallinta__päätös___taustaa']}
         dataTestId="taustaa"
       />
@@ -1234,7 +1250,7 @@ const DecisionEditorPage = () => {
         onChange={onChange}
         helpText={helpTexts['hakujen_hallinta__päätös___myönteisen_päätöksen_lisäteksti']}
         dataTestId="myonteinenlisateksti"
-        disabled={loadingAvustushaku}
+        disabled={fieldsDisabled}
       />
       <div className="decision-subfields">
         {koulutusasteet.map((aste) => (
@@ -1244,7 +1260,7 @@ const DecisionEditorPage = () => {
             avustushaku={avustushaku}
             id={`myonteinenlisateksti-${aste.replace(/[\s.]/g, '_')}`}
             onChange={onChange}
-            disabled={loadingAvustushaku}
+            disabled={fieldsDisabled}
           />
         ))}
       </div>
@@ -1257,7 +1273,7 @@ const DecisionEditorPage = () => {
           onChange={onChange}
           helpText={field.helpText}
           dataTestId={field.dataTestId}
-          disabled={loadingAvustushaku}
+          disabled={fieldsDisabled}
         />
       ))}
       <DecisionFields
@@ -1268,13 +1284,13 @@ const DecisionEditorPage = () => {
         onChange={onChange}
         helpText={helpTexts['hakujen_hallinta__päätös___avustuksen_maksuaika']}
         dataTestId={'maksu'}
-        disabled={loadingAvustushaku}
+        disabled={fieldsDisabled}
       />
-      <Kayttoaika avustushaku={avustushaku} disabled={loadingAvustushaku} />
+      <Kayttoaika avustushaku={avustushaku} disabled={fieldsDisabled} />
       <SelvityksienAikarajat
         avustushaku={avustushaku}
         helpTexts={helpTexts}
-        disabled={loadingAvustushaku}
+        disabled={fieldsDisabled}
       />
       {avustushaku.content.multiplemaksuera === true && (
         <DateField
@@ -1282,21 +1298,21 @@ const DecisionEditorPage = () => {
           field="maksudate"
           label="Viimeinen maksuerä"
           helpTexts={helpTexts}
-          disabled={loadingAvustushaku}
+          disabled={fieldsDisabled}
         />
       )}
       <LiitteetSelection
         avustushaku={avustushaku}
         decisionLiitteet={decisionLiitteet}
         helpTexts={helpTexts}
-        disabled={loadingAvustushaku}
+        disabled={fieldsDisabled}
       />
       <PakoteLiite />
       <DecisionDateAndSend
         avustushaku={avustushaku}
         environment={environment}
         helpTexts={helpTexts}
-        disabled={loadingAvustushaku}
+        disabled={fieldsDisabled}
       />
     </div>
   )

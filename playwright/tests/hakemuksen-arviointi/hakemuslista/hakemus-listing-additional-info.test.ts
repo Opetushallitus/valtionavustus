@@ -86,10 +86,10 @@ test(`hakemusten arviointi additional info`, async ({
     await expect(locators.loppuselvitykset).toHaveText('-')
 
     const paatosPage = PaatosPage(page)
-    await paatosPage.navigateTo(avustushakuID)
-    await paatosPage.setValiselvitysDate(valiselvitysDeadline)
-    await paatosPage.setLoppuselvitysDate(loppuselvitysDeadline)
-    await paatosPage.waitForSave()
+    await paatosPage.editPaatos(avustushakuID, async () => {
+      await paatosPage.setValiselvitysDate(valiselvitysDeadline)
+      await paatosPage.setLoppuselvitysDate(loppuselvitysDeadline)
+    })
 
     await hakemustenArviointiPage.navigate(avustushakuID, {
       showAdditionalInfo: true,
