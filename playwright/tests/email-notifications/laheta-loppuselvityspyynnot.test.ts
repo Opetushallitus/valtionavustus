@@ -30,10 +30,9 @@ const notifyTest = selvitysTest.extend<LoppuselvitysExtraFixtures>({
     expectToBeDefined(acceptedHakemus)
 
     const paatosPage = PaatosPage(page)
-    await paatosPage.navigateTo(avustushakuID)
-
-    await paatosPage.setLoppuselvitysDate(loppuselvitysDate)
-    await paatosPage.waitForSave()
+    await paatosPage.editPaatos(avustushakuID, () =>
+      paatosPage.setLoppuselvitysDate(loppuselvitysDate)
+    )
     await use(true)
   },
 })

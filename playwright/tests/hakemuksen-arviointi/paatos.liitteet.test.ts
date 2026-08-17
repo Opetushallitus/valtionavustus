@@ -45,8 +45,6 @@ test.extend({
       projektikoodi,
       paatoksenPerustelut: 'Timanttinen hakemus, ei voi muuta sanoa kun hattua nostaa!',
     })
-    const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
-    await haunTiedotPage.resolveAvustushaku()
     await hakemustenArviointiPage.navigate(avustushakuID)
     await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
 
@@ -96,7 +94,8 @@ test.extend({
     })
 
     await test.step('make sure link to yleisohje is in paatos', async () => {
-      const paatosPage = PaatosPage(page)
+      const haunTiedotPage = await paatosPage.common.switchToHaunTiedotTab()
+      await haunTiedotPage.resolveAvustushaku()
       await paatosPage.navigateTo(avustushakuID)
       await paatosPage.sendPaatos()
       await paatosPage.navigateToLatestHakijaPaatos(hakemusID)
@@ -135,13 +134,12 @@ test.extend({
     })
 
     await test.step('uncheck pakoteohje', async () => {
-      await paatosPage.navigateTo(avustushakuID)
-
-      await expect(yleisOhjeCheckbox).toBeChecked()
-      await expect(pakoteOhjeCheckbox).toBeChecked()
-      await pakoteOhjeCheckbox.click()
-      await expect(pakoteOhjeCheckbox).not.toBeChecked()
-      await paatosPage.common.waitForSave()
+      await paatosPage.editPaatos(avustushakuID, async () => {
+        await expect(yleisOhjeCheckbox).toBeChecked()
+        await expect(pakoteOhjeCheckbox).toBeChecked()
+        await pakoteOhjeCheckbox.click()
+        await expect(pakoteOhjeCheckbox).not.toBeChecked()
+      })
     })
     await test.step('pakoteohje gets removed after recreating and sending paatokset', async () => {
       await paatosPage.recreatePaatokset()
@@ -192,8 +190,6 @@ test.extend({
       paatoksenPerustelut: 'Timanttinen hakemus, ei voi muuta sanoa kun hattua nostaa!',
     })
     const kayttotarkoitus = 'Tarkoitus olisi olla käyttämättä koko summaa Alkoon'
-    const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
-    await haunTiedotPage.resolveAvustushaku()
     await hakemustenArviointiPage.navigate(avustushakuID)
     await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
 
@@ -204,6 +200,9 @@ test.extend({
       await paatosPage.navigateTo(avustushakuID)
       await paatosPage.locators.kayttotarkoitus.fill(kayttotarkoitus)
       await Promise.all([paatosPage.locators.jotpaOhjeCheckbox.click(), waitForSave(page)])
+      const haunTiedotPage = await paatosPage.common.switchToHaunTiedotTab()
+      await haunTiedotPage.resolveAvustushaku()
+      await paatosPage.navigateTo(avustushakuID)
       await paatosPage.sendPaatos()
 
       await test.step('And user navigates to päätös page', async () => {
@@ -269,8 +268,6 @@ test.extend({
       projektikoodi,
       paatoksenPerustelut: 'Timanttinen hakemus, ei voi muuta sanoa kun hattua nostaa!',
     })
-    const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
-    await haunTiedotPage.resolveAvustushaku()
     await hakemustenArviointiPage.navigate(avustushakuID)
     await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, ukotettuValmistelija)
 
@@ -334,6 +331,9 @@ test.extend({
       await hakemustenArviointiPage.waitForSave()
       await expect(newestVersionRadio).toBeChecked()
 
+      const haunTiedotPage = await paatosPage.common.switchToHaunTiedotTab()
+      await haunTiedotPage.resolveAvustushaku()
+      await paatosPage.navigateTo(avustushakuID)
       await paatosPage.sendPaatos()
       await paatosPage.navigateToLatestHakijaPaatos(hakemusID)
 

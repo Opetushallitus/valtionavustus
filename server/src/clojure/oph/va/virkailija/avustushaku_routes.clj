@@ -6,6 +6,7 @@
             [oph.soresu.form.schema :as form-schema]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
+            [oph.va.routes :as va-routes]
             [oph.va.schema :as va-schema]
             [oph.va.virkailija.authentication :as authentication]
             [oph.va.virkailija.authorization :as authorization]
@@ -67,14 +68,33 @@
     (with-tx (fn [tx]
                (http/ok (hakudata/create-new-avustushaku tx (:baseHakuId base-haku-id-wrapper) (authentication/get-request-identity request)))))))
 
+(def ^:private paatoksen-paivamaarakentat
+  [:hankkeen-alkamispaiva :hankkeen-paattymispaiva :valiselvitysdate :loppuselvitysdate])
+
+(defn- paatostiedot-muuttuneet? [tallennettu paivitetty]
+  (let [[vain-tallennetussa vain-paivitetyssa] (hakija-api/diff-paatos (:decision tallennettu)
+                                                                      (:decision paivitetty))]
+    (or (some? vain-tallennetussa)
+        (some? vain-paivitetyssa)
+        (not= (mapv #(get tallennettu %) paatoksen-paivamaarakentat)
+              (mapv #(get paivitetty %) paatoksen-paivamaarakentat)))))
+
 (defn- post-avustushaku []
   (compojure-api/POST "/:avustushaku-id" []
     :path-params [avustushaku-id :- Long]
     :body [avustushaku (compojure-api/describe va-schema/AvustusHaku "Updated avustushaku")]
     :return va-schema/AvustusHaku
     :summary "Update avustushaku description"
-    (if-let [response (hakija-api/update-avustushaku avustushaku)]
-      (http/ok response)
+    (if-let [tallennettu (some-> (hakija-api/get-avustushaku avustushaku-id)
+                                 va-routes/avustushaku-response-content)]
+      (if (and (= "resolved" (:status tallennettu))
+               (paatostiedot-muuttuneet? tallennettu avustushaku))
+        (do
+          (log/warn "Yritettiin muuttaa ratkaistun avustushaun" avustushaku-id "päätöstietoja")
+          (http/bad-request {:error "Haku on ratkaistu, joten päätöksen tietoja ei voi muuttaa. Palauta haku tilaan Julkaistu tai Luonnos tehdäksesi muutoksia."}))
+        (if-let [response (hakija-api/update-avustushaku avustushaku)]
+          (http/ok response)
+          (http/not-found)))
       (http/not-found))))
 
 (defn- get-avustushaku []

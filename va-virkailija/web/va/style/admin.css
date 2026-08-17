@@ -546,6 +546,10 @@ table.translation td {
     flex-direction: column;
 }
 
+.decision-locked-notice {
+    margin-bottom: 20px;
+}
+
 .decision-subfields {
     padding: 20px;
 }

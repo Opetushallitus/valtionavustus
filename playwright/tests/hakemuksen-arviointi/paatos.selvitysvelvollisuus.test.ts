@@ -74,11 +74,12 @@ test.describe('päätöksen selvitysvelvollisuus-osio', () => {
   test('on muotoiltu oikein', async ({ avustushakuID, acceptedHakemus, page }) => {
     await test.step('Send päätökset', async () => {
       const paatosPage = PaatosPage(page)
-      await paatosPage.navigateTo(avustushakuID)
       const selvitysvelvollisuus = `Avustuksen käytöstä tulee tehdä Opetushallitukselle loppuselvitys kahden kuukauden kuluessa hankkeen päättymisestä tai viimeistään 30.9.2027.
  Hankkeen tulee pyydettäessä kuvata siinä syntyneitä tuotoksia ja käytäntöjä Opetushallituksen erikseen osoittamassa palvelussa.`
-      await paatosPage.locators.selvitysvelvollisuus.fill(selvitysvelvollisuus)
-      await waitForSave(page)
+      await paatosPage.editPaatos(avustushakuID, async () => {
+        await paatosPage.locators.selvitysvelvollisuus.fill(selvitysvelvollisuus)
+        await waitForSave(page)
+      })
       await paatosPage.sendPaatos()
     })
     const hakijaPaatosPage = HakijaPaatosPage(page)

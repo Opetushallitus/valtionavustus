@@ -4,6 +4,7 @@ import * as common from './CommonHakujenHallintaPage'
 import { CommonHakujenHallintaPage } from './CommonHakujenHallintaPage'
 import { getAcceptedPäätösEmails } from '../../../utils/emails'
 import { expectToBeDefined } from '../../../utils/util'
+import { VIRKAILIJA_URL } from '../../../utils/constants'
 
 export function PaatosPage(page: Page) {
   const datePicker = 'div.datepicker input'
@@ -38,12 +39,16 @@ export function PaatosPage(page: Page) {
     pakoteOhjeCheckbox: page.locator(
       'text=Pakotteiden huomioon ottaminen valtionavustustoiminnassa'
     ),
+    pakoteOhjeInput: page.getByRole('checkbox', {
+      name: 'Pakotteiden huomioon ottaminen valtionavustustoiminnassa',
+    }),
     maksuaika: page.locator('[id="decision.maksu.fi"]'),
     lisatekstiDefault: page.locator('[id="decision.myonteinenlisateksti.fi"]'),
     lisatekstiAmmatillinenKoulutus: page.locator(
       '[id="decision.myonteinenlisateksti-Ammatillinen_koulutus.fi"]'
     ),
     paatosUpdatedAt: page.locator('#paatosUpdatedAt'),
+    paatosLukittuIlmoitus: page.getByTestId('paatos-lukittu-ilmoitus'),
     valiselvitysDate: valiselvitysPaiva.locator(datePicker),
     loppuselvitysDate: loppuselvitysPaiva.locator(datePicker),
     decisionDate: page.locator('[id="decision.date"]'),
@@ -104,6 +109,39 @@ export function PaatosPage(page: Page) {
     await expect(page.locator('.tapahtumaloki .entry')).toHaveCount(1, { timeout: 30_000 })
   }
 
+  async function isRatkaistu(avustushakuID: number) {
+    const response = await page.request.get(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}`, {
+      failOnStatusCode: true,
+    })
+    const { avustushaku } = await response.json()
+    return avustushaku.status === 'resolved'
+  }
+
+  /**
+   * Päätöseditori on lukittu, kun haku on tilassa Ratkaistu. Muokkausta varten haku
+   * palautetaan Julkaistu-tilaan ja ratkaistaan muokkauksen jälkeen uudelleen.
+   */
+  async function editPaatos(avustushakuID: number, edit: () => Promise<void>) {
+    const common = CommonHakujenHallintaPage(page)
+    const lukittu = await isRatkaistu(avustushakuID)
+    if (lukittu) {
+      await navigateTo(avustushakuID)
+      await common.waitForAvustushakuReady()
+      const haunTiedotPage = await common.switchToHaunTiedotTab()
+      await haunTiedotPage.publishAvustushaku()
+    }
+    await navigateTo(avustushakuID)
+    await common.waitForAvustushakuReady()
+    await edit()
+    await common.waitForSave()
+    if (lukittu) {
+      const haunTiedotPage = await common.switchToHaunTiedotTab()
+      await haunTiedotPage.resolveAvustushaku()
+      await navigateTo(avustushakuID)
+      await common.waitForAvustushakuReady()
+    }
+  }
+
   async function setLoppuselvitysDate(value: string) {
     await page.fill('[data-test-id="loppuselvityksen-aikaraja"] div.datepicker input', value)
     await page.keyboard.press('Tab')
@@ -119,6 +157,7 @@ export function PaatosPage(page: Page) {
     locators,
     navigateTo,
     navigateToLatestHakijaPaatos,
+    editPaatos,
     sendPaatos,
     recreatePaatokset,
     resendPaatokset,
