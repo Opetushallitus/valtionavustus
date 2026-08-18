@@ -15,11 +15,12 @@ export default class BasicTextArea extends BasicFieldComponent<BasicTextAreaProp
     const props = this.props
     const length = props.value === undefined ? 0 : props.value.length
     const lengthLeft = props.maxLength - length
-    const classStr = this.resolveClassName()
+    const classStr = this.resolveClassName(props.size)
     return (
       <div className={ClassNames('soresu-text-area', props.size)}>
         {this.label(classStr)}
         <textarea
+          className={classStr}
           id={props.htmlId}
           name={props.htmlId}
           maxLength={props.maxLength}

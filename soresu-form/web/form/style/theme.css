@@ -2,6 +2,7 @@
   --form-width: 1300px;
   --section-width: 800px;
   --form-heading-width: 250px; /* From main.less */
+  --field-gutter: 16px; /* Vierekkäisten kenttien väli fieldsetissä */
 
   /* Colors */
   --lightest-gray: #fafafa;
