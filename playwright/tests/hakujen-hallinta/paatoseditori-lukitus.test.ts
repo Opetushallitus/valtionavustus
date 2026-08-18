@@ -106,4 +106,27 @@ test('palvelin estää päätöstietojen muuttamisen kun haku on ratkaistu', asy
     expect(currentAvustushaku.decision.taustaa).toEqual(avustushaku.decision.taustaa)
     expect(currentAvustushaku.loppuselvitysdate).toEqual(avustushaku.loppuselvitysdate)
   })
+
+  await test.step('päätöstietojen muuttamista ei voi kiertää toisen haun polun kautta', async () => {
+    // Lukitsematon haku (luonnos) jonka polun kautta lukitusta yritetään kiertää.
+    // Body säilyttää ratkaistun haun id:n, mutta POST menee lukitsemattoman haun polkuun.
+    const julkaistuHakuID = await hakujenHallintaPage.copyEsimerkkihaku()
+    const response = await page.request.post(
+      `${VIRKAILIJA_URL}/api/avustushaku/${julkaistuHakuID}`,
+      {
+        data: {
+          ...avustushaku,
+          decision: { ...avustushaku.decision, taustaa: { fi: 'ohi lukituksen', sv: '' } },
+        },
+      }
+    )
+    expect(response.status()).toBe(400)
+
+    const afterResponse = await page.request.get(
+      `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}`,
+      { failOnStatusCode: true }
+    )
+    const currentAvustushaku = (await afterResponse.json()).avustushaku
+    expect(currentAvustushaku.decision.taustaa).toEqual(avustushaku.decision.taustaa)
+  })
 })

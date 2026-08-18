@@ -87,11 +87,19 @@
     :summary "Update avustushaku description"
     (if-let [tallennettu (some-> (hakija-api/get-avustushaku avustushaku-id)
                                  va-routes/avustushaku-response-content)]
-      (if (and (= "resolved" (:status tallennettu))
-               (paatostiedot-muuttuneet? tallennettu avustushaku))
+      (cond
+        (not= avustushaku-id (:id avustushaku))
+        (do
+          (log/warn "Polun avustushaku-id" avustushaku-id "ja bodyn id" (:id avustushaku) "eivät täsmää")
+          (http/bad-request {:error "Avustushaku-id ei täsmää"}))
+
+        (and (= "resolved" (:status tallennettu))
+             (paatostiedot-muuttuneet? tallennettu avustushaku))
         (do
           (log/warn "Yritettiin muuttaa ratkaistun avustushaun" avustushaku-id "päätöstietoja")
           (http/bad-request {:error "Haku on ratkaistu, joten päätöksen tietoja ei voi muuttaa. Palauta haku tilaan Julkaistu tai Luonnos tehdäksesi muutoksia."}))
+
+        :else
         (if-let [response (hakija-api/update-avustushaku avustushaku)]
           (http/ok response)
           (http/not-found)))
