@@ -1,0 +1,4 @@
+interface:
+  display_name: "Recover VA form JSON"
+  short_description: "Recover a lost VA form at a point in time"
+  default_prompt: "Use $recover-va-form-json to export a VA form JSON as it existed at a requested date."
