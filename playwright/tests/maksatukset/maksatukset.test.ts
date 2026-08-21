@@ -21,6 +21,7 @@ import {
 } from './maksatuspalvelu'
 import { ValiselvitysPage } from '../../pages/virkailija/hakujen-hallinta/ValiselvitysPage'
 import { createDefaultErapaiva } from '../../../va-virkailija/web/va/hakujen-hallinta-page/haku-details/erapaiva'
+import { PaymentBatchV2 } from '../../../va-virkailija/web/va/types'
 
 const correctOVTTest = test.extend({
   codes: async ({ page }, use) => {
@@ -381,3 +382,144 @@ test('sending maksatukset disables changing code values for haku', async ({
     await expect(projects.nth(i)).toBeVisible()
   }
 })
+
+twoAcceptedHakemusTest(
+  'maksatusten sending in progress status is persisted on page reload',
+  async ({ page, avustushakuID, acceptedHakemukset: { hakemusID, secondHakemusID } }) => {
+    // Fixtures are created lazily: acceptedHakemukset must be requested for maksatukset to exist.
+    expectToBeDefined(hakemusID)
+    expectToBeDefined(secondHakemusID)
+    const maksatuksetPage = MaksatuksetPage(page)
+    await maksatuksetPage.gotoID(avustushakuID)
+    // Accepting a hakemus does not create maksatukset; they are created separately (cf. :241).
+    await Promise.all([
+      page.waitForResponse(new RegExp('/api/v2/grants/\\d+/payments/')),
+      maksatuksetPage.luoMaksatukset.click(),
+    ])
+    await expect(maksatuksetPage.maksatuksetTableRow(0).hanke).toBeVisible()
+    await maksatuksetPage.fillInMaksueranTiedot(
+      'ID0123456789',
+      'essi.esittelija@example.com',
+      'hygge.hyvaksyja@example.com'
+    )
+
+    const sendBtn = page.locator('text=Lähetä maksatukset ja täsmäytysraportti')
+    await sendBtn.click()
+    await expect(sendBtn).toBeDisabled()
+
+    const progress = page.getByTestId('maksatukset-progress')
+    await expect(progress).toBeVisible()
+    await expect(progress).toContainText(/Lähetetään maksatuksia \(\d+\/\d+\)/)
+
+    // The send continues on the server; a reload must not lose the state or show an error.
+    await page.reload()
+    await expect(page.getByTestId('maksatukset-progress')).toBeVisible()
+    await expect(
+      page.locator('text=Maksatuksien ja täsmäytysraportin lähetys epäonnistui')
+    ).toBeHidden()
+
+    await expect(page.getByTestId('maksatukset-progress')).toBeHidden({ timeout: 60000 })
+  }
+)
+
+twoAcceptedHakemusTest(
+  'show failed state for some maksatukset',
+  async ({ page, avustushakuID, acceptedHakemukset: { hakemusID, secondHakemusID } }) => {
+    // Fixtures are created lazily: acceptedHakemukset must be requested for maksatukset to exist.
+    expectToBeDefined(hakemusID)
+    expectToBeDefined(secondHakemusID)
+    const maksatuksetPage = MaksatuksetPage(page)
+    await maksatuksetPage.gotoID(avustushakuID)
+    // Accepting a hakemus does not create maksatukset; they are created separately (cf. :241).
+    await Promise.all([
+      page.waitForResponse(new RegExp('/api/v2/grants/\\d+/payments/')),
+      maksatuksetPage.luoMaksatukset.click(),
+    ])
+    await expect(maksatuksetPage.maksatuksetTableRow(0).hanke).toBeVisible()
+
+    const getBatches = async (): Promise<PaymentBatchV2[]> => {
+      const res = await page.request.get(
+        `${VIRKAILIJA_URL}/api/v2/grants/${avustushakuID}/batches/`,
+        { failOnStatusCode: true }
+      )
+      return res.json()
+    }
+
+    // The maksuerä is created through the API rather than the UI form: this fixture's avustushaku
+    // is missing fields the send form validates, which would leave the send button disabled.
+    const today = moment()
+    const created = await page.request.post(`${VIRKAILIJA_URL}/api/v2/payment-batches/`, {
+      data: {
+        currency: 'EUR',
+        'invoice-date': today.format('YYYY-MM-DD'),
+        'due-date': moment(createDefaultErapaiva(today)).format('YYYY-MM-DD'),
+        'receipt-date': today.format('YYYY-MM-DD'),
+        'grant-id': avustushakuID,
+        partner: '',
+      },
+      failOnStatusCode: true,
+    })
+    const batch: PaymentBatchV2 = await created.json()
+
+    await page.request.post(`${VIRKAILIJA_URL}/api/test/set-maksatus-batch-status`, {
+      data: { 'batch-id': batch.id, 'send-status': 'failed' },
+      failOnStatusCode: true,
+    })
+
+    await page.reload()
+    const stopped = page.getByTestId('maksatukset-send-failed')
+    await expect(stopped).toBeVisible()
+    await expect(stopped).toContainText('Osa maksatuksista jäi lähettämättä')
+
+    // Showing the failed state must not have created another maksuerä.
+    expect((await getBatches()).map((b) => b.id)).toEqual([batch.id])
+  }
+)
+
+twoAcceptedHakemusTest(
+  'error is shown when sending fails',
+  async ({ page, avustushakuID, acceptedHakemukset: { hakemusID, secondHakemusID } }) => {
+    // Fixtures are created lazily: acceptedHakemukset must be requested for maksatukset to exist.
+    expectToBeDefined(hakemusID)
+    expectToBeDefined(secondHakemusID)
+    const maksatuksetPage = MaksatuksetPage(page)
+    await maksatuksetPage.gotoID(avustushakuID)
+    // Accepting a hakemus does not create maksatukset; they are created separately (cf. :241).
+    await Promise.all([
+      page.waitForResponse(new RegExp('/api/v2/grants/\\d+/payments/')),
+      maksatuksetPage.luoMaksatukset.click(),
+    ])
+    await expect(maksatuksetPage.maksatuksetTableRow(0).hanke).toBeVisible()
+
+    // The maksuerä is created through the API rather than the UI form: this fixture's avustushaku
+    // is missing fields the send form validates, which would leave the send button disabled.
+    const today = moment()
+    const created = await page.request.post(`${VIRKAILIJA_URL}/api/v2/payment-batches/`, {
+      data: {
+        currency: 'EUR',
+        'invoice-date': today.format('YYYY-MM-DD'),
+        'due-date': moment(createDefaultErapaiva(today)).format('YYYY-MM-DD'),
+        'receipt-date': today.format('YYYY-MM-DD'),
+        'grant-id': avustushakuID,
+        partner: '',
+      },
+      failOnStatusCode: true,
+    })
+    const batch: PaymentBatchV2 = await created.json()
+
+    await page.request.post(`${VIRKAILIJA_URL}/api/test/set-maksatus-batch-status`, {
+      data: { 'batch-id': batch.id, 'send-status': 'sending' },
+      failOnStatusCode: true,
+    })
+    await page.route('**/payments-batch/*/status', (route) => route.abort())
+
+    await page.reload()
+
+    // The bounded retry gives up after a handful of failures and says so.
+    await expect(page.getByText('Maksatusten lähetyksen tilaa ei saatu haettua')).toBeVisible({
+      timeout: 30000,
+    })
+    await expect(page.getByTestId('maksatukset-progress')).toBeHidden()
+    await expect(page.locator('text=Lähetetään maksatuksia ja täsmäytysraporttia')).toBeHidden()
+  }
+)

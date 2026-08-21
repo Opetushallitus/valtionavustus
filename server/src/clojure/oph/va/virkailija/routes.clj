@@ -377,6 +377,15 @@
         (log/error e)
         (internal-server-error {:message "error"}))))
 
+  (compojure-api/POST "/set-maksatus-batch-status" []
+    :body-params [batch-id :- Long send-status :- (s/enum "sending" "completed" "failed")]
+    :summary "Testikäyttöön: asettaa maksuerän lähetystilan"
+    (log/info "test-api: set maksatus batch" batch-id "to" send-status)
+    (execute!
+     "UPDATE virkailija.payment_batches SET send_status = ? WHERE id = ?"
+     [send-status batch-id])
+    (ok {:status "ok"}))
+
   (compojure-api/POST "/get-sent-invoice-from-db" []
     :body  [body {:pitkaviite s/Str}]
     (let [sql "SELECT outgoing_invoice::text AS invoice FROM virkailija.payments

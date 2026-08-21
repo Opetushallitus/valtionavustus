@@ -14,6 +14,8 @@ export interface HeaderSaveStatus {
   loading?: boolean
   loadError?: string
   sendingMaksatuksetAndTasmaytysraportti?: boolean
+  maksatuksetSentCount?: number | null
+  maksatuksetTotalCount?: number | null
   sendingMaksatuksetAndTasmaytysraporttiFailed?: boolean
 }
 
@@ -67,6 +69,8 @@ export const HeaderContainer = ({
     saveStatus?.saveTime,
     saveStatus?.serverError,
     saveStatus?.sendingMaksatuksetAndTasmaytysraportti,
+    saveStatus?.maksatuksetSentCount,
+    saveStatus?.maksatuksetTotalCount,
     saveStatus?.sendingMaksatuksetAndTasmaytysraporttiFailed,
     saveStatus?.loadError,
     saveStatus?.loading,
@@ -203,8 +207,13 @@ function getNotificationContent(saveStatus?: HeaderSaveStatus): NotificationProp
       status: 'warning',
     }
   } else if (saveStatus?.sendingMaksatuksetAndTasmaytysraportti) {
+    const sent = saveStatus.maksatuksetSentCount
+    const total = saveStatus.maksatuksetTotalCount
     return {
-      notification: 'Lähetetään maksatuksia ja täsmäytysraporttia',
+      notification:
+        sent != null && total != null
+          ? `Lähetetään maksatuksia ja täsmäytysraporttia (${sent}/${total})`
+          : 'Lähetetään maksatuksia ja täsmäytysraporttia',
       notificationIcon: saveInProgressIcon,
       status: 'ok',
     }

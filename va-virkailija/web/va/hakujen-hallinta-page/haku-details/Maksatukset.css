@@ -135,8 +135,34 @@
   width: 100%;
 }
 
+.maksatukset_send_status {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+.maksatukset_progress {
+  background-color: #f6fcff;
+  border-color: #499cc7;
+}
+
+.maksatukset_send_ok {
+  background-color: #dcf8e7;
+  border-color: #108046;
+}
+
+.maksatukset_send_failed {
+  background-color: #fff3f2;
+  border-color: #ba3e35;
+}
+
 .maksatukset_errors {
   width: 100%;
+  box-sizing: border-box;
   background-color: #fff;
   border: 1px solid #000;
   padding: 1rem 1rem 1.5rem;

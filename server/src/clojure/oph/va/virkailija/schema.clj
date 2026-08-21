@@ -409,6 +409,13 @@
    (s/optional-key :refused-at) (s/maybe s/Inst)
    (s/optional-key :grant-name) (s/maybe s/Str)})
 
+(s/defschema PaymentBatchSendStatus
+  "Send status of a maksuerä"
+  {:id s/Int
+   :send-status (s/maybe (s/enum "sending" "completed" "failed"))
+   :sent-count s/Int
+   :total-count (s/maybe s/Int)})
+
 (s/defschema PaymentBatch
   "Payment batch"
   {(s/optional-key :created-at) s/Inst
@@ -419,7 +426,10 @@
    :receipt-date LocalDate
    :currency s/Str
    :partner s/Str
-   :grant-id s/Int})
+   :grant-id s/Int
+   (s/optional-key :send-status) (s/maybe s/Str)
+   (s/optional-key :sent-count) (s/maybe s/Int)
+   (s/optional-key :total-count) (s/maybe s/Int)})
 
 (s/defschema BatchDocument
   "Payment batch document"
