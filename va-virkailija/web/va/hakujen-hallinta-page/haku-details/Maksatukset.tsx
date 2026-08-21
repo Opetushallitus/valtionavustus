@@ -17,9 +17,13 @@ import {
   VirkailijaAvustushaku,
   startManuallySaving,
   selectLoadedInitialData,
+  startSendingMaksatuksetAndTasmaytysraportti,
+  stopSendingMaksatuksetAndTasmaytysraportti,
+  updateSendMaksatuksetProgress,
 } from '../hakuReducer'
 import { tryToUseCurrentAvustushaku, useCurrentAvustushaku } from '../useAvustushaku'
 import ChooseAvustushaku from './ChooseAvustushaku'
+import { isSendUnfinished, useSendMaksatukset } from './useSendMaksatukset'
 
 type MaksatuksetTab = 'outgoing' | 'sent'
 
@@ -28,8 +32,9 @@ export type Maksatus = PaymentV2 & {
 }
 
 const isSent = (p: Maksatus) => ['sent', 'paid'].includes(p['paymentstatus-id'])
-const today = moment().format(fiShortFormat)
-const isToday = (p: Maksatus) => moment(p['created-at']).format(fiShortFormat) === today
+const isCreatedToday = (createdAt: string) =>
+  moment(createdAt).format(fiShortFormat) === moment().format(fiShortFormat)
+const isToday = (p: Maksatus) => isCreatedToday(p['created-at'])
 
 const MaksatuksetPage = () => {
   const avustushaku = useCurrentAvustushaku()
@@ -44,6 +49,8 @@ const MaksatuksetPage = () => {
   const [batches, setBatches] = useState<PaymentBatchV2[]>([])
   const [sentPayments, outgoingPayments] = partition(maksatukset, isSent)
   const newSentPayments = sentPayments.filter(isToday).length
+
+  const dispatch = useHakujenHallintaDispatch()
 
   useEffect(() => {
     void refreshPayments()
@@ -67,6 +74,37 @@ const MaksatuksetPage = () => {
     )
     setBatches(batches)
   }
+
+  const sendMaksatukset = useSendMaksatukset(avustushaku.id, async () => {
+    dispatch(stopSendingMaksatuksetAndTasmaytysraportti())
+    await refreshPayments()
+  })
+
+  useEffect(() => {
+    if (sendMaksatukset.status) {
+      dispatch(
+        updateSendMaksatuksetProgress({
+          sent: sendMaksatukset.status['sent-count'],
+          total: sendMaksatukset.status['total-count'],
+        })
+      )
+    }
+  }, [sendMaksatukset.status, dispatch])
+
+  const activeBatch = batches.find(
+    (b) => isCreatedToday(b['created-at']) && isSendUnfinished(b['send-status'])
+  )
+
+  // A page reload must not lose a send in progress: resume polling, and raise the same redux flag
+  // the send button raises. Without the flag the header banner stays silent after a reload, and the
+  // only sign of a running send is the counter further down the page, below the haku listing.
+  const watchBatch = sendMaksatukset.watchBatch
+  useEffect(() => {
+    if (activeBatch?.['send-status'] === 'sending') {
+      watchBatch(activeBatch.id)
+      dispatch(startSendingMaksatuksetAndTasmaytysraportti())
+    }
+  }, [activeBatch?.id, activeBatch?.['send-status'], watchBatch, dispatch])
 
   return (
     <div className="maksatukset section-container">
@@ -111,6 +149,8 @@ const MaksatuksetPage = () => {
           payments={outgoingPayments}
           refreshPayments={refreshPayments}
           userInfo={userInfo}
+          activeBatch={activeBatch}
+          sendMaksatukset={sendMaksatukset}
         />
       )}
       {userInfo.privileges.includes('va-admin') && (

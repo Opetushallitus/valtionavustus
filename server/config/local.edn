@@ -32,6 +32,7 @@
                                                :delete-payments? true}
  :applications-ui                             {:enabled? true}
  :dont-send-loppuselvityspyynto-to-virkailija {:enabled? true}
- :test-apis                                   {:enabled? true}
+ :test-apis                                   {:enabled?               true
+                                               :maksatus-send-delay-ms 3000}
  :officer-edit-jwt-secret                     "playwright-test-secret"
  :tilastokeskus                               {:url "http://org-mock:8080/tilastokeskus/api/v2/enterprises/"}}

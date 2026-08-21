@@ -105,7 +105,10 @@ export function MaksatuksetPage(page: Page) {
     await sendBtn.click()
     await expect(sendBtn).toBeDisabled()
     await expect(page.locator('text=Lähetetään maksatuksia ja täsmäytysraporttia')).toBeVisible()
-    await expect(lahetetytTab).toContainText('uutta', { timeout: 30000 })
+    const progress = page.getByTestId('maksatukset-progress')
+    await expect(progress).toBeVisible()
+    await expect(progress).toBeHidden({ timeout: 60000 })
+    await expect(lahetetytTab).toContainText('uutta', { timeout: 60000 })
   }
 
   async function clickLahetetytMaksatuksetTab() {

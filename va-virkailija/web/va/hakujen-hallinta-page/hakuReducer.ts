@@ -118,6 +118,8 @@ type SaveStatus = {
   saveInProgress: boolean
   saveTime: string | null
   serverError?: string
+  maksatuksetSentCount: number | null
+  maksatuksetTotalCount: number | null
 } & ExtraSavingStates
 
 interface State {
@@ -741,6 +743,8 @@ const initialState: State = {
     savingTalousarviotilit: false,
     savingManuallyRefactorToOwnActionsAtSomepoint: false,
     sendingMaksatuksetAndTasmaytysraportti: false,
+    maksatuksetSentCount: null,
+    maksatuksetTotalCount: null,
     sendingMaksatuksetAndTasmaytysraporttiFailed: false,
   },
   formDrafts: {},
@@ -763,6 +767,13 @@ const hakuSlice = createSlice({
     startManuallySaving: startSaving('savingManuallyRefactorToOwnActionsAtSomepoint'),
     startSendingMaksatuksetAndTasmaytysraportti: (state) => {
       state.saveStatus.sendingMaksatuksetAndTasmaytysraportti = true
+    },
+    updateSendMaksatuksetProgress: (
+      state,
+      { payload }: PayloadAction<{ sent: number; total: number | null }>
+    ) => {
+      state.saveStatus.maksatuksetSentCount = payload.sent
+      state.saveStatus.maksatuksetTotalCount = payload.total
     },
     stopSendingMaksatuksetAndTasmaytysraportti: (state) => {
       state.saveStatus.sendingMaksatuksetAndTasmaytysraportti = false
@@ -1044,6 +1055,7 @@ export const {
   removeSelectionCriteria,
   startSendingMaksatuksetAndTasmaytysraportti,
   stopSendingMaksatuksetAndTasmaytysraportti,
+  updateSendMaksatuksetProgress,
 } = hakuSlice.actions
 
 export default hakuSlice.reducer

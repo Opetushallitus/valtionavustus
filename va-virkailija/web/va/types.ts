@@ -216,6 +216,8 @@ export type BatchDocumentV2 = {
   'presenter-email': string
 }
 
+export type MaksatusSendStatus = 'sending' | 'completed' | 'failed'
+
 export type PaymentBatchV2 = {
   'batch-number': number
   'created-at': string
@@ -227,4 +229,7 @@ export type PaymentBatchV2 = {
   'invoice-date': string
   partner: string
   'receipt-date': string
+  'send-status': MaksatusSendStatus | null
+  'sent-count': number
+  'total-count': number | null
 }

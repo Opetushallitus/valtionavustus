@@ -5,7 +5,7 @@ import { HelpTexts } from 'soresu-form/web/va/types'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 
 import HelpTooltip from '../../common-components/HelpTooltip'
-import { UserInfo, VaUserSearch } from '../../types'
+import { PaymentBatchV2, UserInfo, VaUserSearch } from '../../types'
 import { DateInput } from './DateInput'
 import { Maksatus } from './Maksatukset'
 import { MaksatuksetTable } from './MaksatuksetTable'
@@ -18,6 +18,7 @@ import {
 } from '../hakuReducer'
 import { useHakujenHallintaDispatch, useHakujenHallintaSelector } from '../hakujenHallintaStore'
 import { createDefaultErapaiva } from './erapaiva'
+import { isSendStopped, SendMaksatukset } from './useSendMaksatukset'
 
 type LahtevatMaksatuksetProps = {
   avustushaku: VirkailijaAvustushaku
@@ -25,6 +26,8 @@ type LahtevatMaksatuksetProps = {
   payments: Maksatus[]
   refreshPayments: () => Promise<void>
   userInfo: UserInfo
+  activeBatch?: PaymentBatchV2
+  sendMaksatukset: SendMaksatukset
 }
 
 type Document = {
@@ -58,8 +61,11 @@ export const LahtevatMaksatukset = ({
   payments,
   refreshPayments,
   userInfo,
+  activeBatch,
+  sendMaksatukset,
 }: LahtevatMaksatuksetProps) => {
   const dispatch = useHakujenHallintaDispatch()
+  const { status, startSend, isSending, startError } = sendMaksatukset
   const defaultLaskuAndTosite = (): Date => now.toDate()
   const [laskunPvm, setLaskunPvm] = useState<Date>(defaultLaskuAndTosite)
   const [erapaiva, setErapaiva] = useState<Date>(createDefaultErapaiva(now))
@@ -108,14 +114,10 @@ export const LahtevatMaksatukset = ({
   }
 
   const onLähetäMaksatuksetJaTäsmäytysraportti = async () => {
+    dispatch(startSendingMaksatuksetAndTasmaytysraportti())
     try {
-      dispatch(startSendingMaksatuksetAndTasmaytysraportti())
       const paymentBatchId = await createPaymentBatches()
-      await HttpUtil.post(
-        `/api/send-maksatukset-and-tasmaytysraportti/avustushaku/${avustushaku.id}/payments-batch/${paymentBatchId}`
-      )
-      dispatch(stopSendingMaksatuksetAndTasmaytysraportti())
-      await refreshPayments()
+      await startSend(paymentBatchId)
     } catch (e) {
       dispatch(stopSendingMaksatuksetAndTasmaytysraportti())
       dispatch(startIndicatingThatSendingMaksatuksetAndTasmaytysraporttiFailed())
@@ -134,7 +136,11 @@ export const LahtevatMaksatukset = ({
       setAsetaMaksatuksetState('error')
     }
   }
-  const sending = asetaMaksatuksetState === 'loading' || sendingMaksatuksetAndTasmaytysraportti
+  const sending =
+    asetaMaksatuksetState === 'loading' ||
+    sendingMaksatuksetAndTasmaytysraportti ||
+    isSending ||
+    activeBatch?.['send-status'] === 'sending'
   const disabled = !!errors.length || sending
 
   return (
@@ -228,6 +234,35 @@ export const LahtevatMaksatukset = ({
           <div className="spacer" />
         </>
       )}
+      {isSending && (
+        <div
+          className="maksatukset_send_status maksatukset_progress"
+          data-test-id="maksatukset-progress"
+        >
+          Lähetetään maksatuksia ({status?.['sent-count'] ?? 0}/{status?.['total-count'] ?? 0})
+        </div>
+      )}
+      {status?.['send-status'] === 'completed' && (
+        <div
+          className="maksatukset_send_status maksatukset_send_ok"
+          data-test-id="maksatukset-send-ok"
+        >
+          Maksatukset lähetetty ({status['sent-count']}/{status['total-count'] ?? 0})
+        </div>
+      )}
+      {activeBatch && isSendStopped(activeBatch['send-status']) && !isSending && (
+        <div
+          className="maksatukset_send_status maksatukset_send_failed"
+          data-test-id="maksatukset-send-failed"
+        >
+          <span>
+            {activeBatch['sent-count'] === activeBatch['total-count']
+              ? 'Maksatukset lähetettiin, mutta lähetys ei päättynyt onnistuneesti'
+              : `Osa maksatuksista jäi lähettämättä (${activeBatch['sent-count']}/${activeBatch['total-count'] ?? 0} lähetetty)`}
+          </span>
+        </div>
+      )}
+      {startError && <div className="maksatukset_errors">{startError}</div>}
       <MaksatuksetTable payments={payments} testId="pending-payments-table" />
     </>
   )

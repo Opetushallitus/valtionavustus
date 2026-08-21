@@ -18,6 +18,7 @@
             [oph.va.virkailija.authentication :as auth]
             [oph.va.virkailija.email :as email]
             [oph.va.virkailija.va-users :as va-users]
+            [oph.va.virkailija.payment-batches-data :as payment-batches-data]
             [oph.va.virkailija.notification-scheduler :as notification-scheduler]
             [oph.va.virkailija.rondo-scheduling :as rondo-scheduling]
             [oph.va.virkailija.muistutus-scheduling :as muistutus-scheduling]
@@ -30,6 +31,7 @@
                                "oph/va/hakija/db/migrations")
   (dbmigrations/migrate "db/migration/virkailija"
                         "oph/va/virkailija/db/migrations")
+  (payment-batches-data/fail-stale-sending-batches!)
   (common-email/start-background-job-send-mails)
   (auth/start-background-job-timeout-sessions)
   (when (get-in config [:va-users :use-cache?])
