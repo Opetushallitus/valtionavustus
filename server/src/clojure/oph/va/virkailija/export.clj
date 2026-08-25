@@ -8,6 +8,7 @@
             [dk.ative.docjure.spreadsheet :as spreadsheet]
             [oph.soresu.form.formhandler :as formhandler]
             [oph.soresu.form.formutil :as formutil]
+            [oph.va.hakemus.db :as hakemus-db]
             [oph.va.virkailija.utils :refer [remove-white-spaces]])
   (:import (java.io ByteArrayOutputStream)
            (org.apache.poi.ss.usermodel Cell CellStyle CellType Sheet Workbook)))
@@ -538,22 +539,24 @@
          (mapv hakemus->main-sheet-rows hakemukset)))
 
 (defn get-normalized-hakemus [hakemus-id]
-  (first
-   (query
-    "SELECT
-         n.contact_person,
-         n.contact_email,
-         n.contact_phone,
-         n.trusted_contact_name,
-         n.trusted_contact_email,
-         n.trusted_contact_phone
-       FROM virkailija.normalized_hakemus n
-       JOIN hakija.hakemukset  h ON h.id = n.hakemus_id
-       JOIN hakija.avustushaut a ON a.id = h.avustushaku
-       WHERE h.version_closed IS NULL
-         AND a.muutoshakukelpoinen = true
-         AND n.hakemus_id = ?"
-    [hakemus-id])))
+  (when-let [normalized-hakemus
+             (first
+              (query
+               "SELECT
+                    n.contact_person,
+                    n.contact_email,
+                    n.contact_phone,
+                    n.trusted_contact_name,
+                    n.trusted_contact_email,
+                    n.trusted_contact_phone
+                  FROM virkailija.normalized_hakemus n
+                  JOIN hakija.hakemukset h ON h.id = n.hakemus_id
+                  WHERE h.version_closed IS NULL
+                    AND n.hakemus_id = ?"
+               [hakemus-id]))]
+    (assoc normalized-hakemus
+           :yhteishanke-organizations
+           (hakemus-db/get-yhteishanke-organizations hakemus-id))))
 
 (def patch-answer-key-map
   {:contact-person        'applicant-name
@@ -563,18 +566,58 @@
    :trusted-contact-email 'trusted-contact-email
    :trusted-contact-phone 'trusted-contact-phone})
 
+(defn- patch-answer-value [answers answer-key value]
+  (if (or (nil? value)
+          (and (string? value) (str/blank? value)))
+    answers
+    (assoc answers answer-key value)))
+
+(def yhteishanke-organization-name-key-pattern
+  #"^other-organizations\.other-organizations-(\d+)\.name$")
+
+(defn- original-yhteishanke-organization-identities [answers]
+  (->> answers
+       (keep (fn [[answer-key value]]
+               (when-let [[_ index]
+                          (re-matches yhteishanke-organization-name-key-pattern answer-key)]
+                 [(Long/parseLong index) value])))
+       (sort-by first)
+       vec))
+
+(defn- normalized-yhteishanke-organization-identities [organizations]
+  (mapv (fn [index organization]
+          [(inc index) (:organization-name organization)])
+        (range)
+        organizations))
+
+(defn- yhteishanke-answer-key [index field]
+  (format "other-organizations.other-organizations-%d.%s" (inc index) field))
+
+(defn patch-yhteishanke-answer-map [answers organizations]
+  (let [organizations (vec organizations)]
+    (if (and (seq organizations)
+             (= (original-yhteishanke-organization-identities answers)
+                (normalized-yhteishanke-organization-identities organizations)))
+      (reduce-kv
+       (fn [patched-answers index organization]
+         (-> patched-answers
+             (patch-answer-value (yhteishanke-answer-key index "contactperson")
+                                 (:contact-person organization))
+             (patch-answer-value (yhteishanke-answer-key index "email")
+                                 (:email organization))))
+       answers
+       organizations)
+      answers)))
+
 (defn patch-answer-map
   [answers db-row]
-  (reduce
-   (fn [row [db-k sym-k]]
-     (let [v (get db-row db-k)]
-       (if (or (nil? v)
-               (and (string? v) (clojure.string/blank? v)))
-         row
-         (-> row
-             (assoc (name sym-k) v)))))
-   answers
-   patch-answer-key-map))
+  (let [patched-answers
+        (reduce
+         (fn [row [db-k sym-k]]
+           (patch-answer-value row (name sym-k) (get db-row db-k)))
+         answers
+         patch-answer-key-map)]
+    (patch-yhteishanke-answer-map patched-answers (:yhteishanke-organizations db-row))))
 
 (defn- make-answers-sheet-rows [form hakemukset va-focus-areas-label va-focus-areas-items fixed-fields]
   (let [growing-fieldset-lut          (generate-growing-fieldset-lut hakemukset)

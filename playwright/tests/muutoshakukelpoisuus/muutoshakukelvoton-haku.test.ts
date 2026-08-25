@@ -13,6 +13,7 @@ import {
   waitUntilMinEmails,
 } from '../../utils/emails'
 import { waitForNewTab } from '../../utils/util'
+import { getHakemusAnswerByHeader } from '../../utils/excel'
 
 test.describe.parallel('Avustushaku that was marked as muutoshakukelvoton', () => {
   test('turns into muutoshakukelpoinen when copied', async ({ avustushakuID, page }) => {
@@ -133,5 +134,10 @@ test.describe.parallel('Avustushaku that was marked as muutoshakukelvoton', () =
     await expect(page.getByRole('heading', { name: 'Hakemus', exact: true })).toBeVisible()
     await expect(page.getByRole('heading', { name: 'Haettavat muutokset' })).not.toBeVisible()
     await hakemusEditPage.changeHakijaNameToEtunimiTakanimi()
+
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    await hakemustenArviointiPage.navigate(avustushakuID)
+    const workbook = await hakemustenArviointiPage.getLataaExcel()
+    expect(getHakemusAnswerByHeader(workbook, 'Yhteyshenkilö')).toEqual('Etunimi Takanimi')
   })
 })

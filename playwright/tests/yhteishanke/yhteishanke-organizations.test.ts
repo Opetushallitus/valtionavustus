@@ -15,6 +15,26 @@ import { Answers } from '../../utils/types'
 import moment from 'moment'
 import { expectToBeDefined } from 'utils/util'
 import { otherOrganization } from '../../utils/yhteishanke'
+import { getHakemusAnswerByHeader } from '../../utils/excel'
+import type { WorkBook } from 'xlsx'
+
+function expectYhteishankeExcelContacts(
+  workbook: WorkBook,
+  organizations: Array<{ name: string; contactPerson: string; email: string }>
+) {
+  organizations.forEach((organization, zeroBasedIndex) => {
+    const index = zeroBasedIndex + 1
+    expect(getHakemusAnswerByHeader(workbook, `Yhteistyökumppanin nimi ${index}`)).toEqual(
+      organization.name
+    )
+    expect(getHakemusAnswerByHeader(workbook, `Yhteyshenkilön nimi ${index}`)).toEqual(
+      organization.contactPerson
+    )
+    expect(getHakemusAnswerByHeader(workbook, `Yhteyshenkilön sähköposti ${index}`)).toEqual(
+      organization.email
+    )
+  })
+}
 
 async function expectYhteishankeEmails(
   avustushakuID: number,
@@ -622,6 +642,15 @@ test('yhteishanke organizations: contact details can be updated in muutoshakemus
       [`Valtionavustus: ${avustushakuName}`, `Terveisin,`, ukotettuValmistelija],
       'Oikaisuvaatimusosoitus'
     )
+  })
+
+  await test.step('excel contains updated yhteishanke contact details', async () => {
+    await hakemustenArviointiPage.navigate(avustushakuID)
+    const workbook = await hakemustenArviointiPage.getLataaExcel()
+    expectYhteishankeExcelContacts(workbook, [
+      { name: 'Ensimmäinen Organisaatio Oy', ...updatedFirstContact },
+      { name: 'Toinen Organisaatio Oy', ...updatedSecondContact },
+    ])
   })
 
   await test.step('send loppuselvityspyynnöt, submit loppuselvitys, and verify emails', async () => {
