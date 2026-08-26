@@ -142,6 +142,9 @@ export const LahtevatMaksatukset = ({
     isSending ||
     activeBatch?.['send-status'] === 'sending'
   const disabled = !!errors.length || sending
+  const sentCount = status?.['sent-count'] ?? 0
+  const totalCount = status?.['total-count'] ?? 0
+  const sentPercentage = totalCount > 0 ? Math.round((sentCount / totalCount) * 100) : 0
 
   return (
     <>
@@ -239,7 +242,18 @@ export const LahtevatMaksatukset = ({
           className="maksatukset_send_status maksatukset_progress"
           data-test-id="maksatukset-progress"
         >
-          Lähetetään maksatuksia ({status?.['sent-count'] ?? 0}/{status?.['total-count'] ?? 0})
+          <span>
+            Lähetetään maksatuksia ({sentCount}/{totalCount})
+          </span>
+          <div
+            className="maksatukset_progress_track"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={totalCount}
+            aria-valuenow={sentCount}
+          >
+            <div className="maksatukset_progress_bar" style={{ width: `${sentPercentage}%` }} />
+          </div>
         </div>
       )}
       {status?.['send-status'] === 'completed' && (

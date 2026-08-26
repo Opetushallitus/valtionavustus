@@ -150,6 +150,21 @@
   border-color: #499cc7;
 }
 
+.maksatukset_progress_track {
+  margin-top: 0.75rem;
+  height: 8px;
+  background-color: #fff;
+  border: 1px solid #499cc7;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.maksatukset_progress_bar {
+  height: 100%;
+  background-color: #499cc7;
+  transition: width 0.3s ease-out;
+}
+
 .maksatukset_send_ok {
   background-color: #dcf8e7;
   border-color: #108046;
