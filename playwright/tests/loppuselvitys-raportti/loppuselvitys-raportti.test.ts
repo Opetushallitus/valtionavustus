@@ -21,12 +21,7 @@ test('excel contains at least one row after submitting loppuselvitys', async ({
   expect(asiatarkastettu)
   expect(taloustarkastettu)
   expect(loppuselvitysFormUrl).toBeDefined()
-  const res = await page.request.get(
-    `${VIRKAILIJA_URL}/api/v2/reports/loppuselvitykset/loppuselvitysraportti.xlsx`
-  )
-
-  const buffer = await res.body()
-  const workbook = xlsx.read(buffer)
+  const workbook = await getLoppuselvitysraportti(page)
   expect(workbook.SheetNames).toMatchObject(SHEET_NAMES)
 
   await test.step('Loppuselvitysraportti sheet has correct data', () => {
@@ -73,12 +68,7 @@ test('at least one loppuselvitys is not asiatarkastettu', async ({
   avustushakuID,
 }) => {
   expect(loppuselvitysFormFilled)
-  const res = await page.request.get(
-    `${VIRKAILIJA_URL}/api/v2/reports/loppuselvitykset/loppuselvitysraportti.xlsx`
-  )
-
-  const buffer = await res.body()
-  const workbook = xlsx.read(buffer)
+  const workbook = await getLoppuselvitysraportti(page)
   expect(workbook.SheetNames).toMatchObject(SHEET_NAMES)
 
   await test.step('Asiatarkastamattomat sheet has correct data', () => {
@@ -198,6 +188,7 @@ async function getLoppuselvitysraportti(page: Page) {
   const res = await page.request.get(
     `${VIRKAILIJA_URL}/api/v2/reports/loppuselvitykset/loppuselvitysraportti.xlsx`
   )
+  expect(res.ok(), `Expected report request to succeed, got ${res.status()}`).toBeTruthy()
   const buffer = await res.body()
   return xlsx.read(buffer)
 }
