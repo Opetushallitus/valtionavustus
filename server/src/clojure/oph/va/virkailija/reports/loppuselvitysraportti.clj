@@ -7,14 +7,31 @@
 (defn- get-loppuselvitys-asiatarkastamatta-rows []
   (query "
     select hakemus.avustushaku as avustushaku_id,
-    count(*) as lukumäärä,
+    count(*) filter (
+      where hakemus.loppuselvitys_information_verified_at is null and
+            hakemus.status_loppuselvitys = 'submitted'
+    ) as lukumäärä,
+    count(*) filter (
+      where hakemus.status_loppuselvitys = 'missing' and
+            arvio.status = 'accepted' and
+            hakemus.hakemus_type = 'hakemus' and
+            hakemus.status not in ('cancelled', 'draft', 'new') and
+            hakemus.refused is not true and
+            hakemus.keskeytetty_aloittamatta is not true
+    ) as puuttuu,
     coalesce(rooli.email, 'Ei valmistelijaa') as valmistelija
     from hakija.hakemukset as hakemus
     left join virkailija.arviot arvio on arvio.hakemus_id = hakemus.id
     left join hakija.avustushaku_roles rooli on rooli.id = arvio.presenter_role_id
-    where hakemus.loppuselvitys_information_verified_at is null and
-          hakemus.status_loppuselvitys = 'submitted' and
-          hakemus.version_closed is null
+    where hakemus.version_closed is null and
+          ((hakemus.loppuselvitys_information_verified_at is null and
+            hakemus.status_loppuselvitys = 'submitted') or
+           (hakemus.status_loppuselvitys = 'missing' and
+            arvio.status = 'accepted' and
+            hakemus.hakemus_type = 'hakemus' and
+            hakemus.status not in ('cancelled', 'draft', 'new') and
+            hakemus.refused is not true and
+            hakemus.keskeytetty_aloittamatta is not true))
     group by avustushaku_id, valmistelija
     order by avustushaku_id
     " []))
@@ -82,7 +99,7 @@ left join taloustarkastetut_loppuselvitykset tl on tl.year = l.year
              (make-loppuselvitysraportti-rows asiatarkastettu-rows))
             "Asiatarkastamattomat"
             (concat
-             [["Avustushaku" "Lukumäärä" "Valmistelija"]]
+             [["Avustushaku" "Lukumäärä" "Puuttuu" "Valmistelija"]]
              (make-loppuselvitysraportti-rows asiatarkastamatta-rows))
             "Hakemukset"
             (concat
