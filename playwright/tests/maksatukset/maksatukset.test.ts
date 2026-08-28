@@ -525,44 +525,72 @@ twoAcceptedHakemusTest(
 )
 
 twoAcceptedHakemusTest(
-  'a second send of the same maksuerä is refused',
+  'the send endpoint checks the avustushaku and refuses a second concurrent send',
   async ({ page, avustushakuID, acceptedHakemukset: { hakemusID, secondHakemusID } }) => {
-    // Fixtures are created lazily: acceptedHakemukset must be requested for maksatukset to exist.
     expectToBeDefined(hakemusID)
     expectToBeDefined(secondHakemusID)
-    const maksatuksetPage = MaksatuksetPage(page)
-    await maksatuksetPage.gotoID(avustushakuID)
-    // Accepting a hakemus does not create maksatukset; they are created separately (cf. :241).
-    await Promise.all([
-      page.waitForResponse(new RegExp('/api/v2/grants/\\d+/payments/')),
-      maksatuksetPage.luoMaksatukset.click(),
-    ])
-    await expect(maksatuksetPage.maksatuksetTableRow(0).hanke).toBeVisible()
 
-    // The maksuerä is created through the API rather than the UI form: this fixture's avustushaku
-    // is missing fields the send form validates, which would leave the send button disabled.
-    const today = moment()
-    const created = await page.request.post(`${VIRKAILIJA_URL}/api/v2/payment-batches/`, {
-      data: {
-        currency: 'EUR',
-        'invoice-date': today.format('YYYY-MM-DD'),
-        'due-date': moment(createDefaultErapaiva(today)).format('YYYY-MM-DD'),
-        'receipt-date': today.format('YYYY-MM-DD'),
-        'grant-id': avustushakuID,
-        partner: '',
-      },
-      failOnStatusCode: true,
+    const batch = await test.step('luo maksatukset ja maksuerä', async () => {
+      const maksatuksetPage = MaksatuksetPage(page)
+      await maksatuksetPage.gotoID(avustushakuID)
+      await Promise.all([
+        page.waitForResponse(new RegExp('/api/v2/grants/\\d+/payments/')),
+        maksatuksetPage.luoMaksatukset.click(),
+      ])
+      await expect(maksatuksetPage.maksatuksetTableRow(0).hanke).toBeVisible()
+
+      const today = moment()
+      const created = await page.request.post(`${VIRKAILIJA_URL}/api/v2/payment-batches/`, {
+        data: {
+          currency: 'EUR',
+          'invoice-date': today.format('YYYY-MM-DD'),
+          'due-date': moment(createDefaultErapaiva(today)).format('YYYY-MM-DD'),
+          'receipt-date': today.format('YYYY-MM-DD'),
+          'grant-id': avustushakuID,
+          partner: '',
+        },
+        failOnStatusCode: true,
+      })
+      return (await created.json()) as PaymentBatchV2
     })
-    const batch: PaymentBatchV2 = await created.json()
 
-    const sendUrl = `${VIRKAILIJA_URL}/api/send-maksatukset-and-tasmaytysraportti/avustushaku/${avustushakuID}/payments-batch/${batch.id}`
+    const base = `${VIRKAILIJA_URL}/api/send-maksatukset-and-tasmaytysraportti`
+    const sendUrl = (id: number) => `${base}/avustushaku/${id}/payments-batch/${batch.id}`
+    const statusUrl = (id: number) => `${sendUrl(id)}/status`
+    const foreignAvustushakuID = avustushakuID + 999999
 
-    // The first request claims the send synchronously (send_status is set to 'sending' before the
-    // response goes out), so the second request below is guaranteed to see it as already running.
-    const firstResponse = await page.request.post(sendUrl, { failOnStatusCode: false })
-    expect(firstResponse.status()).toBe(202)
+    await test.step('maksuerää ei löydy toisen avustushaun kautta', async () => {
+      const foreignStatus = await page.request.get(statusUrl(foreignAvustushakuID), {
+        failOnStatusCode: false,
+      })
+      expect(foreignStatus.status()).toBe(404)
 
-    const secondResponse = await page.request.post(sendUrl, { failOnStatusCode: false })
-    expect(secondResponse.status()).toBe(409)
+      const ownStatus = await page.request.get(statusUrl(avustushakuID), {
+        failOnStatusCode: false,
+      })
+      expect(ownStatus.status()).toBe(200)
+
+      const foreignSend = await page.request.post(sendUrl(foreignAvustushakuID), {
+        failOnStatusCode: false,
+      })
+      expect(foreignSend.status()).toBe(404)
+    })
+
+    await test.step('hylätty lähetys ei käynnistä lähetystyötä', async () => {
+      const status = await page.request.get(statusUrl(avustushakuID), { failOnStatusCode: false })
+      expect((await status.json())['send-status']).not.toBe('sending')
+    })
+
+    await test.step('toinen samanaikainen lähetys hylätään', async () => {
+      const firstResponse = await page.request.post(sendUrl(avustushakuID), {
+        failOnStatusCode: false,
+      })
+      expect(firstResponse.status()).toBe(202)
+
+      const secondResponse = await page.request.post(sendUrl(avustushakuID), {
+        failOnStatusCode: false,
+      })
+      expect(secondResponse.status()).toBe(409)
+    })
   }
 )

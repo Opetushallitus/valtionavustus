@@ -94,11 +94,14 @@
      WHERE send_status = 'sending'"
    []))
 
-(defn get-batch-send-status [batch-id]
+(defn get-batch-send-status
+  "Nil when the era does not exist or belongs to another avustushaku, so the polling route needs
+   no separate lookup for the ownership check."
+  [avustushaku-id batch-id]
   (some-> (query-original-identifiers
            "SELECT id, send_status, sent_count, total_count
-              FROM virkailija.payment_batches WHERE id = ?"
-           [batch-id])
+              FROM virkailija.payment_batches WHERE id = ? AND grant_id = ?"
+           [batch-id avustushaku-id])
           first
           convert-to-dash-keys))
 
