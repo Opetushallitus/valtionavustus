@@ -447,10 +447,6 @@
    :presenter-email s/Str
    :acceptor-email s/Str})
 
-(s/defschema PaymentsCreateResult
-  "Payment create result"
-  {:success s/Bool :errors [s/Any]})
-
 (s/defschema HealthCheckResult
   "Integration healthcheck result"
   {:integrations [{:timestamp s/Str

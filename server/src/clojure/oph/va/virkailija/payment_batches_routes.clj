@@ -1,14 +1,10 @@
 (ns oph.va.virkailija.payment-batches-routes
-  (:require [clojure.tools.logging :as log]
-            [clojure.core.async :refer [<!!]]
-            [compojure.api.sweet :as compojure-api]
+  (:require [compojure.api.sweet :as compojure-api]
             [ring.util.http-response
              :refer [ok no-content conflict bad-request]]
             [oph.va.virkailija.payment-batches-data :as data]
-            [oph.va.virkailija.grant-data :as grant-data]
             [oph.va.virkailija.schema :as schema]
-            [oph.va.virkailija.authentication :as authentication]
-            [oph.va.virkailija.utils :refer [either?]])
+            [oph.va.virkailija.authentication :as authentication])
   (:import (java.time LocalDate)))
 
 (defn- find-payment-batches []
@@ -47,15 +43,6 @@
         (ok ""))
       (bad-request "Only updating paymentstatus to paid is allowed"))))
 
-(defn- send-payments []
-  (compojure-api/POST
-    "/:id/payments/" [id :as request]
-    :path-params [id :- Long]
-    :return schema/PaymentsCreateResult
-    :summary "Create new payments for unpaid applications of grant. Payments
-              will be sent to Rondo and stored to database."
-    (ok (data/send-payments-with-id id request))))
-
 (defn- get-documents []
   (compojure-api/GET
     "/:id/documents/" []
@@ -79,21 +66,11 @@
       (conflict {:error "No multiple documents per phase is allowed"})
       (ok (data/create-batch-document id document)))))
 
-(defn- send-payments-email []
-  (compojure-api/POST
-    "/:id/payments-email/" []
-    :path-params [id :- Long]
-    :summary "Send batch payments email"
-    (data/send-batch-emails id)
-    (ok "")))
-
 (compojure-api/defroutes
   routes
   "payment batches routes"
   (find-payment-batches)
   (create-payment-batch)
   (update-payments)
-  (send-payments)
   (get-documents)
-  (create-document)
-  (send-payments-email))
+  (create-document))
