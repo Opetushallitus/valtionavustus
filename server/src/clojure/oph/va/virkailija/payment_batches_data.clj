@@ -243,27 +243,34 @@
         (mark-send-finished! batch-id @failed?)))))
 
 (defn start-send-job!
-  "Hands the send to a background thread. The UPDATE initialises the row the UI polls: without a
-   total there is nothing to divide by and no status to report."
+  "Hands the send to a background thread. The UPDATE only succeeds if no send is already
+   running for this era, so two requests arriving at the same time can't both start a job for
+   the same era. It also initialises the row the UI polls: without a total there is nothing to
+   divide by and no status to report. Returns true if this call started the job, false if a send
+   was already running."
   [avustushaku-id batch-id identity]
   (let [batch (assoc (get-batch batch-id) :documents (get-batch-documents batch-id))
         grant (grant-data/get-grant (:grant-id batch))
-        to-send (count (payments-to-send (:id grant)))]
-    (execute!
-     "UPDATE virkailija.payment_batches
-         SET send_status = 'sending', sent_count = 0, total_count = ?
-       WHERE id = ?"
-     [to-send batch-id])
-    (future
-      ;; run-send-job! catches Throwable itself, but its catch and finally touch the database and
-      ;; can throw in turn. A throwable escaping into a future is swallowed without a trace.
-      (try
-        (run-send-job! {:batch batch
-                        :grant grant
-                        :avustushaku-id avustushaku-id
-                        :identity identity})
-        (catch Throwable e
-          (log/error e "Maksatus send job escaped for batch" batch-id))))))
+        to-send (count (payments-to-send (:id grant)))
+        started? (-> (execute!
+                      "UPDATE virkailija.payment_batches
+                          SET send_status = 'sending', sent_count = 0, total_count = ?
+                        WHERE id = ? AND send_status IS DISTINCT FROM 'sending'"
+                      [to-send batch-id])
+                     first
+                     (= 1))]
+    (when started?
+      (future
+        ;; run-send-job! catches Throwable itself, but its catch and finally touch the database and
+        ;; can throw in turn. A throwable escaping into a future is swallowed without a trace.
+        (try
+          (run-send-job! {:batch batch
+                          :grant grant
+                          :avustushaku-id avustushaku-id
+                          :identity identity})
+          (catch Throwable e
+            (log/error e "Maksatus send job escaped for batch" batch-id)))))
+    started?))
 
 (defn- set-batch-documents [batch]
   (assoc batch :documents (get-batch-documents (:id batch))))

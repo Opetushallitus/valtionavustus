@@ -523,3 +523,46 @@ twoAcceptedHakemusTest(
     await expect(page.locator('text=Lähetetään maksatuksia ja täsmäytysraporttia')).toBeHidden()
   }
 )
+
+twoAcceptedHakemusTest(
+  'a second send of the same maksuerä is refused',
+  async ({ page, avustushakuID, acceptedHakemukset: { hakemusID, secondHakemusID } }) => {
+    // Fixtures are created lazily: acceptedHakemukset must be requested for maksatukset to exist.
+    expectToBeDefined(hakemusID)
+    expectToBeDefined(secondHakemusID)
+    const maksatuksetPage = MaksatuksetPage(page)
+    await maksatuksetPage.gotoID(avustushakuID)
+    // Accepting a hakemus does not create maksatukset; they are created separately (cf. :241).
+    await Promise.all([
+      page.waitForResponse(new RegExp('/api/v2/grants/\\d+/payments/')),
+      maksatuksetPage.luoMaksatukset.click(),
+    ])
+    await expect(maksatuksetPage.maksatuksetTableRow(0).hanke).toBeVisible()
+
+    // The maksuerä is created through the API rather than the UI form: this fixture's avustushaku
+    // is missing fields the send form validates, which would leave the send button disabled.
+    const today = moment()
+    const created = await page.request.post(`${VIRKAILIJA_URL}/api/v2/payment-batches/`, {
+      data: {
+        currency: 'EUR',
+        'invoice-date': today.format('YYYY-MM-DD'),
+        'due-date': moment(createDefaultErapaiva(today)).format('YYYY-MM-DD'),
+        'receipt-date': today.format('YYYY-MM-DD'),
+        'grant-id': avustushakuID,
+        partner: '',
+      },
+      failOnStatusCode: true,
+    })
+    const batch: PaymentBatchV2 = await created.json()
+
+    const sendUrl = `${VIRKAILIJA_URL}/api/send-maksatukset-and-tasmaytysraportti/avustushaku/${avustushakuID}/payments-batch/${batch.id}`
+
+    // The first request claims the send synchronously (send_status is set to 'sending' before the
+    // response goes out), so the second request below is guaranteed to see it as already running.
+    const firstResponse = await page.request.post(sendUrl, { failOnStatusCode: false })
+    expect(firstResponse.status()).toBe(202)
+
+    const secondResponse = await page.request.post(sendUrl, { failOnStatusCode: false })
+    expect(secondResponse.status()).toBe(409)
+  }
+)
