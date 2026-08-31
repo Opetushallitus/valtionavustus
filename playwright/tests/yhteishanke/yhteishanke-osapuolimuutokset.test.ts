@@ -14,6 +14,7 @@ import {
 import { VIRKAILIJA_URL } from '../../utils/constants'
 import { isSetupScenario, printSetupLinks } from '../../utils/setupLinks'
 import { submitMuutoshakemusAndExpectSuccess } from '../../utils/yhteishanke'
+import { getHakemusAnswerByHeader } from '../../utils/excel'
 
 test('yhteishanke osapuolimuutos updates recipients and applicant contact rows after accepted decision', async ({
   page,
@@ -28,9 +29,14 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     email: 'eka.paivitetty@ensimmainen.fi',
   }
   const newSecond = {
-    name: 'Kolmas Organisaatio Ry',
-    contactPerson: 'Kolmas Henkilö',
-    email: 'kolmas@kolmas.fi',
+    name: 'Toinen Osapuoli',
+    contactPerson: 'Toinen Testihenkilö',
+    email: 'toinen.testihenkilo@example.com',
+  }
+  const newThird = {
+    name: 'Kolmas Testiorganisaatio Oy',
+    contactPerson: 'Kolmas Testihenkilö',
+    email: 'kolmas.testihenkilo@example.com',
   }
 
   // `task setup:yhteishanke-muutoshakemus` — accepted yhteishanke with päätös sent (produced
@@ -92,6 +98,12 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
       .locator('#yhteishankkeen-osapuolimuutokset-2-contactperson')
       .fill(newSecond.contactPerson)
     await page.locator('#yhteishankkeen-osapuolimuutokset-2-email').fill(newSecond.email)
+    await page.getByTestId('add-yhteishanke-organization-change').click()
+    await page.locator('#yhteishankkeen-osapuolimuutokset-3-name').fill(newThird.name)
+    await page
+      .locator('#yhteishankkeen-osapuolimuutokset-3-contactperson')
+      .fill(newThird.contactPerson)
+    await page.locator('#yhteishankkeen-osapuolimuutokset-3-email').fill(newThird.email)
     await page
       .locator('#perustelut-yhteishankeOsapuoliPerustelut')
       .fill('Poistetaan yksi osapuoli ja lisätään uusi')
@@ -134,6 +146,9 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     await expect(page.getByTestId('yhteishanke-org-1')).toContainText(newSecond.name)
     await expect(page.getByTestId('yhteishanke-org-1')).toContainText(newSecond.contactPerson)
     await expect(page.getByTestId('yhteishanke-org-1')).toContainText(newSecond.email)
+    await expect(page.getByTestId('yhteishanke-org-2')).toContainText(newThird.name)
+    await expect(page.getByTestId('yhteishanke-org-2')).toContainText(newThird.contactPerson)
+    await expect(page.getByTestId('yhteishanke-org-2')).toContainText(newThird.email)
 
     await muutoshakemusTab.setMuutoshakemusYhteishankeOsapuoliDecision('accepted')
     await muutoshakemusTab.writePerustelu('Hyväksytään yhteishankkeen osapuolimuutos')
@@ -151,6 +166,29 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
       newSecond.contactPerson
     )
     await expect(sidebar.newAnswers.secondYhteishankeOrganizationEmail).toHaveText(newSecond.email)
+  })
+
+  await test.step('excel contains the complete accepted organization list', async () => {
+    await hakemustenArviointiPage.navigate(avustushakuID)
+    const workbook = await hakemustenArviointiPage.getLataaExcel()
+    const expectedOrganizations = [
+      { name: yhteishankeInitialOrgs.first.name, ...updatedFirst },
+      newSecond,
+      newThird,
+    ]
+
+    expectedOrganizations.forEach((organization, zeroBasedIndex) => {
+      const index = zeroBasedIndex + 1
+      expect(getHakemusAnswerByHeader(workbook, `Yhteistyökumppanin nimi ${index}`)).toEqual(
+        organization.name
+      )
+      expect(getHakemusAnswerByHeader(workbook, `Yhteyshenkilön nimi ${index}`)).toEqual(
+        organization.contactPerson
+      )
+      expect(getHakemusAnswerByHeader(workbook, `Yhteyshenkilön sähköposti ${index}`)).toEqual(
+        organization.email
+      )
+    })
   })
 
   await test.step('verify muutoshakemus paatos email recipients use new organization list', async () => {
@@ -172,6 +210,7 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     const recipients = relevantEmails.flatMap((email) => email['to-address'])
     expect(recipients).toContain(updatedFirst.email)
     expect(recipients).toContain(newSecond.email)
+    expect(recipients).toContain(newThird.email)
     expect(recipients).not.toContain(yhteishankeInitialOrgs.second.email)
 
     for (const email of relevantEmails) {
@@ -209,6 +248,11 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     await expect(secondOrg).toContainText(newSecond.contactPerson)
     await expect(secondOrg).toContainText(newSecond.email)
 
+    const thirdOrg = page.getByTestId('yhteishanke-org-2')
+    await expect(thirdOrg).toContainText(newThird.name)
+    await expect(thirdOrg).toContainText(newThird.contactPerson)
+    await expect(thirdOrg).toContainText(newThird.email)
+
     // Perustelut are shown
     await expect(page.getByTestId('yhteishanke-perustelut')).toContainText(
       'Poistetaan yksi osapuoli ja lisätään uusi'
@@ -241,7 +285,16 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     await expect(
       page.locator('[id="other-organizations.other-organizations-2.email"]')
     ).toHaveValue(newSecond.email)
-    await expect(page.locator('[id="other-organizations.other-organizations-3.name"]')).toHaveCount(
+    await expect(page.locator('[id="other-organizations.other-organizations-3.name"]')).toHaveValue(
+      newThird.name
+    )
+    await expect(
+      page.locator('[id="other-organizations.other-organizations-3.contactperson"]')
+    ).toHaveValue(newThird.contactPerson)
+    await expect(
+      page.locator('[id="other-organizations.other-organizations-3.email"]')
+    ).toHaveValue(newThird.email)
+    await expect(page.locator('[id="other-organizations.other-organizations-4.name"]')).toHaveCount(
       0
     )
   })
@@ -266,6 +319,13 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
     await expect(secondOrg).toContainText(newSecond.name)
     await expect(secondOrg).toContainText(newSecond.contactPerson)
     await expect(secondOrg).toContainText(newSecond.email)
+
+    const thirdOrg = page.locator(
+      '[data-test-class="existing-muutoshakemus"] [data-test-id="yhteishanke-org-2"]'
+    )
+    await expect(thirdOrg).toContainText(newThird.name)
+    await expect(thirdOrg).toContainText(newThird.contactPerson)
+    await expect(thirdOrg).toContainText(newThird.email)
   })
 })
 

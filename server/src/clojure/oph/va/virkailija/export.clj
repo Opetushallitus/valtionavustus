@@ -321,6 +321,22 @@
          (mapv process-answers)
          (reduce combine (array-map)))))
 
+(defn resize-yhteishanke-growing-fieldset-lut [growing-fieldset-lut organization-count]
+  (if-let [template-fields (get-in growing-fieldset-lut
+                                   ["other-organizations" "other-organizations-1"])]
+    (assoc growing-fieldset-lut
+           "other-organizations"
+           (into (array-map)
+                 (map (fn [index]
+                        (let [child-key (str "other-organizations-" index)]
+                          [child-key
+                           (mapv #(string/replace %
+                                                  "other-organizations-1"
+                                                  child-key)
+                                 template-fields)]))
+                      (range 1 (inc organization-count)))))
+    growing-fieldset-lut))
+
 (defn- format-date [date-string]
   (try
     (let [date (clj-time-format/parse (clj-time-format/formatter "dd.MM.YYYY") date-string)
@@ -572,40 +588,32 @@
     answers
     (assoc answers answer-key value)))
 
-(def yhteishanke-organization-name-key-pattern
-  #"^other-organizations\.other-organizations-(\d+)\.name$")
-
-(defn- original-yhteishanke-organization-identities [answers]
-  (->> answers
-       (keep (fn [[answer-key value]]
-               (when-let [[_ index]
-                          (re-matches yhteishanke-organization-name-key-pattern answer-key)]
-                 [(Long/parseLong index) value])))
-       (sort-by first)
-       vec))
-
-(defn- normalized-yhteishanke-organization-identities [organizations]
-  (mapv (fn [index organization]
-          [(inc index) (:organization-name organization)])
-        (range)
-        organizations))
+(def yhteishanke-organization-answer-key-pattern
+  #"^other-organizations\.other-organizations-(\d+)\.(name|contactperson|email)$")
 
 (defn- yhteishanke-answer-key [index field]
   (format "other-organizations.other-organizations-%d.%s" (inc index) field))
 
 (defn patch-yhteishanke-answer-map [answers organizations]
   (let [organizations (vec organizations)]
-    (if (and (seq organizations)
-             (= (original-yhteishanke-organization-identities answers)
-                (normalized-yhteishanke-organization-identities organizations)))
+    (if (seq organizations)
       (reduce-kv
        (fn [patched-answers index organization]
-         (-> patched-answers
-             (patch-answer-value (yhteishanke-answer-key index "contactperson")
-                                 (:contact-person organization))
-             (patch-answer-value (yhteishanke-answer-key index "email")
-                                 (:email organization))))
-       answers
+         (reduce (fn [row [field db-key]]
+                   (assoc row
+                          (yhteishanke-answer-key index field)
+                          (get organization db-key)))
+                 patched-answers
+                 [["name" :organization-name]
+                  ["contactperson" :contact-person]
+                  ["email" :email]]))
+       (reduce-kv (fn [row answer-key _]
+                    (if (and (string? answer-key)
+                             (re-matches yhteishanke-organization-answer-key-pattern answer-key))
+                      (dissoc row answer-key)
+                      row))
+                  answers
+                  answers)
        organizations)
       answers)))
 
@@ -619,8 +627,32 @@
          patch-answer-key-map)]
     (patch-yhteishanke-answer-map patched-answers (:yhteishanke-organizations db-row))))
 
+(defn- original-yhteishanke-organization-count [answers]
+  (->> (keys answers)
+       (keep (fn [answer-key]
+               (when (string? answer-key)
+                 (some-> (re-matches yhteishanke-organization-answer-key-pattern answer-key)
+                         second
+                         Long/parseLong))))
+       (reduce max 0)))
+
+(defn- effective-yhteishanke-organization-count [answers normalized-hakemus]
+  (let [current-organizations (:yhteishanke-organizations normalized-hakemus)]
+    (if (seq current-organizations)
+      (count current-organizations)
+      (original-yhteishanke-organization-count answers))))
+
 (defn- make-answers-sheet-rows [form hakemukset va-focus-areas-label va-focus-areas-items fixed-fields]
-  (let [growing-fieldset-lut          (generate-growing-fieldset-lut hakemukset)
+  (let [normalized-hakemukset         (mapv #(get-normalized-hakemus (:id %)) hakemukset)
+        original-answer-sets          (mapv (partial hakemus->answers-sheet-map fixed-fields)
+                                            hakemukset)
+        yhteishanke-organization-count (->> (map effective-yhteishanke-organization-count
+                                                 original-answer-sets
+                                                 normalized-hakemukset)
+                                            (reduce max 0))
+        growing-fieldset-lut          (-> (generate-growing-fieldset-lut hakemukset)
+                                          (resize-yhteishanke-growing-fieldset-lut
+                                           yhteishanke-organization-count))
 
         answer-key-label-type-triples (avustushaku->formlabels form
                                                                va-focus-areas-label
@@ -634,14 +666,12 @@
         answer-types                  (apply conj
                                              (mapv fourth fixed-fields)
                                              (mapv third answer-key-label-type-triples))
-        original-answer-sets          (map (partial hakemus->answers-sheet-map fixed-fields)
-                                           hakemukset)
-        answer-sets (map (fn [hakemus answers]
-                           (if-let [db-row (get-normalized-hakemus (:id hakemus))]
-                             (patch-answer-map answers db-row)
-                             answers))
-                         hakemukset
-                         original-answer-sets)
+        answer-sets (mapv (fn [answers db-row]
+                            (if db-row
+                              (patch-answer-map answers db-row)
+                              answers))
+                          original-answer-sets
+                          normalized-hakemukset)
         all-answers-data-rows         (mapv (partial answers->strs answer-keys answer-types va-focus-areas-items)
                                             answer-sets)
         all-answers-rows              (into [answer-labels] all-answers-data-rows)
