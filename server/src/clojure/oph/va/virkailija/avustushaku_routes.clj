@@ -1,5 +1,6 @@
 (ns oph.va.virkailija.avustushaku-routes
-  (:require [clojure.tools.logging :as log]
+  (:require [clj-time.coerce :as coerce]
+            [clojure.tools.logging :as log]
             [compojure.api.sweet :as compojure-api]
             [oph.common.datetime :as datetime]
             [oph.soresu.common.db :refer [with-tx]]
@@ -79,6 +80,21 @@
         (not= (mapv #(get tallennettu %) paatoksen-paivamaarakentat)
               (mapv #(get paivitetty %) paatoksen-paivamaarakentat)))))
 
+(defn- pin-hakuaika-end
+  "The end time of hakuaika is fixed, but only a changed date may move it. The
+   client sends the date without the time, so only the local date is compared.
+   A save that keeps the date keeps the stored end, and a legacy hakuaika keeps
+   its own time until someone edits the date."
+  [tallennettu avustushaku]
+  (let [local-date #(some-> % coerce/to-date-time datetime/date-string)
+        old-end    (get-in tallennettu [:content :duration :end])
+        new-end    (get-in avustushaku [:content :duration :end])]
+    (assoc-in avustushaku [:content :duration :end]
+              (if (or (nil? new-end)
+                      (= (local-date old-end) (local-date new-end)))
+                old-end
+                (coerce/to-date (datetime/end-of-day new-end))))))
+
 (defn- post-avustushaku []
   (compojure-api/POST "/:avustushaku-id" []
     :path-params [avustushaku-id :- Long]
@@ -100,7 +116,7 @@
           (http/bad-request {:error "Haku on ratkaistu, joten päätöksen tietoja ei voi muuttaa. Palauta haku tilaan Julkaistu tai Luonnos tehdäksesi muutoksia."}))
 
         :else
-        (if-let [response (hakija-api/update-avustushaku avustushaku)]
+        (if-let [response (hakija-api/update-avustushaku (pin-hakuaika-end tallennettu avustushaku))]
           (http/ok response)
           (http/not-found)))
       (http/not-found))))

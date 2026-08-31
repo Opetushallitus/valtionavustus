@@ -284,6 +284,17 @@
      [(:otantapolku body) (:hakemus-id body)])
     (ok {:ok "ok"}))
 
+  (compojure-api/POST "/set-hakuaika-end" []
+    :body [body {:avustushaku-id Long
+                 :end s/Str}]
+    :return {:ok s/Str}
+    (execute!
+     "UPDATE avustushaut
+      SET content = jsonb_set(content, '{duration,end}', to_jsonb(?::text))
+      WHERE id = ?"
+     [(:end body) (:avustushaku-id body)])
+    (ok {:ok "ok"}))
+
   (compojure-api/POST "/set-hakemus-organization" []
     :body [body {:hakemus-id Long
                  (s/optional-key :business-id) (s/maybe s/Str)

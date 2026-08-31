@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Moment } from 'moment'
 
 import DateUtil from 'soresu-form/web/DateUtil'
@@ -336,17 +336,18 @@ const HakuEditor = () => {
                 />
               </h3>
               <DateField
+                key={`hakuaika-start-${avustushaku.id}`}
                 id="hakuaika-start"
                 onBlur={onChange}
-                avustushakuId={avustushaku.id}
                 value={avustushaku.content.duration.start}
                 disabled={!allowAllHakuEdits}
               />
               <span className="dateDivider" />
               <DateField
+                key={`hakuaika-end-${avustushaku.id}`}
+                dateOnly
                 id="hakuaika-end"
-                onBlur={onChange}
-                avustushakuId={avustushaku.id}
+                onBlur={onChangeImmediate}
                 value={avustushaku.content.duration.end}
                 disabled={!allowNondisruptiveHakuEdits}
               />
@@ -721,34 +722,36 @@ const CreateHaku = ({ avustushaku, helpTexts }: CreateHakuProps) => {
 type DateFieldProps = {
   id: string
   disabled: boolean
-  avustushakuId: number
   value: string | Date
   onBlur: (e: React.ChangeEvent<HTMLInputElement>) => void
+  dateOnly?: boolean
 }
 
 const asDateTimeString = (value: string | Date) => {
   return DateUtil.asDateString(value) + ' ' + DateUtil.asTimeString(value)
 }
 
-const DateField = ({ id, disabled, avustushakuId, value, onBlur }: DateFieldProps) => {
-  const [currentValue, setCurrentValue] = useState(asDateTimeString(value))
-
-  useEffect(() => {
-    setCurrentValue(asDateTimeString(value))
-  }, [avustushakuId, setCurrentValue])
+const DateField = ({ id, disabled, value, onBlur, dateOnly }: DateFieldProps) => {
+  const [currentValue, setCurrentValue] = useState(
+    dateOnly ? DateUtil.asDateString(value) : asDateTimeString(value)
+  )
+  const length = dateOnly ? 10 : 16
 
   return (
-    <input
-      className="date"
-      maxLength={16}
-      size={16}
-      type="text"
-      id={id}
-      onChange={(e) => setCurrentValue(e.target.value)}
-      onBlur={onBlur}
-      value={currentValue}
-      disabled={disabled}
-    />
+    <>
+      <input
+        className="date"
+        maxLength={length}
+        size={length}
+        type="text"
+        id={id}
+        onChange={(e) => setCurrentValue(e.target.value)}
+        onBlur={onBlur}
+        value={currentValue}
+        disabled={disabled}
+      />
+      {dateOnly && <span data-test-id="hakuaika-end-time">klo {DateUtil.asTimeString(value)}</span>}
+    </>
   )
 }
 

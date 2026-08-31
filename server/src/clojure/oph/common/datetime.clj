@@ -15,6 +15,14 @@
 (defn time-string [date]
   (.print (clj-time-format/formatter "HH.mm" (local-time-zone)) date))
 
+(defn end-of-day
+  "Pins the time-of-day to the last millisecond of the local day. Accepts
+   anything clj-time.coerce handles (String, java.util.Date, DateTime)."
+  [date]
+  (-> (coerce/to-date-time date)
+      (clj-time/to-time-zone (local-time-zone))
+      (.withTime 23 59 59 999)))
+
 (defn parse [ISO8601-timestamp-string]
   (clj-time-format/parse (clj-time-format/formatters :date-time) ISO8601-timestamp-string))
 

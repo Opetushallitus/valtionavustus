@@ -30,7 +30,11 @@ declare global {
 
 const DEFAULT_AUTOSAVE_TIMEOUT = 3000
 const getAutosaveTimeout = () => window.__VA_AUTOSAVE_TIMEOUT__ ?? DEFAULT_AUTOSAVE_TIMEOUT
-import { fiLongDateTimeFormat, parseFinnishTimestamp } from 'soresu-form/web/va/i18n/dateformat'
+import {
+  fiLongDateTimeFormat,
+  fiLongFormat,
+  parseFinnishTimestamp,
+} from 'soresu-form/web/va/i18n/dateformat'
 import { HakujenHallintaRootState } from './hakujenHallintaStore'
 import { TalousarviotiliWithUsageInfo } from '../koodienhallinta-page/types'
 
@@ -661,8 +665,13 @@ export const updateField = createAsyncThunk<
       throw Error(`Failed to find hakuaika ${fieldId}`)
     }
     const startOrEnd = hakuaika[1] as 'start' | 'end'
-    const newDate = parseFinnishTimestamp(update.newValue, fiLongDateTimeFormat)
-    avustushaku.content.duration[startOrEnd] = newDate.toISOString()
+    if (startOrEnd === 'start') {
+      const newDate = parseFinnishTimestamp(update.newValue, fiLongDateTimeFormat)
+      avustushaku.content.duration.start = newDate.toISOString()
+    } else {
+      const newDate = parseFinnishTimestamp(update.newValue, fiLongFormat)
+      avustushaku.content.duration.end = newDate.toISOString()
+    }
   } else if (fieldId === 'hankkeen-alkamispaiva' || fieldId === 'hankkeen-paattymispaiva') {
     avustushaku[fieldId] = update.newValue
   } else if (fieldId.startsWith('set-haku-type-')) {
@@ -937,6 +946,7 @@ const hakuSlice = createSlice({
         oldHaku.status = response.status
         oldHaku.phase = response.phase
         oldHaku.decision!.updatedAt = response.decision?.updatedAt
+        oldHaku.content.duration.end = response.content.duration.end
         state.saveStatus = saveSuccess(state, 'saveInProgress')
         if (!oldHaku.projects || oldHaku.projects.length === 0) {
           state.saveStatus.serverError = 'validation-error'

@@ -8,6 +8,7 @@
             [oph.va.hakija.api :as hakija-api]
             [oph.va.virkailija.authorization :as authorization]
             [oph.va.decision-liitteet :as decision-liitteet]
+            [oph.common.datetime :as datetime]
             [clj-time.core :as clj-time]))
 
 (defn arvio-json [arvio]
@@ -213,7 +214,7 @@
                   tx
                   {:name (add-copy-suffixes name)
                    :duration {:start (clj-time/plus created-at (clj-time/months 1))
-                              :end (clj-time/plus created-at (clj-time/months 2))
+                              :end (datetime/end-of-day (clj-time/plus created-at (clj-time/months 2)))
                               :label {:fi "Hakuaika"
                                       :sv "Ansökningstid"}}
                    :selection-criteria selection-criteria

@@ -105,7 +105,8 @@ export const HaunTiedotPage = (page: Page) => {
   }
 
   async function setEndDate(endTime: string) {
-    await locators.hakuAika.end.fill(endTime)
+    const dateOnly = moment(endTime, dateFormat).format('D.M.YYYY')
+    await locators.hakuAika.end.fill(dateOnly)
     await locators.hakuAika.end.blur()
     await common.waitForSave()
   }
