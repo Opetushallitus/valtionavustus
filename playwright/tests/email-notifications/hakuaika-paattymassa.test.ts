@@ -25,7 +25,6 @@ for (const tz of timezones) {
       const today = new Date()
       const tomorrow = new Date(today)
       tomorrow.setDate(tomorrow.getDate() + 1)
-      tomorrow.setHours(12, 0, 0, 0)
 
       hakuaikaPaattymassaTest.use({
         hakuProps: ({ hakuProps }, use) => {
