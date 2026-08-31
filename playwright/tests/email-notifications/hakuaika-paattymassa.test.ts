@@ -91,7 +91,7 @@ Mikäli olette päättäneet jättää hakemuksen lähettämättä, on tämä vi
 
 ni har en halvfärdig ansökan om statsunderstöd ${
               hakuProps.avustushakuName + ' på svenska'
-            }. Observera att ansökningstiden för understödet avslutas ${endDate} kl. 12.00.
+            }. Observera att ansökningstiden för understödet avslutas ${endDate} kl. 23.59.
 
 Ansökan och ändringar som görs i ansökan sparas automatiskt i Utbildningsstyrelsens statsunderstödssystem, men för att ansökan ska behandlas behöver den skickas för behandling innan ansökningstiden avslutas. En ansökan som skickats efter att ansökningstiden avslutats kan tas till behandling endast av särskilt vägande skäl.
 
