@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Moment } from 'moment'
 
 import DateUtil from 'soresu-form/web/DateUtil'
+import { isValidFinnishDate } from 'soresu-form/web/va/i18n/dateformat'
 import { AVUSTUSHAKU_STATUSES, AvustushakuStatus, HelpTexts } from 'soresu-form/web/va/types'
 
 import { HakuRoles } from './HakuRoles'
@@ -736,21 +737,33 @@ const DateField = ({ id, disabled, value, onBlur, dateOnly }: DateFieldProps) =>
     dateOnly ? DateUtil.asDateString(value) : asDateTimeString(value)
   )
   const length = dateOnly ? 10 : 16
+  const isValid = !dateOnly || isValidFinnishDate(currentValue)
 
   return (
     <>
       <input
-        className="date"
+        className={isValid ? 'date' : 'date error'}
         maxLength={length}
         size={length}
         type="text"
         id={id}
         onChange={(e) => setCurrentValue(e.target.value)}
-        onBlur={onBlur}
+        onBlur={(e) => {
+          if (isValid) {
+            onBlur(e)
+          }
+        }}
         value={currentValue}
         disabled={disabled}
       />
-      {dateOnly && <span data-test-id="hakuaika-end-time">klo {DateUtil.asTimeString(value)}</span>}
+      {dateOnly && isValid && (
+        <span data-test-id="hakuaika-end-time">klo {DateUtil.asTimeString(value)}</span>
+      )}
+      {!isValid && (
+        <span style={{ paddingLeft: '5px' }} className="error" data-test-id={`${id}-error`}>
+          Virheellinen päivä
+        </span>
+      )}
     </>
   )
 }

@@ -9,14 +9,24 @@ export const fiLongDateTimeFormatWithKlo = 'D.M.YYYY [klo] H.mm'
 
 export const dateformats = [fiLongFormat, fiShortFormat, isoFormat]
 
+export const fiDateFormats = [fiShortFormat, fiLongFormat]
+
 export function parseDateString(str: string, _localizer: unknown): Date | undefined {
   const date = parseDateStringToMoment(str)
 
   return date && date.isValid() ? date.toDate() : undefined
 }
 
-export function parseFinnishTimestamp(str: string, format: string): Moment {
-  return moment.tz(str, format, 'Europe/Helsinki')
+export function parseFinnishTimestamp(
+  str: string,
+  format: string | string[],
+  strict = false
+): Moment {
+  return moment.tz(str, format, strict, 'Europe/Helsinki')
+}
+
+export function isValidFinnishDate(str: string): boolean {
+  return parseFinnishTimestamp(str, fiDateFormats, true).isValid()
 }
 
 export function parseDateStringToMoment(str: string | undefined | null): Moment | undefined {
