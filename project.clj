@@ -31,10 +31,10 @@
                          [org.mozilla/rhino "1.9.1"]
                          ;; ... -> [com.github.java-json-tools/json-schema-validator "2.2.14"] ->
                          ;; fixes https://nvd.nist.gov/vuln/detail/cve-2020-8908
-                         [com.google.guava/guava "33.6.0-android"]
+                         [com.google.guava/guava "33.7.1-android"]
 
                          ;; [org.postgresql/postgresql "42.7.13"] ->
-                         ;; ... -> [com.google.guava/guava "33.6.0-android"] ->
+                         ;; ... -> [com.google.guava/guava "33.7.1-android"] ->
                          [org.checkerframework/checker-qual "4.2.2"]
 
                          ;; ... -> [clout "2.2.1"] ->
