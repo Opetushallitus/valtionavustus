@@ -10,11 +10,15 @@ interface Props {
 export const OtantatarkastusBackfillModal = forwardRef<HTMLDialogElement, Props>(
   function OtantatarkastusBackfillModal({ eligibleCount, onClose }, ref) {
     const bodyText =
-      eligibleCount === 1
-        ? `Hakuun on jo saapunut 1 loppuselvitys, jolle ei ole vielä tehty asiatarkastusta. Kun
+      eligibleCount === 0
+        ? `Hakuun ei ole tällä hetkellä yhtään asiatarkastamatonta loppuselvitystä, joten
+otantavalintaa ei tehdä nyt yhdellekään. Otantatarkastus koskee kaikkia tästä eteenpäin
+saapuvia loppuselvityksiä, joille tehdään satunnaisotantavalinta lähetyshetkellä.`
+        : eligibleCount === 1
+          ? `Hakuun on jo saapunut 1 loppuselvitys, jolle ei ole vielä tehty asiatarkastusta. Kun
 otantatarkastus otetaan käyttöön, järjestelmä tekee näille tarkastamattomille
 loppuselvityksille satunnaisotantavalinnan välittömästi.`
-        : `Hakuun on jo saapunut ${eligibleCount} loppuselvitystä, joille ei ole vielä tehty asiatarkastusta. Kun
+          : `Hakuun on jo saapunut ${eligibleCount} loppuselvitystä, joille ei ole vielä tehty asiatarkastusta. Kun
 otantatarkastus otetaan käyttöön, järjestelmä tekee näille tarkastamattomille
 loppuselvityksille satunnaisotantavalinnan välittömästi.`
     return (

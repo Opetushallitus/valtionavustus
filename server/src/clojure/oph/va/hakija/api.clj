@@ -799,10 +799,16 @@ order by upper(h.organization_name), upper(h.project_name)")
               message      (not-empty (:message verify-information))
               checklist    (:checklist verify-information)
               email-data   (:email verify-information)
-              otantapolku (:loppuselvitys-otantapolku hakemus)
               verifier     (str (:first-name identity) " " (:surname identity))
               verifier-oid (:person-oid identity)
               avustushaku  (get-avustushaku-tx tx (:avustushaku hakemus))
+              ;; Otantapolku is only in play while the haku has otantatarkastus on.
+              ;; If it has been switched back to 2-vaiheinen after a draw, the drawn
+              ;; value stays in the database but must be ignored here — the UI renders
+              ;; the 2-vaiheinen form, which posts no checklist, and payload validation
+              ;; would otherwise reject it and leave the loppuselvitys unverifiable.
+              otantapolku  (when (:loppuselvitys_otantatarkastus_enabled avustushaku)
+                             (:loppuselvitys-otantapolku hakemus))
               response-data {:loppuselvitys-information-verified-by verifier
                              :loppuselvitys-information-verification message
                              :otantapolku otantapolku}]

@@ -32,6 +32,14 @@ export const HaunTiedotPage = (page: Page) => {
       published: page.locator("label[for='set-status-published']"),
       resolved: page.locator("label[for='set-status-resolved']"),
     },
+    muutoshakukelpoinen: {
+      yes: page.locator('#muutoshakukelpoinen_true'),
+      no: page.locator('#muutoshakukelpoinen_false'),
+    },
+    loppuselvitystenTarkastus: {
+      otantatarkastus: page.locator('#loppuselvitys_otantatarkastus_enabled_true'),
+      kaksivaiheinen: page.locator('#loppuselvitys_otantatarkastus_enabled_false'),
+    },
     registerNumber: page.locator('#register-number'),
     hallinoiavustuksiaRegisterNumber: page.getByPlaceholder('Esim. va-oph-2023-6'),
     hakuRole: {

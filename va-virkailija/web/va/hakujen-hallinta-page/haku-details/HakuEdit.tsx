@@ -66,6 +66,12 @@ const HakuEditor = () => {
     !loadingAvustushaku &&
     userHasEditPrivilege &&
     (allowAllHakuEdits || avustushaku.phase === 'current' || avustushaku.phase === 'upcoming')
+  // Loppuselvitysten tarkastustapa koskee vain loppuselvitysvaihetta, ei julkaistua
+  // hakulomaketta, joten se on muokattavissa myös ratkaistussa haussa. Muuten
+  // otantatarkastuksen käyttöönotto vaatisi ratkaistun haun viemisen takaisin
+  // julkaistu- ja luonnostilaan.
+  const allowOtantatarkastusEdit =
+    !loadingAvustushaku && userHasEditPrivilege && avustushaku.status !== 'deleted'
   const userHasEditMyHakuRolePrivilege = !!avustushaku.privileges?.['edit-my-haku-role']
   const selectedValueOperationalUnit = codeOptions.find(
     (k) => k.id === avustushaku['operational-unit-id']
@@ -153,9 +159,15 @@ const HakuEditor = () => {
         `/api/avustushaku/${avustushaku.id}/loppuselvitys-otantapolku-backfill-preview`,
         { credentials: 'include' }
       )
+      if (!resp.ok) {
+        throw new Error(`Backfill preview returned ${resp.status}`)
+      }
       const json = await resp.json()
-      const eligibleCount: number = json['eligible-count'] ?? 0
-      if (eligibleCount === 0) {
+      const eligibleCount: number | undefined = json['eligible-count']
+      if (typeof eligibleCount !== 'number') {
+        throw new Error('Backfill preview response has no eligible-count')
+      }
+      if (eligibleCount === 0 && allowAllHakuEdits) {
         enableOtantatarkastus()
         return
       }
@@ -435,7 +447,7 @@ const HakuEditor = () => {
                   value="false"
                   onChange={onChangeImmediate}
                   checked={!avustushaku['loppuselvitys-otantatarkastus-enabled']}
-                  disabled={!allowAllHakuEdits}
+                  disabled={!allowOtantatarkastusEdit}
                 />
                 <label htmlFor="loppuselvitys_otantatarkastus_enabled_false">
                   2-vaiheinen tarkastus
@@ -449,7 +461,7 @@ const HakuEditor = () => {
                   value="true"
                   onChange={onTogglingOtantatarkastusOn}
                   checked={avustushaku['loppuselvitys-otantatarkastus-enabled']}
-                  disabled={!allowAllHakuEdits}
+                  disabled={!allowOtantatarkastusEdit}
                 />
                 <label htmlFor="loppuselvitys_otantatarkastus_enabled_true">Otantatarkastus</label>
               </span>
