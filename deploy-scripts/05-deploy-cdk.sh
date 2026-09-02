@@ -8,6 +8,8 @@ source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../scripts/common-func
 source "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/deploy-functions.sh"
 
 readonly cdk_out="cdk.out.deploy"
+readonly github_actions_auth_cdk_out="cdk.out.github-actions-auth"
+readonly github_actions_auth_cdk_app="dist/bin/bootstrap.js"
 
 function print_env {
   local env_name="$1"
@@ -32,6 +34,10 @@ function cdk-built-app {
   ./cdk.sh --app "$cdk_out" --build "true" "$@"
 }
 
+function cdk-built-github-actions-auth-app {
+  ./cdk.sh --app "$github_actions_auth_cdk_out" --build "true" "$@"
+}
+
 function main {
   parse_env_from_script_name "05-deploy-cdk"
   check_env
@@ -52,8 +58,23 @@ function main {
   ./cdk.sh synth --output "$cdk_out"
   end_gh_actions_group
 
+  start_gh_actions_group "Synth GitHub Actions authentication stack"
+  ./cdk.sh --app "$github_actions_auth_cdk_app" --output "$github_actions_auth_cdk_out" synth
+  end_gh_actions_group
+
+  start_gh_actions_group "Diff GitHub Actions authentication stack"
+  cdk-built-github-actions-auth-app diff "$ENV/*"
+  end_gh_actions_group
+
   start_gh_actions_group "Diff stacks"
   cdk-built-app diff "$ENV/*"
+  end_gh_actions_group
+
+  start_gh_actions_group "Deploy GitHub Actions authentication stack"
+  cdk-built-github-actions-auth-app deploy \
+    --exclusively \
+    --require-approval never \
+    "$ENV/*"
   end_gh_actions_group
 
   start_gh_actions_group "Deploy stacks"
