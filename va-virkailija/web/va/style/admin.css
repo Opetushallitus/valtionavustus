@@ -402,6 +402,11 @@ table.translation td {
     margin-right: 40px;
 }
 
+#haku-edit .hakuaika-duration {
+    margin-top: 4px;
+    color: var(--mid-gray);
+}
+
 #haku-edit #selection-criteria,
 #haku-edit #focus-areas {
     margin-top: 20px;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Moment } from 'moment'
+import moment, { Moment } from 'moment'
 
 import DateUtil from 'soresu-form/web/DateUtil'
 import { AVUSTUSHAKU_STATUSES, AvustushakuStatus, HelpTexts } from 'soresu-form/web/va/types'
@@ -65,6 +65,10 @@ const HakuEditor = () => {
     !loadingAvustushaku &&
     userHasEditPrivilege &&
     (allowAllHakuEdits || avustushaku.phase === 'current' || avustushaku.phase === 'upcoming')
+  const durationText = hakuaikaDurationText(
+    avustushaku.content.duration.start,
+    avustushaku.content.duration.end
+  )
   // Loppuselvitysten tarkastustapa koskee vain loppuselvitysvaihetta, ei julkaistua
   // hakulomaketta, joten se on muokattavissa myös ratkaistussa haussa. Muuten
   // otantatarkastuksen käyttöönotto vaatisi ratkaistun haun viemisen takaisin
@@ -363,6 +367,11 @@ const HakuEditor = () => {
                 value={avustushaku.content.duration.end}
                 disabled={!allowNondisruptiveHakuEdits}
               />
+              {durationText && (
+                <div className="hakuaika-duration" data-test-id="hakuaika-duration">
+                  {durationText}
+                </div>
+              )}
             </div>
           </div>
           <HakuType
@@ -737,6 +746,25 @@ type DateFieldProps = {
   value: string | Date
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   dateOnly?: boolean
+}
+
+const finnishPlural = (amount: number, singular: string, plural: string) =>
+  `${amount} ${amount === 1 ? singular : plural}`
+
+const hakuaikaDurationText = (start: string | Date, end: string | Date): string | undefined => {
+  const days =
+    moment(DateUtil.asIsoDateString(end)).diff(moment(DateUtil.asIsoDateString(start)), 'days') + 1
+  if (!Number.isFinite(days) || days < 1) {
+    return undefined
+  }
+  const weeks = Math.floor(days / 7)
+  const remainingDays = days % 7
+  return [
+    weeks > 0 ? finnishPlural(weeks, 'viikko', 'viikkoa') : undefined,
+    remainingDays > 0 ? finnishPlural(remainingDays, 'päivä', 'päivää') : undefined,
+  ]
+    .filter(Boolean)
+    .join(' ')
 }
 
 const DateField = ({ id, disabled, value, onChange, dateOnly }: DateFieldProps) => {

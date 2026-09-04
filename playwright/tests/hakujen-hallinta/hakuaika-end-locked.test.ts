@@ -105,3 +105,56 @@ test('a legacy hakuaika keeps its own end time until the date changes', async ({
     )
   })
 })
+
+const durationAvustushakuName = `Hakuaika duration - haku ${randomString()}`
+
+test('hakuaika duration is shown in weeks and days', async ({ page, hakuProps }) => {
+  const hakujenHallintaPage = new HakujenHallintaPage(page)
+  const haunTiedotPage = HaunTiedotPage(page)
+  const duration = page.getByTestId('hakuaika-duration')
+
+  await test.step('create a new avustushaku', async () => {
+    await hakujenHallintaPage.copyEsimerkkihaku()
+    await hakujenHallintaPage.fillAvustushaku({
+      ...hakuProps,
+      avustushakuName: durationAvustushakuName,
+    })
+  })
+
+  await test.step('set a known hakuaika start', async () => {
+    await haunTiedotPage.locators.hakuAika.start.fill('2027-01-01T09:00')
+    await haunTiedotPage.locators.hakuAika.start.blur()
+    await haunTiedotPage.common.waitForSave()
+  })
+
+  const setEndDate = async (endDate: string) => {
+    await haunTiedotPage.locators.hakuAika.end.fill(endDate)
+    await haunTiedotPage.locators.hakuAika.end.blur()
+    await haunTiedotPage.common.waitForSave()
+  }
+
+  await test.step('a whole number of weeks omits the days', async () => {
+    await setEndDate('2027-02-11')
+    await expect(duration).toHaveText('6 viikkoa')
+  })
+
+  await test.step('a partial week is shown after the weeks', async () => {
+    await setEndDate('2027-02-14')
+    await expect(duration).toHaveText('6 viikkoa 3 päivää')
+  })
+
+  await test.step('under a week shows only days', async () => {
+    await setEndDate('2027-01-05')
+    await expect(duration).toHaveText('5 päivää')
+  })
+
+  await test.step('the start and end day both count', async () => {
+    await setEndDate('2027-01-01')
+    await expect(duration).toHaveText('1 päivä')
+  })
+
+  await test.step('a single week uses the singular', async () => {
+    await setEndDate('2027-01-07')
+    await expect(duration).toHaveText('1 viikko')
+  })
+})
