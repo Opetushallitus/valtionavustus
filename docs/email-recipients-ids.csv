@@ -1,0 +1,103 @@
+Sähköpostin aihe,Tiedosto,Milloin lähetetään,Kenelle lähetetään,Hakemuksen kenttätunnukset,Hakemuksen kenttätyypit,Kantasarakkeet
+Linkki organisaationne avustushakemukseen,new-hakemus.plain.fi,Kun hakija aloittaa uuden hakemuksen.,yhteyshenkilö,primary-email,-,-
+Linkki organisaationne avustushakemukseen,new-jotpa-hakemus.plain.fi,"Kun hakija aloittaa uuden hakemuksen JOTPA:n hakuun. Sama viesti kuin edellinen, mutta lähettäjänä JOTPA.",yhteyshenkilö,primary-email,-,-
+Automaattinen viesti: organisaationne avustushakemus on kirjattu vastaanotetuksi (täydennyksen jälkeen: ...avustushakemusta on täydennetty),hakemus-submitted.plain.fi,"Kun hakija lähettää hakemuksen, ja uudelleen kun hakija täydentää sitä.","yhteyshenkilö, varayhteyshenkilö, allekirjoittajat, organisaation virallinen sposti",primary-email; trusted-contact-email; organization-email; signatories-fieldset-N.email; signature-email,vaEmailNotification,hakemukset.business_id
+Automaattinen viesti: avustushakemusta on täydennetty,hakemus-change-request-responded.plain.fi,Kun hakija on vastannut täydennyspyyntöön.,"Virkailija, joka lähetti VIIMEISIMMÄN täydennyspyynnön.",-,-,hakemukset.user_email
+Automaattinen viesti: avustushakemuksen loppuselvitystä on täydennetty,loppuselvitys-change-request-responded.plain.fi,Kun hakija on täydentänyt loppuselvitystä.,"Virkailija, joka lähetti ENSIMMÄISEN loppuselvityksen täydennyspyynnön.",-,-,hakemukset.user_email
+Organisaationne loppuselvitystä on täydennetty: [asianumero] [hankkeen nimi],loppuselvitys-change-request-received.plain.fi,Kun hakija on täydentänyt loppuselvitystä (kuittaus hakijalle).,"yhteyshenkilö, varayhteyshenkilö, organisaation virallinen sposti",primary-email; organization-email,-,normalized_hakemus.contact_email; normalized_hakemus.trusted_contact_email; normalized_hakemus.valiselvitys_contact_email; normalized_hakemus.loppuselvitys_contact_email; normalized_hakemus.loppuselvitys_organization_email; normalized_hakemus.valiselvitys_organization_email; hakemukset.business_id
+Väliselvityksenne on vastaanotettu,valiselvitys-submitted-notification.plain.fi,Kun hakija lähettää väliselvityksen.,"yhteyshenkilö, varayhteyshenkilö, organisaation virallinen sposti",primary-email; organization-email,-,normalized_hakemus.contact_email; normalized_hakemus.trusted_contact_email; normalized_hakemus.valiselvitys_contact_email; normalized_hakemus.loppuselvitys_contact_email; normalized_hakemus.valiselvitys_organization_email; hakemukset.business_id
+Loppuselvityksenne on vastaanotettu,loppuselvitys-submitted-notification.plain.fi,Kun hakija lähettää loppuselvityksen.,"yhteyshenkilö, varayhteyshenkilö, organisaation virallinen sposti",primary-email; organization-email,-,normalized_hakemus.contact_email; normalized_hakemus.trusted_contact_email; normalized_hakemus.valiselvitys_contact_email; normalized_hakemus.loppuselvitys_contact_email; normalized_hakemus.loppuselvitys_organization_email; normalized_hakemus.valiselvitys_organization_email; hakemukset.business_id
+Automaattinen viesti: saapunut muutoshakemus,notify-valmistelija-of-new-muutoshakemus.plain.fi,Kun hakija jättää muutoshakemuksen.,Hakemukselle ukotettu esittelijä (yksi henkilö).,-,-,arviot.presenter_role_id -> avustushaku_roles.email
+Automaattinen viesti: Avustuksen saajan ilmoitus,application-refused-presenter.plain.fi,"Kun hakija ilmoittaa, ettei ota avustusta vastaan.",Kaikki avustushaun valmistelijat (esittelijät ja vastuuvalmistelijat).,-,-,avustushaku_roles.email
+Ilmoitus avustuksenne vastaanottamatta jättämisestä on lähetetty,application-refused.plain.fi,"Kun hakija ilmoittaa, ettei ota avustusta vastaan (kuittaus hakijalle).","yhteyshenkilö, varayhteyshenkilö, organisaation virallinen sposti",primary-email,-,normalized_hakemus.contact_email; normalized_hakemus.trusted_contact_email; hakemukset.business_id
+Täydennyspyyntö avustushakemukseesi,taydennyspyynto.plain.fi,Kun virkailija asettaa hakemuksen tilaan 'odottaa täydennystä'.,"Vastaanottaja: yhteyshenkilö ja organisaation virallinen sposti. Kopio (cc): allekirjoittajat, organisaation virallinen sposti, varayhteyshenkilö. Piilokopio (bcc): täydennyspyynnön lähettänyt virkailija.",primary-email; signatories-fieldset-N.email; organization-email; trusted-contact-email,vaEmailNotification (vain kopiokentän allekirjoittajat),normalized_hakemus.contact_email; normalized_hakemus.trusted_contact_email; hakemukset.business_id
+Automaattinen viesti: organisaationne avustushakemus on käsitelty - Linkki päätösasiakirjaan,paatos-refuse.plain.fi,Kun myönteinen päätös lähetetään. Viesti sisältää linkit avustuksen vastaanottamiseen/kieltäytymiseen ja muutoshakemukseen.,"yhteyshenkilö, varayhteyshenkilö, allekirjoittajat, organisaation virallinen sposti",organization-email; signatories-fieldset-N.email; primary-email; signature-email,vaEmailNotification,normalized_hakemus.contact_email; normalized_hakemus.trusted_contact_email; hakemukset.business_id
+Automaattinen viesti: organisaationne avustushakemus on käsitelty - Linkki päätösasiakirjaan,paatos.plain.fi,"Kun kielteinen (hylätty) päätös lähetetään. Muuten sama kuin edellinen, mutta ilman vastaanotto-/kieltäytymislinkkejä.","yhteyshenkilö, varayhteyshenkilö, allekirjoittajat, organisaation virallinen sposti",organization-email; signatories-fieldset-N.email; primary-email; signature-email,vaEmailNotification,normalized_hakemus.contact_email; normalized_hakemus.trusted_contact_email; hakemukset.business_id
+Automaattinen viesti: organisaationne muutoshakemus on käsitelty - Linkki päätösasiakirjaan,muutoshakemus-paatos.plain.fi,Kun virkailija tekee päätöksen muutoshakemukseen.,"yhteyshenkilö, varayhteyshenkilö, organisaation virallinen sposti",-,-,normalized_hakemus.contact_email; normalized_hakemus.trusted_contact_email; hakemukset.business_id
+Väliselvitys [asianumero] käsitelty / Loppuselvitys [asianumero] käsitelty (virkailija voi muokata aihetta ja viestiä),selvitys.plain.fi,Kun virkailija hyväksyy väli- tai loppuselvityksen.,Virkailijan valitsemat vastaanottajat. Valmiiksi ehdotetaan yhteyshenkilö ja varayhteyshenkilö; virkailija voi lisätä tai poistaa osoitteita käsin ennen lähetystä.,primary-email; trusted-contact-email; valiselvitys.primary-email; loppuselvitys.primary-email,-,normalized_hakemus.contact_email; normalized_hakemus.trusted_contact_email; normalized_hakemus.valiselvitys_contact_email; normalized_hakemus.loppuselvitys_contact_email
+Väliselvitys täytettävissä haulle [haun nimi],valiselvitys-notification.plain.fi,Kun virkailija lähettää väliselvityspyynnöt hyväksytyille hakemuksille.,"yhteyshenkilö, varayhteyshenkilö, organisaation virallinen sposti",organization-email; primary-email; signature-email,vaEmailNotification,normalized_hakemus.contact_email; normalized_hakemus.trusted_contact_email; hakemukset.business_id
+Loppuselvitys täytettävissä haulle [haun nimi],loppuselvitys-notification.plain.fi,Kun virkailija lähettää loppuselvityspyynnöt hyväksytyille hakemuksille.,"yhteyshenkilö, varayhteyshenkilö, organisaation virallinen sposti",organization-email; primary-email; signature-email,vaEmailNotification,normalized_hakemus.contact_email; normalized_hakemus.trusted_contact_email; hakemukset.business_id
+Automaattinen viesti: Yhteishankkeen avustushakemus [haun nimi] on kirjattu vastaanotetuksi,yhteishanke-hakemus-submitted.plain.fi,Kun yhteishankkeen hakemus lähetetään.,"yhteishankkeen osapuolen yhteyshenkilö. Jokaiselle lähtee oma erillinen viesti, vastaanottajat eivät näe toisiaan.",other-organizations.other-organizations-N.email,-,yhteishanke_organization.email
+Automaattinen viesti: Yhteishankkeen [asianumero] väliselvitys on vastaanotettu,yhteishanke-valiselvitys-submitted.plain.fi,Kun yhteishankkeen väliselvitys lähetetään.,"yhteishankkeen osapuolen yhteyshenkilö. Jokaiselle lähtee oma erillinen viesti, vastaanottajat eivät näe toisiaan.",other-organizations.other-organizations-N.email,-,yhteishanke_organization.email
+Automaattinen viesti: Yhteishankkeen [asianumero] loppuselvitys on vastaanotettu,yhteishanke-loppuselvitys-submitted.plain.fi,Kun yhteishankkeen loppuselvitys lähetetään.,"yhteishankkeen osapuolen yhteyshenkilö. Jokaiselle lähtee oma erillinen viesti, vastaanottajat eivät näe toisiaan.",other-organizations.other-organizations-N.email,-,yhteishanke_organization.email
+Automaattinen viesti: Yhteishankkeen avustushakemus [asianumero] on käsitelty - Linkki päätösasiakirjaan,yhteishanke-paatos.plain.fi,Kun yhteishankkeelle lähetetään myönteinen päätös.,"yhteishankkeen osapuolen yhteyshenkilö. Jokaiselle lähtee oma erillinen viesti, vastaanottajat eivät näe toisiaan.",other-organizations.other-organizations-N.email,-,yhteishanke_organization.email
+Automaattinen viesti: Yhteishankkeen [asianumero] avustushakemus on käsitelty - Linkki päätösasiakirjaan,yhteishanke-paatos-refuse.plain.fi,Kun yhteishankkeelle lähetetään kielteinen (hylätty) päätös.,"yhteishankkeen osapuolen yhteyshenkilö. Jokaiselle lähtee oma erillinen viesti, vastaanottajat eivät näe toisiaan.",other-organizations.other-organizations-N.email,-,yhteishanke_organization.email
+Automaattinen viesti: Yhteishankkeen [asianumero] muutoshakemus on käsitelty,yhteishanke-muutoshakemus-paatos.plain.fi,Kun yhteishankkeen muutoshakemukseen tehdään päätös.,"yhteishankkeen osapuolen yhteyshenkilö. Jokaiselle lähtee oma erillinen viesti, vastaanottajat eivät näe toisiaan.",other-organizations.other-organizations-N.email,-,yhteishanke_organization.email
+Automaattinen viesti: Yhteishankkeen [asianumero] väliselvitys on käsitelty,yhteishanke-valiselvitys-processed.plain.fi,Kun yhteishankkeen väliselvitys hyväksytään.,"yhteishankkeen osapuolen yhteyshenkilö. Jokaiselle lähtee oma erillinen viesti, vastaanottajat eivät näe toisiaan.",other-organizations.other-organizations-N.email,-,yhteishanke_organization.email
+Automaattinen viesti: Yhteishankkeen [asianumero] loppuselvitys on käsitelty,yhteishanke-loppuselvitys-processed.plain.fi,Kun yhteishankkeen loppuselvitys hyväksytään.,"yhteishankkeen osapuolen yhteyshenkilö. Jokaiselle lähtee oma erillinen viesti, vastaanottajat eivät näe toisiaan.",other-organizations.other-organizations-N.email,-,yhteishanke_organization.email
+Hakuaika on päättymässä,hakuaika-paattymassa.fi,Ajastettu (tuotannossa ma-pe klo 7.00). Kun hakuajan päättymiseen on yksi päivä ja hakemus on yhä luonnostilassa (status = draft). Lähetetyistä hakemuksista ei muistuteta.,"yhteyshenkilö, organisaation virallinen sposti (haetaan organisaatiopalvelusta business_id:llä)",primary-email,-,normalized_hakemus.contact_email; hakemukset.business_id
+Hakuaika on päättynyt,hakuaika-paattynyt.fi,Ajastettu (tuotannossa päivittäin klo 7.00). Haun hakuajan päättymistä seuraavana päivänä. Sisältää saapuneiden hakemusten määrän ja haetun kokonaissumman.,Haun esittelijät ja vastuuvalmistelijat yhdessä viestissä.,-,-,avustushaku_roles.email (role = presenting_officer tai vastuuvalmistelija)
+Muistutus väliselvityksen palauttamisesta,valiselvitys-palauttamatta.fi,Ajastettu (tuotannossa ma-pe klo 14.00). Kun hyväksytyn hakemuksen väliselvitys on palauttamatta ja määräaikaan on enintään 14 päivää. Lähetetään vain kerran hakemusta kohden ja vain jos väliselvityspyyntö on jo lähetetty.,"yhteyshenkilö, organisaation virallinen sposti (haetaan organisaatiopalvelusta business_id:llä)",primary-email,-,normalized_hakemus.contact_email; hakemukset.business_id
+Muistutus loppuselvityksen palauttamisesta,loppuselvitys-palauttamatta.fi,"Ajastettu (tuotannossa ma-pe klo 14.00). Kun hyväksytyn hakemuksen loppuselvitys on palauttamatta ja määräaikaan on enintään 14 päivää. Määräaikana käytetään hyväksyttyä jatkoaikaa, jos sellainen on. Lähetetään vain kerran hakemusta kohden ja vain jos loppuselvityspyyntö on jo lähetetty.","yhteyshenkilö, organisaation virallinen sposti (haetaan organisaatiopalvelusta business_id:llä)",primary-email,-,normalized_hakemus.contact_email; hakemukset.business_id
+Muistutus valtionavustuksen raportoinnista,raportointivelvoite-muistutus.fi,Ajastettu (tarkistus tunnin välein). Kun raportointivelvoitteen määräaikaan on enintään 30 päivää ja haku on tilassa published tai resolved. Lähetetään kerran velvoitetta kohden (raportointivelvoite.muistutus_lahetetty).,Haun esittelijät ja vastuuvalmistelijat.,-,-,avustushaku_roles.email (role = presenting_officer tai vastuuvalmistelija)
+Muistutus väliselvityspyyntöjen lähettämisestä,laheta-valiselvityspyynnot.fi,"Ajastettu (tuotannossa kuukauden 1. päivä klo 8.00). Kun väliselvityksen määräaikaan on enintään 6 kuukautta ja haussa on hyväksyttyjä hakemuksia, joille väliselvityspyyntöä ei ole lähetetty.",Haun esittelijät ja vastuuvalmistelijat yhdessä viestissä.,-,-,avustushaku_roles.email (role = presenting_officer tai vastuuvalmistelija)
+Muistutus loppuselvityspyyntöjen lähettämisestä,laheta-loppuselvityspyynnot.fi,"Ajastettu (tuotannossa kuukauden 1. päivä klo 8.00). Kun loppuselvityksen määräaikaan on enintään 8 kuukautta ja haussa on hyväksyttyjä hakemuksia, joille loppuselvityspyyntöä ei ole lähetetty.",Haun esittelijät ja vastuuvalmistelijat yhdessä viestissä.,-,-,avustushaku_roles.email (role = presenting_officer tai vastuuvalmistelija)
+Asiatarkastamattomia loppuselvityksiä,loppuselvitys-asiatarkastamatta.fi,"Ajastettu (tuotannossa maanantaisin klo 7.00). Kooste palautetuista loppuselvityksistä (status_loppuselvitys = submitted), joita ei ole asiatarkastettu.",Hakemukselle ukotettu esittelijä; jokainen esittelijä saa oman koosteviestinsä.,-,-,arviot.presenter_role_id -> avustushaku_roles.email
+Taloustarkastamattomia loppuselvityksiä,loppuselvitys-taloustarkastamatta.fi,"Ajastettu (tuotannossa maanantaisin klo 7.00). Kooste asiatarkastetuista loppuselvityksistä (status_loppuselvitys = information_verified), joita ei ole taloustarkastettu.","Kiinteä osoite konfiguraatiosta (email.to-kuukausittainen-tasmaytysraportti, talouspalvelut). Ei hakemuskohtaisia vastaanottajia.",-,-,-
+Tarkastamattomia väliselvityksiä,valiselvitys-tarkastamatta.fi,"Ajastettu (tuotannossa maanantaisin klo 7.00). Kooste palautetuista väliselvityksistä (status_valiselvitys = submitted), joita ei ole tarkastettu. Vain vuoden 2020 jälkeen luodut haut.",Hakemukselle ukotettu esittelijä; jokainen esittelijä saa oman koosteviestinsä.,-,-,arviot.presenter_role_id -> avustushaku_roles.email
+Käsittelemättömiä muutoshakemuksia,muutoshakemuksia-kasittelematta.fi,"Ajastettu (tuotannossa maanantaisin klo 8.00). Kooste muutoshakemuksista, joihin ei ole tehty päätöstä.",Hakemukselle ukotettu esittelijä; koosteviesti hakua kohden.,-,-,arviot.presenter_role_id -> avustushaku_roles.email
+Edellisen kuukauden VA-täsmäytysraportti,kuukausittainen-tasmaytysraportti.fi,"Ajastettu (tuotannossa tunnin välein, mutta lähtee kerran kuukaudessa: ohitetaan jos edellisen kuukauden raportti on jo jonossa tai lähetetty). Mukana Excel-liite.","Kiinteä osoite konfiguraatiosta (email.to-kuukausittainen-tasmaytysraportti, talouspalvelut).",-,-,-
+Avustuspäätökset on lähetetty,paatokset-lahetetty.fi,Kun virkailija lähettää avustuspäätökset. Sisältää linkin päätösten yhteenvetolistaukseen.,Haun valmistelijat (esittelijät ja vastuuvalmistelijat).,-,-,avustushaku_roles.email
+Automaattinen viesti - Valtionavustuserän [erän nimi] maksatus suoritettu,payments-info.fi,Kun maksatuserän asiakirjat lähetetään maksatukseen.,Maksatuserän asiakirjan esittelijä ja hyväksyjä.,-,-,batch_documents.presenter_email; batch_documents.acceptor_email
+Viesti Opetushallituksen avustuksen palauttamattomaan loppuselvitykseen liittyen: [asianumero] [hankkeen nimi],"Hyvä vastaanottaja,
+
+tämä viesti koskee avustusta: [asianumero] [hankkeen nimi]
+
+Valtionavustusjärjestelmämme mukaan loppuselvityksenne on pyynnöstä huolimatta palauttamatta.
+
+Valtionavustuksen saajan on annettava avustuspäätöksen ehtojen noudattamisen valvomiseksi oikeat ja riittävät tiedot loppuselvityksessä. Valtionavustus voidaan periä takaisin, jos loppuselvitystä ei ole palautettu. (Valtionavustuslaki 688/2001, § 14 ja § 22.)
+
+Loppuselvitys tulee palauttaa Opetushallituksen sähköiseen valtionapujärjestelmään mahdollisimman pian, kuitenkin viimeistään 21 vuorokauden kuluessa. Vaihtoehtoisesti avustuksen saajan tulee palauttaa koko avustus ja sen korot omaehtoisesti 21 vuorokauden kuluessa.
+
+Loppuselvityslomakkeenne: [linkki loppuselvityslomakkeelle]
+
+Korkolaskuri ja palautusohjeet: https://www.oph.fi/fi/yleisia-ohjeita-valtionavustusten-hakijoille-ja-kayttajille
+
+Tarvittaessa tarkempia lisätietoja voi kysyä viestin lähettäjältä.
+
+Ystävällisin terveisin,
+[lähettäjän nimi]
+[lähettäjän sähköposti]",Kun virkailija lähettää muistutusviestin loppuselvitys-välilehdeltä.,"Virkailijan valitsemat vastaanottajat. Esitäyttönä yhteyshenkilö, varayhteyshenkilö, väliselvityksen ja loppuselvityksen yhteyshenkilö sekä organisaation nykyinen sposti; virkailija voi lisätä tai poistaa osoitteita.",primary-email; trusted-contact-email; valiselvitys.primary-email; loppuselvitys.primary-email,-,normalized_hakemus.contact_email; normalized_hakemus.trusted_contact_email; normalized_hakemus.valiselvitys_contact_email; normalized_hakemus.loppuselvitys_contact_email
+Viesti Opetushallituksen avustukseen liittyen,"Hyvä vastaanottaja,
+
+tämä viesti koskee avustusta [hankkeen nimi] ([asianumero]).
+
+[virkailijan kirjoittama viesti]
+
+Tarvittaessa tarkempia lisätietoja voi kysyä viestin lähettäjältä.
+
+Ystävällisin terveisin,
+[lähettäjän nimi]
+[lähettäjän sähköposti]",Kun virkailija lähettää vapaan viestin Viestit hankkeelle -välilehdeltä.,"Virkailijan valitsemat vastaanottajat. Esitäyttönä yhteyshenkilö, varayhteyshenkilö, väliselvityksen ja loppuselvityksen yhteyshenkilö sekä organisaation nykyinen sposti; virkailija voi lisätä tai poistaa osoitteita.",primary-email; trusted-contact-email; valiselvitys.primary-email; loppuselvitys.primary-email,-,normalized_hakemus.contact_email; normalized_hakemus.trusted_contact_email; normalized_hakemus.valiselvitys_contact_email; normalized_hakemus.loppuselvitys_contact_email
+Täydennyspyyntö Opetushallituksen avustuksen loppuselvitykseen liittyen: [asianumero] [hankkeen nimi],"Hyvä vastaanottaja,
+
+tämä viesti koskee avustusta: [asianumero] [hankkeen nimi]
+
+[Kirjoita kuvaus täydennyspyynnöstä ja sen määräajasta tähän]
+
+Linkki loppuselvityslomakkeelle: [linkki loppuselvityslomakkeelle]
+
+Muokkaa vain pyydettyjä kohtia.
+
+Tarvittaessa tarkempia lisätietoja voi kysyä viestin lähettäjältä.
+
+Ystävällisin terveisin,
+[lähettäjän nimi]
+[lähettäjän sähköposti]",Kun virkailija lähettää loppuselvityksen asiatarkastuksen täydennyspyynnön.,"Virkailijan valitsemat vastaanottajat. Esitäyttönä yhteyshenkilö, varayhteyshenkilö, väliselvityksen ja loppuselvityksen yhteyshenkilö sekä organisaation nykyinen sposti.",primary-email; trusted-contact-email; valiselvitys.primary-email; loppuselvitys.primary-email,-,normalized_hakemus.contact_email; normalized_hakemus.trusted_contact_email; normalized_hakemus.valiselvitys_contact_email; normalized_hakemus.loppuselvitys_contact_email
+Täydennyspyyntö Opetushallituksen avustuksen loppuselvitykseen liittyen: [asianumero] [hankkeen nimi],"Hyvä vastaanottaja,
+
+tämä viesti koskee avustusta: [asianumero] [hankkeen nimi]
+
+[Kirjoita kuvaus täydennyspyynnöstä ja sen määräajasta tähän]
+
+Linkki loppuselvityslomakkeelle: [linkki loppuselvityslomakkeelle]
+
+Muokkaa vain pyydettyjä kohtia.
+
+Tarvittaessa tarkempia lisätietoja voi kysyä viestin lähettäjältä.
+
+Ystävällisin terveisin,
+[lähettäjän nimi]
+[lähettäjän sähköposti]",Kun virkailija lähettää loppuselvityksen taloustarkastuksen täydennyspyynnön.,"Virkailijan valitsemat vastaanottajat. Esitäyttönä yhteyshenkilö, varayhteyshenkilö, väliselvityksen ja loppuselvityksen yhteyshenkilö sekä organisaation nykyinen sposti.",primary-email; trusted-contact-email; valiselvitys.primary-email; loppuselvitys.primary-email,-,normalized_hakemus.contact_email; normalized_hakemus.trusted_contact_email; normalized_hakemus.valiselvitys_contact_email; normalized_hakemus.loppuselvitys_contact_email
+Valtionavustukset / Täsmäytysraportti / avustushaku [haun id],Täsmäytysraportti liitteenä.,Kun avustushaun maksatukset on lähetetty.,Kiinteä osoite konfiguraatiosta (email.to-palkeet-ja-talouspalvelut: Palkeet ja talouspalvelut).,-,-,-
+(Ei oma viestinsä),email-signature.plain.fi,Ei lähetetä erikseen.,"Allekirjoitus (Opetushallitus tai JOTPA yhteystietoineen), joka liitetään automaattisesti 22 muun viestin loppuun.",-,-,-
