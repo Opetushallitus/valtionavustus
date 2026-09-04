@@ -28,7 +28,7 @@ test('hakuaika end time is locked to 23.59 and only the date is editable', async
     await expect(hakuaikaEndTime).toHaveText('klo 23.59')
   })
 
-  const newEndDate = moment().add(2, 'years').format('D.M.YYYY')
+  const newEndDate = moment().add(2, 'years').format('YYYY-MM-DD')
   await test.step('changing the end date keeps the end time locked to 23.59', async () => {
     await haunTiedotPage.locators.hakuAika.end.fill(newEndDate)
     await haunTiedotPage.locators.hakuAika.end.blur()
@@ -75,7 +75,7 @@ test('a legacy hakuaika keeps its own end time until the date changes', async ({
     expectToBeDefined(avustushakuID)
     await hakujenHallintaPage.navigate(avustushakuID)
     await expect(hakuaikaEndTime).toHaveText('klo 16.15')
-    await expect(haunTiedotPage.locators.hakuAika.end).toHaveValue('1.12.2027')
+    await expect(haunTiedotPage.locators.hakuAika.end).toHaveValue('2027-12-01')
   })
 
   await test.step('saving an unrelated field keeps the legacy end time untouched', async () => {
@@ -88,7 +88,7 @@ test('a legacy hakuaika keeps its own end time until the date changes', async ({
   })
 
   await test.step('changing the end date pins the end time to 23.59', async () => {
-    await haunTiedotPage.locators.hakuAika.end.fill('2.12.2027')
+    await haunTiedotPage.locators.hakuAika.end.fill('2027-12-02')
     await haunTiedotPage.locators.hakuAika.end.blur()
     await haunTiedotPage.common.waitForSave()
     await expect(hakuaikaEndTime).toHaveText('klo 23.59')

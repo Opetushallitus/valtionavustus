@@ -134,6 +134,14 @@ table.translation td {
     content: "—";
 }
 
+#haku-edit input.date[type="date"] {
+    width: 130px;
+}
+
+#haku-edit input.date[type="datetime-local"] {
+    width: 190px;
+}
+
 #haku-edit #set-maksuerat input[type="radio"]+label,
 #haku-edit #set-academysize input[type="radio"]+label {
     text-transform: none;

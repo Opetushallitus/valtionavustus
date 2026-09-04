@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Moment } from 'moment'
 
 import DateUtil from 'soresu-form/web/DateUtil'
-import { isValidFinnishDate } from 'soresu-form/web/va/i18n/dateformat'
 import { AVUSTUSHAKU_STATUSES, AvustushakuStatus, HelpTexts } from 'soresu-form/web/va/types'
 
 import { HakuRoles } from './HakuRoles'
@@ -351,7 +350,7 @@ const HakuEditor = () => {
               <DateField
                 key={`hakuaika-start-${avustushaku.id}`}
                 id="hakuaika-start"
-                onBlur={onChange}
+                onChange={onChange}
                 value={avustushaku.content.duration.start}
                 disabled={!allowAllHakuEdits}
               />
@@ -360,7 +359,7 @@ const HakuEditor = () => {
                 key={`hakuaika-end-${avustushaku.id}`}
                 dateOnly
                 id="hakuaika-end"
-                onBlur={onChangeImmediate}
+                onChange={onChangeImmediate}
                 value={avustushaku.content.duration.end}
                 disabled={!allowNondisruptiveHakuEdits}
               />
@@ -736,42 +735,35 @@ type DateFieldProps = {
   id: string
   disabled: boolean
   value: string | Date
-  onBlur: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   dateOnly?: boolean
 }
 
-const asDateTimeString = (value: string | Date) => {
-  return DateUtil.asDateString(value) + ' ' + DateUtil.asTimeString(value)
-}
-
-const DateField = ({ id, disabled, value, onBlur, dateOnly }: DateFieldProps) => {
+const DateField = ({ id, disabled, value, onChange, dateOnly }: DateFieldProps) => {
   const [currentValue, setCurrentValue] = useState(
-    dateOnly ? DateUtil.asDateString(value) : asDateTimeString(value)
+    dateOnly ? DateUtil.asIsoDateString(value) : DateUtil.asIsoDateTimeString(value)
   )
-  const length = dateOnly ? 10 : 16
-  const isValid = !dateOnly || isValidFinnishDate(currentValue)
+  const [touched, setTouched] = useState(false)
+  const isValid = currentValue !== ''
 
   return (
     <>
       <input
         className={isValid ? 'date' : 'date error'}
-        maxLength={length}
-        size={length}
-        type="text"
+        type={dateOnly ? 'date' : 'datetime-local'}
         id={id}
-        onChange={(e) => setCurrentValue(e.target.value)}
-        onBlur={(e) => {
-          if (isValid) {
-            onBlur(e)
-          }
+        onChange={(e) => {
+          setCurrentValue(e.target.value)
+          onChange(e)
         }}
+        onBlur={() => setTouched(true)}
         value={currentValue}
         disabled={disabled}
       />
       {dateOnly && isValid && (
         <span data-test-id="hakuaika-end-time">klo {DateUtil.asTimeString(value)}</span>
       )}
-      {!isValid && (
+      {touched && !isValid && (
         <span style={{ paddingLeft: '5px' }} className="error" data-test-id={`${id}-error`}>
           Virheellinen päivä
         </span>

@@ -12,4 +12,12 @@ export default class DateUtil {
   static asDateTimeString(date: moment.MomentInput): string {
     return moment(date).tz('Europe/Helsinki').format('D.M.YYYY H.mm')
   }
+
+  static asIsoDateString(date: moment.MomentInput): string {
+    return moment(date).tz('Europe/Helsinki').format('YYYY-MM-DD')
+  }
+
+  static asIsoDateTimeString(date: moment.MomentInput): string {
+    return moment(date).tz('Europe/Helsinki').format('YYYY-MM-DDTHH:mm')
+  }
 }

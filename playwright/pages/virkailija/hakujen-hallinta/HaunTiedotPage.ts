@@ -5,7 +5,9 @@ import moment from 'moment/moment'
 import { NoProjectCodeProvided, VaCodeValues } from '../../../utils/types'
 
 const dateFormat = 'D.M.YYYY H.mm'
-const formatDate = (date: Date | moment.Moment) => moment(date).format(dateFormat)
+const isoDateFormat = 'YYYY-MM-DD'
+const isoDateTimeFormat = 'YYYY-MM-DDTHH:mm'
+const formatDate = (date: Date | moment.Moment) => moment(date).format(isoDateTimeFormat)
 
 export const HaunTiedotPage = (page: Page) => {
   const common = CommonHakujenHallintaPage(page)
@@ -113,7 +115,7 @@ export const HaunTiedotPage = (page: Page) => {
   }
 
   async function setEndDate(endTime: string) {
-    const dateOnly = moment(endTime, dateFormat).format('D.M.YYYY')
+    const dateOnly = moment(endTime, dateFormat).format(isoDateFormat)
     await locators.hakuAika.end.fill(dateOnly)
     await locators.hakuAika.end.blur()
     await common.waitForSave()

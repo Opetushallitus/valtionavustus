@@ -31,8 +31,8 @@ declare global {
 const DEFAULT_AUTOSAVE_TIMEOUT = 3000
 const getAutosaveTimeout = () => window.__VA_AUTOSAVE_TIMEOUT__ ?? DEFAULT_AUTOSAVE_TIMEOUT
 import {
-  fiLongDateTimeFormat,
-  fiDateFormats,
+  isoFormat,
+  isoDateTimeFormat,
   parseFinnishTimestamp,
 } from 'soresu-form/web/va/i18n/dateformat'
 import { HakujenHallintaRootState } from './hakujenHallintaStore'
@@ -666,10 +666,13 @@ export const updateField = createAsyncThunk<
     }
     const startOrEnd = hakuaika[1] as 'start' | 'end'
     if (startOrEnd === 'start') {
-      const newDate = parseFinnishTimestamp(update.newValue, fiLongDateTimeFormat)
+      const newDate = parseFinnishTimestamp(update.newValue, isoDateTimeFormat, true)
+      if (!newDate.isValid()) {
+        return
+      }
       avustushaku.content.duration.start = newDate.toISOString()
     } else {
-      const newDate = parseFinnishTimestamp(update.newValue, fiDateFormats, true)
+      const newDate = parseFinnishTimestamp(update.newValue, isoFormat, true)
       if (!newDate.isValid()) {
         return
       }
