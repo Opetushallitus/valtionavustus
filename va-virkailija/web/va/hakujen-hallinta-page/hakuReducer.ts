@@ -647,7 +647,9 @@ export const updateField = createAsyncThunk<
     'register-number',
     'hallinnoiavustuksia-register-number',
   ] as const
-  let avustushaku = _.cloneDeep(update.avustushaku)
+  // Read-modify-write must start from current state: a handler's closed-over avustushaku
+  // can be a render behind and would overwrite a field edited just before.
+  let avustushaku = _.cloneDeep(selectAvustushaku(thunkAPI.getState().haku, update.avustushaku.id))
   if (basicFields.indexOf(fieldId as any) > -1) {
     avustushaku[fieldId as (typeof basicFields)[number]] = update.newValue
   } else if (fieldId === 'haku-self-financing-percentage') {
