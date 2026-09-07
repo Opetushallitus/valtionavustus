@@ -36,15 +36,24 @@ export const DateInput = (props: DateInputProps) => {
   }
 
   return (
-    <DatePicker
-      name={id}
-      parse={includeTime ? parseDateTimeString : parseDateString}
-      {...(includeTime ? { includeTime: true, valueFormat: fiDateTimeFormat } : {})}
-      onChange={onChangeHandlerFor(id)}
-      value={defaultValue}
-      placeholder={placeholder}
-      containerClassName={getClassNames()}
-      disabled={disabled}
-    />
+    <>
+      <DatePicker
+        name={id}
+        parse={includeTime ? parseDateTimeString : parseDateString}
+        {...(includeTime ? { includeTime: true, valueFormat: fiDateTimeFormat } : {})}
+        onChange={onChangeHandlerFor(id)}
+        value={defaultValue}
+        placeholder={placeholder}
+        containerClassName={getClassNames()}
+        disabled={disabled}
+        inputProps={{ 'aria-invalid': !isValid }}
+        aria-describedby={!isValid ? `${id}-error` : undefined}
+      />
+      {!isValid && (
+        <span id={`${id}-error`} className="error" role="alert">
+          Virheellinen päivämäärä
+        </span>
+      )}
+    </>
   )
 }
