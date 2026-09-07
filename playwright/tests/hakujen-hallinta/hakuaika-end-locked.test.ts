@@ -28,18 +28,16 @@ test('hakuaika end time is locked to 23.59 and only the date is editable', async
     await expect(hakuaikaEndTime).toHaveText('klo 23.59')
   })
 
-  const newEndDate = moment().add(2, 'years').format('YYYY-MM-DD')
+  const newEndDate = moment().add(2, 'years')
   await test.step('changing the end date keeps the end time locked to 23.59', async () => {
-    await haunTiedotPage.locators.hakuAika.end.fill(newEndDate)
-    await haunTiedotPage.locators.hakuAika.end.blur()
-    await haunTiedotPage.common.waitForSave()
+    await haunTiedotPage.setEndDate(newEndDate.format('D.M.YYYY'))
     await expect(hakuaikaEndTime).toHaveText('klo 23.59')
   })
 
   await test.step('reloading the page keeps the new date and locked end time', async () => {
     expectToBeDefined(avustushakuID)
     await hakujenHallintaPage.navigate(avustushakuID)
-    await expect(haunTiedotPage.locators.hakuAika.end).toHaveValue(newEndDate)
+    await expect(haunTiedotPage.locators.hakuAika.end).toHaveValue(newEndDate.format('DD.MM.YYYY'))
     await expect(hakuaikaEndTime).toHaveText('klo 23.59')
   })
 })
@@ -75,7 +73,7 @@ test('a legacy hakuaika keeps its own end time until the date changes', async ({
     expectToBeDefined(avustushakuID)
     await hakujenHallintaPage.navigate(avustushakuID)
     await expect(hakuaikaEndTime).toHaveText('klo 16.15')
-    await expect(haunTiedotPage.locators.hakuAika.end).toHaveValue('2027-12-01')
+    await expect(haunTiedotPage.locators.hakuAika.end).toHaveValue('01.12.2027')
   })
 
   await test.step('saving an unrelated field keeps the legacy end time untouched', async () => {
@@ -88,9 +86,7 @@ test('a legacy hakuaika keeps its own end time until the date changes', async ({
   })
 
   await test.step('changing the end date pins the end time to 23.59', async () => {
-    await haunTiedotPage.locators.hakuAika.end.fill('2027-12-02')
-    await haunTiedotPage.locators.hakuAika.end.blur()
-    await haunTiedotPage.common.waitForSave()
+    await haunTiedotPage.setEndDate('2.12.2027')
     await expect(hakuaikaEndTime).toHaveText('klo 23.59')
   })
 
@@ -122,39 +118,31 @@ test('hakuaika duration is shown in weeks and days', async ({ page, hakuProps })
   })
 
   await test.step('set a known hakuaika start', async () => {
-    await haunTiedotPage.locators.hakuAika.start.fill('2027-01-01T09:00')
-    await haunTiedotPage.locators.hakuAika.start.blur()
-    await haunTiedotPage.common.waitForSave()
+    await haunTiedotPage.setStartDate(moment('2027-01-01T09:00'))
   })
 
-  const setEndDate = async (endDate: string) => {
-    await haunTiedotPage.locators.hakuAika.end.fill(endDate)
-    await haunTiedotPage.locators.hakuAika.end.blur()
-    await haunTiedotPage.common.waitForSave()
-  }
-
   await test.step('a whole number of weeks omits the days', async () => {
-    await setEndDate('2027-02-11')
+    await haunTiedotPage.setEndDate('11.2.2027')
     await expect(duration).toHaveText('6 viikkoa')
   })
 
   await test.step('a partial week is shown after the weeks', async () => {
-    await setEndDate('2027-02-14')
+    await haunTiedotPage.setEndDate('14.2.2027')
     await expect(duration).toHaveText('6 viikkoa 3 päivää')
   })
 
   await test.step('under a week shows only days', async () => {
-    await setEndDate('2027-01-05')
+    await haunTiedotPage.setEndDate('5.1.2027')
     await expect(duration).toHaveText('5 päivää')
   })
 
   await test.step('the start and end day both count', async () => {
-    await setEndDate('2027-01-01')
+    await haunTiedotPage.setEndDate('1.1.2027')
     await expect(duration).toHaveText('1 päivä')
   })
 
   await test.step('a single week uses the singular', async () => {
-    await setEndDate('2027-01-07')
+    await haunTiedotPage.setEndDate('7.1.2027')
     await expect(duration).toHaveText('1 viikko')
   })
 })

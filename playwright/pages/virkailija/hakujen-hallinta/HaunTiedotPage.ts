@@ -5,9 +5,7 @@ import moment from 'moment/moment'
 import { NoProjectCodeProvided, VaCodeValues } from '../../../utils/types'
 
 const dateFormat = 'D.M.YYYY H.mm'
-const isoDateFormat = 'YYYY-MM-DD'
-const isoDateTimeFormat = 'YYYY-MM-DDTHH:mm'
-const formatDate = (date: Date | moment.Moment) => moment(date).format(isoDateTimeFormat)
+const formatDate = (date: Date | moment.Moment) => moment(date).format(dateFormat)
 
 export const HaunTiedotPage = (page: Page) => {
   const common = CommonHakujenHallintaPage(page)
@@ -25,8 +23,8 @@ export const HaunTiedotPage = (page: Page) => {
     dropdownForCode: (codeType: 'operational-unit' | 'project' | 'operation') =>
       page.getByTestId(`code-value-dropdown__${codeType}`),
     hakuAika: {
-      start: page.locator('#hakuaika-start'),
-      end: page.locator('#hakuaika-end'),
+      start: page.locator('[name="hakuaika-start"]'),
+      end: page.locator('[name="hakuaika-end"]'),
     },
     puutteita: page.locator('text=Jossain kentässä puutteita. Tarkasta arvot.'),
     status: {
@@ -110,14 +108,14 @@ export const HaunTiedotPage = (page: Page) => {
 
   async function setStartDate(time: moment.Moment) {
     await locators.hakuAika.start.fill(formatDate(time))
-    await locators.hakuAika.start.blur()
+    await page.keyboard.press('Tab')
     await common.waitForSave()
   }
 
   async function setEndDate(endTime: string) {
-    const dateOnly = moment(endTime, dateFormat).format(isoDateFormat)
+    const dateOnly = moment(endTime, dateFormat).format('D.M.YYYY')
     await locators.hakuAika.end.fill(dateOnly)
-    await locators.hakuAika.end.blur()
+    await page.keyboard.press('Tab')
     await common.waitForSave()
   }
 

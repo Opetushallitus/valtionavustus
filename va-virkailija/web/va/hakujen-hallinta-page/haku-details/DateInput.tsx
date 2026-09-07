@@ -1,7 +1,11 @@
 import React, { useState } from 'react'
 import DatePicker from 'react-widgets/DatePicker'
 import moment, { Moment } from 'moment'
-import { parseDateString } from 'soresu-form/web/va/i18n/dateformat'
+import {
+  fiDateTimeFormat,
+  parseDateString,
+  parseDateTimeString,
+} from 'soresu-form/web/va/i18n/dateformat'
 
 import 'react-widgets/styles.css'
 
@@ -12,10 +16,11 @@ interface DateInputProps {
   allowEmpty: boolean
   placeholder?: string
   disabled?: boolean
+  includeTime?: boolean
 }
 
 export const DateInput = (props: DateInputProps) => {
-  const { id, defaultValue, onChange, allowEmpty, placeholder, disabled } = props
+  const { id, defaultValue, onChange, allowEmpty, placeholder, disabled, includeTime } = props
   const [isValid, setIsValid] = useState(defaultValue !== undefined || allowEmpty)
 
   function onChangeHandlerFor(id: string) {
@@ -33,7 +38,8 @@ export const DateInput = (props: DateInputProps) => {
   return (
     <DatePicker
       name={id}
-      parse={parseDateString}
+      parse={includeTime ? parseDateTimeString : parseDateString}
+      {...(includeTime ? { includeTime: true, valueFormat: fiDateTimeFormat } : {})}
       onChange={onChangeHandlerFor(id)}
       value={defaultValue}
       placeholder={placeholder}

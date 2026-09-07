@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import moment, { Moment } from 'moment'
 
 import DateUtil from 'soresu-form/web/DateUtil'
+import { isoDateTimeFormat, isoFormat } from 'soresu-form/web/va/i18n/dateformat'
 import { AVUSTUSHAKU_STATUSES, AvustushakuStatus, HelpTexts } from 'soresu-form/web/va/types'
 
 import { HakuRoles } from './HakuRoles'
@@ -115,6 +116,18 @@ const HakuEditor = () => {
         field: { id },
         newValue: date.format('YYYY-MM-DD'),
       })
+    )
+  }
+
+  const onChangeHakuaikaField = (
+    fieldId: string,
+    date: Moment,
+    format: string,
+    immediate?: boolean
+  ) => {
+    if (!date.isValid()) return
+    dispatch(
+      updateField({ avustushaku, field: { id: fieldId }, newValue: date.format(format), immediate })
     )
   }
 
@@ -351,22 +364,27 @@ const HakuEditor = () => {
                   direction="left"
                 />
               </h3>
-              <DateField
-                key={`hakuaika-start-${avustushaku.id}`}
+              <DateInput
                 id="hakuaika-start"
-                onChange={onChange}
-                value={avustushaku.content.duration.start}
+                includeTime
+                defaultValue={new Date(avustushaku.content.duration.start)}
+                onChange={(fieldId, date) =>
+                  onChangeHakuaikaField(fieldId, date, isoDateTimeFormat)
+                }
+                allowEmpty={false}
                 disabled={!allowAllHakuEdits}
               />
               <span className="dateDivider" />
-              <DateField
-                key={`hakuaika-end-${avustushaku.id}`}
-                dateOnly
+              <DateInput
                 id="hakuaika-end"
-                onChange={onChangeImmediate}
-                value={avustushaku.content.duration.end}
+                defaultValue={new Date(avustushaku.content.duration.end)}
+                onChange={(fieldId, date) => onChangeHakuaikaField(fieldId, date, isoFormat, true)}
+                allowEmpty={false}
                 disabled={!allowNondisruptiveHakuEdits}
               />
+              <span data-test-id="hakuaika-end-time">
+                klo {DateUtil.asTimeString(avustushaku.content.duration.end)}
+              </span>
               {durationText && (
                 <div className="hakuaika-duration" data-test-id="hakuaika-duration">
                   {durationText}
@@ -740,14 +758,6 @@ const CreateHaku = ({ avustushaku, helpTexts }: CreateHakuProps) => {
   )
 }
 
-type DateFieldProps = {
-  id: string
-  disabled: boolean
-  value: string | Date
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  dateOnly?: boolean
-}
-
 const finnishPlural = (amount: number, singular: string, plural: string) =>
   `${amount} ${amount === 1 ? singular : plural}`
 
@@ -765,39 +775,6 @@ const hakuaikaDurationText = (start: string | Date, end: string | Date): string 
   ]
     .filter(Boolean)
     .join(' ')
-}
-
-const DateField = ({ id, disabled, value, onChange, dateOnly }: DateFieldProps) => {
-  const [currentValue, setCurrentValue] = useState(
-    dateOnly ? DateUtil.asIsoDateString(value) : DateUtil.asIsoDateTimeString(value)
-  )
-  const [touched, setTouched] = useState(false)
-  const isValid = currentValue !== ''
-
-  return (
-    <>
-      <input
-        className={isValid ? 'date' : 'date error'}
-        type={dateOnly ? 'date' : 'datetime-local'}
-        id={id}
-        onChange={(e) => {
-          setCurrentValue(e.target.value)
-          onChange(e)
-        }}
-        onBlur={() => setTouched(true)}
-        value={currentValue}
-        disabled={disabled}
-      />
-      {dateOnly && isValid && (
-        <span data-test-id="hakuaika-end-time">klo {DateUtil.asTimeString(value)}</span>
-      )}
-      {touched && !isValid && (
-        <span style={{ paddingLeft: '5px' }} className="error" data-test-id={`${id}-error`}>
-          Virheellinen päivä
-        </span>
-      )}
-    </>
-  )
 }
 
 type TextAreaProps = {

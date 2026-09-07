@@ -4,6 +4,7 @@ export const fiLongFormat = 'DD.MM.YYYY'
 export const fiShortFormat = 'D.M.YYYY'
 export const isoFormat = 'YYYY-MM-DD'
 export const isoDateTimeFormat = 'YYYY-MM-DDTHH:mm'
+export const fiDateTimeFormat = 'D.M.YYYY H.mm'
 
 export const fiLongDateTimeFormatWithKlo = 'D.M.YYYY [klo] H.mm'
 
@@ -13,6 +14,11 @@ export function parseDateString(str: string, _localizer: unknown): Date | undefi
   const date = parseDateStringToMoment(str)
 
   return date && date.isValid() ? date.toDate() : undefined
+}
+
+export function parseDateTimeString(str: string, _localizer: unknown): Date | undefined {
+  const date = moment(str, [fiDateTimeFormat, ...dateformats])
+  return date.isValid() ? date.toDate() : undefined
 }
 
 export function parseFinnishTimestamp(

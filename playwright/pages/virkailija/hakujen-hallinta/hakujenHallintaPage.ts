@@ -57,8 +57,7 @@ export enum Installment {
 
 const dateFormat = 'D.M.YYYY H.mm'
 const formatDate = (date: Date | moment.Moment) => moment(date).format(dateFormat)
-const formatDateOnly = (date: Date | moment.Moment) => moment(date).format('YYYY-MM-DD')
-const formatDateTimeOnly = (date: Date | moment.Moment) => moment(date).format('YYYY-MM-DDTHH:mm')
+const formatDateOnly = (date: Date | moment.Moment) => moment(date).format('D.M.YYYY')
 export const parseDate = (input: string) => moment(input, dateFormat).toDate()
 
 export const hakuPath = (avustushakuID: number) =>
@@ -300,8 +299,8 @@ export class HakujenHallintaPage {
         await this.page.fill('#total-grant-size', String(jaossaOlevaSumma))
       }
 
-      await this.page.fill('#hakuaika-start', formatDateTimeOnly(hakuaikaStart))
-      await this.page.fill('#hakuaika-end', formatDateOnly(hakuaikaEnd))
+      await this.page.fill('[name="hakuaika-start"]', formatDate(hakuaikaStart))
+      await this.page.fill('[name="hakuaika-end"]', formatDateOnly(hakuaikaEnd))
       await haunTiedotPage.addValmistelija('Viivi Virkailija', false)
       await haunTiedotPage.addArvioija('Päivi Pääkäyttäjä', false)
 

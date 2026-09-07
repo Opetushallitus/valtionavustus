@@ -134,12 +134,17 @@ table.translation td {
     content: "—";
 }
 
-#haku-edit input.date[type="date"] {
-    width: 130px;
+/* The layout goes on .rw-date-picker, never on .datepicker: react-widgets puts
+   containerClassName on .rw-widget-picker, whose display:grid is what keeps the
+   calendar button beside the input. */
+#haku-edit .haku-duration-edit-container .rw-date-picker {
+    display: inline-block;
+    vertical-align: middle;
+    width: 200px;
 }
 
-#haku-edit input.date[type="datetime-local"] {
-    width: 190px;
+#haku-edit .haku-duration-edit-container .rw-date-picker:has(input[name="hakuaika-end"]) {
+    width: 150px;
 }
 
 #haku-edit #set-maksuerat input[type="radio"]+label,
