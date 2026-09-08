@@ -32,8 +32,8 @@ const test = selvitysTest.extend<{
       hakuaikaStart: moment().subtract(1, 'day').toDate(),
       hakuaikaEnd: moment().add(1, 'month').toDate(),
       avustushakuName: secondAvustushakuName,
-      hankkeenAlkamispaiva: moment().add(1, 'month').format('DD.MM.YY'),
-      hankkeenPaattymispaiva: moment().add(7, 'month').format('DD.MM.YY'),
+      hankkeenAlkamispaiva: moment().add(1, 'month').format('DD.MM.YYYY'),
+      hankkeenPaattymispaiva: moment().add(7, 'month').format('DD.MM.YYYY'),
     }
     await hakujenHallintaPage.createMuutoshakemusDisabledHaku(secondHakuProps)
     await use(secondHakuProps)
@@ -250,7 +250,7 @@ test('sorting haku table', async ({ haunTiedotPage, avustushakuName, secondHakuP
   await test.step('correct kayttoaika alkaa for avustushaut', async () => {
     await expect(kayttoaikaAlkaa.cellValue(avustushakuName)).toContainText('20.04.69')
     await expect(kayttoaikaAlkaa.cellValue(secondAvustushakuName)).toContainText(
-      secondHakuProps.hankkeenAlkamispaiva
+      moment(secondHakuProps.hankkeenAlkamispaiva, 'DD.MM.YYYY', true).format('DD.MM.YY')
     )
   })
   await test.step('can be sorted by kayttoaika alkaa', async () => {
@@ -268,7 +268,7 @@ test('sorting haku table', async ({ haunTiedotPage, avustushakuName, secondHakuP
   await test.step('correct kayttoaika paattyy for avustushaut', async () => {
     await expect(kayttoaikaPaattyy.cellValue(avustushakuName)).toContainText('20.04.00')
     await expect(kayttoaikaPaattyy.cellValue(secondAvustushakuName)).toContainText(
-      secondHakuProps.hankkeenPaattymispaiva
+      moment(secondHakuProps.hankkeenPaattymispaiva, 'DD.MM.YYYY', true).format('DD.MM.YY')
     )
   })
   await test.step('can be sorted by kayttoaika paattyy', async () => {
