@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import moment, { Moment } from 'moment'
 
 import DateUtil from 'soresu-form/web/DateUtil'
-import { isoDateTimeFormat, isoFormat } from 'soresu-form/web/va/i18n/dateformat'
 import { AVUSTUSHAKU_STATUSES, AvustushakuStatus, HelpTexts } from 'soresu-form/web/va/types'
 
 import { HakuRoles } from './HakuRoles'
@@ -11,6 +10,7 @@ import { CustomHelpTooltip } from '../../common-components/HelpTooltip'
 import WarningBanner from '../../WarningBanner'
 import { VaCodeValue, ValidationResult } from '../../types'
 import { DateInput } from './DateInput'
+import { Hakuaika } from './Hakuaika'
 import { Raportointivelvoitteet } from './Raportointivelvoitteet'
 import { Lainsaadanto } from './Lainsaadanto'
 import ProjectSelectors from './ProjectSelectors'
@@ -364,32 +364,15 @@ const HakuEditor = () => {
                   direction="left"
                 />
               </h3>
-              <DateInput
-                id="hakuaika-start"
-                includeTime
-                defaultValue={new Date(avustushaku.content.duration.start)}
-                onChange={(fieldId, date) =>
-                  onChangeHakuaikaField(fieldId, date, isoDateTimeFormat)
-                }
-                allowEmpty={false}
-                disabled={!allowAllHakuEdits}
+              <Hakuaika
+                key={avustushaku.id}
+                start={avustushaku.content.duration.start}
+                end={avustushaku.content.duration.end}
+                startDisabled={!allowAllHakuEdits}
+                endDisabled={!allowNondisruptiveHakuEdits}
+                durationText={durationText}
+                onChange={onChangeHakuaikaField}
               />
-              <span className="dateDivider" />
-              <DateInput
-                id="hakuaika-end"
-                defaultValue={new Date(avustushaku.content.duration.end)}
-                onChange={(fieldId, date) => onChangeHakuaikaField(fieldId, date, isoFormat, true)}
-                allowEmpty={false}
-                disabled={!allowNondisruptiveHakuEdits}
-              />
-              <span data-test-id="hakuaika-end-time">
-                klo {DateUtil.asTimeString(avustushaku.content.duration.end)}
-              </span>
-              {durationText && (
-                <div className="hakuaika-duration" data-test-id="hakuaika-duration">
-                  {durationText}
-                </div>
-              )}
             </div>
           </div>
           <HakuType

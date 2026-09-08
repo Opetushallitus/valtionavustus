@@ -1,0 +1,50 @@
+.field {
+    min-width: 0;
+}
+
+.label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--mid-gray);
+    font-size: 14px;
+}
+
+.inputRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.inputRow > :global(.rw-date-picker) {
+    flex: 1;
+    min-width: 0;
+}
+
+.inputRow :global(.rw-widget-picker) {
+    min-height: 42px;
+}
+
+.field :global(.rw-calendar-popup) {
+    width: min(324px, calc(100vw - 16px));
+}
+
+.suffix {
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+.invalid {
+    border-color: var(--bright-red);
+}
+
+.error {
+    margin-top: 7px;
+    color: var(--bright-red);
+    font-size: 14px;
+}
+
+.hint {
+    display: block;
+    margin-top: 2px;
+    font-size: 13px;
+}
