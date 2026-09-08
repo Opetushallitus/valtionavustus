@@ -356,24 +356,22 @@ const HakuEditor = () => {
             helpTexts={helpTexts}
           />
           <div className="haku-duration-and-self-financing">
-            <div className="haku-duration-edit-container">
-              <h3>
-                {avustushaku.content.duration.label.fi}
-                <CustomHelpTooltip
-                  content={helpTexts['hakujen_hallinta__haun_tiedot___hakuaika']}
-                  direction="left"
-                />
-              </h3>
-              <Hakuaika
-                key={avustushaku.id}
-                start={avustushaku.content.duration.start}
-                end={avustushaku.content.duration.end}
-                startDisabled={!allowAllHakuEdits}
-                endDisabled={!allowNondisruptiveHakuEdits}
-                durationText={durationText}
-                onChange={onChangeHakuaikaField}
+            <h3>
+              {avustushaku.content.duration.label.fi}
+              <CustomHelpTooltip
+                content={helpTexts['hakujen_hallinta__haun_tiedot___hakuaika']}
+                direction="left"
               />
-            </div>
+            </h3>
+            <Hakuaika
+              key={avustushaku.id}
+              start={avustushaku.content.duration.start}
+              end={avustushaku.content.duration.end}
+              startDisabled={!allowAllHakuEdits}
+              endDisabled={!allowNondisruptiveHakuEdits}
+              durationText={durationText}
+              onChange={onChangeHakuaikaField}
+            />
           </div>
           <HakuType
             hakuType={avustushaku['haku-type']}

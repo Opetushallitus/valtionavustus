@@ -1,0 +1,52 @@
+.container {
+    container-type: inline-size;
+    width: 590px;
+    max-width: 100%;
+}
+
+.fields {
+    display: grid;
+    grid-template-columns: minmax(200px, 1fr) 20px minmax(235px, 1.2fr);
+    gap: 12px;
+    align-items: start;
+    max-width: 590px;
+    margin-top: 5px;
+}
+
+.divider {
+    margin: 0;
+    padding-top: 32px;
+    text-align: center;
+}
+
+.divider::after {
+    content: "—";
+}
+
+.fields :global(.rw-calendar-btn-view) {
+    flex: 1;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.fields :global(.rw-calendar-btn-today) {
+    display: none;
+}
+
+.duration {
+    margin-top: 14px;
+    color: var(--mid-gray);
+    font-size: 14px;
+}
+
+@container (max-width: 500px) {
+    .fields {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .divider {
+        display: none;
+    }
+}

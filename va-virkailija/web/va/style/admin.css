@@ -126,58 +126,6 @@ table.translation td {
     margin-top: 20px;
 }
 
-#haku-edit .dateDivider {
-    margin: 0 10px;
-}
-
-#haku-edit .dateDivider:after {
-    content: "—";
-}
-
-#haku-edit .hakuaika-fields {
-    display: grid;
-    grid-template-columns: minmax(200px, 1fr) 20px minmax(235px, 1.2fr);
-    gap: 12px;
-    align-items: start;
-    max-width: 590px;
-    margin-top: 5px;
-}
-
-#haku-edit .hakuaika-fields .dateDivider {
-    margin: 0;
-    padding-top: 32px;
-    text-align: center;
-}
-
-#haku-edit .hakuaika-fields .rw-calendar-btn-view {
-    flex: 1;
-    white-space: nowrap;
-    font-size: 14px;
-    font-weight: 400;
-}
-
-#haku-edit .hakuaika-fields .rw-calendar-btn-today {
-    display: none;
-}
-
-#haku-edit .haku-duration-edit-container {
-    display: block;
-    container-type: inline-size;
-    width: 590px;
-    max-width: 100%;
-}
-
-@container (max-width: 500px) {
-    #haku-edit .hakuaika-fields {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 14px;
-    }
-
-    #haku-edit .hakuaika-fields .dateDivider {
-        display: none;
-    }
-}
-
 #haku-edit #set-maksuerat input[type="radio"]+label,
 #haku-edit #set-academysize input[type="radio"]+label {
     text-transform: none;
@@ -435,12 +383,6 @@ table.translation td {
 #haku-edit .haku-self-financing-edit-container {
     display: inline-block;
     margin-right: 40px;
-}
-
-#haku-edit .hakuaika-duration {
-    margin-top: 14px;
-    color: var(--mid-gray);
-    font-size: 14px;
 }
 
 #haku-edit #selection-criteria,

@@ -3,6 +3,7 @@ import { Moment } from 'moment'
 import DateUtil from 'soresu-form/web/DateUtil'
 import { isoDateTimeFormat, isoFormat } from 'soresu-form/web/va/i18n/dateformat'
 import { DateInput } from './DateInput'
+import * as styles from './Hakuaika.module.css'
 
 interface HakuaikaProps {
   start: string | Date
@@ -24,8 +25,8 @@ export const Hakuaika = ({
   const [startValid, setStartValid] = useState(true)
   const [endValid, setEndValid] = useState(true)
   return (
-    <>
-      <div className="hakuaika-fields">
+    <div className={styles.container}>
+      <div className={styles.fields}>
         <DateInput
           id="hakuaika-start"
           label="Alkaa"
@@ -36,7 +37,7 @@ export const Hakuaika = ({
           allowEmpty={false}
           disabled={startDisabled}
         />
-        <span className="dateDivider" aria-hidden="true" />
+        <span className={styles.divider} aria-hidden="true" />
         <DateInput
           id="hakuaika-end"
           label="Päättyy"
@@ -49,10 +50,10 @@ export const Hakuaika = ({
         />
       </div>
       {startValid && endValid && durationText && (
-        <div className="hakuaika-duration">
+        <div className={styles.duration}>
           Hakuajan kesto: <span data-test-id="hakuaika-duration">{durationText}</span>
         </div>
       )}
-    </>
+    </div>
   )
 }
