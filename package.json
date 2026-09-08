@@ -56,7 +56,7 @@
     "less": "4.9.1",
     "less-loader": "13.0.0",
     "pdfjs-dist": "4.10.38",
-    "postcss": "8.5.26",
+    "postcss": "8.5.28",
     "postcss-loader": "8.2.1",
     "postcss-preset-env": "11.5.1",
     "prettier": "3.9.6",
