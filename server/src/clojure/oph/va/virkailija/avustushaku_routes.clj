@@ -1,5 +1,6 @@
 (ns oph.va.virkailija.avustushaku-routes
   (:require [clj-time.coerce :as coerce]
+            [clj-time.core :as time]
             [clojure.tools.logging :as log]
             [compojure.api.sweet :as compojure-api]
             [oph.common.datetime :as datetime]
@@ -116,9 +117,13 @@
           (http/bad-request {:error "Haku on ratkaistu, joten päätöksen tietoja ei voi muuttaa. Palauta haku tilaan Julkaistu tai Luonnos tehdäksesi muutoksia."}))
 
         :else
-        (if-let [response (hakija-api/update-avustushaku (pin-hakuaika-end tallennettu avustushaku))]
-          (http/ok response)
-          (http/not-found)))
+        (let [avustushaku (pin-hakuaika-end tallennettu avustushaku)
+              {:keys [start end]} (get-in avustushaku [:content :duration])]
+          (if-not (time/before? (coerce/to-date-time start) (coerce/to-date-time end))
+            (http/bad-request {:error "Päättymisajan pitää olla alkamisajan jälkeen."})
+            (if-let [response (hakija-api/update-avustushaku avustushaku)]
+              (http/ok response)
+              (http/not-found)))))
       (http/not-found))))
 
 (defn- get-avustushaku []
