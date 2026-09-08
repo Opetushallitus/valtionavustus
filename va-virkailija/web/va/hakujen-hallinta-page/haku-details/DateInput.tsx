@@ -1,5 +1,6 @@
 import React, { createContext, forwardRef, useContext, useEffect, useState } from 'react'
 import DatePicker from 'react-widgets/DatePicker'
+import { DateTimePicker } from './DateTimePicker'
 import moment, { Moment } from 'moment'
 import {
   dateformats,
@@ -55,6 +56,7 @@ export const DateInput = (props: DateInputProps) => {
     error,
     onValidityChange,
   } = props
+  const Picker = includeTime ? DateTimePicker : DatePicker
   const format = includeTime ? fiDateTimeFormat : fiLongFormat
   const savedText = defaultValue ? moment(defaultValue).format(format) : ''
   const [text, setText] = useState(savedText)
@@ -159,11 +161,10 @@ export const DateInput = (props: DateInputProps) => {
             },
           }}
         >
-          <DatePicker
+          <Picker
             id={id}
             name={id}
             parse={parse}
-            {...(includeTime ? { includeTime: true, valueFormat: fiDateTimeFormat } : {})}
             onChange={onChangeHandlerFor(id)}
             onSelect={acceptDate}
             calendarProps={{ formats: { header: 'MMMM YYYY' } }}
