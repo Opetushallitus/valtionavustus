@@ -2,6 +2,7 @@ import React, { createContext, forwardRef, useContext, useEffect, useState } fro
 import DatePicker from 'react-widgets/DatePicker'
 import moment, { Moment } from 'moment'
 import {
+  dateformats,
   fiDateTimeFormat,
   fiLongFormat,
   parseDateString,
@@ -36,6 +37,7 @@ interface DateInputProps {
   includeTime?: boolean
   label?: string
   suffix?: React.ReactNode
+  error?: string
   onValidityChange?: (valid: boolean) => void
 }
 
@@ -50,19 +52,31 @@ export const DateInput = (props: DateInputProps) => {
     includeTime,
     label,
     suffix,
+    error,
     onValidityChange,
   } = props
   const format = includeTime ? fiDateTimeFormat : fiLongFormat
   const savedText = defaultValue ? moment(defaultValue).format(format) : ''
   const [text, setText] = useState(savedText)
   const [showError, setShowError] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
   const parse = includeTime ? parseDateTimeString : parseDateString
   const parsed = parse(text, undefined)
   const isValid = !!parsed || (allowEmpty && text === '')
+  const formatError = showError && !isValid
+  const hasError = !isEditing && (formatError || !!error)
+  const dateFlags = moment(
+    includeTime ? text.split(' ')[0] : text,
+    dateformats,
+    true
+  ).parsingFlags()
+  const nonexistentDate =
+    dateFlags.overflow >= 0 && dateFlags.unusedTokens.length === 0 && dateFlags.charsLeftOver === 0
 
   useEffect(() => {
     setText(savedText)
     setShowError(false)
+    setIsEditing(false)
   }, [savedText])
 
   useEffect(() => {
@@ -72,6 +86,7 @@ export const DateInput = (props: DateInputProps) => {
   const acceptDate = (newDate: Date | null | undefined) => {
     setText(newDate ? moment(newDate).format(format) : '')
     setShowError(false)
+    setIsEditing(false)
   }
 
   function onChangeHandlerFor(id: string) {
@@ -82,8 +97,33 @@ export const DateInput = (props: DateInputProps) => {
   }
 
   function getClassNames(): string {
-    return showError && !isValid ? `datepicker ${styles.invalid}` : 'datepicker'
+    return hasError ? `datepicker ${styles.invalid}` : 'datepicker'
   }
+
+  function getError(): { errorMessage?: string; errorHint?: string } {
+    if (!formatError) return { errorMessage: error }
+
+    if (nonexistentDate) {
+      return {
+        errorMessage: 'Tätä päivämäärää ei ole olemassa.',
+        errorHint: 'Tarkista päivä, kuukausi ja vuosi.',
+      }
+    }
+
+    if (includeTime) {
+      return {
+        errorMessage: 'Virheellinen päivämäärä.',
+        errorHint: 'Anna päivä ja kellonaika, esim. 1.2.2027 9.00.',
+      }
+    }
+
+    return {
+      errorMessage: 'Virheellinen päivämäärä.',
+      errorHint: 'Anna päivä muodossa pp.kk.vvvv.',
+    }
+  }
+
+  const { errorMessage, errorHint } = getError()
 
   return (
     <div className={styles.field}>
@@ -96,8 +136,12 @@ export const DateInput = (props: DateInputProps) => {
         <TextInputContext.Provider
           value={{
             value: text,
-            onChange: (event) => setText(event.target.value),
+            onChange: (event) => {
+              setText(event.target.value)
+              setIsEditing(true)
+            },
             onBlur: () => {
+              setIsEditing(false)
               setShowError(!isValid)
               if (!isValid) return
               const newDate = parsed ? moment(parsed) : moment.invalid()
@@ -118,20 +162,16 @@ export const DateInput = (props: DateInputProps) => {
             placeholder={placeholder}
             containerClassName={getClassNames()}
             disabled={disabled}
-            inputProps={{ component: DateTextInput, 'aria-invalid': showError && !isValid }}
-            aria-describedby={showError && !isValid ? `${id}-error` : undefined}
+            inputProps={{ component: DateTextInput, 'aria-invalid': hasError }}
+            aria-describedby={hasError ? `${id}-error` : undefined}
           />
         </TextInputContext.Provider>
         {suffix && <span className={styles.suffix}>{suffix}</span>}
       </div>
-      {showError && !isValid && (
+      {hasError && (
         <div id={`${id}-error`} className={styles.error} role="alert">
-          Virheellinen päivämäärä.
-          <span className={styles.hint}>
-            {includeTime
-              ? 'Anna päivä ja kellonaika, esim. 1.2.2027 9.00.'
-              : 'Anna päivä muodossa pp.kk.vvvv.'}
-          </span>
+          {errorMessage}
+          {errorHint && <span className={styles.hint}>{errorHint}</span>}
         </div>
       )}
     </div>
