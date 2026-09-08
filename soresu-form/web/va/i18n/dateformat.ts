@@ -17,7 +17,13 @@ export function parseDateString(str: string, _localizer: unknown): Date | undefi
 }
 
 export function parseDateTimeString(str: string, _localizer: unknown): Date | undefined {
-  const date = moment(str, [fiDateTimeFormat, 'DD.MM.YYYY HH.mm', ...dateformats], true)
+  const formats = [
+    fiDateTimeFormat,
+    'DD.MM.YYYY HH.mm',
+    ...dateformats.flatMap((format) => [`${format} H:mm`, `${format} HH:mm`]),
+    ...dateformats,
+  ]
+  const date = moment(str, formats, true)
   return date.isValid() ? date.toDate() : undefined
 }
 
