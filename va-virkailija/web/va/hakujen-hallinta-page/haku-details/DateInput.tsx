@@ -65,13 +65,19 @@ export const DateInput = (props: DateInputProps) => {
   const isValid = !!parsed || (allowEmpty && text === '')
   const formatError = showError && !isValid
   const hasError = !isEditing && (formatError || !!error)
-  const dateFlags = moment(
-    includeTime ? text.split(' ')[0] : text,
-    dateformats,
-    true
-  ).parsingFlags()
-  const nonexistentDate =
-    dateFlags.overflow >= 0 && dateFlags.unusedTokens.length === 0 && dateFlags.charsLeftOver === 0
+
+  function isNonexistentDate() {
+    const dateFlags = moment(
+      includeTime ? text.split(' ')[0] : text,
+      dateformats,
+      true
+    ).parsingFlags()
+    return (
+      dateFlags.overflow >= 0 &&
+      dateFlags.unusedTokens.length === 0 &&
+      dateFlags.charsLeftOver === 0
+    )
+  }
 
   useEffect(() => {
     setText(savedText)
@@ -103,7 +109,7 @@ export const DateInput = (props: DateInputProps) => {
   function getError(): { errorMessage?: string; errorHint?: string } {
     if (!formatError) return { errorMessage: error }
 
-    if (nonexistentDate) {
+    if (isNonexistentDate()) {
       return {
         errorMessage: 'Tätä päivämäärää ei ole olemassa.',
         errorHint: 'Tarkista päivä, kuukausi ja vuosi.',
