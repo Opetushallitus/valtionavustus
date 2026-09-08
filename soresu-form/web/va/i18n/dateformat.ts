@@ -19,6 +19,8 @@ export function parseDateString(str: string, _localizer: unknown): Date | undefi
 export function parseDateTimeString(str: string, _localizer: unknown): Date | undefined {
   const formats = [
     fiDateTimeFormat,
+    'D.M.YYYY HH.mm',
+    'DD.MM.YYYY H.mm',
     'DD.MM.YYYY HH.mm',
     ...dateformats.flatMap((format) => [`${format} H:mm`, `${format} HH:mm`]),
     ...dateformats,

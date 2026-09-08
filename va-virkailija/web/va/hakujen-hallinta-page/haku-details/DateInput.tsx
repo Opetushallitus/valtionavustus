@@ -151,8 +151,11 @@ export const DateInput = (props: DateInputProps) => {
               setShowError(!isValid)
               if (!isValid) return
               const newDate = parsed ? moment(parsed) : moment.invalid()
-              if ((parsed ? newDate.format(format) : '') !== savedText) onChange(id, newDate)
-              setText(parsed ? newDate.format(format) : '')
+              const newText = parsed ? newDate.format(format) : ''
+              if (newText !== savedText) {
+                onChange(id, newDate)
+              }
+              setText(newText)
             },
           }}
         >
