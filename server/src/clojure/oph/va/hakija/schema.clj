@@ -24,17 +24,20 @@
   "YhteishankkeenOsapuoli contains editable contact details for one organization"
   {:organizationName s/Str
    :contactPerson s/Str
-   :email s/Str})
+   :email s/Str
+   (s/optional-key :role) (s/maybe s/Str)})
 
 (s/defschema YhteishankeOrganization
   "YhteishankeOrganization is yhteishanke organization contact data in DB response format"
   {:organization-name (s/maybe s/Str)
    :contact-person (s/maybe s/Str)
-   :email (s/maybe s/Str)})
+   :email (s/maybe s/Str)
+   (s/optional-key :role) (s/maybe s/Str)})
 
 (s/defschema YhteishankeOrganizationsResponse
   "YhteishankeOrganizationsResponse returns yhteishanke organization metadata for muutoshakemus form"
   {:is-yhteishanke s/Bool
+   :has-role s/Bool
    :organizations [YhteishankeOrganization]})
 
 (s/defschema TalousarvioMuutos

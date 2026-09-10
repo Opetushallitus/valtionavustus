@@ -2,6 +2,7 @@ export interface YhteishankeOrganizationContact {
   'organization-name'?: string
   'contact-person'?: string
   email?: string
+  role?: string
 }
 
 type RowAnswerChild = {
@@ -53,6 +54,9 @@ const mapRowChildrenWithOrganization = (
     if (key.endsWith('.email') && organization.email) {
       return { ...child, value: organization.email }
     }
+    if (key.endsWith('.role') && organization.role) {
+      return { ...child, value: organization.role }
+    }
     return child
   })
 
@@ -62,7 +66,12 @@ const blankRowChildren = (rowChildren: RowAnswerChild[]): RowAnswerChild[] =>
     if (!key) {
       return child
     }
-    if (key.endsWith('.name') || key.endsWith('.contactperson') || key.endsWith('.email')) {
+    if (
+      key.endsWith('.name') ||
+      key.endsWith('.contactperson') ||
+      key.endsWith('.email') ||
+      key.endsWith('.role')
+    ) {
       // Keep removed rows visible in diff views so old/new values can be shown.
       return { ...child, value: ' ' }
     }
@@ -77,9 +86,11 @@ const createRowFromTemplate = (
   ...templateRow,
   key: rowKeyWithIndex(templateRow.key, indexStartsFromOne),
   value: mapRowChildrenWithOrganization(
+    // A new partner must not inherit the template partner's values.
     templateRow.value.map((child) => ({
       ...child,
       key: rowKeyWithIndex(child.key, indexStartsFromOne),
+      value: typeof child.value === 'string' ? '' : child.value,
     })),
     organization
   ),

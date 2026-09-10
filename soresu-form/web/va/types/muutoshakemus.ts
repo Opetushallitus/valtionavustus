@@ -12,6 +12,7 @@ export type MuutoshakemusProps = {
   hakemus?: NormalizedHakemusData
   muutoshakemukset: Muutoshakemus[]
   isYhteishanke?: boolean
+  hasYhteishankeRole?: boolean
   yhteishankeOrganizations?: YhteishankeOrganization[]
 }
 
@@ -19,6 +20,7 @@ export interface YhteishankeOrganization {
   organizationName: string
   contactPerson: string
   email: string
+  role?: string
   isNew?: boolean
   sourceIndex?: number
 }
@@ -27,10 +29,12 @@ export interface YhteishankeOrganizationResponse {
   'organization-name'?: string
   'contact-person'?: string
   email?: string
+  role?: string
 }
 
 export interface YhteishankeOrganizationsResponse {
   'is-yhteishanke': boolean
+  'has-role': boolean
   organizations: YhteishankeOrganizationResponse[]
 }
 
@@ -149,11 +153,13 @@ export const getMuutoshakemusSchema = (lang: Language) => {
     organizationName: yup.string().required(e.required),
     contactPerson: yup.string().required(e.required),
     email: yup.string().email(e.email).required(e.required),
+    role: yup.string(),
   })
   const optionalYhteishankeOrganizationSchema = yup.object({
     organizationName: yup.string(),
     contactPerson: yup.string(),
     email: yup.string(),
+    role: yup.string(),
   })
   return yup
     .object({

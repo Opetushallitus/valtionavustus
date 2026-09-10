@@ -10,6 +10,7 @@ import { expectToBeDefined } from '../utils/util'
 import organizationsFormJson from './avustushaku-with-organizations.json'
 
 export interface YhteishankeFixtures {
+  yhteishankeHakulomake: string
   avustushakuID: number
   submittedHakemusUrl: string
 }
@@ -17,14 +18,15 @@ export interface YhteishankeFixtures {
 const hakulomake = JSON.stringify(organizationsFormJson)
 
 export const yhteishankeTest = defaultValues.extend<YhteishankeFixtures>({
-  avustushakuID: async ({ page, hakuProps, userCache }, use, testInfo) => {
+  yhteishankeHakulomake: [hakulomake, { option: true }],
+  avustushakuID: async ({ page, hakuProps, userCache, yhteishankeHakulomake }, use, testInfo) => {
     expect(userCache).toBeDefined()
     testInfo.setTimeout(testInfo.timeout + 40_000)
 
     const hakujenHallintaPage = new HakujenHallintaPage(page)
     const avustushakuID = await hakujenHallintaPage.createPublishedAvustushaku(
       hakuProps,
-      hakulomake
+      yhteishankeHakulomake
     )
 
     testInfo.annotations.push({
