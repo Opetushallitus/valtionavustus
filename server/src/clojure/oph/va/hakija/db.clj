@@ -272,21 +272,29 @@
         (log/info (str "Succesfully stored normalized fields for hakemus with id: " id)))
       (log/info (str "Skipping normalized_hakemus for incomplete hakemus: " id)))))
 
+(defn- find-yhteishanke-child-value [children key-suffix]
+  (->> children
+       (filter #(clojure.string/ends-with? (:key %) key-suffix))
+       first
+       :value))
+
 (defn extract-yhteishanke-organizations [answers]
   (let [fieldset-value (form-util/find-answer-value answers "other-organizations")]
     (when (seq fieldset-value)
-      (let [find-child-value (fn [children key-suffix]
-                               (->> children
-                                    (filter #(clojure.string/ends-with? (:key %) key-suffix))
-                                    first
-                                    :value))]
-        (->> fieldset-value
-             (map (fn [child]
-                    (let [children (:value child)]
-                      {:organization-name (find-child-value children ".name")
-                       :contact-person    (find-child-value children ".contactperson")
-                       :email             (find-child-value children ".email")})))
-             (filter #(some seq (vals %))))))))
+      (->> fieldset-value
+           (map (fn [child]
+                  (let [children (:value child)]
+                    {:organization-name (find-yhteishanke-child-value children ".name")
+                     :contact-person    (find-yhteishanke-child-value children ".contactperson")
+                     :email             (find-yhteishanke-child-value children ".email")
+                     :role              (find-yhteishanke-child-value children ".role")})))
+           (filter #(some seq (vals %)))))))
+
+(defn answers-have-yhteishanke-role? [answers]
+  (->> (form-util/find-answer-value answers "other-organizations")
+       (mapcat :value)
+       (some #(clojure.string/ends-with? (str (:key %)) ".role"))
+       boolean))
 
 (defn store-yhteishanke-organizations [tx hakemus-id answers]
   (when (feature-enabled? :enableYhteishankeEmails)
@@ -299,12 +307,13 @@
         (doseq [org organizations]
           (execute! tx
                     "INSERT INTO virkailija.yhteishanke_organization
-                     (hakemus_id, organization_name, contact_person, email)
-                     VALUES (?, ?, ?, ?)"
+                     (hakemus_id, organization_name, contact_person, email, role)
+                     VALUES (?, ?, ?, ?, ?)"
                     [hakemus-id
                      (:organization-name org)
                      (:contact-person org)
-                     (:email org)])))
+                     (:email org)
+                     (:role org)])))
       (log/info (str "Successfully stored yhteishanke organizations for hakemus: " hakemus-id)))))
 
 (defn- get-current-submission-answers [hakemus]
@@ -314,11 +323,33 @@
                         "SELECT answers FROM hakija.form_submissions WHERE id = ? AND version_closed IS NULL"
                         [submission-id]))))))
 
+(defn merge-legacy-roles
+  "Rows stored before the role column existed have a nil role. Fill them from the
+   current answers by matching organization name, so the muutoshakemus form is
+   prefilled. Positional matching is unsafe because the DB list and the answers
+   list can drift apart."
+  [organizations answers]
+  (if (and (seq organizations)
+           (some #(nil? (:role %)) organizations)
+           answers)
+    (let [candidates (or (extract-yhteishanke-organizations answers) [])]
+      (first
+       (reduce (fn [[result remaining] organization]
+                 (if (nil? (:role organization))
+                   (let [match (first (filter #(= (:organization-name %) (:organization-name organization))
+                                              remaining))]
+                     [(conj result (assoc organization :role (:role match)))
+                      (if match (remove #(identical? % match) remaining) remaining)])
+                   [(conj result organization) remaining]))
+               [[] candidates]
+               organizations)))
+    organizations))
+
 (defn get-or-create-yhteishanke-organizations [hakemus]
   (let [hakemus-id (:id hakemus)
         existing (hakemus-copy/get-yhteishanke-organizations hakemus-id)]
     (if (seq existing)
-      existing
+      (merge-legacy-roles existing (get-current-submission-answers hakemus))
       (let [answers (get-current-submission-answers hakemus)
             organizations (when answers (extract-yhteishanke-organizations answers))]
         (when (seq organizations)
@@ -334,6 +365,7 @@
                                          (= "yes" (form-util/find-answer-value answers "combined-effort"))))
             organizations (or (get-or-create-yhteishanke-organizations hakemus) [])]
         {:is-yhteishanke is-yhteishanke
+         :has-role (boolean (and answers (answers-have-yhteishanke-role? answers)))
          :organizations organizations}))))
 
 (defn get-yhteishanke-organization-emails [hakemus]
@@ -505,7 +537,7 @@
       paatos)))
 
 (defn- get-muutoshakemus-yhteishanke-organizations [muutoshakemus-id]
-  (query "SELECT organization_name, contact_person, email
+  (query "SELECT organization_name, contact_person, email, role
           FROM virkailija.muutoshakemus_yhteishanke_organization
           WHERE muutoshakemus_id = ?
           ORDER BY position, id"
@@ -628,13 +660,14 @@
     (doseq [[position organization] (map-indexed vector organizations)]
       (execute! tx
                 "INSERT INTO virkailija.muutoshakemus_yhteishanke_organization
-                 (muutoshakemus_id, position, organization_name, contact_person, email)
-                 VALUES (?, ?, ?, ?, ?)"
+                 (muutoshakemus_id, position, organization_name, contact_person, email, role)
+                 VALUES (?, ?, ?, ?, ?, ?)"
                 [muutoshakemus-id
                  position
                  (:organizationName organization)
                  (:contactPerson organization)
-                 (:email organization)]))
+                 (:email organization)
+                 (:role organization)]))
     (log/info (str "Stored yhteishanke organization structure change for muutoshakemus: " muutoshakemus-id))))
 
 (defn- change-normalized-hakemus-contact-person-details [tx user-key hakemus-id contact-person-details]
