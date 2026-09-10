@@ -13,6 +13,9 @@ export const otherOrganization = (page: Page, index: number) => {
     email: baseLocator.locator(
       `[id="other-organizations.other-organizations-${indexStartsFromOne}.email"]`
     ),
+    role: baseLocator.locator(
+      `[id="other-organizations.other-organizations-${indexStartsFromOne}.role"]`
+    ),
     remove: baseLocator.getByTitle('poista'),
   }
 }

@@ -14,11 +14,13 @@ export const yhteishankeInitialOrgs = {
     name: 'Ensimmäinen Organisaatio Oy',
     contactPerson: 'Eka Henkilö',
     email: 'eka@ensimmainen.fi',
+    role: 'Ensimmäisen rooli',
   },
   second: {
     name: 'Toinen Organisaatio Oy',
     contactPerson: 'Toka Henkilö',
     email: 'toka@toinen.fi',
+    role: 'Toisen rooli',
   },
 }
 
@@ -60,6 +62,12 @@ export const yhteishankeMuutoshakemusTest =
         await second.name.fill(yhteishankeInitialOrgs.second.name)
         await second.contactPerson.fill(yhteishankeInitialOrgs.second.contactPerson)
         await second.email.fill(yhteishankeInitialOrgs.second.email)
+
+        // The role field exists only in forms built with avustushakuWithOrganizationRoleHakulomake.
+        if (await first.role.isVisible()) {
+          await first.role.fill(yhteishankeInitialOrgs.first.role)
+          await second.role.fill(yhteishankeInitialOrgs.second.role)
+        }
 
         await page.locator("[id='project-costs-row.amount']").fill('20000')
         await page.locator("[for='type-of-organization.radio.0']").click()
