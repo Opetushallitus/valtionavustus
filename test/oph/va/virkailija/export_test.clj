@@ -94,3 +94,28 @@
     (let [actual (export/resize-yhteishanke-growing-fieldset-lut original-growing-fieldset-lut 1)]
       (is (= ["other-organizations-1"]
              (keys (get actual "other-organizations")))))))
+
+(deftest patch-yhteishanke-answer-map-role-test
+  (let [answers (assoc original-answers
+                       "other-organizations.other-organizations-1.role" "Ekan rooli"
+                       "other-organizations.other-organizations-2.role" "Tokan rooli")
+        organizations [{:organization-name "Toinen Organisaatio Oy"
+                        :contact-person "Toka Henkilö"
+                        :email "toka@toinen.fi"
+                        :role "Tokan rooli"}
+                       {:organization-name "Kolmas Oy"
+                        :contact-person "Kolmas Henkilö"
+                        :email "kolmas@kolmas.fi"
+                        :role "Kolmannen rooli"}]]
+    (testing "roles follow the organization order"
+      (let [actual (export/patch-yhteishanke-answer-map answers organizations)]
+        (is (= "Tokan rooli" (get actual "other-organizations.other-organizations-1.role")))
+        (is (= "Kolmannen rooli" (get actual "other-organizations.other-organizations-2.role")))))
+    (testing "removed organizations lose their role"
+      (let [actual (export/patch-yhteishanke-answer-map answers (subvec organizations 0 1))]
+        (is (not (contains? actual "other-organizations.other-organizations-2.role")))))
+    (testing "legacy organizations without a stored role keep the original role answers"
+      (let [legacy (mapv #(assoc % :role nil) organizations)
+            actual (export/patch-yhteishanke-answer-map answers legacy)]
+        (is (= "Ekan rooli" (get actual "other-organizations.other-organizations-1.role")))
+        (is (= "Toinen Organisaatio Oy" (get actual "other-organizations.other-organizations-1.name")))))))

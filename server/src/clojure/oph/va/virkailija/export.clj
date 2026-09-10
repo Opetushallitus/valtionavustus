@@ -589,13 +589,28 @@
     (assoc answers answer-key value)))
 
 (def yhteishanke-organization-answer-key-pattern
-  #"^other-organizations\.other-organizations-(\d+)\.(name|contactperson|email)$")
+  #"^other-organizations\.other-organizations-(\d+)\.(name|contactperson|email|role)$")
 
 (defn- yhteishanke-answer-key [index field]
   (format "other-organizations.other-organizations-%d.%s" (inc index) field))
 
+(defn- yhteishanke-answer-fields
+  "Role is managed only when the current organization list knows it; legacy rows
+   stored before the role column existed keep their original role answers."
+  [organizations]
+  (cond-> [["name" :organization-name]
+           ["contactperson" :contact-person]
+           ["email" :email]]
+    (some :role organizations) (conj ["role" :role])))
+
 (defn patch-yhteishanke-answer-map [answers organizations]
-  (let [organizations (vec organizations)]
+  (let [organizations (vec organizations)
+        answer-fields (yhteishanke-answer-fields organizations)
+        managed-suffixes (set (map first answer-fields))
+        managed-answer-key? (fn [answer-key]
+                              (when (string? answer-key)
+                                (when-let [[_ _ suffix] (re-matches yhteishanke-organization-answer-key-pattern answer-key)]
+                                  (contains? managed-suffixes suffix))))]
     (if (seq organizations)
       (reduce-kv
        (fn [patched-answers index organization]
@@ -604,12 +619,9 @@
                           (yhteishanke-answer-key index field)
                           (get organization db-key)))
                  patched-answers
-                 [["name" :organization-name]
-                  ["contactperson" :contact-person]
-                  ["email" :email]]))
+                 answer-fields))
        (reduce-kv (fn [row answer-key _]
-                    (if (and (string? answer-key)
-                             (re-matches yhteishanke-organization-answer-key-pattern answer-key))
+                    (if (managed-answer-key? answer-key)
                       (dissoc row answer-key)
                       row))
                   answers

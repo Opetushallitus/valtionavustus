@@ -17,7 +17,7 @@
                 RETURNING *;" [id old-hakemus-version]))))
 
 (defn get-yhteishanke-organizations [hakemus-id]
-  (query "SELECT organization_name, contact_person, email
+  (query "SELECT organization_name, contact_person, email, role
           FROM virkailija.yhteishanke_organization
           WHERE hakemus_id = ?
           ORDER BY id"

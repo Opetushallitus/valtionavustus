@@ -30,14 +30,14 @@
 
 (defn get-muutoshakemus-yhteishanke-organizations
   ([muutoshakemus-id]
-   (query "SELECT organization_name, contact_person, email
+   (query "SELECT organization_name, contact_person, email, role
            FROM virkailija.muutoshakemus_yhteishanke_organization
            WHERE muutoshakemus_id = ?
            ORDER BY position, id"
           [muutoshakemus-id]))
   ([tx muutoshakemus-id]
    (query tx
-          "SELECT organization_name, contact_person, email
+          "SELECT organization_name, contact_person, email, role
            FROM virkailija.muutoshakemus_yhteishanke_organization
            WHERE muutoshakemus_id = ?
            ORDER BY position, id"
@@ -49,12 +49,13 @@
     (doseq [organization organizations]
       (execute! tx
                 "INSERT INTO virkailija.yhteishanke_organization
-                 (hakemus_id, organization_name, contact_person, email)
-                 VALUES (?, ?, ?, ?)"
+                 (hakemus_id, organization_name, contact_person, email, role)
+                 VALUES (?, ?, ?, ?, ?)"
                 [hakemus-id
                  (:organization-name organization)
                  (:contact-person organization)
-                 (:email organization)]))))
+                 (:email organization)
+                 (:role organization)]))))
 
 (defn- store-paatos-sisaltomuutos [tx paatos-id status]
   (execute! tx "insert into paatos_sisaltomuutos (paatos_id, status) values (?, ?::virkailija.paatos_type)"

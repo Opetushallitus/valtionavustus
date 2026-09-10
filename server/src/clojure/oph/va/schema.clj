@@ -206,7 +206,8 @@
   "Yhteishanke organization contact data"
   {(s/optional-key :organization-name) (s/maybe s/Str)
    (s/optional-key :contact-person) (s/maybe s/Str)
-   (s/optional-key :email) (s/maybe s/Str)})
+   (s/optional-key :email) (s/maybe s/Str)
+   (s/optional-key :role) (s/maybe s/Str)})
 
 (s/defschema NormalizedHakemus
   "NormalizedHakemus contains hakemus answers in normalized format"
