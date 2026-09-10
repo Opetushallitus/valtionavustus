@@ -54,7 +54,7 @@ const parseYhteishankeOrganizationsResponse = (
   value: unknown
 ): YhteishankeOrganizationsResponse => {
   if (!isRecord(value)) {
-    return { 'is-yhteishanke': false, organizations: [] }
+    return { 'is-yhteishanke': false, 'has-role': false, organizations: [] }
   }
 
   const rawOrganizations = value.organizations
@@ -63,11 +63,13 @@ const parseYhteishankeOrganizationsResponse = (
         'organization-name': toOptionalString(organization['organization-name']),
         'contact-person': toOptionalString(organization['contact-person']),
         email: toOptionalString(organization.email),
+        role: toOptionalString(organization.role),
       }))
     : []
 
   return {
     'is-yhteishanke': value['is-yhteishanke'] === true,
+    'has-role': value['has-role'] === true,
     organizations,
   }
 }
@@ -129,6 +131,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
           organizationName: organization['organization-name'] || '',
           contactPerson: organization['contact-person'] || '',
           email: organization.email || '',
+          role: organization.role || '',
           isNew: false,
           sourceIndex,
         })
@@ -137,6 +140,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
         (organization) => ({ ...organization, isNew: false })
       )
       const isYhteishanke = yhteishankeOrganizationsResponse['is-yhteishanke']
+      const hasYhteishankeRole = yhteishankeOrganizationsResponse['has-role']
 
       const currentProjectEnd = getProjectEndMoment(avustushaku, muutoshakemukset)
       const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
@@ -177,6 +181,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
         hakemus,
         muutoshakemukset,
         isYhteishanke,
+        hasYhteishankeRole,
         yhteishankeOrganizations: mappedYhteishankeOrganizations,
         status: 'LOADED',
       })
@@ -329,6 +334,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
                       <YhteishankeOrganizationChanges
                         f={f}
                         originalOrganizations={state.yhteishankeOrganizations || []}
+                        showRole={state.hasYhteishankeRole === true}
                       />
                       <PerustelutTextArea
                         f={f}

@@ -50,8 +50,10 @@ const parseYhteishankeOrganizationsResponse = (
       'organization-name': toOptionalString(organization['organization-name']),
       'contact-person': toOptionalString(organization['contact-person']),
       email: toOptionalString(organization.email),
+      role: toOptionalString(organization.role),
     })),
     'is-yhteishanke': value['is-yhteishanke'] === true,
+    'has-role': value['has-role'] === true,
   }
 }
 

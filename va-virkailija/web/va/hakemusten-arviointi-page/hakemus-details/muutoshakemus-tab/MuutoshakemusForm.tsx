@@ -47,6 +47,7 @@ import { translationsFi } from 'soresu-form/web/va/i18n/translations'
 import { getNestedInputErrorClass } from 'soresu-form/web/va/formikHelpers'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import { MuutoshakemusPaatos } from 'soresu-form/web/va/MuutoshakemusPaatos'
+import { YhteishankeOrganizationsTable } from 'soresu-form/web/va/YhteishankeOrganizationsTable'
 import { EnvironmentApiResponse } from 'soresu-form/web/va/types/environment'
 
 import { isError, isSubmitDisabled } from '../../../formikHelpers'
@@ -426,24 +427,9 @@ export const MuutoshakemusForm = ({
                 {t.sisaltomuutos.yhteishankeOsapuolimuutokset}
               </h2>
               <div className="muutoshakemus-row" data-test-id="yhteishanke-osapuolimuutokset">
-                <table className="muutoshakemus-yhteishanke-table">
-                  <thead>
-                    <tr>
-                      <th>{t.contactPersonEdit.yhteishankeOrganizationName}</th>
-                      <th>{t.contactPersonEdit.yhteishankeContactPerson}</th>
-                      <th>{t.contactPersonEdit.yhteishankeEmail}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {muutoshakemus['yhteishanke-osapuolimuutokset'].map((org, index) => (
-                      <tr key={index} data-test-id={`yhteishanke-org-${index}`}>
-                        <td>{org['organization-name']}</td>
-                        <td>{org['contact-person']}</td>
-                        <td>{org['email']}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <YhteishankeOrganizationsTable
+                  organizations={muutoshakemus['yhteishanke-osapuolimuutokset']}
+                />
               </div>
               <div className="muutoshakemus-row">
                 <h4 className="muutoshakemus__header">{t.muutoshakemus.applicantReasoning}</h4>

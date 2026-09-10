@@ -88,7 +88,7 @@ test.describe('mapOtherOrganizationsAnswerValue', () => {
     expect(valueFor(mapped[1], '.name')).toBe(' ')
     expect(valueFor(mapped[1], '.contactperson')).toBe(' ')
     expect(valueFor(mapped[1], '.email')).toBe(' ')
-    expect(valueFor(mapped[1], '.role')).toBe('')
+    expect(valueFor(mapped[1], '.role')).toBe(' ')
   })
 
   test('keeps all original rows visible when normalized organizations become empty', () => {
@@ -112,7 +112,95 @@ test.describe('mapOtherOrganizationsAnswerValue', () => {
       expect(valueFor(row, '.name')).toBe(' ')
       expect(valueFor(row, '.contactperson')).toBe(' ')
       expect(valueFor(row, '.email')).toBe(' ')
-      expect(valueFor(row, '.role')).toBe('')
+      expect(valueFor(row, '.role')).toBe(' ')
     }
+  })
+
+  test('writes the role into the matching row child', () => {
+    const answerValue = [
+      createOrganizationRow(1, {
+        name: 'Ensimmainen Org Oy',
+        contactPerson: 'Eka Yhteyshenkilo',
+        email: 'eka@org.fi',
+        role: 'Ekan rooli',
+      }),
+      createOrganizationRow(2, {
+        name: 'Toinen Org Ry',
+        contactPerson: 'Toka Yhteyshenkilo',
+        email: 'toka@org.fi',
+        role: 'Tokan rooli',
+      }),
+    ]
+
+    const mapped = mapOtherOrganizationsAnswerValue(answerValue, [
+      {
+        'organization-name': 'Toinen Org Ry',
+        'contact-person': 'Toka Yhteyshenkilo',
+        email: 'toka@org.fi',
+        role: 'Tokan rooli',
+      },
+      {
+        'organization-name': 'Kolmas Org Oy',
+        'contact-person': 'Kolmas Yhteyshenkilo',
+        email: 'kolmas@org.fi',
+        role: 'Kolmannen rooli',
+      },
+    ]) as OrganizationRow[]
+
+    expect(valueFor(mapped[0], '.name')).toBe('Toinen Org Ry')
+    expect(valueFor(mapped[0], '.role')).toBe('Tokan rooli')
+    expect(valueFor(mapped[1], '.name')).toBe('Kolmas Org Oy')
+    expect(valueFor(mapped[1], '.role')).toBe('Kolmannen rooli')
+  })
+
+  test('a new row does not inherit the template row role', () => {
+    const answerValue = [
+      createOrganizationRow(1, {
+        name: 'Ensimmainen Org Oy',
+        contactPerson: 'Eka Yhteyshenkilo',
+        email: 'eka@org.fi',
+        role: 'Ekan rooli',
+      }),
+    ]
+
+    const mapped = mapOtherOrganizationsAnswerValue(answerValue, [
+      {
+        'organization-name': 'Ensimmainen Org Oy',
+        'contact-person': 'Eka Yhteyshenkilo',
+        email: 'eka@org.fi',
+        role: 'Ekan rooli',
+      },
+      {
+        'organization-name': 'Uusi Org Ry',
+        'contact-person': 'Uusi Henkilo',
+        email: 'uusi@org.fi',
+      },
+    ]) as OrganizationRow[]
+
+    expect(mapped[1].key).toBe('other-organizations-2')
+    expect(valueFor(mapped[1], '.name')).toBe('Uusi Org Ry')
+    expect(valueFor(mapped[1], '.role')).toBe('')
+  })
+
+  test('a legacy organization without a stored role keeps the original role answer', () => {
+    const answerValue = [
+      createOrganizationRow(1, {
+        name: 'Ensimmainen Org Oy',
+        contactPerson: 'Eka Yhteyshenkilo',
+        email: 'eka@org.fi',
+        role: 'Ekan rooli',
+      }),
+    ]
+
+    const mapped = mapOtherOrganizationsAnswerValue(answerValue, [
+      {
+        'organization-name': 'Ensimmainen Org Oy',
+        'contact-person': 'Eka Paivitetty',
+        email: 'eka@org.fi',
+      },
+    ]) as OrganizationRow[]
+
+    expect(valueFor(mapped[0], '.contactperson')).toBe('Eka Paivitetty')
+    expect(valueFor(mapped[0], '.role')).toBe('Ekan rooli')
   })
 })

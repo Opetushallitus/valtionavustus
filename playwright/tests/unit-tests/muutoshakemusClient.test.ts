@@ -43,11 +43,13 @@ test.describe('mergeYhteishankkeenOsapuolimuutoksetWithUpdatedContacts', () => {
       organizationName: 'Duplicate Org Oy',
       contactPerson: 'First Contact Updated',
       email: 'first-updated@example.com',
+      role: '',
     })
     expect(merged[1]).toEqual({
       organizationName: 'Duplicate Org Oy',
       contactPerson: 'Second Contact Updated',
       email: 'second-updated@example.com',
+      role: '',
     })
   })
 
@@ -104,16 +106,67 @@ test.describe('mergeYhteishankkeenOsapuolimuutoksetWithUpdatedContacts', () => {
         organizationName: 'Org A',
         contactPerson: 'Contact A Updated',
         email: 'a-updated@example.com',
+        role: '',
       },
       {
         organizationName: 'Org C',
         contactPerson: 'Contact C Updated',
         email: 'c-updated@example.com',
+        role: '',
       },
       {
         organizationName: 'Org D',
         contactPerson: 'New Contact',
         email: 'new@example.com',
+        role: '',
+      },
+    ])
+  })
+
+  test('keeps the role of each organization change when merging updated contacts', () => {
+    const updatedOrganizations: YhteishankeOrganization[] = [
+      {
+        organizationName: 'Org Oy',
+        contactPerson: 'Contact Updated',
+        email: 'updated@example.com',
+        role: 'Ei tätä',
+        sourceIndex: 0,
+      },
+    ]
+    const organizationChanges: YhteishankeOrganization[] = [
+      {
+        organizationName: 'Org Oy',
+        contactPerson: 'Old Contact',
+        email: 'old@example.com',
+        role: 'Päivitetty rooli',
+        sourceIndex: 0,
+      },
+      {
+        organizationName: 'Uusi Oy',
+        contactPerson: 'Uusi Henkilö',
+        email: 'uusi@example.com',
+        role: 'Uusi rooli',
+        isNew: true,
+      },
+    ]
+
+    const merged = mergeYhteishankkeenOsapuolimuutoksetWithUpdatedContacts(
+      organizationChanges,
+      updatedOrganizations
+    )
+
+    expect(merged).toEqual([
+      {
+        organizationName: 'Org Oy',
+        contactPerson: 'Contact Updated',
+        email: 'updated@example.com',
+        role: 'Päivitetty rooli',
+      },
+      {
+        organizationName: 'Uusi Oy',
+        contactPerson: 'Uusi Henkilö',
+        email: 'uusi@example.com',
+        role: 'Uusi rooli',
       },
     ])
   })
