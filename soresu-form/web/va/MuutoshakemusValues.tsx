@@ -5,6 +5,7 @@ import { MuutosTaloudenKayttosuunnitelmaan } from './muutoshakemus/MuutosTaloude
 import { MuutoshakemusSection } from './MuutoshakemusSection'
 import { isAcceptedWithChanges } from './Muutoshakemus'
 import { OsioPaatos } from './OsioPaatos'
+import { YhteishankeOrganizationsTable } from './YhteishankeOrganizationsTable'
 import { Muutoshakemus, Talousarvio } from './types/muutoshakemus'
 import { Language } from './i18n/translations'
 import { useTranslations } from './i18n/TranslationContext'
@@ -114,24 +115,9 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
               {t.sisaltomuutos.yhteishankeOsapuolimuutokset}
             </h2>
             <div className="muutoshakemus-row" data-test-id="yhteishanke-osapuolimuutokset">
-              <table className="muutoshakemus-yhteishanke-table">
-                <thead>
-                  <tr>
-                    <th>{t.contactPersonEdit.yhteishankeOrganizationName}</th>
-                    <th>{t.contactPersonEdit.yhteishankeContactPerson}</th>
-                    <th>{t.contactPersonEdit.yhteishankeEmail}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {muutoshakemus['yhteishanke-osapuolimuutokset'].map((org, index) => (
-                    <tr key={index} data-test-id={`yhteishanke-org-${index}`}>
-                      <td>{org['organization-name']}</td>
-                      <td>{org['contact-person']}</td>
-                      <td>{org['email']}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <YhteishankeOrganizationsTable
+                organizations={muutoshakemus['yhteishanke-osapuolimuutokset']}
+              />
             </div>
             <div className="muutoshakemus-row">
               <h4 className="muutoshakemus__header">{t.muutoshakemus.applicantReasoning}</h4>

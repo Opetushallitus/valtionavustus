@@ -28,6 +28,7 @@ export const translationsFi = {
     yhteishankeOrganizationName: 'Yhteishankkeen osapuolen nimi',
     yhteishankeContactPerson: 'Yhteyshenkilön nimi',
     yhteishankeEmail: 'Yhteyshenkilön sähköposti',
+    yhteishankeRole: 'Rooli hankkeessa',
   },
   applicationEdit: {
     title: 'Haettavat muutokset',
@@ -351,6 +352,7 @@ const translationsSv: Translations = {
     yhteishankeOrganizationName: 'Namnet på parten i samprojektet',
     yhteishankeContactPerson: 'Kontaktperson',
     yhteishankeEmail: 'Kontaktpersonens e-postadress',
+    yhteishankeRole: 'Roll i projektet',
   },
   applicationEdit: {
     title: 'Ändringar som ändringsansökan gäller',

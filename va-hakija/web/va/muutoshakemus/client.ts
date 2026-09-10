@@ -14,16 +14,19 @@ type YhteishankeOrganizationPayload = {
   organizationName: string
   contactPerson: string
   email: string
+  role: string
 }
 
 const mapOrganizationForPayload = ({
   organizationName,
   contactPerson,
   email,
+  role,
 }: FormValues['yhteishankkeenOsapuolet'][number]): YhteishankeOrganizationPayload => ({
   organizationName,
   contactPerson,
   email,
+  role: role ?? '',
 })
 
 const mapOrganizationsForPayload = (

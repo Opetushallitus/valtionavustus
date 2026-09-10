@@ -9,11 +9,13 @@ import { ErrorMessage } from '../../ErrorMessage'
 type YhteishankeOrganizationChangesProps = {
   f: FormikHook
   originalOrganizations: YhteishankeOrganization[]
+  showRole: boolean
 }
 
 export const YhteishankeOrganizationChanges = ({
   f,
   originalOrganizations,
+  showRole,
 }: YhteishankeOrganizationChangesProps) => {
   const { t } = useTranslations()
   const organizations = f.values.yhteishankkeenOsapuolimuutokset
@@ -34,6 +36,7 @@ export const YhteishankeOrganizationChanges = ({
         organizationName: organization.organizationName,
         contactPerson: organization.contactPerson,
         email: organization.email,
+        role: organization.role ?? '',
         isNew: false,
         sourceIndex: organization.sourceIndex,
       }))
@@ -47,6 +50,7 @@ export const YhteishankeOrganizationChanges = ({
         organizationName: '',
         contactPerson: '',
         email: '',
+        role: '',
         isNew: true,
       },
     ])
@@ -81,6 +85,7 @@ export const YhteishankeOrganizationChanges = ({
           const organizationNameField = `yhteishankkeenOsapuolimuutokset.${index}.organizationName`
           const contactPersonField = `yhteishankkeenOsapuolimuutokset.${index}.contactPerson`
           const emailField = `yhteishankkeenOsapuolimuutokset.${index}.email`
+          const roleField = `yhteishankkeenOsapuolimuutokset.${index}.role`
           const idPrefix = `yhteishankkeen-osapuolimuutokset-${index + 1}`
           const readOnly = !organization.isNew
 
@@ -152,6 +157,27 @@ export const YhteishankeOrganizationChanges = ({
                 />
                 <ErrorMessage text={getError(emailField)} />
               </div>
+              {showRole && (
+                <div className="muutoshakemus__form-cell">
+                  <label className="muutoshakemus__label" htmlFor={`${idPrefix}-role`}>
+                    {t.contactPersonEdit.yhteishankeRole}
+                  </label>
+                  <input
+                    id={`${idPrefix}-role`}
+                    className={`${getNestedInputErrorClass(f, [
+                      'yhteishankkeenOsapuolimuutokset',
+                      `${index}`,
+                      'role',
+                    ])} muutoshakemus__input muutoshakemus__input--contact`}
+                    name={roleField}
+                    type="text"
+                    onChange={f.handleChange}
+                    onBlur={f.handleBlur}
+                    value={organization.role ?? ''}
+                  />
+                  <ErrorMessage text={getError(roleField)} />
+                </div>
+              )}
               <div className="muutoshakemus__form-cell muutoshakemus__form-cell--actions">
                 <button
                   className="muutoshakemus__button muutoshakemus__button--danger"

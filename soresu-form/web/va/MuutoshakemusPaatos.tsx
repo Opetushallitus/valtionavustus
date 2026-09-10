@@ -17,6 +17,7 @@ import {
 import './MuutoshakemusPaatos.css'
 import { Role } from '../../../va-virkailija/web/va/types'
 import { OsioPaatos, PaatosOsio } from './OsioPaatos'
+import { YhteishankeOrganizationsTable } from './YhteishankeOrganizationsTable'
 
 type MuutoshakemusPaatosProps = Omit<PaatosState, 'paatos' | 'presenter' | 'muutoshakemusUrl'> & {
   paatos: Omit<Paatos, 'id' | 'user-key' | 'updated-at'>
@@ -128,24 +129,7 @@ const YhteishankePaatosSection: React.FC<{
       <h3 className="muutoshakemus-paatos__change-header">
         {t.sisaltomuutos.yhteishankeOsapuolimuutokset}
       </h3>
-      <table className="muutoshakemus-yhteishanke-table">
-        <thead>
-          <tr>
-            <th>{t.contactPersonEdit.yhteishankeOrganizationName}</th>
-            <th>{t.contactPersonEdit.yhteishankeContactPerson}</th>
-            <th>{t.contactPersonEdit.yhteishankeEmail}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {organizations.map((org, index) => (
-            <tr key={index} data-test-id={`yhteishanke-org-${index}`}>
-              <td>{org['organization-name']}</td>
-              <td>{org['contact-person']}</td>
-              <td>{org['email']}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <YhteishankeOrganizationsTable organizations={organizations} />
       {perustelut && (
         <div className="muutoshakemus-paatos__perustelut">
           <h3 className="muutoshakemus-paatos__change-header">
