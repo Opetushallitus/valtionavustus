@@ -90,6 +90,8 @@ test('yhteishanke osapuolimuutos updates recipients and applicant contact rows a
       'readonly',
       ''
     )
+    // The form has no "Rooli hankkeessa" field, so no role input is rendered.
+    await expect(page.locator('#yhteishankkeen-osapuolimuutokset-1-role')).toHaveCount(0)
 
     await page.getByTestId('remove-yhteishanke-organization-change-2').click()
     await page.getByTestId('add-yhteishanke-organization-change').click()
