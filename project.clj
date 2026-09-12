@@ -58,7 +58,7 @@
 
                          ; dependencies under compojure-api -> explicitly updated for security patches
                          [ring-middleware-format "0.7.5"]
-                         [clj-commons/clj-yaml "1.0.29"]
+                         [clj-commons/clj-yaml "1.0.30"]
                          [org.yaml/snakeyaml "2.7"]
 
                          ;; [metosin/compojure-api "1.1.14"] ->
