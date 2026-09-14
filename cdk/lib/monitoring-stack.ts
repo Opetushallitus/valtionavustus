@@ -1,0 +1,200 @@
+import * as fs from 'node:fs'
+import * as os from 'node:os'
+import * as path from 'node:path'
+import * as cdk from 'aws-cdk-lib'
+import { Duration } from 'aws-cdk-lib'
+import {
+  Alarm,
+  AlarmRule,
+  AlarmState,
+  ComparisonOperator,
+  CompositeAlarm,
+  Metric,
+  TreatMissingData,
+} from 'aws-cdk-lib/aws-cloudwatch'
+import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions'
+import { IBaseService } from 'aws-cdk-lib/aws-ecs'
+import { Rule } from 'aws-cdk-lib/aws-events'
+import { SnsTopic } from 'aws-cdk-lib/aws-events-targets'
+import { Secret } from 'aws-cdk-lib/aws-secretsmanager'
+import { Subscription, SubscriptionProtocol, Topic } from 'aws-cdk-lib/aws-sns'
+import { Canary, Code, Runtime, Schedule } from 'aws-cdk-lib/aws-synthetics'
+import type { CfnCanary } from 'aws-cdk-lib/aws-synthetics'
+import { Environment } from './va-env-stage'
+import { Domains } from './cdn-stack'
+
+interface MonitoringStackProps extends cdk.StackProps {
+  domains: Domains
+  service: IBaseService
+  pagerdutySecret: Secret
+}
+
+const HEALTHCHECK_PATH = '/api/healthcheck'
+
+// ACM renews automatically 60 days before expiry, so anything still unrenewed
+// this close to the deadline means renewal itself is broken.
+const CERTIFICATE_EXPIRY_WARNING_DAYS = 14
+
+export class MonitoringStack extends cdk.Stack {
+  constructor(scope: Environment, id: string, props: MonitoringStackProps) {
+    super(scope, id, props)
+
+    const { domains, service, pagerdutySecret } = props
+
+    const alarmTopic = new Topic(this, 'alarm-topic', {
+      topicName: 'valtionavustukset-alarms',
+    })
+
+    new Subscription(this, 'pagerduty-subscription', {
+      topic: alarmTopic,
+      protocol: SubscriptionProtocol.HTTPS,
+      endpoint: pagerdutySecret.secretValueFromJson('url').unsafeUnwrap(),
+    })
+
+    const multiChecksCanary = (
+      id: string,
+      canaryName: string,
+      schedule: Schedule,
+      step: (domain: string) => Record<string, unknown>
+    ) => {
+      const domainList = [domains.hakijaDomain, domains.hakijaDomainSv, domains.virkailijaDomain]
+      const directory = fs.mkdtempSync(path.join(os.tmpdir(), `${canaryName}-`))
+      fs.writeFileSync(
+        path.join(directory, 'blueprint-config.json'),
+        JSON.stringify(
+          {
+            globalSettings: { stepTimeout: 10000 },
+            steps: Object.fromEntries(
+              domainList.map((domain, index) => [
+                `${index + 1}`,
+                { stepName: domain, ...step(domain) },
+              ])
+            ),
+          },
+          null,
+          2
+        )
+      )
+
+      const canary = new Canary(this, id, {
+        canaryName,
+        runtime: Runtime.SYNTHETICS_NODEJS_3_1,
+        schedule,
+        test: {
+          code: Code.fromAsset(directory),
+          handler: 'blueprint.handler',
+        },
+        startAfterCreation: true,
+      })
+
+      const cfnCanary = canary.node.defaultChild as CfnCanary
+      cfnCanary.addPropertyOverride('Code.BlueprintTypes', ['multi-checks'])
+      cfnCanary.addPropertyDeletionOverride('Code.Handler')
+
+      return canary
+    }
+
+    const canary = multiChecksCanary(
+      'health-check-canary',
+      `va-health-check-${scope.env}`,
+      Schedule.rate(Duration.minutes(1)),
+      (domain) => ({
+        checkerType: 'HTTP',
+        url: `https://${domain}${HEALTHCHECK_PATH}`,
+        httpMethod: 'GET',
+        assertions: [{ type: 'STATUS_CODE', operator: 'EQUALS', value: 200 }],
+      })
+    )
+
+    const certificateCanary = multiChecksCanary(
+      'certificate-check-canary',
+      `va-certificate-check-${scope.env}`,
+      Schedule.rate(Duration.hours(1)),
+      (domain) => ({
+        checkerType: 'SSL',
+        hostname: domain,
+        assertions: [
+          {
+            type: 'CERTIFICATE_EXPIRY',
+            operator: 'GREATER_THAN',
+            value: CERTIFICATE_EXPIRY_WARNING_DAYS,
+            unit: 'DAYS',
+          },
+        ],
+      })
+    )
+
+    const outageAlarm = new Alarm(this, 'site-unreachable-alarm', {
+      alarmName: 'valtionavustukset-site-unreachable',
+      alarmDescription: [
+        'One or more public Valtionavustukset endpoints stopped answering /api/healthcheck with 200.',
+        'Suppressed while an ECS deployment is in progress; see valtionavustukset-site-unreachable-paging.',
+      ].join(' '),
+      metric: canary.metricSuccessPercent({ period: Duration.minutes(1), statistic: 'Average' }),
+      comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+      threshold: 100,
+      evaluationPeriods: 2,
+      datapointsToAlarm: 2,
+      treatMissingData: TreatMissingData.BREACHING,
+    })
+
+    const deploymentInProgressAlarm = new Alarm(this, 'deployment-in-progress-alarm', {
+      alarmName: 'valtionavustukset-deployment-in-progress',
+      alarmDescription:
+        'More than one ECS deployment exists, meaning a rollout is under way. Not a fault; used only to suppress outage paging.',
+      metric: new Metric({
+        namespace: 'ECS/ContainerInsights',
+        metricName: 'DeploymentCount',
+        dimensionsMap: {
+          ClusterName: service.cluster.clusterName,
+          ServiceName: service.serviceName,
+        },
+        statistic: 'Maximum',
+        period: Duration.minutes(1),
+      }),
+      comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+      threshold: 1,
+      evaluationPeriods: 1,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
+    })
+
+    const pagingAlarm = new CompositeAlarm(this, 'site-unreachable-paging-alarm', {
+      compositeAlarmName: 'valtionavustukset-site-unreachable-paging',
+      alarmRule: AlarmRule.fromAlarm(outageAlarm, AlarmState.ALARM),
+      actionsSuppressor: deploymentInProgressAlarm,
+      // A deploy takes the site down for ~6 min. The wait period has to outlast the lag
+      // before ECS/ContainerInsights publishes DeploymentCount, or the rollout pages anyway.
+      actionsSuppressorWaitPeriod: Duration.minutes(5),
+      actionsSuppressorExtensionPeriod: Duration.minutes(1),
+    })
+    pagingAlarm.addAlarmAction(new SnsAction(alarmTopic))
+
+    const certificateAlarm = new Alarm(this, 'certificate-expiring-alarm', {
+      alarmName: 'valtionavustukset-certificate-expiring',
+      alarmDescription: `A public Valtionavustukset certificate expires in under ${CERTIFICATE_EXPIRY_WARNING_DAYS} days, or could not be read at all. ACM renews 60 days out, so renewal has failed and needs fixing by hand.`,
+      metric: certificateCanary.metricSuccessPercent({
+        period: Duration.hours(1),
+        statistic: 'Average',
+      }),
+      comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+      threshold: 100,
+      evaluationPeriods: 2,
+      datapointsToAlarm: 2,
+      treatMissingData: TreatMissingData.MISSING,
+    })
+    certificateAlarm.addAlarmAction(new SnsAction(alarmTopic))
+
+    new Rule(this, 'deployment-failed-rule', {
+      ruleName: 'valtionavustukset-deployment-failed',
+      description:
+        'A rollout failed and the circuit breaker gave up. Never suppressed, because the service is not coming back on its own.',
+      eventPattern: {
+        source: ['aws.ecs'],
+        detailType: ['ECS Deployment State Change'],
+        detail: { eventName: ['SERVICE_DEPLOYMENT_FAILED'] },
+        resources: [service.serviceArn],
+      },
+      targets: [new SnsTopic(alarmTopic)],
+    })
+  }
+}

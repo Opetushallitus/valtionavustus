@@ -1,6 +1,6 @@
 import * as cdk from 'aws-cdk-lib'
 import { Environment } from './va-env-stage'
-import { Cluster } from 'aws-cdk-lib/aws-ecs'
+import { Cluster, ContainerInsights } from 'aws-cdk-lib/aws-ecs'
 
 export class EcsStack extends cdk.Stack {
   ecsCluster: Cluster
@@ -11,6 +11,7 @@ export class EcsStack extends cdk.Stack {
     this.ecsCluster = new Cluster(this, 'va-cluster', {
       clusterName: 'valtionavustukset-cluster',
       vpc: vpc,
+      containerInsightsV2: ContainerInsights.ENABLED,
     })
   }
 }

@@ -15,6 +15,7 @@ import { PersistentResourcesStack } from '../lib/persistent-resources-stack'
 import { CdnStack } from '../lib/cdn-stack'
 import { CertificateStack } from '../lib/certificate-stack'
 import { SmtpStack } from '../lib/smtp-stack'
+import { MonitoringStack } from '../lib/monitoring-stack'
 
 const HAKIJA_DOMAIN = 'valtionavustukset.oph.fi'
 const HAKIJA_DOMAIN_SV = 'statsunderstod.oph.fi'
@@ -93,6 +94,12 @@ const app = new cdk.App()
       pagerdutySecrets: persistentResources.pagerdutyApiSecrets,
       smtpSecrets: smtpStack.smtpSecrets,
     },
+  })
+
+  new MonitoringStack(dev, 'monitoring', {
+    domains: dns.domains,
+    service: vaService.service,
+    pagerdutySecret: persistentResources.pagerdutyCloudwatchSecrets,
   })
 
   const globalCertificatesStack = new CertificateStack(dev, 'certs', {
@@ -183,6 +190,12 @@ const app = new cdk.App()
     },
   })
 
+  new MonitoringStack(qa, 'monitoring', {
+    domains: dns.domains,
+    service: vaService.service,
+    pagerdutySecret: persistentResources.pagerdutyCloudwatchSecrets,
+  })
+
   const globalCertificatesStack = new CertificateStack(qa, 'certs', {
     domains: dns.domains,
     zones: dns.zones,
@@ -267,6 +280,12 @@ const app = new cdk.App()
       pagerdutySecrets: persistentResources.pagerdutyApiSecrets,
       smtpSecrets: smtpStack.smtpSecrets,
     },
+  })
+
+  new MonitoringStack(prod, 'monitoring', {
+    domains: dns.domains,
+    service: vaService.service,
+    pagerdutySecret: persistentResources.pagerdutyCloudwatchSecrets,
   })
 
   const globalCertificatesStack = new CertificateStack(prod, 'certs', {

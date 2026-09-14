@@ -60,6 +60,7 @@ interface AppSecrets {
 export class VaServiceStack extends cdk.Stack {
   loadbalancer: ApplicationLoadBalancer
   loadbalancerARecord: ARecord
+  service: FargateService
 
   constructor(scope: Environment, id: string, props: VaServiceStackProps) {
     super(scope, id, props)
@@ -191,6 +192,7 @@ export class VaServiceStack extends cdk.Stack {
       deploymentController: { type: DeploymentControllerType.ECS },
       healthCheckGracePeriod: Duration.minutes(10),
     })
+    this.service = vaService
 
     /* ---------- LOAD BALANCER ---------- */
 
