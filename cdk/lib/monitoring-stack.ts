@@ -35,6 +35,10 @@ const HEALTHCHECK_PATH = '/api/healthcheck'
 // this close to the deadline means renewal itself is broken.
 const CERTIFICATE_EXPIRY_WARNING_DAYS = 14
 
+// The task gets 2 vCPU and 4096 MiB, and -Xmx2500m caps the JVM's own footprint
+// near 78% of that, so sustained use above this is something the heap can't explain.
+const SATURATION_THRESHOLD_PERCENT = 85
+
 export class MonitoringStack extends cdk.Stack {
   constructor(scope: Environment, id: string, props: MonitoringStackProps) {
     super(scope, id, props)
@@ -183,6 +187,54 @@ export class MonitoringStack extends cdk.Stack {
       treatMissingData: TreatMissingData.MISSING,
     })
     certificateAlarm.addAlarmAction(new SnsAction(alarmTopic))
+
+    const serviceMetric = (metricName: string) =>
+      new Metric({
+        namespace: 'AWS/ECS',
+        metricName,
+        dimensionsMap: {
+          ClusterName: service.cluster.clusterName,
+          ServiceName: service.serviceName,
+        },
+        statistic: 'Average',
+        period: Duration.minutes(5),
+      })
+
+    const saturationAlarm = (
+      id: string,
+      alarmName: string,
+      alarmDescription: string,
+      metricName: string,
+      evaluationPeriods: number
+    ) => {
+      const alarm = new Alarm(this, id, {
+        alarmName,
+        alarmDescription,
+        metric: serviceMetric(metricName),
+        comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+        threshold: SATURATION_THRESHOLD_PERCENT,
+        evaluationPeriods,
+        treatMissingData: TreatMissingData.NOT_BREACHING,
+      })
+      alarm.addAlarmAction(new SnsAction(alarmTopic))
+      alarm.addOkAction(new SnsAction(alarmTopic))
+    }
+
+    saturationAlarm(
+      'cpu-high-alarm',
+      'valtionavustukset-cpu-high',
+      'The task has been using nearly all of its 2 vCPU for 15 minutes. It runs alone and cannot scale out, so requests are most likely queueing.',
+      'CPUUtilization',
+      3
+    )
+
+    saturationAlarm(
+      'memory-high-alarm',
+      'valtionavustukset-memory-high',
+      'The task is using more memory than its JVM heap can account for, and the next step is an OOM kill and a restart.',
+      'MemoryUtilization',
+      2
+    )
 
     new Rule(this, 'deployment-failed-rule', {
       ruleName: 'valtionavustukset-deployment-failed',

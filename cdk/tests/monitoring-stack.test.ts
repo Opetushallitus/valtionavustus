@@ -144,6 +144,38 @@ describe('failed deployment', () => {
   })
 })
 
+describe('saturation alarms', () => {
+  const template = createTemplate()
+
+  test('page on sustained cpu use, and resolve when it recovers', () => {
+    template.hasResourceProperties('AWS::CloudWatch::Alarm', {
+      AlarmName: 'valtionavustukset-cpu-high',
+      Namespace: 'AWS/ECS',
+      MetricName: 'CPUUtilization',
+      Statistic: 'Average',
+      Threshold: 85,
+      EvaluationPeriods: 3,
+      TreatMissingData: 'notBreaching',
+      AlarmActions: Match.anyValue(),
+      OKActions: Match.anyValue(),
+    })
+  })
+
+  test('page on sustained memory use, and resolve when it recovers', () => {
+    template.hasResourceProperties('AWS::CloudWatch::Alarm', {
+      AlarmName: 'valtionavustukset-memory-high',
+      Namespace: 'AWS/ECS',
+      MetricName: 'MemoryUtilization',
+      Statistic: 'Average',
+      Threshold: 85,
+      EvaluationPeriods: 2,
+      TreatMissingData: 'notBreaching',
+      AlarmActions: Match.anyValue(),
+      OKActions: Match.anyValue(),
+    })
+  })
+})
+
 describe('pagerduty subscription', () => {
   test('reads the integration url from Secrets Manager', () => {
     const template = createTemplate()
