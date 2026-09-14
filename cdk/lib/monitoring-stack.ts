@@ -30,6 +30,7 @@ interface MonitoringStackProps extends cdk.StackProps {
 }
 
 const HEALTHCHECK_PATH = '/api/healthcheck'
+const HEALTHCHECK_INTERVAL = Duration.minutes(5)
 
 // ACM renews automatically 60 days before expiry, so anything still unrenewed
 // this close to the deadline means renewal itself is broken.
@@ -101,7 +102,7 @@ export class MonitoringStack extends cdk.Stack {
     const canary = multiChecksCanary(
       'health-check-canary',
       `va-health-check-${scope.env}`,
-      Schedule.rate(Duration.minutes(1)),
+      Schedule.rate(HEALTHCHECK_INTERVAL),
       (domain) => ({
         checkerType: 'HTTP',
         url: `https://${domain}${HEALTHCHECK_PATH}`,
@@ -134,7 +135,7 @@ export class MonitoringStack extends cdk.Stack {
         'One or more public Valtionavustukset endpoints stopped answering /api/healthcheck with 200.',
         'Suppressed while an ECS deployment is in progress; see valtionavustukset-site-unreachable-paging.',
       ].join(' '),
-      metric: canary.metricSuccessPercent({ period: Duration.minutes(1), statistic: 'Average' }),
+      metric: canary.metricSuccessPercent({ period: HEALTHCHECK_INTERVAL, statistic: 'Average' }),
       comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
       threshold: 100,
       evaluationPeriods: 2,

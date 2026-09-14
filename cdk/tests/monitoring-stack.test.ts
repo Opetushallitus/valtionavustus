@@ -51,6 +51,8 @@ describe('health check canary', () => {
         Handler: Match.absent(),
       }),
       RuntimeVersion: 'syn-nodejs-3.1',
+      Name: 'va-health-check-prod',
+      Schedule: Match.objectLike({ Expression: 'rate(5 minutes)' }),
     })
   })
 })
@@ -65,7 +67,7 @@ describe('outage alarm', () => {
       MetricName: 'SuccessPercent',
       ComparisonOperator: 'LessThanThreshold',
       Threshold: 100,
-      Period: 60,
+      Period: 300,
       EvaluationPeriods: 2,
       DatapointsToAlarm: 2,
       TreatMissingData: 'breaching',
