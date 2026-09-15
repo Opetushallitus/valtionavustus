@@ -18,8 +18,8 @@ import { Rule } from 'aws-cdk-lib/aws-events'
 import { SnsTopic } from 'aws-cdk-lib/aws-events-targets'
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager'
 import { Subscription, SubscriptionProtocol, Topic } from 'aws-cdk-lib/aws-sns'
-import { Canary, Code, Runtime, Schedule } from 'aws-cdk-lib/aws-synthetics'
 import type { CfnCanary } from 'aws-cdk-lib/aws-synthetics'
+import { Canary, Code, Runtime, RuntimeFamily, Schedule } from 'aws-cdk-lib/aws-synthetics'
 import { Environment } from './va-env-stage'
 import { Domains } from './cdn-stack'
 
@@ -28,6 +28,9 @@ interface MonitoringStackProps extends cdk.StackProps {
   service: IBaseService
   pagerdutySecret: Secret
 }
+
+// aws-cdk-lib 2.269.0 only ships constants up to syn-nodejs-3.1.
+const CANARY_RUNTIME = new Runtime('syn-nodejs-5.2', RuntimeFamily.NODEJS)
 
 const HEALTHCHECK_PATH = '/api/healthcheck'
 const HEALTHCHECK_INTERVAL = Duration.minutes(5)
@@ -39,6 +42,9 @@ const CERTIFICATE_EXPIRY_WARNING_DAYS = 14
 // The task gets 2 vCPU and 4096 MiB, and -Xmx2500m caps the JVM's own footprint
 // near 78% of that, so sustained use above this is something the heap can't explain.
 const SATURATION_THRESHOLD_PERCENT = 85
+
+// The blueprint schema requires stepName to match ^[a-zA-Z][a-zA-Z0-9_-]*$, so dots are out.
+export const canaryStepName = (domain: string) => domain.replace(/\./g, '-')
 
 export class MonitoringStack extends cdk.Stack {
   constructor(scope: Environment, id: string, props: MonitoringStackProps) {
@@ -72,7 +78,7 @@ export class MonitoringStack extends cdk.Stack {
             steps: Object.fromEntries(
               domainList.map((domain, index) => [
                 `${index + 1}`,
-                { stepName: domain, ...step(domain) },
+                { stepName: canaryStepName(domain), ...step(domain) },
               ])
             ),
           },
@@ -83,7 +89,7 @@ export class MonitoringStack extends cdk.Stack {
 
       const canary = new Canary(this, id, {
         canaryName,
-        runtime: Runtime.SYNTHETICS_NODEJS_3_1,
+        runtime: CANARY_RUNTIME,
         schedule,
         test: {
           code: Code.fromAsset(directory),

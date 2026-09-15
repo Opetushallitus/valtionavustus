@@ -1,10 +1,11 @@
+import * as assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
 import * as cdk from 'aws-cdk-lib'
 import { Match, Template } from 'aws-cdk-lib/assertions'
 import { Cluster, FargateService } from 'aws-cdk-lib/aws-ecs'
 import { Vpc } from 'aws-cdk-lib/aws-ec2'
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager'
-import { MonitoringStack } from '../lib/monitoring-stack'
+import { MonitoringStack, canaryStepName } from '../lib/monitoring-stack'
 import { Environment } from '../lib/va-env-stage'
 
 function createTemplate(): Template {
@@ -50,10 +51,18 @@ describe('health check canary', () => {
         BlueprintTypes: ['multi-checks'],
         Handler: Match.absent(),
       }),
-      RuntimeVersion: 'syn-nodejs-3.1',
+      RuntimeVersion: 'syn-nodejs-5.2',
       Name: 'va-health-check-prod',
       Schedule: Match.objectLike({ Expression: 'rate(5 minutes)' }),
     })
+  })
+})
+
+describe('blueprint step names', () => {
+  test('match the schema pattern the canary runtime enforces', () => {
+    for (const domain of ['valtionavustukset.oph.fi', 'statsunderstod.oph.fi']) {
+      assert.match(canaryStepName(domain), /^[a-zA-Z][a-zA-Z0-9_-]*$/)
+    }
   })
 })
 
