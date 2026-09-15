@@ -197,7 +197,7 @@ export class MonitoringStack extends cdk.Stack {
 
     const certificateAlarm = new Alarm(this, 'certificate-expiring-alarm', {
       alarmName: PUBLISHING_ALARM_NAMES.certificateExpiring,
-      alarmDescription: `A public Valtionavustukset certificate expires in under ${CERTIFICATE_EXPIRY_WARNING_DAYS} days, or could not be read at all. ACM renews 60 days out, so renewal has failed and needs fixing by hand.`,
+      alarmDescription: `A public Valtionavustukset certificate expires in under ${CERTIFICATE_EXPIRY_WARNING_DAYS} days, could not be read, or the certificate canary stopped reporting results. Check the certificate canary runs and logs; if a certificate is nearing expiry, investigate ACM renewal.`,
       metric: certificateCanary.metricSuccessPercent({
         period: Duration.hours(1),
         statistic: 'Average',
@@ -206,7 +206,8 @@ export class MonitoringStack extends cdk.Stack {
       threshold: 100,
       evaluationPeriods: 2,
       datapointsToAlarm: 2,
-      treatMissingData: TreatMissingData.MISSING,
+      // The hourly canary must keep reporting, or certificate monitoring has stopped.
+      treatMissingData: TreatMissingData.BREACHING,
     })
     certificateAlarm.addAlarmAction(new SnsAction(alarmTopic))
 
