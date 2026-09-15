@@ -44,6 +44,13 @@ const CERTIFICATE_EXPIRY_WARNING_DAYS = 14
 // near 78% of that, so sustained use above this is something the heap can't explain.
 const SATURATION_THRESHOLD_PERCENT = 85
 
+const PUBLISHING_ALARM_NAMES = {
+  siteUnreachable: 'valtionavustukset-site-unreachable-paging',
+  certificateExpiring: 'valtionavustukset-certificate-expiring',
+  cpuHigh: 'valtionavustukset-cpu-high',
+  memoryHigh: 'valtionavustukset-memory-high',
+}
+
 // The blueprint schema requires stepName to match ^[a-zA-Z][a-zA-Z0-9_-]*$, so dots are out.
 export const canaryStepName = (domain: string) => domain.replace(/\./g, '-')
 
@@ -57,9 +64,12 @@ export class MonitoringStack extends cdk.Stack {
       topicName: 'valtionavustukset-alarms',
     })
 
-    // The EventBridge target below grants events.amazonaws.com and so replaces the default
-    // topic policy, which is what otherwise lets alarms in this account publish.
-    alarmTopic.grantPublish(new ServicePrincipal('cloudwatch.amazonaws.com'))
+    // Allow every CloudWatch alarm in this account to publish to the shared alarm topic.
+    alarmTopic.grantPublish(
+      new ServicePrincipal('cloudwatch.amazonaws.com').withConditions({
+        StringEquals: { 'aws:SourceAccount': this.account },
+      })
+    )
 
     new Subscription(this, 'pagerduty-subscription', {
       topic: alarmTopic,
@@ -144,7 +154,7 @@ export class MonitoringStack extends cdk.Stack {
       alarmName: 'valtionavustukset-site-unreachable',
       alarmDescription: [
         'One or more public Valtionavustukset endpoints stopped answering /api/healthcheck with 200.',
-        'Suppressed while an ECS deployment is in progress; see valtionavustukset-site-unreachable-paging.',
+        `Suppressed while an ECS deployment is in progress; see ${PUBLISHING_ALARM_NAMES.siteUnreachable}.`,
       ].join(' '),
       metric: canary.metricSuccessPercent({ period: HEALTHCHECK_INTERVAL, statistic: 'Average' }),
       comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
@@ -175,18 +185,18 @@ export class MonitoringStack extends cdk.Stack {
     })
 
     const pagingAlarm = new CompositeAlarm(this, 'site-unreachable-paging-alarm', {
-      compositeAlarmName: 'valtionavustukset-site-unreachable-paging',
+      compositeAlarmName: PUBLISHING_ALARM_NAMES.siteUnreachable,
       alarmRule: AlarmRule.fromAlarm(outageAlarm, AlarmState.ALARM),
       actionsSuppressor: deploymentInProgressAlarm,
       // A deploy takes the site down for ~6 min. The wait period has to outlast the lag
       // before ECS/ContainerInsights publishes DeploymentCount, or the rollout pages anyway.
       actionsSuppressorWaitPeriod: Duration.minutes(5),
-      actionsSuppressorExtensionPeriod: Duration.minutes(1),
+      actionsSuppressorExtensionPeriod: Duration.minutes(5),
     })
     pagingAlarm.addAlarmAction(new SnsAction(alarmTopic))
 
     const certificateAlarm = new Alarm(this, 'certificate-expiring-alarm', {
-      alarmName: 'valtionavustukset-certificate-expiring',
+      alarmName: PUBLISHING_ALARM_NAMES.certificateExpiring,
       alarmDescription: `A public Valtionavustukset certificate expires in under ${CERTIFICATE_EXPIRY_WARNING_DAYS} days, or could not be read at all. ACM renews 60 days out, so renewal has failed and needs fixing by hand.`,
       metric: certificateCanary.metricSuccessPercent({
         period: Duration.hours(1),
@@ -234,7 +244,7 @@ export class MonitoringStack extends cdk.Stack {
 
     saturationAlarm(
       'cpu-high-alarm',
-      'valtionavustukset-cpu-high',
+      PUBLISHING_ALARM_NAMES.cpuHigh,
       'The task has been using nearly all of its 2 vCPU for 15 minutes. It runs alone and cannot scale out, so requests are most likely queueing.',
       'CPUUtilization',
       3
@@ -242,7 +252,7 @@ export class MonitoringStack extends cdk.Stack {
 
     saturationAlarm(
       'memory-high-alarm',
-      'valtionavustukset-memory-high',
+      PUBLISHING_ALARM_NAMES.memoryHigh,
       'The task is using more memory than its JVM heap can account for, and the next step is an OOM kill and a restart.',
       'MemoryUtilization',
       2

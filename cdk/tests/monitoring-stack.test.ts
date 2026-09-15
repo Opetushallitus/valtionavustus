@@ -99,7 +99,7 @@ describe('outage alarm', () => {
       AlarmName: 'valtionavustukset-site-unreachable-paging',
       ActionsSuppressor: Match.anyValue(),
       ActionsSuppressorWaitPeriod: 300,
-      ActionsSuppressorExtensionPeriod: 60,
+      ActionsSuppressorExtensionPeriod: 300,
       AlarmActions: Match.anyValue(),
     })
   })
@@ -188,17 +188,29 @@ describe('saturation alarms', () => {
 })
 
 describe('alarm topic policy', () => {
-  test('lets cloudwatch publish, so alarm actions are not silently dropped', () => {
+  test('allows all CloudWatch alarms from this account to publish', () => {
     const template = createTemplate()
-    template.hasResourceProperties('AWS::SNS::TopicPolicy', {
-      PolicyDocument: {
-        Statement: Match.arrayWith([
-          Match.objectLike({
-            Action: 'sns:Publish',
-            Effect: 'Allow',
-            Principal: { Service: 'cloudwatch.amazonaws.com' },
-          }),
-        ]),
+    const [topicId] = Object.keys(
+      template.findResources('AWS::SNS::Topic', {
+        Properties: { TopicName: 'valtionavustukset-alarms' },
+      })
+    )
+    const statements = Object.values(template.findResources('AWS::SNS::TopicPolicy')).flatMap(
+      (policy) => policy.Properties.PolicyDocument.Statement
+    )
+    const cloudwatchStatements = statements.filter(
+      (statement) => statement.Principal?.Service === 'cloudwatch.amazonaws.com'
+    )
+
+    assert.equal(cloudwatchStatements.length, 1)
+    const { Sid: _sid, ...statement } = cloudwatchStatements[0]
+    assert.deepEqual(statement, {
+      Effect: 'Allow',
+      Action: 'sns:Publish',
+      Principal: { Service: 'cloudwatch.amazonaws.com' },
+      Resource: { Ref: topicId },
+      Condition: {
+        StringEquals: { 'aws:SourceAccount': '67890' },
       },
     })
   })
