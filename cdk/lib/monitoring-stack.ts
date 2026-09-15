@@ -16,6 +16,7 @@ import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions'
 import { IBaseService } from 'aws-cdk-lib/aws-ecs'
 import { Rule } from 'aws-cdk-lib/aws-events'
 import { SnsTopic } from 'aws-cdk-lib/aws-events-targets'
+import { ServicePrincipal } from 'aws-cdk-lib/aws-iam'
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager'
 import { Subscription, SubscriptionProtocol, Topic } from 'aws-cdk-lib/aws-sns'
 import type { CfnCanary } from 'aws-cdk-lib/aws-synthetics'
@@ -55,6 +56,10 @@ export class MonitoringStack extends cdk.Stack {
     const alarmTopic = new Topic(this, 'alarm-topic', {
       topicName: 'valtionavustukset-alarms',
     })
+
+    // The EventBridge target below grants events.amazonaws.com and so replaces the default
+    // topic policy, which is what otherwise lets alarms in this account publish.
+    alarmTopic.grantPublish(new ServicePrincipal('cloudwatch.amazonaws.com'))
 
     new Subscription(this, 'pagerduty-subscription', {
       topic: alarmTopic,

@@ -187,6 +187,23 @@ describe('saturation alarms', () => {
   })
 })
 
+describe('alarm topic policy', () => {
+  test('lets cloudwatch publish, so alarm actions are not silently dropped', () => {
+    const template = createTemplate()
+    template.hasResourceProperties('AWS::SNS::TopicPolicy', {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Action: 'sns:Publish',
+            Effect: 'Allow',
+            Principal: { Service: 'cloudwatch.amazonaws.com' },
+          }),
+        ]),
+      },
+    })
+  })
+})
+
 describe('pagerduty subscription', () => {
   test('reads the integration url from Secrets Manager', () => {
     const template = createTemplate()
