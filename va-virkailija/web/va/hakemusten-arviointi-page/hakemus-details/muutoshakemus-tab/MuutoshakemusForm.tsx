@@ -183,11 +183,7 @@ interface MuutoshakemusFormProps {
 }
 
 const getInitialValues =
-  (
-    talousarvioValues: TalousarvioValues | undefined,
-    muutoshakemus: Muutoshakemus,
-    yhteishankeOsapuolimuutoksetEnabled: boolean
-  ) =>
+  (talousarvioValues: TalousarvioValues | undefined, muutoshakemus: Muutoshakemus) =>
   (): MuutoshakemusPaatosRequest => {
     const initialTalousarvio: MuutoshakemusPaatosRequest['talousarvio'] = talousarvioValues
       ? {
@@ -209,7 +205,7 @@ const getInitialValues =
           }
         : undefined
     const initialYhteishankeOsapuoli: MuutoshakemusPaatosRequest['haen-yhteishanke-osapuolimuutosta'] =
-      yhteishankeOsapuolimuutoksetEnabled && muutoshakemus['yhteishanke-osapuolimuutokset']?.length
+      muutoshakemus['yhteishanke-osapuolimuutokset']?.length
         ? {
             status: 'accepted',
           }
@@ -267,12 +263,7 @@ export const MuutoshakemusForm = ({
     ? getTalousarvioValues(muutoshakemus.talousarvio)
     : undefined
   const talousarvio = getTalousarvio(muutoshakemukset, hakemus.talousarvio)
-  const yhteishankeOsapuolimuutoksetEnabled =
-    environment['feature-flags'].includes('enableYhteishankeEmails')
-  const initialValues = useMemo(
-    getInitialValues(talousarvioValues, muutoshakemus, yhteishankeOsapuolimuutoksetEnabled),
-    []
-  )
+  const initialValues = useMemo(getInitialValues(talousarvioValues, muutoshakemus), [])
   const f = useFormik<MuutoshakemusPaatosRequest>({
     initialValues,
     validationSchema: getPaatosSchema(muutoshakemus),
@@ -412,36 +403,35 @@ export const MuutoshakemusForm = ({
             )}
           </MuutoshakemusSection>
         )}
-        {yhteishankeOsapuolimuutoksetEnabled &&
-          !!muutoshakemus['yhteishanke-osapuolimuutokset']?.length && (
-            <MuutoshakemusSection
-              blueMiddleComponent={
-                <PaatosStatusRadioButtonGroup
-                  group="haen-yhteishanke-osapuolimuutosta"
-                  f={f}
-                  excludeStatuses={['accepted_with_changes']}
-                />
-              }
-            >
-              <h2 className="muutoshakemus-section-title">
-                {t.sisaltomuutos.yhteishankeOsapuolimuutokset}
-              </h2>
-              <div className="muutoshakemus-row" data-test-id="yhteishanke-osapuolimuutokset">
-                <YhteishankeOrganizationsTable
-                  organizations={muutoshakemus['yhteishanke-osapuolimuutokset']}
-                />
+        {!!muutoshakemus['yhteishanke-osapuolimuutokset']?.length && (
+          <MuutoshakemusSection
+            blueMiddleComponent={
+              <PaatosStatusRadioButtonGroup
+                group="haen-yhteishanke-osapuolimuutosta"
+                f={f}
+                excludeStatuses={['accepted_with_changes']}
+              />
+            }
+          >
+            <h2 className="muutoshakemus-section-title">
+              {t.sisaltomuutos.yhteishankeOsapuolimuutokset}
+            </h2>
+            <div className="muutoshakemus-row" data-test-id="yhteishanke-osapuolimuutokset">
+              <YhteishankeOrganizationsTable
+                organizations={muutoshakemus['yhteishanke-osapuolimuutokset']}
+              />
+            </div>
+            <div className="muutoshakemus-row">
+              <h4 className="muutoshakemus__header">{t.muutoshakemus.applicantReasoning}</h4>
+              <div
+                className="muutoshakemus-description-box"
+                data-test-id="yhteishanke-osapuoli-perustelut"
+              >
+                {muutoshakemus['yhteishanke-osapuoli-perustelut']}
               </div>
-              <div className="muutoshakemus-row">
-                <h4 className="muutoshakemus__header">{t.muutoshakemus.applicantReasoning}</h4>
-                <div
-                  className="muutoshakemus-description-box"
-                  data-test-id="yhteishanke-osapuoli-perustelut"
-                >
-                  {muutoshakemus['yhteishanke-osapuoli-perustelut']}
-                </div>
-              </div>
-            </MuutoshakemusSection>
-          )}
+            </div>
+          </MuutoshakemusSection>
+        )}
         <MuutoshakemusSection
           blueMiddleComponent={
             <button

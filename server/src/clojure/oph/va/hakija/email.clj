@@ -307,56 +307,54 @@
     (email/enqueue-message-to-be-send user-message body)))
 
 (defn send-yhteishanke-hakemus-submitted! [lang avustushaku-id avustushaku user-key start-date end-date hakemus]
-  (when (feature-enabled? :enableYhteishankeEmails)
-    (let [emails (va-db/get-yhteishanke-organization-emails hakemus)]
-      (when (not-empty emails)
-        (log/info "Sending yhteishanke hakemus submitted email to" emails "for hakemus" (:id hakemus))
-        (let [start-date-string (datetime/date-string start-date)
-              start-time-string (datetime/time-string start-date)
-              end-date-string (datetime/date-string end-date)
-              end-time-string (datetime/time-string end-date)
-              url (if (feature-enabled? :useEsikatseluEmailLink)
-                    (email-utils/generate-esikatselu-url avustushaku-id lang user-key)
-                    (email-utils/generate-url avustushaku-id lang user-key true))
-              avustushaku-name (get-in avustushaku [:content :name lang])
-              subject (format (get-in mail-titles [:yhteishanke-hakemus-submitted lang]) avustushaku-name)
-              template (get-in mail-templates [:yhteishanke-hakemus-submitted lang])
-              signature (email-signature-block lang)
-              msg {:avustushaku-name avustushaku-name
-                   :start-date start-date-string
-                   :start-time start-time-string
-                   :end-date end-date-string
-                   :end-time end-time-string
-                   :url url}
-              body (render template msg signature)]
-          (doseq [recipient emails]
-            (email/try-send-email!
-             (email/message lang :yhteishanke-hakemus-submitted [recipient] subject body)
-             {:hakemus-id     (:id hakemus)
-              :avustushaku-id avustushaku-id})))))))
+  (let [emails (va-db/get-yhteishanke-organization-emails hakemus)]
+    (when (not-empty emails)
+      (log/info "Sending yhteishanke hakemus submitted email to" emails "for hakemus" (:id hakemus))
+      (let [start-date-string (datetime/date-string start-date)
+            start-time-string (datetime/time-string start-date)
+            end-date-string (datetime/date-string end-date)
+            end-time-string (datetime/time-string end-date)
+            url (if (feature-enabled? :useEsikatseluEmailLink)
+                  (email-utils/generate-esikatselu-url avustushaku-id lang user-key)
+                  (email-utils/generate-url avustushaku-id lang user-key true))
+            avustushaku-name (get-in avustushaku [:content :name lang])
+            subject (format (get-in mail-titles [:yhteishanke-hakemus-submitted lang]) avustushaku-name)
+            template (get-in mail-templates [:yhteishanke-hakemus-submitted lang])
+            signature (email-signature-block lang)
+            msg {:avustushaku-name avustushaku-name
+                 :start-date start-date-string
+                 :start-time start-time-string
+                 :end-date end-date-string
+                 :end-time end-time-string
+                 :url url}
+            body (render template msg signature)]
+        (doseq [recipient emails]
+          (email/try-send-email!
+           (email/message lang :yhteishanke-hakemus-submitted [recipient] subject body)
+           {:hakemus-id     (:id hakemus)
+            :avustushaku-id avustushaku-id}))))))
 
 (defn send-yhteishanke-selvitys-submitted! [avustushaku-id avustushaku selvitys-user-key selvitys-type lang hakemus hakemus-name register-number]
-  (when (feature-enabled? :enableYhteishankeEmails)
-    (let [emails (va-db/get-yhteishanke-organization-emails hakemus)]
-      (when (not-empty emails)
-        (log/info "Sending yhteishanke selvitys submitted email to" emails "for hakemus" (:id hakemus))
-        (let [type (if (= selvitys-type "loppuselvitys")
-                     :yhteishanke-loppuselvitys-submitted
-                     :yhteishanke-valiselvitys-submitted)
-              avustushaku-name (get-in avustushaku [:content :name lang])
-              subject (format (get-in mail-titles [type lang]) register-number)
-              template (get-in mail-templates [type lang])
-              preview-url (if (feature-enabled? :useEsikatseluEmailLink)
-                            (email-utils/generate-selvitys-esikatselu-url avustushaku-id lang selvitys-user-key selvitys-type)
-                            (selvitys-preview-url avustushaku-id selvitys-user-key lang selvitys-type))
-              signature (email-signature-block lang)
-              msg {:avustushaku-name avustushaku-name
-                   :project-name hakemus-name
-                   :preview-url preview-url
-                   :register-number register-number}
-              body (render template msg signature)]
-          (doseq [recipient emails]
-            (email/try-send-email!
-             (email/message lang type [recipient] subject body)
-             {:hakemus-id     (:id hakemus)
-              :avustushaku-id avustushaku-id})))))))
+  (let [emails (va-db/get-yhteishanke-organization-emails hakemus)]
+    (when (not-empty emails)
+      (log/info "Sending yhteishanke selvitys submitted email to" emails "for hakemus" (:id hakemus))
+      (let [type (if (= selvitys-type "loppuselvitys")
+                   :yhteishanke-loppuselvitys-submitted
+                   :yhteishanke-valiselvitys-submitted)
+            avustushaku-name (get-in avustushaku [:content :name lang])
+            subject (format (get-in mail-titles [type lang]) register-number)
+            template (get-in mail-templates [type lang])
+            preview-url (if (feature-enabled? :useEsikatseluEmailLink)
+                          (email-utils/generate-selvitys-esikatselu-url avustushaku-id lang selvitys-user-key selvitys-type)
+                          (selvitys-preview-url avustushaku-id selvitys-user-key lang selvitys-type))
+            signature (email-signature-block lang)
+            msg {:avustushaku-name avustushaku-name
+                 :project-name hakemus-name
+                 :preview-url preview-url
+                 :register-number register-number}
+            body (render template msg signature)]
+        (doseq [recipient emails]
+          (email/try-send-email!
+           (email/message lang type [recipient] subject body)
+           {:hakemus-id     (:id hakemus)
+            :avustushaku-id avustushaku-id}))))))

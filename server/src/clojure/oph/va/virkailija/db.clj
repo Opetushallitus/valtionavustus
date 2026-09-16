@@ -8,7 +8,6 @@
             [clojure.string :as string]
             [clojure.java.jdbc :as jdbc]
             [clojure.tools.logging :as log]
-            [oph.soresu.common.config :refer [feature-enabled?]]
             [oph.va.budget :as va-budget])
   (:import [java.util Date]))
 
@@ -42,20 +41,6 @@
            WHERE muutoshakemus_id = ?
            ORDER BY position, id"
           [muutoshakemus-id])))
-
-(defn- replace-yhteishanke-organizations [tx hakemus-id organizations]
-  (when (feature-enabled? :enableYhteishankeEmails)
-    (execute! tx "DELETE FROM virkailija.yhteishanke_organization WHERE hakemus_id = ?" [hakemus-id])
-    (doseq [organization organizations]
-      (execute! tx
-                "INSERT INTO virkailija.yhteishanke_organization
-                 (hakemus_id, organization_name, contact_person, email, role)
-                 VALUES (?, ?, ?, ?, ?)"
-                [hakemus-id
-                 (:organization-name organization)
-                 (:contact-person organization)
-                 (:email organization)
-                 (:role organization)]))))
 
 (defn- store-paatos-sisaltomuutos [tx paatos-id status]
   (execute! tx "insert into paatos_sisaltomuutos (paatos_id, status) values (?, ?::virkailija.paatos_type)"
@@ -115,9 +100,9 @@
                  (store-paatos-yhteishanke-osapuoli tx paatos-id yhteishanke-osapuoli-status))
                (when (and (seq requested-yhteishanke-organizations)
                           (= "accepted" yhteishanke-osapuoli-status))
-                 (replace-yhteishanke-organizations tx
-                                                    (:hakemus-id muutoshakemus)
-                                                    requested-yhteishanke-organizations))
+                 (hakemus-copy/replace-yhteishanke-organizations! tx
+                                                                  (:hakemus-id muutoshakemus)
+                                                                  requested-yhteishanke-organizations))
                created-paatos))))
 
 (defn get-hyvaksytty-paattymispaiva [paatos-id]
@@ -299,13 +284,11 @@
                               ORDER BY id DESC" [hakemus-id])
         muutoshakemukset-talousarvio (map #(assoc % :talousarvio (get-talousarvio (:id %) "muutoshakemus")) basic-muutoshakemukset)
         muutoshakemukset-paatos-talousarvio (map #(assoc % :paatos-talousarvio (get-talousarvio (:paatos-id %) "paatos")) muutoshakemukset-talousarvio)
-        muutoshakemukset-yhteishanke (if (feature-enabled? :enableYhteishankeEmails)
-                                       (map #(let [orgs (get-muutoshakemus-yhteishanke-organizations (:id %))]
-                                               (if (seq orgs)
-                                                 (assoc % :yhteishanke-osapuolimuutokset orgs)
-                                                 %))
-                                            muutoshakemukset-paatos-talousarvio)
-                                       muutoshakemukset-paatos-talousarvio)
+        muutoshakemukset-yhteishanke (map #(let [orgs (get-muutoshakemus-yhteishanke-organizations (:id %))]
+                                             (if (seq orgs)
+                                               (assoc % :yhteishanke-osapuolimuutokset orgs)
+                                               %))
+                                          muutoshakemukset-paatos-talousarvio)
         muutoshakemukset (map #(dissoc % :paatos-id) muutoshakemukset-yhteishanke)]
     (log/info (str "Succesfully fetched muutoshakemukset with id: " hakemus-id))
     muutoshakemukset))

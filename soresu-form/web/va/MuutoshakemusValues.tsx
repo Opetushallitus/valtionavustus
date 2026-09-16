@@ -21,17 +21,10 @@ type MuutoshakemusValuesProps = {
   muutoshakemus: Muutoshakemus
   hakijaUrl?: string
   projectEndDate?: string
-  enableYhteishankeOsapuolimuutokset?: boolean
 }
 
 export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
-  const {
-    currentTalousarvio,
-    muutoshakemus,
-    hakijaUrl,
-    projectEndDate,
-    enableYhteishankeOsapuolimuutokset,
-  } = props
+  const { currentTalousarvio, muutoshakemus, hakijaUrl, projectEndDate } = props
   const { t, lang } = useTranslations()
   const a = muutoshakemus
   const paatosUrl = `${hakijaUrl}muutoshakemus/paatos?user-key=${a['paatos-user-key']}`
@@ -107,8 +100,7 @@ export const MuutoshakemusValues = (props: MuutoshakemusValuesProps) => {
           )}
         </MuutoshakemusSection>
       )}
-      {enableYhteishankeOsapuolimuutokset &&
-        muutoshakemus['yhteishanke-osapuolimuutokset'] &&
+      {muutoshakemus['yhteishanke-osapuolimuutokset'] &&
         muutoshakemus['yhteishanke-osapuolimuutokset'].length > 0 && (
           <MuutoshakemusSection>
             <h2 className="muutoshakemus-section-title">

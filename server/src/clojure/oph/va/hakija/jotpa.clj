@@ -1,5 +1,4 @@
-(ns oph.va.hakija.jotpa
-  (:require [oph.soresu.common.config :refer [feature-enabled?]]))
+(ns oph.va.hakija.jotpa)
 
 (defn is-jotpa-avustushaku [avustushaku]
   (or (= (:operational-unit-code avustushaku) "6600105300")

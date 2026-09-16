@@ -10,7 +10,7 @@
             [oph.common.datetime :as datetime]
             [oph.common.email :as email]
             [oph.common.email-utils :as email-utils]
-            [oph.soresu.common.config :refer [config feature-enabled?]]
+            [oph.soresu.common.config :refer [config]]
             [oph.va.hakija.db :as hakija-db]
             [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
             [oph.soresu.common.db :refer [query]]
@@ -235,38 +235,37 @@
       :business-id    (:business_id hakemus)})))
 
 (defn send-yhteishanke-muutoshakemus-paatos! [avustushaku hakemus arvio roles muutoshakemus-id paatos]
-  (when (feature-enabled? :enableYhteishankeEmails)
-    (let [emails (hakija-db/get-yhteishanke-organization-emails hakemus)]
-      (when (not-empty emails)
-        (log/info "Sending yhteishanke muutoshakemus paatos email to" emails "for hakemus" (:id hakemus))
-        (let [lang-str (:language hakemus)
-              lang (keyword lang-str)
-              muutoshakemus-paatos-url (muutoshakemus-paatos-url (:user-key paatos) lang)
-              presenter-role-id (:presenter_role_id arvio)
-              attachment (oikaisuvaatimusosoitus-attachment avustushaku lang)
-              attachment-title (:title attachment)
-              selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
-              presenter (if (nil? selected-presenter) (first roles) selected-presenter)
-              hanke-name (if (str/blank? (:project_name hakemus))
-                           (:organization_name hakemus)
-                           (:project_name hakemus))
-              avustushaku-name (get-in avustushaku [:content :name lang])
-              subject (format (get-in mail-titles [:yhteishanke-muutoshakemus-paatos lang]) (:register_number hakemus))
-              template (get-in mail-templates [:yhteishanke-muutoshakemus-paatos lang])
-              signature (email-signature-block lang)
-              msg {:avustushaku-name avustushaku-name
-                   :register-number (:register_number hakemus)
-                   :project-name hanke-name
-                   :paatos-url muutoshakemus-paatos-url
-                   :attachment-title attachment-title
-                   :presenter-name (:name presenter)}
-              body (render template msg signature)]
-          (doseq [recipient emails]
-            (email/try-send-email!
-             (email/message lang :yhteishanke-muutoshakemus-paatos [recipient] subject body {:attachment attachment})
-             {:hakemus-id     (:id hakemus)
-              :muutoshakemus-id muutoshakemus-id
-              :avustushaku-id (:id avustushaku)})))))))
+  (let [emails (hakija-db/get-yhteishanke-organization-emails hakemus)]
+    (when (not-empty emails)
+      (log/info "Sending yhteishanke muutoshakemus paatos email to" emails "for hakemus" (:id hakemus))
+      (let [lang-str (:language hakemus)
+            lang (keyword lang-str)
+            muutoshakemus-paatos-url (muutoshakemus-paatos-url (:user-key paatos) lang)
+            presenter-role-id (:presenter_role_id arvio)
+            attachment (oikaisuvaatimusosoitus-attachment avustushaku lang)
+            attachment-title (:title attachment)
+            selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
+            presenter (if (nil? selected-presenter) (first roles) selected-presenter)
+            hanke-name (if (str/blank? (:project_name hakemus))
+                         (:organization_name hakemus)
+                         (:project_name hakemus))
+            avustushaku-name (get-in avustushaku [:content :name lang])
+            subject (format (get-in mail-titles [:yhteishanke-muutoshakemus-paatos lang]) (:register_number hakemus))
+            template (get-in mail-templates [:yhteishanke-muutoshakemus-paatos lang])
+            signature (email-signature-block lang)
+            msg {:avustushaku-name avustushaku-name
+                 :register-number (:register_number hakemus)
+                 :project-name hanke-name
+                 :paatos-url muutoshakemus-paatos-url
+                 :attachment-title attachment-title
+                 :presenter-name (:name presenter)}
+            body (render template msg signature)]
+        (doseq [recipient emails]
+          (email/try-send-email!
+           (email/message lang :yhteishanke-muutoshakemus-paatos [recipient] subject body {:attachment attachment})
+           {:hakemus-id     (:id hakemus)
+            :muutoshakemus-id muutoshakemus-id
+            :avustushaku-id (:id avustushaku)}))))))
 
 (defn- generate-avustushaku-url [avustushaku-id]
   (str (-> config :server :virkailija-url)
@@ -500,50 +499,48 @@
       :business-id    (:business_id hakemus)})))
 
 (defn send-yhteishanke-paatos! [avustushaku hakemus]
-  (when (feature-enabled? :enableYhteishankeEmails)
-    (let [emails (hakija-db/get-yhteishanke-organization-emails hakemus)]
-      (when (not-empty emails)
-        (log/info "Sending yhteishanke paatos email to" emails "for hakemus" (:id hakemus))
-        (let [lang-str (:language hakemus)
-              lang (keyword lang-str)
-              url (paatos-url (:id avustushaku) (:user_key hakemus) lang)
-              avustushaku-name (get-in avustushaku [:content :name lang])
-              subject (format (get-in mail-titles [:yhteishanke-paatos lang]) (:register_number hakemus))
-              template (get-in mail-templates [:yhteishanke-paatos lang])
-              signature (email-signature-block lang)
-              msg {:avustushaku-name avustushaku-name
-                   :register-number (:register_number hakemus)
-                   :project-name (:project_name hakemus)
-                   :url url}
-              body (render template msg signature)]
-          (doseq [recipient emails]
-            (email/try-send-email!
-             (email/message lang :yhteishanke-paatos [recipient] subject body)
-             {:hakemus-id     (:id hakemus)
-              :avustushaku-id (:id avustushaku)})))))))
+  (let [emails (hakija-db/get-yhteishanke-organization-emails hakemus)]
+    (when (not-empty emails)
+      (log/info "Sending yhteishanke paatos email to" emails "for hakemus" (:id hakemus))
+      (let [lang-str (:language hakemus)
+            lang (keyword lang-str)
+            url (paatos-url (:id avustushaku) (:user_key hakemus) lang)
+            avustushaku-name (get-in avustushaku [:content :name lang])
+            subject (format (get-in mail-titles [:yhteishanke-paatos lang]) (:register_number hakemus))
+            template (get-in mail-templates [:yhteishanke-paatos lang])
+            signature (email-signature-block lang)
+            msg {:avustushaku-name avustushaku-name
+                 :register-number (:register_number hakemus)
+                 :project-name (:project_name hakemus)
+                 :url url}
+            body (render template msg signature)]
+        (doseq [recipient emails]
+          (email/try-send-email!
+           (email/message lang :yhteishanke-paatos [recipient] subject body)
+           {:hakemus-id     (:id hakemus)
+            :avustushaku-id (:id avustushaku)}))))))
 
 (defn send-yhteishanke-paatos-refuse! [avustushaku hakemus]
-  (when (feature-enabled? :enableYhteishankeEmails)
-    (let [emails (hakija-db/get-yhteishanke-organization-emails hakemus)]
-      (when (not-empty emails)
-        (log/info "Sending yhteishanke paatos refuse email to" emails "for hakemus" (:id hakemus))
-        (let [lang-str (:language hakemus)
-              lang (keyword lang-str)
-              url (paatos-url (:id avustushaku) (:user_key hakemus) lang)
-              avustushaku-name (get-in avustushaku [:content :name lang])
-              subject (format (get-in mail-titles [:yhteishanke-paatos-refuse lang]) (:register_number hakemus))
-              template (get-in mail-templates [:yhteishanke-paatos-refuse lang])
-              signature (email-signature-block lang)
-              msg {:avustushaku-name avustushaku-name
-                   :register-number (:register_number hakemus)
-                   :project-name (:project_name hakemus)
-                   :url url}
-              body (render template msg signature)]
-          (doseq [recipient emails]
-            (email/try-send-email!
-             (email/message lang :yhteishanke-paatos-refuse [recipient] subject body)
-             {:hakemus-id     (:id hakemus)
-              :avustushaku-id (:id avustushaku)})))))))
+  (let [emails (hakija-db/get-yhteishanke-organization-emails hakemus)]
+    (when (not-empty emails)
+      (log/info "Sending yhteishanke paatos refuse email to" emails "for hakemus" (:id hakemus))
+      (let [lang-str (:language hakemus)
+            lang (keyword lang-str)
+            url (paatos-url (:id avustushaku) (:user_key hakemus) lang)
+            avustushaku-name (get-in avustushaku [:content :name lang])
+            subject (format (get-in mail-titles [:yhteishanke-paatos-refuse lang]) (:register_number hakemus))
+            template (get-in mail-templates [:yhteishanke-paatos-refuse lang])
+            signature (email-signature-block lang)
+            msg {:avustushaku-name avustushaku-name
+                 :register-number (:register_number hakemus)
+                 :project-name (:project_name hakemus)
+                 :url url}
+            body (render template msg signature)]
+        (doseq [recipient emails]
+          (email/try-send-email!
+           (email/message lang :yhteishanke-paatos-refuse [recipient] subject body)
+           {:hakemus-id     (:id hakemus)
+            :avustushaku-id (:id avustushaku)}))))))
 
 (defn send-paatokset-lahetetty [yhteenveto-url avustushaku-id avustushaku-name to]
   (let [lang (keyword "fi")]
@@ -682,32 +679,31 @@
     (email/enqueue-message-to-be-send msg body)))
 
 (defn send-yhteishanke-selvitys-processed! [avustushaku hakemus selvitys-type arvio roles]
-  (when (feature-enabled? :enableYhteishankeEmails)
-    (let [emails (hakija-db/get-yhteishanke-organization-emails hakemus)]
-      (when (not-empty emails)
-        (log/info "Sending yhteishanke selvitys processed email to" emails "for hakemus" (:id hakemus))
-        (let [lang-str (:language hakemus)
-              lang (keyword lang-str)
-              type (if (= selvitys-type "loppuselvitys")
-                     :yhteishanke-loppuselvitys-processed
-                     :yhteishanke-valiselvitys-processed)
-              avustushaku-name (get-in avustushaku [:content :name lang])
-              subject (format (get-in mail-titles [type lang]) (:register_number hakemus))
-              presenter-role-id (:presenter_role_id arvio)
-              selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
-              presenter (if (nil? selected-presenter) (first roles) selected-presenter)
-              template (get-in mail-templates [type lang])
-              signature (email-signature-block lang)
-              msg {:avustushaku-name avustushaku-name
-                   :register-number (:register_number hakemus)
-                   :project-name (:project_name hakemus)
-                   :presenter-name (:name presenter)}
-              body (render template msg signature)]
-          (doseq [recipient emails]
-            (email/try-send-email!
-             (email/message lang type [recipient] subject body)
-             {:hakemus-id     (:id hakemus)
-              :avustushaku-id (:id avustushaku)})))))))
+  (let [emails (hakija-db/get-yhteishanke-organization-emails hakemus)]
+    (when (not-empty emails)
+      (log/info "Sending yhteishanke selvitys processed email to" emails "for hakemus" (:id hakemus))
+      (let [lang-str (:language hakemus)
+            lang (keyword lang-str)
+            type (if (= selvitys-type "loppuselvitys")
+                   :yhteishanke-loppuselvitys-processed
+                   :yhteishanke-valiselvitys-processed)
+            avustushaku-name (get-in avustushaku [:content :name lang])
+            subject (format (get-in mail-titles [type lang]) (:register_number hakemus))
+            presenter-role-id (:presenter_role_id arvio)
+            selected-presenter (first (filter #(= (:id %) presenter-role-id) roles))
+            presenter (if (nil? selected-presenter) (first roles) selected-presenter)
+            template (get-in mail-templates [type lang])
+            signature (email-signature-block lang)
+            msg {:avustushaku-name avustushaku-name
+                 :register-number (:register_number hakemus)
+                 :project-name (:project_name hakemus)
+                 :presenter-name (:name presenter)}
+            body (render template msg signature)]
+        (doseq [recipient emails]
+          (email/try-send-email!
+           (email/message lang type [recipient] subject body)
+           {:hakemus-id     (:id hakemus)
+            :avustushaku-id (:id avustushaku)}))))))
 
 (defn send-payments-info! [payments-info]
   (let [lang :fi

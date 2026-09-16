@@ -1,5 +1,5 @@
 (ns oph.va.hakemus.db
-  (:require [oph.soresu.common.db :refer [query]]))
+  (:require [oph.soresu.common.db :refer [execute! query]]))
 
 (defn close-hakemus-by-id-and-get-version [tx id]
   (first (query tx "UPDATE hakemukset SET version_closed = now() WHERE id = ? AND version_closed IS NULL RETURNING version" [id])))
@@ -22,6 +22,19 @@
           WHERE hakemus_id = ?
           ORDER BY id"
          [hakemus-id]))
+
+(defn replace-yhteishanke-organizations! [tx hakemus-id organizations]
+  (execute! tx "DELETE FROM virkailija.yhteishanke_organization WHERE hakemus_id = ?" [hakemus-id])
+  (doseq [organization organizations]
+    (execute! tx
+              "INSERT INTO virkailija.yhteishanke_organization
+                 (hakemus_id, organization_name, contact_person, email, role)
+                 VALUES (?, ?, ?, ?, ?)"
+              [hakemus-id
+               (:organization-name organization)
+               (:contact-person organization)
+               (:email organization)
+               (:role organization)])))
 
 (defn get-hakemus-id-by-user-key-and-form-submission-id [tx user-key submission-id]
   (let [hakemus-id-rows (query tx "SELECT id FROM hakemukset WHERE user_key = ? AND form_submission_id = ? LIMIT 1" [user-key submission-id])]

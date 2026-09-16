@@ -226,9 +226,6 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
             muutoshakemus={m}
             hakijaUrl={state.environment?.['hakija-server'].url[lang]}
             projectEndDate={projectEndDate}
-            enableYhteishankeOsapuolimuutokset={state.environment?.['feature-flags']?.includes(
-              'enableYhteishankeEmails'
-            )}
           />
         </div>
       </MuutoshakemusSection>
@@ -305,10 +302,7 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
               </div>
             </div>
           )}
-          {state.isYhteishanke &&
-            state.environment?.['feature-flags']?.includes('enableYhteishankeEmails') && (
-              <YhteishankeOrganizations f={f} />
-            )}
+          {state.isYhteishanke && <YhteishankeOrganizations f={f} />}
           {!existingNewMuutoshakemus && state.avustushaku?.muutoshakukelpoinen && (
             <>
               <h2 className="muutoshakemus__sub-title">{t.applicationEdit.title}</h2>
@@ -324,25 +318,24 @@ export const MuutoshakemusComponent = ({ query }: { query: Query }) => {
                     title={t.sisaltomuutos.title}
                   />
                 </MuutoshakemusFormSection>
-                {state.isYhteishanke &&
-                  state.environment?.['feature-flags']?.includes('enableYhteishankeEmails') && (
-                    <MuutoshakemusFormSection
+                {state.isYhteishanke && (
+                  <MuutoshakemusFormSection
+                    f={f}
+                    name="haenYhteishankkeenOsapuolimuutosta"
+                    title={t.contactPersonEdit.updateYhteishankeOrganizations}
+                  >
+                    <YhteishankeOrganizationChanges
                       f={f}
-                      name="haenYhteishankkeenOsapuolimuutosta"
-                      title={t.contactPersonEdit.updateYhteishankeOrganizations}
-                    >
-                      <YhteishankeOrganizationChanges
-                        f={f}
-                        originalOrganizations={state.yhteishankeOrganizations || []}
-                        showRole={state.hasYhteishankeRole === true}
-                      />
-                      <PerustelutTextArea
-                        f={f}
-                        name="yhteishankeOsapuoliPerustelut"
-                        title={t.sisaltomuutos.yhteishankeOsapuoliPerustelutTitle}
-                      />
-                    </MuutoshakemusFormSection>
-                  )}
+                      originalOrganizations={state.yhteishankeOrganizations || []}
+                      showRole={state.hasYhteishankeRole === true}
+                    />
+                    <PerustelutTextArea
+                      f={f}
+                      name="yhteishankeOsapuoliPerustelut"
+                      title={t.sisaltomuutos.yhteishankeOsapuoliPerustelutTitle}
+                    />
+                  </MuutoshakemusFormSection>
+                )}
                 <MuutoshakemusFormSection
                   f={f}
                   name="haenKayttoajanPidennysta"

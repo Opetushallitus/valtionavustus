@@ -10,7 +10,7 @@
             [oph.soresu.form.formutil :as form-util]
             [oph.va.hakemus.db :as hakemus-copy]
             [oph.va.jdbc.extensions :refer :all]
-            [oph.soresu.common.config :refer [config feature-enabled?]]
+            [oph.soresu.common.config :refer [config]]
             [oph.va.budget :as va-budget]))
 
 (defn slurp-binary-file! [file]
@@ -297,24 +297,9 @@
        boolean))
 
 (defn store-yhteishanke-organizations [tx hakemus-id answers]
-  (when (feature-enabled? :enableYhteishankeEmails)
-    (log/info (str "Storing yhteishanke organizations for hakemus: " hakemus-id))
-    (execute! tx
-              "DELETE FROM virkailija.yhteishanke_organization WHERE hakemus_id = ?"
-              [hakemus-id])
-    (let [organizations (extract-yhteishanke-organizations answers)]
-      (when (seq organizations)
-        (doseq [org organizations]
-          (execute! tx
-                    "INSERT INTO virkailija.yhteishanke_organization
-                     (hakemus_id, organization_name, contact_person, email, role)
-                     VALUES (?, ?, ?, ?, ?)"
-                    [hakemus-id
-                     (:organization-name org)
-                     (:contact-person org)
-                     (:email org)
-                     (:role org)])))
-      (log/info (str "Successfully stored yhteishanke organizations for hakemus: " hakemus-id)))))
+  (log/info (str "Storing yhteishanke organizations for hakemus: " hakemus-id))
+  (hakemus-copy/replace-yhteishanke-organizations! tx hakemus-id (extract-yhteishanke-organizations answers))
+  (log/info (str "Successfully stored yhteishanke organizations for hakemus: " hakemus-id)))
 
 (defn- get-current-submission-answers [hakemus]
   (let [submission-id (or (:form_submission_id hakemus) (:form-submission-id hakemus))]
@@ -358,15 +343,14 @@
           (hakemus-copy/get-yhteishanke-organizations hakemus-id))))))
 
 (defn get-yhteishanke-organizations-for-muutoshakemus [user-key]
-  (when (feature-enabled? :enableYhteishankeEmails)
-    (when-let [hakemus (get-hakemus user-key)]
-      (let [answers (get-current-submission-answers hakemus)
-            is-yhteishanke (boolean (and answers
-                                         (= "yes" (form-util/find-answer-value answers "combined-effort"))))
-            organizations (or (get-or-create-yhteishanke-organizations hakemus) [])]
-        {:is-yhteishanke is-yhteishanke
-         :has-role (boolean (and answers (answers-have-yhteishanke-role? answers)))
-         :organizations organizations}))))
+  (when-let [hakemus (get-hakemus user-key)]
+    (let [answers (get-current-submission-answers hakemus)
+          is-yhteishanke (boolean (and answers
+                                       (= "yes" (form-util/find-answer-value answers "combined-effort"))))
+          organizations (or (get-or-create-yhteishanke-organizations hakemus) [])]
+      {:is-yhteishanke is-yhteishanke
+       :has-role (boolean (and answers (answers-have-yhteishanke-role? answers)))
+       :organizations organizations})))
 
 (defn get-yhteishanke-organization-emails [hakemus]
   (->> (get-or-create-yhteishanke-organizations hakemus)
@@ -585,13 +569,11 @@
                                 ORDER BY id DESC" [hakemus-id])
         muutoshakemukset-talousarvio (map #(assoc % :talousarvio (get-talousarvio (:id %) "muutoshakemus")) basic-muutoshakemukset)
         muutoshakemukset-paatos-talousarvio (map #(assoc % :paatos-talousarvio (get-talousarvio (:paatos-id %) "paatos")) muutoshakemukset-talousarvio)
-        muutoshakemukset-yhteishanke (if (feature-enabled? :enableYhteishankeEmails)
-                                       (map #(let [orgs (get-muutoshakemus-yhteishanke-organizations (:id %))]
-                                               (if (seq orgs)
-                                                 (assoc % :yhteishanke-osapuolimuutokset orgs)
-                                                 %))
-                                            muutoshakemukset-paatos-talousarvio)
-                                       muutoshakemukset-paatos-talousarvio)
+        muutoshakemukset-yhteishanke (map #(let [orgs (get-muutoshakemus-yhteishanke-organizations (:id %))]
+                                             (if (seq orgs)
+                                               (assoc % :yhteishanke-osapuolimuutokset orgs)
+                                               %))
+                                          muutoshakemukset-paatos-talousarvio)
         muutoshakemukset (map #(dissoc % :paatos-id) muutoshakemukset-yhteishanke)]
     muutoshakemukset))
 
@@ -655,7 +637,7 @@
               [avustushaku-id (name type) muutoshakemus-id amount])))
 
 (defn- add-muutoshakemus-yhteishanke-organizations [tx muutoshakemus-id organizations]
-  (when (and (feature-enabled? :enableYhteishankeEmails) (seq organizations))
+  (when (seq organizations)
     (log/info (str "Storing yhteishanke organization structure change for muutoshakemus: " muutoshakemus-id))
     (doseq [[position organization] (map-indexed vector organizations)]
       (execute! tx
@@ -704,26 +686,25 @@
               [hakemus-id])))
 
 (defn- update-yhteishanke-organization-contacts [tx hakemus-id organizations]
-  (when (feature-enabled? :enableYhteishankeEmails)
-    (log/info (str "Updating yhteishanke organization contacts for hakemus: " hakemus-id))
-    (let [organization-ids (vec (get-yhteishanke-organization-ids tx hakemus-id))]
-      (when (not= (count organization-ids) (count organizations))
-        (log/warn (str "Yhteishanke organization contact update row count mismatch for hakemus: "
-                       hakemus-id
-                       ", expected rows: "
-                       (count organization-ids)
-                       ", got updates: "
-                       (count organizations))))
-      (doseq [[organization-id organization] (map vector organization-ids organizations)]
-        (execute! tx
-                  "UPDATE virkailija.yhteishanke_organization
+  (log/info (str "Updating yhteishanke organization contacts for hakemus: " hakemus-id))
+  (let [organization-ids (vec (get-yhteishanke-organization-ids tx hakemus-id))]
+    (when (not= (count organization-ids) (count organizations))
+      (log/warn (str "Yhteishanke organization contact update row count mismatch for hakemus: "
+                     hakemus-id
+                     ", expected rows: "
+                     (count organization-ids)
+                     ", got updates: "
+                     (count organizations))))
+    (doseq [[organization-id organization] (map vector organization-ids organizations)]
+      (execute! tx
+                "UPDATE virkailija.yhteishanke_organization
                  SET contact_person = ?, email = ?
                  WHERE id = ? AND hakemus_id = ?"
-                  [(:contactPerson organization)
-                   (:email organization)
-                   organization-id
-                   hakemus-id])))
-    (log/info (str "Successfully updated yhteishanke organization contacts for hakemus: " hakemus-id))))
+                [(:contactPerson organization)
+                 (:email organization)
+                 organization-id
+                 hakemus-id])))
+  (log/info (str "Successfully updated yhteishanke organization contacts for hakemus: " hakemus-id)))
 
 (defn on-muutoshakemus [user-key hakemus-id avustushaku-id muutoshakemus]
   (with-tx (fn [tx]
