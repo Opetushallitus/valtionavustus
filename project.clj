@@ -3,6 +3,7 @@
 (def jackson-annotations-version "2.22")
 (def http4s-version "0.16.6")
 (def flyway-version "13.6.0")
+(def bouncycastle-version "1.86")
 
 (defproject oph-va/valtionavustus "0.1.0-SNAPSHOT"
 
@@ -23,6 +24,14 @@
   :plugins [[lein-environ "1.2.0"][dev.weavejester/lein-cljfmt "0.16.5" :exclusions [org.clojure/clojure org.clojure/spec.alpha org.clojure/core.specs.alpha]]]
 
   :managed-dependencies [
+
+                         ;; [org.apache.commons/commons-email "1.6.0"] ->
+                         ;; fixes CVE-2025-7962 while retaining the javax.mail API
+                         [com.sun.mail/jakarta.mail "1.6.8"]
+
+                         ;; [buddy/buddy-core "1.12.0-430"] ->
+                         ;; fixes CVE-2025-8916 and CVE-2026-5588; keep aligned with bcprov
+                         [org.bouncycastle/bcpkix-jdk18on ~bouncycastle-version]
 
                          ;; [metosin/compojure-api 1.1.14] -> [metosin/ring-swagger 1.1.0] -> [metosin/scjsv 0.6.2] ->
                          [com.github.java-json-tools/json-schema-validator "2.2.14"]
@@ -111,7 +120,7 @@
                  ;; auth
                  [buddy/buddy-auth "3.0.323"]
                  [buddy/buddy-sign "3.6.1-359" :exclusions [org.bouncycastle/bcprov-jdk18on]]
-                 [org.bouncycastle/bcprov-jdk18on "1.86"] ;; CVE-2024-29857, CVE-2024-30171, CVE-2024-30172
+                 [org.bouncycastle/bcprov-jdk18on ~bouncycastle-version] ;; CVE-2024-29857, CVE-2024-30171, CVE-2024-30172
 
                  ;; json
                  [cheshire "6.2.0"]
