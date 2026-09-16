@@ -21,6 +21,7 @@ import {
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import _ from 'lodash'
 import FormUtil from 'soresu-form/web/form/FormUtil'
+import { createHakuSaveQueue } from './hakuSaveQueue'
 
 declare global {
   interface Window {
@@ -99,12 +100,15 @@ const startSaving = (key: ExtraSavingStateKeys) => (state: State) => {
   state.saveStatus.saveTime = null
 }
 
-const saveSuccess = ({ saveStatus }: State, key: ExtraSavingStateKeys): SaveStatus => {
+const saveSuccess = (
+  { saveStatus, hakuSaveErrors }: State,
+  key: ExtraSavingStateKeys
+): SaveStatus => {
   return {
     ...saveStatus,
     [key]: false,
     saveTime: new Date().toISOString(),
-    serverError: undefined,
+    serverError: Object.values(hakuSaveErrors)[0],
   }
 }
 
@@ -129,6 +133,8 @@ type SaveStatus = {
 interface State {
   initialData: { loading: false; data: InitialData } | { loading: true }
   saveStatus: SaveStatus
+  pendingHakuSaves: Record<number, string>
+  hakuSaveErrors: Record<number, string>
   loadStatus: {
     loadingAvustushaku: boolean
     error: boolean
@@ -382,9 +388,9 @@ function avustusHakuPayload(haku: VirkailijaAvustushaku) {
 
 const saveHaku = createAsyncThunk<
   VirkailijaAvustushaku,
-  VirkailijaAvustushaku,
+  { haku: VirkailijaAvustushaku; revision: string },
   { rejectValue: string }
->('haku/saveHaku', async (selectedHaku, { rejectWithValue }) => {
+>('haku/saveHaku', async ({ haku: selectedHaku }, { rejectWithValue }) => {
   try {
     const data = await HttpUtil.post(
       `/api/avustushaku/${selectedHaku.id}`,
@@ -499,47 +505,30 @@ export const saveRoleImmediately = createAsyncThunk<
   }, IMMEDIATE_SAVE_TIMEOUT)
 })
 
-const debouncedSave: AsyncThunkPayloadCreator<
-  void,
-  number,
-  { state: HakujenHallintaRootState }
-> = async (id, thunkAPI) => {
-  const haku = selectAvustushaku(thunkAPI.getState().haku, id)
-  thunkAPI.dispatch(saveHaku(haku))
-}
-
-const debouncedSaveFn = _.debounce(debouncedSave, getAutosaveTimeout())
-
-const debouncedSaveHaku = createAsyncThunk<void, number, { state: HakujenHallintaRootState }>(
-  'haku/debouncedSaveHaku',
-  debouncedSaveFn
-)
+const hakuSaveQueue = createHakuSaveQueue()
 
 export const startAutoSaveForAvustushaku = createAsyncThunk<
   void,
   number,
   { state: HakujenHallintaRootState }
->('haku/startAutoSave', async (id, thunkAPI) => {
-  thunkAPI.dispatch(debouncedSaveHaku(id))
+>('haku/startAutoSave', (id, thunkAPI) => {
+  hakuSaveQueue.schedule(id, getAutosaveTimeout(), async () => {
+    const haku = selectAvustushaku(thunkAPI.getState().haku, id)
+    await thunkAPI.dispatch(saveHaku({ haku, revision: thunkAPI.requestId }))
+  })
 })
 
 const IMMEDIATE_SAVE_TIMEOUT = 100
-let pendingImmediateHakuSave: ReturnType<typeof setTimeout> | null = null
 
 export const saveHakuImmediately = createAsyncThunk<
   void,
   number,
   { state: HakujenHallintaRootState }
 >('haku/saveHakuImmediately', (id, thunkAPI) => {
-  debouncedSaveFn.cancel()
-  if (pendingImmediateHakuSave !== null) {
-    clearTimeout(pendingImmediateHakuSave)
-  }
-  pendingImmediateHakuSave = setTimeout(() => {
-    pendingImmediateHakuSave = null
+  hakuSaveQueue.schedule(id, IMMEDIATE_SAVE_TIMEOUT, async () => {
     const haku = selectAvustushaku(thunkAPI.getState().haku, id)
-    thunkAPI.dispatch(saveHaku(haku))
-  }, IMMEDIATE_SAVE_TIMEOUT)
+    await thunkAPI.dispatch(saveHaku({ haku, revision: thunkAPI.requestId }))
+  })
 })
 
 const selvitysFormMap = {
@@ -743,6 +732,8 @@ export const updateField = createAsyncThunk<
 })
 
 const initialState: State = {
+  pendingHakuSaves: {},
+  hakuSaveErrors: {},
   initialData: {
     loading: true,
   },
@@ -950,19 +941,29 @@ const hakuSlice = createSlice({
       })
       .addCase(saveHaku.fulfilled, (state, action) => {
         const response = action.payload
+        // A response must not replace edits scheduled while its request was in flight.
+        if (state.pendingHakuSaves[response.id] !== action.meta.arg.revision) return
+        delete state.pendingHakuSaves[response.id]
+        delete state.hakuSaveErrors[response.id]
         const oldHaku = selectAvustushaku(state, response.id)
         oldHaku.status = response.status
         oldHaku.phase = response.phase
         oldHaku.decision!.updatedAt = response.decision?.updatedAt
         oldHaku.content.duration.end = response.content.duration.end
         state.saveStatus = saveSuccess(state, 'saveInProgress')
+        state.saveStatus.saveInProgress = Object.keys(state.pendingHakuSaves).length > 0
         if (!oldHaku.projects || oldHaku.projects.length === 0) {
           state.saveStatus.serverError = 'validation-error'
         }
       })
       .addCase(saveHaku.rejected, (state, action) => {
-        state.saveStatus.serverError = action.payload ?? 'unexpected-save-error'
-        state.saveStatus.saveInProgress = false
+        const { haku, revision } = action.meta.arg
+        if (state.pendingHakuSaves[haku.id] !== revision) return
+        delete state.pendingHakuSaves[haku.id]
+        state.hakuSaveErrors[haku.id] = action.payload ?? 'unexpected-save-error'
+        state.saveStatus.serverError = Object.values(state.hakuSaveErrors)[0]
+        state.saveStatus.saveTime = null
+        state.saveStatus.saveInProgress = Object.keys(state.pendingHakuSaves).length > 0
       })
       .addCase(updateProjects.pending, startSaving('savingProjects'))
       .addCase(updateProjects.fulfilled, (state) => {
@@ -973,8 +974,14 @@ const hakuSlice = createSlice({
         state.saveStatus.savingProjects = false
         state.saveStatus.serverError = action.payload ?? 'unexpected-save-error'
       })
-      .addCase(startAutoSaveForAvustushaku.pending, startSaving('saveInProgress'))
-      .addCase(saveHakuImmediately.pending, startSaving('saveInProgress'))
+      .addCase(startAutoSaveForAvustushaku.pending, (state, action) => {
+        state.pendingHakuSaves[action.meta.arg] = action.meta.requestId
+        startSaving('saveInProgress')(state)
+      })
+      .addCase(saveHakuImmediately.pending, (state, action) => {
+        state.pendingHakuSaves[action.meta.arg] = action.meta.requestId
+        startSaving('saveInProgress')(state)
+      })
       .addCase(createHakuRole.pending, startSaving('savingRoles'))
       .addCase(createHakuRole.fulfilled, (state, action) => {
         state.saveStatus = saveSuccess(state, 'savingRoles')
@@ -985,7 +992,7 @@ const hakuSlice = createSlice({
       })
       .addCase(createHaku.rejected, (state) => {
         state.saveStatus.serverError = 'unexpected-create-error'
-        state.saveStatus.saveInProgress = false
+        state.saveStatus.saveInProgress = Object.keys(state.pendingHakuSaves).length > 0
       })
       .addCase(debouncedSaveRole.pending, startSaving('savingRoles'))
       .addCase(saveRoleImmediately.pending, startSaving('savingRoles'))
