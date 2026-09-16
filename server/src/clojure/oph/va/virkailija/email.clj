@@ -128,7 +128,7 @@
 (defn send-taydennyspyynto-message! [lang to cc avustushaku hakemus-id avustushaku-name user-key taydennyspyynto presenting-officer-email business-id]
   (let [avustushaku-id (:id avustushaku)
         is-jotpa-avustushaku (is-jotpa-avustushaku avustushaku)
-        url (email-utils/generate-url avustushaku-id lang user-key false)
+        url (email-utils/generate-url avustushaku-id lang user-key)
         from (if is-jotpa-avustushaku (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
         mail-template (get-in mail-templates [:taydennyspyynto lang])
         mail-subject (get-in mail-titles [:taydennyspyynto lang])
@@ -307,7 +307,7 @@
         paattymispaiva (datetime/date-string (datetime/parse (:paattymispaiva hakemus)))
         paattymisaika  (datetime/time-string (datetime/parse (:paattymispaiva hakemus)))
         email-signature (email-signature-block lang)
-        url             (email-utils/generate-url (:avustushaku-id hakemus) lang (:user-key hakemus) false)
+        url             (email-utils/generate-url (:avustushaku-id hakemus) lang (:user-key hakemus))
         is-jotpa-hakemus? (is-jotpa-avustushaku avustushaku)
         from            (if is-jotpa-hakemus? (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
         msg             {:avustushaku-name (:avustushaku-name hakemus)

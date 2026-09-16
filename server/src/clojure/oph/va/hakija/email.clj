@@ -4,7 +4,7 @@
             [oph.common.datetime :as datetime]
             [oph.common.email :as email]
             [oph.common.email-utils :as email-utils]
-            [oph.soresu.common.config :refer [config feature-enabled?]]
+            [oph.soresu.common.config :refer [config]]
             [oph.va.hakija.db :as va-db]
             [oph.va.virkailija.email :refer [email-signature-block]]))
 
@@ -85,11 +85,6 @@
        hakemus-db-id
        "/"))
 
-(defn selvitys-preview-url [avustushaku-id selvitys-user-key lang selvitys-type]
-  (let [va-url (-> config :server :url lang)
-        lang-str (or (clojure.core/name lang) "fi")]
-    (str va-url "avustushaku/" avustushaku-id "/" selvitys-type "?" selvitys-type "=" selvitys-user-key "&lang=" lang-str "&preview=true")))
-
 (defn send-selvitys-submitted-message! [avustushaku-id selvitys-user-key selvitys-type lang hakemus-id hakemus-name register-number to is-jotpa]
   (log/info "Sending notification for a submitted selvitys of type " selvitys-type)
   (let [type (if (= selvitys-type "loppuselvitys")
@@ -97,9 +92,7 @@
                :valiselvitys-submitted-notification)
         subject (get-in mail-titles [type lang])
         template (get-in mail-templates [type lang])
-        preview-url (if (feature-enabled? :useEsikatseluEmailLink)
-                      (email-utils/generate-selvitys-esikatselu-url avustushaku-id lang selvitys-user-key selvitys-type)
-                      (selvitys-preview-url avustushaku-id selvitys-user-key lang selvitys-type))
+        preview-url (email-utils/generate-selvitys-esikatselu-url avustushaku-id lang selvitys-user-key selvitys-type)
         msg {:hakemus-name hakemus-name
              :preview-url preview-url
              :register-number register-number
@@ -117,7 +110,7 @@
         start-time-string (datetime/time-string start-date)
         end-date-string (datetime/date-string end-date)
         end-time-string (datetime/time-string end-date)
-        url (email-utils/generate-url avustushaku-id lang user-key false)
+        url (email-utils/generate-url avustushaku-id lang user-key)
         signature (email-signature-block lang)
         enriched-to (email/get-recipients-with-org-email business-id to)
         msg {:operation :send
@@ -144,7 +137,7 @@
         start-time-string (datetime/time-string start-date)
         end-date-string (datetime/date-string end-date)
         end-time-string (datetime/time-string end-date)
-        url (email-utils/generate-url avustushaku-id lang user-key false)
+        url (email-utils/generate-url avustushaku-id lang user-key)
         signature (email-signature-block lang)
         enriched-to (email/get-recipients-with-org-email business-id to)
         msg {:operation :send
@@ -280,9 +273,7 @@
         start-time-string (datetime/time-string start-date)
         end-date-string (datetime/date-string end-date)
         end-time-string (datetime/time-string end-date)
-        url (if (feature-enabled? :useEsikatseluEmailLink)
-              (email-utils/generate-esikatselu-url avustushaku-id lang user-key)
-              (email-utils/generate-url avustushaku-id lang user-key true))
+        url (email-utils/generate-esikatselu-url avustushaku-id lang user-key)
         from (if is-jotpa-avustushaku? (-> email/smtp-config :jotpa-from :fi) (-> email/smtp-config :from lang))
         signature (email-signature-block lang)
         enriched-to (email/get-recipients-with-org-email business-id to)
@@ -314,9 +305,7 @@
             start-time-string (datetime/time-string start-date)
             end-date-string (datetime/date-string end-date)
             end-time-string (datetime/time-string end-date)
-            url (if (feature-enabled? :useEsikatseluEmailLink)
-                  (email-utils/generate-esikatselu-url avustushaku-id lang user-key)
-                  (email-utils/generate-url avustushaku-id lang user-key true))
+            url (email-utils/generate-esikatselu-url avustushaku-id lang user-key)
             avustushaku-name (get-in avustushaku [:content :name lang])
             subject (format (get-in mail-titles [:yhteishanke-hakemus-submitted lang]) avustushaku-name)
             template (get-in mail-templates [:yhteishanke-hakemus-submitted lang])
@@ -344,9 +333,7 @@
             avustushaku-name (get-in avustushaku [:content :name lang])
             subject (format (get-in mail-titles [type lang]) register-number)
             template (get-in mail-templates [type lang])
-            preview-url (if (feature-enabled? :useEsikatseluEmailLink)
-                          (email-utils/generate-selvitys-esikatselu-url avustushaku-id lang selvitys-user-key selvitys-type)
-                          (selvitys-preview-url avustushaku-id selvitys-user-key lang selvitys-type))
+            preview-url (email-utils/generate-selvitys-esikatselu-url avustushaku-id lang selvitys-user-key selvitys-type)
             signature (email-signature-block lang)
             msg {:avustushaku-name avustushaku-name
                  :project-name hakemus-name

@@ -53,7 +53,7 @@
          "?lang="
          lang-str)))
 
-(defn generate-url [avustushaku-id lang user-key preview?]
+(defn generate-url [avustushaku-id lang user-key]
   (let [lang-str (or (clojure.core/name lang) "fi")]
     (str (va-url lang)
          (if (= lang :sv)
@@ -67,7 +67,4 @@
          "?hakemus="
          user-key
          "&lang="
-         lang-str
-         (if preview?
-           "&preview=true"
-           ""))))
+         lang-str)))
