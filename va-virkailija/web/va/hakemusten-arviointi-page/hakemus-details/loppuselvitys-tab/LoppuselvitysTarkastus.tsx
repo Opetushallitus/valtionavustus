@@ -209,33 +209,52 @@ function showCancelTaydennyspyynto(hakemus: Hakemus) {
   )
 }
 
-function Asiatarkastus2Vaiheinen({ disabled }: { disabled: boolean }) {
+function useAsiatarkastusSubmit() {
   const hakemus = useHakemus()
-  const dispatch = useHakemustenArviointiDispatch()
   const avustushakuId = useAvustushakuId()
-  const [message, setMessage] = useState<string>()
+  const dispatch = useHakemustenArviointiDispatch()
   const [error, setError] = useState<string>()
-  const verifiedBy = hakemus['loppuselvitys-information-verified-by']
-  const verifiedAt = hakemus['loppuselvitys-information-verified-at']
-  const isVerified = !!verifiedBy && !!verifiedAt
-  const loppuselvitysNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
-  const disableSubmit = loppuselvitysNotSubmitted || !message || disabled
+  const [submitting, setSubmitting] = useState(false)
+  const submissionStarted = useRef(false)
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
+  const submit = async (body: unknown) => {
+    if (submissionStarted.current) return false
+    submissionStarted.current = true
+    setSubmitting(true)
     setError(undefined)
     try {
       await HttpUtil.post(
         `/api/avustushaku/${avustushakuId}/hakemus/${hakemus.id}/loppuselvitys/verify-information`,
-        { message }
+        body
       )
     } catch {
+      submissionStarted.current = false
+      setSubmitting(false)
       setError('Asiatarkastuksen hyväksyminen epäonnistui')
-      return
+      return false
     }
+    // Approval is saved. Keep it locked even if refreshing the view is slow or fails.
     dispatch(refreshHakemus({ hakemusId: hakemus.id }))
-    setMessage('')
+    return true
+  }
+
+  return { submit, submitting, error }
+}
+
+function Asiatarkastus2Vaiheinen({ disabled }: { disabled: boolean }) {
+  const hakemus = useHakemus()
+  const [message, setMessage] = useState<string>()
+  const { submit, submitting, error } = useAsiatarkastusSubmit()
+  const verifiedBy = hakemus['loppuselvitys-information-verified-by']
+  const verifiedAt = hakemus['loppuselvitys-information-verified-at']
+  const isVerified = !!verifiedBy && !!verifiedAt
+  const loppuselvitysNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
+  const disableSubmit = loppuselvitysNotSubmitted || !message || disabled || submitting
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (await submit({ message })) setMessage('')
   }
 
   return (
@@ -269,13 +288,11 @@ function Asiatarkastus2Vaiheinen({ disabled }: { disabled: boolean }) {
 
 function AsiatarkastusSatunnaisotanta({ disabled }: { disabled: boolean }) {
   const hakemus = useHakemus()
-  const dispatch = useHakemustenArviointiDispatch()
-  const avustushakuId = useAvustushakuId()
   const [message, setMessage] = useState<string>()
   const [checklist, setChecklist] = useState<AsiatarkastusChecklist>(
     INITIAL_ASIATARKASTUS_CHECKLIST
   )
-  const [error, setError] = useState<string>()
+  const { submit, submitting, error } = useAsiatarkastusSubmit()
   const verifiedBy = hakemus['loppuselvitys-information-verified-by']
   const verifiedAt = hakemus['loppuselvitys-information-verified-at']
   const isVerified = !!verifiedBy && !!verifiedAt
@@ -284,23 +301,12 @@ function AsiatarkastusSatunnaisotanta({ disabled }: { disabled: boolean }) {
   const loppuselvitysNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
   // comment is optional unless a risk was found (not all checklist items checked)
   const disableSubmit =
-    loppuselvitysNotSubmitted || disabled || !allAnswered || (!allChecked && !message)
+    loppuselvitysNotSubmitted || disabled || submitting || !allAnswered || (!allChecked && !message)
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     e.stopPropagation()
-    setError(undefined)
-    try {
-      await HttpUtil.post(
-        `/api/avustushaku/${avustushakuId}/hakemus/${hakemus.id}/loppuselvitys/verify-information`,
-        { message: message ?? '', checklist }
-      )
-    } catch {
-      setError('Asiatarkastuksen hyväksyminen epäonnistui')
-      return
-    }
-    dispatch(refreshHakemus({ hakemusId: hakemus.id }))
-    setMessage('')
+    if (await submit({ message: message ?? '', checklist })) setMessage('')
   }
 
   return (
@@ -348,7 +354,6 @@ function AsiatarkastusSatunnaisotanta({ disabled }: { disabled: boolean }) {
 
 function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
   const hakemus = useHakemus()
-  const dispatch = useHakemustenArviointiDispatch()
   const avustushakuId = useAvustushakuId()
   const userInfo = useUserInfo()
   const avustushakuFromStore = useHakemustenArviointiSelector(
@@ -358,7 +363,7 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
   const [checklist, setChecklist] = useState<AsiatarkastusChecklist>(
     INITIAL_ASIATARKASTUS_CHECKLIST
   )
-  const [error, setError] = useState<string>()
+  const { submit, submitting, error } = useAsiatarkastusSubmit()
   const [showHyvaksytty, setShowHyvaksytty] = useState(false)
 
   const verifiedBy = hakemus['loppuselvitys-information-verified-by']
@@ -403,50 +408,33 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
   const allAnswered = Object.values(checklist).every((v) => v !== undefined)
   const allChecked = allAnswered && Object.values(checklist).every(Boolean)
   const loppuselvitysNotSubmitted = hakemus.selvitys?.loppuselvitys.status !== 'submitted'
-  const disableRiskiSubmit = loppuselvitysNotSubmitted || !message || disabled || !allAnswered
-  const disableAsiatarkastaAndAcceptSubmit = loppuselvitysNotSubmitted || disabled
+  const disableRiskiSubmit =
+    loppuselvitysNotSubmitted || !message || disabled || submitting || !allAnswered
+  const disableAsiatarkastaAndAcceptSubmit = loppuselvitysNotSubmitted || disabled || submitting
 
   const onSubmitRiski = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     e.stopPropagation()
-    setError(undefined)
-    try {
-      await HttpUtil.post(
-        `/api/avustushaku/${avustushakuId}/hakemus/${hakemus.id}/loppuselvitys/verify-information`,
-        { message, checklist }
-      )
-    } catch {
-      setError('Asiatarkastuksen hyväksyminen epäonnistui')
-      return
-    }
-    dispatch(refreshHakemus({ hakemusId: hakemus.id }))
-    setMessage('')
+    if (await submit({ message, checklist })) setMessage('')
   }
 
   const onSubmitAsiatarkastaAndAccept = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     e.stopPropagation()
-    setError(undefined)
-    try {
-      await HttpUtil.post(
-        `/api/avustushaku/${avustushakuId}/hakemus/${hakemus.id}/loppuselvitys/verify-information`,
-        {
-          message: message ?? '',
-          checklist,
-          email: {
-            to: approvalEmail.receivers,
-            subject: approvalEmail.subject,
-            message: approvalEmail.content,
-            'selvitys-hakemus-id': loppuselvitys!.id,
-          },
-        }
-      )
-    } catch {
-      setError('Asiatarkastuksen hyväksyminen epäonnistui')
-      return
+    if (
+      await submit({
+        message: message ?? '',
+        checklist,
+        email: {
+          to: approvalEmail.receivers,
+          subject: approvalEmail.subject,
+          message: approvalEmail.content,
+          'selvitys-hakemus-id': loppuselvitys!.id,
+        },
+      })
+    ) {
+      setMessage('')
     }
-    dispatch(refreshHakemus({ hakemusId: hakemus.id }))
-    setMessage('')
   }
 
   return (
@@ -556,13 +544,14 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
   )
   const otantatarkastusEnabled = avustushaku['loppuselvitys-otantatarkastus-enabled']
   const otantapolku = hakemus['loppuselvitys-otantapolku']
+  const approvalKey = `${hakemus.id}-${hakemus['status-loppuselvitys']}`
   if (otantatarkastusEnabled && otantapolku === 'satunnaisotanta') {
-    return <AsiatarkastusSatunnaisotanta disabled={disabled} />
+    return <AsiatarkastusSatunnaisotanta key={approvalKey} disabled={disabled} />
   }
   if (otantatarkastusEnabled && otantapolku === 'otannan-ulkopuolella') {
-    return <AsiatarkastusOtannanUlkopuolella disabled={disabled} />
+    return <AsiatarkastusOtannanUlkopuolella key={approvalKey} disabled={disabled} />
   }
-  return <Asiatarkastus2Vaiheinen disabled={disabled} />
+  return <Asiatarkastus2Vaiheinen key={approvalKey} disabled={disabled} />
 }
 
 export function Taloustarkastus({ disabled }: { disabled: boolean }) {
