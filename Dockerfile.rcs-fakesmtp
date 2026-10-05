@@ -1,6 +1,6 @@
 FROM eclipse-temurin:25.0.1_8-jdk-alpine@sha256:7ace075f29555df6696750ee3caffea4fb542a1db8a5b1e7578129162f071c03
 
-ADD https://nilhcem.github.io/FakeSMTP/downloads/fakeSMTP-latest.zip /fakeSMTP-latest.zip
+ADD https://raw.githubusercontent.com/Nilhcem/FakeSMTP/25c7ab753b9af8e44a7cc61ab59e33268af7ef84/downloads/fakeSMTP-latest.zip /fakeSMTP-latest.zip
 RUN unzip /fakeSMTP-latest.zip
 VOLUME ["/var/mail"]
 EXPOSE 25
