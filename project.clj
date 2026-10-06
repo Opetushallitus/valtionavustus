@@ -94,7 +94,7 @@
                  ;; clojure libs
                  [org.clojure/core.async "1.9.865"]
                  [org.clojure/data.xml "0.0.8"]
-                 [org.clojure/tools.trace "0.9.0"]
+                 [org.clojure/tools.trace "0.9.1"]
                  [org.clojure/tools.logging "1.3.1"]
 
                  ;; logging
