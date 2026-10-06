@@ -287,7 +287,7 @@ test.describe('talousarviotilien hallinta', () => {
   }
   for (const badCode of badTaTiliCodes) {
     test(`api doesnt allow bad code ${badCode}`, async ({ page }, testInfo) => {
-      const res = await createBody({
+      const res = await createTalousarviotili({
         code: badCode,
         name: testInfo.title,
         request: page.request,
@@ -297,7 +297,7 @@ test.describe('talousarviotilien hallinta', () => {
     })
   }
   test('api allows good code', async ({ page }, testInfo) => {
-    const res = await createBody({
+    const res = await createTalousarviotili({
       code: createRandomTalousarviotiliCode(),
       name: testInfo.title,
       request: page.request,
@@ -306,7 +306,20 @@ test.describe('talousarviotilien hallinta', () => {
   })
 })
 
-unpublishedAvustushakuTest(
+// Own tili, because this test deletes it and the default one is shared by the whole worker
+const ownTiliTest = unpublishedAvustushakuTest.extend({
+  talousarviotili: async ({ page, randomName }, use) => {
+    const res = await createTalousarviotili({
+      code: createRandomTalousarviotiliCode(),
+      name: `Poistettava tili ${randomName}`,
+      request: page.request,
+    })
+    await expect(res).toBeOK()
+    await use(await res.json())
+  },
+})
+
+ownTiliTest(
   'tili that is in use cannot be deleted',
   async ({ page, avustushakuID, talousarviotili, hakuProps }) => {
     expectToBeDefined(avustushakuID)
@@ -350,7 +363,7 @@ unpublishedAvustushakuTest(
   }
 )
 
-const createBody = ({
+const createTalousarviotili = ({
   code,
   name,
   request,
