@@ -231,6 +231,7 @@ export class VaServiceStack extends cdk.Stack {
     const targetGroupHealthCheck = {
       enabled: true,
       interval: Duration.seconds(10),
+      timeout: Duration.seconds(5),
       healthyThresholdCount: 2,
       unhealthyThresholdCount: 6,
       path: '/api/healthcheck',
