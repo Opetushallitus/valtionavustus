@@ -80,6 +80,7 @@ function main {
   start_gh_actions_group "Deploy stacks"
   cdk-built-app deploy \
     --exclusively \
+    --concurrency 4 \
     --require-approval never \
     "$ENV/*"
   end_gh_actions_group

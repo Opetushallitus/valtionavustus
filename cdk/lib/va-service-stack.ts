@@ -105,6 +105,7 @@ export class VaServiceStack extends cdk.Stack {
       image: valtionavustuksetImage,
       healthCheck: {
         command: ['CMD-SHELL', 'curl -f http://localhost:8081/api/healthcheck || exit 1'],
+        interval: Duration.seconds(10),
         startPeriod: Duration.minutes(5),
       },
       containerName: CONTAINER_NAME,
@@ -227,6 +228,14 @@ export class VaServiceStack extends cdk.Stack {
       certificates: [loadBalancerCertificate],
     })
 
+    const targetGroupHealthCheck = {
+      enabled: true,
+      interval: Duration.seconds(10),
+      healthyThresholdCount: 2,
+      unhealthyThresholdCount: 6,
+      path: '/api/healthcheck',
+    }
+
     const virkailijaTargetGroup = new ApplicationTargetGroup(
       this,
       'va-virkailija-alb-target-group',
@@ -240,12 +249,8 @@ export class VaServiceStack extends cdk.Stack {
             containerPort: VIRKAILIJA_PORT,
           }),
         ],
-        healthCheck: {
-          enabled: true,
-          interval: Duration.seconds(30),
-          path: '/api/healthcheck',
-          port: `${VIRKAILIJA_PORT}`,
-        },
+        deregistrationDelay: Duration.seconds(albIdleTimeoutValue),
+        healthCheck: { ...targetGroupHealthCheck, port: `${VIRKAILIJA_PORT}` },
       }
     )
 
@@ -259,12 +264,8 @@ export class VaServiceStack extends cdk.Stack {
           containerPort: HAKIJA_PORT,
         }),
       ],
-      healthCheck: {
-        enabled: true,
-        interval: Duration.seconds(30),
-        path: '/api/healthcheck',
-        port: `${HAKIJA_PORT}`,
-      },
+      deregistrationDelay: Duration.seconds(albIdleTimeoutValue),
+      healthCheck: { ...targetGroupHealthCheck, port: `${HAKIJA_PORT}` },
     })
 
     /*  ---------- VIRKAILIJA FQDN ---------- */
