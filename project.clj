@@ -21,7 +21,7 @@
 
   :pedantic? :abort
 
-  :plugins [[lein-environ "1.2.0"][dev.weavejester/lein-cljfmt "0.16.5" :exclusions [org.clojure/clojure org.clojure/spec.alpha org.clojure/core.specs.alpha]]]
+  :plugins [[lein-environ "1.2.0"][dev.weavejester/lein-cljfmt "0.16.6" :exclusions [org.clojure/clojure org.clojure/spec.alpha org.clojure/core.specs.alpha]]]
 
   :managed-dependencies [
 
