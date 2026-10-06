@@ -1,15 +1,16 @@
 import path from 'node:path'
 import fs from 'node:fs/promises'
 
-import { expect } from '@playwright/test'
+import { expect, Page } from '@playwright/test'
 import { defaultValues } from '../../fixtures/defaultValues'
 import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
 import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
+import { Answers } from '../../utils/types'
+import { randomString } from '../../utils/random'
 
 const AKAAN_KAUPUNKI_BUSINESS_ID = '2050864-5'
 
 const test = defaultValues.extend<{
-  hakijaAvustusHakuPage: ReturnType<typeof HakijaAvustusHakuPage>
   avustushakuID: number
 }>({
   avustushakuID: async ({ page, hakuProps, userCache }, use) => {
@@ -31,20 +32,9 @@ const test = defaultValues.extend<{
     await haunTiedotPage.publishAvustushaku()
     await use(avustushakuID)
   },
-  hakijaAvustusHakuPage: async ({ page, answers, avustushakuID }, use) => {
-    const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
-    await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
-
-    const hakemusUrl = await hakijaAvustusHakuPage.startApplication(
-      avustushakuID,
-      answers.contactPersonEmail
-    )
-    await hakijaAvustusHakuPage.page.goto(hakemusUrl)
-    await use(hakijaAvustusHakuPage)
-  },
 })
 
-async function enterBusinessIdAndFetch(page: import('@playwright/test').Page, businessId: string) {
+async function enterBusinessIdAndFetch(page: Page, businessId: string) {
   await page.fill('#finnish-business-id', businessId)
 
   await Promise.all([
@@ -61,97 +51,79 @@ async function enterBusinessIdAndFetch(page: import('@playwright/test').Page, bu
   await expect(page.locator('[data-test-id="organisation-selection-fi"]')).toBeVisible()
 }
 
-async function selectOrganisationAndConfirm(page: import('@playwright/test').Page) {
+async function selectOrganisationAndConfirm(page: Page) {
   await page.click('[data-test-id="organisation-selection-fi"]')
   await page.click('[data-test-id="confirm-selection"]')
 }
 
-test('omistajatyyppi is auto-filled as kunta_kirkko for a municipality', async ({
-  hakijaAvustusHakuPage,
-}) => {
-  const { page } = hakijaAvustusHakuPage
+// Each hakemus needs its own email, startApplication picks the first email sent to the address
+async function startNewHakemus(page: Page, avustushakuID: number, answers: Answers) {
+  const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
+  await hakijaAvustusHakuPage.navigate(avustushakuID, answers.lang)
+  const hakemusUrl = await hakijaAvustusHakuPage.startApplication(
+    avustushakuID,
+    `${randomString()}-${answers.contactPersonEmail}`
+  )
+  await page.goto(hakemusUrl)
+}
 
-  await test.step('enter Y-tunnus and fetch organization data', async () => {
-    await enterBusinessIdAndFetch(page, AKAAN_KAUPUNKI_BUSINESS_ID)
+test('omistajatyyppi prefill from organisation data', async ({ page, avustushakuID, answers }) => {
+  await test.step('omistajatyyppi is locked to kunta_kirkko for a municipality, also after reload', async () => {
+    await test.step('start new hakemus', async () => {
+      await startNewHakemus(page, avustushakuID, answers)
+    })
+    await test.step('fetch organisation data for Akaan kaupunki', async () => {
+      await enterBusinessIdAndFetch(page, AKAAN_KAUPUNKI_BUSINESS_ID)
+    })
+    await test.step('select organization and confirm', async () => {
+      await selectOrganisationAndConfirm(page)
+    })
+    await test.step('omistajatyyppi is auto-selected as kunta_kirkko and disabled', async () => {
+      await expect(page.locator('input[type="radio"][value="kunta_kirkko"]')).toBeChecked()
+      await expect(page.locator('input[type="radio"][value="kunta_kirkko"]')).toBeDisabled()
+    })
+    await test.step('after page reload omistajatyyppi cannot be changed', async () => {
+      await page.reload()
+      await expect(page.locator('label[for="radioButton-0.radio.0"]')).toBeVisible()
+      await page.locator('label[for="radioButton-0.radio.1"]').click({ force: true })
+      await expect(page.locator('input[type="radio"][value="liiketalous"]')).not.toBeChecked()
+      await expect(page.locator('input[type="radio"][value="kunta_kirkko"]')).toBeChecked()
+    })
   })
 
-  await test.step('select organization and confirm', async () => {
-    await selectOrganisationAndConfirm(page)
+  await test.step('omistajatyyppi is locked to valtio for a state agency', async () => {
+    await test.step('start new hakemus', async () => {
+      await startNewHakemus(page, avustushakuID, answers)
+    })
+    await test.step('fetch organisation data for a state agency', async () => {
+      await enterBusinessIdAndFetch(page, '0211675-2')
+    })
+    await test.step('select organization and confirm', async () => {
+      await selectOrganisationAndConfirm(page)
+    })
+    await test.step('omistajatyyppi is auto-selected as valtio and disabled', async () => {
+      await expect(page.locator('input[type="radio"][value="valtio"]')).toBeChecked()
+      await expect(page.locator('input[type="radio"][value="valtio"]')).toBeDisabled()
+    })
   })
 
-  await test.step('verify omistajatyyppi radio button is auto-selected and disabled', async () => {
-    await expect(page.locator('input[type="radio"][value="kunta_kirkko"]')).toBeChecked()
-    await expect(page.locator('input[type="radio"][value="kunta_kirkko"]')).toBeDisabled()
-  })
-})
-
-test('omistajatyyppi is auto-filled as valtio for a state agency', async ({
-  hakijaAvustusHakuPage,
-}) => {
-  const { page } = hakijaAvustusHakuPage
-
-  await test.step('enter Y-tunnus and fetch organization data', async () => {
-    await enterBusinessIdAndFetch(page, '0211675-2')
-  })
-
-  await test.step('select organization and confirm', async () => {
-    await selectOrganisationAndConfirm(page)
-  })
-
-  await test.step('verify omistajatyyppi radio button is auto-selected and disabled', async () => {
-    await expect(page.locator('input[type="radio"][value="valtio"]')).toBeChecked()
-    await expect(page.locator('input[type="radio"][value="valtio"]')).toBeDisabled()
-  })
-})
-
-test('omistajatyyppi radio button is not pre-selected when API returns 404', async ({
-  hakijaAvustusHakuPage,
-}) => {
-  const { page } = hakijaAvustusHakuPage
-
-  await test.step('enter Y-tunnus and fetch organization data', async () => {
-    await enterBusinessIdAndFetch(page, '0187690-1')
-  })
-
-  await test.step('select organization and confirm', async () => {
-    await selectOrganisationAndConfirm(page)
-  })
-
-  await test.step('verify no omistajatyyppi radio button is pre-selected', async () => {
-    await expect(page.locator('input[name="radioButton-0"]:checked')).toHaveCount(0)
-  })
-
-  await test.step('manually select omistajatyyppi', async () => {
-    // Radio inputs are visually hidden; click the label instead
-    await page.locator('label[for="radioButton-0.radio.2"]').click()
-    await expect(page.locator('#radioButton-0\\.radio\\.2')).toBeChecked()
-  })
-})
-
-test('omistajatyyppi remains locked after page reload', async ({ hakijaAvustusHakuPage }) => {
-  const { page } = hakijaAvustusHakuPage
-
-  await test.step('enter Y-tunnus and fetch organization data', async () => {
-    await enterBusinessIdAndFetch(page, AKAAN_KAUPUNKI_BUSINESS_ID)
-  })
-
-  await test.step('select organization and confirm', async () => {
-    await selectOrganisationAndConfirm(page)
-  })
-
-  await test.step('verify omistajatyyppi is auto-selected and disabled before reload', async () => {
-    await expect(page.locator('input[type="radio"][value="kunta_kirkko"]')).toBeChecked()
-    await expect(page.locator('input[type="radio"][value="kunta_kirkko"]')).toBeDisabled()
-  })
-
-  await test.step('reload the page', async () => {
-    await page.reload()
-    await expect(page.locator('label[for="radioButton-0.radio.0"]')).toBeVisible()
-  })
-
-  await test.step('clicking another omistajatyyppi must not change the selection', async () => {
-    await page.locator('label[for="radioButton-0.radio.1"]').click({ force: true })
-    await expect(page.locator('input[type="radio"][value="liiketalous"]')).not.toBeChecked()
-    await expect(page.locator('input[type="radio"][value="kunta_kirkko"]')).toBeChecked()
+  await test.step('omistajatyyppi is not prefilled and can be chosen when organisation type is not found', async () => {
+    await test.step('start new hakemus', async () => {
+      await startNewHakemus(page, avustushakuID, answers)
+    })
+    await test.step('fetch organisation data for Y-tunnus without organisation type', async () => {
+      await enterBusinessIdAndFetch(page, '0187690-1')
+    })
+    await test.step('select organization and confirm', async () => {
+      await selectOrganisationAndConfirm(page)
+    })
+    await test.step('no omistajatyyppi radio button is pre-selected', async () => {
+      await expect(page.locator('input[name="radioButton-0"]:checked')).toHaveCount(0)
+    })
+    await test.step('hakija can select omistajatyyppi manually', async () => {
+      // Radio inputs are visually hidden; click the label instead
+      await page.locator('label[for="radioButton-0.radio.2"]').click()
+      await expect(page.locator('#radioButton-0\\.radio\\.2')).toBeChecked()
+    })
   })
 })
