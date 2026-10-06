@@ -127,6 +127,7 @@
                   FROM hakija.hakemukset h
                   LEFT JOIN hakija.avustushaut a ON a.id = h.avustushaku
                   WHERE h.version_closed IS NULL
+                    AND h.hakemus_type = 'hakemus'
                     AND (h.register_number LIKE ?
                          OR LOWER(h.project_name) LIKE ?
                          OR LOWER(h.organization_name) LIKE ?)
