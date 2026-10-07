@@ -86,19 +86,32 @@ export const HaunTiedotPage = (page: Page) => {
     },
   }
 
-  async function publishAvustushaku() {
-    await locators.status.published.click()
+  // "Kaikki tiedot tallennettu" is already visible before the coalesced save starts,
+  // so wait for the save request carrying the new status instead
+  async function changeStatus(status: 'published' | 'draft' | 'resolved') {
+    await Promise.all([
+      page.waitForResponse(
+        (resp) =>
+          /\/api\/avustushaku\/\d+$/.test(resp.url()) &&
+          resp.request().method() === 'POST' &&
+          resp.request().postDataJSON()?.status === status &&
+          resp.ok()
+      ),
+      locators.status[status].click(),
+    ])
     await common.waitForSave()
+  }
+
+  async function publishAvustushaku() {
+    await changeStatus('published')
   }
 
   async function setAvustushakuInDraftState() {
-    await locators.status.draft.click()
-    await common.waitForSave()
+    await changeStatus('draft')
   }
 
   async function resolveAvustushaku() {
-    await locators.status.resolved.click()
-    await common.waitForSave()
+    await changeStatus('resolved')
   }
 
   async function allowExternalApi(allow: boolean) {
