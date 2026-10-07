@@ -33,6 +33,19 @@ export const LoppuselvitysPage = (page: Page) => {
         name: 'Hyväksy asiatarkastus ja lähetä taloustarkastukseen',
       }),
     },
+    palautaAsiatarkastukseen: page.getByRole('button', {
+      name: 'Palauta loppuselvitys asiatarkastukseen',
+    }),
+    palautaDialog: page.getByTestId('palauta-asiatarkastukseen-modal'),
+    palautaDialogCancel: page.getByTestId('palauta-asiatarkastukseen-cancel-button'),
+    palautaDialogConfirm: page.getByTestId('palauta-asiatarkastukseen-confirm-button'),
+    palautukset: page.getByTestId('loppuselvitys-palautukset'),
+    palautusHistoryRows: page
+      .getByTestId('loppuselvitys-palautukset')
+      .locator(
+        '[data-test-id="loppuselvitys-palautus-asiatarkastettu"], [data-test-id="loppuselvitys-palautus"]'
+      ),
+    palautusAsiatarkastettu: page.getByTestId('loppuselvitys-palautus-asiatarkastettu'),
     otantatarkastus: {
       checklist: page.getByTestId('asiatarkastus-checklist'),
       checklistItem: (label: string) =>

@@ -1,6 +1,7 @@
 (ns oph.va.virkailija.hakemus-routes
   (:require [clojure.tools.logging :as log]
             [compojure.api.sweet :as compojure-api]
+            [oph.soresu.common.config :as config]
             [oph.soresu.common.db :refer [with-tx]]
             [oph.common.email :as common-email :refer [smtp-config]]
             [oph.soresu.form.formutil :as formutil]
@@ -119,6 +120,19 @@
     (let [identity (authentication/get-request-identity request)
           response (hakija-api/verify-loppuselvitys-information hakemus-id verify-information identity)]
       (or response (http/bad-request!))))
+
+  (compojure-api/POST "/loppuselvitys/palauta-asiatarkastukseen" request
+    :path-params [avustushaku-id :- Long hakemus-id :- Long]
+    :return s/Any
+    :summary "Return asiatarkastettu loppuselvitys back to asiatarkastus"
+    (let [identity (authentication/get-request-identity request)]
+      (when-not (config/feature-enabled? :enablePalautaLoppuselvitysAsiatarkastukseen)
+        (http/not-found!))
+      (when-not (authorization/is-pääkäyttäjä? identity)
+        (http/forbidden!))
+      (if (hakija-api/palauta-loppuselvitys-asiatarkastukseen avustushaku-id hakemus-id identity)
+        (http/ok {})
+        (http/bad-request!))))
 
   (compojure-api/GET "/tapahtumaloki/:tyyppi" []
     :path-params [avustushaku-id :- Long, hakemus-id :- Long, tyyppi :- s/Str]

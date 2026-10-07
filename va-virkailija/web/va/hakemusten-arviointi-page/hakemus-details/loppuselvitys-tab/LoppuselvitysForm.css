@@ -55,3 +55,10 @@
     margin: 4px 8px 8px;
     border-radius: 4px;
 }
+
+.palauta-asiatarkastukseen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}

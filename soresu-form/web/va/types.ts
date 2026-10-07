@@ -247,11 +247,21 @@ export interface LoadedHakemusData {
   accessControl: HakemusAccessControl
 }
 
+export interface LoppuselvitysPalautus {
+  id: number
+  created_at: string
+  user_name: string
+  information_verified_by: string | null
+  information_verified_at: string | null
+  information_verification: string | null
+}
+
 export interface HakemusSelvitys {
   attachments: unknown
   loppuselvitysForm?: ImmutableObject<Form>
   loppuselvitys: Selvitys
   loppuselvitysChangeRequests?: Hakemus[]
+  loppuselvitysPalautukset?: LoppuselvitysPalautus[]
   valiselvitysForm?: ImmutableObject<Form>
   valiselvitys: Selvitys
 }

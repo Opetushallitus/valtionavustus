@@ -3,6 +3,8 @@
    [oph.soresu.common.db :as db]
    [clojure.tools.logging :as log]))
 
+(def loppuselvitys-palautettu-tyyppi "loppuselvitys-palautettu-asiatarkastukseen")
+
 (defn- store-log-entry [tx {:keys [tyyppi avustushaku_id hakemus_id batch_id emails success user_name user_oid email_id]}]
   (db/query tx "INSERT INTO virkailija.tapahtumaloki
              (id, tyyppi, avustushaku_id, hakemus_id, batch_id, emails, success, user_name, user_oid, email_id)
@@ -33,6 +35,10 @@
 (defn create-paatoksen-lahetys-entry [avustushaku-id hakemus-id identity batch-id emails success]
   (create-log-entry "paatoksen_lahetys" avustushaku-id hakemus-id identity batch-id emails nil success))
 
+(defn create-loppuselvitys-palautettu-entry-tx [tx avustushaku-id hakemus-id identity]
+  ;; batch_id is NOT NULL in tapahtumaloki
+  (create-log-entry-tx tx loppuselvitys-palautettu-tyyppi avustushaku-id hakemus-id identity "" nil nil true))
+
 (defn get-tapahtumaloki-entries [tyyppi avustushaku-id]
   (db/query-original-identifiers
    "SELECT id, tyyppi, created_at, avustushaku_id, hakemus_id, batch_id, emails, success, user_name, user_oid, email_id
@@ -57,3 +63,13 @@
      WHERE avustushaku_id = ? AND tyyppi = ? AND hakemus_id = ?
      ORDER BY created_at ASC"
    [avustushaku-id tyyppi hakemus-id]))
+
+(defn get-loppuselvitys-palautukset [avustushaku-id hakemus-id]
+  (db/query-original-identifiers
+   "SELECT t.id, t.created_at, t.user_name,
+       p.information_verified_by, p.information_verified_at, p.information_verification
+     FROM virkailija.tapahtumaloki t
+     LEFT JOIN virkailija.palautettu_asiatarkastus p ON p.tapahtumaloki_id = t.id
+     WHERE t.avustushaku_id = ? AND t.hakemus_id = ? AND t.tyyppi = ?
+     ORDER BY t.created_at ASC"
+   [avustushaku-id hakemus-id loppuselvitys-palautettu-tyyppi]))

@@ -7,10 +7,11 @@ import {
   Hakemus,
   SelvitysEmail,
 } from 'soresu-form/web/va/types'
-import HttpUtil from 'soresu-form/web/HttpUtil'
+import HttpUtil, { getHttpResponseErrorStatus } from 'soresu-form/web/HttpUtil'
 import { Language, translations } from 'soresu-form/web/va/i18n/translations'
 
-import ViestiLista, { ViestiDetails, ViestiListaRow } from '../ViestiLista'
+import { ConfirmDialog } from '../../../common-components/ConfirmDialog'
+import ViestiLista, { ViestiDetails, ViestiListaRow, ViestiListaStaticRow } from '../ViestiLista'
 import { useHakemus } from '../../useHakemus'
 import { useAvustushakuId } from '../../useAvustushaku'
 import MultipleRecipentEmailForm, { Email } from '../common-components/MultipleRecipentsEmailForm'
@@ -303,6 +304,7 @@ function Asiatarkastus2Vaiheinen({ disabled }: { disabled: boolean }) {
     <>
       <LoppuselvitysTarkastus
         dataTestId="loppuselvitys-asiatarkastus"
+        showPalautukset
         taydennyspyyntoType="taydennyspyynto-asiatarkastus"
         disabled={disabled}
         heading="Loppuselvityksen asiatarkastus"
@@ -355,6 +357,7 @@ function AsiatarkastusSatunnaisotanta({ disabled }: { disabled: boolean }) {
     <>
       <LoppuselvitysTarkastus
         dataTestId="loppuselvitys-asiatarkastus"
+        showPalautukset
         taydennyspyyntoType="taydennyspyynto-asiatarkastus"
         disabled={disabled}
         heading="Loppuselvityksen asiatarkastus"
@@ -483,6 +486,7 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
     <>
       <LoppuselvitysTarkastus
         dataTestId="loppuselvitys-asiatarkastus"
+        showPalautukset
         taydennyspyyntoType="taydennyspyynto-asiatarkastus"
         disabled={disabled}
         heading="Loppuselvityksen asiatarkastus"
@@ -594,6 +598,101 @@ export function Asiatarkastus({ disabled }: { disabled: boolean }) {
     return <AsiatarkastusOtannanUlkopuolella key={approvalKey} disabled={disabled} />
   }
   return <Asiatarkastus2Vaiheinen key={approvalKey} disabled={disabled} />
+}
+
+export function PalautaAsiatarkastukseen() {
+  const hakemus = useHakemus()
+  const avustushakuId = useAvustushakuId()
+  const dispatch = useHakemustenArviointiDispatch()
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string>()
+  const dialogRef = useRef<HTMLDialogElement>(null)
+
+  const onDialogClose = () => {
+    const dialog = dialogRef.current
+    if (dialog?.returnValue === 'confirm') {
+      palauta()
+    }
+    if (dialog) dialog.returnValue = ''
+  }
+
+  const palauta = async () => {
+    setSubmitting(true)
+    setError(undefined)
+    try {
+      await HttpUtil.post(
+        `/api/avustushaku/${avustushakuId}/hakemus/${hakemus.id}/loppuselvitys/palauta-asiatarkastukseen`,
+        {}
+      )
+      await dispatch(refreshHakemus({ hakemusId: hakemus.id }))
+    } catch (e) {
+      console.error('Failed to return loppuselvitys to asiatarkastus', e)
+      const status = getHttpResponseErrorStatus(e)
+      setError(
+        status === 400
+          ? 'Loppuselvitystä ei voi palauttaa asiatarkastukseen, päivitä sivu'
+          : 'Palauttaminen asiatarkastukseen epäonnistui'
+      )
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="palauta-asiatarkastukseen">
+      <button
+        name="palauta-asiatarkastukseen"
+        disabled={submitting}
+        onClick={() => dialogRef.current?.showModal()}
+      >
+        Palauta loppuselvitys asiatarkastukseen
+      </button>
+      <ConfirmDialog
+        ref={dialogRef}
+        title="Palauta loppuselvitys asiatarkastukseen"
+        cancelLabel="Peruuta"
+        confirmLabel="Palauta asiatarkastukseen"
+        testId="palauta-asiatarkastukseen-modal"
+        cancelTestId="palauta-asiatarkastukseen-cancel-button"
+        confirmTestId="palauta-asiatarkastukseen-confirm-button"
+        onClose={onDialogClose}
+      >
+        <p>Asiatarkastuksen tiedot tyhjennetään. Aiempi asiatarkastus jää näkyviin historiaan.</p>
+      </ConfirmDialog>
+      {error && <div className="error">{error}</div>}
+    </div>
+  )
+}
+
+function LoppuselvitysPalautukset() {
+  const hakemus = useHakemus()
+  const palautukset = hakemus.selvitys?.loppuselvitysPalautukset
+  if (!palautukset?.length) return null
+  return (
+    <div data-test-id="loppuselvitys-palautukset">
+      {palautukset.map((palautus) => (
+        <React.Fragment key={palautus.id}>
+          {palautus.information_verified_by && palautus.information_verified_at && (
+            <AvattavaTarkastusRow
+              name={palautus.information_verified_by}
+              heading="Asiatarkastettu"
+              date={palautus.information_verified_at}
+              dataTestId="loppuselvitys-palautus-asiatarkastettu"
+            >
+              <AsiatarkastusContent verification={palautus.information_verification} />
+            </AvattavaTarkastusRow>
+          )}
+          <ViestiListaStaticRow
+            icon="undo"
+            date={palautus.created_at}
+            virkailija={palautus.user_name.trim()}
+            heading="Palautettu asiatarkastukseen"
+            dataTestId="loppuselvitys-palautus"
+          />
+        </React.Fragment>
+      ))}
+    </div>
+  )
 }
 
 export function Taloustarkastus({ disabled }: { disabled: boolean }) {
@@ -746,6 +845,7 @@ interface LoppuselvitysTarkastusProps {
   taydennyspyyntoHeading: string
   confirmButton: React.JSX.Element
   dataTestId: string
+  showPalautukset?: boolean
   completedBy?: {
     name: string
     date: string
@@ -757,6 +857,7 @@ interface LoppuselvitysTarkastusProps {
 
 function LoppuselvitysTarkastus({
   dataTestId,
+  showPalautukset,
   disabled,
   heading,
   taydennyspyyntoHeading,
@@ -912,6 +1013,7 @@ ${email.footer}`,
         </div>
       )}
       <ViestiLista heading="Täydennyspyyntö" messages={sentEmails ?? []} />
+      {showPalautukset && <LoppuselvitysPalautukset />}
       {completedBy && (
         <AvattavaTarkastusRow
           name={completedBy.name}

@@ -23,6 +23,7 @@
    [oph.va.routes :refer :all]
    [oph.va.virkailija.authorization :as authorization]
    [oph.va.virkailija.email :as email]
+   [oph.va.virkailija.tapahtumaloki :as tapahtumaloki]
    [ring.util.http-response :refer [bad-request conflict! ok]])
   (:import
    (oph.va.jdbc.enums HakuRole HakuStatus HakuType)))
@@ -563,6 +564,7 @@ order by upper(h.organization_name), upper(h.project_name)")
      :valiselvitysForm (form->json valiselvitys-form)
      :loppuselvitys (if loppuselvitys (hakemus->json loppuselvitys) {})
      :loppuselvitysChangeRequests loppuselvitys-change-requests
+     :loppuselvitysPalautukset (tapahtumaloki/get-loppuselvitys-palautukset avustushaku-id hakemus-id)
      :valiselvitys (if valiselvitys (hakemus->json valiselvitys) {})
      :attachments (->> attachments
                        (partition-by (fn [attachment] (:hakemus_id attachment)))
@@ -882,6 +884,40 @@ order by upper(h.organization_name), upper(h.project_name)")
                  :in "verify-loppuselvitys-information"
                  :hakemus-id hakemus-id})
       (conflict!))))
+
+(defn palauta-loppuselvitys-asiatarkastukseen
+  "Returns the loppuselvitys from information_verified status to asiatarkastus (submitted), snapshotting the previous asiatarkastus. Returns true on success, nil when the loppuselvitys was not in information_verified status."
+  [avustushaku-id hakemus-id identity]
+  (with-tx
+    (fn [tx]
+      (let [asiatarkastus-ennen-palautusta (first (query tx
+                                                         "SELECT loppuselvitys_information_verification, loppuselvitys_information_verified_by, loppuselvitys_information_verified_at
+                                     FROM hakemukset
+                                     WHERE id = ? AND version_closed IS NULL AND status_loppuselvitys = 'information_verified'
+                                     FOR UPDATE"
+                                                         [hakemus-id]))
+            [paivitetyt-rivit] (execute!
+                                tx
+                                "UPDATE hakemukset
+                        SET status_loppuselvitys = 'submitted',
+                            loppuselvitys_information_verification = NULL,
+                            loppuselvitys_information_verified_by = NULL,
+                            loppuselvitys_information_verified_at = NULL,
+                            loppuselvitys_riskiperusteinen = FALSE
+                        WHERE id = ? AND version_closed IS NULL AND status_loppuselvitys = 'information_verified'"
+                                [hakemus-id])]
+        (when (pos? paivitetyt-rivit)
+          (execute! tx "DELETE FROM virkailija.loppuselvitys_asiatarkastus_checklist WHERE hakemus_id = ?" [hakemus-id])
+          (let [[{tapahtumaloki-id :id}] (tapahtumaloki/create-loppuselvitys-palautettu-entry-tx tx avustushaku-id hakemus-id identity)]
+            (execute! tx
+                      "INSERT INTO virkailija.palautettu_asiatarkastus
+                       (tapahtumaloki_id, information_verified_by, information_verified_at, information_verification)
+                       VALUES (?, ?, ?, ?)"
+                      [tapahtumaloki-id
+                       (:loppuselvitys-information-verified-by asiatarkastus-ennen-palautusta)
+                       (:loppuselvitys-information-verified-at asiatarkastus-ennen-palautusta)
+                       (:loppuselvitys-information-verification asiatarkastus-ennen-palautusta)]))
+          true)))))
 
 (defn get-hakemusdata [hakemus-id]
   (let [hakemus (first (query-original-identifiers
