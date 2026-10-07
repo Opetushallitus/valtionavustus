@@ -84,7 +84,7 @@
 
 
                          ;; other
-                         [metosin/ring-swagger-ui "5.32.11"]
+                         [metosin/ring-swagger-ui "5.33.0"]
 
                          [org.clojure/core.memoize "1.2.281"]]
 
