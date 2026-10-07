@@ -95,38 +95,65 @@ function EmailField(props: { name: string; address: string | null | undefined; t
   )
 }
 
-interface ViestilistaRowProps {
+interface RowContentProps {
   date: string
   virkailija: string
   heading?: string
-  onClick?: () => void
-  icon: 'done' | 'envelope'
+  icon: 'done' | 'envelope' | 'undo'
+}
+
+interface ViestilistaRowProps extends RowContentProps {
+  onClick: () => void
   dataTestId?: string
   children?: React.ReactNode
 }
 
-export function ViestiListaRow({
-  date,
-  virkailija,
-  heading,
-  onClick,
-  icon,
-  dataTestId,
-  children,
-}: ViestilistaRowProps) {
+export function ViestiListaRow({ onClick, dataTestId, children, ...content }: ViestilistaRowProps) {
   return (
     <div role="listitem" className={'viestiListaItem'}>
-      <div className={'viestiListaRow'} role="button" onClick={onClick} data-test-id={dataTestId}>
-        {icon === 'envelope' ? <EnvelopeIcon active /> : <DoneIcon />}
-        <div className={'rowDate'}>{formatDate(date)}</div>
-        <div className={'rowVirkailija'}>{virkailija}</div>
-        {heading ? <div className={'rowHeading'}>{heading}</div> : <div></div>}
-        <div className={'rowOpenCloseIcon'}>
+      <button
+        type="button"
+        className={'viestiListaRow'}
+        onClick={onClick}
+        data-test-id={dataTestId}
+      >
+        <RowContent {...content} />
+        <span className={'rowOpenCloseIcon'}>
           <CloseIcon />
-        </div>
-      </div>
+        </span>
+      </button>
       {children}
     </div>
+  )
+}
+
+export function ViestiListaStaticRow({
+  dataTestId,
+  ...content
+}: RowContentProps & { dataTestId?: string }) {
+  return (
+    <div role="listitem" className={'viestiListaItem'}>
+      <div className={'viestiListaRow'} data-test-id={dataTestId}>
+        <RowContent {...content} />
+      </div>
+    </div>
+  )
+}
+
+function RowContent({ date, virkailija, heading, icon }: RowContentProps) {
+  return (
+    <>
+      {icon === 'envelope' ? (
+        <EnvelopeIcon active />
+      ) : icon === 'undo' ? (
+        <UndoIcon />
+      ) : (
+        <DoneIcon />
+      )}
+      <span className={'rowDate'}>{formatDate(date)}</span>
+      <span className={'rowVirkailija'}>{virkailija}</span>
+      <span className={'rowHeading'}>{heading}</span>
+    </>
   )
 }
 
@@ -147,5 +174,18 @@ const DoneIcon = () => (
         fill="#159ECB"
       />
     </g>
+  </svg>
+)
+
+const UndoIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 16 16" fill="none">
+    <circle cx="8" cy="8" r="8" fill="#159ECB" />
+    <path
+      d="M5.2 6.2h4.3a2.4 2.4 0 0 1 0 4.8H6.8M6.9 4.3 5 6.2l1.9 1.9"
+      stroke="#fff"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 )
