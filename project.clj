@@ -160,7 +160,7 @@
                  ]
 
   :profiles {:dev {:dependencies [[nrepl "1.7.0"]
-                                   [cider/cider-nrepl "0.62.2"]]}
+                                   [cider/cider-nrepl "0.63.1"]]}
              :uberjar {:aot [oph.va.hakija.main]
                         :main oph.va.hakija.main}
              :server-local {:env {:config "server/config/local.edn"
