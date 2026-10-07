@@ -17,13 +17,12 @@ jobs:
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-24.04
     steps:
-      - run: |
-          curl \
-            -H "AUTH_TOKEN: ${{ secrets.RADIATOR_AUTH_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -X PUT \
-            https://radiator.continuous-services.services/api/v2/buildstatus/valtionavustus/deploy-dev \
-            -d '{"status": "inProgress"}'
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/radiator-status
+        with:
+          status: inProgress
+          task: deploy-dev
+          api_key: ${{ secrets.RADIATOR_AUTH_TOKEN }}
 
   build:
     name: 01-build.sh
@@ -98,10 +97,9 @@ jobs:
     if: ${{ always() && contains(needs.*.result, 'failure') && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-24.04
     steps:
-      - run: |
-          curl \
-            -H "AUTH_TOKEN: ${{ secrets.RADIATOR_AUTH_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -X PUT \
-            https://radiator.continuous-services.services/api/v2/buildstatus/valtionavustus/deploy-dev \
-            -d '{"status": "failure"}'
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/radiator-status
+        with:
+          status: failure
+          task: deploy-dev
+          api_key: ${{ secrets.RADIATOR_AUTH_TOKEN }}

@@ -1,0 +1,38 @@
+name: Send status to radiator
+description: Send build/deploy status with commit info to radiator. Requires the repository to be checked out.
+inputs:
+  status:
+    description: inProgress, success or failure
+    required: true
+  task:
+    description: Radiator task name, e.g. deploy-dev
+    required: true
+  api_key:
+    description: Radiator auth token
+    required: true
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        STATUS: ${{ inputs.status }}
+        TASK: ${{ inputs.task }}
+        AUTH_TOKEN: ${{ inputs.api_key }}
+        COMMIT_HASH: ${{ github.sha }}
+        DEPLOYER: ${{ github.actor }}
+        RUN_ID: ${{ github.run_id }}
+      run: |
+        body=$(jq -n \
+          --arg status "$STATUS" \
+          --arg commitHeader "$(git log -1 --pretty=%s)" \
+          --arg committer "$(git log -1 --pretty=%an)" \
+          --arg commitHash "$COMMIT_HASH" \
+          --arg deployer "$DEPLOYER" \
+          --arg runId "$RUN_ID" \
+          '$ARGS.named')
+        curl \
+          -H "AUTH_TOKEN: $AUTH_TOKEN" \
+          -H "Content-Type: application/json" \
+          -X PUT \
+          "https://radiator.continuous-services.services/api/v2/buildstatus/valtionavustus/$TASK" \
+          -d "$body"
