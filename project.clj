@@ -145,7 +145,7 @@
 
                  ;; miscellaneous
                  [clj-time "0.15.2"]
-                 [joda-time "2.14.3"] ; also required by com.github.java-json-tools/json-schema-validator
+                 [joda-time "2.15.0"] ; also required by com.github.java-json-tools/json-schema-validator
                                       ; and clj-time
                  [de.ubercode.clostache/clostache "1.4.0"] ; email templates and some html templating somewhere
 
