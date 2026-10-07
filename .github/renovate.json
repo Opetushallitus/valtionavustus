@@ -6,7 +6,6 @@
     ":rebaseStalePrs",
     "security:minimumReleaseAgeNpm"
   ],
-  "onboarding": false,
   "postUpgradeTasks": {
     "executionMode": "branch",
     "commands": ["./scripts/refresh_pom_xml.sh"],
@@ -16,9 +15,7 @@
   "dependencyDashboard": true,
   "dependencyDashboardTitle": "Dependency Dashboard self-hosted",
   "gitAuthor": "Self-hosted Renovate Bot <130737409+valtionavustus-renovate[bot]@users.noreply.github.com>",
-  "username": "valtionavustus-renovate[bot]",
   "branchPrefix": "github-renovate/",
-  "platform": "github",
   "forkProcessing": "disabled",
   "ignoreTests": false,
   "automergeType": "pr",
@@ -31,7 +28,6 @@
   "automergeSchedule": ["every weekend", "after 5pm", "before 5am"],
   "platformAutomerge": true,
   "automerge": true,
-  "repositories": ["Opetushallitus/valtionavustus"],
   "osvVulnerabilityAlerts": true,
   "vulnerabilityAlerts": {
     "labels": ["security"],
