@@ -3,18 +3,19 @@
    [oph.soresu.common.db :as db]
    [clojure.tools.logging :as log]))
 
-(defn- store-log-entry [{:keys [tyyppi avustushaku_id hakemus_id batch_id emails success user_name user_oid email_id]}]
-  (db/query "INSERT INTO virkailija.tapahtumaloki
+(defn- store-log-entry [tx {:keys [tyyppi avustushaku_id hakemus_id batch_id emails success user_name user_oid email_id]}]
+  (db/query tx "INSERT INTO virkailija.tapahtumaloki
              (id, tyyppi, avustushaku_id, hakemus_id, batch_id, emails, success, user_name, user_oid, email_id)
              VALUES (NEXTVAL ('virkailija.tapahtumaloki_id_seq'), ?, ?, ?, ?, ?, ?, ?, ?, ?)
              RETURNING id"
             [tyyppi avustushaku_id hakemus_id batch_id emails success user_name user_oid email_id]))
 
-(defn create-log-entry [tyyppi avustushaku-id hakemus-id identity batch-id emails email-id success]
+(defn create-log-entry-tx [tx tyyppi avustushaku-id hakemus-id identity batch-id emails email-id success]
   (let [user-info {:user_oid (:person-oid identity)
                    :user_name (format " %s %s " (:first-name identity) (:surname identity))}]
     (log/info (str "Creating log entry " tyyppi " for avustushaku " avustushaku-id " hakemus " hakemus-id))
     (store-log-entry
+     tx
      (merge user-info
             {:tyyppi         tyyppi
              :avustushaku_id avustushaku-id
@@ -23,6 +24,11 @@
              :emails         {:addresses emails}
              :email_id       email-id
              :success        success}))))
+
+(defn create-log-entry [tyyppi avustushaku-id hakemus-id identity batch-id emails email-id success]
+  (db/with-tx
+    (fn [tx]
+      (create-log-entry-tx tx tyyppi avustushaku-id hakemus-id identity batch-id emails email-id success))))
 
 (defn create-paatoksen-lahetys-entry [avustushaku-id hakemus-id identity batch-id emails success]
   (create-log-entry "paatoksen_lahetys" avustushaku-id hakemus-id identity batch-id emails nil success))
