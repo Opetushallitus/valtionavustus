@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react'
 
-import * as styles from './OtantatarkastusBackfillModal.module.css'
+import { ConfirmDialog } from '../../common-components/ConfirmDialog'
 
 interface Props {
   eligibleCount: number
@@ -22,26 +22,24 @@ loppuselvityksille satunnaisotantavalinnan välittömästi.`
 otantatarkastus otetaan käyttöön, järjestelmä tekee näille tarkastamattomille
 loppuselvityksille satunnaisotantavalinnan välittömästi.`
     return (
-      <dialog ref={ref} data-test-id="backfill-confirm-modal" onClose={onClose}>
-        <form method="dialog">
-          <h2>Vahvista otantatarkastuksen käyttöönotto</h2>
-          <p>{bodyText}</p>
-          <p>
-            Kaikki loppuselvitykset asiatarkastetaan normaalisti. Jos loppuselvitys valitaan
-            satunnaisotantaan, se siirtyy asiatarkastuksen jälkeen taloustarkastukseen, ellei se
-            ohjaudu taloustarkastukseen jo asiatarkastuksessa havaitun riskin perusteella.
-          </p>
-          <p>Voit myöhemmin palauttaa haun takaisin 2-vaiheiseen tarkastukseen.</p>
-          <div className={styles.buttons}>
-            <button type="submit" value="cancel" data-test-id="backfill-cancel-button">
-              Peruuta
-            </button>
-            <button type="submit" value="confirm" data-test-id="backfill-confirm-button">
-              Ota käyttöön
-            </button>
-          </div>
-        </form>
-      </dialog>
+      <ConfirmDialog
+        ref={ref}
+        title="Vahvista otantatarkastuksen käyttöönotto"
+        cancelLabel="Peruuta"
+        confirmLabel="Ota käyttöön"
+        testId="backfill-confirm-modal"
+        cancelTestId="backfill-cancel-button"
+        confirmTestId="backfill-confirm-button"
+        onClose={onClose}
+      >
+        <p>{bodyText}</p>
+        <p>
+          Kaikki loppuselvitykset asiatarkastetaan normaalisti. Jos loppuselvitys valitaan
+          satunnaisotantaan, se siirtyy asiatarkastuksen jälkeen taloustarkastukseen, ellei se
+          ohjaudu taloustarkastukseen jo asiatarkastuksessa havaitun riskin perusteella.
+        </p>
+        <p>Voit myöhemmin palauttaa haun takaisin 2-vaiheiseen tarkastukseen.</p>
+      </ConfirmDialog>
     )
   }
 )

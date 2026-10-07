@@ -165,6 +165,51 @@ function CommentTextarea({
   )
 }
 
+function AvattavaTarkastusRow({
+  name,
+  date,
+  heading,
+  dataTestId,
+  children,
+}: {
+  name: string
+  date: string
+  heading: string
+  dataTestId: string
+  children?: React.ReactNode
+}) {
+  const [open, setOpen] = useState(false)
+  return (
+    <ViestiListaRow
+      icon="done"
+      virkailija={name}
+      date={date}
+      onClick={() => setOpen((show) => !show)}
+      heading={heading}
+      dataTestId={dataTestId}
+    >
+      {open && children}
+    </ViestiListaRow>
+  )
+}
+
+function AsiatarkastusContent({
+  verification,
+  children,
+}: {
+  verification?: string | null
+  children?: React.ReactNode
+}) {
+  return (
+    <div className="asiatarkastettu-content">
+      {children}
+      <div className={'messageDetails'}>
+        <div className={'rowMessage'}>{verification}</div>
+      </div>
+    </div>
+  )
+}
+
 function VerifiedDrawer({ hakemus, showChecklist }: { hakemus: Hakemus; showChecklist: boolean }) {
   const verifiedBy = hakemus['loppuselvitys-information-verified-by']
   const verifiedAt = hakemus['loppuselvitys-information-verified-at']
@@ -172,7 +217,7 @@ function VerifiedDrawer({ hakemus, showChecklist }: { hakemus: Hakemus; showChec
   const savedChecklist = hakemus['asiatarkastus-checklist']
   if (!verifiedBy || !verifiedAt) return null
   return (
-    <div className="asiatarkastettu-content">
+    <AsiatarkastusContent verification={verification}>
       {showChecklist && savedChecklist && (
         <div className="verification-checklist-readonly">
           <AsiatarkastusChecklistInput
@@ -182,10 +227,7 @@ function VerifiedDrawer({ hakemus, showChecklist }: { hakemus: Hakemus; showChec
           />
         </div>
       )}
-      <div className={'messageDetails'}>
-        <div className={'rowMessage'}>{verification}</div>
-      </div>
-    </div>
+    </AsiatarkastusContent>
   )
 }
 
@@ -758,7 +800,6 @@ function LoppuselvitysTarkastus({
     )
   )
   const revealEmailForm = () => emailFormRef.current?.scrollIntoView({ behavior: 'smooth' })
-  const [showMessage, setShowMessage] = useState(false)
   const [cancellingTaydennys, setCancellingTaydennys] = useState(false)
   const [cancelErrorMsg, setCancelErrorMsg] = useState<string>()
 
@@ -872,16 +913,14 @@ ${email.footer}`,
       )}
       <ViestiLista heading="Täydennyspyyntö" messages={sentEmails ?? []} />
       {completedBy && (
-        <ViestiListaRow
-          icon="done"
-          virkailija={completedBy.name}
+        <AvattavaTarkastusRow
+          name={completedBy.name}
           date={completedBy.date}
-          onClick={() => setShowMessage((show) => !show)}
           heading={completedBy.heading}
           dataTestId="loppuselvitys-tarkastus"
         >
-          {showMessage && completedBy.component}
-        </ViestiListaRow>
+          {completedBy.component}
+        </AvattavaTarkastusRow>
       )}
       {showEmailForm && (
         <MultipleRecipentEmailForm
