@@ -11,7 +11,7 @@ import HttpUtil, { getHttpResponseErrorStatus } from 'soresu-form/web/HttpUtil'
 import { Language, translations } from 'soresu-form/web/va/i18n/translations'
 
 import { ConfirmDialog } from '../../../common-components/ConfirmDialog'
-import ViestiLista, { ViestiDetails, ViestiListaRow, ViestiListaStaticRow } from '../ViestiLista'
+import ViestiLista, { ViestiDetails, ViestiListaRow } from '../ViestiLista'
 import { useHakemus } from '../../useHakemus'
 import { useAvustushakuId } from '../../useAvustushaku'
 import MultipleRecipentEmailForm, { Email } from '../common-components/MultipleRecipentsEmailForm'
@@ -105,36 +105,39 @@ function AsiatarkastusChecklistInput({
   checklist,
   disabled,
   onChange,
+  idPrefix = '',
 }: {
   checklist: AsiatarkastusChecklist
   disabled: boolean
   onChange: (key: AsiatarkastusChecklistKey, value: boolean) => void
+  // keeps ids and radio group names unique when several checklists are on the page
+  idPrefix?: string
 }) {
   return (
-    <div className="verification-checklist" data-test-id="asiatarkastus-checklist">
+    <div className="verification-checklist" data-test-id={`${idPrefix}asiatarkastus-checklist`}>
       {ASIATARKASTUS_CHECKLIST_ITEMS.map((item) => (
         <div key={item.key} className="verification-checklist-item">
           <fieldset className="soresu-radiobutton-group">
             <input
-              id={`${item.key}-true`}
+              id={`${idPrefix}${item.key}-true`}
               type="radio"
-              name={item.key}
+              name={`${idPrefix}${item.key}`}
               value="true"
               checked={checklist[item.key] === true}
               disabled={disabled}
               onChange={() => onChange(item.key, true)}
             />
-            <label htmlFor={`${item.key}-true`}>Kyllä</label>
+            <label htmlFor={`${idPrefix}${item.key}-true`}>Kyllä</label>
             <input
-              id={`${item.key}-false`}
+              id={`${idPrefix}${item.key}-false`}
               type="radio"
-              name={item.key}
+              name={`${idPrefix}${item.key}`}
               value="false"
               checked={checklist[item.key] === false}
               disabled={disabled}
               onChange={() => onChange(item.key, false)}
             />
-            <label htmlFor={`${item.key}-false`}>Ei</label>
+            <label htmlFor={`${idPrefix}${item.key}-false`}>Ei</label>
           </fieldset>
           <span>{item.label}</span>
         </div>
@@ -171,18 +174,22 @@ function AvattavaTarkastusRow({
   date,
   heading,
   dataTestId,
+  icon = 'done',
+  defaultOpen = false,
   children,
 }: {
   name: string
   date: string
   heading: string
   dataTestId: string
+  icon?: 'done' | 'undo'
+  defaultOpen?: boolean
   children?: React.ReactNode
 }) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(defaultOpen)
   return (
     <ViestiListaRow
-      icon="done"
+      icon={icon}
       virkailija={name}
       date={date}
       onClick={() => setOpen((show) => !show)}
@@ -211,6 +218,25 @@ function AsiatarkastusContent({
   )
 }
 
+function ReadonlyAsiatarkastusChecklist({
+  checklist,
+  idPrefix,
+}: {
+  checklist: AsiatarkastusChecklist
+  idPrefix?: string
+}) {
+  return (
+    <div className="verification-checklist-readonly">
+      <AsiatarkastusChecklistInput
+        checklist={checklist}
+        disabled={true}
+        onChange={() => {}}
+        idPrefix={idPrefix}
+      />
+    </div>
+  )
+}
+
 function VerifiedDrawer({ hakemus, showChecklist }: { hakemus: Hakemus; showChecklist: boolean }) {
   const verifiedBy = hakemus['loppuselvitys-information-verified-by']
   const verifiedAt = hakemus['loppuselvitys-information-verified-at']
@@ -220,13 +246,7 @@ function VerifiedDrawer({ hakemus, showChecklist }: { hakemus: Hakemus; showChec
   return (
     <AsiatarkastusContent verification={verification}>
       {showChecklist && savedChecklist && (
-        <div className="verification-checklist-readonly">
-          <AsiatarkastusChecklistInput
-            checklist={savedChecklist}
-            disabled={true}
-            onChange={() => {}}
-          />
-        </div>
+        <ReadonlyAsiatarkastusChecklist checklist={savedChecklist} />
       )}
     </AsiatarkastusContent>
   )
@@ -606,12 +626,15 @@ export function PalautaAsiatarkastukseen() {
   const dispatch = useHakemustenArviointiDispatch()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string>()
+  const [syy, setSyy] = useState('')
   const dialogRef = useRef<HTMLDialogElement>(null)
 
   const onDialogClose = () => {
     const dialog = dialogRef.current
     if (dialog?.returnValue === 'confirm') {
       palauta()
+    } else {
+      setSyy('')
     }
     if (dialog) dialog.returnValue = ''
   }
@@ -622,8 +645,9 @@ export function PalautaAsiatarkastukseen() {
     try {
       await HttpUtil.post(
         `/api/avustushaku/${avustushakuId}/hakemus/${hakemus.id}/loppuselvitys/palauta-asiatarkastukseen`,
-        {}
+        { syy }
       )
+      setSyy('')
       await dispatch(refreshHakemus({ hakemusId: hakemus.id }))
     } catch (e) {
       console.error('Failed to return loppuselvitys to asiatarkastus', e)
@@ -657,7 +681,20 @@ export function PalautaAsiatarkastukseen() {
         confirmTestId="palauta-asiatarkastukseen-confirm-button"
         onClose={onDialogClose}
       >
-        <p>Asiatarkastuksen tiedot tyhjennetään. Aiempi asiatarkastus jää näkyviin historiaan.</p>
+        <p>
+          Asiatarkastuksen tiedot ja tarkistuslista tyhjennetään. Aiempi asiatarkastus jää näkyviin
+          historiaan.
+        </p>
+        <label className="palautuksen-syy">
+          Palautuksen syy
+          <textarea
+            name="palautuksen-syy"
+            required
+            rows={4}
+            value={syy}
+            onChange={(e) => setSyy(e.target.value)}
+          />
+        </label>
       </ConfirmDialog>
       {error && <div className="error">{error}</div>}
     </div>
@@ -668,9 +705,10 @@ function LoppuselvitysPalautukset() {
   const hakemus = useHakemus()
   const palautukset = hakemus.selvitys?.loppuselvitysPalautukset
   if (!palautukset?.length) return null
+  const odottaaAsiatarkastusta = hakemus['status-loppuselvitys'] === 'submitted'
   return (
     <div data-test-id="loppuselvitys-palautukset">
-      {palautukset.map((palautus) => (
+      {palautukset.map((palautus, index) => (
         <React.Fragment key={palautus.id}>
           {palautus.information_verified_by && palautus.information_verified_at && (
             <AvattavaTarkastusRow
@@ -679,16 +717,28 @@ function LoppuselvitysPalautukset() {
               date={palautus.information_verified_at}
               dataTestId="loppuselvitys-palautus-asiatarkastettu"
             >
-              <AsiatarkastusContent verification={palautus.information_verification} />
+              <AsiatarkastusContent verification={palautus.information_verification}>
+                {palautus['asiatarkastus-checklist'] && (
+                  <ReadonlyAsiatarkastusChecklist
+                    checklist={palautus['asiatarkastus-checklist']}
+                    idPrefix={`palautus-${palautus.id}-`}
+                  />
+                )}
+              </AsiatarkastusContent>
             </AvattavaTarkastusRow>
           )}
-          <ViestiListaStaticRow
+          <AvattavaTarkastusRow
             icon="undo"
-            date={palautus.created_at}
-            virkailija={palautus.user_name.trim()}
+            defaultOpen={odottaaAsiatarkastusta && index === palautukset.length - 1}
+            name={palautus.user_name.trim()}
             heading="Palautettu asiatarkastukseen"
+            date={palautus.created_at}
             dataTestId="loppuselvitys-palautus"
-          />
+          >
+            <AsiatarkastusContent
+              verification={palautus.syy ? `Syy: ${palautus.syy}` : 'Syytä ei kirjattu'}
+            />
+          </AvattavaTarkastusRow>
         </React.Fragment>
       ))}
     </div>

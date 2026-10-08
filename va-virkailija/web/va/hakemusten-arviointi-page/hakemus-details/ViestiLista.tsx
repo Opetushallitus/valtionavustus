@@ -127,19 +127,6 @@ export function ViestiListaRow({ onClick, dataTestId, children, ...content }: Vi
   )
 }
 
-export function ViestiListaStaticRow({
-  dataTestId,
-  ...content
-}: RowContentProps & { dataTestId?: string }) {
-  return (
-    <div role="listitem" className={'viestiListaItem'}>
-      <div className={'viestiListaRow'} data-test-id={dataTestId}>
-        <RowContent {...content} />
-      </div>
-    </div>
-  )
-}
-
 function RowContent({ date, virkailija, heading, icon }: RowContentProps) {
   return (
     <>
