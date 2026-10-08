@@ -23,7 +23,7 @@ export const ConfirmDialog = forwardRef<HTMLDialogElement, Props>(function Confi
         <h2>{title}</h2>
         {children}
         <div className={styles.buttons}>
-          <button type="submit" value="cancel" data-test-id={cancelTestId}>
+          <button type="submit" value="cancel" formNoValidate data-test-id={cancelTestId}>
             {cancelLabel}
           </button>
           <button type="submit" value="confirm" data-test-id={confirmTestId}>
