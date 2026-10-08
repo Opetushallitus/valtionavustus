@@ -254,7 +254,7 @@ export interface LoppuselvitysPalautus {
   information_verified_by: string | null
   information_verified_at: string | null
   information_verification: string | null
-  syy: string | null
+  syy: string
   'asiatarkastus-checklist': AsiatarkastusChecklist | null
   riskiperusteinen: boolean | null
 }

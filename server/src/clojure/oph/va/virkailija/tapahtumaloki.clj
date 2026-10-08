@@ -64,12 +64,25 @@
      ORDER BY created_at ASC"
    [avustushaku-id tyyppi hakemus-id]))
 
+(defn- palautus->json [palautus]
+  (-> palautus
+      (dissoc :avustus_kaytetty_paatoksen_mukaisesti :omarahoitus_kaytetty :taloustiedot_kirjattu :avustus_alle_100k)
+      (assoc :asiatarkastus-checklist
+             (when (some? (:avustus_kaytetty_paatoksen_mukaisesti palautus))
+               {:avustus-kaytetty-paatoksen-mukaisesti (:avustus_kaytetty_paatoksen_mukaisesti palautus)
+                :omarahoitus-kaytetty (:omarahoitus_kaytetty palautus)
+                :taloustiedot-kirjattu (:taloustiedot_kirjattu palautus)
+                :avustus-alle-100k (:avustus_alle_100k palautus)}))))
+
 (defn get-loppuselvitys-palautukset [avustushaku-id hakemus-id]
-  (db/query-original-identifiers
-   "SELECT t.id, t.created_at, t.user_name,
-       p.information_verified_by, p.information_verified_at, p.information_verification
-     FROM virkailija.tapahtumaloki t
-     LEFT JOIN virkailija.palautettu_asiatarkastus p ON p.tapahtumaloki_id = t.id
-     WHERE t.avustushaku_id = ? AND t.hakemus_id = ? AND t.tyyppi = ?
-     ORDER BY t.created_at ASC"
-   [avustushaku-id hakemus-id loppuselvitys-palautettu-tyyppi]))
+  (map palautus->json
+       (db/query-original-identifiers
+        "SELECT t.id, t.created_at, t.user_name,
+            p.information_verified_by, p.information_verified_at, p.information_verification, p.syy,
+            p.avustus_kaytetty_paatoksen_mukaisesti, p.omarahoitus_kaytetty, p.taloustiedot_kirjattu, p.avustus_alle_100k,
+            p.riskiperusteinen
+          FROM virkailija.tapahtumaloki t
+          JOIN virkailija.palautettu_asiatarkastus p ON p.tapahtumaloki_id = t.id
+          WHERE t.avustushaku_id = ? AND t.hakemus_id = ? AND t.tyyppi = ?
+          ORDER BY t.created_at ASC"
+        [avustushaku-id hakemus-id loppuselvitys-palautettu-tyyppi])))

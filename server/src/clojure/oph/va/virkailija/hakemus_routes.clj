@@ -123,14 +123,18 @@
 
   (compojure-api/POST "/loppuselvitys/palauta-asiatarkastukseen" request
     :path-params [avustushaku-id :- Long hakemus-id :- Long]
+    :body [palautus {:syy s/Str}]
     :return s/Any
     :summary "Return asiatarkastettu loppuselvitys back to asiatarkastus"
-    (let [identity (authentication/get-request-identity request)]
+    (let [identity (authentication/get-request-identity request)
+          syy (clojure.string/trim (:syy palautus))]
       (when-not (config/feature-enabled? :enablePalautaLoppuselvitysAsiatarkastukseen)
         (http/not-found!))
       (when-not (authorization/is-pääkäyttäjä? identity)
         (http/forbidden!))
-      (if (hakija-api/palauta-loppuselvitys-asiatarkastukseen avustushaku-id hakemus-id identity)
+      (when (clojure.string/blank? syy)
+        (http/bad-request!))
+      (if (hakija-api/palauta-loppuselvitys-asiatarkastukseen avustushaku-id hakemus-id identity syy)
         (http/ok {})
         (http/bad-request!))))
 

@@ -887,14 +887,17 @@ order by upper(h.organization_name), upper(h.project_name)")
 
 (defn palauta-loppuselvitys-asiatarkastukseen
   "Returns the loppuselvitys from information_verified status to asiatarkastus (submitted), snapshotting the previous asiatarkastus. Returns true on success, nil when the loppuselvitys was not in information_verified status."
-  [avustushaku-id hakemus-id identity]
+  [avustushaku-id hakemus-id identity syy]
   (with-tx
     (fn [tx]
       (let [asiatarkastus-ennen-palautusta (first (query tx
-                                                         "SELECT loppuselvitys_information_verification, loppuselvitys_information_verified_by, loppuselvitys_information_verified_at
-                                     FROM hakemukset
-                                     WHERE id = ? AND version_closed IS NULL AND status_loppuselvitys = 'information_verified'
-                                     FOR UPDATE"
+                                                         "SELECT h.loppuselvitys_information_verification, h.loppuselvitys_information_verified_by, h.loppuselvitys_information_verified_at,
+                                            h.loppuselvitys_riskiperusteinen,
+                                            ac.avustus_kaytetty_paatoksen_mukaisesti, ac.omarahoitus_kaytetty, ac.taloustiedot_kirjattu, ac.avustus_alle_100k
+                                     FROM hakemukset h
+                                     LEFT JOIN virkailija.loppuselvitys_asiatarkastus_checklist ac ON ac.hakemus_id = h.id
+                                     WHERE h.id = ? AND h.version_closed IS NULL AND h.status_loppuselvitys = 'information_verified'
+                                     FOR UPDATE OF h"
                                                          [hakemus-id]))
             [paivitetyt-rivit] (execute!
                                 tx
@@ -911,12 +914,20 @@ order by upper(h.organization_name), upper(h.project_name)")
           (let [[{tapahtumaloki-id :id}] (tapahtumaloki/create-loppuselvitys-palautettu-entry-tx tx avustushaku-id hakemus-id identity)]
             (execute! tx
                       "INSERT INTO virkailija.palautettu_asiatarkastus
-                       (tapahtumaloki_id, information_verified_by, information_verified_at, information_verification)
-                       VALUES (?, ?, ?, ?)"
+                       (tapahtumaloki_id, information_verified_by, information_verified_at, information_verification, syy,
+                        avustus_kaytetty_paatoksen_mukaisesti, omarahoitus_kaytetty, taloustiedot_kirjattu, avustus_alle_100k,
+                        riskiperusteinen)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
                       [tapahtumaloki-id
                        (:loppuselvitys-information-verified-by asiatarkastus-ennen-palautusta)
                        (:loppuselvitys-information-verified-at asiatarkastus-ennen-palautusta)
-                       (:loppuselvitys-information-verification asiatarkastus-ennen-palautusta)]))
+                       (:loppuselvitys-information-verification asiatarkastus-ennen-palautusta)
+                       syy
+                       (:avustus-kaytetty-paatoksen-mukaisesti asiatarkastus-ennen-palautusta)
+                       (:omarahoitus-kaytetty asiatarkastus-ennen-palautusta)
+                       (:taloustiedot-kirjattu asiatarkastus-ennen-palautusta)
+                       (:avustus-alle-100k asiatarkastus-ennen-palautusta)
+                       (:loppuselvitys-riskiperusteinen asiatarkastus-ennen-palautusta)]))
           true)))))
 
 (defn get-hakemusdata [hakemus-id]
