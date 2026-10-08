@@ -39,6 +39,9 @@ export const LoppuselvitysPage = (page: Page) => {
     palautaDialog: page.getByTestId('palauta-asiatarkastukseen-modal'),
     palautaDialogCancel: page.getByTestId('palauta-asiatarkastukseen-cancel-button'),
     palautaDialogConfirm: page.getByTestId('palauta-asiatarkastukseen-confirm-button'),
+    palautaDialogSyy: page
+      .getByTestId('palauta-asiatarkastukseen-modal')
+      .getByLabel('Palautuksen syy'),
     palautukset: page.getByTestId('loppuselvitys-palautukset'),
     palautusHistoryRows: page
       .getByTestId('loppuselvitys-palautukset')
@@ -46,6 +49,9 @@ export const LoppuselvitysPage = (page: Page) => {
         '[data-test-id="loppuselvitys-palautus-asiatarkastettu"], [data-test-id="loppuselvitys-palautus"]'
       ),
     palautusAsiatarkastettu: page.getByTestId('loppuselvitys-palautus-asiatarkastettu'),
+    palautusChecklist: page
+      .getByTestId('loppuselvitys-palautukset')
+      .locator('[data-test-id$="-asiatarkastus-checklist"]'),
     otantatarkastus: {
       checklist: page.getByTestId('asiatarkastus-checklist'),
       checklistItem: (label: string) =>

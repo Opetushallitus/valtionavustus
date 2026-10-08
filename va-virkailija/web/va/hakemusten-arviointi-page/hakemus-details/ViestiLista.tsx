@@ -99,7 +99,7 @@ interface RowContentProps {
   date: string
   virkailija: string
   heading?: string
-  icon: 'done' | 'envelope' | 'undo'
+  icon: 'done' | 'done-palautettu' | 'envelope' | 'undo'
 }
 
 interface ViestilistaRowProps extends RowContentProps {
@@ -134,6 +134,8 @@ function RowContent({ date, virkailija, heading, icon }: RowContentProps) {
         <EnvelopeIcon active />
       ) : icon === 'undo' ? (
         <UndoIcon />
+      ) : icon === 'done-palautettu' ? (
+        <PalautettuDoneIcon />
       ) : (
         <DoneIcon />
       )}
@@ -161,6 +163,14 @@ const DoneIcon = () => (
         fill="#159ECB"
       />
     </g>
+  </svg>
+)
+
+// asiatarkastus that was later returned: grey, not red, so it doesn't read as hylätty
+const PalautettuDoneIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 16 16" fill="none">
+    <circle cx="8" cy="8" r="7.25" stroke="#8C8C8C" strokeWidth="1.5" />
+    <path d="M5.5 5.5l5 5M10.5 5.5l-5 5" stroke="#8C8C8C" strokeWidth="1.5" strokeLinecap="round" />
   </svg>
 )
 

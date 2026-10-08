@@ -182,7 +182,7 @@ function AvattavaTarkastusRow({
   date: string
   heading: string
   dataTestId: string
-  icon?: 'done' | 'undo'
+  icon?: 'done' | 'done-palautettu' | 'undo'
   defaultOpen?: boolean
   children?: React.ReactNode
 }) {
@@ -712,6 +712,7 @@ function LoppuselvitysPalautukset() {
         <React.Fragment key={palautus.id}>
           {palautus.information_verified_by && palautus.information_verified_at && (
             <AvattavaTarkastusRow
+              icon="done-palautettu"
               name={palautus.information_verified_by}
               heading="Asiatarkastettu"
               date={palautus.information_verified_at}
