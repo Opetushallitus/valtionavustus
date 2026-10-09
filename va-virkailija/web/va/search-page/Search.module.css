@@ -39,3 +39,67 @@
   font-weight: 700;
   margin-right: 0.5rem;
 }
+
+.hint {
+  font-size: 12px;
+  color: var(--darker-gray);
+  margin: 4px 0 8px;
+}
+
+.hint code {
+  background: var(--lighter-gray);
+  padding: 0 3px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0 10px;
+}
+
+.chip {
+  background: var(--lighter-blue);
+  border: 1px solid var(--light-blue);
+  border-radius: 12px;
+  padding: 2px 10px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.chip.zero {
+  background: #fff;
+  border-color: var(--dark-gray);
+  color: var(--darker-gray);
+}
+
+.chipCount {
+  margin-left: 4px;
+}
+
+.count {
+  font-size: 13px;
+  margin: 8px 0;
+}
+
+.suggestions {
+  background: var(--lighter-blue);
+  border: 1px solid var(--light-blue);
+  padding: 8px 10px;
+  margin-bottom: 6px;
+}
+
+.suggestions a {
+  text-decoration: underline;
+}
+
+.muted {
+  color: var(--darker-gray);
+  font-size: 12px;
+}
+
+.results mark {
+  background: #fbe9a6;
+  color: inherit;
+  padding: 0 1px;
+}

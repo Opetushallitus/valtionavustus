@@ -54,40 +54,45 @@ const SearchApp = () => {
   }
 }
 
-const orderByCreatedAt = <T extends { 'created-at': string }>(array: T[], order: string) => {
-  const newArray = [...array]
-  newArray.sort((a, b) =>
-    order === 'created-at-asc'
-      ? a['created-at'] >= b['created-at']
-        ? 1
-        : -1
-      : a['created-at'] < b['created-at']
-        ? 1
-        : -1
-  )
-  return newArray
+type Suggestion = { 'organization-name': string; 'application-count': number }
+type SearchTerm = { term: string; 'hit-count': number; suggestions: Suggestion[] }
+type TextPart = { text: string; match: boolean }
+type SearchResults = {
+  terms: SearchTerm[]
+  hakemukset: (HakemusV2 & {
+    'organization-name-parts': TextPart[]
+    'project-name-parts': TextPart[]
+  })[]
+  avustushaut: (AvustushakuV2 & { 'name-parts': TextPart[] })[]
 }
+type SearchHakemus = SearchResults['hakemukset'][number]
+type SearchHaku = SearchResults['avustushaut'][number]
 
-type LoadingState = 'initial' | 'loading' | 'error'
+type LoadingState = 'initial' | 'loading' | 'done' | 'error'
 
 const searchStateText: Record<LoadingState, string> = {
   initial: 'Ei hakutuloksia',
+  done: 'Ei hakutuloksia',
   loading: 'Ladataan...',
   error: 'Haku epäonnistui',
 }
 
+const isSearchLongEnough = (search: string) => search.length > 2
+
 const Search = () => {
   const query = new URLSearchParams(window.location.search)
-  const [input, setInput] = useState(query.get('search') ?? '')
-  const [order, setOrder] = useState(query.get('order') ?? 'created-at-asc')
-  const [hakemukset, setHakemukset] = useState<HakemusV2[]>([])
-  const [haut, setHaut] = useState<AvustushakuV2[]>([])
-  const [searchState, setSearchState] = useState<LoadingState>('initial')
-  const sending = searchState === 'loading'
-  const disabled = sending
+  const search = query.get('search') ?? ''
+  const [input, setInput] = useState(search)
+  const order = query.get('order') || 'created-at-desc'
+  const [terms, setTerms] = useState<SearchTerm[]>([])
+  const [hakemukset, setHakemukset] = useState<SearchHakemus[]>([])
+  const [haut, setHaut] = useState<SearchHaku[]>([])
+  const [searchState, setSearchState] = useState<LoadingState>(
+    isSearchLongEnough(search) ? 'loading' : 'initial'
+  )
 
   const doSearch = async (e: React.FormEvent<HTMLFormElement>) => {
-    if (input.length < 3) {
+    if (!isSearchLongEnough(input)) {
       e.preventDefault()
       e.stopPropagation()
       return
@@ -98,32 +103,24 @@ const Search = () => {
   }
 
   useEffect(() => {
-    const doSearch = async () => {
-      setSearchState('loading')
+    const loadResults = async () => {
       try {
-        const [newHakemukset, newHaut] = await Promise.all([
-          HttpUtil.get<HakemusV2[]>(`/api/v2/applications/${window.location.search}`),
-          HttpUtil.get<AvustushakuV2[]>(`/api/v2/grants/${window.location.search}`),
-        ])
-        setHakemukset(newHakemukset)
-        setHaut(newHaut)
-        setSearchState('initial')
+        const results = await HttpUtil.get<SearchResults>(
+          `/api/v2/search/${window.location.search}`
+        )
+        setTerms(results.terms)
+        setHakemukset(results.hakemukset)
+        setHaut(results.avustushaut)
+        setSearchState('done')
       } catch (e: unknown) {
         setSearchState('error')
       }
     }
 
-    const params = new URLSearchParams(window.location.search)
-    const search = params.get('search')
-    if (search && search.length > 2) {
-      void doSearch()
+    if (isSearchLongEnough(search)) {
+      void loadResults()
     }
   }, [])
-
-  useEffect(() => {
-    setHakemukset(orderByCreatedAt(hakemukset, order))
-    setHaut(orderByCreatedAt(haut, order))
-  }, [order])
 
   return (
     <>
@@ -134,21 +131,33 @@ const Search = () => {
           className="oph-input"
           onChange={(e) => setInput(e.target.value)}
           value={input}
-          readOnly={disabled}
+          readOnly={searchState === 'loading'}
           autoFocus
         />
         <div className="oph-select-container">
           <select
             name="order"
-            defaultValue={query.get('order') || 'created-at-desc'}
+            defaultValue={order}
             className="oph-input oph-select"
-            onChange={(e) => setOrder(e.target.value)}
+            onChange={(e) => e.currentTarget.form?.requestSubmit()}
           >
             <option value="created-at-desc">Uusin ensin</option>
             <option value="created-at-asc">Vanhin ensin</option>
           </select>
         </div>
       </form>
+      <div className={styles.hint}>
+        Erota hakusanat pilkulla: <code>helsinki, vantaa</code> · haku osuu sanan alkuun
+      </div>
+      {searchState === 'done' && terms.length > 0 && (
+        <>
+          <TermChips terms={terms} />
+          <div className={styles.count}>
+            <b>{hakemukset.length}</b> hakemusta · <b>{haut.length}</b> avustushakua
+          </div>
+          <SuggestionBox terms={terms} order={order} />
+        </>
+      )}
       <div className={styles.results}>
         <div>
           <h1>Avustushaut</h1>
@@ -171,14 +180,70 @@ const Search = () => {
   )
 }
 
+const TermChips = ({ terms }: { terms: SearchTerm[] }) => (
+  <div className={styles.chips}>
+    {terms.map(({ term, 'hit-count': hitCount }) => (
+      <span
+        key={term}
+        className={hitCount === 0 ? `${styles.chip} ${styles.zero}` : styles.chip}
+        data-test-class="search-term-chip"
+        data-hit-count={hitCount}
+      >
+        {term}
+        <b className={styles.chipCount}>{hitCount}</b>
+      </span>
+    ))}
+  </div>
+)
+
+const searchUrlReplacingTerm = (
+  terms: SearchTerm[],
+  term: string,
+  replacement: string,
+  order: string
+) => {
+  const search = terms.map((t) => (t.term === term ? replacement : t.term)).join(', ')
+  return `?${new URLSearchParams({ search, order })}`
+}
+
+const SuggestionBox = ({ terms, order }: { terms: SearchTerm[]; order: string }) => {
+  const termsWithSuggestions = terms.filter((term) => term.suggestions.length)
+  if (termsWithSuggestions.length === 0) {
+    return null
+  }
+  return (
+    <div className={styles.suggestions} data-test-id="search-suggestions">
+      Ei osumia. Tarkoititko:
+      {termsWithSuggestions.map(({ term, suggestions }) => (
+        <div key={term}>
+          <span className={styles.muted}>{term} →</span>{' '}
+          {suggestions.map((suggestion, i) => {
+            const name = suggestion['organization-name']
+            return (
+              <React.Fragment key={name}>
+                {i > 0 && ' · '}
+                <a href={searchUrlReplacingTerm(terms, term, name, order)}>{name}</a>{' '}
+                <span className={styles.muted}>({suggestion['application-count']})</span>
+              </React.Fragment>
+            )
+          })}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+const renderParts = (parts: TextPart[]) =>
+  parts.map(({ text, match }, i) => (match ? <mark key={i}>{text}</mark> : text))
+
 const dateFormat = 'D.M.YYYY H:mm'
 
-const renderHaku = (haku: AvustushakuV2) => {
+const renderHaku = (haku: SearchHaku) => {
   return (
     <div key={`haku-result-${haku.id}`} data-test-class="avustushaku-result">
       <a href={`/avustushaku/${haku.id}/`} target="_blank">
         <h2>
-          {haku['register-number']} - {haku.content.name.fi}
+          {haku['register-number']} - {renderParts(haku['name-parts'])}
         </h2>
       </a>
       <span>
@@ -189,7 +254,7 @@ const renderHaku = (haku: AvustushakuV2) => {
   )
 }
 
-const renderHakemus = (hakemus: HakemusV2) => {
+const renderHakemus = (hakemus: SearchHakemus) => {
   return (
     <div key={`hakemus-result-${hakemus.id}`} data-test-class="hakemus-result">
       <a
@@ -197,7 +262,7 @@ const renderHakemus = (hakemus: HakemusV2) => {
         target="_blank"
       >
         <h2>
-          {hakemus['register-number']} - {hakemus['organization-name']}
+          {hakemus['register-number']} - {renderParts(hakemus['organization-name-parts'])}
         </h2>
       </a>
       <div>
@@ -207,7 +272,7 @@ const renderHakemus = (hakemus: HakemusV2) => {
       {hakemus['project-name'] && (
         <div>
           <span className={styles.rowTitle}>Hanke</span>
-          {hakemus['project-name']}
+          {renderParts(hakemus['project-name-parts'])}
         </div>
       )}
       <div>
