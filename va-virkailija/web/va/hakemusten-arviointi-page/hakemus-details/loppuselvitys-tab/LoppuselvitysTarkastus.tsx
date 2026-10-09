@@ -736,7 +736,9 @@ function LoppuselvitysPalautukset() {
             date={palautus.created_at}
             dataTestId="loppuselvitys-palautus"
           >
-            <AsiatarkastusContent verification={`Syy: ${palautus.syy}`} />
+            <AsiatarkastusContent verification={palautus.syy}>
+              <div className="palautus-syy-label">Syy palautukseen:</div>
+            </AsiatarkastusContent>
           </AvattavaTarkastusRow>
         </React.Fragment>
       ))}

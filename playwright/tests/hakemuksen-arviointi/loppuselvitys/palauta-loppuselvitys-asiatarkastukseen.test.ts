@@ -121,7 +121,7 @@ test('pääkäyttäjä can return asiatarkastettu loppuselvitys to asiatarkastus
     await expect(taloustarkastus.accept).toBeHidden()
     await expect(palautaAsiatarkastukseen).toBeHidden()
     await expect(palautukset.getByText('Palautettu asiatarkastukseen')).toHaveCount(1)
-    await expect(palautukset.getByText(`Syy: ${syy}`)).toBeVisible()
+    await expect(palautukset.getByText(syy, { exact: true })).toBeVisible()
     await expect(liveRadios).toHaveCount(8)
     for (const radio of await liveRadios.all()) {
       await expect(radio).not.toBeChecked()
