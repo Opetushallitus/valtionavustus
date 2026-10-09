@@ -376,10 +376,6 @@
    (s/optional-key :operational-unit-id) (s/maybe s/Int)
    (s/optional-key :operational-unit) (s/maybe s/Str)})
 
-(s/defschema Grants
-  "List of grants"
-  [Grant])
-
 (s/defschema Application
   "Grant application"
   {:id s/Int

@@ -10,18 +10,6 @@
             [oph.va.virkailija.va-code-values-routes :refer [with-admin]]
             [oph.va.virkailija.authentication :as authentication]))
 
-(defn- get-grants []
-  (compojure-api/GET "/" []
-    :path-params []
-    :query-params [{template :- String ""}]
-    :return virkailija-schema/Grants
-    :summary "Return list of grants"
-    (ok
-     (cond
-       (= template "with-content")
-       (grant-data/get-resolved-grants-with-content)
-       :else (grant-data/get-grants)))))
-
 (defn- get-grant-applications []
   (compojure-api/GET
     "/:grant-id/applications/" [grant-id :as request]
@@ -76,7 +64,6 @@
 
 (compojure-api/defroutes routes
   "grant routes"
-  (get-grants)
   (get-grant-applications)
   (get-grant-payments)
   (get-grant-batches)
