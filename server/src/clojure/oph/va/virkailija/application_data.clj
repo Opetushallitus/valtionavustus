@@ -117,29 +117,6 @@
          ORDER BY id"
         [id])))
 
-(defn find-applications [search-term order]
-  (let [order-dir (if (.endsWith order "-desc") "DESC" "ASC")
-        sql (str "SELECT
-                    h.id, h.created_at, h.version, h.budget_total, h.budget_oph_share,
-                    h.organization_name, h.project_name, h.register_number, h.parent_id,
-                    h.language, h.avustushaku AS grant_id, h.refused, h.refused_comment,
-                    h.refused_at, a.content#>'{name, fi}' AS grant_name
-                  FROM hakija.hakemukset h
-                  LEFT JOIN hakija.avustushaut a ON a.id = h.avustushaku
-                  WHERE h.version_closed IS NULL
-                    AND h.hakemus_type = 'hakemus'
-                    AND (h.register_number LIKE ?
-                         OR LOWER(h.project_name) LIKE ?
-                         OR LOWER(h.organization_name) LIKE ?)
-                  ORDER BY created_at " order-dir)]
-    (map
-     #(assoc (convert-to-dash-keys %)
-             :evaluation (get-application-full-evaluation (:id %)))
-     (query-original-identifiers
-      sql
-      (let [term (str "%" (clojure.string/lower-case search-term) "%")]
-        [term term term])))))
-
 (defn create-application-token [application-id]
   (:token (va-db/create-application-token application-id)))
 

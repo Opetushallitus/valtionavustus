@@ -38,23 +38,6 @@
 (defn get-resolved-grants-with-content []
   (get-grants true))
 
-(def ^:private find-grants-columns
-  "SELECT id, created_at, form, content, status, register_number, valiselvitysdate,
-          loppuselvitysdate, form_loppuselvitys, form_valiselvitys,
-          is_academysize, haku_type, allow_visibility_in_external_system, arvioitu_maksupaiva,
-          loppuselvitys_otantatarkastus_enabled
-   FROM hakija.avustushaut
-   WHERE register_number LIKE ? OR LOWER(content#>>'{name,fi}') LIKE ?")
-
-(defn find-grants [search-term order]
-  (let [term (str "%" (clojure.string/lower-case search-term) "%")]
-    (mapv convert-to-dash-keys
-          (query-original-identifiers
-           (str find-grants-columns
-                " ORDER BY created_at "
-                (if (.endsWith order "desc") "DESC" "ASC"))
-           [term term]))))
-
 (defn get-grant [grant-id]
   (let [grant (convert-to-dash-keys
                (first (query-original-identifiers

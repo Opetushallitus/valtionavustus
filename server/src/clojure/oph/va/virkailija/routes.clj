@@ -37,6 +37,7 @@
             [oph.va.virkailija.muistutus-scheduling :refer [send-muistutusviestit]]
             [oph.va.virkailija.rondo-service :as rondo-service]
             [oph.va.virkailija.schema :as virkailija-schema]
+            [oph.va.virkailija.search-routes :as search-routes]
             [oph.va.virkailija.va-code-values-routes :as va-code-values-routes]
             [oph.va.virkailija.talousarviotili-routes :as talousarviotili-routes]
             [oph.va.virkailija.va-users :as va-users]
@@ -732,6 +733,7 @@
   (compojure-api/context "/api/v2/grants" [] :tags ["grants"] grant-routes/routes)
   (compojure-api/context "/api/v2/applications" [] :tags ["applications"]
     application-routes/routes)
+  (compojure-api/context "/api/v2/search" [] :tags ["search"] search-routes/routes)
   (compojure-api/context
     "/api/v2/reports" [] :tags ["reports"] reporting-routes/routes)
   (compojure-api/context "/api/v2/payment-batches" [] :tags ["payment batches"]

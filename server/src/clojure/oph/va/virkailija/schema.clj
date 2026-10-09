@@ -409,6 +409,22 @@
    (s/optional-key :refused-at) (s/maybe s/Inst)
    (s/optional-key :grant-name) (s/maybe s/Str)})
 
+(s/defschema SearchTextPart
+  "Part of a text, a match is a word start that a search term matched"
+  {:text s/Str
+   :match s/Bool})
+
+(s/defschema SearchResults
+  "Search terms with their hits, and the matching applications and grants"
+  {:terms [{:term s/Str
+            :hit-count s/Int
+            :suggestions [{:organization-name s/Str
+                           :application-count s/Int}]}]
+   :hakemukset [(assoc Application
+                       :organization-name-parts [SearchTextPart]
+                       :project-name-parts [SearchTextPart])]
+   :avustushaut [(assoc Grant :name-parts [SearchTextPart])]})
+
 (s/defschema PaymentBatchSendStatus
   "Send status of a maksuerä"
   {:id s/Int
