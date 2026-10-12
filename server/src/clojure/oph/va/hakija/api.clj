@@ -886,7 +886,7 @@ order by upper(h.organization_name), upper(h.project_name)")
       (conflict!))))
 
 (defn palauta-loppuselvitys-asiatarkastukseen
-  "Returns the loppuselvitys from information_verified status to asiatarkastus (submitted), snapshotting the previous asiatarkastus. Returns true on success, nil when the loppuselvitys was not in information_verified status."
+  "Returns the loppuselvitys from information_verified status to asiatarkastus (submitted), snapshotting the previous asiatarkastus. Returns true on success, nil when the loppuselvitys was not in information_verified status or does not belong to the avustushaku."
   [avustushaku-id hakemus-id identity syy]
   (with-tx
     (fn [tx]
@@ -896,9 +896,9 @@ order by upper(h.organization_name), upper(h.project_name)")
                                             ac.avustus_kaytetty_paatoksen_mukaisesti, ac.omarahoitus_kaytetty, ac.taloustiedot_kirjattu, ac.avustus_alle_100k
                                      FROM hakemukset h
                                      LEFT JOIN virkailija.loppuselvitys_asiatarkastus_checklist ac ON ac.hakemus_id = h.id
-                                     WHERE h.id = ? AND h.version_closed IS NULL AND h.status_loppuselvitys = 'information_verified'
+                                     WHERE h.id = ? AND h.avustushaku = ? AND h.version_closed IS NULL AND h.status_loppuselvitys = 'information_verified'
                                      FOR UPDATE OF h"
-                                                         [hakemus-id]))
+                                                         [hakemus-id avustushaku-id]))
             [paivitetyt-rivit] (execute!
                                 tx
                                 "UPDATE hakemukset
@@ -907,8 +907,8 @@ order by upper(h.organization_name), upper(h.project_name)")
                             loppuselvitys_information_verified_by = NULL,
                             loppuselvitys_information_verified_at = NULL,
                             loppuselvitys_riskiperusteinen = FALSE
-                        WHERE id = ? AND version_closed IS NULL AND status_loppuselvitys = 'information_verified'"
-                                [hakemus-id])]
+                        WHERE id = ? AND avustushaku = ? AND version_closed IS NULL AND status_loppuselvitys = 'information_verified'"
+                                [hakemus-id avustushaku-id])]
         (when (pos? paivitetyt-rivit)
           (execute! tx "DELETE FROM virkailija.loppuselvitys_asiatarkastus_checklist WHERE hakemus_id = ?" [hakemus-id])
           (let [[{tapahtumaloki-id :id}] (tapahtumaloki/create-loppuselvitys-palautettu-entry-tx tx avustushaku-id hakemus-id identity)]
