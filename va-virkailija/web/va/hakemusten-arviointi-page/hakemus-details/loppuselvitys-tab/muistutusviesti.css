@@ -27,11 +27,24 @@
 }
 
 
+/* gap: inherit keeps the spacing the rows had as direct children of a flex parent */
+.viestiLista,
+.tarkastusHistoria {
+    display: flex;
+    flex-direction: column;
+    gap: inherit;
+}
+
+.tarkastusHistoria:empty {
+    display: none;
+}
+
 .viestiListaItem {
     background-color: var(--background-blue);
 }
 
 .viestiListaItem .viestiListaRow {
+    cursor: pointer;
     width: 100%;
     box-sizing: border-box;
     border: none;
@@ -51,11 +64,7 @@
     line-height: 1.6;
 }
 
-.viestiListaItem button.viestiListaRow {
-    cursor: pointer;
-}
-
-.viestiListaItem button.viestiListaRow:not(:disabled):hover {
+.viestiListaItem .viestiListaRow:hover {
     background-color: #eaf6fb;
 }
 
@@ -79,6 +88,10 @@
     justify-content: flex-end;
     align-items: center;
     height: 100%;
+}
+
+.viestiListaItem .viestiListaRow[aria-expanded='true'] .rowOpenCloseIcon svg {
+    transform: rotate(180deg);
 }
 
 .viestiListaItem .messageDetails {

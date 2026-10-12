@@ -126,9 +126,9 @@ function LoadedViestiHankkeelleTab({ avustushaku, hakemus }: Props) {
   return (
     <>
       {sentEmails.length > 0 && (
-        <section role="list" aria-labelledby={listSectionHeading}>
+        <section aria-labelledby={listSectionHeading}>
           <h2 id={listSectionHeading}>Aiemmin lähetetyt viestit</h2>
-          <ViestiLista messages={sentEmails} />
+          <ViestiLista messages={sentEmails} aria-labelledby={listSectionHeading} />
         </section>
       )}
       <section aria-labelledby={emailFormHeading}>

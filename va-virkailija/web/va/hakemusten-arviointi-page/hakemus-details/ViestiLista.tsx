@@ -25,6 +25,7 @@ export interface Message {
 interface Props {
   messages: Message[]
   heading?: string
+  'aria-labelledby'?: string
 }
 
 type OpenedMessagesState = Record<number, boolean>
@@ -40,6 +41,7 @@ export default function ViestiLista(props: Props) {
         dataTestId={`open-email-${idx}`}
         virkailija={message.virkailija}
         heading={props.heading}
+        expanded={!!openedMessages[message.id]}
         onClick={() =>
           setOpenedMessages({ ...openedMessages, [message.id]: !openedMessages[message.id] })
         }
@@ -48,7 +50,12 @@ export default function ViestiLista(props: Props) {
       </ViestiListaRow>
     )
   })
-  return <>{messages}</>
+  if (!messages.length) return null
+  return (
+    <div role="list" className="viestiLista" aria-labelledby={props['aria-labelledby']}>
+      {messages}
+    </div>
+  )
 }
 
 export function ViestiDetails(props: { message: Omit<Message, 'virkailija' | 'date'> }) {
@@ -95,54 +102,54 @@ function EmailField(props: { name: string; address: string | null | undefined; t
   )
 }
 
-interface RowContentProps {
+interface ViestilistaRowProps {
   date: string
   virkailija: string
   heading?: string
   icon: 'done' | 'done-palautettu' | 'envelope' | 'undo'
-}
-
-interface ViestilistaRowProps extends RowContentProps {
   onClick: () => void
+  expanded: boolean
   dataTestId?: string
   children?: React.ReactNode
 }
 
-export function ViestiListaRow({ onClick, dataTestId, children, ...content }: ViestilistaRowProps) {
+export function ViestiListaRow({
+  date,
+  virkailija,
+  heading,
+  icon,
+  onClick,
+  expanded,
+  dataTestId,
+  children,
+}: ViestilistaRowProps) {
   return (
     <div role="listitem" className={'viestiListaItem'}>
       <button
         type="button"
         className={'viestiListaRow'}
         onClick={onClick}
+        aria-expanded={expanded}
         data-test-id={dataTestId}
       >
-        <RowContent {...content} />
+        {icon === 'envelope' ? (
+          <EnvelopeIcon active />
+        ) : icon === 'undo' ? (
+          <UndoIcon />
+        ) : icon === 'done-palautettu' ? (
+          <PalautettuDoneIcon />
+        ) : (
+          <DoneIcon />
+        )}
+        <span className={'rowDate'}>{formatDate(date)}</span>
+        <span className={'rowVirkailija'}>{virkailija}</span>
+        <span className={'rowHeading'}>{heading}</span>
         <span className={'rowOpenCloseIcon'}>
           <CloseIcon />
         </span>
       </button>
       {children}
     </div>
-  )
-}
-
-function RowContent({ date, virkailija, heading, icon }: RowContentProps) {
-  return (
-    <>
-      {icon === 'envelope' ? (
-        <EnvelopeIcon active />
-      ) : icon === 'undo' ? (
-        <UndoIcon />
-      ) : icon === 'done-palautettu' ? (
-        <PalautettuDoneIcon />
-      ) : (
-        <DoneIcon />
-      )}
-      <span className={'rowDate'}>{formatDate(date)}</span>
-      <span className={'rowVirkailija'}>{virkailija}</span>
-      <span className={'rowHeading'}>{heading}</span>
-    </>
   )
 }
 

@@ -193,6 +193,7 @@ function AvattavaTarkastusRow({
       virkailija={name}
       date={date}
       onClick={() => setOpen((show) => !show)}
+      expanded={open}
       heading={heading}
       dataTestId={dataTestId}
     >
@@ -577,27 +578,30 @@ function AsiatarkastusOtannanUlkopuolella({ disabled }: { disabled: boolean }) {
         </>
       )}
       {isAccepted && selvitysEmail && (
-        <ViestiListaRow
-          icon="done"
-          virkailija={hakemus['loppuselvitys-taloustarkastanut-name'] || ''}
-          date={hakemus['loppuselvitys-taloustarkastettu-at'] || ''}
-          onClick={() => setShowHyvaksytty((show) => !show)}
-          heading="Hyväksytty"
-          dataTestId="loppuselvitys-asiatarkastus-hyvaksytty"
-        >
-          {showHyvaksytty && (
-            <ViestiDetails
-              message={{
-                id: 0,
-                sender: 'no-reply@valtionavustukset.oph.fi',
-                reply_to: userInfo.email,
-                receivers: selvitysEmail.to,
-                message: selvitysEmail.message,
-                subject: selvitysEmail.subject,
-              }}
-            />
-          )}
-        </ViestiListaRow>
+        <div role="list">
+          <ViestiListaRow
+            icon="done"
+            virkailija={hakemus['loppuselvitys-taloustarkastanut-name'] || ''}
+            date={hakemus['loppuselvitys-taloustarkastettu-at'] || ''}
+            onClick={() => setShowHyvaksytty((show) => !show)}
+            expanded={showHyvaksytty}
+            heading="Hyväksytty"
+            dataTestId="loppuselvitys-asiatarkastus-hyvaksytty"
+          >
+            {showHyvaksytty && (
+              <ViestiDetails
+                message={{
+                  id: 0,
+                  sender: 'no-reply@valtionavustukset.oph.fi',
+                  reply_to: userInfo.email,
+                  receivers: selvitysEmail.to,
+                  message: selvitysEmail.message,
+                  subject: selvitysEmail.subject,
+                }}
+              />
+            )}
+          </ViestiListaRow>
+        </div>
       )}
     </>
   )
@@ -1064,17 +1068,19 @@ ${email.footer}`,
         </div>
       )}
       <ViestiLista heading="Täydennyspyyntö" messages={sentEmails ?? []} />
-      {showPalautukset && <LoppuselvitysPalautukset />}
-      {completedBy && (
-        <AvattavaTarkastusRow
-          name={completedBy.name}
-          date={completedBy.date}
-          heading={completedBy.heading}
-          dataTestId="loppuselvitys-tarkastus"
-        >
-          {completedBy.component}
-        </AvattavaTarkastusRow>
-      )}
+      <div role="list" className="tarkastusHistoria">
+        {showPalautukset && <LoppuselvitysPalautukset />}
+        {completedBy && (
+          <AvattavaTarkastusRow
+            name={completedBy.name}
+            date={completedBy.date}
+            heading={completedBy.heading}
+            dataTestId="loppuselvitys-tarkastus"
+          >
+            {completedBy.component}
+          </AvattavaTarkastusRow>
+        )}
+      </div>
       {showEmailForm && (
         <MultipleRecipentEmailForm
           ref={emailFormRef}

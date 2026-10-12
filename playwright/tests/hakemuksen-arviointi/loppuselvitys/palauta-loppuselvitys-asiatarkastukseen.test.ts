@@ -145,6 +145,7 @@ test('pääkäyttäjä can return asiatarkastettu loppuselvitys to asiatarkastus
     await expect(palautusChecklist).toBeHidden()
 
     await palautusAsiatarkastettu.click()
+    await expect(palautusAsiatarkastettu).toHaveAttribute('aria-expanded', 'true')
     await expect(palautukset.getByText('Riskiperusteinen huomio')).toBeVisible()
     await expect(palautusChecklist).toBeVisible()
     const kyllaRadios = palautusChecklist.locator('input[value="true"]')
