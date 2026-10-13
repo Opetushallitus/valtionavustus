@@ -59,7 +59,7 @@
     "postcss": "8.5.29",
     "postcss-loader": "8.2.1",
     "postcss-preset-env": "11.6.1",
-    "prettier": "3.9.9",
+    "prettier": "3.9.10",
     "style-loader": "4.0.0",
     "ts-loader": "9.6.2",
     "typescript": "5.9.3",
