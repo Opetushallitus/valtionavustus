@@ -548,6 +548,14 @@
       "fi": "Lisätietoja",
       "sv": "Mer information"
     },
+    "lisatietoja-paatoksesta": {
+      "fi": "Lisätietoja päätöksestä",
+      "sv": "Lisätietoja päätöksestä"
+    },
+    "allekirjoittajat": {
+      "fi": "Allekirjoittajat",
+      "sv": "Allekirjoittajat"
+    },
     "lisatietoja-antaa": {
       "fi": "Lisätietoja antaa",
       "sv": "Mer information ger"

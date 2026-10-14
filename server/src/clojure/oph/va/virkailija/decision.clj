@@ -12,7 +12,8 @@
             [oph.va.virkailija.koulutusosio :as koulutusosio]
             [hiccup.core :refer [html]]
             [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
-            [oph.va.virkailija.payments-data :as payments-data])
+            [oph.va.virkailija.payments-data :as payments-data]
+            [oph.soresu.common.config :as config])
   (:import (java.time.format DateTimeFormatter)))
 
 (defn decision-translation [translations lang translation-key]
@@ -253,6 +254,7 @@
                 :t                             translate
                 :johtaja                       johtaja
                 :valmistelija                  valmistelija
+                :allekirjoittajat-osio         (config/feature-enabled? :enablePaatosAllekirjoittajat)
                 :myonteinen-lisateksti         myonteinen-lisateksti
                 :liitteet                      liitteet-list
                 :accepted                      accepted

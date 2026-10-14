@@ -4,7 +4,8 @@ type LegacyFeatureFlag = { 'enabled?': boolean }
   Add flags here
   Currently empty string as no active flags
  */
-export type FeatureFlag = '' | 'enablePalautaLoppuselvitysAsiatarkastukseen'
+export type FeatureFlag =
+  '' | 'enablePalautaLoppuselvitysAsiatarkastukseen' | 'enablePaatosAllekirjoittajat'
 
 export interface EnvironmentApiResponse {
   name: string

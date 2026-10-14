@@ -201,12 +201,13 @@ const HyvaksyjaSection: React.FC<{
   isDecidedByUkotettuValmistelija: boolean
   decider: string
   presenter: Role | undefined
-}> = ({ isDecidedByUkotettuValmistelija, presenter, decider }) => {
+  title: string
+}> = ({ isDecidedByUkotettuValmistelija, presenter, decider, title }) => {
   const { t } = useTranslations()
   return (
     <section className="muutoshakemus-paatos__section">
       <div data-test-id="muutoshakemus-paatos-tekija-title" className="muutoshakemus-paatos__title">
-        {t.muutoshakemus.paatos.paatoksenTekija}
+        {title}
       </div>
       {isDecidedByUkotettuValmistelija ? (
         <div data-test-id="paatos-decider">{decider}</div>
@@ -224,7 +225,10 @@ const HyvaksyjaSection: React.FC<{
   )
 }
 
-const LisatietojaSection: React.FC<{ presenter: Role | undefined }> = ({ presenter }) => {
+const LisatietojaSection: React.FC<{ presenter: Role | undefined; title: string }> = ({
+  presenter,
+  title,
+}) => {
   const { t } = useTranslations()
   return (
     <section className="muutoshakemus-paatos__section">
@@ -232,7 +236,7 @@ const LisatietojaSection: React.FC<{ presenter: Role | undefined }> = ({ present
         data-test-id="muutoshakemus-paatos-lisatietoja-title"
         className="muutoshakemus-paatos__title"
       >
-        {t.muutoshakemus.paatos.lisatietoja}
+        {title}
       </div>
       <div data-test-id="paatos-additional-info">
         {presenter?.name}
@@ -268,8 +272,10 @@ export const MuutoshakemusPaatos = ({
   avustushaku,
   muutoshakemukset,
   isDecidedByUkotettuValmistelija,
+  environment,
 }: MuutoshakemusPaatosProps) => {
   const { t } = useTranslations()
+  const allekirjoittajatOsio = environment['feature-flags'].includes('enablePaatosAllekirjoittajat')
 
   const paattymispaiva = isAcceptedWithChanges(paatos['paatos-status-jatkoaika'])
     ? paatos.paattymispaiva
@@ -319,12 +325,30 @@ export const MuutoshakemusPaatos = ({
         />
       )}
       <PerustelutSection reason={paatos.reason} />
-      <HyvaksyjaSection
-        isDecidedByUkotettuValmistelija={isDecidedByUkotettuValmistelija}
-        decider={paatos.decider}
-        presenter={presenter}
-      />
-      <LisatietojaSection presenter={presenter} />
+      {allekirjoittajatOsio ? (
+        <>
+          <LisatietojaSection
+            presenter={presenter}
+            title={t.muutoshakemus.paatos.lisatietojaPaatoksesta}
+          />
+          <HyvaksyjaSection
+            isDecidedByUkotettuValmistelija={isDecidedByUkotettuValmistelija}
+            decider={paatos.decider}
+            presenter={presenter}
+            title={t.muutoshakemus.paatos.allekirjoittajat}
+          />
+        </>
+      ) : (
+        <>
+          <HyvaksyjaSection
+            isDecidedByUkotettuValmistelija={isDecidedByUkotettuValmistelija}
+            decider={paatos.decider}
+            presenter={presenter}
+            title={t.muutoshakemus.paatos.paatoksenTekija}
+          />
+          <LisatietojaSection presenter={presenter} title={t.muutoshakemus.paatos.lisatietoja} />
+        </>
+      )}
       <LiitteetSection />
     </div>
   )
