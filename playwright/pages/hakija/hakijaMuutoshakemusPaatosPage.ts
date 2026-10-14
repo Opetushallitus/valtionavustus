@@ -66,7 +66,7 @@ export class HakijaMuutoshakemusPaatosPage {
   }
 
   async lisatietoja() {
-    return this.page.innerText('[data-test-id="paatos-esittelija"]')
+    return this.page.innerText('[data-test-id="paatos-additional-info"]')
   }
 
   async infoSection() {

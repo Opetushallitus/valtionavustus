@@ -8,6 +8,7 @@ import { waitForSave } from '../../pages/virkailija/hakujen-hallinta/CommonHakuj
 import type { Blob } from 'node:buffer'
 import { createJotpaCodes } from '../../fixtures/JotpaTest'
 import { VIRKAILIJA_URL } from '../../utils/constants'
+import { HakijaPaatosPage } from '../../pages/hakija/HakijaPaatosPage'
 
 async function downloadPdfFromLocator(locator: Locator): Promise<Blob> {
   const downloadPromise = locator.page().waitForEvent('download')
@@ -93,6 +94,12 @@ test.extend({
       await expect(jotpaOhjeCheckbox).not.toBeChecked()
     })
 
+    await test.step('add allekirjoittajat to paatos', async () => {
+      await paatosPage.locators.johtaja.fill('opetusneuvos Jussi Joutsen')
+      await paatosPage.locators.esittelija.fill('opetusneuvos Esko Euroopanmajava')
+      await waitForSave(page)
+    })
+
     await test.step('make sure link to yleisohje is in paatos', async () => {
       const haunTiedotPage = await paatosPage.common.switchToHaunTiedotTab()
       await haunTiedotPage.resolveAvustushaku()
@@ -110,6 +117,15 @@ test.extend({
         expect(pdfText).toContain('3.8.2026')
         expect(pdfText).toContain('YLEISOHJE')
       })
+    })
+
+    await test.step('allekirjoittajat are in paatos', async () => {
+      const hakijaPaatosPage = HakijaPaatosPage(page)
+      await expect(hakijaPaatosPage.allekirjoittajatTitle).toHaveText('Allekirjoittajat')
+      await expect(hakijaPaatosPage.allekirjoittajat).toContainText('opetusneuvos Jussi Joutsen')
+      await expect(hakijaPaatosPage.allekirjoittajat).toContainText(
+        'opetusneuvos Esko Euroopanmajava'
+      )
     })
 
     await test.step('make sure JOTPA yleisohje is not visible', async () => {

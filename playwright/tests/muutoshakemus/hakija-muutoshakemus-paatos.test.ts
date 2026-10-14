@@ -190,12 +190,14 @@ test('Hakija views muutoshakemus page', async ({
     )
   })
 
-  await test.step('Päätöksen tekijä is shown in finnish', async () => {
-    expect(await hakijaMuutoshakemusPaatosPage.paatoksetTekija()).toEqual('Hyväksyjä')
+  await test.step('Allekirjoittajat title is shown in finnish', async () => {
+    expect(await hakijaMuutoshakemusPaatosPage.paatoksetTekija()).toEqual('Allekirjoittajat')
   })
 
-  await test.step('Lisätietoja title is shown in finnish', async () => {
-    expect(await hakijaMuutoshakemusPaatosPage.lisatietojaTitle()).toEqual('Lisätietoja')
+  await test.step('Lisätietoja päätöksestä title is shown in finnish', async () => {
+    expect(await hakijaMuutoshakemusPaatosPage.lisatietojaTitle()).toEqual(
+      'Lisätietoja päätöksestä'
+    )
   })
 
   await test.step('budget change is mentioned in the info section', async () => {
@@ -367,14 +369,14 @@ svTest(
       expect(currentBudgetHeader).toEqual('Motiveringar för beslutet')
     })
 
-    await svTest.step('päätöksen tekijä is shown in swedish', async () => {
+    await svTest.step('allekirjoittajat title is shown', async () => {
       const currentBudgetHeader = await hakijaMuutoshakemusPaatosPage.paatoksetTekija()
-      expect(currentBudgetHeader).toEqual('Har godkänts av')
+      expect(currentBudgetHeader).toEqual('Allekirjoittajat')
     })
 
-    await svTest.step('lisätietoja title is shown in swedish', async () => {
+    await svTest.step('lisätietoja päätöksestä title is shown', async () => {
       const currentBudgetHeader = await hakijaMuutoshakemusPaatosPage.lisatietojaTitle()
-      expect(currentBudgetHeader).toEqual('Mer information')
+      expect(currentBudgetHeader).toEqual('Lisätietoja päätöksestä')
     })
 
     await svTest.step('budget change is mentioned in the info section', async () => {

@@ -77,8 +77,8 @@ fornamn.efternamn@oph.fi
         'Utbildningsstyrelsen har beslutat att bevilja statsunderstöd till projektet'
       )
     })
-    await test.step('lisätietoja title is in swedish', async () => {
-      await expect(hakijaPaatosPage.lisatietojaTitle).toHaveText('Mer information')
+    await test.step('lisätietoja päätöksestä title is shown', async () => {
+      await expect(hakijaPaatosPage.lisatietojaTitle).toHaveText('Lisätietoja päätöksestä')
     })
     await test.step('avustuslaji is in swedish', async () => {
       await expect(hakijaPaatosPage.avustuslajiTitle).toHaveText('Typ av statsunderstöd')

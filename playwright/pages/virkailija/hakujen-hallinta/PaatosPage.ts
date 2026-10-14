@@ -23,6 +23,8 @@ export function PaatosPage(page: Page) {
     taustaa: page.locator('[id="decision.taustaa.fi"]'),
     kayttotarkoitus: page.locator('[id="decision.kayttotarkoitus.fi"]'),
     selvitysvelvollisuus: page.locator('[id="decision.selvitysvelvollisuus.fi"]'),
+    johtaja: page.locator('[id="decision.johtaja.fi"]'),
+    esittelija: page.locator('[id="decision.valmistelija.fi"]'),
     decisionEditor: page.locator('.decision-editor'),
     confirmSending: page.locator('text="Vahvista lähetys"'),
     paatosSendError: page.locator('#päätös-send-error'),
