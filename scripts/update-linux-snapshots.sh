@@ -61,15 +61,14 @@ docker run --rm --network valtionavustus-playwright_default \
   --entrypoint /usr/bin/npx \
   playwright-image \
   playwright test \
-  --config=playwright/playwright.config.ts \
-  --project=Default \
-  --update-snapshots \
-  -- \
   hakulomake/look-and-feel.test.ts \
   ruotsinkielinen-hakija-paatos.test.ts \
   hakemuksen-arviointi/paatos.liitteet.test.ts \
   jotpa/jotpa-hakemuksen-tayttaminen.test.ts \
-  "$@" || {
+  "$@" \
+  --config=playwright/playwright.config.ts \
+  --project=Default \
+  --update-snapshots || {
     echo "Error: Playwright snapshot update failed"
     echo "Check logs above for details"
     exit 1
