@@ -117,6 +117,17 @@ test('Search page', async ({ page, valiAndLoppuselvitysSubmitted, hakuProps, avu
     ).toHaveText([`1/${hakuProps.registerNumber} - Akaan kaupunki`])
   })
 
+  await test.step('treats non-breaking spaces as spaces and drops too short terms', async () => {
+    await searchPage.search('akaa kaupunki, vantaa\u00A0kaupunki, a')
+    await expect(searchPage.termChips).toHaveText([/^akaa kaupunki\d+$/, /^vantaa kaupunki\d+$/])
+    await expect(
+      searchPage.hakemusResults.filter({ hasText: hakuProps.registerNumber }).locator('h2')
+    ).toHaveText([
+      `1/${hakuProps.registerNumber} - Akaan kaupunki`,
+      `2/${hakuProps.registerNumber} - Vantaan kaupunki`,
+    ])
+  })
+
   await test.step('suggests organization names for a term without hits', async () => {
     await searchPage.search('espoot kaupunki')
     await expect(searchPage.termChips.first()).toHaveText('espoot kaupunki0')

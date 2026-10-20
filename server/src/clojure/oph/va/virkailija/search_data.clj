@@ -6,6 +6,7 @@
 
 (def ^:private max-search-terms 20)
 (def ^:private max-search-words 10)
+(def ^:private min-search-term-length 3)
 
 (defn- distinct-ignoring-case [strings]
   (->> strings
@@ -16,11 +17,14 @@
        second))
 
 (defn- split-search-terms
-  "\"helsingin kaupunki, Vantaa\" => [\"helsingin kaupunki\" \"Vantaa\"]"
+  "\"helsingin kaupunki, Vantaa\" => [\"helsingin kaupunki\" \"Vantaa\"]
+   Commas, tabs and line breaks separate terms, and non-breaking
+   spaces are plain spaces. Terms shorter than min-search-term-length are
+   dropped, as they would match almost everything."
   [search]
-  (->> (string/split search #",")
+  (->> (string/split (string/replace search #"[\u00A0\u2007\u202F]" " ") #"[,\t\r\n]")
        (map string/trim)
-       (remove empty?)
+       (filter #(>= (count %) min-search-term-length))
        distinct-ignoring-case
        (take max-search-terms)))
 
