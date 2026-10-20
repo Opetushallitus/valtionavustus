@@ -55,10 +55,10 @@ test('Search page', async ({ page, valiAndLoppuselvitysSubmitted, hakuProps, avu
     await expect(searchPage.hakemusResults).toHaveCount(0)
   })
 
-  await test.step('finds hakemukset by hanke', async () => {
+  await test.step('does not find hakemukset by hanke', async () => {
     await searchPage.search(randomStr)
     await expect(searchPage.avustushakuResults).toHaveCount(0)
-    await expect(searchPage.hakemusResults).toHaveCount(2)
+    await expect(searchPage.hakemusResults).toHaveCount(0)
   })
 
   await test.step('finds both by register number', async () => {

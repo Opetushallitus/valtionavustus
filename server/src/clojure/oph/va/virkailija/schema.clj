@@ -417,8 +417,7 @@
             :suggestions [{:organization-name s/Str
                            :application-count s/Int}]}]
    :hakemukset [(assoc Application
-                       :organization-name-parts [SearchTextPart]
-                       :project-name-parts [SearchTextPart])]
+                       :organization-name-parts [SearchTextPart])]
    :avustushaut [(assoc Grant :name-parts [SearchTextPart])]})
 
 (s/defschema PaymentBatchSendStatus

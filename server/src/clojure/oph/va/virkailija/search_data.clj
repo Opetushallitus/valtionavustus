@@ -38,30 +38,22 @@
   (str "(^|[^[:alnum:]])" (string/replace word #"[^\p{L}\p{N}]" #(str "\\" %))))
 
 (defn- word-start-condition
-  "SQL where every word of the term starts a word in some of the columns.
-   Columns are pasted into the SQL, so they must be constants, never user input."
-  [columns term]
-  (let [words (split-search-words term)
-        word-in-any-column (str "(" (string/join
-                                     " OR "
-                                     (map #(str "LOWER(" % ") ~ ?") columns))
-                                ")")]
-    {:sql (str "(" (string/join " AND " (repeat (count words) word-in-any-column)) ")")
-     :params (for [word words
-                   _ columns]
-               (word-start-regex word))}))
+  "SQL condition matching the term at word starts in the column.
+   The column is pasted into the SQL, so it must be a constant, never user input."
+  [column term]
+  (let [words (split-search-words term)]
+    {:sql (str "(" (string/join " AND " (repeat (count words) (str "LOWER(" column ") ~ ?"))) ")")
+     :params (map word-start-regex words)}))
 
 (defn- term-column [i]
   (str "term_" i))
 
 (defn- term-match-sql
-  "Returns SQL select-list additions (one boolean column term_N per search term),
-   a WHERE condition matching any term, and the bound parameters for the select-list.
-   A term matches when it is a substring of the register number or when every
-   word in it matches the start of a word in some of the given columns."
-  [register-number-column columns terms]
+  "SQL finding the rows that match any of the terms, telling which terms each row matched.
+   The columns are pasted into the SQL, so they must be constants, never user input."
+  [register-number-column column terms]
   (let [conditions (for [term terms
-                         :let [{:keys [sql params]} (word-start-condition columns term)
+                         :let [{:keys [sql params]} (word-start-condition column term)
                                register-number-pattern (str "%" (escape-like-pattern (string/lower-case term)) "%")]]
                      {:sql (str "(" register-number-column " LIKE ? OR " sql ")")
                       :params (cons register-number-pattern params)})]
@@ -107,7 +99,7 @@
   (if (= order "created-at-asc") "ASC" "DESC"))
 
 (defn- find-applications [terms order]
-  (let [{:keys [select where params]} (term-match-sql "h.register_number" ["h.organization_name" "h.project_name"] terms)
+  (let [{:keys [select where params]} (term-match-sql "h.register_number" "h.organization_name" terms)
         sql (str "SELECT * FROM (
                     SELECT
                       h.id, h.created_at, h.version, h.budget_total, h.budget_oph_share,
@@ -133,7 +125,7 @@
           (query-original-identifiers sql params))))
 
 (defn- find-grants [terms order]
-  (let [{:keys [select where params]} (term-match-sql "register_number" ["content#>>'{name,fi}'"] terms)]
+  (let [{:keys [select where params]} (term-match-sql "register_number" "content#>>'{name,fi}'" terms)]
     (mapv #(->> % convert-to-dash-keys (with-matched-terms terms))
           (query-original-identifiers
            (str "SELECT * FROM (
@@ -161,7 +153,7 @@
   (let [shortened (->> (split-search-words term)
                        (map shorten-word)
                        (string/join " "))
-        {:keys [sql params]} (word-start-condition ["organization_name"] shortened)]
+        {:keys [sql params]} (word-start-condition "organization_name" shortened)]
     (if (empty? shortened)
       []
       (map convert-to-dash-keys
@@ -201,7 +193,6 @@
      :hakemukset (for [hakemus hakemukset]
                    (-> hakemus
                        (highlight (:organization-name hakemus) :organization-name-parts)
-                       (highlight (:project-name hakemus) :project-name-parts)
                        (dissoc :matched-terms)))
      :avustushaut (for [haku avustushaut]
                     (-> haku

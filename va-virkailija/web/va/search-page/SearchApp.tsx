@@ -61,7 +61,6 @@ type SearchResults = {
   terms: SearchTerm[]
   hakemukset: (HakemusV2 & {
     'organization-name-parts': TextPart[]
-    'project-name-parts': TextPart[]
   })[]
   avustushaut: (AvustushakuV2 & { 'name-parts': TextPart[] })[]
 }
@@ -272,7 +271,7 @@ const renderHakemus = (hakemus: SearchHakemus) => {
       {hakemus['project-name'] && (
         <div>
           <span className={styles.rowTitle}>Hanke</span>
-          {renderParts(hakemus['project-name-parts'])}
+          {hakemus['project-name']}
         </div>
       )}
       <div>
