@@ -61,8 +61,12 @@ type SearchResults = {
   terms: SearchTerm[]
   hakemukset: (HakemusV2 & {
     'organization-name-parts': TextPart[]
+    'register-number-parts': TextPart[]
   })[]
-  avustushaut: (AvustushakuV2 & { 'name-parts': TextPart[] })[]
+  avustushaut: (AvustushakuV2 & {
+    'name-parts': TextPart[]
+    'register-number-parts': TextPart[]
+  })[]
 }
 type SearchHakemus = SearchResults['hakemukset'][number]
 type SearchHaku = SearchResults['avustushaut'][number]
@@ -242,7 +246,7 @@ const renderHaku = (haku: SearchHaku) => {
     <div key={`haku-result-${haku.id}`} data-test-class="avustushaku-result">
       <a href={`/avustushaku/${haku.id}/`} target="_blank">
         <h2>
-          {haku['register-number']} - {renderParts(haku['name-parts'])}
+          {renderParts(haku['register-number-parts'])} - {renderParts(haku['name-parts'])}
         </h2>
       </a>
       <span>
@@ -261,7 +265,8 @@ const renderHakemus = (hakemus: SearchHakemus) => {
         target="_blank"
       >
         <h2>
-          {hakemus['register-number']} - {renderParts(hakemus['organization-name-parts'])}
+          {renderParts(hakemus['register-number-parts'])} -{' '}
+          {renderParts(hakemus['organization-name-parts'])}
         </h2>
       </a>
       <div>

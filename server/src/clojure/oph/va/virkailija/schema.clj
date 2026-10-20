@@ -406,7 +406,7 @@
    (s/optional-key :grant-name) (s/maybe s/Str)})
 
 (s/defschema SearchTextPart
-  "Part of a text, a match is a word start that a search term matched"
+  "Part of a text, a match is a part that a search term matched"
   {:text s/Str
    :match s/Bool})
 
@@ -417,8 +417,11 @@
             :suggestions [{:organization-name s/Str
                            :application-count s/Int}]}]
    :hakemukset [(assoc Application
-                       :organization-name-parts [SearchTextPart])]
-   :avustushaut [(assoc Grant :name-parts [SearchTextPart])]})
+                       :organization-name-parts [SearchTextPart]
+                       :register-number-parts [SearchTextPart])]
+   :avustushaut [(assoc Grant
+                        :name-parts [SearchTextPart]
+                        :register-number-parts [SearchTextPart])]})
 
 (s/defschema PaymentBatchSendStatus
   "Send status of a maksuerä"

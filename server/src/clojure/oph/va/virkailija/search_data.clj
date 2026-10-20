@@ -72,28 +72,36 @@
                                      :when (get row term-key)]
                                  term)))))
 
+(defn- marked-parts
+  "Splits the text into parts, marking the occurrences of the alternatives"
+  [text alternatives lookbehind]
+  (cond
+    (empty? text) []
+    (empty? alternatives) [{:text text :match false}]
+    :else
+    (let [pattern (string/join "|" (map #(java.util.regex.Pattern/quote %) (sort-by count > alternatives)))
+          matcher (re-matcher (re-pattern (str "(?iu)" lookbehind "(" pattern ")")) text)
+          match-bounds (loop [bounds []]
+                         (if (.find matcher)
+                           (recur (conj bounds (.start matcher) (.end matcher)))
+                           bounds))]
+      ;; bounds alternate between the starts of non-matching and matching parts
+      (->> (partition 2 1 (concat [0] match-bounds [(count text)]))
+           (map-indexed (fn [i [start end]]
+                          {:text (subs text start end) :match (odd? i)}))
+           (remove #(empty? (:text %)))
+           vec))))
+
 (defn- highlight-parts
-  "Splits the text into consecutive parts, marking the word starts that the matched terms
-   matched: \"Vantaan kaupunki\" with [\"vantaa\"] =>
+  "Marks the matched terms in a name: \"Vantaan kaupunki\" with [\"vantaa\"] =>
    [{:text \"Vantaa\" :match true} {:text \"n kaupunki\" :match false}]"
   [text matched-terms]
-  (let [words (->> matched-terms (mapcat split-search-words) distinct (sort-by count >))]
-    (cond
-      (empty? text) []
-      (empty? words) [{:text text :match false}]
-      :else
-      (let [alternatives (string/join "|" (map #(java.util.regex.Pattern/quote %) words))
-            matcher (re-matcher (re-pattern (str "(?iu)(?<![\\p{L}\\p{N}])(" alternatives ")")) text)
-            match-bounds (loop [bounds []]
-                           (if (.find matcher)
-                             (recur (conj bounds (.start matcher) (.end matcher)))
-                             bounds))]
-        ;; bounds alternate between the starts of non-matching and matching parts
-        (->> (partition 2 1 (concat [0] match-bounds [(count text)]))
-             (map-indexed (fn [i [start end]]
-                            {:text (subs text start end) :match (odd? i)}))
-             (remove #(empty? (:text %)))
-             vec)))))
+  (marked-parts text (distinct (mapcat split-search-words matched-terms)) "(?<![\\p{L}\\p{N}])"))
+
+(defn- register-number-parts
+  "Marks the matched terms in the register number"
+  [register-number matched-terms]
+  (marked-parts register-number (distinct (map string/lower-case matched-terms)) ""))
 
 (defn- order-direction [order]
   (if (= order "created-at-asc") "ASC" "DESC"))
@@ -193,8 +201,10 @@
      :hakemukset (for [hakemus hakemukset]
                    (-> hakemus
                        (highlight (:organization-name hakemus) :organization-name-parts)
+                       (assoc :register-number-parts (register-number-parts (:register-number hakemus) (:matched-terms hakemus)))
                        (dissoc :matched-terms)))
      :avustushaut (for [haku avustushaut]
                     (-> haku
                         (highlight (get-in haku [:content :name :fi]) :name-parts)
+                        (assoc :register-number-parts (register-number-parts (:register-number haku) (:matched-terms haku)))
                         (dissoc :matched-terms)))}))

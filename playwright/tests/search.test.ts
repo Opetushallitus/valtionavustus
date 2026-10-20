@@ -68,6 +68,14 @@ test('Search page', async ({ page, valiAndLoppuselvitysSubmitted, hakuProps, avu
       `/avustushaku/${avustushakuID}/`
     )
     await expect(searchPage.hakemusResults).toHaveCount(3)
+    await expect(searchPage.avustushakuResults.locator('h2 mark')).toHaveText([
+      hakuProps.registerNumber,
+    ])
+    await expect(searchPage.hakemusResults.locator('h2 mark')).toHaveText([
+      hakuProps.registerNumber,
+      hakuProps.registerNumber,
+      hakuProps.registerNumber,
+    ])
   })
 
   await test.step('sorts current results according to the created-at timestamps', async () => {
