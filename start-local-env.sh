@@ -62,6 +62,7 @@ session="valtionavustus"
 tmux kill-session -t $session || true
 tmux start-server
 tmux new-session -d -s $session -c "$repo"
+tmux set-option -t $session pane-border-status top
 
 tmux splitw -h
 tmux splitw -h
