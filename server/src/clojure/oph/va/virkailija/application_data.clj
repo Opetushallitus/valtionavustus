@@ -12,12 +12,6 @@
             FROM virkailija.arviot a WHERE a.hakemus_id = ?"
            [application-id]))))
 
-(defn get-application-full-evaluation [application-id]
-  (convert-to-dash-keys
-   (first (query-original-identifiers
-           "SELECT * FROM virkailija.arviot a WHERE a.hakemus_id = ?"
-           [application-id]))))
-
 (defn get-application-contact-person-name [hakemus-id]
   (:contact-person (first (query
                            "SELECT
