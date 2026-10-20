@@ -314,7 +314,9 @@ export const MuutoshakemusForm = ({
           presenter={presenter}
           isDecidedByUkotettuValmistelija={isCurrentUserHakemukselleUkotettuValmistelija}
           muutoshakemukset={muutoshakemukset}
-          environment={environment}
+          ratkaisijaJaEsittelijaOsio={environment['feature-flags'].includes(
+            'enablePaatosTemplateVersion2'
+          )}
         />
       </TranslationContext.Provider>
     )

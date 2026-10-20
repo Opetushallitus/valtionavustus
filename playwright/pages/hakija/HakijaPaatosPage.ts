@@ -21,8 +21,11 @@ export const HakijaPaatosPage = (page: Page) => {
     paatosTitle: page.locator('[data-test-id="paatos-title"]'),
     acceptedTitle: page.locator('[data-test-id="paatos-accepted-title"]'),
     lisatietojaTitle: page.locator('[data-test-id="lisatietoja-title"]'),
-    allekirjoittajatTitle: page.getByTestId('allekirjoittajat-title'),
-    allekirjoittajat: page.getByTestId('allekirjoittajat'),
+    lisatietojaNimet: page
+      .locator('section', { has: page.getByTestId('lisatietoja-title') })
+      .locator('.signature'),
+    ratkaisijaJaEsittelijaTitle: page.getByTestId('ratkaisija-ja-esittelija-title'),
+    ratkaisijaJaEsittelijaNimet: page.getByTestId('ratkaisija-ja-esittelija').locator('.signature'),
     avustuslajiTitle: page.locator('[data-test-id="avustuslaji"] h2'),
     avustuslaji: page.locator('[data-test-id="avustuslaji"] p'),
     koulutusosiot: {

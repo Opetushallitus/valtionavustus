@@ -19,7 +19,7 @@
    [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
    [oph.va.jdbc.enums]
    [oph.va.menoluokka.db :refer [upsert-menoluokka-rows]]
-   [oph.soresu.common.config :refer [config]]
+   [oph.soresu.common.config :refer [config feature-enabled?]]
    [oph.va.routes :refer :all]
    [oph.va.virkailija.authorization :as authorization]
    [oph.va.virkailija.email :as email]
@@ -378,11 +378,14 @@
    "select * from hakemus_paatokset_views where hakemus_id = ? order by view_time desc"
    [hakemus-id]))
 
+(defn current-paatos-template-version []
+  (if (feature-enabled? :enablePaatosTemplateVersion2) 2 1))
+
 (defn add-paatos-sent-emails [hakemus emails decision]
   (execute!
-   "insert into hakija.hakemus_paatokset (hakemus_id, hakemus_version, sent_emails, decision)
-     values (?, ?, ?, ?)"
-   [(:id hakemus) (:version hakemus) {:addresses emails} decision]))
+   "insert into hakija.hakemus_paatokset (hakemus_id, hakemus_version, sent_emails, decision, paatos_template_version)
+     values (?, ?, ?, ?, ?)"
+   [(:id hakemus) (:version hakemus) {:addresses emails} decision (current-paatos-template-version)]))
 
 (defn update-paatos-sent-emails [hakemus emails decision]
   (execute!
@@ -932,7 +935,11 @@ order by upper(h.organization_name), upper(h.project_name)")
 
 (defn get-hakemusdata [hakemus-id]
   (let [hakemus (first (query-original-identifiers
-                        "select *, s.answers->'value' as answer_values
+                        "select *, s.answers->'value' as answer_values,
+                                 (select hp.paatos_template_version
+                                    from hakija.hakemus_paatokset hp
+                                    where hp.hakemus_id = h.id
+                                    order by hp.id limit 1) as paatos_template_version
                           from hakija.hakemukset h
                             join hakija.form_submissions s on (h.form_submission_id = s.id and h.form_submission_version = s.version)
                           where h.id = ? and h.version_closed is null"
@@ -944,7 +951,8 @@ order by upper(h.organization_name), upper(h.project_name)")
     {:avustushaku (avustushaku-response-content avustushaku)
      :roles       roles
      :form        (form->json form)
-     :hakemus     (hakemus->json hakemus)}))
+     :hakemus     (hakemus->json hakemus)
+     :paatos-template-version (or (:paatos_template_version hakemus) (current-paatos-template-version))}))
 
 (defn list-attachments [hakemus-id]
   (query-original-identifiers

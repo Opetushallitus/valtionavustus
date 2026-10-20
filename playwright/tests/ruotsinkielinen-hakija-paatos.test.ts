@@ -6,7 +6,8 @@ import {
   getHakemusTokenAndRegisterNumber,
   waitUntilMinEmails,
 } from '../utils/emails'
-import { HAKIJA_URL } from '../utils/constants'
+import { HAKIJA_URL, VIRKAILIJA_URL } from '../utils/constants'
+import { setPaatosTemplateVersion } from '../utils/hakemus'
 
 svTest.setTimeout(180000)
 
@@ -90,6 +91,12 @@ fornamn.efternamn@oph.fi
         fullPage: true,
         maxDiffPixelRatio: 0.05,
       })
+    })
+    await test.step('päätös with template version 1 uses the old layout', async () => {
+      await setPaatosTemplateVersion(page.request, hakemusID, 1)
+      await page.goto(`${VIRKAILIJA_URL}/paatos/avustushaku/${avustushakuID}/hakemus/${hakemusID}`)
+      await expect(hakijaPaatosPage.lisatietojaTitle).toHaveText('Mer information')
+      await expect(hakijaPaatosPage.ratkaisijaJaEsittelijaTitle).toBeHidden()
     })
   }
 )

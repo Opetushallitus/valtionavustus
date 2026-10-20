@@ -507,6 +507,7 @@
                             created_at,
                             updated_at,
                             decider,
+                            paatos_template_version,
                             to_char(pj.paattymispaiva, 'YYYY-MM-DD') as paattymispaiva
                           FROM virkailija.paatos
                           LEFT JOIN virkailija.paatos_jatkoaika pj ON (pj.paatos_id = paatos.id)

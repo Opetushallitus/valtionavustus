@@ -20,6 +20,7 @@ import { HakijaMuutoshakemusPaatosPage } from '../../pages/hakija/hakijaMuutosha
 import { svBudjettimuutoshakemusTest } from '../../fixtures/swedishHakemusTest'
 import { expectIsFinnishOphEmail, expectIsSwedishOphEmail } from '../../utils/email-signature'
 import { HAKIJA_URL } from '../../utils/constants'
+import { setPaatosTemplateVersion } from '../../utils/hakemus'
 
 const budget: Budget = {
   amount: {
@@ -190,8 +191,10 @@ test('Hakija views muutoshakemus page', async ({
     )
   })
 
-  await test.step('Allekirjoittajat title is shown in finnish', async () => {
-    expect(await hakijaMuutoshakemusPaatosPage.paatoksetTekija()).toEqual('Allekirjoittajat')
+  await test.step('Ratkaisija ja esittelijä title is shown in finnish', async () => {
+    expect(await hakijaMuutoshakemusPaatosPage.paatoksetTekija()).toEqual(
+      'Ratkaisija ja esittelijä'
+    )
   })
 
   await test.step('Lisätietoja päätöksestä title is shown in finnish', async () => {
@@ -251,6 +254,16 @@ test('Hakija views muutoshakemus page', async ({
 
     expect(attachment.equals(oldVersion)).toBe(false)
     expect(attachment.equals(selectedVersion)).toBe(true)
+  })
+
+  await test.step('päätös with template version 1 uses the old layout', async () => {
+    const { page } = hakijaMuutoshakemusPaatosPage
+    await setPaatosTemplateVersion(page.request, hakemusID, 1)
+    await page.reload()
+    await expect(page.getByTestId('muutoshakemus-paatos-tekija-title')).toHaveText('Hyväksyjä')
+    await expect(page.getByTestId('muutoshakemus-paatos-lisatietoja-title')).toHaveText(
+      'Lisätietoja'
+    )
   })
 })
 
@@ -369,9 +382,9 @@ svTest(
       expect(currentBudgetHeader).toEqual('Motiveringar för beslutet')
     })
 
-    await svTest.step('allekirjoittajat title is shown', async () => {
+    await svTest.step('Ratkaisija ja esittelijä title is shown', async () => {
       const currentBudgetHeader = await hakijaMuutoshakemusPaatosPage.paatoksetTekija()
-      expect(currentBudgetHeader).toEqual('Allekirjoittajat')
+      expect(currentBudgetHeader).toEqual('Ratkaisija ja esittelijä')
     })
 
     await svTest.step('lisätietoja päätöksestä title is shown', async () => {
@@ -403,6 +416,13 @@ svTest(
       await expect(
         hakijaMuutoshakemusPaatosPage.page.getByRole('link', { name: 'Rättelseyrkande' })
       ).toBeVisible()
+    })
+
+    await svTest.step('päätös with template version 1 uses the old layout', async () => {
+      await setPaatosTemplateVersion(page.request, hakemusID, 1)
+      await page.reload()
+      expect(await hakijaMuutoshakemusPaatosPage.paatoksetTekija()).toEqual('Har godkänts av')
+      expect(await hakijaMuutoshakemusPaatosPage.lisatietojaTitle()).toEqual('Mer information')
     })
 
     await svTest.step('päätös email', async () => {

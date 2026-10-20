@@ -284,6 +284,7 @@
           :rules s/Any}
    :roles [Role]
    (s/optional-key :ispublic) (s/maybe s/Bool)
+   :paatos-template-version Long
    :hakemus Hakemus})
 
 (s/defschema SavedSearch

@@ -9,6 +9,7 @@ import type { Blob } from 'node:buffer'
 import { createJotpaCodes } from '../../fixtures/JotpaTest'
 import { VIRKAILIJA_URL } from '../../utils/constants'
 import { HakijaPaatosPage } from '../../pages/hakija/HakijaPaatosPage'
+import { setPaatosTemplateVersion } from '../../utils/hakemus'
 
 async function downloadPdfFromLocator(locator: Locator): Promise<Blob> {
   const downloadPromise = locator.page().waitForEvent('download')
@@ -94,8 +95,8 @@ test.extend({
       await expect(jotpaOhjeCheckbox).not.toBeChecked()
     })
 
-    await test.step('add allekirjoittajat to paatos', async () => {
-      await paatosPage.locators.johtaja.fill('opetusneuvos Jussi Joutsen')
+    await test.step('add ratkaisija ja esittelijä to paatos', async () => {
+      await paatosPage.locators.johtaja.fill('opetusneuvos Jussi Joutsen, yksikön päällikkö')
       await paatosPage.locators.esittelija.fill('opetusneuvos Esko Euroopanmajava')
       await waitForSave(page)
     })
@@ -119,13 +120,15 @@ test.extend({
       })
     })
 
-    await test.step('allekirjoittajat are in paatos', async () => {
+    await test.step('ratkaisija ja esittelijä are in paatos', async () => {
       const hakijaPaatosPage = HakijaPaatosPage(page)
-      await expect(hakijaPaatosPage.allekirjoittajatTitle).toHaveText('Allekirjoittajat')
-      await expect(hakijaPaatosPage.allekirjoittajat).toContainText('opetusneuvos Jussi Joutsen')
-      await expect(hakijaPaatosPage.allekirjoittajat).toContainText(
-        'opetusneuvos Esko Euroopanmajava'
+      await expect(hakijaPaatosPage.ratkaisijaJaEsittelijaTitle).toHaveText(
+        'Ratkaisija ja esittelijä'
       )
+      await expect(hakijaPaatosPage.ratkaisijaJaEsittelijaNimet).toHaveText([
+        'opetusneuvos Jussi Joutsen, yksikön päällikkö',
+        'opetusneuvos Esko Euroopanmajava',
+      ])
     })
 
     await test.step('make sure JOTPA yleisohje is not visible', async () => {
@@ -157,6 +160,7 @@ test.extend({
         await expect(pakoteOhjeCheckbox).not.toBeChecked()
       })
     })
+    await setPaatosTemplateVersion(page.request, hakemusID, 1)
     await test.step('pakoteohje gets removed after recreating and sending paatokset', async () => {
       await paatosPage.recreatePaatokset()
       await paatosPage.resendPaatokset()
@@ -168,6 +172,19 @@ test.extend({
         .locator('a')
         .locator('text=Pakotteiden huomioon ottaminen valtionavustustoiminnassa')
       await expect(pakoteohjeLink).toBeHidden()
+    })
+    await test.step('recreated paatos keeps its template version', async () => {
+      const hakijaPaatosPage = HakijaPaatosPage(page)
+      await expect(hakijaPaatosPage.lisatietojaTitle).toHaveText('Lisätietoja')
+      await expect(hakijaPaatosPage.lisatietojaNimet).toHaveText([
+        'opetusneuvos Jussi Joutsen, yksikön päällikkö',
+        'opetusneuvos Esko Euroopanmajava',
+      ])
+      await expect(hakijaPaatosPage.ratkaisijaJaEsittelijaTitle).toBeHidden()
+
+      await page.goto(`${VIRKAILIJA_URL}/paatos/avustushaku/${avustushakuID}/hakemus/${hakemusID}`)
+      await expect(hakijaPaatosPage.lisatietojaTitle).toHaveText('Lisätietoja')
+      await expect(hakijaPaatosPage.ratkaisijaJaEsittelijaTitle).toBeHidden()
     })
   }
 )

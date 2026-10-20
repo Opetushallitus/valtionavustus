@@ -296,6 +296,20 @@
      [(:end body) (:avustushaku-id body)])
     (ok {:ok "ok"}))
 
+  (compojure-api/POST "/set-paatos-template-version" []
+    :body [body {:hakemus-id Long
+                 :paatos-template-version Long}]
+    :return {:ok s/Str}
+    (execute!
+     "UPDATE hakija.hakemus_paatokset SET paatos_template_version = ? WHERE hakemus_id = ?"
+     [(:paatos-template-version body) (:hakemus-id body)])
+    (execute!
+     "UPDATE virkailija.paatos p SET paatos_template_version = ?
+      FROM virkailija.muutoshakemus m
+      WHERE m.paatos_id = p.id AND m.hakemus_id = ?"
+     [(:paatos-template-version body) (:hakemus-id body)])
+    (ok {:ok "ok"}))
+
   (compojure-api/POST "/set-hakemus-organization" []
     :body [body {:hakemus-id Long
                  (s/optional-key :business-id) (s/maybe s/Str)

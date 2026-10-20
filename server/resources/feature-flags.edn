@@ -1,4 +1,4 @@
 {; available environments: [:local :test :aws-dev :aws-qa :aws-prod ]
  :enablePalautaLoppuselvitysAsiatarkastukseen [:local :test :aws-dev :aws-qa]
- :enablePaatosAllekirjoittajat [:local :test :aws-dev :aws-qa]
+ :enablePaatosTemplateVersion2 [:local :test :aws-dev :aws-qa]
 }

@@ -103,6 +103,7 @@ export interface Paatos {
   'user-key': string
   'created-at': string
   'updated-at': string
+  'paatos-template-version': number
   'paatos-status-jatkoaika'?: PaatosStatus
   'paatos-status-talousarvio'?: PaatosStatus
   'paatos-status-sisaltomuutos'?: PaatosStatus

@@ -38,7 +38,7 @@
     .groupTitle { text-align: center;}
     .trainingColumn { padding: 6px 5px; text-align: center; width:11%}
     .signature{margin-top: 60px;margin-bottom: 20px}
-    .allekirjoittajat .signature:first-child {margin-top: 0;}
+    .ratkaisija-ja-esittelija .signature:first-child {margin-top: 0;}
     .footerTitle {text-transform: uppercase;  }
 
     @media print {
@@ -150,7 +150,7 @@
       <p>{{#t}}lisatietoja-sisalto{{/t}}</p>
     </div>
   </section>
-  {{#allekirjoittajat-osio}}
+  {{#ratkaisija-ja-esittelija-osio}}
   <section class='section'>
     <h2 data-test-id="lisatietoja-title">{{#t}}lisatietoja-paatoksesta{{/t}}</h2>
     <div class='content'>
@@ -158,15 +158,15 @@
       </p>
     </div>
   </section>
-  <section class='section allekirjoittajat' data-test-id="allekirjoittajat">
-    <h2 data-test-id="allekirjoittajat-title">{{#t}}allekirjoittajat{{/t}}</h2>
+  <section class='section ratkaisija-ja-esittelija' data-test-id="ratkaisija-ja-esittelija">
+    <h2 data-test-id="ratkaisija-ja-esittelija-title">{{#t}}ratkaisija-ja-esittelija{{/t}}</h2>
     <div class='content'>
       <div class="signature">{{johtaja}}</div>
       <div class="signature">{{valmistelija}}</div>
     </div>
   </section>
-  {{/allekirjoittajat-osio}}
-  {{^allekirjoittajat-osio}}
+  {{/ratkaisija-ja-esittelija-osio}}
+  {{^ratkaisija-ja-esittelija-osio}}
   <section class='section'>
     <h2 data-test-id="lisatietoja-title">{{#t}}lisatietoja{{/t}}</h2>
     <div class='content'>
@@ -176,7 +176,7 @@
       <div class="signature">{{valmistelija}}</div>
     </div>
   </section>
-  {{/allekirjoittajat-osio}}
+  {{/ratkaisija-ja-esittelija-osio}}
   {{{liitteet}}}
 
   {{#accepted}}

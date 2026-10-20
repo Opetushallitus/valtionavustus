@@ -13,6 +13,17 @@ export async function setHakemusOrganization(
   expect(res.ok()).toBeTruthy()
 }
 
+export async function setPaatosTemplateVersion(
+  request: APIRequestContext,
+  hakemusID: number,
+  paatosTemplateVersion: number
+) {
+  const res = await request.post(`${VIRKAILIJA_URL}/api/test/set-paatos-template-version`, {
+    data: { 'hakemus-id': hakemusID, 'paatos-template-version': paatosTemplateVersion },
+  })
+  expect(res.ok()).toBeTruthy()
+}
+
 export async function getNormalizedHakemus(
   page: Page,
   avustushakuID: number,

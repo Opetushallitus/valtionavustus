@@ -597,7 +597,7 @@
              :refuse-url paatos-refuse-url
              :modify-url paatos-modify-url
              :yhteystiedot-url (yhteystiedot-url (:id avustushaku) (:user_key hakemus) lang)
-             :include-yhteystiedot-link (feature-enabled? :enablePaatosAllekirjoittajat)
+             :include-yhteystiedot-link (feature-enabled? :enablePaatosTemplateVersion2)
              :register-number (:register_number hakemus)
              :project-name (:project_name hakemus)
              :budjettimuutoshakemus-enabled budjettimuutoshakemus-enabled?

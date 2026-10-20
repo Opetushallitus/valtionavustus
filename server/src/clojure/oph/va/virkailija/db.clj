@@ -79,10 +79,10 @@
                    sisaltomuutos-status (get-in paatos [:haen-sisaltomuutosta :status])
                    yhteishanke-osapuoli-status (get-in paatos [:haen-yhteishanke-osapuolimuutosta :status])
                    created-paatos (first (query tx
-                                                "INSERT INTO virkailija.paatos (user_key, reason, decider)
-                                                 VALUES (?, ?, ?)
+                                                "INSERT INTO virkailija.paatos (user_key, reason, decider, paatos_template_version)
+                                                 VALUES (?, ?, ?, ?)
                                                  RETURNING id, reason, decider, user_key, created_at, updated_at"
-                                                [(generate-hash-id) (:reason paatos) decider]))
+                                                [(generate-hash-id) (:reason paatos) decider (hakija-api/current-paatos-template-version)]))
                    paatos-id (:id created-paatos)]
                (execute! tx
                          "UPDATE virkailija.muutoshakemus

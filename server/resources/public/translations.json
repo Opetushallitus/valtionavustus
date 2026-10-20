@@ -552,9 +552,9 @@
       "fi": "Lisätietoja päätöksestä",
       "sv": "Lisätietoja päätöksestä"
     },
-    "allekirjoittajat": {
-      "fi": "Allekirjoittajat",
-      "sv": "Allekirjoittajat"
+    "ratkaisija-ja-esittelija": {
+      "fi": "Ratkaisija ja esittelijä",
+      "sv": "Ratkaisija ja esittelijä"
     },
     "lisatietoja-antaa": {
       "fi": "Lisätietoja antaa",

@@ -19,9 +19,13 @@ import { Role } from '../../../va-virkailija/web/va/types'
 import { OsioPaatos, PaatosOsio } from './OsioPaatos'
 import { YhteishankeOrganizationsTable } from './YhteishankeOrganizationsTable'
 
-type MuutoshakemusPaatosProps = Omit<PaatosState, 'paatos' | 'presenter' | 'muutoshakemusUrl'> & {
-  paatos: Omit<Paatos, 'id' | 'user-key' | 'updated-at'>
+type MuutoshakemusPaatosProps = Omit<
+  PaatosState,
+  'paatos' | 'presenter' | 'muutoshakemusUrl' | 'environment'
+> & {
+  paatos: Omit<Paatos, 'id' | 'user-key' | 'updated-at' | 'paatos-template-version'>
   presenter: Role | undefined
+  ratkaisijaJaEsittelijaOsio: boolean
 }
 
 const Muutospaatos: React.FC<{
@@ -272,10 +276,9 @@ export const MuutoshakemusPaatos = ({
   avustushaku,
   muutoshakemukset,
   isDecidedByUkotettuValmistelija,
-  environment,
+  ratkaisijaJaEsittelijaOsio,
 }: MuutoshakemusPaatosProps) => {
   const { t } = useTranslations()
-  const allekirjoittajatOsio = environment['feature-flags'].includes('enablePaatosAllekirjoittajat')
 
   const paattymispaiva = isAcceptedWithChanges(paatos['paatos-status-jatkoaika'])
     ? paatos.paattymispaiva
@@ -325,7 +328,7 @@ export const MuutoshakemusPaatos = ({
         />
       )}
       <PerustelutSection reason={paatos.reason} />
-      {allekirjoittajatOsio ? (
+      {ratkaisijaJaEsittelijaOsio ? (
         <>
           <LisatietojaSection
             presenter={presenter}
@@ -335,7 +338,7 @@ export const MuutoshakemusPaatos = ({
             isDecidedByUkotettuValmistelija={isDecidedByUkotettuValmistelija}
             decider={paatos.decider}
             presenter={presenter}
-            title={t.muutoshakemus.paatos.allekirjoittajat}
+            title={t.muutoshakemus.paatos.ratkaisijaJaEsittelija}
           />
         </>
       ) : (

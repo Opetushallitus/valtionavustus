@@ -35,7 +35,14 @@ export const Paatos = ({ query }: { query: Query }) => {
 
   return (
     <div className="paatos__wrapper">
-      {loading ? <div>{t.loadingDecision}</div> : <MuutoshakemusPaatos {...paatosState} />}
+      {loading ? (
+        <div>{t.loadingDecision}</div>
+      ) : (
+        <MuutoshakemusPaatos
+          {...paatosState}
+          ratkaisijaJaEsittelijaOsio={paatosState.paatos['paatos-template-version'] === 2}
+        />
+      )}
     </div>
   )
 }
