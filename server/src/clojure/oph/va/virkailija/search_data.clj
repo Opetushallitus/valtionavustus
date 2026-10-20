@@ -64,7 +64,7 @@
      :params (mapcat :params conditions)}))
 
 (defn- with-matched-terms
-  "Replaces the term_N columns of a row with :matched-terms, the terms that matched"
+  "Collects the terms that the row matched into :matched-terms"
   [terms row]
   (let [term-keys (map #(keyword (str "term-" %)) (range (count terms)))] ; term_N after convert-to-dash-keys
     (assoc (apply dissoc row term-keys)
@@ -156,7 +156,7 @@
     (subs word 0 (max 3 (- (count word) 2)))))
 
 (defn- find-application-suggestions
-  "Organization names matching the term with each word shortened"
+  "Organization names resembling the term, for a term without hits"
   [term]
   (let [shortened (->> (split-search-words term)
                        (map shorten-word)
