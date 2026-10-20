@@ -17,8 +17,8 @@ muutoshakemusTest.use({
 
 muutoshakemusTest(
   'Ukotusmodal hanke changes when user changes hanke from list',
-  async ({ page, submitMultipleHakemuses, avustushakuID }) => {
-    expect(submitMultipleHakemuses).toBeDefined()
+  async ({ page, submitMultipleHakemukset, avustushakuID }) => {
+    expect(submitMultipleHakemukset).toBeDefined()
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
     const hakemusId = await hakemustenArviointiPage.navigateToLatestHakemusArviointi(avustushakuID)
     await hakemustenArviointiPage.closeHakemusDetails()

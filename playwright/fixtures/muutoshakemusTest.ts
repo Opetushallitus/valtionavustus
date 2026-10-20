@@ -44,7 +44,7 @@ export interface MuutoshakemusFixtures {
   rejectedHakemusEmails: {
     emails: Promise<Email[]>
   }
-  submitMultipleHakemuses: {}
+  submitMultipleHakemukset: {}
   hakulomake: string
 }
 
@@ -132,7 +132,7 @@ export const submittedHakemusTest = defaultValues.extend<MuutoshakemusFixtures>(
     expectToBeDefined(userKey)
     await use({ userKey })
   },
-  submitMultipleHakemuses: async ({ avustushakuID, answers, page }, use, testInfo) => {
+  submitMultipleHakemukset: async ({ avustushakuID, answers, page }, use, testInfo) => {
     testInfo.setTimeout(testInfo.timeout + 15_000)
 
     await test.step('Submit hakemus', async () => {

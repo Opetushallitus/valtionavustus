@@ -10,7 +10,7 @@ import { randomString } from '../utils/random'
 const randomStr = randomString()
 
 const test = selvitysTest.extend({
-  // Submit the extra hakemuses before the fixture chain closes the avustushaku
+  // Submit the extra hakemukset before the fixture chain closes the avustushaku
   submittedHakemus: async ({ submittedHakemus, page, avustushakuID, answers }, use) => {
     const hakijaAvustusHakuPage = HakijaAvustusHakuPage(page)
     const submit = async (moreAnswers: Answers, businessId: string) => {
@@ -55,7 +55,7 @@ test('Search page', async ({ page, valiAndLoppuselvitysSubmitted, hakuProps, avu
     await expect(searchPage.hakemusResults).toHaveCount(0)
   })
 
-  await test.step('finds hakemuses by hanke', async () => {
+  await test.step('finds hakemukset by hanke', async () => {
     await searchPage.search(randomStr)
     await expect(searchPage.avustushakuResults).toHaveCount(0)
     await expect(searchPage.hakemusResults).toHaveCount(2)
@@ -83,14 +83,14 @@ test('Search page', async ({ page, valiAndLoppuselvitysSubmitted, hakuProps, avu
       `3/${hakuProps.registerNumber} - Espoon kaupunki`,
     ])
   })
-  await test.step('does not show väli- and loppuselvitys as separate hakemuses', async () => {
+  await test.step('does not show väli- and loppuselvitys as separate hakemukset', async () => {
     await searchPage.search(`1/${hakuProps.registerNumber}`)
     await expect(searchPage.hakemusResults.locator('h2')).toHaveText([
       `1/${hakuProps.registerNumber} - Akaan kaupunki`,
     ])
   })
 
-  await test.step('finds hakemuses of several organizations with comma separated terms', async () => {
+  await test.step('finds hakemukset of several organizations with comma separated terms', async () => {
     await searchPage.search(`vantaa kaupunki, akaa kaupunki, ${randomStr}x`)
     await expect(searchPage.termChips.nth(0)).toContainText('vantaa kaupunki')
     await expect(searchPage.termChips.nth(0)).toHaveAttribute('data-hit-count', /^[1-9]\d*$/)

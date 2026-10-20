@@ -79,9 +79,9 @@ export function getTalousarvio(
   const muutoshakemuksetBeforeCurrent = beforeMuutoshakemus
     ? sortedMuutoshakemukset.filter((m) => m['created-at'] < beforeMuutoshakemus['created-at'])
     : sortedMuutoshakemukset
-  const acceptedTalousarvioMuutoshakemuses =
+  const acceptedTalousarvioMuutoshakemukset =
     muutoshakemuksetBeforeCurrent.filter(acceptedTalousarvioFilter)
-  const paatosTalousarvios = acceptedTalousarvioMuutoshakemuses.map((m) => m['paatos-talousarvio'])
+  const paatosTalousarvios = acceptedTalousarvioMuutoshakemukset.map((m) => m['paatos-talousarvio'])
   return [...paatosTalousarvios, hakemusTalousarvio][0] || []
 }
 

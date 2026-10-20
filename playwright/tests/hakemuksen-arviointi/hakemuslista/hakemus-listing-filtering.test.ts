@@ -93,7 +93,7 @@ test('hakemus list filtering', async ({ hakemustenArviointiPage, hakuProps, avus
     await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
   })
 
-  await test.step('clicking näytä keskeneräiset shows unfinished hakemuses in the listing', async () => {
+  await test.step('clicking näytä keskeneräiset shows unfinished hakemukset in the listing', async () => {
     await expect(hakemustenArviointiPage.hakemusListing).toContainText('2/2 hakemusta')
     await expect(hakemustenArviointiPage.showUnfinished).not.toBeChecked()
     await hakemustenArviointiPage.showUnfinished.click()

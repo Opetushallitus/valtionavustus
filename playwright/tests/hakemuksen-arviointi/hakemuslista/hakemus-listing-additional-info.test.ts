@@ -28,7 +28,7 @@ test(`hakemusten arviointi additional info`, async ({
   })
   const { locators } = hakemustenArviointiPage.additionalInfo()
 
-  await test.step('shows no budget if there are no accepted hakemuses', async () => {
+  await test.step('shows no budget if there are no accepted hakemukset', async () => {
     await expect(locators.budjetti).toHaveText('-')
   })
 
