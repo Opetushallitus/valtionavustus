@@ -362,7 +362,7 @@ Shared webpack config (`webpack.config.js`) builds both applications with:
 - Outputs to `server/resources/public/{hakija,virkailija}/js/`
 
 Entry points:
-- **Hakija**: VaApp.tsx, SelvitysApp.tsx, VaLogin.tsx, MuutoshakemusApp.tsx
+- **Hakija**: VaApp.tsx, SelvitysApp.tsx, VaLogin.tsx, MuutoshakemusApp.tsx, YhteystiedotApp.tsx
 - **Virkailija**: HakemustenArviointiApp.tsx, HakujenHallintaApp.tsx, YhteenvetoApp.jsx, Login.jsx, KoodienhallintaApp.tsx, SearchApp.tsx
 
 ## Code Style

@@ -612,6 +612,25 @@
     (log/info "Found valmistelija" result  "for hakemus ID" hakemus-id)
     result))
 
+(defn get-yhteystiedot [avustushaku-id user-key]
+  (when-let [hakemus (first (query "SELECT h.id, h.project_name, h.organization_name, h.register_number,
+                                           a.content -> 'name' AS avustushaku_name, v.code AS operational_unit_code
+                                    FROM hakija.hakemukset h
+                                    JOIN hakija.avustushaut a ON a.id = h.avustushaku
+                                    LEFT JOIN virkailija.va_code_values v ON v.id = a.operational_unit_id
+                                    WHERE h.user_key = ? AND h.avustushaku = ?
+                                      AND h.version_closed IS NULL AND h.status <> 'cancelled'
+                                      AND a.status <> 'deleted'"
+                                   [user-key avustushaku-id]))]
+    {:avustushaku {:name (:avustushaku-name hakemus)
+                   :operational-unit-code (:operational-unit-code hakemus)}
+     :hakemus {:project-name (if (clojure.string/blank? (:project-name hakemus))
+                               (:organization-name hakemus)
+                               (:project-name hakemus))
+               :register-number (:register-number hakemus)}
+     :contact (some-> (get-valmistelija-assigned-to-hakemus (:id hakemus))
+                      (select-keys [:name :email]))}))
+
 (defn- add-muutoshakemus [tx user-key hakemus-id muutoshakemus]
   (log/info (str "Inserting muutoshakemus for user-key: " user-key))
   (let [haen-kayttoajan-pidennysta (get-in muutoshakemus [:jatkoaika :haenKayttoajanPidennysta] false)

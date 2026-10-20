@@ -49,6 +49,7 @@ Begäranden om redovisningar och andra meddelanden som riktas till projektet ski
 Mottagaren av understöd ska spara detta meddelande och länkarna som ingår i meddelandet.
 
 Vid behov ges närmare information av den person som angetts som kontaktperson i understödsbeslutet.
+Ajantasaiset yhteystiedot hakemuksenne käsittelijään löydätte tästä linkistä (SV): ${HAKIJA_URL}/avustushaku/${avustushakuID}/hakemus/${userKey}/yhteystiedot?lang=sv
 
 
 

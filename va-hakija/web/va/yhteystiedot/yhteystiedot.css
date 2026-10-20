@@ -1,0 +1,120 @@
+body {
+  margin: 0;
+  font-family: 'Open Sans', Arial, sans-serif;
+  color: var(--text-black);
+  background: #fff;
+  line-height: 1.5;
+}
+
+.yhteystiedot__topbar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  min-height: 44px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.yhteystiedot__topbar img {
+  height: 44px;
+  width: auto;
+}
+
+.yhteystiedot__lang {
+  margin-left: auto;
+}
+
+.yhteystiedot__main {
+  max-width: var(--section-width);
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+}
+
+.yhteystiedot__main a {
+  color: var(--dark-blue);
+}
+
+.yhteystiedot__topbar a {
+  color: var(--dark-blue);
+}
+
+.yhteystiedot__main h1 {
+  font-size: 26px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: var(--dark-blue);
+}
+
+.yhteystiedot__main h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 32px 0 8px;
+  color: var(--dark-blue);
+}
+
+.yhteystiedot__hakemus {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 2px 16px;
+  margin: 0;
+}
+
+.yhteystiedot__hakemus dt {
+  color: var(--mid-gray);
+}
+
+.yhteystiedot__hakemus dd {
+  margin: 0;
+}
+
+.yhteystiedot__contact {
+  border: 1px solid var(--light-gray);
+  border-left: 4px solid var(--bright-blue);
+  background: var(--background-blue);
+  padding: 16px 20px;
+  margin-top: 16px;
+}
+
+.yhteystiedot__contact p {
+  margin: 2px 0;
+  overflow-wrap: anywhere;
+}
+
+.yhteystiedot__contact .yhteystiedot__contact-name {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.yhteystiedot__contact .yhteystiedot__contact-role {
+  color: var(--mid-gray);
+  margin: 0 0 8px;
+}
+
+.yhteystiedot__note {
+  color: var(--mid-gray);
+  font-size: 14px;
+  margin-top: 16px;
+}
+
+@media (max-width: 640px) {
+  .yhteystiedot__topbar {
+    min-height: 34px;
+  }
+
+  .yhteystiedot__topbar img {
+    height: 34px;
+  }
+
+  .yhteystiedot__main h1 {
+    font-size: 22px;
+  }
+
+  .yhteystiedot__hakemus {
+    grid-template-columns: 1fr;
+  }
+
+  .yhteystiedot__hakemus dd {
+    margin-bottom: 6px;
+  }
+}

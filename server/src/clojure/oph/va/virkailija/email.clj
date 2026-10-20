@@ -10,7 +10,7 @@
             [oph.common.datetime :as datetime]
             [oph.common.email :as email]
             [oph.common.email-utils :as email-utils]
-            [oph.soresu.common.config :refer [config]]
+            [oph.soresu.common.config :refer [config feature-enabled?]]
             [oph.va.hakija.db :as hakija-db]
             [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
             [oph.soresu.common.db :refer [query]]
@@ -151,6 +151,10 @@
 (defn paatos-url [avustushaku-id user-key lang]
   (let [va-url (-> config :server :url lang)]
     (str va-url "paatos/avustushaku/" avustushaku-id "/hakemus/" user-key)))
+
+(defn yhteystiedot-url [avustushaku-id user-key lang]
+  (let [va-url (-> config :server :url lang)]
+    (str va-url "avustushaku/" avustushaku-id "/hakemus/" user-key "/yhteystiedot?lang=" (name lang))))
 
 (defn selvitys-url [avustushaku-id user-key lang selvitys-type]
   (let [va-url (-> config :server :url lang)
@@ -592,6 +596,8 @@
              :url url
              :refuse-url paatos-refuse-url
              :modify-url paatos-modify-url
+             :yhteystiedot-url (yhteystiedot-url (:id avustushaku) (:user_key hakemus) lang)
+             :include-yhteystiedot-link (feature-enabled? :enablePaatosAllekirjoittajat)
              :register-number (:register_number hakemus)
              :project-name (:project_name hakemus)
              :budjettimuutoshakemus-enabled budjettimuutoshakemus-enabled?

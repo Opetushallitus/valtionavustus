@@ -40,6 +40,15 @@
    :has-role s/Bool
    :organizations [YhteishankeOrganization]})
 
+(s/defschema Yhteystiedot
+  "Yhteystiedot contains the current contact person of a hakemus for the hakija"
+  {:avustushaku {:name LocalizedString
+                 :operational-unit-code (s/maybe s/Str)}
+   :hakemus {:project-name s/Str
+             :register-number (s/maybe s/Str)}
+   :contact (s/maybe {:name s/Str
+                      :email (s/maybe s/Str)})})
+
 (s/defschema TalousarvioMuutos
   "TalousarvioMuutos contains a list of menoluokka amounts"
   {s/Keyword s/Int})

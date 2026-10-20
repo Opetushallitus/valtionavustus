@@ -206,6 +206,15 @@
       (ok response)
       (not-found))))
 
+(defn- get-yhteystiedot []
+  (compojure-api/GET "/:avustushaku-id/hakemus/:user-key/yhteystiedot" [avustushaku-id user-key]
+    :path-params [avustushaku-id :- Long user-key :- s/Str]
+    :return Yhteystiedot
+    :summary "Get the current contact person of a hakemus"
+    (if-let [yhteystiedot (hakija-db/get-yhteystiedot avustushaku-id user-key)]
+      (ok yhteystiedot)
+      (not-found))))
+
 (defn- get-attachments []
   (compojure-api/GET "/:haku-id/hakemus/:hakemus-id/attachments" [haku-id hakemus-id]
     :path-params [haku-id :- Long, hakemus-id :- s/Str]
@@ -272,6 +281,7 @@
   (get-normalized-hakemus)
   (get-muutoshakemukset)
   (get-yhteishanke-organizations)
+  (get-yhteystiedot)
   (get-hakemus)
   (selvitys-routes/get-selvitys)
   (selvitys-routes/get-selvitys-init)
@@ -315,6 +325,7 @@
    (compojure/GET "/avustushaku/:avustushaku-id/loppuselvitys" [] (return-html "hakija/selvitys.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/valiselvitys" [] (return-html "hakija/selvitys.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/" [] (return-html "hakija/login.html"))
+   (compojure/GET "/avustushaku/:avustushaku-id/hakemus/:user-key/yhteystiedot" [] (return-html "hakija/yhteystiedot.html"))
 
    (compojure/GET "/avustushaku/:avustushaku-id/esikatselu" [] (return-html "hakija/index.html"))
    (compojure/GET "/avustushaku/:avustushaku-id/esikatselu/:hakemus" [] (return-html "hakija/index.html"))

@@ -20,7 +20,8 @@ Begäranden om redovisningar och andra meddelanden som riktas till projektet ski
 
 Mottagaren av understöd ska spara detta meddelande och länkarna som ingår i meddelandet.
 
-Vid behov ges närmare information av den person som angetts som kontaktperson i understödsbeslutet.
+Vid behov ges närmare information av den person som angetts som kontaktperson i understödsbeslutet.{{#include-yhteystiedot-link}}
+Ajantasaiset yhteystiedot hakemuksenne käsittelijään löydätte tästä linkistä (SV): {{& yhteystiedot-url }}{{/include-yhteystiedot-link}}
 
 
 

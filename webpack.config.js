@@ -124,6 +124,7 @@ const hakijaConfig = Object.assign({}, makeConfig(path.resolve(__dirname, 'va-ha
       __dirname,
       'va-hakija/web/va/muutoshakemus/MuutoshakemusApp.tsx'
     ),
+    yhteystiedotApp: path.resolve(__dirname, 'va-hakija/web/va/yhteystiedot/YhteystiedotApp.tsx'),
   },
 })
 

@@ -188,6 +188,23 @@ ${email}`,
   logo: {
     alt: 'Opetushallitus',
   },
+  yhteystiedot: {
+    loading: 'Ladataan yhteystietoja...',
+    notFound: 'Hakemusta ei löytynyt.',
+    error: 'Yhteystietojen lataaminen epäonnistui.',
+    hakemus: 'Hakemus',
+    hanke: 'Hanke',
+    hakemusnumero: 'Hakemusnumero',
+    haku: 'Haku',
+    contactTitle: 'Lisätietoja hakemuksestanne antaa',
+    valmistelija: 'Valmistelija',
+    oph: 'Opetushallitus',
+    jotpa: 'Jatkuvan oppimisen ja työllisyyden palvelukeskus',
+    noContact: 'Hakemukselle ei ole tällä hetkellä nimetty yhteyshenkilöä.',
+    switchboard: '029 533 1000 (vaihde)',
+    note: 'Yhteystiedot ovat ajantasaiset. Ne voivat poiketa päätöksessä mainituista, jos hakemuksenne käsittelijä on vaihtunut.',
+    otherLanguage: 'På svenska',
+  },
   email: {
     paatos: {
       status: {
@@ -452,6 +469,23 @@ ${email}`,
   },
   logo: {
     alt: 'Utbildningsstyrelsen',
+  },
+  yhteystiedot: {
+    loading: 'Ladataan yhteystietoja... (SV)',
+    notFound: 'Hakemusta ei löytynyt. (SV)',
+    error: 'Yhteystietojen lataaminen epäonnistui. (SV)',
+    hakemus: 'Hakemus (SV)',
+    hanke: 'Hanke (SV)',
+    hakemusnumero: 'Hakemusnumero (SV)',
+    haku: 'Haku (SV)',
+    contactTitle: 'Lisätietoja hakemuksestanne antaa (SV)',
+    valmistelija: 'Valmistelija (SV)',
+    oph: 'Opetushallitus (SV)',
+    jotpa: 'Jatkuvan oppimisen ja työllisyyden palvelukeskus (SV)',
+    noContact: 'Hakemukselle ei ole tällä hetkellä nimetty yhteyshenkilöä. (SV)',
+    switchboard: '029 533 1000 (vaihde) (SV)',
+    note: 'Yhteystiedot ovat ajantasaiset. Ne voivat poiketa päätöksessä mainituista, jos hakemuksenne käsittelijä on vaihtunut. (SV)',
+    otherLanguage: 'Suomeksi',
   },
   muistutusviesti: {
     header: (nimi) => `Bästa mottagare

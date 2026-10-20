@@ -20,7 +20,8 @@ Selvityspyynnöt sekä muut valtionavustusjärjestelmästä hankkeille osoitetut
 
 Avustuksen saajan tulee säilyttää tämä viesti sekä viestin sisältämät linkit.
 
-Tarvittaessa tarkempia lisätietoja antaa avustuspäätöksessä nimetty lisätietojen antaja.
+Tarvittaessa tarkempia lisätietoja antaa avustuspäätöksessä nimetty lisätietojen antaja.{{#include-yhteystiedot-link}}
+Ajantasaiset yhteystiedot hakemuksenne käsittelijään löydätte tästä linkistä: {{& yhteystiedot-url }}{{/include-yhteystiedot-link}}
 
 
 

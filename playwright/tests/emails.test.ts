@@ -180,6 +180,7 @@ async function getLatestAcceptedPaatosEmailsForHakemus(hakemusID: number, nthSen
   return {
     'to-address': email['to-address'].sort(),
     'reply-to': email['reply-to'],
+    formatted: email.formatted,
   }
 }
 
@@ -192,17 +193,65 @@ const expectedSentToAddresses = [
 
 test('sends emails to correct contact and hakemus emails', async ({
   page,
-  acceptedHakemus: { hakemusID },
+  acceptedHakemus: { hakemusID, userKey },
   avustushakuID,
+  answers,
+  avustushakuName,
+  ukotettuValmistelija,
 }) => {
+  const yhteystiedotUrl = `${HAKIJA_URL}/avustushaku/${avustushakuID}/hakemus/${userKey}/yhteystiedot`
   const linkToMuutoshakemus = await getLinkToMuutoshakemusFromSentEmails(hakemusID)
   await test.step('sends päätös email', async () => {
     const email = await getLatestAcceptedPaatosEmailsForHakemus(hakemusID, 1)
     expect(email['to-address']).toEqual(expectedSentToAddresses)
     expect(email['reply-to']).toEqual(null)
+    expect(email.formatted).toContain(
+      `Ajantasaiset yhteystiedot hakemuksenne käsittelijään löydätte tästä linkistä: ${yhteystiedotUrl}?lang=fi`
+    )
     const sentEmailsList = await page.getByTestId('sent-emails')
     const sentEmails = await sentEmailsList.textContent()
     expect(sentEmails!.split(' ').sort()).toEqual(expectedSentToAddresses.sort())
+  })
+  const yhteystiedotContact = page.getByTestId('yhteystiedot-contact')
+  await test.step('yhteystiedot link shows hakemus and ukotettu valmistelija', async () => {
+    await page.goto(`${yhteystiedotUrl}?lang=fi`)
+    await expect(page.getByTestId('yhteystiedot-hanke')).toHaveText(answers.projectName ?? '')
+    await expect(page.getByTestId('yhteystiedot-haku')).toHaveText(avustushakuName)
+    await expect(page.getByTestId('yhteystiedot-hakemusnumero')).not.toBeEmpty()
+    await expect(
+      page.getByRole('heading', { name: 'Lisätietoja hakemuksestanne antaa' })
+    ).toBeVisible()
+    await expect(yhteystiedotContact).toContainText(ukotettuValmistelija)
+  })
+  await test.step('yhteystiedot switches language without reloading', async () => {
+    let yhteystiedotRequests = 0
+    page.on('request', (request) => {
+      if (request.url().includes('/yhteystiedot') && request.url().includes('/api/')) {
+        yhteystiedotRequests++
+      }
+    })
+    await page.getByRole('link', { name: 'På svenska' }).click()
+    await expect(
+      page.getByRole('heading', { name: 'Lisätietoja hakemuksestanne antaa (SV)' })
+    ).toBeVisible()
+    await expect(page).toHaveURL(/\?lang=sv$/)
+    await expect(yhteystiedotContact).toContainText(ukotettuValmistelija)
+    expect(yhteystiedotRequests).toBe(0)
+  })
+  await test.step('yhteystiedot shows the new valmistelija after re-ukotus', async () => {
+    const hakemustenArviointiPage = new HakemustenArviointiPage(page)
+    await hakemustenArviointiPage.navigate(avustushakuID, { showAll: true })
+    await hakemustenArviointiPage.selectValmistelijaForHakemus(hakemusID, 'Viivi Virkailija')
+    await page.goto(yhteystiedotUrl)
+    await expect(yhteystiedotContact).toContainText('Viivi Virkailija')
+    await expect(yhteystiedotContact).not.toContainText(ukotettuValmistelija)
+  })
+  await test.step('yhteystiedot shows no contact for an unknown hakemus', async () => {
+    await page.goto(
+      `${HAKIJA_URL}/avustushaku/${avustushakuID}/hakemus/tuntematon-user-key/yhteystiedot`
+    )
+    await expect(page.getByText('Hakemusta ei löytynyt.')).toBeVisible()
+    await expect(yhteystiedotContact).toBeHidden()
   })
   const hakujenHallintaPage = new HakujenHallintaPage(page)
   const paatosPage = PaatosPage(page)
