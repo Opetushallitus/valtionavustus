@@ -30,7 +30,7 @@ function normalize_playwright_args {
 function main {
   init_nodejs
   normalize_playwright_args "$@"
-  run_tests "${normalized_playwright_args[@]}"
+  run_tests ${normalized_playwright_args[@]+"${normalized_playwright_args[@]}"}
 }
 
 main "$@"
