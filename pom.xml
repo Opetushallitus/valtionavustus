@@ -258,7 +258,7 @@
     <dependency>
       <groupId>ring</groupId>
       <artifactId>ring-core</artifactId>
-      <version>1.15.5</version>
+      <version>1.15.6</version>
     </dependency>
     <dependency>
       <groupId>ring</groupId>
