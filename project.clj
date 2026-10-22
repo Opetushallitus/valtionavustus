@@ -53,7 +53,7 @@
                          ;; [buddy/buddy-sign "3.6.1-359"] -> [buddy/buddy-core "1.12.0-430"] ->
                          [commons-codec "1.23.0"]
 
-                         ;; [ring/ring-core "1.15.5"] -> [commons-io "2.22.0"]
+                         ;; [ring/ring-core "1.15.6"] -> [commons-io "2.22.0"]
                          ;; [org.apache.tika/tika-core "4.1.0"] -> [commons-io "2.22.0"]
                          [commons-io "2.22.0"]
 
@@ -109,7 +109,7 @@
                  [ring.middleware.conditional "0.2.0" :exclusions [ring]]
                  [radicalzephyr/ring.middleware.logger "0.6.0"]
                  [ring/ring-codec "1.3.0"]
-                 [ring/ring-core "1.15.5"]
+                 [ring/ring-core "1.15.6"]
                  [ring/ring-devel "1.15.5"]
                  [ring/ring-defaults "0.7.1"]
                  [ring/ring-session-timeout "0.3.0"]
