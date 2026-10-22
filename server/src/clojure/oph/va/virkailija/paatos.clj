@@ -14,7 +14,7 @@
    [clojure.tools.logging :as log]
    [clojure.string :as str]
    [oph.va.virkailija.decision :as decision]
-   [oph.soresu.common.config :refer [config]]
+   [oph.soresu.common.config :refer [config feature-enabled?]]
    [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
    [oph.va.virkailija.application-data :refer [get-application-token create-application-token]]
    [oph.va.virkailija.payments-data :as payments-data]
@@ -287,8 +287,11 @@
                            :budjettimuutoshakemus-enabled budjettimuutoshakemus-enabled
                            :include-muutoshaku-link include-muutoshaku-link?
                            :is-jotpa-hakemus (is-jotpa-avustushaku avustushaku)
-                           :modify-url       (when include-muutoshaku-link? "MODIFY_URL_PLACEHOLDER")})
+                           :modify-url       (when include-muutoshaku-link? "MODIFY_URL_PLACEHOLDER")
+                           :yhteystiedot-url "YHTEYSTIEDOT_URL_PLACEHOLDER"
+                           :include-yhteystiedot-link (feature-enabled? :enablePaatosTemplateVersion2)})
             :example-url (email/paatos-url avustushaku-id first-hakemus-user-key :fi)
+            :example-yhteystiedot-url (email/yhteystiedot-url avustushaku-id first-hakemus-user-key :fi)
             :example-modify-url (email-utils/modify-url avustushaku-id first-hakemus-user-key :fi first-hakemus-token true)
             :example-refuse-url
             (email-utils/refuse-url

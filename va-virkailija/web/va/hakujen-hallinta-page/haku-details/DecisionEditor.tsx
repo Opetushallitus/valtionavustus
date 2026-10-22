@@ -771,6 +771,7 @@ interface PaatosSentRes {
   'example-url': string
   'example-refuse-url': string
   'example-modify-url': string
+  'example-yhteystiedot-url': string
   paatokset: Paatos[]
 }
 
@@ -785,6 +786,7 @@ interface DecisionAndSendState {
   exampleUrl?: string
   exampleRefuseUrl?: string
   exampleModifyUrl?: string
+  exampleYhteystiedotUrl?: string
   paatokset?: Paatos[]
   lahetykset?: Lahetys[]
   sendError?: string
@@ -906,6 +908,7 @@ class DecisionDateAndSend extends React.Component<DecisionDateAndSendProps, Deci
         exampleUrl: res['example-url'],
         exampleRefuseUrl: res['example-refuse-url'],
         exampleModifyUrl: res['example-modify-url'],
+        exampleYhteystiedotUrl: res['example-yhteystiedot-url'],
         paatokset: res.paatokset,
       })
     })
@@ -1129,6 +1132,10 @@ class DecisionDateAndSend extends React.Component<DecisionDateAndSendProps, Deci
       .replace(
         'MODIFY_URL_PLACEHOLDER',
         `<a href=${this.state.exampleModifyUrl}>${this.state.exampleModifyUrl}</a>`
+      )
+      .replace(
+        'YHTEYSTIEDOT_URL_PLACEHOLDER',
+        `<a href=${this.state.exampleYhteystiedotUrl}>${this.state.exampleYhteystiedotUrl}</a>`
       )
 
     return (

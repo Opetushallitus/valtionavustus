@@ -212,6 +212,12 @@ test('sends emails to correct contact and hakemus emails', async ({
     const sentEmails = await sentEmailsList.textContent()
     expect(sentEmails!.split(' ').sort()).toEqual(expectedSentToAddresses.sort())
   })
+  await test.step('päätös email preview contains yhteystiedot link', async () => {
+    await PaatosPage(page).navigateTo(avustushakuID)
+    await expect(page.locator('.decision-email-content')).toContainText(
+      `Ajantasaiset yhteystiedot hakemuksenne käsittelijään löydätte tästä linkistä: ${yhteystiedotUrl}?lang=fi`
+    )
+  })
   const yhteystiedotContact = page.getByTestId('yhteystiedot-contact')
   await test.step('yhteystiedot link shows hakemus and ukotettu valmistelija', async () => {
     await page.goto(`${yhteystiedotUrl}?lang=fi`)
