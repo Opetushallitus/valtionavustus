@@ -556,6 +556,14 @@
       "fi": "Ratkaisija ja esittelijä",
       "sv": "Ratkaisija ja esittelijä"
     },
+    "ratkaisija": {
+      "fi": "Ratkaisija",
+      "sv": "Ratkaisija"
+    },
+    "esittelija": {
+      "fi": "Esittelijä",
+      "sv": "Föredragande"
+    },
     "lisatietoja-antaa": {
       "fi": "Lisätietoja antaa",
       "sv": "Mer information ger"

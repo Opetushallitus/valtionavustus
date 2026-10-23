@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import _ from 'lodash'
 import * as Bacon from 'baconjs'
 
@@ -25,6 +25,8 @@ import { VirkailijaAvustushaku, selectLoadedInitialData, updateField } from '../
 import { useHakujenHallintaDispatch, useHakujenHallintaSelector } from '../hakujenHallintaStore'
 import { tryToUseCurrentAvustushaku, useCurrentAvustushaku } from '../useAvustushaku'
 import ChooseAvustushaku from './ChooseAvustushaku'
+import translations from '../../../../../server/resources/public/translations.json'
+import { useGetPaatosTemplateVersionsQuery } from '../../apiSlice'
 
 const onPaatosLukittu = (avustushaku: VirkailijaAvustushaku) => avustushaku.status === 'resolved'
 
@@ -42,11 +44,12 @@ interface DecisionProps {
   title: string
   avustushaku: VirkailijaAvustushaku
   id: string
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+  onChange: (fieldId: string, newValue: string) => void
   helpText?: string
   dataTestId?: string
   language: Language
   disabled: boolean
+  prefixLabels?: Record<Language, string>
 }
 
 const DecisionField: React.FC<DecisionProps> = ({
@@ -58,17 +61,56 @@ const DecisionField: React.FC<DecisionProps> = ({
   helpText,
   dataTestId,
   disabled,
+  prefixLabels,
 }) => {
   const fieldId = `decision.${id}.${language}`
+  const prefix = prefixLabels && `${prefixLabels[language]}: `
   const value = _.get(avustushaku, fieldId, '')
   const titleLanguage = language === 'sv' ? `${title} ruotsiksi` : title
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const selectionStart = useRef(0)
+  useEffect(() => {
+    const textarea = textareaRef.current
+    if (!prefix || !textarea) {
+      return
+    }
+    const rememberSelectionStart = () => (selectionStart.current = textarea.selectionStart)
+    textarea.addEventListener('beforeinput', rememberSelectionStart)
+    return () => textarea.removeEventListener('beforeinput', rememberSelectionStart)
+  }, [prefix])
+  useEffect(() => {
+    if (prefix && !disabled && !value.startsWith(prefix)) {
+      onChange(fieldId, prefix + value)
+    }
+  }, [prefix, disabled, value])
+  const onTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { value: newValue, selectionEnd } = e.target
+    if (!prefix || newValue.startsWith(prefix)) {
+      onChange(fieldId, newValue)
+      return
+    }
+    const inserted = newValue.slice(Math.min(selectionStart.current, selectionEnd), selectionEnd)
+    const tail = value.slice(
+      Math.max(value.length - (newValue.length - selectionEnd), prefix.length)
+    )
+    onChange(fieldId, prefix + inserted + tail)
+    const cursor = prefix.length + inserted.length
+    queueMicrotask(() => textareaRef.current?.setSelectionRange(cursor, cursor))
+  }
   return (
     <div className="decision-column" data-test-id={dataTestId}>
       <label>
         {titleLanguage}
         {helpText && language === 'fi' ? <HelpTooltip content={helpText} direction="left" /> : ''}
       </label>
-      <textarea disabled={disabled} onChange={onChange} rows={5} id={fieldId} value={value} />
+      <textarea
+        ref={textareaRef}
+        disabled={disabled}
+        onChange={onTextChange}
+        rows={5}
+        id={fieldId}
+        value={value}
+      />
     </div>
   )
 }
@@ -81,6 +123,7 @@ const DecisionFields: React.FC<Omit<DecisionProps, 'language'>> = ({
   helpText,
   dataTestId,
   disabled,
+  prefixLabels,
 }) => (
   <div className="decision-row">
     <DecisionField
@@ -92,6 +135,7 @@ const DecisionFields: React.FC<Omit<DecisionProps, 'language'>> = ({
       helpText={helpText}
       dataTestId={dataTestId}
       disabled={disabled}
+      prefixLabels={prefixLabels}
     />
     <DecisionField
       title={title}
@@ -102,6 +146,7 @@ const DecisionFields: React.FC<Omit<DecisionProps, 'language'>> = ({
       helpText={helpText}
       dataTestId={dataTestId}
       disabled={disabled}
+      prefixLabels={prefixLabels}
     />
   </div>
 )
@@ -1183,9 +1228,17 @@ const DecisionEditorPage = () => {
   )
   const paatosLukittu = onPaatosLukittu(avustushaku)
   const fieldsDisabled = loadingAvustushaku || paatosLukittu
-  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    dispatch(updateField({ avustushaku, field: e.target, newValue: e.target.value }))
+  const onChange = (fieldId: string, newValue: string) => {
+    dispatch(updateField({ avustushaku, field: { id: fieldId }, newValue }))
   }
+  const { currentData: paatosTemplateVersions } = useGetPaatosTemplateVersionsQuery(
+    avustushaku.id,
+    {
+      skip: !environment['feature-flags'].includes('enablePaatosTemplateVersion2'),
+    }
+  )
+  const paatosTemplateVersion2 =
+    paatosTemplateVersions !== undefined && !paatosTemplateVersions.includes(1)
   const fields = [
     {
       id: 'sovelletutsaannokset',
@@ -1219,15 +1272,17 @@ const DecisionEditorPage = () => {
     },
     {
       id: 'johtaja',
-      title: 'Johtaja',
+      title: paatosTemplateVersion2 ? translations.paatos.ratkaisija.fi : 'Johtaja',
       helpText: helpTexts['hakujen_hallinta__päätös___johtaja'],
       dataTestId: 'johtaja',
+      prefixLabels: paatosTemplateVersion2 ? translations.paatos.ratkaisija : undefined,
     },
     {
       id: 'valmistelija',
       title: 'Esittelijä',
       helpText: helpTexts['hakujen_hallinta__päätös___esittelijä'],
       dataTestId: 'valmistelija',
+      prefixLabels: paatosTemplateVersion2 ? translations.paatos.esittelija : undefined,
     },
   ]
   const updatedAt = avustushaku.decision?.updatedAt
@@ -1281,6 +1336,7 @@ const DecisionEditorPage = () => {
           helpText={field.helpText}
           dataTestId={field.dataTestId}
           disabled={fieldsDisabled}
+          prefixLabels={field.prefixLabels}
         />
       ))}
       <DecisionFields

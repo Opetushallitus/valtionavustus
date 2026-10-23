@@ -298,6 +298,10 @@
              avustushaku-id first-hakemus-user-key :fi first-hakemus-token)}
            (select-keys sent-status [:sent :count :sent-time :paatokset])))))
 
+  (compojure-api/GET "/template-versions/:avustushaku-id" []
+    :path-params [avustushaku-id :- Long]
+    (ok (hakija-api/get-paatos-template-versions avustushaku-id)))
+
   (compojure-api/GET "/views/:hakemus-id" []
     :path-params [hakemus-id :- Long]
     (ok {:views (hakija-api/find-paatos-views hakemus-id)}))
