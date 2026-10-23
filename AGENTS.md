@@ -1,34 +1,58 @@
-# Repository Guidelines
+# AGENTS.md
 
-## Project Structure & Module Organization
-- `va-hakija/` and `va-virkailija/` are Leiningen apps for applicant and official UIs; both serve front-end assets from their `web/va` trees and rely on shared form logic in `soresu-form/`.
-- `server/` contains the common Clojure backend (REST APIs, database integrations, tests under `server/spec`). Supporting services live in `maksatuspalvelu/` and infrastructure definitions live in `cdk/` and `deploy-scripts/`.
-- UI regression packs, configs, and fixtures are in `playwright/`; local orchestration scripts sit in `scripts/` alongside `start-local-env.sh` and Docker Compose files for dev containers.
+Valtionavustukset is OPH's grant application system. Two web services share one Clojure backend:
+- **va-hakija** (port 8080): public application submission, no auth
+- **va-virkailija** (port 8081): grant evaluation and management, OPH CAS auth
 
-## Build, Test, and Development Commands
-- `./start-local-env.sh` spins up tmux panes that build frontends, run the VA service stack, fakes SMTP, maksatuspalvelu, and pagerduty containers.
-- `npm run build` (or `build-watch`) bundles front-end assets for both UIs; run inside each service directory when editing JS/TS.
-- `npm run playwright:test` executes end-to-end checks with the repo Playwright config; choose `:smoketest-qa` or `:smoketest-prod` before promoting changes.
+Domain concepts and user roles are in `README.md` (Finnish).
 
-## Coding Style & Naming Conventions
-- Clojure code follows idiomatic two-space indentation and kebab-case namespaces; format with `lein cljfmt fix` before committing.
-- TypeScript/JavaScript code uses Prettier defaults (`npm run prettier-check-project`); React components favor PascalCase files, hooks remain camelCase, and CSS modules mirror component names.
-- Keep Docker, script, and YAML files POSIX-compliant with lower-case, hyphenated filenames.
+## Layout
 
-## Agent Gotchas
-- DB result keys from `oph.soresu.common.db/query` are converted from snake_case to kebab-case. Read result maps with keys like `:hakemus-id`, `:organization-name`, `:contact-person` (not `:hakemus_id`, `:organization_name`, `:contact_person`).
-- Real failure seen in VA-477: using underscore keys in `server/src/clojure/oph/va/virkailija/db.clj` caused `java.sql.BatchUpdateException` during muutoshakemus decision save (`POST .../muutoshakemus/:id/paatos`).
-- CI Playwright tests run inside `Dockerfile.playwright-test-runner`, not directly from repo tree. If a unit test imports code from `va-hakija/`, the image must copy `va-hakija/` and root `tsconfig.json` + `common-tsconfig.json`; otherwise CI fails with `Cannot find module ...` (seen in VA-477 follow-up with `playwright/tests/unit-tests/muutoshakemusClient.test.ts`).
+- `server/`: Clojure backend, a single Leiningen project for both services (entry point `oph.va.hakija.main`)
+  - `src/clojure/oph/va/{hakija,virkailija}/`: service backends
+  - `src/clojure/oph/soresu/`: shared form library backend; `src/clojure/oph/common/`: common utils
+  - `resources/db/migration/`: Flyway migrations, run automatically on startup
+  - `config/*.edn`: per-environment config, selected via the `config` env var
+- `va-hakija/web/va/`, `va-virkailija/web/va/`: React/TS frontends
+- `soresu-form/web/`: shared frontend form library. Changes here affect both frontends
+- `playwright/`: E2E tests; `cdk/`: AWS infra + its unit tests; `maksatuspalvelu/`: payment service mock
 
-## Testing Guidelines
-- Playwright specs live under `playwright/tests`; name files by feature (`application-submission.spec.ts`) and capture new fixtures in `playwright/fixtures`.
-- E2E runs require frontends built via `npm run build` and a running local stack; rely on `docker-compose.local-dev.yml` for dependencies.
+## Commands
 
-## Commit & Pull Request Guidelines
-- Follow the existing sentence-style summaries (`Update dependency aws-cdk-lib to v2.217.0`); start with an imperative verb and avoid trailing punctuation.
-- Reference Jira or GitHub issues in the body when applicable, and mention any migrations or manual steps.
-- Pull requests should state scope, test evidence (commands run, screenshots for UI), and note coordination needed with `valtionavustus-secret`.
+Run `task --list` to see all commands, including `task setup:*`, which seeds data for manual testing.
 
-## Security & Configuration Tips
-- Secrets live in the adjacent `valtionavustus-secret/` repo; never commit credentials here and rely on the provided Docker Compose overrides for local secrets.
-- Regenerate `tmp/version.txt` via the startup script only—do not hand-edit generated files.
+```bash
+task dev                         # full local env in tmux (db, webpack watch, backend, mocks)
+task test                        # CDK tests + Playwright E2E (needs `task dev` running)
+npm run playwright:test          # Playwright only
+npm run prettier-fix             # TS/JS formatting
+./lein cljfmt fix                # Clojure formatting
+```
+
+Always use `./lein` (pinned version), not a global `lein`. There are no Clojure unit tests. Tests are Playwright E2E and CDK only.
+
+## Code style
+
+- **Domain terms stay in Finnish** (hakemus, avustushaku, virkailija, …) in function names, variables, and DB columns. Do not translate them: `hae-hakemus`, not `get-application`. Generic technical terms (user, session, token) can stay in English.
+- Run `./lein cljfmt fix` and `npm run prettier-fix` before committing.
+- `project.clj` has `:pedantic? :abort`, so all dependency versions must be explicit.
+- React components use PascalCase filenames; hooks and utilities use camelCase.
+
+## Gotchas
+
+- `oph.soresu.common.db/query` converts result keys from snake_case to kebab-case. Read them as `:hakemus-id`, not `:hakemus_id`. Using underscore keys caused a `BatchUpdateException` in VA-477.
+- CI Playwright runs inside `Dockerfile.playwright-test-runner`, not from the repo tree. If a test imports code from outside `playwright/` (e.g. `va-hakija/`), that Dockerfile must copy it, along with `tsconfig.json` and `common-tsconfig.json`.
+- Secrets live in the sibling repo `../valtionavustus-secret/`. Never commit credentials.
+- `tmp/version.txt` is generated by `start-local-env.sh`. Don't edit it by hand.
+
+## Commits
+
+- Sentence-style imperative summary, no trailing punctuation (e.g. `Update dependency aws-cdk-lib to v2.217.0`)
+- Reference the Jira/GitHub issue when applicable
+
+## Read when relevant
+
+- Writing or changing Playwright tests → `playwright/TESTING_PATTERNS.md` (required)
+- Form JSON, form rendering/layout, or the form editor → `docs/agents/soresu-form.md`
+- Changing running backend code via nREPL → `docs/agents/repl.md`
+- Email sending flow → `docs/emails-flow.md`
