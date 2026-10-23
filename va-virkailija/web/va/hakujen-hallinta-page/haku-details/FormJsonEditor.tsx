@@ -8,12 +8,21 @@ function scrollToTop() {
   window.scrollTo(0, 0)
 }
 
+export const isFormEdited = (formDraftJson: string, savedForm: Form) => {
+  try {
+    return !_.isEqual(JSON.parse(formDraftJson), savedForm)
+  } catch {
+    return true
+  }
+}
+
 interface FormEditorProps {
   avustushaku: VirkailijaAvustushaku
   formDraftJson: string
+  versionButtons: React.ReactNode
 }
 
-const FormJsonEditor = ({ avustushaku, formDraftJson }: FormEditorProps) => {
+const FormJsonEditor = ({ avustushaku, formDraftJson, versionButtons }: FormEditorProps) => {
   const dispatch = useHakujenHallintaDispatch()
   const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges['edit-haku']
   const hakuIsDraft = avustushaku.status === 'draft'
@@ -29,10 +38,9 @@ const FormJsonEditor = ({ avustushaku, formDraftJson }: FormEditorProps) => {
     dispatch(saveForm({ avustushakuId, form: JSON.parse(formDraftJson) }))
   }
 
-  let parsedForm: Form | null = null
   let parseError = false
   try {
-    parsedForm = JSON.parse(formDraftJson)
+    JSON.parse(formDraftJson)
   } catch (error: any) {
     parseError = error.toString()
   }
@@ -50,7 +58,7 @@ const FormJsonEditor = ({ avustushaku, formDraftJson }: FormEditorProps) => {
   })()
   const allowSave = userHasEditPrivilege && !parseError && hakuIsDraft
   const formHasBeenEdited =
-    formDraftJson && avustushaku.formContent && !_.isEqual(parsedForm, avustushaku.formContent)
+    formDraftJson && avustushaku.formContent && isFormEdited(formDraftJson, avustushaku.formContent)
   const disableSave = !allowSave || !formHasBeenEdited
 
   return (
@@ -58,6 +66,7 @@ const FormJsonEditor = ({ avustushaku, formDraftJson }: FormEditorProps) => {
       <h3>Hakulomakkeen sisältö</h3>
       <div className="btn-fixed-container">
         {saveDisabledError && <span>{saveDisabledError}</span>}
+        {userHasEditPrivilege && hakuIsDraft && versionButtons}
         <button className="btn-fixed" type="button" onClick={scrollToTop}>
           Takaisin ylös
         </button>

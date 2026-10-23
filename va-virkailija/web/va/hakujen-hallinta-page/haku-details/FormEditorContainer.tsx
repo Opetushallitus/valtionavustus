@@ -1,8 +1,7 @@
 import React from 'react'
-import DateUtil from 'soresu-form/web/DateUtil'
 import FormEditor from './FormEditor'
 import FormJsonEditor from './FormJsonEditor'
-import { ValidationContainer, ScrollAwareValidationContainer } from './ValidationContainer'
+import { ValidationContainer, ScrollAwareSticky } from './ValidationContainer'
 import { Field, Form } from 'soresu-form/web/va/types'
 import { useHakujenHallintaDispatch, useHakujenHallintaSelector } from '../hakujenHallintaStore'
 import {
@@ -16,6 +15,7 @@ import { tryToUseCurrentAvustushaku, useCurrentAvustushaku } from '../useAvustus
 import FormUtil from 'soresu-form/web/form/FormUtil'
 import { ValidationResult } from '../../types'
 import ChooseAvustushaku from './ChooseAvustushaku'
+import { formatSaveTime, useFormVersionBrowsing } from './FormVersionBrowsing'
 
 const trustedContact = {
   name: {
@@ -71,9 +71,6 @@ const FormEditorPage = () => {
     environment['hakija-server'].url.fi + 'avustushaku/' + avustushaku.id + '/esikatselu?lang=fi'
   const previewUrlSv =
     environment['hakija-server'].url.sv + 'avustushaku/' + avustushaku.id + '/esikatselu?lang=sv'
-  const formattedUpdatedDate = `${DateUtil.asDateString(updatedAt)} klo ${DateUtil.asTimeString(
-    updatedAt
-  )}`
   const varayhteyshenkiloResult = hasVarayhteyshenkiloFields(formDraft?.content)
   const onFormChange = ({ id: avustushakuId }: VirkailijaAvustushaku, newDraft: Form) => {
     dispatch(formUpdated({ avustushakuId, newForm: newDraft }))
@@ -84,6 +81,11 @@ const FormEditorPage = () => {
       })
     )
   }
+  const { versionButtons, banner, restoredFieldIds } = useFormVersionBrowsing(
+    avustushaku,
+    formDraftJson,
+    onFormChange
+  )
 
   const scrollToEditor = () => {
     const textArea = document.querySelector<HTMLTextAreaElement>('.form-json-editor textarea')
@@ -108,12 +110,15 @@ const FormEditorPage = () => {
           }}
         />
       )}
-      {avustushaku.muutoshakukelpoisuus && (
-        <ScrollAwareValidationContainer
-          result={avustushaku.muutoshakukelpoisuus}
-          avustushakuMuutoshakukelpoinen={avustushaku.muutoshakukelpoinen}
-        />
-      )}
+      <ScrollAwareSticky>
+        {avustushaku.muutoshakukelpoisuus && (
+          <ValidationContainer
+            result={avustushaku.muutoshakukelpoisuus}
+            avustushakuMuutoshakukelpoinen={avustushaku.muutoshakukelpoinen}
+          />
+        )}
+        {banner}
+      </ScrollAwareSticky>
       <div dangerouslySetInnerHTML={mainHelp} />
       <div style={{ float: 'right' }}>
         <button className="btn btn-blue btn-sm" onClick={scrollToEditor}>
@@ -121,7 +126,9 @@ const FormEditorPage = () => {
         </button>
       </div>
       {updatedAt && (
-        <div style={{ float: 'right', marginRight: 20 }}>Päivitetty: {formattedUpdatedDate}</div>
+        <div style={{ float: 'right', marginRight: 20 }}>
+          Päivitetty: {formatSaveTime(updatedAt)}
+        </div>
       )}
       <div className="link-list">
         <div className="link-list-item">
@@ -150,8 +157,13 @@ const FormEditorPage = () => {
         formDraft={formDraft}
         koodistos={koodistos}
         onFormChange={onFormChange}
+        restoredFieldIds={restoredFieldIds}
       />
-      <FormJsonEditor avustushaku={avustushaku} formDraftJson={formDraftJson} />
+      <FormJsonEditor
+        avustushaku={avustushaku}
+        formDraftJson={formDraftJson}
+        versionButtons={versionButtons}
+      />
     </section>
   )
 }

@@ -1,0 +1,43 @@
+.banner {
+  clear: both;
+  margin: 10px 5px;
+  padding: 10px 15px;
+  background-color: #fff8d6;
+  border: 1px solid var(--yellow);
+}
+
+.linkButton {
+  margin-left: 10px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--light-blue);
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+}
+
+.versionButton {
+  width: 240px;
+  padding: 6px 15px;
+  text-align: left;
+  vertical-align: bottom;
+  color: var(--text-black);
+  background-color: #fff;
+  border: 1px solid var(--text-black);
+}
+
+.versionButton:disabled {
+  color: #767676;
+  background-color: #fff;
+  border-color: var(--light-gray);
+}
+
+.versionButtonDetail {
+  display: block;
+  font-size: 12px;
+}
+
+.error {
+  color: var(--bright-red);
+}

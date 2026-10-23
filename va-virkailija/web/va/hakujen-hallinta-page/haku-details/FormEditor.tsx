@@ -20,6 +20,7 @@ interface FormEditorProps {
   koodistos: Koodistos
   formDraft: Form
   onFormChange: (avustushaku: VirkailijaAvustushaku, newDraft: Form) => void
+  restoredFieldIds?: string[]
 }
 
 const cloneDeeplyBecauseYouCannotMutateStateDirectlyWithRedux = (
@@ -35,6 +36,7 @@ const FormEditor = ({
   koodistos,
   formDraft: originalFormDraft,
   onFormChange,
+  restoredFieldIds,
 }: FormEditorProps) => {
   const { avustushaku, formDraft } = cloneDeeplyBecauseYouCannotMutateStateDirectlyWithRedux(
     originalAvustushaku,
@@ -55,6 +57,7 @@ const FormEditor = ({
     formDraft,
     onFormEdited,
     allowEditing,
+    restoredFieldIds,
   })
   const formState = formDraft
     ? FakeFormState.createEditFormState(avustushaku, formDraft.content)

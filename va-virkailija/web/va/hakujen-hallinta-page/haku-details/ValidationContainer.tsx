@@ -156,6 +156,21 @@ export const ScrollAwareValidationContainer = (props: ValidationProps) => {
   )
 }
 
+// Keeps its children stuck to the top of the page, below the header when it slides in
+export const ScrollAwareSticky = ({ children }: { children: React.ReactNode }) => {
+  const isScrollingUp = useScrollingUp()
+  return (
+    <div
+      className={classNames(
+        styles.validationContainer,
+        isScrollingUp ? styles.validationContainerWithHeader : undefined
+      )}
+    >
+      {children}
+    </div>
+  )
+}
+
 export const ValidationContainer = ({
   result,
   errorTexts,

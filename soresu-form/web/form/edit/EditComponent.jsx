@@ -185,11 +185,27 @@ export class EditComponent extends React.Component {
         </div>
       ) : null
 
+    const isRestored = this.props.formEditorController.isRestoredField(field.id)
+
     return (
-      <div key={htmlId} className={this.className()} data-test-id={`field-${field.id}`}>
+      <div
+        key={htmlId}
+        className={ClassNames(this.className(), { 'soresu-field-restored': isRestored })}
+        data-test-id={`field-${field.id}`}
+      >
         <div className="soresu-field-header">
           <span className="soresu-field-title">
-            <h3>{EditComponent.fieldTypeInFI(field.fieldType)}</h3>
+            <h3>
+              {EditComponent.fieldTypeInFI(field.fieldType)}
+              {isRestored && (
+                <span
+                  className="soresu-field-restored-tag"
+                  data-test-id={`restored-field-tag-${field.id}`}
+                >
+                  Kenttä puuttuu nykyisestä versiosta
+                </span>
+              )}
+            </h3>
           </span>
           <div className="soresu-field-id-grey-box">
             <b>Id</b> <span className="soresu-field-id">{field.id}</span>

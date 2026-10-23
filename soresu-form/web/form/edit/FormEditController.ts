@@ -16,17 +16,24 @@ interface FormEditorControllerProps {
   formDraft: Form
   onFormEdited: (f: Form, result: Field | void) => void
   allowEditing: boolean
+  restoredFieldIds?: string[]
 }
 
 export default class FormEditorController {
   formDraft: Form
   onEditCallback: (f: Form, result: Field | void) => void
   allowEditing: boolean
+  restoredFieldIds: string[]
 
   constructor(props: FormEditorControllerProps) {
     this.formDraft = props.formDraft
     this.onEditCallback = props.onFormEdited
     this.allowEditing = props.allowEditing
+    this.restoredFieldIds = props.restoredFieldIds ?? []
+  }
+
+  isRestoredField(fieldId: string) {
+    return this.restoredFieldIds.includes(fieldId)
   }
 
   doEdit(operation: () => Field | void) {
