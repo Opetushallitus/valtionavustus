@@ -178,3 +178,77 @@ defaultValues('Editing loppuselvitys lomake', async ({ page, hakuProps }) => {
     await formEditorPage.locators.saveFormButton.isDisabled()
   })
 })
+
+const restorableFieldId = 'restorable-field'
+const changedFieldId = 'changed-field'
+
+defaultValues('Browsing and restoring hakulomake versions', async ({ page, hakuProps }) => {
+  const hakujenHallinta = new HakujenHallintaPage(page)
+  const avustushakuID = await hakujenHallinta.copyEsimerkkihaku()
+  const haunTiedotPage = await hakujenHallinta.commonHakujenHallinta.switchToHaunTiedotTab()
+  await haunTiedotPage.selectVaCodes(hakuProps.vaCodes)
+  await haunTiedotPage.setStartDate(moment().subtract(1, 'day'))
+  await hakujenHallinta.waitForSave()
+  const formEditorPage = await hakujenHallinta.navigateToFormEditor(avustushakuID)
+  const { locators } = formEditorPage
+
+  await formEditorPage.addFields({
+    fieldId: changedFieldId,
+    type: 'textField',
+    fieldLabel: 'Yhteyshenkilö',
+  })
+  const formWithoutField = await locators.form.inputValue()
+
+  await test.step('save version with an extra field', async () => {
+    await formEditorPage.addFields({
+      fieldId: restorableFieldId,
+      type: 'textField',
+      fieldLabel: 'Palautettava kenttä',
+    })
+    await expect(locators.field(restorableFieldId)).toBeVisible()
+  })
+
+  await test.step('save version without the field and with a changed label', async () => {
+    await formEditorPage.changeLomakeJson(
+      formWithoutField.replace('Yhteyshenkilöfi', 'Yhteysmiesfi')
+    )
+    await formEditorPage.saveForm()
+    await expect(locators.field(restorableFieldId)).toBeHidden()
+  })
+
+  await test.step('returning to current version restores the saved form', async () => {
+    const savedForm = await locators.form.inputValue()
+    await locators.previousVersionButton.click()
+    await expect(locators.versionBanner).toBeVisible()
+    await expect(locators.saveFormButton).toBeEnabled()
+
+    await locators.returnToCurrentVersionButton.click()
+    await expect(locators.versionBanner).toBeHidden()
+    await expect(locators.form).toHaveValue(savedForm)
+    await expect(locators.field(restorableFieldId)).toBeHidden()
+    await expect(locators.saveFormButton).toBeDisabled()
+  })
+
+  await test.step('previous version brings the field back', async () => {
+    await locators.previousVersionButton.click()
+    await expect(locators.versionBanner).toBeVisible()
+    await expect(locators.field(restorableFieldId)).toBeVisible()
+    await expect(locators.restoredFieldTag(restorableFieldId)).toHaveText(
+      'Kenttä puuttuu nykyisestä versiosta'
+    )
+    await expect(locators.changedFieldTag(restorableFieldId)).toBeHidden()
+    await expect(locators.changedFieldTag(changedFieldId)).toHaveText(
+      'Sisältö eroaa nykyisestä versiosta'
+    )
+    await expect(locators.changedFieldTag(`${changedFieldId}wrapper`)).toBeHidden()
+  })
+
+  await test.step('restored version stays after saving', async () => {
+    await formEditorPage.saveForm()
+    await expect(locators.versionBanner).toBeHidden()
+    await page.reload()
+    await formEditorPage.waitFormToBeLoaded()
+    await expect(locators.field(restorableFieldId)).toBeVisible()
+  })
+
+})

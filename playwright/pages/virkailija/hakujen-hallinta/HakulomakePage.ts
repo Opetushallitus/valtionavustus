@@ -15,30 +15,22 @@ export function HakulomakePage(page: Page) {
     lomakeWarningId: page.getByTestId('validation-dropdown-item-id'),
     lomakeWarningLabel: page.getByTestId('validation-dropdown-item-label'),
     muutoshakuOk: page.getByTestId('validation-ok'),
+    previousVersionButton: page.getByTestId('previous-form-version'),
+    versionBanner: page.getByTestId('form-version-banner'),
+    returnToCurrentVersionButton: page.getByTestId('return-to-current-form-version'),
+    field: (fieldId: string) => page.getByTestId(`field-${fieldId}`),
+    restoredFieldTag: (fieldId: string) => page.getByTestId(`restored-field-tag-${fieldId}`),
+    changedFieldTag: (fieldId: string) => page.getByTestId(`changed-field-tag-${fieldId}`),
   }
 
   async function waitFormToBeLoaded() {
     await expect(locators.form).toContainText('{')
   }
 
-  /*
-    for some reason
-    await page.fill(".form-json-editor textarea", lomakeJson)
-    takes almost 50seconds
-  */
-  async function replaceLomakeJson(lomakeJson: string) {
-    await locators.form.evaluate((textarea, lomakeJson) => {
-      ;(textarea as HTMLTextAreaElement).value = lomakeJson
-    }, lomakeJson)
-  }
-
   async function changeLomakeJson(lomakeJson: string) {
     await waitFormToBeLoaded()
     await expect(locators.saveFormButton).toBeDisabled()
-    await replaceLomakeJson(lomakeJson)
-    await expect(locators.saveFormButton).toBeDisabled()
-    // trigger autosave by typing space in the end
-    await locators.form.pressSequentially(' ')
+    await locators.form.fill(lomakeJson)
     await expect(locators.saveFormButton).toBeEnabled()
   }
 
@@ -143,8 +135,7 @@ export function HakulomakePage(page: Page) {
       fieldJson(type, fieldId, fieldLabel)
     )
     const newJson = { ...json, content: [...content, ...fieldsJson] }
-    await replaceLomakeJson(JSON.stringify(newJson))
-    await locators.form.pressSequentially(' ')
+    await locators.form.fill(JSON.stringify(newJson))
     await saveForm()
   }
 
