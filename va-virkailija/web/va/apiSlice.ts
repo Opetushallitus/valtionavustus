@@ -188,6 +188,9 @@ export const apiSlice = createApi({
         `/api/avustushaku/${avustushakuId}/hakemus-ids-having-taydennyspyynto`,
       providesTags: [hakemusIdsHavingTaydennyspyyntoTag],
     }),
+    getPaatosTemplateVersions: builder.query<number[], number>({
+      query: (avustushakuId) => `/api/paatos/template-versions/${avustushakuId}`,
+    }),
   }),
 })
 
@@ -208,6 +211,7 @@ export const {
   usePostRaportointivelvoiteMutation,
   useDeleteRaportointivelvoiteMutation,
   useGetHakemusIdsHavingTaydennyspyyntoQuery,
+  useGetPaatosTemplateVersionsQuery,
 } = apiSlice
 
 export const mapEmails = ({ user_name, email_content }: Lahetys): Message | Message[] => {

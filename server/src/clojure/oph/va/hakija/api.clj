@@ -398,6 +398,15 @@
 (defn current-paatos-template-version []
   (if (feature-enabled? :enablePaatosTemplateVersion2) 2 1))
 
+(defn get-paatos-template-versions [avustushaku-id]
+  (map :paatos_template_version
+       (query-original-identifiers
+        "select distinct hp.paatos_template_version
+           from hakija.hakemus_paatokset hp
+             join hakija.hakemukset h on (h.id = hp.hakemus_id and h.version_closed is null)
+           where h.avustushaku = ?"
+        [avustushaku-id])))
+
 (defn add-paatos-sent-emails [hakemus emails decision]
   (execute!
    "insert into hakija.hakemus_paatokset (hakemus_id, hakemus_version, sent_emails, decision, paatos_template_version)

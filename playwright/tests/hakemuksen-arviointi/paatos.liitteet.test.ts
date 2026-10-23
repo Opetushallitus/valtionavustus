@@ -95,6 +95,33 @@ test.extend({
       await expect(jotpaOhjeCheckbox).not.toBeChecked()
     })
 
+    await test.step('ratkaisija and esittelijä fields have prefixes that can not be removed', async () => {
+      const { johtaja, johtajaLabel, johtajaSv, esittelija, esittelijaSv } = paatosPage.locators
+      await expect(johtajaLabel).toHaveText(/^Ratkaisija/)
+      await expect(johtajaSv).toHaveValue(/^Ratkaisija: /)
+      await expect(esittelijaSv).toHaveValue(/^Föredragande: /)
+
+      await johtaja.fill('')
+      await expect(johtaja).toHaveValue('Ratkaisija: ')
+
+      await johtaja.pressSequentially('ab')
+      for (let i = 0; i < 5; i++) {
+        await johtaja.press('Backspace')
+      }
+      await expect(johtaja).toHaveValue('Ratkaisija: ')
+
+      await johtaja.evaluate((el: HTMLTextAreaElement) => el.setSelectionRange(0, 0))
+      await johtaja.press('X')
+      await expect(johtaja).toHaveValue('Ratkaisija: X')
+
+      await johtaja.press('ControlOrMeta+a')
+      await johtaja.pressSequentially('Riikka')
+      await expect(johtaja).toHaveValue('Ratkaisija: Riikka')
+
+      await esittelija.fill('')
+      await expect(esittelija).toHaveValue('Esittelijä: ')
+    })
+
     await test.step('add ratkaisija ja esittelijä to paatos', async () => {
       await paatosPage.locators.johtaja.fill('opetusneuvos Jussi Joutsen, yksikön päällikkö')
       await paatosPage.locators.esittelija.fill('opetusneuvos Esko Euroopanmajava')
@@ -126,8 +153,8 @@ test.extend({
         'Ratkaisija ja esittelijä'
       )
       await expect(hakijaPaatosPage.ratkaisijaJaEsittelijaNimet).toHaveText([
-        'opetusneuvos Jussi Joutsen, yksikön päällikkö',
-        'opetusneuvos Esko Euroopanmajava',
+        'Ratkaisija: opetusneuvos Jussi Joutsen, yksikön päällikkö',
+        'Esittelijä: opetusneuvos Esko Euroopanmajava',
       ])
     })
 
@@ -177,14 +204,29 @@ test.extend({
       const hakijaPaatosPage = HakijaPaatosPage(page)
       await expect(hakijaPaatosPage.lisatietojaTitle).toHaveText('Lisätietoja')
       await expect(hakijaPaatosPage.lisatietojaNimet).toHaveText([
-        'opetusneuvos Jussi Joutsen, yksikön päällikkö',
-        'opetusneuvos Esko Euroopanmajava',
+        'Ratkaisija: opetusneuvos Jussi Joutsen, yksikön päällikkö',
+        'Esittelijä: opetusneuvos Esko Euroopanmajava',
       ])
       await expect(hakijaPaatosPage.ratkaisijaJaEsittelijaTitle).toBeHidden()
 
       await page.goto(`${VIRKAILIJA_URL}/paatos/avustushaku/${avustushakuID}/hakemus/${hakemusID}`)
       await expect(hakijaPaatosPage.lisatietojaTitle).toHaveText('Lisätietoja')
       await expect(hakijaPaatosPage.ratkaisijaJaEsittelijaTitle).toBeHidden()
+    })
+    await test.step('editor does not add prefixes when haku has a v1 paatos', async () => {
+      const { johtaja, johtajaLabel, esittelija } = paatosPage.locators
+      await paatosPage.editPaatos(avustushakuID, async () => {
+        await expect(johtajaLabel).toHaveText(/^Johtaja/)
+        await johtaja.fill('opetusneuvos Jussi Joutsen')
+        await esittelija.fill('')
+        await expect(johtaja).toHaveValue('opetusneuvos Jussi Joutsen')
+        await expect(esittelija).toHaveValue('')
+      })
+      await page.goto(`${VIRKAILIJA_URL}/paatos/avustushaku/${avustushakuID}/hakemus/${hakemusID}`)
+      await expect(HakijaPaatosPage(page).lisatietojaNimet).toHaveText([
+        'opetusneuvos Jussi Joutsen',
+        '',
+      ])
     })
   }
 )
