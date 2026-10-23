@@ -6,6 +6,8 @@ import moment from 'moment'
 import { defaultValues } from '../fixtures/defaultValues'
 import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { HakulomakePage } from '../pages/virkailija/hakujen-hallinta/HakulomakePage'
+import { switchUserIdentityTo } from '../utils/util'
+import { VIRKAILIJA_URL } from '../utils/constants'
 
 defaultValues('Editing hakulomake', async ({ page, hakuProps }) => {
   const puuttuvaYhteyshenkilonNimiJson = await readFile(
@@ -251,4 +253,16 @@ defaultValues('Browsing and restoring hakulomake versions', async ({ page, hakuP
     await expect(locators.field(restorableFieldId)).toBeVisible()
   })
 
+  await test.step('saving hakulomake requires edit-haku privilege', async () => {
+    const formUrl = `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/form`
+    const form = await (await page.request.get(formUrl, { failOnStatusCode: true })).json()
+
+    await switchUserIdentityTo(page, 'viivivirkailija')
+    const forbiddenResponse = await page.request.post(formUrl, { data: form })
+    expect(forbiddenResponse.status()).toEqual(403)
+
+    await switchUserIdentityTo(page, 'valtionavustus')
+    const allowedResponse = await page.request.post(formUrl, { data: form })
+    expect(allowedResponse.status()).toEqual(200)
+  })
 })
