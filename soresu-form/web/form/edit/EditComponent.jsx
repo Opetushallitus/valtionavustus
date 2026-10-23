@@ -186,11 +186,15 @@ export class EditComponent extends React.Component {
       ) : null
 
     const isRestored = this.props.formEditorController.isRestoredField(field.id)
+    const isChanged = this.props.formEditorController.isChangedField(field.id)
 
     return (
       <div
         key={htmlId}
-        className={ClassNames(this.className(), { 'soresu-field-restored': isRestored })}
+        className={ClassNames(this.className(), {
+          'soresu-field-restored': isRestored,
+          'soresu-field-changed': isChanged,
+        })}
         data-test-id={`field-${field.id}`}
       >
         <div className="soresu-field-header">
@@ -203,6 +207,14 @@ export class EditComponent extends React.Component {
                   data-test-id={`restored-field-tag-${field.id}`}
                 >
                   Kenttä puuttuu nykyisestä versiosta
+                </span>
+              )}
+              {isChanged && (
+                <span
+                  className="soresu-field-changed-tag"
+                  data-test-id={`changed-field-tag-${field.id}`}
+                >
+                  Sisältö eroaa nykyisestä versiosta
                 </span>
               )}
             </h3>

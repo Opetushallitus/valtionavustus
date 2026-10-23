@@ -81,7 +81,7 @@ const FormEditorPage = () => {
       })
     )
   }
-  const { versionButtons, banner, restoredFieldIds } = useFormVersionBrowsing(
+  const { versionButtons, banner, restoredFieldIds, changedFieldIds } = useFormVersionBrowsing(
     avustushaku,
     formDraftJson,
     onFormChange
@@ -158,6 +158,7 @@ const FormEditorPage = () => {
         koodistos={koodistos}
         onFormChange={onFormChange}
         restoredFieldIds={restoredFieldIds}
+        changedFieldIds={changedFieldIds}
       />
       <FormJsonEditor
         avustushaku={avustushaku}

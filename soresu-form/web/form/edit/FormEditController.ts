@@ -17,6 +17,7 @@ interface FormEditorControllerProps {
   onFormEdited: (f: Form, result: Field | void) => void
   allowEditing: boolean
   restoredFieldIds?: string[]
+  changedFieldIds?: string[]
 }
 
 export default class FormEditorController {
@@ -24,16 +25,22 @@ export default class FormEditorController {
   onEditCallback: (f: Form, result: Field | void) => void
   allowEditing: boolean
   restoredFieldIds: string[]
+  changedFieldIds: string[]
 
   constructor(props: FormEditorControllerProps) {
     this.formDraft = props.formDraft
     this.onEditCallback = props.onFormEdited
     this.allowEditing = props.allowEditing
     this.restoredFieldIds = props.restoredFieldIds ?? []
+    this.changedFieldIds = props.changedFieldIds ?? []
   }
 
   isRestoredField(fieldId: string) {
     return this.restoredFieldIds.includes(fieldId)
+  }
+
+  isChangedField(fieldId: string) {
+    return this.changedFieldIds.includes(fieldId)
   }
 
   doEdit(operation: () => Field | void) {

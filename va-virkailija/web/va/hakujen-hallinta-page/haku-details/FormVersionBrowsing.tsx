@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import _ from 'lodash'
 import moment from 'moment-timezone'
 import HttpUtil from 'soresu-form/web/HttpUtil'
 import JsUtil from 'soresu-form/web/JsUtil'
@@ -17,15 +18,14 @@ interface ShownVersion {
   index: number
   savedAt: string
   restoredFieldIds: string[]
+  changedFieldIds: string[]
 }
 
 export const formatSaveTime = (date: moment.MomentInput) =>
   moment(date).tz('Europe/Helsinki').format(fiLongDateTimeFormatWithKlo)
 
-const findFieldIds = (content: Field[]) =>
-  JsUtil.flatFilter<Field>(content, (field) => !!field.id && !!field.fieldClass).map(
-    (field) => field.id
-  )
+const findFields = (content: Field[]) =>
+  JsUtil.flatFilter<Field>(content, (field) => !!field.id && !!field.fieldClass)
 
 export const useFormVersionBrowsing = (
   avustushaku: VirkailijaAvustushaku,
@@ -72,22 +72,33 @@ export const useFormVersionBrowsing = (
     }
     setLoading(true)
     setError(undefined)
-    let version: Pick<Form, 'content' | 'rules'> & { 'saved-at': string }
     try {
-      version = await HttpUtil.get(`/api/avustushaku/${avustushaku.id}/form/versions/${index}`)
+      const version = await HttpUtil.get<Pick<Form, 'content' | 'rules'> & { 'saved-at': string }>(
+        `/api/avustushaku/${avustushaku.id}/form/versions/${index}`
+      )
+      const savedFields = new Map(findFields(savedForm.content).map((field) => [field.id, field]))
+      const versionFields = findFields(version.content)
+      onFormChange(avustushaku, { ...savedForm, content: version.content, rules: version.rules })
+      setShownVersion({
+        index,
+        savedAt: version['saved-at'],
+        restoredFieldIds: versionFields
+          .filter((field) => !savedFields.has(field.id))
+          .map((field) => field.id),
+        changedFieldIds: versionFields
+          .filter((field) => {
+            const savedField = savedFields.get(field.id)
+            return (
+              savedField && !_.isEqual(_.omit(field, 'children'), _.omit(savedField, 'children'))
+            )
+          })
+          .map((field) => field.id),
+      })
     } catch {
       setError('Version lataaminen epäonnistui. Yritä uudelleen.')
-      return
     } finally {
       setLoading(false)
     }
-    const savedFieldIds = new Set(findFieldIds(savedForm.content))
-    onFormChange(avustushaku, { ...savedForm, content: version.content, rules: version.rules })
-    setShownVersion({
-      index,
-      savedAt: version['saved-at'],
-      restoredFieldIds: findFieldIds(version.content).filter((id) => !savedFieldIds.has(id)),
-    })
   }
 
   const olderVersion = versions?.[shownVersion ? shownVersion.index + 1 : 0]
@@ -95,6 +106,13 @@ export const useFormVersionBrowsing = (
     shownVersion && shownVersion.index > 0 ? versions?.[shownVersion.index - 1] : undefined
   const showNewerVersion = () =>
     newerVersion ? showVersion(newerVersion.index) : returnToCurrentVersion()
+
+  const olderVersionDetail = () => {
+    if (olderVersion) return formatSaveTime(olderVersion['saved-at'])
+    if (versions) return 'Ei vanhempia versioita'
+    if (error) return 'Ei saatavilla'
+    return 'Ladataan…'
+  }
 
   const versionButtons = (
     <>
@@ -106,15 +124,7 @@ export const useFormVersionBrowsing = (
       <VersionButton
         testId="previous-form-version"
         label="↶ Edellinen tallennettu versio"
-        detail={
-          olderVersion
-            ? formatSaveTime(olderVersion['saved-at'])
-            : versions
-              ? 'Ei vanhempia versioita'
-              : error
-                ? 'Ei saatavilla'
-                : 'Ladataan…'
-        }
+        detail={olderVersionDetail()}
         disabled={!olderVersion || loading}
         onClick={() => olderVersion && showVersion(olderVersion.index)}
       />
@@ -147,7 +157,12 @@ export const useFormVersionBrowsing = (
     </div>
   )
 
-  return { versionButtons, banner, restoredFieldIds: shownVersion?.restoredFieldIds ?? [] }
+  return {
+    versionButtons,
+    banner,
+    restoredFieldIds: shownVersion?.restoredFieldIds ?? [],
+    changedFieldIds: shownVersion?.changedFieldIds ?? [],
+  }
 }
 
 interface VersionButtonProps {

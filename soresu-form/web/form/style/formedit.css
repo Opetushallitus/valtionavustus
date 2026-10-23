@@ -165,6 +165,26 @@ div.soresu-field-restored > .soresu-field-header {
     vertical-align: middle;
 }
 
+div.soresu-edit.soresu-field-changed {
+    border: 2px dashed #e0a800;
+    background-color: #fffbea;
+}
+
+div.soresu-field-changed > .soresu-field-header {
+    background-color: #fffbea;
+}
+
+.soresu-field-changed-tag {
+    margin-left: 8px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    background-color: #fff3c4;
+    color: #6b4f00;
+    font-size: 11px;
+    font-weight: 600;
+    vertical-align: middle;
+}
+
 .soresu-field-edit-tools {
     display: flex;
     flex-direction: row;
