@@ -115,6 +115,7 @@ export const HaunTiedotPage = (page: Page) => {
   }
 
   async function allowExternalApi(allow: boolean) {
+    await expect(page.getByRole('heading', { name: 'Salli tietojen automaattinen' })).toBeVisible()
     await page.click(`label[for="allow_visibility_in_external_system_${allow}"]`)
     await common.waitForSave()
   }
