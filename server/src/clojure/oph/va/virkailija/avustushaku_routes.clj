@@ -348,6 +348,23 @@
       (http/ok (without-id found-form))
       (http/not-found))))
 
+(defn- get-avustushaku-form-versions []
+  (compojure-api/GET "/:avustushaku-id/form/versions" []
+    :path-params [avustushaku-id :- Long]
+    :return [{:index Long :saved-at s/Inst}]
+    :summary "List earlier saved versions of the form that is linked to avustushaku, newest first"
+    (http/ok (hakija-api/get-archived-form-versions-by-avustushaku avustushaku-id))))
+
+(defn- get-avustushaku-form-version []
+  (compojure-api/GET "/:avustushaku-id/form/versions/:index" []
+    :path-params [avustushaku-id :- Long index :- Long]
+    ;; Archive rows written by old migrations don't match today's form-schema/Form
+    :return {:content [s/Any] :rules [s/Any] :saved-at s/Inst}
+    :summary "Get an earlier saved version of the form that is linked to avustushaku"
+    (if-let [version (hakija-api/get-archived-form-version-by-avustushaku avustushaku-id index)]
+      (http/ok (select-keys version [:content :rules :saved-at]))
+      (http/not-found))))
+
 (defn- post-avustushaku-form []
   (compojure-api/POST "/:avustushaku-id/form" []
     :path-params [avustushaku-id :- Long]
@@ -482,6 +499,8 @@
   (get-avustushaku-lainsaadanto)
   (get-avustushaku-privileges)
   (get-avustushaku-form)
+  (get-avustushaku-form-versions)
+  (get-avustushaku-form-version)
   (post-avustushaku-form)
   (post-init-selvitysform)
   (post-selvitysform)

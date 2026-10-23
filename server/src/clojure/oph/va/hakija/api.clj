@@ -350,6 +350,23 @@
             where a.id = ?"
           [avustushaku-id])))
 
+(defn- archived-form-versions-sql [extra-columns]
+  (str "SELECT row_number() OVER (ORDER BY af.archived_at DESC) - 1 AS index,
+               coalesce(lead(af.archived_at) OVER (ORDER BY af.archived_at DESC), af.created_at) AS saved_at"
+       extra-columns
+       " FROM hakija.archived_forms af
+         JOIN hakija.avustushaut a ON a.form = af.form_id
+         WHERE a.id = ?
+         ORDER BY af.archived_at DESC"))
+
+(defn get-archived-form-versions-by-avustushaku [avustushaku-id]
+  (query (archived-form-versions-sql "") [avustushaku-id]))
+
+(defn get-archived-form-version-by-avustushaku [avustushaku-id index]
+  (when-not (neg? index)
+    (first (query (str (archived-form-versions-sql ", af.content, af.rules") " OFFSET ? LIMIT 1")
+                  [avustushaku-id index]))))
+
 (defn get-form-by-id [id]
   (first (query-original-identifiers
           "select * from hakija.forms where id = ?"
