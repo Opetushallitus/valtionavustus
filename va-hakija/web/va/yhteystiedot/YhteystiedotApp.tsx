@@ -1,4 +1,4 @@
-import React, { Suspense, use, useState } from 'react'
+import React, { Suspense, use } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import 'soresu-form/web/form/style/theme.css'
@@ -20,7 +20,7 @@ type YhteystiedotResponse = {
     'operational-unit-code': string | null
   }
   hakemus: {
-    'project-name': string
+    'project-name': string | null
     'register-number': string | null
   }
   contact: { name: string; email: string | null } | null
@@ -73,17 +73,8 @@ const Yhteystiedot = () => {
 }
 
 const YhteystiedotPage = () => {
-  const [lang, setLang] = useState(initialLang)
-  const translationContext = getTranslationContext(lang)
+  const translationContext = getTranslationContext(initialLang)
   const { t } = translationContext
-  const otherLang: Language = lang === 'fi' ? 'sv' : 'fi'
-
-  const changeLanguage = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault()
-    history.replaceState(null, '', `?lang=${otherLang}`)
-    document.documentElement.lang = otherLang
-    setLang(otherLang)
-  }
 
   return (
     <TranslationContext.Provider value={translationContext}>
@@ -91,14 +82,6 @@ const YhteystiedotPage = () => {
         <Suspense fallback={null}>
           <YhteystiedotLogo />
         </Suspense>
-        <a
-          className="yhteystiedot__lang"
-          href={`?lang=${otherLang}`}
-          lang={otherLang}
-          onClick={changeLanguage}
-        >
-          {t.yhteystiedot.otherLanguage}
-        </a>
       </header>
       <main className="yhteystiedot__main">
         <Suspense fallback={<p role="status">{t.yhteystiedot.loading}</p>}>
@@ -119,12 +102,16 @@ const YhteystiedotContent = ({
   const { t, lang } = useTranslations()
   return (
     <>
-      <h1>{t.yhteystiedot.hakemus}</h1>
+      <h1>{t.yhteystiedot.title}</h1>
       <dl className="yhteystiedot__hakemus">
-        <dt>{t.yhteystiedot.hanke}</dt>
-        <dd data-test-id="yhteystiedot-hanke">{hakemus['project-name']}</dd>
-        <dt>{t.yhteystiedot.hakemusnumero}</dt>
-        <dd data-test-id="yhteystiedot-hakemusnumero">{hakemus['register-number']}</dd>
+        {hakemus['project-name'] && (
+          <>
+            <dt>{t.yhteystiedot.hanke}</dt>
+            <dd data-test-id="yhteystiedot-hanke">{hakemus['project-name']}</dd>
+          </>
+        )}
+        <dt>{t.yhteystiedot.asianumero}</dt>
+        <dd data-test-id="yhteystiedot-asianumero">{hakemus['register-number']}</dd>
         <dt>{t.yhteystiedot.haku}</dt>
         <dd data-test-id="yhteystiedot-haku">{avustushaku.name[lang]}</dd>
       </dl>
@@ -134,9 +121,6 @@ const YhteystiedotContent = ({
         {contact ? (
           <>
             <p className="yhteystiedot__contact-name">{contact.name}</p>
-            <p className="yhteystiedot__contact-role">
-              {t.yhteystiedot.valmistelija}, {isJotpa ? t.yhteystiedot.jotpa : t.yhteystiedot.oph}
-            </p>
             {contact.email && (
               <p>
                 <a href={`mailto:${contact.email}`}>{contact.email}</a>
@@ -147,6 +131,9 @@ const YhteystiedotContent = ({
           <p>{t.yhteystiedot.noContact}</p>
         )}
         <p>{t.yhteystiedot.switchboard}</p>
+        <p className="yhteystiedot__contact-organization">
+          {isJotpa ? t.yhteystiedot.jotpa : t.yhteystiedot.oph}
+        </p>
       </div>
       <p className="yhteystiedot__note">{t.yhteystiedot.note}</p>
     </>

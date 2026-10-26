@@ -221,28 +221,24 @@ test('sends emails to correct contact and hakemus emails', async ({
   const yhteystiedotContact = page.getByTestId('yhteystiedot-contact')
   await test.step('yhteystiedot link shows hakemus and ukotettu valmistelija', async () => {
     await page.goto(`${yhteystiedotUrl}?lang=fi`)
+    await expect(page.getByRole('heading', { name: 'Ajantasaiset yhteystiedot' })).toBeVisible()
     await expect(page.getByTestId('yhteystiedot-hanke')).toHaveText(answers.projectName ?? '')
     await expect(page.getByTestId('yhteystiedot-haku')).toHaveText(avustushakuName)
-    await expect(page.getByTestId('yhteystiedot-hakemusnumero')).not.toBeEmpty()
+    await expect(page.getByTestId('yhteystiedot-asianumero')).not.toBeEmpty()
     await expect(
       page.getByRole('heading', { name: 'Lisätietoja hakemuksestanne antaa' })
     ).toBeVisible()
     await expect(yhteystiedotContact).toContainText(ukotettuValmistelija)
+    await expect(yhteystiedotContact).toContainText('Opetushallitus')
+    await expect(yhteystiedotContact).not.toContainText('Valmistelija')
+    await expect(page.getByRole('link', { name: 'På svenska' })).toBeHidden()
   })
-  await test.step('yhteystiedot switches language without reloading', async () => {
-    let yhteystiedotRequests = 0
-    page.on('request', (request) => {
-      if (request.url().includes('/yhteystiedot') && request.url().includes('/api/')) {
-        yhteystiedotRequests++
-      }
-    })
-    await page.getByRole('link', { name: 'På svenska' }).click()
+  await test.step('yhteystiedot is shown in swedish with lang=sv', async () => {
+    await page.goto(`${yhteystiedotUrl}?lang=sv`)
     await expect(
       page.getByRole('heading', { name: 'Lisätietoja hakemuksestanne antaa (SV)' })
     ).toBeVisible()
-    await expect(page).toHaveURL(/\?lang=sv$/)
     await expect(yhteystiedotContact).toContainText(ukotettuValmistelija)
-    expect(yhteystiedotRequests).toBe(0)
   })
   await test.step('yhteystiedot shows the new valmistelija after re-ukotus', async () => {
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)

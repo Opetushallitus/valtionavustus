@@ -20,10 +20,6 @@ body {
   width: auto;
 }
 
-.yhteystiedot__lang {
-  margin-left: auto;
-}
-
 .yhteystiedot__main {
   max-width: var(--section-width);
   margin: 0 auto;
@@ -31,10 +27,6 @@ body {
 }
 
 .yhteystiedot__main a {
-  color: var(--dark-blue);
-}
-
-.yhteystiedot__topbar a {
   color: var(--dark-blue);
 }
 
@@ -83,12 +75,11 @@ body {
 .yhteystiedot__contact .yhteystiedot__contact-name {
   font-size: 24px;
   font-weight: 600;
-  margin: 0;
+  margin: 0 0 8px;
 }
 
-.yhteystiedot__contact .yhteystiedot__contact-role {
+.yhteystiedot__contact .yhteystiedot__contact-organization {
   color: var(--mid-gray);
-  margin: 0 0 8px;
 }
 
 .yhteystiedot__note {

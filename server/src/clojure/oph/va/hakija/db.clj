@@ -614,7 +614,7 @@
     result))
 
 (defn get-yhteystiedot [avustushaku-id user-key]
-  (when-let [hakemus (first (query "SELECT h.id, h.project_name, h.organization_name, h.register_number,
+  (when-let [hakemus (first (query "SELECT h.id, h.project_name, h.register_number,
                                            a.content -> 'name' AS avustushaku_name, v.code AS operational_unit_code
                                     FROM hakija.hakemukset h
                                     JOIN hakija.avustushaut a ON a.id = h.avustushaku
@@ -625,8 +625,7 @@
                                    [user-key avustushaku-id]))]
     {:avustushaku {:name (:avustushaku-name hakemus)
                    :operational-unit-code (:operational-unit-code hakemus)}
-     :hakemus {:project-name (if (clojure.string/blank? (:project-name hakemus))
-                               (:organization-name hakemus)
+     :hakemus {:project-name (when-not (clojure.string/blank? (:project-name hakemus))
                                (:project-name hakemus))
                :register-number (:register-number hakemus)}
      :contact (some-> (get-valmistelija-assigned-to-hakemus (:id hakemus))
