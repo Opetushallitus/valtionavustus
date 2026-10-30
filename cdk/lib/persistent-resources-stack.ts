@@ -9,6 +9,7 @@ export class PersistentResourcesStack extends cdk.Stack {
   databasePasswordSecret: Secret
   pagerdutyApiSecrets: Secret
   pagerdutyCloudwatchSecrets: Secret
+  pagerdutyHealthSecrets: Secret
   ansibleVaultSecrets: Secret
   applicationLogGroup: LogGroup
   loadBalancerAccessLogBucket: Bucket
@@ -64,6 +65,13 @@ export class PersistentResourcesStack extends cdk.Stack {
       secretName: '/pagerduty/cloudwatch',
       description:
         'Integration url for the Pagerduty CloudWatch integration, used by SNS alarm actions',
+      removalPolicy: RemovalPolicy.RETAIN,
+    })
+
+    /* Manually set via AWS Console: { "url": "<AWS Health vendor integration URL>" } */
+    this.pagerdutyHealthSecrets = new Secret(this, 'pagerduty-health-secrets', {
+      secretName: '/pagerduty/health',
+      description: 'Integration url for the PagerDuty AWS Health Dashboard integration',
       removalPolicy: RemovalPolicy.RETAIN,
     })
 

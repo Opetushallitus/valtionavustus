@@ -16,6 +16,7 @@ import { CdnStack } from '../lib/cdn-stack'
 import { CertificateStack } from '../lib/certificate-stack'
 import { SmtpStack } from '../lib/smtp-stack'
 import { MonitoringStack } from '../lib/monitoring-stack'
+import { addAwsHealthRiskMonitoring } from '../lib/aws-health-risk-stack'
 
 const HAKIJA_DOMAIN = 'valtionavustukset.oph.fi'
 const HAKIJA_DOMAIN_SV = 'statsunderstod.oph.fi'
@@ -95,6 +96,8 @@ const app = new cdk.App()
       smtpSecrets: smtpStack.smtpSecrets,
     },
   })
+
+  addAwsHealthRiskMonitoring(dev, persistentResources)
 
   new MonitoringStack(dev, 'monitoring', {
     domains: dns.domains,
@@ -190,6 +193,8 @@ const app = new cdk.App()
     },
   })
 
+  addAwsHealthRiskMonitoring(qa, persistentResources)
+
   new MonitoringStack(qa, 'monitoring', {
     domains: dns.domains,
     service: vaService.service,
@@ -281,6 +286,8 @@ const app = new cdk.App()
       smtpSecrets: smtpStack.smtpSecrets,
     },
   })
+
+  addAwsHealthRiskMonitoring(prod, persistentResources)
 
   new MonitoringStack(prod, 'monitoring', {
     domains: dns.domains,

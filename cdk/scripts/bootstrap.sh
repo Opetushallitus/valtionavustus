@@ -58,12 +58,14 @@ function bootstrap_cdk {
 
   readonly context_variable_name="AWS_ACCOUNT_ID_$env_upper"
   readonly aws_account_id="${!context_variable_name}"
-  readonly aws_region="eu-west-1"
-  readonly us_east_1="us-east-1"
+  local bootstrap_environments=()
+  while IFS= read -r region; do
+    bootstrap_environments+=("$aws_account_id/$region")
+  done < <(node -e "console.log(require('./dist/lib/aws-health-risk-stack').AWS_HEALTH_RISK_REGIONS.join('\n'))")
 
-  info "Running cdk bootstrap in account $aws_account_id in region $aws_region and $us_east_1"
+  info "Running cdk bootstrap in account $aws_account_id in every AWS Health collection region"
   REVISION=${revision} \
-  npm run cdk -- bootstrap "$aws_account_id/$aws_region" "$aws_account_id/$us_east_1"
+  npm run cdk -- bootstrap "${bootstrap_environments[@]}"
 }
 
 function set_deployment_role_secret {
