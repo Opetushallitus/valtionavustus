@@ -4,7 +4,6 @@ import { Avustushaku, Hakemus } from 'soresu-form/web/va/types'
 
 import { Role, UserInfo } from '../../../types'
 import { isPääkäyttäjä } from '../../../authorization'
-import { useFeature } from '../../../initial-data-context'
 import { Taloustarkastus, Asiatarkastus, PalautaAsiatarkastukseen } from './LoppuselvitysTarkastus'
 
 import './LoppuselvitysForm.css'
@@ -42,10 +41,7 @@ export const LoppuselvitysForm = ({
   const showTaloustarkastus =
     !isOtantatarkastus || routedToTaloustarkastus || status === 'information_verified'
 
-  const showPalautaAsiatarkastukseen =
-    useFeature('enablePalautaLoppuselvitysAsiatarkastukseen') &&
-    isPääkäyttäjä(userInfo) &&
-    status === 'information_verified'
+  const showPalautaAsiatarkastukseen = isPääkäyttäjä(userInfo) && status === 'information_verified'
 
   const loppuselvitysEmail = hakemus.selvitys?.loppuselvitys?.['selvitys-email']
   if (approvedBeforeAsiatarkastusFeature && loppuselvitysEmail) {

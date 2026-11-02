@@ -1,7 +1,6 @@
 (ns oph.va.virkailija.hakemus-routes
   (:require [clojure.tools.logging :as log]
             [compojure.api.sweet :as compojure-api]
-            [oph.soresu.common.config :as config]
             [oph.soresu.common.db :refer [with-tx]]
             [oph.common.email :as common-email :refer [smtp-config]]
             [oph.soresu.form.formutil :as formutil]
@@ -128,8 +127,6 @@
     :summary "Return asiatarkastettu loppuselvitys back to asiatarkastus"
     (let [identity (authentication/get-request-identity request)
           syy (clojure.string/trim (:syy palautus))]
-      (when-not (config/feature-enabled? :enablePalautaLoppuselvitysAsiatarkastukseen)
-        (http/not-found!))
       (when-not (authorization/is-pääkäyttäjä? identity)
         (http/forbidden!))
       (when (clojure.string/blank? syy)
