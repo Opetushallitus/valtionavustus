@@ -95,35 +95,40 @@ test.extend({
       await expect(jotpaOhjeCheckbox).not.toBeChecked()
     })
 
-    await test.step('ratkaisija and esittelijä fields have prefixes that can not be removed', async () => {
-      const { johtaja, johtajaLabel, johtajaSv, esittelija, esittelijaSv } = paatosPage.locators
-      await expect(johtajaLabel).toHaveText(/^Ratkaisija/)
-      await expect(johtajaSv).toHaveValue(/^Ratkaisija: /)
-      await expect(esittelijaSv).toHaveValue(/^Föredragande: /)
+    await test.step('ratkaisija and esittelijä fields show prefixes outside the editable text', async () => {
+      const {
+        ratkaisija,
+        ratkaisijaLabel,
+        ratkaisijaSv,
+        esittelija,
+        esittelijaSv,
+        ratkaisijaPrefix,
+        ratkaisijaSvPrefix,
+        esittelijaPrefix,
+        esittelijaSvPrefix,
+      } = paatosPage.locators
+      await expect(ratkaisijaLabel).toHaveText(/^Ratkaisija/)
+      await expect(ratkaisijaPrefix).toHaveText('Ratkaisija:')
+      await expect(ratkaisijaSvPrefix).toHaveText('Ratkaisija:')
+      await expect(esittelijaPrefix).toHaveText('Esittelijä:')
+      await expect(esittelijaSvPrefix).toHaveText('Föredragande:')
+      await expect(ratkaisijaSv).toHaveValue('')
+      await expect(esittelijaSv).toHaveValue('')
+      await expect(ratkaisija).toHaveAttribute('placeholder', 'titteli etunimi sukunimi')
+      await expect(esittelijaSv).toHaveAttribute('placeholder', 'titteli etunimi sukunimi')
 
-      await johtaja.fill('')
-      await expect(johtaja).toHaveValue('Ratkaisija: ')
+      await ratkaisija.pressSequentially('Riikka')
+      await expect(ratkaisija).toHaveValue('Riikka')
+      await ratkaisija.press('ControlOrMeta+a')
+      await ratkaisija.press('Backspace')
+      await expect(ratkaisija).toHaveValue('')
+      await expect(ratkaisijaPrefix).toBeVisible()
 
-      await johtaja.pressSequentially('ab')
-      for (let i = 0; i < 5; i++) {
-        await johtaja.press('Backspace')
-      }
-      await expect(johtaja).toHaveValue('Ratkaisija: ')
-
-      await johtaja.evaluate((el: HTMLTextAreaElement) => el.setSelectionRange(0, 0))
-      await johtaja.press('X')
-      await expect(johtaja).toHaveValue('Ratkaisija: X')
-
-      await johtaja.press('ControlOrMeta+a')
-      await johtaja.pressSequentially('Riikka')
-      await expect(johtaja).toHaveValue('Ratkaisija: Riikka')
-
-      await esittelija.fill('')
-      await expect(esittelija).toHaveValue('Esittelijä: ')
+      await expect(esittelija).toHaveValue('')
     })
 
     await test.step('add ratkaisija ja esittelijä to paatos', async () => {
-      await paatosPage.locators.johtaja.fill('opetusneuvos Jussi Joutsen, yksikön päällikkö')
+      await paatosPage.locators.ratkaisija.fill('opetusneuvos Jussi Joutsen, yksikön päällikkö')
       await paatosPage.locators.esittelija.fill('opetusneuvos Esko Euroopanmajava')
       await waitForSave(page)
     })
@@ -214,12 +219,15 @@ test.extend({
       await expect(hakijaPaatosPage.ratkaisijaJaEsittelijaTitle).toBeHidden()
     })
     await test.step('editor does not add prefixes when haku has a v1 paatos', async () => {
-      const { johtaja, johtajaLabel, esittelija } = paatosPage.locators
+      const { ratkaisija, ratkaisijaLabel, esittelija, ratkaisijaPrefix, esittelijaPrefix } =
+        paatosPage.locators
       await paatosPage.editPaatos(avustushakuID, async () => {
-        await expect(johtajaLabel).toHaveText(/^Johtaja/)
-        await johtaja.fill('opetusneuvos Jussi Joutsen')
+        await expect(ratkaisijaLabel).toHaveText(/^Johtaja/)
+        await expect(ratkaisijaPrefix).toBeHidden()
+        await expect(esittelijaPrefix).toBeHidden()
+        await ratkaisija.fill('opetusneuvos Jussi Joutsen')
         await esittelija.fill('')
-        await expect(johtaja).toHaveValue('opetusneuvos Jussi Joutsen')
+        await expect(ratkaisija).toHaveValue('opetusneuvos Jussi Joutsen')
         await expect(esittelija).toHaveValue('')
       })
       await page.goto(`${VIRKAILIJA_URL}/paatos/avustushaku/${avustushakuID}/hakemus/${hakemusID}`)

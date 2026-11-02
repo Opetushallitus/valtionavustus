@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import _ from 'lodash'
+import classNames from 'classnames'
 import * as Bacon from 'baconjs'
 
 import DateUtil from 'soresu-form/web/DateUtil'
@@ -7,6 +8,7 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 
 import PaatosUrl from '../../PaatosUrl'
 import HelpTooltip from '../../common-components/HelpTooltip'
+import { Pill } from '../../common-components/Pill'
 import WarningBanner from '../../WarningBanner'
 import { Kayttoaika } from './Kayttoaika'
 import { SelvityksienAikarajat } from './SelvityksienAikarajat'
@@ -52,6 +54,70 @@ interface DecisionProps {
   prefixLabels?: Record<Language, string>
 }
 
+const PREFIX_GAP_PX = 6
+
+interface DecisionTextareaProps {
+  id: string
+  value: string
+  prefix?: string
+  placeholder?: string
+  disabled: boolean
+  onChange: (value: string) => void
+}
+
+const DecisionTextarea: React.FC<DecisionTextareaProps> = ({
+  id,
+  value,
+  prefix,
+  placeholder,
+  disabled,
+  onChange,
+}) => {
+  const prefixRef = useRef<HTMLDivElement>(null)
+  const [prefixWidth, setPrefixWidth] = useState(0)
+  const [scrollTop, setScrollTop] = useState(0)
+  useLayoutEffect(() => {
+    const prefixElement = prefixRef.current
+    if (!prefixElement) {
+      return
+    }
+    const updatePrefixWidth = () => setPrefixWidth(prefixElement.offsetWidth)
+    updatePrefixWidth()
+    // Width changes once the web font has loaded
+    const observer = new ResizeObserver(updatePrefixWidth)
+    observer.observe(prefixElement)
+    return () => observer.disconnect()
+  }, [prefix])
+  const prefixId = `${id}-prefix`
+  return (
+    <div className={classNames('decision-textarea', { 'decision-textarea--prefixed': prefix })}>
+      <textarea
+        disabled={disabled}
+        onChange={(e) => onChange(e.target.value)}
+        onScroll={prefix ? (e) => setScrollTop(e.currentTarget.scrollTop) : undefined}
+        rows={5}
+        id={id}
+        value={value}
+        placeholder={disabled ? undefined : placeholder}
+        aria-describedby={prefix ? prefixId : undefined}
+        style={prefix ? { textIndent: prefixWidth + PREFIX_GAP_PX } : undefined}
+      />
+      {prefix && (
+        <div className="decision-prefix-clip" aria-hidden="true">
+          <div
+            id={prefixId}
+            ref={prefixRef}
+            className="decision-prefix"
+            style={{ transform: `translateY(${-scrollTop}px)` }}
+          >
+            <Pill color="grey" text={prefix.trim()} testId={prefixId} />
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 const DecisionField: React.FC<DecisionProps> = ({
   avustushaku,
   title,
@@ -65,51 +131,28 @@ const DecisionField: React.FC<DecisionProps> = ({
 }) => {
   const fieldId = `decision.${id}.${language}`
   const prefix = prefixLabels && `${prefixLabels[language]}: `
-  const value = _.get(avustushaku, fieldId, '')
+  const value: string = _.get(avustushaku, fieldId, '')
   const titleLanguage = language === 'sv' ? `${title} ruotsiksi` : title
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const selectionStart = useRef(0)
-  useEffect(() => {
-    const textarea = textareaRef.current
-    if (!prefix || !textarea) {
-      return
-    }
-    const rememberSelectionStart = () => (selectionStart.current = textarea.selectionStart)
-    textarea.addEventListener('beforeinput', rememberSelectionStart)
-    return () => textarea.removeEventListener('beforeinput', rememberSelectionStart)
-  }, [prefix])
   useEffect(() => {
     if (prefix && !disabled && !value.startsWith(prefix)) {
       onChange(fieldId, prefix + value)
     }
   }, [prefix, disabled, value])
-  const onTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { value: newValue, selectionEnd } = e.target
-    if (!prefix || newValue.startsWith(prefix)) {
-      onChange(fieldId, newValue)
-      return
-    }
-    const inserted = newValue.slice(Math.min(selectionStart.current, selectionEnd), selectionEnd)
-    const tail = value.slice(
-      Math.max(value.length - (newValue.length - selectionEnd), prefix.length)
-    )
-    onChange(fieldId, prefix + inserted + tail)
-    const cursor = prefix.length + inserted.length
-    queueMicrotask(() => textareaRef.current?.setSelectionRange(cursor, cursor))
-  }
+  const hasPrefix = !!prefix && value.startsWith(prefix)
+  const shownPrefix = prefix && (hasPrefix || !disabled) ? prefix : undefined
   return (
     <div className="decision-column" data-test-id={dataTestId}>
       <label>
         {titleLanguage}
         {helpText && language === 'fi' ? <HelpTooltip content={helpText} direction="left" /> : ''}
       </label>
-      <textarea
-        ref={textareaRef}
-        disabled={disabled}
-        onChange={onTextChange}
-        rows={5}
+      <DecisionTextarea
         id={fieldId}
-        value={value}
+        value={hasPrefix ? value.slice(prefix.length) : value}
+        prefix={shownPrefix}
+        placeholder={shownPrefix && 'titteli etunimi sukunimi'}
+        disabled={disabled}
+        onChange={(text) => onChange(fieldId, shownPrefix ? shownPrefix + text : text)}
       />
     </div>
   )

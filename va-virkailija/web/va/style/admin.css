@@ -569,6 +569,49 @@ table.translation td {
     width: 90%;
 }
 
+.decision-textarea {
+    position: relative;
+}
+
+.decision-textarea--prefixed {
+    --textarea-border: 1px;
+    --textarea-padding: 10px;
+    --textarea-line-height: 24px;
+}
+
+.decision-textarea--prefixed textarea {
+    display: block;
+    border-width: var(--textarea-border);
+    padding: var(--textarea-padding);
+    line-height: var(--textarea-line-height);
+}
+
+.decision-prefix-clip {
+    position: absolute;
+    inset: var(--textarea-border) 0 var(--textarea-border) var(--textarea-border);
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.decision-prefix {
+    position: absolute;
+    top: var(--textarea-padding);
+    left: var(--textarea-padding);
+    height: var(--textarea-line-height);
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    color: var(--mid-gray);
+}
+
+.decision-prefix > div {
+    font-size: 14px;
+}
+
+.decision-textarea textarea:disabled + .decision-prefix-clip .decision-prefix {
+    color: var(--dark-gray);
+}
+
 .decision-date {
     padding-bottom: 19px;
 }
