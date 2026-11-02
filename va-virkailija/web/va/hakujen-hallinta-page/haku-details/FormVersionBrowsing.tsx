@@ -5,7 +5,8 @@ import HttpUtil from 'soresu-form/web/HttpUtil'
 import JsUtil from 'soresu-form/web/JsUtil'
 import { fiLongDateTimeFormatWithKlo } from 'soresu-form/web/va/i18n/dateformat'
 import { Field, Form } from 'soresu-form/web/va/types'
-import { VirkailijaAvustushaku } from '../hakuReducer'
+import { useHakujenHallintaSelector } from '../hakujenHallintaStore'
+import { selectLoadedInitialData, VirkailijaAvustushaku } from '../hakuReducer'
 import { isFormEdited } from './FormJsonEditor'
 import * as styles from './FormVersionBrowsing.module.css'
 
@@ -32,6 +33,8 @@ export const useFormVersionBrowsing = (
   formDraftJson: string,
   onFormChange: (avustushaku: VirkailijaAvustushaku, newDraft: Form) => void
 ) => {
+  const { userInfo } = useHakujenHallintaSelector(selectLoadedInitialData)
+  const isVaAdmin = userInfo.privileges.includes('va-admin')
   const savedForm = avustushaku.formContent
   const [versions, setVersions] = useState<FormVersion[]>()
   const [shownVersion, setShownVersion] = useState<ShownVersion>()
@@ -44,13 +47,14 @@ export const useFormVersionBrowsing = (
     setShownVersion(undefined)
     setVersions(undefined)
     setError(undefined)
+    if (!isVaAdmin) return
     HttpUtil.get<FormVersion[]>(`/api/avustushaku/${avustushaku.id}/form/versions`)
       .then((fetchedVersions) => !cancelled && setVersions(fetchedVersions))
       .catch(() => !cancelled && setError('Aiempien versioiden lataaminen epäonnistui'))
     return () => {
       cancelled = true
     }
-  }, [avustushaku.id, savedForm])
+  }, [avustushaku.id, savedForm, isVaAdmin])
 
   const returnToCurrentVersion = () => {
     if (savedForm) {
@@ -114,7 +118,7 @@ export const useFormVersionBrowsing = (
     return 'Ladataan…'
   }
 
-  const versionButtons = (
+  const versionButtons = isVaAdmin && (
     <>
       {error && (
         <span className={styles.error} role="alert" data-test-id="form-version-error">

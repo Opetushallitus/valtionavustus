@@ -260,9 +260,49 @@ defaultValues('Browsing and restoring hakulomake versions', async ({ page, hakuP
     await switchUserIdentityTo(page, 'viivivirkailija')
     const forbiddenResponse = await page.request.post(formUrl, { data: form })
     expect(forbiddenResponse.status()).toEqual(403)
+    for (const path of ['/versions', '/versions/0']) {
+      const response = await page.request.get(`${formUrl}${path}`)
+      expect(response.status()).toEqual(403)
+    }
 
     await switchUserIdentityTo(page, 'valtionavustus')
+    await formEditorPage.waitFormToBeLoaded()
+    await expect(locators.previousVersionButton).toBeEnabled()
     const allowedResponse = await page.request.post(formUrl, { data: form })
     expect(allowedResponse.status()).toEqual(200)
+  })
+
+  await test.step('only pääkäyttäjä can browse versions, not even a valmistelija', async () => {
+    const hakuUrl = `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}`
+    for (const path of ['/form/versions', '/form/versions/0']) {
+      await expect(await page.request.get(`${hakuUrl}${path}`)).toBeOK()
+    }
+    await page.request.put(`${hakuUrl}/role`, {
+      failOnStatusCode: true,
+      data: {
+        name: 'Viivi Virkailija',
+        email: 'viivi.virkailja@exmaple.com',
+        role: 'presenting_officer',
+        oid: '1.2.246.562.24.99000000002',
+      },
+    })
+
+    const historyRequests: string[] = []
+    page.on('request', (request) => {
+      if (request.url().includes('/form/versions')) historyRequests.push(request.url())
+    })
+    await switchUserIdentityTo(page, 'viivivirkailija')
+    await formEditorPage.waitFormToBeLoaded()
+    await expect(locators.form).toBeEnabled()
+    await expect(locators.previousVersionButton).toHaveCount(0)
+    await expect(page.getByTestId('next-form-version')).toHaveCount(0)
+    expect(historyRequests).toEqual([])
+
+    for (const path of ['/form/versions', '/form/versions/0']) {
+      const response = await page.request.get(`${hakuUrl}${path}`)
+      expect(response.status()).toEqual(403)
+    }
+    const form = await locators.form.inputValue()
+    await expect(await page.request.post(`${hakuUrl}/form`, { data: JSON.parse(form) })).toBeOK()
   })
 })
