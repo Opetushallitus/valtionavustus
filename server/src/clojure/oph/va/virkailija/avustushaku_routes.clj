@@ -351,26 +351,53 @@
       (http/ok (without-id found-form))
       (http/not-found))))
 
+(defn- require-pääkäyttäjä! [request]
+  (when-not (authorization/is-pääkäyttäjä? (authentication/get-request-identity request))
+    (http/forbidden!)))
+
+(def ^:private FormVersions [{:index Long :saved-at s/Inst}])
+
+;; Archive rows written by old migrations don't match today's form-schema/Form
+(def ^:private FormVersion {:content [s/Any] :rules [s/Any] :saved-at s/Inst})
+
+(defn- form-version-response [avustushaku-id lomake index]
+  (if-let [version (hakija-api/get-archived-form-version-by-avustushaku avustushaku-id lomake index)]
+    (http/ok (select-keys version [:content :rules :saved-at]))
+    (http/not-found)))
+
 (defn- get-avustushaku-form-versions []
   (compojure-api/GET "/:avustushaku-id/form/versions" request
     :path-params [avustushaku-id :- Long]
-    :return [{:index Long :saved-at s/Inst}]
+    :return FormVersions
     :summary "List earlier saved versions of the form that is linked to avustushaku, newest first"
-    (when-not (authorization/is-pääkäyttäjä? (authentication/get-request-identity request))
-      (http/forbidden!))
-    (http/ok (hakija-api/get-archived-form-versions-by-avustushaku avustushaku-id))))
+    (require-pääkäyttäjä! request)
+    (http/ok (hakija-api/get-archived-form-versions-by-avustushaku avustushaku-id :hakulomake))))
 
 (defn- get-avustushaku-form-version []
   (compojure-api/GET "/:avustushaku-id/form/versions/:index" request
     :path-params [avustushaku-id :- Long index :- Long]
-    ;; Archive rows written by old migrations don't match today's form-schema/Form
-    :return {:content [s/Any] :rules [s/Any] :saved-at s/Inst}
+    :return FormVersion
     :summary "Get an earlier saved version of the form that is linked to avustushaku"
-    (when-not (authorization/is-pääkäyttäjä? (authentication/get-request-identity request))
-      (http/forbidden!))
-    (if-let [version (hakija-api/get-archived-form-version-by-avustushaku avustushaku-id index)]
-      (http/ok (select-keys version [:content :rules :saved-at]))
-      (http/not-found))))
+    (require-pääkäyttäjä! request)
+    (form-version-response avustushaku-id :hakulomake index)))
+
+(def ^:private SelvitysType (s/enum "valiselvitys" "loppuselvitys"))
+
+(defn- get-selvitysform-versions []
+  (compojure-api/GET "/:avustushaku-id/selvitysform/:selvitys-type/versions" request
+    :path-params [avustushaku-id :- Long selvitys-type :- SelvitysType]
+    :return FormVersions
+    :summary "List earlier saved versions of the selvitys form that is linked to avustushaku, newest first"
+    (require-pääkäyttäjä! request)
+    (http/ok (hakija-api/get-archived-form-versions-by-avustushaku avustushaku-id (keyword selvitys-type)))))
+
+(defn- get-selvitysform-version []
+  (compojure-api/GET "/:avustushaku-id/selvitysform/:selvitys-type/versions/:index" request
+    :path-params [avustushaku-id :- Long selvitys-type :- SelvitysType index :- Long]
+    :return FormVersion
+    :summary "Get an earlier saved version of the selvitys form that is linked to avustushaku"
+    (require-pääkäyttäjä! request)
+    (form-version-response avustushaku-id (keyword selvitys-type) index)))
 
 (defn- post-avustushaku-form []
   (compojure-api/POST "/:avustushaku-id/form" request
@@ -513,6 +540,8 @@
   (post-avustushaku-form)
   (post-init-selvitysform)
   (post-selvitysform)
+  (get-selvitysform-versions)
+  (get-selvitysform-version)
   (delete-score)
   (put-searches)
   (get-search)

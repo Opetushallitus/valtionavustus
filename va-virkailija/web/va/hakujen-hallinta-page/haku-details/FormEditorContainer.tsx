@@ -83,6 +83,8 @@ const FormEditorPage = () => {
   }
   const { versionButtons, banner, restoredFieldIds, changedFieldIds } = useFormVersionBrowsing(
     avustushaku,
+    avustushaku.formContent,
+    `/api/avustushaku/${avustushaku.id}/form/versions`,
     formDraftJson,
     onFormChange
   )

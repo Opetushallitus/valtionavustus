@@ -306,3 +306,95 @@ defaultValues('Browsing and restoring hakulomake versions', async ({ page, hakuP
     await expect(await page.request.post(`${hakuUrl}/form`, { data: JSON.parse(form) })).toBeOK()
   })
 })
+
+for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
+  defaultValues(`Browsing and restoring ${selvitysType} form versions`, async ({ page }) => {
+    const hakujenHallinta = new HakujenHallintaPage(page)
+    const avustushakuID = await hakujenHallinta.copyEsimerkkihaku()
+    await hakujenHallinta.navigateTo(`/admin/${selvitysType}/?avustushaku=${avustushakuID}`)
+    const formEditorPage = HakulomakePage(page)
+    const { locators } = formEditorPage
+    await formEditorPage.waitFormToBeLoaded()
+
+    await formEditorPage.addFields({
+      fieldId: changedFieldId,
+      type: 'textField',
+      fieldLabel: 'Yhteyshenkilö',
+    })
+    const formWithoutField = await locators.form.inputValue()
+
+    await test.step('save version with an extra field', async () => {
+      await formEditorPage.addFields({
+        fieldId: restorableFieldId,
+        type: 'textField',
+        fieldLabel: 'Palautettava kenttä',
+      })
+      await expect(locators.field(restorableFieldId)).toBeVisible()
+    })
+
+    await test.step('save version without the field and with a changed label', async () => {
+      await formEditorPage.changeLomakeJson(
+        formWithoutField.replace('Yhteyshenkilöfi', 'Yhteysmiesfi')
+      )
+      await formEditorPage.saveForm()
+      await expect(locators.field(restorableFieldId)).toBeHidden()
+    })
+
+    await test.step('returning to current version restores the saved form', async () => {
+      const savedForm = await locators.form.inputValue()
+      await locators.previousVersionButton.click()
+      await expect(locators.versionBanner).toBeVisible()
+      await expect(locators.saveFormButton).toBeEnabled()
+
+      await locators.returnToCurrentVersionButton.click()
+      await expect(locators.versionBanner).toBeHidden()
+      await expect(locators.form).toHaveValue(savedForm)
+      await expect(locators.field(restorableFieldId)).toBeHidden()
+      await expect(locators.saveFormButton).toBeDisabled()
+    })
+
+    await test.step('previous version brings the field back', async () => {
+      await locators.previousVersionButton.click()
+      await expect(locators.versionBanner).toBeVisible()
+      await expect(locators.field(restorableFieldId)).toBeVisible()
+      await expect(locators.restoredFieldTag(restorableFieldId)).toHaveText(
+        'Kenttä puuttuu nykyisestä versiosta'
+      )
+      await expect(locators.changedFieldTag(changedFieldId)).toHaveText(
+        'Sisältö eroaa nykyisestä versiosta'
+      )
+    })
+
+    await test.step('restored version stays after saving', async () => {
+      await formEditorPage.saveForm()
+      await expect(locators.versionBanner).toBeHidden()
+      await page.reload()
+      await formEditorPage.waitFormToBeLoaded()
+      await expect(locators.field(restorableFieldId)).toBeVisible()
+    })
+
+    await test.step('only pääkäyttäjä can browse versions', async () => {
+      const selvitysFormUrl = `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitysform/${selvitysType}`
+      for (const path of ['/versions', '/versions/0']) {
+        await expect(await page.request.get(`${selvitysFormUrl}${path}`)).toBeOK()
+      }
+
+      const historyRequests: string[] = []
+      page.on('request', (request) => {
+        if (request.url().includes('/versions')) historyRequests.push(request.url())
+      })
+      await switchUserIdentityTo(page, 'viivivirkailija')
+      await formEditorPage.waitFormToBeLoaded()
+      await expect(locators.previousVersionButton).toHaveCount(0)
+      await expect(page.getByTestId('next-form-version')).toHaveCount(0)
+      expect(historyRequests).toEqual([])
+
+      for (const path of ['/versions', '/versions/0']) {
+        const response = await page.request.get(`${selvitysFormUrl}${path}`)
+        expect(response.status()).toEqual(403)
+      }
+      const form = await locators.form.inputValue()
+      await expect(await page.request.post(selvitysFormUrl, { data: JSON.parse(form) })).toBeOK()
+    })
+  })
+}

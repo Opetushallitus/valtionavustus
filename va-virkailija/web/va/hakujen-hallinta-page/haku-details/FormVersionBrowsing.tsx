@@ -30,12 +30,13 @@ const findFields = (content: Field[]) =>
 
 export const useFormVersionBrowsing = (
   avustushaku: VirkailijaAvustushaku,
+  savedForm: Form | undefined,
+  versionsUrl: string,
   formDraftJson: string,
   onFormChange: (avustushaku: VirkailijaAvustushaku, newDraft: Form) => void
 ) => {
   const { userInfo } = useHakujenHallintaSelector(selectLoadedInitialData)
   const isVaAdmin = userInfo.privileges.includes('va-admin')
-  const savedForm = avustushaku.formContent
   const [versions, setVersions] = useState<FormVersion[]>()
   const [shownVersion, setShownVersion] = useState<ShownVersion>()
   const [loading, setLoading] = useState(false)
@@ -48,13 +49,13 @@ export const useFormVersionBrowsing = (
     setVersions(undefined)
     setError(undefined)
     if (!isVaAdmin) return
-    HttpUtil.get<FormVersion[]>(`/api/avustushaku/${avustushaku.id}/form/versions`)
+    HttpUtil.get<FormVersion[]>(versionsUrl)
       .then((fetchedVersions) => !cancelled && setVersions(fetchedVersions))
       .catch(() => !cancelled && setError('Aiempien versioiden lataaminen epäonnistui'))
     return () => {
       cancelled = true
     }
-  }, [avustushaku.id, savedForm, isVaAdmin])
+  }, [versionsUrl, savedForm, isVaAdmin])
 
   const returnToCurrentVersion = () => {
     if (savedForm) {
@@ -78,7 +79,7 @@ export const useFormVersionBrowsing = (
     setError(undefined)
     try {
       const version = await HttpUtil.get<Pick<Form, 'content' | 'rules'> & { 'saved-at': string }>(
-        `/api/avustushaku/${avustushaku.id}/form/versions/${index}`
+        `${versionsUrl}/${index}`
       )
       const savedFields = new Map(findFields(savedForm.content).map((field) => [field.id, field]))
       const versionFields = findFields(version.content)

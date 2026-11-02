@@ -23,6 +23,8 @@ import {
 } from '../hakuReducer'
 import { tryToUseCurrentAvustushaku, useCurrentAvustushaku } from '../useAvustushaku'
 import ChooseAvustushaku from './ChooseAvustushaku'
+import { useFormVersionBrowsing } from './FormVersionBrowsing'
+import { ScrollAwareSticky } from './ValidationContainer'
 
 type SelvitysFormEditorProps = {
   selvitysType: 'valiselvitys' | 'loppuselvitys'
@@ -84,6 +86,13 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
       })
     )
   }
+  const { versionButtons, banner, restoredFieldIds, changedFieldIds } = useFormVersionBrowsing(
+    avustushaku,
+    formContent,
+    `/api/avustushaku/${avustushaku.id}/selvitysform/${selvitysType}/versions`,
+    formDraftJson,
+    onFormChange
+  )
 
   const onJsonChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(
@@ -240,6 +249,7 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
   return (
     <div>
       {selvitysType === 'valiselvitys' ? valiselvitysSection : loppuSelvitysSection}
+      {banner && <ScrollAwareSticky>{banner}</ScrollAwareSticky>}
       <button style={{ float: 'right' }} onClick={recreateForm}>
         Palauta alkuperäiset kysymykset
       </button>
@@ -271,11 +281,14 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
         formDraft={formDraft}
         koodistos={koodistos}
         onFormChange={onFormChange}
+        restoredFieldIds={restoredFieldIds}
+        changedFieldIds={changedFieldIds}
       />
       <div className="form-json-editor">
         <h3>Hakulomakkeen sisältö</h3>
         {parseError && <span className="error">{parseError}</span>}
         <div className="btn-fixed-container">
+          {versionButtons}
           <button className="btn-fixed" type="button" onClick={scrollToTop}>
             Takaisin ylös
           </button>
