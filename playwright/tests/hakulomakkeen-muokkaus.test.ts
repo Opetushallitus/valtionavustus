@@ -314,6 +314,7 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
     await hakujenHallinta.navigateTo(`/admin/${selvitysType}/?avustushaku=${avustushakuID}`)
     const formEditorPage = HakulomakePage(page)
     const { locators } = formEditorPage
+    const selvitysFormUrl = `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitysform/${selvitysType}`
     await formEditorPage.waitFormToBeLoaded()
 
     await formEditorPage.addFields({
@@ -374,7 +375,6 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
     })
 
     await test.step('only pääkäyttäjä can browse versions', async () => {
-      const selvitysFormUrl = `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitysform/${selvitysType}`
       for (const path of ['/versions', '/versions/0']) {
         await expect(await page.request.get(`${selvitysFormUrl}${path}`)).toBeOK()
       }
@@ -393,8 +393,31 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
         const response = await page.request.get(`${selvitysFormUrl}${path}`)
         expect(response.status()).toEqual(403)
       }
-      const form = await locators.form.inputValue()
-      await expect(await page.request.post(selvitysFormUrl, { data: JSON.parse(form) })).toBeOK()
+    })
+
+    await test.step('saving selvitys form requires edit-haku privilege', async () => {
+      const form = JSON.parse(await locators.form.inputValue())
+      await expect(locators.form).toBeDisabled()
+      await expect(
+        page.getByText('Sinulla ei ole muokkausoikeutta tähän lomakkeeseen')
+      ).toBeVisible()
+      const forbiddenResponse = await page.request.post(selvitysFormUrl, { data: form })
+      expect(forbiddenResponse.status()).toEqual(403)
+
+      await switchUserIdentityTo(page, 'valtionavustus')
+      await page.request.put(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/role`, {
+        failOnStatusCode: true,
+        data: {
+          name: 'Viivi Virkailija',
+          email: 'viivi.virkailja@exmaple.com',
+          role: 'presenting_officer',
+          oid: '1.2.246.562.24.99000000002',
+        },
+      })
+      await switchUserIdentityTo(page, 'viivivirkailija')
+      await formEditorPage.waitFormToBeLoaded()
+      await expect(locators.form).toBeEnabled()
+      await expect(await page.request.post(selvitysFormUrl, { data: form })).toBeOK()
     })
   })
 }

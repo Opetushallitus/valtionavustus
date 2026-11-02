@@ -443,11 +443,13 @@
           (http/ok (without-id found-form)))))))
 
 (defn- post-selvitysform []
-  (compojure-api/POST "/:avustushaku-id/selvitysform/:selvitys-type" []
+  (compojure-api/POST "/:avustushaku-id/selvitysform/:selvitys-type" request
     :path-params [avustushaku-id :- Long selvitys-type :- s/Str]
     :body [updated-form (compojure-api/describe form-schema/Form "Updated form")]
     :return form-schema/Form
     :summary "Update selvitys form"
+    (when-not (:edit-haku (resolve-request-user-privileges request avustushaku-id))
+      (http/forbidden!))
     (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
           form-keyword (keyword (str "form_" selvitys-type))
           form-id (form-keyword avustushaku)
