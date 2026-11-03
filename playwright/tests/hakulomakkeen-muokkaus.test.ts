@@ -316,6 +316,7 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
     const formEditorPage = HakulomakePage(page)
     const { locators } = formEditorPage
     const selvitysFormUrl = `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitysform/${selvitysType}`
+    const recreateFormButton = page.getByRole('button', { name: 'Palauta alkuperäiset kysymykset' })
     await formEditorPage.waitFormToBeLoaded()
 
     await formEditorPage.addFields({
@@ -403,6 +404,7 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
       await expect(
         page.getByText('Sinulla ei ole muokkausoikeutta tähän lomakkeeseen')
       ).toBeVisible()
+      await expect(recreateFormButton).toBeDisabled()
       const forbiddenResponse = await page.request.post(selvitysFormUrl, { data: form })
       expect(forbiddenResponse.status()).toEqual(403)
     })
@@ -434,6 +436,7 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
       await switchUserIdentityTo(page, 'viivivirkailija')
       await formEditorPage.waitFormToBeLoaded()
       await expect(locators.form).toBeEnabled()
+      await expect(recreateFormButton).toBeEnabled()
       await expect(await page.request.post(selvitysFormUrl, { data: form })).toBeOK()
     })
   })

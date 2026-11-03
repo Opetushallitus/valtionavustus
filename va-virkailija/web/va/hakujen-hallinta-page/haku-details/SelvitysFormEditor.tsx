@@ -251,7 +251,7 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
     <div>
       {selvitysType === 'valiselvitys' ? valiselvitysSection : loppuSelvitysSection}
       {banner && <ScrollAwareSticky>{banner}</ScrollAwareSticky>}
-      <button style={{ float: 'right' }} onClick={recreateForm}>
+      <button style={{ float: 'right' }} onClick={recreateForm} disabled={!userHasEditPrivilege}>
         Palauta alkuperäiset kysymykset
       </button>
       <LastUpdated updatedAt={updatedAt} id={updatedAtElementId} />
