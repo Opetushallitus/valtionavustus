@@ -34,6 +34,13 @@ export function HakulomakePage(page: Page) {
     await expect(locators.saveFormButton).toBeEnabled()
   }
 
+  async function showPreviousVersion() {
+    await Promise.all([
+      page.waitForResponse((response) => /\/versions\/\d+$/.test(response.url()) && response.ok()),
+      locators.previousVersionButton.click(),
+    ])
+  }
+
   async function saveForm() {
     await expect(locators.saveFormButton).toBeEnabled()
     await locators.saveFormButton.click()
@@ -150,5 +157,6 @@ export function HakulomakePage(page: Page) {
     removeField,
     moveField,
     addKoodisto,
+    showPreviousVersion,
   }
 }

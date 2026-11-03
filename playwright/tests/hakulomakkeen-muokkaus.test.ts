@@ -220,7 +220,7 @@ defaultValues('Browsing and restoring hakulomake versions', async ({ page, hakuP
 
   await test.step('returning to current version restores the saved form', async () => {
     const savedForm = await locators.form.inputValue()
-    await locators.previousVersionButton.click()
+    await formEditorPage.showPreviousVersion()
     await expect(locators.versionBanner).toBeVisible()
     await expect(locators.field(restorableFieldId)).toBeVisible()
     await expect(locators.saveFormButton).toBeEnabled()
@@ -233,7 +233,7 @@ defaultValues('Browsing and restoring hakulomake versions', async ({ page, hakuP
   })
 
   await test.step('previous version brings the field back', async () => {
-    await locators.previousVersionButton.click()
+    await formEditorPage.showPreviousVersion()
     await expect(locators.versionBanner).toBeVisible()
     await expect(locators.field(restorableFieldId)).toBeVisible()
     await expect(locators.restoredFieldTag(restorableFieldId)).toHaveText(
@@ -345,7 +345,7 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
 
     await test.step('returning to current version restores the saved form', async () => {
       const savedForm = await locators.form.inputValue()
-      await locators.previousVersionButton.click()
+      await formEditorPage.showPreviousVersion()
       await expect(locators.versionBanner).toBeVisible()
       await expect(locators.field(restorableFieldId)).toBeVisible()
       await expect(locators.saveFormButton).toBeEnabled()
@@ -358,7 +358,7 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
     })
 
     await test.step('previous version brings the field back', async () => {
-      await locators.previousVersionButton.click()
+      await formEditorPage.showPreviousVersion()
       await expect(locators.versionBanner).toBeVisible()
       await expect(locators.field(restorableFieldId)).toBeVisible()
       await expect(locators.restoredFieldTag(restorableFieldId)).toHaveText(
