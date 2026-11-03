@@ -405,7 +405,22 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
       ).toBeVisible()
       const forbiddenResponse = await page.request.post(selvitysFormUrl, { data: form })
       expect(forbiddenResponse.status()).toEqual(403)
+    })
 
+    await test.step('unknown selvitys type is rejected without touching the forms', async () => {
+      const form = JSON.parse(await locators.form.inputValue())
+      const hakuUrl = `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}`
+      for (const url of [`${hakuUrl}/init-selvitysform/x`, `${hakuUrl}/selvitysform/x`]) {
+        const response = await page.request.post(url, { data: { ...form, content: [] } })
+        expect(response.status()).toEqual(400)
+      }
+      await page.reload()
+      await formEditorPage.waitFormToBeLoaded()
+      expect(JSON.parse(await locators.form.inputValue())).toEqual(form)
+    })
+
+    await test.step('valmistelija can save selvitys form', async () => {
+      const form = JSON.parse(await locators.form.inputValue())
       await switchUserIdentityTo(page, 'valtionavustus')
       await page.request.put(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/role`, {
         failOnStatusCode: true,

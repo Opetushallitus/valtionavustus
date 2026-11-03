@@ -419,7 +419,7 @@
 
 (defn- post-init-selvitysform []
   (compojure-api/POST "/:avustushaku-id/init-selvitysform/:selvitys-type" []
-    :path-params [avustushaku-id :- Long selvitys-type :- s/Str]
+    :path-params [avustushaku-id :- Long selvitys-type :- SelvitysType]
     :body [form (compojure-api/describe form-schema/Form "Form to create")]
     :return form-schema/Form
     :summary "Create of finds selvitys form for given avustushaku"
@@ -444,7 +444,7 @@
 
 (defn- post-selvitysform []
   (compojure-api/POST "/:avustushaku-id/selvitysform/:selvitys-type" request
-    :path-params [avustushaku-id :- Long selvitys-type :- s/Str]
+    :path-params [avustushaku-id :- Long selvitys-type :- SelvitysType]
     :body [updated-form (compojure-api/describe form-schema/Form "Updated form")]
     :return form-schema/Form
     :summary "Update selvitys form"
