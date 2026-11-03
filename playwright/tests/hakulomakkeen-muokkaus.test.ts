@@ -421,7 +421,7 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
       expect(JSON.parse(await locators.form.inputValue())).toEqual(form)
     })
 
-    await test.step('valmistelija can save selvitys form', async () => {
+    await test.step('valmistelija can save selvitys form but not browse versions', async () => {
       const form = JSON.parse(await locators.form.inputValue())
       await switchUserIdentityTo(page, 'valtionavustus')
       await page.request.put(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/role`, {
@@ -437,6 +437,11 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
       await formEditorPage.waitFormToBeLoaded()
       await expect(locators.form).toBeEnabled()
       await expect(recreateFormButton).toBeEnabled()
+      await expect(locators.previousVersionButton).toHaveCount(0)
+      for (const path of ['/versions', '/versions/0']) {
+        const response = await page.request.get(`${selvitysFormUrl}${path}`)
+        expect(response.status()).toEqual(403)
+      }
       await expect(await page.request.post(selvitysFormUrl, { data: form })).toBeOK()
     })
   })
