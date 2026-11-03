@@ -1,5 +1,4 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
-import { isEqual } from 'lodash'
 import * as Bacon from 'baconjs'
 import moment from 'moment'
 
@@ -10,6 +9,7 @@ import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'
 import { Avustushaku, Form } from 'soresu-form/web/va/types'
 
 import FormEditor from './FormEditor'
+import { isFormEdited } from './FormJsonEditor'
 import { hasEditHakuPrivilege } from '../../authorization'
 import { Lahetys, Tapahtumaloki } from './Tapahtumaloki'
 import { LastUpdated } from './LastUpdated'
@@ -128,10 +128,9 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
     window.scrollTo(0, 0)
   }
 
-  let parsedForm = formDraft
   let parseError: string | undefined = undefined
   try {
-    parsedForm = JSON.parse(formDraftJson)
+    JSON.parse(formDraftJson)
   } catch (error: unknown) {
     if (error instanceof Error) {
       parseError = error.toString()
@@ -140,13 +139,9 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
     }
   }
 
-  function formHasBeenEdited() {
-    return formDraft && formContent && !isEqual(parsedForm, formContent)
-  }
-
   const userHasEditPrivilege = hasEditHakuPrivilege(avustushaku)
-  const hasFormBeenEdited = !formHasBeenEdited()
-  const disableSave = !userHasEditPrivilege || !!parseError || hasFormBeenEdited
+  const formEdited = !!formContent && isFormEdited(formDraftJson, formContent)
+  const disableSave = !userHasEditPrivilege || !!parseError || !formEdited
   const recreateForm = () => {
     dispatch(recreateSelvitysForm({ avustushaku, selvitysType }))
   }
