@@ -392,6 +392,27 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
       expect(versionListRequests).toHaveLength(1)
     })
 
+    await test.step('no permission message is not shown while privileges load', async () => {
+      const noPermissionMessage = page.getByText(
+        'Sinulla ei ole muokkausoikeutta tähän lomakkeeseen'
+      )
+      const privilegesUrl = `**/api/avustushaku/${avustushakuID}/privileges`
+      let releasePrivileges = () => {}
+      const privilegesReleased = new Promise<void>((resolve) => (releasePrivileges = resolve))
+      await page.route(privilegesUrl, async (route) => {
+        await privilegesReleased
+        await route.continue()
+      })
+      await page.reload()
+      await expect(locators.saveFormButton).toBeVisible()
+      await expect(noPermissionMessage).toBeHidden()
+      releasePrivileges()
+      await formEditorPage.waitFormToBeLoaded()
+      await expect(locators.previousVersionButton).toBeEnabled()
+      await expect(noPermissionMessage).toBeHidden()
+      await page.unroute(privilegesUrl)
+    })
+
     await test.step('only pääkäyttäjä can browse versions', async () => {
       for (const path of ['/versions', '/versions/0']) {
         await expect(await page.request.get(`${selvitysFormUrl}${path}`)).toBeOK()

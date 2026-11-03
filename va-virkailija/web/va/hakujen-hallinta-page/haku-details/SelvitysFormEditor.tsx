@@ -139,6 +139,7 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
     }
   }
 
+  const privilegesLoaded = !!avustushaku.privileges
   const userHasEditPrivilege = hasEditHakuPrivilege(avustushaku)
   const formEdited = !!formContent && isFormEdited(formDraftJson, formContent)
   const disableSave = !userHasEditPrivilege || !!parseError || !formEdited
@@ -285,7 +286,9 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
         <h3>Hakulomakkeen sisältö</h3>
         {parseError && <span className="error">{parseError}</span>}
         <div className="btn-fixed-container">
-          {!userHasEditPrivilege && <span>Sinulla ei ole muokkausoikeutta tähän lomakkeeseen</span>}
+          {privilegesLoaded && !userHasEditPrivilege && (
+            <span>Sinulla ei ole muokkausoikeutta tähän lomakkeeseen</span>
+          )}
           {versionButtons}
           <button className="btn-fixed" type="button" onClick={scrollToTop}>
             Takaisin ylös
