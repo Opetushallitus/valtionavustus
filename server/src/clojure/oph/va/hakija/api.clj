@@ -355,12 +355,16 @@
    :valiselvitys  "form_valiselvitys"
    :loppuselvitys "form_loppuselvitys"})
 
+(defn- avustushaku-form-column [form-type]
+  (or (avustushaku-form-columns form-type)
+      (throw (ex-info (str "Unknown form type: " form-type) {:form-type form-type}))))
+
 (defn- archived-form-versions-sql [form-type extra-columns]
   (str "SELECT row_number() OVER (ORDER BY af.archived_at DESC) - 1 AS index,
                coalesce(lead(af.archived_at) OVER (ORDER BY af.archived_at DESC), af.created_at) AS saved_at"
        extra-columns
        " FROM hakija.archived_forms af
-         JOIN hakija.avustushaut a ON a." (avustushaku-form-columns form-type) " = af.form_id
+         JOIN hakija.avustushaut a ON a." (avustushaku-form-column form-type) " = af.form_id
          WHERE a.id = ?
          ORDER BY af.archived_at DESC"))
 
