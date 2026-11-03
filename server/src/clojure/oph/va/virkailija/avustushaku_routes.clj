@@ -360,8 +360,8 @@
 ;; Archive rows written by old migrations don't match today's form-schema/Form
 (def ^:private FormVersion {:content [s/Any] :rules [s/Any] :saved-at s/Inst})
 
-(defn- form-version-response [avustushaku-id lomake index]
-  (if-let [version (hakija-api/get-archived-form-version-by-avustushaku avustushaku-id lomake index)]
+(defn- form-version-response [avustushaku-id form-type index]
+  (if-let [version (hakija-api/get-archived-form-version-by-avustushaku avustushaku-id form-type index)]
     (http/ok (select-keys version [:content :rules :saved-at]))
     (http/not-found)))
 

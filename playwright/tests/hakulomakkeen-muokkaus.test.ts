@@ -222,6 +222,7 @@ defaultValues('Browsing and restoring hakulomake versions', async ({ page, hakuP
     const savedForm = await locators.form.inputValue()
     await locators.previousVersionButton.click()
     await expect(locators.versionBanner).toBeVisible()
+    await expect(locators.field(restorableFieldId)).toBeVisible()
     await expect(locators.saveFormButton).toBeEnabled()
 
     await locators.returnToCurrentVersionButton.click()
@@ -345,6 +346,7 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
       const savedForm = await locators.form.inputValue()
       await locators.previousVersionButton.click()
       await expect(locators.versionBanner).toBeVisible()
+      await expect(locators.field(restorableFieldId)).toBeVisible()
       await expect(locators.saveFormButton).toBeEnabled()
 
       await locators.returnToCurrentVersionButton.click()
