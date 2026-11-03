@@ -3,6 +3,7 @@ import _ from 'lodash'
 import { Form } from 'soresu-form/web/va/types'
 import { useHakujenHallintaDispatch } from '../hakujenHallintaStore'
 import { VirkailijaAvustushaku, formJsonUpdated, formUpdated, saveForm } from '../hakuReducer'
+import { hasEditHakuPrivilege } from '../../authorization'
 
 function scrollToTop() {
   window.scrollTo(0, 0)
@@ -24,7 +25,7 @@ interface FormEditorProps {
 
 const FormJsonEditor = ({ avustushaku, formDraftJson, versionButtons }: FormEditorProps) => {
   const dispatch = useHakujenHallintaDispatch()
-  const userHasEditPrivilege = avustushaku.privileges && avustushaku.privileges['edit-haku']
+  const userHasEditPrivilege = hasEditHakuPrivilege(avustushaku)
   const hakuIsDraft = avustushaku.status === 'draft'
   const avustushakuId = avustushaku.id
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {

@@ -10,6 +10,7 @@ import { fiShortFormat } from 'soresu-form/web/va/i18n/dateformat'
 import { Avustushaku, Form } from 'soresu-form/web/va/types'
 
 import FormEditor from './FormEditor'
+import { hasEditHakuPrivilege } from '../../authorization'
 import { Lahetys, Tapahtumaloki } from './Tapahtumaloki'
 import { LastUpdated } from './LastUpdated'
 import { useHakujenHallintaDispatch, useHakujenHallintaSelector } from '../hakujenHallintaStore'
@@ -143,7 +144,7 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
     return formDraft && formContent && !isEqual(parsedForm, formContent)
   }
 
-  const userHasEditPrivilege = !!avustushaku.privileges && avustushaku.privileges['edit-haku']
+  const userHasEditPrivilege = hasEditHakuPrivilege(avustushaku)
   const hasFormBeenEdited = !formHasBeenEdited()
   const disableSave = !userHasEditPrivilege || !!parseError || hasFormBeenEdited
   const recreateForm = () => {

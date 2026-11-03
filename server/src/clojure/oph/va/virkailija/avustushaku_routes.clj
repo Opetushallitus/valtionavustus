@@ -332,6 +332,10 @@
         user-haku-role (hakija-api/get-avustushaku-role-by-avustushaku-id-and-person-oid avustushaku-id (:person-oid user-identity))]
     (authorization/resolve-user-privileges user-identity user-haku-role)))
 
+(defn- require-edit-haku! [request avustushaku-id]
+  (when-not (:edit-haku (resolve-request-user-privileges request avustushaku-id))
+    (http/forbidden!)))
+
 (defn- get-avustushaku-privileges []
   (compojure-api/GET "/:avustushaku-id/privileges" request
     :path-params [avustushaku-id :- Long]
@@ -405,8 +409,7 @@
     :body [updated-form (compojure-api/describe form-schema/Form "Updated form")]
     :return form-schema/Form
     :summary "Update form description that is linked to avustushaku"
-    (when-not (:edit-haku (resolve-request-user-privileges request avustushaku-id))
-      (http/forbidden!))
+    (require-edit-haku! request avustushaku-id)
     (if-let [avustushaku (hakija-api/get-avustushaku-by-status avustushaku-id ["new" "draft"])]
       (let [response (hakija-api/update-form-by-avustushaku avustushaku-id updated-form)]
         (if response
@@ -448,8 +451,7 @@
     :body [updated-form (compojure-api/describe form-schema/Form "Updated form")]
     :return form-schema/Form
     :summary "Update selvitys form"
-    (when-not (:edit-haku (resolve-request-user-privileges request avustushaku-id))
-      (http/forbidden!))
+    (require-edit-haku! request avustushaku-id)
     (let [avustushaku (hakija-api/get-avustushaku avustushaku-id)
           form-keyword (keyword (str "form_" selvitys-type))
           form-id (form-keyword avustushaku)

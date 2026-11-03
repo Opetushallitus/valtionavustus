@@ -9,6 +9,7 @@ import AutoCompleteCodeValue, { CodeType } from '../../common-components/AutoCom
 import { CustomHelpTooltip } from '../../common-components/HelpTooltip'
 import WarningBanner from '../../WarningBanner'
 import { VaCodeValue, ValidationResult } from '../../types'
+import { hasEditHakuPrivilege } from '../../authorization'
 import { DateInput } from './DateInput'
 import { Hakuaika } from './Hakuaika'
 import { Raportointivelvoitteet } from './Raportointivelvoitteet'
@@ -57,7 +58,7 @@ const HakuEditor = () => {
   const backfillDialogRef = React.useRef<HTMLDialogElement>(null)
   const isAllPaymentsPaid =
     hasPayments && !avustushaku.payments?.find((p) => p['paymentstatus-id'] !== 'paid')
-  const userHasEditPrivilege = !!avustushaku.privileges?.['edit-haku']
+  const userHasEditPrivilege = hasEditHakuPrivilege(avustushaku)
   const allowAllHakuEdits =
     !loadingAvustushaku &&
     userHasEditPrivilege &&

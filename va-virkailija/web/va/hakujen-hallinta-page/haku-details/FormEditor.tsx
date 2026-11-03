@@ -10,6 +10,7 @@ import VaPreviewComponentFactory from 'soresu-form/web/va/VaPreviewComponentFact
 
 import FakeFormController from '../../form/FakeFormController'
 import FakeFormState from '../../form/FakeFormState'
+import { hasEditHakuPrivilege } from '../../authorization'
 import { Field, Form, Koodistos } from 'soresu-form/web/va/types'
 import _ from 'lodash'
 import { useHakujenHallintaDispatch } from '../hakujenHallintaStore'
@@ -45,7 +46,7 @@ const FormEditor = ({
     originalFormDraft
   )
   const dispatch = useHakujenHallintaDispatch()
-  const allowEditing = !!avustushaku.privileges && avustushaku.privileges['edit-haku']
+  const allowEditing = hasEditHakuPrivilege(avustushaku)
   const ensureLoaded = useCallback(() => {
     dispatch(ensureKoodistoLoaded())
   }, [])
