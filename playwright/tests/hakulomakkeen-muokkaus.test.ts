@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, Request } from '@playwright/test'
 import * as path from 'path'
 import { readFile } from 'fs/promises'
 import moment from 'moment'
@@ -375,6 +375,21 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
       await page.reload()
       await formEditorPage.waitFormToBeLoaded()
       await expect(locators.field(restorableFieldId)).toBeVisible()
+    })
+
+    await test.step('version list is fetched once on page load', async () => {
+      const versionListRequests: string[] = []
+      const collectVersionListRequests = (request: Request) => {
+        if (request.url().endsWith(`/selvitysform/${selvitysType}/versions`)) {
+          versionListRequests.push(request.url())
+        }
+      }
+      page.on('request', collectVersionListRequests)
+      await page.reload()
+      await formEditorPage.waitFormToBeLoaded()
+      await expect(locators.previousVersionButton).toBeEnabled()
+      page.off('request', collectVersionListRequests)
+      expect(versionListRequests).toHaveLength(1)
     })
 
     await test.step('only pääkäyttäjä can browse versions', async () => {

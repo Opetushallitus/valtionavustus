@@ -48,7 +48,7 @@ export const useFormVersionBrowsing = (
     setShownVersion(undefined)
     setVersions(undefined)
     setError(undefined)
-    if (!isVaAdmin) return
+    if (!isVaAdmin || !savedForm) return
     HttpUtil.get<FormVersion[]>(versionsUrl)
       .then((fetchedVersions) => !cancelled && setVersions(fetchedVersions))
       .catch(() => !cancelled && setError('Aiempien versioiden lataaminen epäonnistui'))
