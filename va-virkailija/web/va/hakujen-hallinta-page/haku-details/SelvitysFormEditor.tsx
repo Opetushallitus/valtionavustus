@@ -87,13 +87,14 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
       })
     )
   }
-  const { versionButtons, banner, restoredFieldIds, changedFieldIds } = useFormVersionBrowsing(
-    avustushaku,
-    formContent,
-    `/api/avustushaku/${avustushaku.id}/selvitysform/${selvitysType}/versions`,
-    formDraftJson,
-    onFormChange
-  )
+  const { versionButtons, banner, restoredFieldIds, changedFieldIds, endVersionPreview } =
+    useFormVersionBrowsing(
+      avustushaku,
+      formContent,
+      `/api/avustushaku/${avustushaku.id}/selvitysform/${selvitysType}/versions`,
+      formDraftJson,
+      onFormChange
+    )
 
   const onJsonChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(
@@ -144,6 +145,7 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
   const formEdited = !!formContent && isFormEdited(formDraftJson, formContent)
   const disableSave = !userHasEditPrivilege || !!parseError || !formEdited
   const recreateForm = () => {
+    endVersionPreview()
     dispatch(recreateSelvitysForm({ avustushaku, selvitysType }))
   }
 

@@ -357,6 +357,27 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
       await expect(locators.saveFormButton).toBeDisabled()
     })
 
+    await test.step('restoring default questions ends the version preview', async () => {
+      await formEditorPage.showPreviousVersion()
+      await expect(locators.versionBanner).toBeVisible()
+      await recreateFormButton.click()
+      await expect(locators.versionBanner).toBeHidden()
+
+      const dialogMessages: string[] = []
+      page.once('dialog', async (dialog) => {
+        dialogMessages.push(dialog.message())
+        await dialog.dismiss()
+      })
+      await locators.previousVersionButton.click()
+      await expect
+        .poll(() => dialogMessages)
+        .toEqual(['Lomakkeeseen tehdyt tallentamattomat muutokset menetetään. Jatketaanko?'])
+      await expect(locators.versionBanner).toBeHidden()
+
+      await page.reload()
+      await formEditorPage.waitFormToBeLoaded()
+    })
+
     await test.step('previous version brings the field back', async () => {
       await formEditorPage.showPreviousVersion()
       await expect(locators.versionBanner).toBeVisible()
