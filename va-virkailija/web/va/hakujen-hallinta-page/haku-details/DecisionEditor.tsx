@@ -59,7 +59,7 @@ const PREFIX_GAP_PX = 6
 interface DecisionTextareaProps {
   id: string
   value: string
-  prefix?: string
+  prefixLabel?: string
   placeholder?: string
   disabled: boolean
   onChange: (value: string) => void
@@ -68,7 +68,7 @@ interface DecisionTextareaProps {
 const DecisionTextarea: React.FC<DecisionTextareaProps> = ({
   id,
   value,
-  prefix,
+  prefixLabel,
   placeholder,
   disabled,
   onChange,
@@ -87,22 +87,24 @@ const DecisionTextarea: React.FC<DecisionTextareaProps> = ({
     const observer = new ResizeObserver(updatePrefixWidth)
     observer.observe(prefixElement)
     return () => observer.disconnect()
-  }, [prefix])
+  }, [prefixLabel])
   const prefixId = `${id}-prefix`
   return (
-    <div className={classNames('decision-textarea', { 'decision-textarea--prefixed': prefix })}>
+    <div
+      className={classNames('decision-textarea', { 'decision-textarea--prefixed': prefixLabel })}
+    >
       <textarea
         disabled={disabled}
         onChange={(e) => onChange(e.target.value)}
-        onScroll={prefix ? (e) => setScrollTop(e.currentTarget.scrollTop) : undefined}
+        onScroll={prefixLabel ? (e) => setScrollTop(e.currentTarget.scrollTop) : undefined}
         rows={5}
         id={id}
         value={value}
         placeholder={disabled ? undefined : placeholder}
-        aria-describedby={prefix ? prefixId : undefined}
-        style={prefix ? { textIndent: prefixWidth + PREFIX_GAP_PX } : undefined}
+        aria-describedby={prefixLabel ? prefixId : undefined}
+        style={prefixLabel ? { textIndent: prefixWidth + PREFIX_GAP_PX } : undefined}
       />
-      {prefix && (
+      {prefixLabel && (
         <div className="decision-prefix-clip" aria-hidden="true">
           <div
             id={prefixId}
@@ -110,7 +112,7 @@ const DecisionTextarea: React.FC<DecisionTextareaProps> = ({
             className="decision-prefix"
             style={{ transform: `translateY(${-scrollTop}px)` }}
           >
-            <Pill color="grey" text={prefix.trim()} testId={prefixId} />
+            <Pill color="grey" text={`${prefixLabel}:`} testId={prefixId} />
           </div>
         </div>
       )}
@@ -130,16 +132,19 @@ const DecisionField: React.FC<DecisionProps> = ({
   prefixLabels,
 }) => {
   const fieldId = `decision.${id}.${language}`
-  const prefix = prefixLabels && `${prefixLabels[language]}: `
+  const prefixLabel = prefixLabels?.[language]
+  const storedPrefix = prefixLabel && `${prefixLabel}: `
   const value: string = _.get(avustushaku, fieldId, '')
   const titleLanguage = language === 'sv' ? `${title} ruotsiksi` : title
   useEffect(() => {
-    if (prefix && !disabled && !value.startsWith(prefix)) {
-      onChange(fieldId, prefix + value)
+    if (storedPrefix && !disabled && !value.startsWith(storedPrefix)) {
+      onChange(fieldId, storedPrefix + value)
     }
-  }, [prefix, disabled, value])
-  const hasPrefix = !!prefix && value.startsWith(prefix)
-  const shownPrefix = prefix && (hasPrefix || !disabled) ? prefix : undefined
+  }, [storedPrefix, disabled, value])
+  const valueHasPrefix = !!storedPrefix && value.startsWith(storedPrefix)
+  // Locked legacy text without the prefix is shown as-is
+  const showPrefix = valueHasPrefix || !disabled
+  const visiblePrefix = showPrefix ? storedPrefix : undefined
   return (
     <div className="decision-column" data-test-id={dataTestId}>
       <label>
@@ -148,11 +153,11 @@ const DecisionField: React.FC<DecisionProps> = ({
       </label>
       <DecisionTextarea
         id={fieldId}
-        value={hasPrefix ? value.slice(prefix.length) : value}
-        prefix={shownPrefix}
-        placeholder={shownPrefix && 'titteli etunimi sukunimi'}
+        value={valueHasPrefix ? value.slice(storedPrefix.length) : value}
+        prefixLabel={visiblePrefix && prefixLabel}
+        placeholder={visiblePrefix && 'titteli etunimi sukunimi'}
         disabled={disabled}
-        onChange={(text) => onChange(fieldId, shownPrefix ? shownPrefix + text : text)}
+        onChange={(text) => onChange(fieldId, visiblePrefix ? visiblePrefix + text : text)}
       />
     </div>
   )
