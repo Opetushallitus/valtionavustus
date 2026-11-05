@@ -2,8 +2,11 @@ import { expect, test } from '@playwright/test'
 
 import { budjettimuutoshakemusTest } from '../../fixtures/budjettimuutoshakemusTest'
 import { DefaultValueFixtures } from '../../fixtures/defaultValues'
+import { twoAcceptedHakemusTest } from '../../fixtures/twoHakemusTest'
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
+import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusPage'
+import { VIRKAILIJA_URL } from '../../utils/constants'
 import { switchUserIdentityTo } from '../../utils/util'
 
 test.setTimeout(180000)
@@ -93,6 +96,47 @@ budjettimuutoshakemusTest(
       // Reason textarea should be editable for admin
       const reasonTextarea = page.locator('textarea[name="reason"]')
       await expect(reasonTextarea).toBeEditable()
+    })
+  }
+)
+
+twoAcceptedHakemusTest(
+  'muutospäätös oikeudet - toisen hakemuksen muutoshakemukseen ei voi tehdä päätöstä',
+  async ({ page, avustushakuID, acceptedHakemukset: { hakemusID, secondHakemusID } }) => {
+    const muutoshakemuksetUrl = (id: number) =>
+      `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${id}/muutoshakemus/`
+
+    await test.step('send päätökset', async () => {
+      const hakujenHallintaPage = new HakujenHallintaPage(page)
+      const haunTiedotPage = await hakujenHallintaPage.navigate(avustushakuID)
+      await haunTiedotPage.resolveAvustushaku()
+      const paatosPage = await hakujenHallintaPage.commonHakujenHallinta.switchToPaatosTab()
+      await paatosPage.sendPaatos(2)
+    })
+
+    await test.step('send muutoshakemus for the second hakemus', async () => {
+      const hakijaMuutoshakemusPage = new HakijaMuutoshakemusPage(page)
+      await hakijaMuutoshakemusPage.navigate(secondHakemusID)
+      await hakijaMuutoshakemusPage.clickHaenSisaltomuutosta()
+      await hakijaMuutoshakemusPage.fillSisaltomuutosPerustelut(sisaltomuutosPerustelut)
+      await hakijaMuutoshakemusPage.sendMuutoshakemus(true)
+    })
+
+    await test.step('paatos cannot be made through the first hakemus', async () => {
+      const [muutoshakemus] = await (
+        await page.request.get(muutoshakemuksetUrl(secondHakemusID), { failOnStatusCode: true })
+      ).json()
+
+      const response = await page.request.post(
+        `${muutoshakemuksetUrl(hakemusID)}${muutoshakemus.id}/paatos`,
+        { data: { reason: 'Hyväksytään', 'haen-sisaltomuutosta': { status: 'accepted' } } }
+      )
+      expect(response.status()).toBe(404)
+
+      const [muutoshakemusAfter] = await (
+        await page.request.get(muutoshakemuksetUrl(secondHakemusID), { failOnStatusCode: true })
+      ).json()
+      expect(muutoshakemusAfter.status).toBe('new')
     })
   }
 )

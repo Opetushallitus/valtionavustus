@@ -72,6 +72,8 @@
     (let [identity (authentication/get-request-identity request)]
       (when-not (can-make-muutospaatos? identity hakemus-id)
         (http/forbidden! {:error "Vain hankkeelle osoitettu valmistelija tai pääkäyttäjä voi tehdä muutospäätöksen"}))
+      (when-not (some #(= muutoshakemus-id (:id %)) (virkailija-db/get-muutoshakemukset hakemus-id))
+        (http/not-found!))
       (when (and (= "accepted_with_changes" (get-in paatos [:haen-yhteishanke-osapuolimuutosta :status]))
                  (seq (virkailija-db/get-muutoshakemus-yhteishanke-organizations muutoshakemus-id)))
         (http/bad-request! {:error "Yhteishankkeen osapuolimuutoksia ei voi hyväksyä muutettuna"}))
