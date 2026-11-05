@@ -13,7 +13,7 @@ const sisaltomuutosPerustelut = 'Muutamme kaiken muuttamisen ilosta'
 budjettimuutoshakemusTest.extend<Pick<DefaultValueFixtures, 'ukotettuValmistelija'>>({
   ukotettuValmistelija: 'Viivi Virkailija',
 })(
-  'Ukottamattoman valmistelijan (paallikon) hyvaksyessa muutoshakemuksen, ratkaisijaksi ja lisatietoja osioon tulee ukotettu valmistelija ja esittelijaksi hyvaksyja',
+  'Ukottamattoman hyvaksyjan hyvaksyessa muutoshakemuksen, ratkaisijaksi ja lisatietoja osioon tulee ukotettu valmistelija ja esittelijaksi hyvaksyja',
   async ({ page, avustushakuID, ukotettuValmistelija, acceptedHakemus: { hakemusID } }) => {
     const hyvaksyja = '_ valtionavustus'
     const hakemustenArviointiPage = new HakemustenArviointiPage(page)
