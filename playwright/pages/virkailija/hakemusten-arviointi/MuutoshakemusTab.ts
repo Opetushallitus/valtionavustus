@@ -41,6 +41,7 @@ export function createMuutoshakemusTab(page: Page) {
       yhteishankeOsapuoliPaatos: page.getByTestId('paatos-yhteishanke-osapuoli'),
       talousarvioPaatos: page.getByTestId('paatos-talousarvio'),
       esittelija: page.getByTestId('paatos-esittelija'),
+      ratkaisija: page.getByTestId('paatos-ratkaisija'),
       lisatietoja: page.getByTestId('paatos-additional-info'),
       hyvaksyja: page.getByTestId('paatos-decider'),
       registerNumber: page.getByTestId('paatos-register-number'),

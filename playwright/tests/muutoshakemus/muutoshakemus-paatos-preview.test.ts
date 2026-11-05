@@ -43,7 +43,8 @@ muutoshakemusTest(
       await expect(preview.projectName).toHaveText('Rahassa kylpijät Ky Ay Oy')
       await expect(preview.registerNumber).toHaveText(/[0-9]{1,3}\/[0-9]{1,5}\/[0-9]{2,6}/)
       await expect(preview.org).toHaveText('Akaan kaupunki')
-      await expect(preview.hyvaksyja).toHaveText('_ valtionavustus')
+      await expect(preview.ratkaisija).toHaveText('_ valtionavustus')
+      await expect(preview.esittelija).toHaveText('_ valtionavustus')
       await expect(preview.lisatietoja).toHaveText(
         '_ valtionavustussanteri.horttanainen@reaktor.com029 533 1000 (vaihde)'
       )

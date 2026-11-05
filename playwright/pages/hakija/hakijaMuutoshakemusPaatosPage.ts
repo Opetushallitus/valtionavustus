@@ -33,6 +33,7 @@ export class HakijaMuutoshakemusPaatosPage {
       budgetInput: this.page.locator('[data-test-type="personnel-costs-row"] input'),
       tekijaTitle: this.page.getByTestId('muutoshakemus-paatos-tekija-title'),
       hyvaksyja: this.page.getByTestId('paatos-decider'),
+      ratkaisija: this.page.getByTestId('paatos-ratkaisija'),
       esittelija: this.page.getByTestId('paatos-esittelija'),
       lisatietoja: this.page.getByTestId('paatos-additional-info'),
     }

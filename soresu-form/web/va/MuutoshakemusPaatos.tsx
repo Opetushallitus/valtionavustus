@@ -229,6 +229,28 @@ const HyvaksyjaSection: React.FC<{
   )
 }
 
+const RatkaisijaJaEsittelijaSection: React.FC<{
+  decider: string
+  presenter: Role | undefined
+}> = ({ presenter, decider }) => {
+  const { t } = useTranslations()
+  return (
+    <section className="muutoshakemus-paatos__section">
+      <div data-test-id="muutoshakemus-paatos-tekija-title" className="muutoshakemus-paatos__title">
+        {t.muutoshakemus.paatos.ratkaisijaJaEsittelija}
+      </div>
+      <div>
+        <div data-test-id="paatos-ratkaisija">{presenter?.name || decider}</div>
+        <br />
+        <div data-test-id="muutoshakemus-paatos-esittelija-title">
+          {t.muutoshakemus.paatos.esittelija}
+        </div>
+        <div data-test-id="paatos-esittelija">{decider}</div>
+      </div>
+    </section>
+  )
+}
+
 const LisatietojaSection: React.FC<{ presenter: Role | undefined; title: string }> = ({
   presenter,
   title,
@@ -334,12 +356,7 @@ export const MuutoshakemusPaatos = ({
             presenter={presenter}
             title={t.muutoshakemus.paatos.lisatietojaPaatoksesta}
           />
-          <HyvaksyjaSection
-            isDecidedByUkotettuValmistelija={isDecidedByUkotettuValmistelija}
-            decider={paatos.decider}
-            presenter={presenter}
-            title={t.muutoshakemus.paatos.ratkaisijaJaEsittelija}
-          />
+          <RatkaisijaJaEsittelijaSection decider={paatos.decider} presenter={presenter} />
         </>
       ) : (
         <>
