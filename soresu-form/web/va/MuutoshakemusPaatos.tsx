@@ -230,9 +230,9 @@ const HyvaksyjaSection: React.FC<{
 }
 
 const RatkaisijaJaEsittelijaSection: React.FC<{
-  decider: string
-  presenter: Role | undefined
-}> = ({ presenter, decider }) => {
+  ratkaisija: string
+  esittelija: string
+}> = ({ ratkaisija, esittelija }) => {
   const { t } = useTranslations()
   return (
     <section className="muutoshakemus-paatos__section">
@@ -240,12 +240,12 @@ const RatkaisijaJaEsittelijaSection: React.FC<{
         {t.muutoshakemus.paatos.ratkaisijaJaEsittelija}
       </div>
       <div>
-        <div data-test-id="paatos-ratkaisija">{presenter?.name || decider}</div>
+        <div data-test-id="paatos-ratkaisija">{ratkaisija}</div>
         <br />
         <div data-test-id="muutoshakemus-paatos-esittelija-title">
           {t.muutoshakemus.paatos.esittelija}
         </div>
-        <div data-test-id="paatos-esittelija">{decider}</div>
+        <div data-test-id="paatos-esittelija">{esittelija}</div>
       </div>
     </section>
   )
@@ -312,6 +312,8 @@ export const MuutoshakemusPaatos = ({
   const projectEndDate = getProjectEndDate(avustushaku, muutoshakemukset, muutoshakemus)
   const currentTalousarvio = getTalousarvio(muutoshakemukset, hakemus?.talousarvio, muutoshakemus)
   const hasYhteishankeChanges = (muutoshakemus['yhteishanke-osapuolimuutokset']?.length ?? 0) > 0
+  const hyvaksyja = paatos.decider
+  const ukotettuValmistelija = presenter?.name
   return (
     <div className="muutoshakemus-paatos__content">
       <header className="muutoshakemus-paatos__header">
@@ -356,7 +358,10 @@ export const MuutoshakemusPaatos = ({
             presenter={presenter}
             title={t.muutoshakemus.paatos.lisatietojaPaatoksesta}
           />
-          <RatkaisijaJaEsittelijaSection decider={paatos.decider} presenter={presenter} />
+          <RatkaisijaJaEsittelijaSection
+            ratkaisija={ukotettuValmistelija || hyvaksyja}
+            esittelija={hyvaksyja}
+          />
         </>
       ) : (
         <>
