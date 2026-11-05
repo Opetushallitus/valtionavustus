@@ -31,6 +31,10 @@ export class HakijaMuutoshakemusPaatosPage {
       jatkoaika: this.page.locator('[data-test-id="muutoshakemus-jatkoaika"]'),
       talousarvio: this.page.locator('.talousarvio'),
       budgetInput: this.page.locator('[data-test-type="personnel-costs-row"] input'),
+      tekijaTitle: this.page.getByTestId('muutoshakemus-paatos-tekija-title'),
+      hyvaksyja: this.page.getByTestId('paatos-decider'),
+      esittelija: this.page.getByTestId('paatos-esittelija'),
+      lisatietoja: this.page.getByTestId('paatos-additional-info'),
     }
   }
 

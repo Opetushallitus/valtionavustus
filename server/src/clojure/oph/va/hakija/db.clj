@@ -507,6 +507,8 @@
                             created_at,
                             updated_at,
                             decider,
+                            valmistelija_name,
+                            valmistelija_email,
                             paatos_template_version,
                             to_char(pj.paattymispaiva, 'YYYY-MM-DD') as paattymispaiva
                           FROM virkailija.paatos

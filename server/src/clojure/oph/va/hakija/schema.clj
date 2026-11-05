@@ -88,8 +88,8 @@
 
 (s/defschema Presenter
   "Presenter"
-  {:name s/Str
-   :email s/Str})
+  {:name (s/maybe s/Str)
+   :email (s/maybe s/Str)})
 
 (s/defschema Avustushaku
   "Avustushaku"

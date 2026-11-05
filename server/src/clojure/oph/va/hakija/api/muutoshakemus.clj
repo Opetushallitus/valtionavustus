@@ -56,22 +56,23 @@
     :path-params [user-key :- s/Str]
     :return MuutoshakemusPaatosDocument
     :summary "Get data for rendering a muutoshakemus paatos document"
-    (let [paatos (hakija-db/get-paatos user-key)
+    (let [paatos-row (hakija-db/get-paatos user-key)
+          paatos (dissoc paatos-row :valmistelija-name :valmistelija-email)
           muutoshakemukset (hakija-db/get-muutoshakemukset-by-paatos-user-key user-key)
           muutoshakemus (first (filter #(= user-key (:paatos-user-key %)) muutoshakemukset))
           muutoshakemus-url (hakija-db/get-muutoshakemus-url-by-hakemus-id (:hakemus-id muutoshakemus))
-          presenter (hakija-db/get-valmistelija-assigned-to-hakemus (:hakemus-id muutoshakemus))
+          presenter {:name (:valmistelija-name paatos-row) :email (:valmistelija-email paatos-row)}
           avustushaku (hakija-db/get-avustushaku-by-paatos-user-key user-key)
           hakemus (hakija-db/get-normalized-hakemus-by-id (:hakemus-id muutoshakemus))
           is-decided-by-ukotettu-valmistelija (= (:decider muutoshakemus)
                                                  (:name presenter))]
-      (if (nil? paatos)
+      (if (nil? paatos-row)
         (http/not-found)
         (http/ok {:paatos paatos
                   :muutoshakemus muutoshakemus
                   :muutoshakemusUrl muutoshakemus-url
                   :muutoshakemukset muutoshakemukset
-                  :presenter {:name (:name presenter) :email (:email presenter)}
+                  :presenter presenter
                   :isDecidedByUkotettuValmistelija is-decided-by-ukotettu-valmistelija
                   :avustushaku {:hankkeen-alkamispaiva (:hankkeen-alkamispaiva avustushaku) :hankkeen-paattymispaiva (:hankkeen-paattymispaiva avustushaku)}
                   :hakemus hakemus}))))

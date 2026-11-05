@@ -83,7 +83,8 @@
             trusted-contact-email (:trusted-contact-email normalized-hakemus)
             to (remove nil? [contact-email trusted-contact-email])
             decider (str (:first-name identity) " " (:surname identity))
-            paatos (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)
+            valmistelija (hakija-db/get-valmistelija-assigned-to-hakemus hakemus-id)
+            paatos (virkailija-db/create-muutoshakemus-paatos muutoshakemus-id paatos decider valmistelija avustushaku-id)
             token (virkailija-db/create-application-token (:id hakemus))]
         (email/send-muutoshakemus-paatos to avustushaku hakemus arvio roles token muutoshakemus-id paatos)
         (email/send-yhteishanke-muutoshakemus-paatos! avustushaku hakemus arvio roles muutoshakemus-id paatos)

@@ -72,17 +72,17 @@
   (let [rows (query tx "SELECT count(*) FROM menoluokka_muutoshakemus WHERE muutoshakemus_id = ?" [muutoshakemus-id])]
     (> (:count (first rows)) 0)))
 
-(defn- store-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
+(defn- store-muutoshakemus-paatos [muutoshakemus-id paatos decider valmistelija avustushaku-id]
   (with-tx (fn [tx]
              (let [muutoshakemus (first (query tx "SELECT * FROM muutoshakemus WHERE id = ?" [muutoshakemus-id]))
                    requested-yhteishanke-organizations (get-muutoshakemus-yhteishanke-organizations tx muutoshakemus-id)
                    sisaltomuutos-status (get-in paatos [:haen-sisaltomuutosta :status])
                    yhteishanke-osapuoli-status (get-in paatos [:haen-yhteishanke-osapuolimuutosta :status])
                    created-paatos (first (query tx
-                                                "INSERT INTO virkailija.paatos (user_key, reason, decider, paatos_template_version)
-                                                 VALUES (?, ?, ?, ?)
+                                                "INSERT INTO virkailija.paatos (user_key, reason, decider, valmistelija_name, valmistelija_email, valmistelija_oid, paatos_template_version)
+                                                 VALUES (?, ?, ?, ?, ?, ?, ?)
                                                  RETURNING id, reason, decider, user_key, created_at, updated_at"
-                                                [(generate-hash-id) (:reason paatos) decider (hakija-api/current-paatos-template-version)]))
+                                                [(generate-hash-id) (:reason paatos) decider (:name valmistelija) (:email valmistelija) (:oid valmistelija) (hakija-api/current-paatos-template-version)]))
                    paatos-id (:id created-paatos)]
                (execute! tx
                          "UPDATE virkailija.muutoshakemus
@@ -138,8 +138,8 @@
                 keskeytetty_aloittamatta = ?
               WHERE id = ? AND version = ?" [keskeyta (:id new-hakemus) (:version new-hakemus)])))
 
-(defn create-muutoshakemus-paatos [muutoshakemus-id paatos decider avustushaku-id]
-  (if-let [created-paatos (store-muutoshakemus-paatos muutoshakemus-id paatos decider avustushaku-id)]
+(defn create-muutoshakemus-paatos [muutoshakemus-id paatos decider valmistelija avustushaku-id]
+  (if-let [created-paatos (store-muutoshakemus-paatos muutoshakemus-id paatos decider valmistelija avustushaku-id)]
     (-> created-paatos
         (assoc :paatos-hyvaksytty-paattymispaiva (get-hyvaksytty-paattymispaiva (:id created-paatos)))
         (assoc :status-jatkoaika (get-jatkoaika-paatos-status (:id created-paatos)))
