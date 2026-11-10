@@ -7,6 +7,7 @@ import { navigate } from '../../../utils/navigate'
 import { expectQueryParameter } from '../../../utils/util'
 import { VaCodeValues, Field } from '../../../utils/types'
 import { addFieldsToHakemusJson } from '../../../utils/hakemus-json'
+import { VIRKAILIJA_URL } from '../../../utils/constants'
 import { Talousarviotili } from '../../../../va-virkailija/web/va/koodienhallinta-page/types'
 import { HakulomakePage } from './HakulomakePage'
 import {
@@ -345,17 +346,15 @@ export class HakujenHallintaPage {
     const avustushakuID = await this.copyEsimerkkihaku()
     await this.fillAvustushaku(hakuProps)
 
-    const formEditorPage = await this.switchToHakulomakeTab()
-    await formEditorPage.waitFormToBeLoaded()
-
-    if (hakuProps.hakemusFields.length) {
-      const newJson = addFieldsToHakemusJson(lomakeJson, hakuProps.hakemusFields)
-      await formEditorPage.changeLomakeJson(newJson)
-    } else {
-      await formEditorPage.changeLomakeJson(lomakeJson)
-    }
-
-    await formEditorPage.saveForm()
+    const formJson = hakuProps.hakemusFields.length
+      ? addFieldsToHakemusJson(lomakeJson, hakuProps.hakemusFields)
+      : lomakeJson
+    // Seed through the API: filling large JSON fixtures also renders the entire visual editor.
+    await this.page.request.post(`${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/form`, {
+      data: JSON.parse(formJson),
+      failOnStatusCode: true,
+    })
+    await this.navigateToFormEditor(avustushakuID)
     return { avustushakuID }
   }
 
