@@ -162,14 +162,11 @@ export const useFormVersionBrowsing = (
     </div>
   )
 
-  const endVersionPreview = () => setShownVersion(undefined)
-
   return {
     versionButtons,
     banner,
     restoredFieldIds: shownVersion?.restoredFieldIds ?? [],
     changedFieldIds: shownVersion?.changedFieldIds ?? [],
-    endVersionPreview,
   }
 }
 

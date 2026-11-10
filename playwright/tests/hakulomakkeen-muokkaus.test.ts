@@ -316,7 +316,6 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
     const formEditorPage = HakulomakePage(page)
     const { locators } = formEditorPage
     const selvitysFormUrl = `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitysform/${selvitysType}`
-    const recreateFormButton = page.getByRole('button', { name: 'Palauta alkuperäiset kysymykset' })
     await formEditorPage.waitFormToBeLoaded()
 
     await formEditorPage.addFields({
@@ -357,11 +356,9 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
       await expect(locators.saveFormButton).toBeDisabled()
     })
 
-    await test.step('restoring default questions ends the version preview', async () => {
-      await formEditorPage.showPreviousVersion()
-      await expect(locators.versionBanner).toBeVisible()
-      await recreateFormButton.click()
-      await expect(locators.versionBanner).toBeHidden()
+    await test.step('unsaved edits ask before showing a previous version', async () => {
+      const savedForm = await locators.form.inputValue()
+      await formEditorPage.changeLomakeJson(savedForm.replace('Yhteysmiesfi', 'Tallentamatonfi'))
 
       const dialogMessages: string[] = []
       page.once('dialog', async (dialog) => {
@@ -461,7 +458,6 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
       await expect(
         page.getByText('Sinulla ei ole muokkausoikeutta tähän lomakkeeseen')
       ).toBeVisible()
-      await expect(recreateFormButton).toBeDisabled()
       const forbiddenResponse = await page.request.post(selvitysFormUrl, { data: form })
       expect(forbiddenResponse.status()).toEqual(403)
     })
@@ -493,7 +489,6 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
       await switchUserIdentityTo(page, 'viivivirkailija')
       await formEditorPage.waitFormToBeLoaded()
       await expect(locators.form).toBeEnabled()
-      await expect(recreateFormButton).toBeEnabled()
       await expect(locators.previousVersionButton).toHaveCount(0)
       for (const path of ['/versions', '/versions/0']) {
         const response = await page.request.get(`${selvitysFormUrl}${path}`)

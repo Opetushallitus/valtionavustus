@@ -546,25 +546,6 @@ const selvitysFormDraftJsonMap = {
   loppuselvitys: 'loppuselvitysFormDraftsJson',
 } as const
 
-export const recreateSelvitysForm = createAsyncThunk<
-  void,
-  {
-    avustushaku: VirkailijaAvustushaku
-    selvitysType: Selvitys
-  }
->('haku/recreateSelvitysForm', async ({ avustushaku, selvitysType }, thunkAPI) => {
-  const form = appendBudgetComponent(selvitysType, avustushaku.formContent)
-  const avustushakuId = avustushaku.id
-  thunkAPI.dispatch(selvitysFormUpdated({ selvitysType, avustushakuId, newDraft: form }))
-  thunkAPI.dispatch(
-    selvitysFormJsonUpdated({
-      selvitysType,
-      avustushakuId,
-      newDraftJson: JSON.stringify(form, null, 2),
-    })
-  )
-})
-
 export const saveSelvitysForm = createAsyncThunk<
   { avustushakuId: number; form: Form; selvitysType: Selvitys },
   {

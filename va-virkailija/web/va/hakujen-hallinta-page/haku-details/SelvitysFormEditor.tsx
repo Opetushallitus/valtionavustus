@@ -17,7 +17,6 @@ import { useHakujenHallintaDispatch, useHakujenHallintaSelector } from '../hakuj
 import {
   selectHakuState,
   selectLoadedInitialData,
-  recreateSelvitysForm,
   saveSelvitysForm,
   selvitysFormJsonUpdated,
   selvitysFormUpdated,
@@ -87,14 +86,13 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
       })
     )
   }
-  const { versionButtons, banner, restoredFieldIds, changedFieldIds, endVersionPreview } =
-    useFormVersionBrowsing(
-      avustushaku,
-      formContent,
-      `/api/avustushaku/${avustushaku.id}/selvitysform/${selvitysType}/versions`,
-      formDraftJson,
-      onFormChange
-    )
+  const { versionButtons, banner, restoredFieldIds, changedFieldIds } = useFormVersionBrowsing(
+    avustushaku,
+    formContent,
+    `/api/avustushaku/${avustushaku.id}/selvitysform/${selvitysType}/versions`,
+    formDraftJson,
+    onFormChange
+  )
 
   const onJsonChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(
@@ -144,10 +142,6 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
   const userHasEditPrivilege = hasEditHakuPrivilege(avustushaku)
   const formEdited = !!formContent && isFormEdited(formDraftJson, formContent)
   const disableSave = !userHasEditPrivilege || !!parseError || !formEdited
-  const recreateForm = () => {
-    endVersionPreview()
-    dispatch(recreateSelvitysForm({ avustushaku, selvitysType }))
-  }
 
   const onSendSelvitys = () => {
     setSending(true)
@@ -250,9 +244,6 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
     <div>
       {selvitysType === 'valiselvitys' ? valiselvitysSection : loppuSelvitysSection}
       {banner && <ScrollAwareSticky>{banner}</ScrollAwareSticky>}
-      <button style={{ float: 'right' }} onClick={recreateForm} disabled={!userHasEditPrivilege}>
-        Palauta alkuperäiset kysymykset
-      </button>
       <LastUpdated updatedAt={updatedAt} id={updatedAtElementId} />
       <div className="link-list">
         <div className="link-list-item">
