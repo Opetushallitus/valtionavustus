@@ -305,7 +305,7 @@ export const unpublishedAvustushakuTest = defaultValues.extend<MuutoshakemusFixt
     await test.step('Create avustushaku', async () => {
       const hakujenHallintaPage = new HakujenHallintaPage(page)
       avustushakuID = await hakujenHallintaPage.createUnpublishedMuutoshakemusEnabledHaku(hakuProps)
-      await hakujenHallintaPage.waitForSave()
+      await hakujenHallintaPage.commonHakujenHallinta.waitForAvustushakuReady()
     })
     expectToBeDefined(avustushakuID)
     await use(avustushakuID)

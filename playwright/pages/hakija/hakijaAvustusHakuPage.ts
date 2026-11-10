@@ -421,7 +421,26 @@ export function HakijaAvustusHakuPage(page: Page) {
     await koulutusTd.nth(0).fill('33')
     await koulutusTd.nth(1).fill('33')
     await koulutusTd.nth(2).fill('33')
-    await page.locator("[name='namedAttachment-0']").setInputFiles(dummyExcelPath)
+    // Uploads advance the hakemus version, so wait for saves and the subsequent refresh.
+    await page.waitForFunction(
+      () => document.getElementById('pending-changes')?.textContent === 'false'
+    )
+    await Promise.all([
+      page.waitForResponse(
+        (response) =>
+          response.url().includes(`/api/avustushaku/${avustushakuID}/hakemus/`) &&
+          /\/hakemus\/[^/]+$/.test(response.url()) &&
+          response.request().method() === 'GET' &&
+          response.ok()
+      ),
+      page.waitForResponse(
+        (response) =>
+          response.url().endsWith('/attachments/namedAttachment-0') &&
+          response.request().method() === 'PUT' &&
+          response.ok()
+      ),
+      page.locator("[name='namedAttachment-0']").setInputFiles(dummyExcelPath),
+    ])
     await page.locator(`label[for='vat-included.radio.1']`).click()
     await page.locator(`[id="personnel-costs-row.amount"]`).fill('1000')
     await page.locator(`[id="own-income-row.description"]`).fill('Oma osuus')

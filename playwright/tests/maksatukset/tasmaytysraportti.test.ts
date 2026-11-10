@@ -108,7 +108,7 @@ test('tasmaytysraportti is sent when maksatuset are sent', async ({
         .poll(async () => {
           const emails = await getTasmaytysraporttiEmails()
           const email = emails.at(0)
-          expectToBeDefined(email)
+          if (!email) return undefined
           expect(email.subject).toEqual('Edellisen kuukauden VA-täsmäytysraportti')
           expect(email.formatted).toEqual(`Hyvä vastaanottaja,
 

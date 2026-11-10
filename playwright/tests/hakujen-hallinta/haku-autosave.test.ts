@@ -16,7 +16,7 @@ const test = defaultValues.extend<{ editingHaku: number }>({
       hakuProps
     )
     const details = await hallinta.commonHakujenHallinta.switchToHaunTiedotTab()
-    await details.common.waitForSave()
+    await details.common.waitForAvustushakuReady()
     await details.setStartDate(moment().subtract(1, 'year'))
     await details.setEndDate(moment().add(1, 'year').format('D.M.YYYY'))
     await use(avustushakuID)

@@ -4,6 +4,7 @@ import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hak
 import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { HakijaPaatosPage } from '../../pages/hakija/HakijaPaatosPage'
+import { VIRKAILIJA_URL } from '../../utils/constants'
 
 type KoulutusosioFixtures = {
   avustushakuID: number
@@ -73,16 +74,24 @@ test.describe.parallel('avustushaku with koulutusosio happy path', () => {
       })
       await hakemustenArviointiPage.selectHakemusFromList(projectName)
       const { koulutusosio, budget } = hakemustenArviointiPage.arviointiTabLocators()
-      await budget.fill('1000')
+      const waitForArvioSave = () =>
+        page.waitForResponse(
+          (response) =>
+            response.url() ===
+              `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/hakemus/${hakemusID}/arvio` &&
+            response.request().method() === 'POST' &&
+            response.ok()
+        )
+      await Promise.all([waitForArvioSave(), budget.fill('1000')])
       await test.step('fill koulutusosio', async () => {
         const { osioName, osio } = koulutusosio
         await expect(osioName).toHaveText('Osio 1')
         await expect(osio.haettu).toHaveText(haettu)
         await expect(osio.hyvaksyttyInput).toHaveValue('99')
-        await osio.hyvaksyttyInput.fill('10')
+        await Promise.all([waitForArvioSave(), osio.hyvaksyttyInput.fill('10')])
         await expect(osio.haettuOsallistujaMaara).toHaveText('10')
         await expect(osio.hyvaksyttyOsallistujaMaaraInput).toHaveValue('10')
-        await osio.hyvaksyttyOsallistujaMaaraInput.fill('5')
+        await Promise.all([waitForArvioSave(), osio.hyvaksyttyOsallistujaMaaraInput.fill('5')])
       })
       await test.step('accept hakemus', async () => {
         await expect(
