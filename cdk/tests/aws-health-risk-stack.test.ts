@@ -147,7 +147,7 @@ for (const env of ['dev', 'qa', 'prod'] as const) {
       assert.ok(subscriptions.dependencies.includes(collector))
       Template.fromStack(collector).hasResourceProperties('AWS::Events::Rule', { State: 'ENABLED' })
       const resources = template.findResources('AWS::SNS::Subscription')
-      const health = resources[`health${region.replace(/-/g, '')}`].Properties
+      const health = resources[`healthophsecurity${region.replace(/-/g, '')}`].Properties
       const failures = resources[`failures${region.replace(/-/g, '')}`].Properties
       assert.equal(health.Region, region)
       assert.equal(failures.Region, region)

@@ -38,6 +38,8 @@ cannot silently lose events before subscription confirmation. For each account:
    `{"url":"https://events.eu.pagerduty.com/integration/KEY/enqueue"}` using the
    AWS Console. Do not use the Events v2 API URL or the CloudWatch integration URL.
    Do not commit the URL. Leave `/pagerduty/cloudwatch` unchanged.
+   CloudFormation resolves the secret only when a subscription changes, so after
+   changing the URL also rename the `health-*` subscription logical IDs.
 4. Deploy `$ENV/*` normally. Confirm both HTTPS subscriptions per collection
    region are confirmed, not `PendingConfirmation`.
 5. With an agreed test window, publish an AWS Health-format RISK test event to a

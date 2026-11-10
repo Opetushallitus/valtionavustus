@@ -134,7 +134,8 @@ export function addAwsHealthRiskMonitoring(
     const arn = (service: string, resource: string) =>
       subscriptions.formatArn({ service, region, resource })
 
-    new CfnSubscription(subscriptions, `health-${region}`, {
+    // ID changed to force re-resolving /pagerduty/health for the shared "OPH AWS security" PagerDuty service.
+    new CfnSubscription(subscriptions, `health-oph-security-${region}`, {
       region,
       topicArn: arn('sns', 'aws-health-risk'),
       protocol: 'https',
