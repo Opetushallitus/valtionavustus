@@ -126,6 +126,11 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
   const scrollToTop = () => {
     window.scrollTo(0, 0)
   }
+  const scrollToEditor = () => {
+    const textArea = document.querySelector<HTMLTextAreaElement>('.form-json-editor textarea')
+    textArea?.scrollIntoView({ block: 'start', behavior: 'smooth' })
+    textArea?.focus()
+  }
 
   let parseError: string | undefined = undefined
   try {
@@ -244,6 +249,11 @@ const SelvitysFormEditorPage = ({ selvitysType }: SelvitysFormEditorProps) => {
     <div>
       {selvitysType === 'valiselvitys' ? valiselvitysSection : loppuSelvitysSection}
       {banner && <ScrollAwareSticky>{banner}</ScrollAwareSticky>}
+      <div style={{ float: 'right' }}>
+        <button className="btn btn-blue btn-sm" onClick={scrollToEditor}>
+          JSON editoriin
+        </button>
+      </div>
       <LastUpdated updatedAt={updatedAt} id={updatedAtElementId} />
       <div className="link-list">
         <div className="link-list-item">

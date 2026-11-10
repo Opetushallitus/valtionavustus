@@ -318,6 +318,12 @@ for (const selvitysType of ['valiselvitys', 'loppuselvitys'] as const) {
     const selvitysFormUrl = `${VIRKAILIJA_URL}/api/avustushaku/${avustushakuID}/selvitysform/${selvitysType}`
     await formEditorPage.waitFormToBeLoaded()
 
+    await test.step('JSON editoriin button moves focus to the JSON editor', async () => {
+      await locators.jsonEditorButton.click()
+      await expect(locators.form).toBeFocused()
+      await expect(locators.form).toBeInViewport()
+    })
+
     await formEditorPage.addFields({
       fieldId: changedFieldId,
       type: 'textField',

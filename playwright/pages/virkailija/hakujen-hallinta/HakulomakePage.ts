@@ -8,6 +8,7 @@ export function HakulomakePage(page: Page) {
   const locators = {
     formErrorState: page.getByTestId('form-error-state'),
     form: page.locator('.form-json-editor textarea'),
+    jsonEditorButton: page.getByRole('button', { name: 'JSON editoriin' }),
     fieldId: page.locator('span.soresu-field-id'),
     saveFormButton: page.locator('#saveForm'),
     lomakeWarning,
