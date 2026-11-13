@@ -51,6 +51,12 @@ export function resolveFieldsErrorsAndClosestParents(
   }
 
   const results: FieldWithErrorsAndParent[] = []
+  for (const topLevelField of formContent) {
+    const errorsOfField = validationErrors[topLevelField.id]
+    if (errorsOfField && errorsOfField.length > 0) {
+      results.push({ field: topLevelField, errors: errorsOfField, closestParent: topLevelField })
+    }
+  }
   JsUtil.traverseMatching(
     formContent,
     (x: any) => {
