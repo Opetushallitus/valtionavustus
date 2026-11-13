@@ -2,7 +2,7 @@ import path from 'node:path'
 import fs from 'node:fs/promises'
 import { defaultValues } from '../../fixtures/defaultValues'
 import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
-import { expect } from '@playwright/test'
+import { expect, Page } from '@playwright/test'
 import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { dummyPdfPath, TEST_Y_TUNNUS } from '../../utils/constants'
 
@@ -61,30 +61,95 @@ const test = defaultValues.extend<{
   },
 })
 
-test('hakemus requires all attachments to be uploaded before allowing to submit', async ({
+const FIXTURE_ATTACHMENT_NAMES = [
+  'previous-income-statement-and-balance-sheet',
+  'previous-financial-year-report',
+  'previous-financial-year-auditor-report',
+  'current-year-plan-for-action-and-budget',
+  'description-of-functional-development-during-last-five-years',
+]
+
+async function waitForFixtureAttachmentUploads(page: Page) {
+  for (const name of FIXTURE_ATTACHMENT_NAMES) {
+    await expect(page.locator(`[name='${name}']`)).toHaveCount(0)
+  }
+  await expect(page.locator('#pending-changes')).toHaveText('false')
+}
+
+test('hakemus requires all attachments to be uploaded before it can be sent', async ({
   hakijaAvustusHakuPage,
 }) => {
-  const finaLocator = hakijaAvustusHakuPage.page.locator("[name='financial-information-form']")
-  await test.step('enables sending after uploading last attachment', async () => {
-    await hakijaAvustusHakuPage.sendHakemusButton.isDisabled()
+  const { page } = hakijaAvustusHakuPage
+  const finaLocator = page.locator("[name='financial-information-form']")
+  await test.step('uploading the last attachment', async () => {
     await finaLocator.waitFor({ state: 'attached' })
     await finaLocator.setInputFiles(dummyPdfPath)
     await finaLocator.waitFor({ state: 'detached' })
-    await hakijaAvustusHakuPage.sendHakemusButton.isEnabled()
   })
   await test.step('can remove attachment', async () => {
-    await hakijaAvustusHakuPage.page
-      .locator('#financial-information-form')
-      .locator('button.soresu-remove')
-      .click()
+    await page.locator('#financial-information-form').locator('button.soresu-remove').click()
     await finaLocator.waitFor({ state: 'attached' })
   })
-  await test.step('removal disables sending', async () => {
-    await hakijaAvustusHakuPage.sendHakemusButton.isDisabled()
+  await test.step('removal disables sending and lists the attachment as missing', async () => {
+    await expect(page.locator('#pending-changes')).toHaveText('false')
+    await expect(hakijaAvustusHakuPage.sendHakemusButton).toBeDisabled()
+    await page.locator('#form-error-summary .validation-errors-summary').click()
+    await expect(
+      page.locator('#form-error-summary').getByTestId('financial-information-form')
+    ).toHaveText('Taloustietolomake: Pakollinen tieto')
   })
   await test.step('adding last attachment back allows sending', async () => {
     await finaLocator.setInputFiles(dummyPdfPath)
-    await hakijaAvustusHakuPage.sendHakemusButton.isEnabled()
+    await finaLocator.waitFor({ state: 'detached' })
     await hakijaAvustusHakuPage.submitApplication()
   })
+})
+
+function heldUntilReleased() {
+  let release = () => {}
+  const released = new Promise<void>((resolve) => {
+    release = resolve
+  })
+  return { release, released }
+}
+
+test('sending waits until an attachment upload and the following hakemus refresh have finished', async ({
+  hakijaAvustusHakuPage,
+}) => {
+  const { page } = hakijaAvustusHakuPage
+  await waitForFixtureAttachmentUploads(page)
+  const upload = heldUntilReleased()
+  const refresh = heldUntilReleased()
+  await page.route('**/attachments/financial-information-form', async (route) => {
+    if (route.request().method() === 'PUT') {
+      await upload.released
+    }
+    await route.continue()
+  })
+  await page.route(
+    (url) => /^\/api\/avustushaku\/\d+\/hakemus\/[^/]+$/.test(url.pathname),
+    async (route) => {
+      if (route.request().method() === 'GET') {
+        await refresh.released
+      }
+      await route.continue()
+    }
+  )
+
+  await page.locator("[name='financial-information-form']").setInputFiles(dummyPdfPath)
+  await expect(hakijaAvustusHakuPage.sendHakemusButton).toBeDisabled()
+
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().endsWith('/attachments/financial-information-form') &&
+        response.request().method() === 'PUT'
+    ),
+    upload.release(),
+  ])
+  await expect(page.locator("[name='financial-information-form']")).toHaveCount(0)
+  await expect(hakijaAvustusHakuPage.sendHakemusButton).toBeDisabled()
+
+  refresh.release()
+  await hakijaAvustusHakuPage.submitApplication()
 })
