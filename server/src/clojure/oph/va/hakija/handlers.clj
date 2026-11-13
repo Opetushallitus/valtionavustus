@@ -243,11 +243,17 @@
         (fn [tx]
           (let [hakemus (va-db/get-locked-hakemus-version-for-update tx user-key base-version)]
             (if (and hakemus (nil? (:version_closed hakemus)))
-              (let [_avustushaku (get-open-avustushaku-tx tx haku-id hakemus)
+              (let [avustushaku (get-open-avustushaku-tx tx haku-id hakemus)
                     result (va-db/vahvista-organisaatio-tx tx haku-id user-key base-version
                                                            organisation owner-type)]
                 (if result
-                  (hakemus-ok-response (:hakemus result) (:submission result) {} nil)
+                  (let [form (form-db/get-form-tx tx (:form avustushaku))
+                        answers (:answers (:submission result))
+                        attachments (va-db/get-attachments (:user_key hakemus) (:id hakemus))
+                        budget-totals (va-budget/calculate-totals-hakija answers avustushaku form)
+                        validation (merge (validation/validate-form form answers attachments)
+                                          (va-budget/validate-budget-hakija answers budget-totals form))]
+                    (hakemus-ok-response (:hakemus result) (:submission result) validation nil))
                   (hakemus-conflict-response hakemus)))
               (hakemus-conflict-response (or hakemus {:user_key user-key :version base-version}))))))
       (catch java.sql.BatchUpdateException e
