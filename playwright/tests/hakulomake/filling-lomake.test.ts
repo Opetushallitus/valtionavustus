@@ -1,7 +1,7 @@
 import { defaultValues as test } from '../../fixtures/defaultValues'
 import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { HakijaAvustusHakuPage } from '../../pages/hakija/hakijaAvustusHakuPage'
-import { Page, expect } from '@playwright/test'
+import { Locator, Page, expect } from '@playwright/test'
 import { expectToBeDefined } from '../../utils/util'
 
 const typeValueInFieldAndExpectValidationError = async ({
@@ -20,15 +20,23 @@ const typeValueInFieldAndExpectValidationError = async ({
   fieldValueAfter: string
 }) => {
   const field = page.locator(`#${fieldId}`)
-  const errorSummary = page.locator('a.validation-errors-summary')
-  await expect(errorSummary).toBeHidden()
-  await field.fill(fieldValue)
-  await expect(errorSummary).toHaveText('1 vastauksessa puutteita')
-  await errorSummary.click()
-  await expect(page.locator('.validation-errors')).toHaveText(fieldLabel + errorMessage)
-  const submit = page.locator('#submit')
-  await expect(submit).toBeDisabled()
-  await field.fill(fieldValueAfter)
+  const fieldError = page.locator('#form-error-summary').getByTestId(fieldId)
+  const closedErrorSummary = page.locator('a.validation-errors-summary.closed')
+  await fillAndWaitForSave(page, field, fieldValue)
+  if (await closedErrorSummary.isVisible()) {
+    await closedErrorSummary.click()
+  }
+  await expect(fieldError).toHaveText(fieldLabel + errorMessage)
+  await expect(page.locator('#submit')).toBeDisabled()
+  await fillAndWaitForSave(page, field, fieldValueAfter)
+  await expect(fieldError).toBeHidden()
+}
+
+async function fillAndWaitForSave(page: Page, field: Locator, value: string) {
+  await Promise.all([
+    page.waitForResponse((response) => response.request().method() === 'POST' && response.ok()),
+    field.fill(value),
+  ])
 }
 
 test('can add and validate different fields', async ({

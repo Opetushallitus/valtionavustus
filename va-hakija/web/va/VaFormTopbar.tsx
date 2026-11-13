@@ -8,7 +8,11 @@ import EnvironmentInfo from 'soresu-form/web/va/EnvironmentInfo'
 
 import TextButton from 'soresu-form/web/form/component/TextButton'
 import FormSaveStatus from 'soresu-form/web/form/component/FormSaveStatus.jsx'
-import { FormErrorSummary } from 'soresu-form/web/form/component/FormErrorSummary'
+import {
+  combineValidationErrors,
+  FormErrorSummary,
+  hasValidationErrors,
+} from 'soresu-form/web/form/component/FormErrorSummary'
 import ServerError from 'soresu-form/web/form/component/ServerError.jsx'
 import FormController from 'soresu-form/web/form/FormController'
 import { BaseStateLoopState } from 'soresu-form/web/form/types/Form'
@@ -33,19 +37,14 @@ const VaFormTopbar = <T extends BaseStateLoopState<T>>(props: Props<T>) => {
   const translations = configuration.translations
   const formTranslator = new Translator(translations.form)
   const preview = configuration.preview
-  const formIsValidOnClientSide = _.reduce(
-    validationErrors,
-    (allValid, fieldErrors) => allValid && fieldErrors.length === 0,
-    true
-  )
-  const formIsValidOnServerSide =
-    state.saveStatus.savedObject &&
-    _.reduce(
-      state.saveStatus.savedObject['validation-errors'],
-      (allValid, fieldErrors) => allValid && fieldErrors.length === 0,
-      true
-    )
   const formOperations = state.extensionApi.formOperations
+  const serverValidationErrors = saveStatus.savedObject?.['validation-errors']
+  const shownValidationErrors = combineValidationErrors(
+    validationErrors,
+    formOperations.isNotFirstEdit(state) ? serverValidationErrors : undefined
+  )
+  const sendingBlockedByErrors =
+    hasValidationErrors(validationErrors) || hasValidationErrors(serverValidationErrors)
   const previewUrl = formOperations.urlCreator.existingSubmissionPreviewUrl(
     avustushaku.id,
     state.saveStatus.hakemusId,
@@ -61,11 +60,8 @@ const VaFormTopbar = <T extends BaseStateLoopState<T>>(props: Props<T>) => {
   const isSubmitted = () => 'submitted' === _.get(saveStatus.savedObject, 'status')
   const isSubmitDisabled = function () {
     return (
-      !(
-        formIsValidOnClientSide &&
-        formIsValidOnServerSide &&
-        controller.isSaveDraftAllowed(state)
-      ) ||
+      sendingBlockedByErrors ||
+      !controller.isSaveDraftAllowed(state) ||
       controller.hasPendingChanges(state) ||
       isSubmitted()
     )
@@ -203,7 +199,7 @@ const VaFormTopbar = <T extends BaseStateLoopState<T>>(props: Props<T>) => {
               <FormErrorSummary
                 formContent={form.content}
                 controller={controller}
-                validationErrors={validationErrors}
+                validationErrors={shownValidationErrors}
                 translations={translations.errors}
                 lang={lang}
               />

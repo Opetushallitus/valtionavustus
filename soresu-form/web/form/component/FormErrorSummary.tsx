@@ -11,8 +11,32 @@ interface ValidationError {
   error: string
 }
 
-interface ValidationErrors {
+export interface ValidationErrors {
   [fieldId: string]: ValidationError[]
+}
+
+export function combineValidationErrors(
+  clientErrors: ValidationErrors | undefined,
+  serverErrors: ValidationErrors | undefined
+): ValidationErrors {
+  const combined: ValidationErrors = {}
+  const fieldIds = new Set([...Object.keys(clientErrors ?? {}), ...Object.keys(serverErrors ?? {})])
+  for (const fieldId of fieldIds) {
+    const clientErrorsOfField = clientErrors?.[fieldId]
+    const serverErrorsOfField = serverErrors?.[fieldId]
+    if (Array.isArray(clientErrorsOfField)) {
+      combined[fieldId] = clientErrorsOfField
+    } else if (Array.isArray(serverErrorsOfField)) {
+      combined[fieldId] = serverErrorsOfField
+    }
+  }
+  return combined
+}
+
+export function hasValidationErrors(validationErrors: ValidationErrors | undefined) {
+  return Object.values(validationErrors ?? {}).some(
+    (fieldErrors) => Array.isArray(fieldErrors) && fieldErrors.length > 0
+  )
 }
 
 interface FieldWithErrorsAndParent {
