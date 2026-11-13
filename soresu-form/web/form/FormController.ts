@@ -27,6 +27,7 @@ export const events = {
   attachmentUploadCompleted: 'attachmentUploadCompleted',
   startAttachmentRemoval: 'startAttachmentRemoval',
   attachmentRemovalCompleted: 'attachmentRemovalCompleted',
+  attachmentOperationFailed: 'attachmentOperationFailed',
   refuseApplication: 'refuseApplication',
   onApplicationRefused: 'onApplicationRefused',
   onModifyApplicationContacts: 'onModifyApplicationContacts',

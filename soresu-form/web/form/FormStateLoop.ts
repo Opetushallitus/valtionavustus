@@ -209,6 +209,10 @@ export function initializeStateLoop<T extends BaseStateLoopState<T>>(
       dispatcher.stream(events.attachmentRemovalCompleted),
       stateTransitions.onAttachmentRemovalCompleted,
     ],
+    [
+      dispatcher.stream(events.attachmentOperationFailed),
+      stateTransitions.onAttachmentOperationFailed,
+    ],
     [dispatcher.stream(events.refuseApplication), stateTransitions.onRefuseApplication],
     [
       dispatcher.stream(events.modifyApplicationContacts),

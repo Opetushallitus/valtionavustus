@@ -102,6 +102,7 @@ export default class FormStateTransitions {
       'onRemoveAttachment',
       'onAttachmentUploadCompleted',
       'onAttachmentRemovalCompleted',
+      'onAttachmentOperationFailed',
       'pushSaveCompletedEvent',
       'refreshStateFromServer',
       'onRefuseApplication',
@@ -198,6 +199,7 @@ export default class FormStateTransitions {
           return null
         })
         .catch(function (error) {
+          dispatcher.push(events.attachmentOperationFailed, field)
           if (
             error.response &&
             error.response.status === 400 &&
@@ -288,6 +290,7 @@ export default class FormStateTransitions {
           return null
         })
         .catch(function (error) {
+          dispatcher.push(events.attachmentOperationFailed, fieldOfFile)
           if (error.response.status !== 404) {
             FormStateTransitions.handleAttachmentSaveError(
               'attachment-remove-error',
@@ -312,6 +315,11 @@ export default class FormStateTransitions {
     state.saveStatus.attachmentUploadsInProgress[fieldId] = false
     LocalStorage.save(formOperations.createUiStateIdentifier, state)
     this.refreshStateFromServer(this, state)
+    return state
+  }
+
+  onAttachmentOperationFailed<T extends BaseStateLoopState<T>>(state: T, field: Field) {
+    state.saveStatus.attachmentUploadsInProgress[field.id] = false
     return state
   }
 
