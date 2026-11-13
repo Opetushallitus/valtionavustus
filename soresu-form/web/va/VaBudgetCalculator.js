@@ -231,11 +231,14 @@ export default class VaBudgetCalculator {
         totalNeeded.value
       )
 
-      state.form.validationErrors = state.form.validationErrors.merge({
-        [vaBudgetElement.id]: reportValidationErrors
-          ? makeValidationErrors(totalNeeded.isBudgetPositive, financing.isValid)
-          : [],
-      })
+      if (reportValidationErrors) {
+        state.form.validationErrors = state.form.validationErrors.merge({
+          [vaBudgetElement.id]: makeValidationErrors(
+            totalNeeded.isBudgetPositive,
+            financing.isValid
+          ),
+        })
+      }
 
       vaBudgetSummaryElement.totalNeeded = totalNeeded
       vaBudgetSummaryElement.financing = financing
