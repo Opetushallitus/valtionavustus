@@ -74,7 +74,7 @@
       <dependency>
         <groupId>org.bouncycastle</groupId>
         <artifactId>bcpkix-jdk18on</artifactId>
-        <version>1.86</version>
+        <version>1.87</version>
       </dependency>
       <dependency>
         <groupId>com.github.java-json-tools</groupId>
@@ -309,7 +309,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk18on</artifactId>
-      <version>1.86</version>
+      <version>1.87</version>
     </dependency>
     <dependency>
       <groupId>cheshire</groupId>
