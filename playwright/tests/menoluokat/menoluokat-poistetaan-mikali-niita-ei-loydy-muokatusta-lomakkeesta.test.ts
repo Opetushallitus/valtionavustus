@@ -55,7 +55,7 @@ test.describe('Menoluokat', () => {
 
     await test.step('Avustushaulla on eritellyt menoluokat menoluokka-taulussa', async () => {
       const menoluokat = await getMenoluokat(avustushakuID, page.request)
-      expect(menoluokat).toHaveLength(1)
+      expect(menoluokat).toHaveLength(7)
     })
 
     await hakujenHallintaPage.navigate(avustushakuID)

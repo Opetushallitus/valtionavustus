@@ -53,7 +53,7 @@ test('external api', async ({
     const hakemus = hakemukset.find((h) => h.id === hakemusID)
     expect(hakemus).toEqual({
       'project-name': 'Rahassa kylpijät Ky Ay Oy',
-      'project-begin': '13.03.1992',
+      'project-begin': null,
       'organization-name': 'Akaan kaupunki',
       'grant-id': avustushakuID,
       partners: null,
@@ -64,7 +64,7 @@ test('external api', async ({
       nutshell: nutshell,
       'user-first-name': null,
       'budget-granted': 99999,
-      'project-end': '13.03.2032',
+      'project-end': null,
     })
   })
 

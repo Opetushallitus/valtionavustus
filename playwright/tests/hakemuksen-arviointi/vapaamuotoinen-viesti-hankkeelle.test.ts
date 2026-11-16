@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test'
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
 import { setHakemusOrganization } from '../../utils/hakemus'
+import { DEFAULT_TRUSTED_CONTACT } from '../../utils/constants'
 
 // Assumes that the hakemus is first one in avustushaku, so it gets asianumero 1
 const message = (content: string, hakuAsianumero: string) =>
@@ -40,9 +41,10 @@ muutoshakemusTest(
       const { addressInputs } = form.recipients
       const replyTo = page.getByTestId('email-form-message-reply-to')
       await expect(replyTo).toHaveValue(virkailijaEmailAddress)
-      await expect(addressInputs).toHaveCount(2)
+      await expect(addressInputs).toHaveCount(3)
       await expect(addressInputs.nth(0)).toHaveValue('hakija-1424884@oph.fi')
       await expect(addressInputs.nth(1)).toHaveValue(answers.contactPersonEmail)
+      await expect(addressInputs.nth(2)).toHaveValue(DEFAULT_TRUSTED_CONTACT.email)
 
       await form.subject.fill(message1.subject)
       await form.body.fill(message1.body)
@@ -78,7 +80,7 @@ muutoshakemusTest(
 
       await expect(messageRow.subject(row)).toHaveText(message1.subject)
       await expect(messageRow.recipients(row)).toHaveText(
-        `hakija-1424884@oph.fi, ${answers.contactPersonEmail}`
+        `hakija-1424884@oph.fi, ${answers.contactPersonEmail}, ${DEFAULT_TRUSTED_CONTACT.email}`
       )
     })
 
@@ -90,9 +92,10 @@ muutoshakemusTest(
 
     await test.step('Toisen viestin lähettäminen ylimääräisellä vastaanottajalla', async () => {
       const { addressInputs } = form.recipients
-      await expect(addressInputs).toHaveCount(2)
+      await expect(addressInputs).toHaveCount(3)
       await expect(addressInputs.nth(0)).toHaveValue('hakija-1424884@oph.fi')
       await expect(addressInputs.nth(1)).toHaveValue(answers.contactPersonEmail)
+      await expect(addressInputs.nth(2)).toHaveValue(DEFAULT_TRUSTED_CONTACT.email)
 
       await form.recipients.addButton.click()
       await form.recipients.addressInputs.last().pressSequentially(extraRecipient)
@@ -138,9 +141,10 @@ muutoshakemusTest(
     await expect(page.getByTestId('viestihankkeelle-recipients-warning')).toBeVisible()
     await expect(page.getByTestId('viestihankkeelle-submit')).toBeEnabled()
     const { addressInputs } = viestiTab.locators.sendMessageForm.recipients
-    await expect(addressInputs).toHaveCount(2)
+    await expect(addressInputs).toHaveCount(3)
     await expect(addressInputs.nth(0)).toHaveValue('hakija-1424884@oph.fi')
     await expect(addressInputs.nth(1)).toHaveValue(answers.contactPersonEmail)
+    await expect(addressInputs.nth(2)).toHaveValue(DEFAULT_TRUSTED_CONTACT.email)
   }
 )
 
@@ -163,7 +167,8 @@ muutoshakemusTest(
 
     await expect(page.getByTestId('viestihankkeelle-recipients-warning')).toBeVisible()
     const { addressInputs } = viestiTab.locators.sendMessageForm.recipients
-    await expect(addressInputs).toHaveCount(1)
+    await expect(addressInputs).toHaveCount(2)
     await expect(addressInputs.nth(0)).toHaveValue(answers.contactPersonEmail)
+    await expect(addressInputs.nth(1)).toHaveValue(DEFAULT_TRUSTED_CONTACT.email)
   }
 )

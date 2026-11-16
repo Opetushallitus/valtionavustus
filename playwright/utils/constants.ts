@@ -1,5 +1,5 @@
 import * as path from 'path'
-import { Answers } from './types'
+import { Answers, TrustedContact } from './types'
 
 const HAKIJA_HOSTNAME = process.env.HAKIJA_HOSTNAME || '127.0.0.1'
 const HAKIJA_PORT = 8080
@@ -10,6 +10,11 @@ export const HAKIJA_URL = `http://${HAKIJA_HOSTNAME}:${HAKIJA_PORT}`
 export const TEST_Y_TUNNUS = '2050864-5'
 export const dummyPdfPath = path.join(__dirname, 'dummy.pdf')
 export const dummyExcelPath = path.join(__dirname, 'dummy.xls')
+export const DEFAULT_TRUSTED_CONTACT: TrustedContact = {
+  name: 'Varmo Varahenkilö',
+  email: 'varmo.varahenkilo@example.com',
+  phone: '0401234567',
+}
 
 export const answers = {
   contactPersonEmail: 'erkki.esimerkki@example.com',

@@ -96,7 +96,7 @@ JotpaTest(
             'Kun hakemus on valmis, se lähetetään Jatkuvan oppimisen ja työllisyyden palvelukeskuksen käsiteltäväksi'
           )
         ).not.toBeVisible()
-        await page.getByText('Lähetä käsiteltäväksi').hover()
+        await page.getByRole('button', { name: 'Lähetä käsiteltäväksi' }).hover()
         await expect(
           page.getByText(
             'Kun hakemus on valmis, se lähetetään Jatkuvan oppimisen ja työllisyyden palvelukeskuksen käsiteltäväksi'
@@ -289,7 +289,7 @@ JotpaTest(
           )
         ).toBeVisible()
 
-        await expect(page.getByText('OPETUSHALLITUKSELTA')).not.toBeVisible()
+        await expect(page.getByText(/OPETUSHALLITUKSELTA/)).not.toBeVisible()
         await expect(
           page.getByText('JATKUVAN OPPIMISEN JA TYÖLLISYYDEN PALVELUKESKUKSELTA')
         ).toBeVisible()

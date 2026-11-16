@@ -53,25 +53,32 @@ defaultValues('Editing hakulomake', async ({ page, hakuProps }) => {
 
   await test.step('field can be moved', async () => {
     const fields = await formEditorPage.getFieldIds()
+    const firstFieldIndex = fields.indexOf('application-form-info-1-autosave')
 
-    await formEditorPage.moveField('duration-help', 'up')
+    await formEditorPage.moveField('application-form-info-2-notification', 'up')
     const fieldsAfterMoveUp = await formEditorPage.getFieldIds()
-    const movedUpFields = [fields[0], 'duration-help', 'duration', ...fields.slice(3)]
+    const movedUpFields = [
+      ...fields.slice(0, firstFieldIndex),
+      'application-form-info-2-notification',
+      'application-form-info-1-autosave',
+      ...fields.slice(firstFieldIndex + 2),
+    ]
     expect(fieldsAfterMoveUp).toEqual(movedUpFields)
 
-    await formEditorPage.moveField('duration-help', 'down')
+    await formEditorPage.moveField('application-form-info-2-notification', 'down')
     const fieldsAfterMoveDown = await formEditorPage.getFieldIds()
-    const movedDownFields = [fields[0], 'duration', 'duration-help', ...fields.slice(3)]
-    expect(fieldsAfterMoveDown).toEqual(movedDownFields)
+    expect(fieldsAfterMoveDown).toEqual(fields)
   })
 
   await test.step('field can be edited', async () => {
     const textToSave = 'tähellä merkityt ompi täytettävä'
-    await page.fill('[name="p-1-text-fi"]', textToSave)
+    await page.fill('[name="application-form-info-1-autosave-text-fi"]', textToSave)
     await formEditorPage.saveForm()
     await formEditorPage.locators.saveFormButton.isDisabled()
 
-    await expect(page.locator('[name="p-1-text-fi"]')).toHaveText(textToSave)
+    await expect(page.locator('[name="application-form-info-1-autosave-text-fi"]')).toHaveText(
+      textToSave
+    )
   })
 
   await test.step('(nested) field can be added into a fieldset', async () => {

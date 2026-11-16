@@ -11,25 +11,113 @@
       "fieldType": "dateRange"
     },
     {
-      "fieldClass": "infoElement",
-      "id": "duration-help",
-      "fieldType": "p",
-      "params": {
-        "preview": false
-      },
-      "text": {
-        "fi": "Koulutuksen järjestäjä hakee avustusta yhdellä hakemuksella. Kaksikielisen järjestäjän on kuitenkin mahdollista hakea avustusta kahdella eri hakemuksella.\n\n\nHakemusta on mahdollista muokata hakuajan loppuun asti. Hakemukset käsitellään hakuajan päättymisen jälkeen.\n\n",
-        "sv": "Utbildningsanordnaren ansöker om understöd med en ansökan. Tvåspråkiga utbildningsanordnare kan ansöka om understöd med två olika ansökningar."
-      }
-    },
-    {
-      "fieldClass": "infoElement",
-      "id": "p-1",
-      "fieldType": "p",
-      "params": {},
-      "text": {
-        "fi": "Tähdellä (*) merkityt kentät ovat pakollisia.",
-        "sv": "De fält som är märkta med (*) är obligatoriska."
+      "fieldClass": "wrapperElement",
+      "id": "applicant-instructions",
+      "fieldType": "theme",
+      "children": [
+        {
+          "fieldClass": "infoElement",
+          "id": "application-form-info-1-autosave",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "Hakemus muokkauksineen tallentuu automaattisesti Opetushallituksen valtionavustusjärjestelmään, mutta tullakseen vireille on se tallennettava \"Lähetä käsiteltäväksi\" -painikkeella järjestelmään ennen hakuajan päättymistä. Myöhästyneitä hakemuksia ei käsitellä.",
+            "sv": "Ansökan med redigeringar sparas automatiskt i Utbildningsstyrelsens statsunderstödssystem. För att lämna in ansökan måste man ändå trycka på knappen \"Sänd för behandling\" innan ansökningstiden går ut. Försenade ansökningar behandlas inte."
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "application-form-info-2-notification",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "Valtionavustusjärjestelmä vahvistaa hakemuksen vastaanottamisen vahvistussähköpostilla, joka toimitetaan hakemuksen yhteyshenkilöille, allekirjoittajille ja hakijaorganisaation viralliseen sähköpostiosoitteeseen. Vahvistusviesti sisältää linkin hakemuksen esikatselusivulle, jonka avulla hakija voi tulostaa, tallentaa ja arkistoida hakemuksen.",
+            "sv": "SV-KÄÄNNÖS TÄHÄN"
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "application-form-info-3-editing",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "Hakija voi muokata jo lähetettyä hakemusta alkuperäisen hakulomakelinkin kautta hakuajan päättymiseen asti. Tällöin hakemusta ei kuitenkaan enää lähetetä uudelleen käsiteltäväksi, vaan muokkausten tallentuminen varmistetaan hakulomakkeen yläreunan lokitietokentästä.",
+            "sv": "Den sökande kan via länken till ansökningsblanketten uppdatera sin ansökan så länge ansökningstiden pågår. Då ska ansökan inte skickas för behandling på nytt. Däremot ska man efter att ansökan bearbetats kontrollera att uppdateringarna har sparats med hjälp av logguppgifterna i ansökningsblanketten."
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "application-form-info-4-privacy",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "Hakijan vastuulla on huolehtia siitä, että hakulomakelinkkiä ei jaeta hankkeen vastuuhenkilöiden ulkopuolelle. Kuka tahansa linkin saanut voi avata hakulomakkeen.",
+            "sv": "SV-KÄÄNNÖS TÄHÄN"
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "application-form-info-5-guide",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "Hakijan tulee perehtyä ennen hakemuksen laatimista Opetushallituksen ohjeisiin:",
+            "sv": "Läs Utbildningsstyrelsens anvisningar innan du börjar fylla i ansökan:"
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "application-form-link-guide",
+          "fieldType": "link",
+          "params": {
+            "href": {
+              "fi": "https://www.oph.fi/fi/yleisia-ohjeita-valtionavustusten-hakijoille-ja-kayttajille",
+              "sv": "https://www.oph.fi/sv/allmanna-anvisningar-sokande-och-anvandare-av-statsunderstod"
+            }
+          },
+          "text": {
+            "fi": "Yleisiä ohjeita valtionavustuksen hakijalle ja käyttäjälle",
+            "sv": "Allmänna anvisningar för sökande och användare av statsunderstöd"
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "application-form-info-6-obligation",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "Tähdellä (*) merkityt kentät ovat pakollisia.",
+            "sv": "De fält som är märkta med (*) är obligatoriska."
+          }
+        },
+        {
+          "label": {
+            "fi": "Olen tutustunut valtionavustuksen hakemiseen liittyviin ohjeisiin sekä avustuksen käyttöä koskeviin ehtoihin.",
+            "sv": "Jag har läst anvisningarna om ansökan om statsunderstöd samt villkoren för användning av statsunderstöd."
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "applicant-instructions-confirmation",
+          "params": {},
+          "options": [
+            {
+              "value": "kyllae",
+              "label": {
+                "fi": "Kyllä",
+                "sv": "Ja"
+              }
+            }
+          ],
+          "required": true,
+          "fieldType": "radioButton"
+        }
+      ],
+      "label": {
+        "fi": "Ohjeet hakemuksen laatijalle",
+        "sv": "Anvisningar för den som fyller i ansökan"
       }
     },
     {
@@ -44,31 +132,31 @@
           "children": [
             {
               "label": {
-                "fi": "Hakija",
-                "sv": "Sökande"
+                "fi": "Hakijaorganisaation virallinen nimi",
+                "sv": "Det officiella namnet för den sökande organisationen"
               },
               "fieldClass": "formField",
               "helpText": {
-                "fi": "Ilmoita hakijan nimi. Hakukelpoisia ovat hakutiedotteessa mainitut lukiokoulutuksen järjestäjät.",
-                "sv": "Anmäl den sökandes namn. Behöriga att söka är sådana anordnare av gymnasieutbildning som nämns i ansökningsmeddelandet."
+                "fi": "Tiedot on haettu Patentti- ja rekisterihallituksen (PRH) yritys- ja yhteisötietojärjestelmästä (YTJ) sekä Opetushallituksen Opintopolun Organisaatiopalvelusta, eikä niitä voi tässä muokata. Tiedot tulee muuttaa lähteenä toimivaan rekisteriin, jolloin ne päivittyvät myös Opetushallituksen valtionavustusjärjestelmään.",
+                "sv": "SV-KÄÄNNÖS TÄHÄN"
               },
               "id": "organization",
               "params": {
                 "size": "large",
-                "maxlength": 80
+                "maxlength": 200
               },
               "required": true,
               "fieldType": "textField"
             },
             {
               "label": {
-                "fi": "Hakijan virallinen sähköpostiosoite",
-                "sv": "Sökandens officiella e-postadress"
+                "fi": "Hakijaorganisaation virallinen sähköpostiosoite",
+                "sv": "Den sökande organisationens officiella e-postadress"
               },
               "fieldClass": "formField",
               "helpText": {
-                "fi": "Ilmoita hakijaorganisaation virallinen sähköpostiosoite, johon voidaan lähettää päätöksentekoon liittyviä asiakirjoja.",
-                "sv": "Meddela den sökande organisationens officiella e-postadress, dit dokument som rör beslutsfattandet kan sändas."
+                "fi": "Tiedot on haettu Patentti- ja rekisterihallituksen (PRH) yritys- ja yhteisötietojärjestelmästä (YTJ) sekä Opetushallituksen Opintopolun Organisaatiopalvelusta, eikä niitä voi tässä muokata. Tiedot tulee muuttaa lähteenä toimivaan rekisteriin, jolloin ne päivittyvät myös Opetushallituksen valtionavustusjärjestelmään. Kaikki valtionavustusjärjestelmän viestit lähetetään yhteyshenkilöille, allekirjoittajille ja hakijaorganisaation viralliseen sähköpostiosoitteeseen.",
+                "sv": "SV-KÄÄNNÖS TÄHÄN"
               },
               "id": "organization-email",
               "params": {
@@ -105,17 +193,17 @@
           "children": [
             {
               "label": {
-                "fi": "Yhteyshenkilö",
-                "sv": "Kontaktperson"
+                "fi": "Yhteyshenkilön nimi",
+                "sv": "Kontaktpersonens namn"
               },
               "fieldClass": "formField",
               "helpText": {
-                "fi": "Yhteyshenkilöllä tarkoitetaan hankkeen vastuuhenkilöä.",
-                "sv": "Med kontaktperson avses den projektansvariga i sökandeorganisationen."
+                "fi": "Yhteyshenkilöllä tarkoitetaan hakijaorganisaatiossa avustuksesta vastaavaa henkilöä. Yhteyshenkilöitä voi vaihtaa avustuksen käyttöaikana avustuskohtaisella muutoshakulomakkeella. Avustuksen saaja vastaa siitä, että valtionavustusjärjestelmään kirjattujen yhteyshenkilöiden yhteystiedot ovat aina ajan tasalla.",
+                "sv": "Med kontaktperson avses den person som ansvarar för statsunderstödet i organisationen. Det är möjligt att ändra kontaktpersoner under användningstiden på blanketten för ändringsansökan för statsunderstödet. Mottagaren av statsunderstöd ansvarar för att kontaktuppgifterna till kontaktpersonerna alltid är uppdaterade i statsunderstödssystemet."
               },
               "id": "applicant-name",
               "params": {
-                "size": "large",
+                "size": "small",
                 "maxlength": 80
               },
               "required": true,
@@ -123,13 +211,13 @@
             },
             {
               "label": {
-                "fi": "Sähköposti",
-                "sv": "E-post"
+                "fi": "Yhteyshenkilön sähköpostiosoite",
+                "sv": "Kontaktpersonens e-postadress"
               },
               "fieldClass": "formField",
               "helpText": {
-                "fi": "",
-                "sv": ""
+                "fi": "Kaikki valtionavustusjärjestelmän viestit lähetetään yhteyshenkilöille, allekirjoittajille ja hakijaorganisaation viralliseen sähköpostiosoitteeseen.",
+                "sv": "Alla meddelanden från statsunderstödssystemet skickas till kontaktpersonerna, dem som undertecknat ansökan och den sökande organisationens officiella e-postadress."
               },
               "id": "primary-email",
               "params": {
@@ -141,8 +229,8 @@
             },
             {
               "label": {
-                "fi": "Puhelinumero",
-                "sv": "Telefon"
+                "fi": "Yhteyshenkilön puhelinnumero",
+                "sv": "Kontaktpersonens telefonnummer"
               },
               "fieldClass": "formField",
               "helpText": {
@@ -159,44 +247,44 @@
             },
             {
               "label": {
-                "fi": "Varayhteyshenkilö",
-                "sv": "Kontaktperson"
+                "fi": "Varayhteyshenkilön nimi",
+                "sv": "Reservperson för kontaktpersonen"
               },
               "fieldClass": "formField",
               "helpText": {
-                "fi": "Varayhteyshenkilöllä tarkoitetaan hankkeen varavastuuhenkilöä.",
-                "sv": ""
+                "fi": "Varayhteyshenkilöllä tarkoitetaan henkilöä, joka toimii hakijaorganisaatiossa yhteyshenkilön sijaisena, työparina tai muissa avustukseen liittyvissä tehtävissä. Yhteyshenkilöitä voi vaihtaa avustuksen käyttöaikana avustuskohtaisella muutoshakulomakkeella. Avustuksen saaja vastaa siitä, että valtionavustusjärjestelmään kirjattujen yhteyshenkilöiden yhteystiedot ovat aina ajan tasalla.",
+                "sv": "Med reservperson avses den person som arbetar som vikarie eller arbetspar för kontaktpersonen eller med andra uppgifter gällande statsunderstödet i den sökande organisationen. Det är möjligt att ändra kontaktpersoner under användningstiden på blanketten för ändringsansökan för statsunderstödet. Mottagaren av statsunderstöd ansvarar för att kontaktuppgifterna till kontaktpersonerna alltid är uppdaterade i statsunderstödssystemet."
               },
               "id": "trusted-contact-name",
               "params": {
-                "size": "large",
+                "size": "small",
                 "maxlength": 80
               },
-              "required": false,
+              "required": true,
               "fieldType": "textField"
             },
             {
               "label": {
-                "fi": "Varayhteyshenkilön sähköposti",
-                "sv": "E-post"
+                "fi": "Varayhteyshenkilön sähköpostiosoite",
+                "sv": "Reservpersonens e-postadress"
               },
               "fieldClass": "formField",
               "helpText": {
-                "fi": "",
-                "sv": ""
+                "fi": "Kaikki valtionavustusjärjestelmän viestit lähetetään yhteyshenkilöille, allekirjoittajille ja hakijaorganisaation viralliseen sähköpostiosoitteeseen.",
+                "sv": "Alla meddelanden från statsunderstödssystemet skickas till kontaktpersonerna, dem som undertecknat ansökan och den sökande organisationens officiella e-postadress."
               },
               "id": "trusted-contact-email",
               "params": {
                 "size": "small",
                 "maxlength": 80
               },
-              "required": false,
+              "required": true,
               "fieldType": "vaEmailNotification"
             },
             {
               "label": {
-                "fi": "Varayhteyshenkilön puhelinumero",
-                "sv": "Telefon"
+                "fi": "Varayhteyshenkilön puhelinnumero",
+                "sv": "Reservpersonens telefonnummer"
               },
               "fieldClass": "formField",
               "helpText": {
@@ -208,18 +296,72 @@
                 "size": "small",
                 "maxlength": 15
               },
-              "required": false,
+              "required": true,
               "fieldType": "textField"
             },
             {
               "label": {
-                "fi": "Omistajatyyppi",
-                "sv": "Ägartyp"
+                "fi": "Hakijaorganisaation postiosoite",
+                "sv": "Den sökande organisationens postadress"
               },
               "fieldClass": "formField",
               "helpText": {
                 "fi": "",
                 "sv": ""
+              },
+              "id": "official-address",
+              "params": {
+                "size": "small",
+                "maxlength": 100
+              },
+              "required": true,
+              "fieldType": "textField"
+            },
+            {
+              "label": {
+                "fi": "Hakijaorganisaation postinumero",
+                "sv": "Den sökande organisationens postnummer"
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "",
+                "sv": ""
+              },
+              "id": "official-postcode",
+              "params": {
+                "size": "small",
+                "maxlength": 7
+              },
+              "required": true,
+              "fieldType": "textField"
+            },
+            {
+              "label": {
+                "fi": "Hakijaorganisaation postitoimipaikka",
+                "sv": "Den sökande organisationens postanstalt"
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "",
+                "sv": ""
+              },
+              "id": "official-district",
+              "params": {
+                "size": "small",
+                "maxlength": 35
+              },
+              "required": true,
+              "fieldType": "textField"
+            },
+            {
+              "label": {
+                "fi": "Hakijaorganisaation sektori / organisaatiotyyppi (julkisen talouden sektoriluokitus)",
+                "sv": "SV-KÄÄNNÖS TÄHÄN"
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "Tiedot on haettu Tilastokeskukselta, eikä niitä voi tässä muokata. Tiedot tulee muuttaa lähteenä toimivaan rekisteriin, jolloin ne päivittyvät myös Opetushallituksen valtionavustusjärjestelmään. Jos tietoa ei saada Tilastokeskukselta, tulee hakijan valita hakijaorganisaation julkisen talouden sektori sektoriluokituksen mukaisesti. Oikean luokituksen voitte varmistaa organisaationne taloushallinnosta. Tietoa käytetään avustuksen taloushallinnolliseen käsittelyyn.",
+                "sv": "Uppgifterna har hämtats från Statistikcentralen. De kan inte redigeras här, utan måste redigeras i det ursprungliga registret. Om uppgifterna redigeras i registret uppdateras de även i Utbildningsstyrelsens statsunderstödssystem. Om uppgiften inte finns att tillgå via Statistikcentralen, ska den sökande organisationen välja rätt sektor utgående från Statistikcentralens sektorindelning. Om ni är osäkra, kan ni vända er till ekonomiförvaltningen i er organisation. Uppgiften används i behandlingen av statsunderstödet."
               },
               "id": "radioButton-0",
               "params": {},
@@ -262,7 +404,7 @@
                 {
                   "value": "eu-maat",
                   "label": {
-                    "fi": "Eu-jäsenvaltiot",
+                    "fi": "EU-jäsenvaltiot",
                     "sv": "EU:s medlemsländer"
                   }
                 },
@@ -279,8 +421,8 @@
             },
             {
               "label": {
-                "fi": "Maakunta ",
-                "sv": "Landskap"
+                "fi": "Hakijaorganisaation maakunta",
+                "sv": "Den sökande organisationens landskap"
               },
               "fieldClass": "formField",
               "helpText": {
@@ -303,15 +445,15 @@
             },
             {
               "label": {
-                "fi": "Hakijan ensisijainen kotikunta",
-                "sv": "Den sökandes huvudsakliga hemkommun\n"
+                "fi": "Hakijaorganisaation ensisijainen kotikunta",
+                "sv": "Den sökande organisationens huvudsakliga hemkommun"
               },
               "fieldClass": "formField",
               "helpText": {
                 "fi": "",
                 "sv": ""
               },
-              "id": "koodistoField-0",
+              "id": "avustushakemusAlueKunnat",
               "params": {
                 "size": "medium",
                 "koodisto": {
@@ -344,8 +486,8 @@
                   },
                   "fieldClass": "formField",
                   "helpText": {
-                    "fi": "",
-                    "sv": ""
+                    "fi": "Hakemuksen allekirjoittajalla tulee olla hakijaorganisaation nimenkirjoitusoikeus.",
+                    "sv": "Den som undertecknar ansökan ska ha namnteckningsrätt för den sökande organisationen."
                   },
                   "id": "signatories-fieldset-1.name",
                   "params": {
@@ -357,17 +499,17 @@
                 },
                 {
                   "label": {
-                    "fi": "Sähköposti",
-                    "sv": "E-post"
+                    "fi": "Allekirjoitusoikeuden omaavan henkilön sähköpostiosoite",
+                    "sv": "E-postadress för personen med namnteckningsrätt"
                   },
                   "fieldClass": "formField",
                   "helpText": {
-                    "fi": "",
-                    "sv": ""
+                    "fi": "Kaikki valtionavustusjärjestelmän viestit lähetetään yhteyshenkilöille, allekirjoittajille ja hakijaorganisaation viralliseen sähköpostiosoitteeseen.",
+                    "sv": "Alla meddelanden från statsunderstödssystemet skickas till kontaktpersonerna, dem som undertecknat ansökan och den sökande organisationens officiella e-postadress."
                   },
                   "id": "signatories-fieldset-1.email",
                   "params": {
-                    "size": "small",
+                    "size": "large",
                     "maxlength": 80
                   },
                   "required": true,
@@ -387,13 +529,13 @@
           "children": [
             {
               "label": {
-                "fi": "Tilinumero IBAN-muodossa",
-                "sv": "Kontonummer i IBAN-format"
+                "fi": "Hakijaorganisaation tilinumero IBAN-muodossa",
+                "sv": "Den sökande organisationens kontonummer i IBAN-format"
               },
               "fieldClass": "formField",
               "helpText": {
-                "fi": "",
-                "sv": ""
+                "fi": "Varmista tilitietojen oikeellisuus. Avustus maksetaan hakijan ilmoittamalle tilille.",
+                "sv": "Försäkra dig om att kontouppgifterna är korrekta. Understödet betalas till det konto som den sökande har uppgett."
               },
               "id": "bank-iban",
               "params": {
@@ -410,8 +552,8 @@
               },
               "fieldClass": "formField",
               "helpText": {
-                "fi": "",
-                "sv": ""
+                "fi": "Varmista tilitietojen oikeellisuus. Avustus maksetaan hakijan ilmoittamalle tilille.",
+                "sv": "Försäkra dig om att kontouppgifterna är korrekta. Understödet betalas till det konto som den sökande har uppgett."
               },
               "id": "bank-bic",
               "params": {
@@ -420,62 +562,6 @@
               },
               "required": true,
               "fieldType": "bic"
-            },
-            {
-              "fieldClass": "infoElement",
-              "id": "h3-1",
-              "fieldType": "h3",
-              "params": {},
-              "text": {
-                "fi": "Opiskelijamäärä 20.1.2020",
-                "sv": "Studerandeantal 20.1.2020."
-              }
-            },
-            {
-              "fieldClass": "infoElement",
-              "id": "p-0",
-              "fieldType": "p",
-              "params": {},
-              "text": {
-                "fi": "Tässä ilmoitetaan koulutuksen järjestäjän nuorten ja aikuisten lukiokoulutuksessa opiskelevien tutkintotavoitteisten 1. ja 2. vuosikurssin opiskelijoiden yhteismäärä 20.1.2020 tilastointipäivän mukaisesti, oppimäärän mukaan eriteltynä.  Jos koulutuksen järjestäjä hakee avustusta erikseen suomen- ja ruotsinkieliseen lukiokoulutukseen, tulee tässä ilmoittaa vain kyseisen opetuskielen mukaan opiskelevien määrä.",
-                "sv": "Här ska man ange det totala antalet första och andra årets studerande inom gymnasieutbildning för unga och vuxna som leder till examen. Antalet anges enligt situationen på registreringsdagen 20.1.2020, indelat enligt lärokursen för unga och lärokursen för vuxna. Om utbildningsanordnaren ansöker om understöd för svensk- och finskspråkig gymnasieutbildning med separata ansökningar ska man här endast ange studerandeantalet inom gymnasieutbildningen för det undervisningsspråk som ansökan gäller.\n\n"
-              }
-            },
-            {
-              "label": {
-                "fi": "Opiskelijamäärä, nuorten oppimäärä",
-                "sv": "Antal studerande, lärokursen för unga"
-              },
-              "fieldClass": "formField",
-              "helpText": {
-                "fi": "",
-                "sv": ""
-              },
-              "id": "textField-2",
-              "params": {
-                "size": "medium",
-                "maxlength": 100
-              },
-              "required": true,
-              "fieldType": "textField"
-            },
-            {
-              "label": {
-                "fi": "Opiskelijamäärä, aikuisten oppimäärä",
-                "sv": "Antal studerande, lärokursen för vuxna"
-              },
-              "fieldClass": "formField",
-              "helpText": {
-                "fi": "",
-                "sv": ""
-              },
-              "id": "textField-1",
-              "params": {
-                "size": "medium",
-                "maxlength": 100
-              },
-              "required": true,
-              "fieldType": "textField"
             }
           ]
         }
@@ -483,6 +569,80 @@
       "label": {
         "fi": "Hakijan tiedot",
         "sv": "Uppgifter om den sökande"
+      }
+    },
+    {
+      "fieldClass": "wrapperElement",
+      "id": "declaration-info",
+      "fieldType": "theme",
+      "children": [
+        {
+          "label": {
+            "fi": "Hakija vakuuttaa, että hakemuksessa allekirjoittajiksi merkityillä henkilöillä on nimenkirjoitusoikeus hakijaorganisaation puolesta.",
+            "sv": "SV-KÄÄNNÖS TÄHÄN"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "declaration-signatories",
+          "params": {},
+          "options": [
+            {
+              "value": "kyllae",
+              "label": {
+                "fi": "Kyllä",
+                "sv": "Ja"
+              }
+            }
+          ],
+          "required": true,
+          "fieldType": "radioButton"
+        },
+        {
+          "label": {
+            "fi": "Hakija vakuuttaa tutustuneensa pakote-ehtoihin ja sitoutuu noudattamaan niitä.",
+            "sv": "SV-KÄÄNNÖS TÄHÄN"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "declaration-sanctions",
+          "params": {},
+          "options": [
+            {
+              "value": "kyllae",
+              "label": {
+                "fi": "Kyllä",
+                "sv": "Ja"
+              }
+            }
+          ],
+          "required": true,
+          "fieldType": "radioButton"
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "declaration-sanctions-link",
+          "fieldType": "link",
+          "params": {
+            "href": {
+              "fi": "https://www.oph.fi/fi/avustukset/pakotteiden-huomioon-ottaminen-valtionavustustoiminnassa",
+              "sv": "https://www.oph.fi/sv/understod/beaktande-av-sanktioner-i-statsunderstodsverksamheten"
+            }
+          },
+          "text": {
+            "fi": "Pakotteiden huomioon ottaminen valtionavustustoiminnassa",
+            "sv": "Beaktande av sanktioner i statsunderstödsverksamheten"
+          }
+        }
+      ],
+      "label": {
+        "fi": "Hakijan vakuutukset",
+        "sv": "Den sökandes försäkran"
       }
     },
     {
@@ -511,12 +671,12 @@
         {
           "label": {
             "fi": "Asiointikieli",
-            "sv": "Projektets språk"
+            "sv": "Ärendespråk"
           },
           "fieldClass": "formField",
           "helpText": {
-            "fi": "",
-            "sv": ""
+            "fi": "Valtionavustusjärjestelmän viestit ja asiakirjat lähetetään hakijan valitsemalla asiointikielellä.",
+            "sv": "Meddelanden och handlingar i statsunderstödssystemet skickas på det ärendespråk som den sökande har valt."
           },
           "id": "language",
           "options": [
@@ -539,117 +699,268 @@
           "fieldType": "radioButton"
         },
         {
-          "fieldClass": "wrapperElement",
-          "id": "nayta-tarkennus",
-          "fieldType": "fieldset",
-          "children": []
-        },
-        {
           "label": {
-            "fi": "Hanke pähkinänkuoressa",
-            "sv": "Projektet i ett nötskal"
+            "fi": "Onko kyseessä yhteishanke?",
+            "sv": "Är projektet ett samprojekt?"
           },
           "fieldClass": "formField",
           "helpText": {
-            "fi": "Kuvaa lyhyesti mistä hankkeessa on kyse: mitä tavoitellaan, mitä tehdään, miten tehdään ja ketkä ovat hyödynsaajat. Opetushallitus voi julkaista kuvauksen verkkosivuillaan.",
-            "sv": "Beskriv i korthet vad projektet handlar om: vad som eftersträvas, vad som görs, hur man gör det och vilka nyttotagarna är. Utbildningsstyrelsen kan publicera beskrivningen på sin webbsida."
+            "fi": "Yhteishankkeessa useampi hakukelpoinen organisaatio toteuttaa hanketta yhdessä. Hakemuksen allekirjoittava ja lähettävä organisaatio toimii päähakijayhteisönä hakien avustusta kaikkien osapuolten puolesta. Kaikkien yhteishankkeen osapuolten tulee olla hakukelpoisia ja heitä koskevat samat ehdot kuin päähakijayhteisöä.",
+            "sv": "I ett samprojekt genomförs projektet i samarbete mellan flera organisationer, som alla är behöriga att söka statsunderstödet. Den organisation som undertecknar och skickar ansökan fungerar som den huvudansvariga sökanden och ansöker om statsunderstödet för alla parter. Alla parter i ett samprojekt ska uppfylla behörighetsvillkoren och samma villkor gäller för dem som för den huvudansvariga sökanden."
           },
-          "id": "project-nutshell",
-          "params": {
-            "size": "small",
-            "maxlength": 1000
-          },
-          "required": true,
-          "fieldType": "textArea"
-        },
-        {
-          "fieldClass": "wrapperElement",
-          "id": "other-organizations",
-          "fieldType": "growingFieldset",
-          "children": [
-            {
-              "fieldClass": "wrapperElement",
-              "id": "other-organizations-1",
-              "fieldType": "growingFieldsetChild",
-              "children": [
-                {
-                  "label": {
-                    "fi": "Yhteyshenkilön nimi",
-                    "sv": "Kontaktpersonens namn"
-                  },
-                  "fieldClass": "formField",
-                  "helpText": {
-                    "fi": "",
-                    "sv": ""
-                  },
-                  "id": "other-organizations.other-organizations-1.contactperson",
-                  "params": {
-                    "size": "large",
-                    "maxlength": 80
-                  },
-                  "required": true,
-                  "fieldType": "textField"
-                },
-                {
-                  "label": {
-                    "fi": "Yhteyshenkilön sähköposti",
-                    "sv": "Kontaktpersonens e-postadress"
-                  },
-                  "fieldClass": "formField",
-                  "helpText": {
-                    "fi": "",
-                    "sv": ""
-                  },
-                  "id": "other-organizations.other-organizations-1.email",
-                  "params": {
-                    "size": "small",
-                    "maxlength": 80
-                  },
-                  "required": true,
-                  "fieldType": "emailField"
-                }
-              ]
-            }
-          ],
-          "params": {
-            "showOnlyFirstLabels": false
-          }
-        },
-        {
-          "label": {
-            "fi": "Mitä kieliryhmiä hankkeen toiminta koskee?",
-            "sv": "Vilka språkgrupper gäller projektets verksamhet?"
-          },
-          "fieldClass": "formField",
-          "helpText": {
-            "fi": "Ilmoita mitkä kieliryhmät ovat hankkeen hyödynsaajina.",
-            "sv": "Meddela vilka språkgrupper som är nyttotagare av projektets verksamhet."
-          },
-          "id": "checkboxButton-0",
-          "params": {},
+          "id": "combined-effort",
           "options": [
             {
-              "value": "suomi",
+              "value": "yes",
               "label": {
-                "fi": "Suomi",
-                "sv": "Finska"
+                "fi": "Kyllä",
+                "sv": "Ja"
               }
             },
             {
-              "value": "ruotsi",
+              "value": "no",
               "label": {
-                "fi": "Ruotsi",
-                "sv": "Svenska"
+                "fi": "Ei",
+                "sv": "Nej"
               }
             }
           ],
           "required": true,
-          "fieldType": "checkboxButton"
+          "fieldType": "radioButton"
+        },
+        {
+          "fieldClass": "wrapperElement",
+          "id": "other-organizations-wrapper",
+          "fieldType": "fieldset",
+          "children": [
+            {
+              "fieldClass": "infoElement",
+              "id": "joint-project-info-guide",
+              "fieldType": "p",
+              "params": {},
+              "text": {
+                "fi": "Ohjeet yhteishankkeen suunnitteluun ja toteuttamiseen löytyvät yleisohjeesta valtionavustuksen hakijalle ja käyttäjälle:",
+                "sv": "Anvisningar om planering och genomförande av samprojekt finns i de allmänna anvisningarna för sökande och användare av statsunderstöd."
+              }
+            },
+            {
+              "fieldClass": "infoElement",
+              "id": "joint-project-guide-link",
+              "fieldType": "link",
+              "params": {
+                "href": {
+                  "fi": "https://www.oph.fi/fi/avustukset/yleisohje-1-yleiset-ohjeet#anchor-_8-yhteishankkeet-",
+                  "sv": "https://www.oph.fi/sv/understod/1-allmanna-anvisningar#anchor-_8samprojekt-"
+                }
+              },
+              "text": {
+                "fi": "Yleisohjeen kappale 1.8. Yhteishankkeet",
+                "sv": "Kapitel 1.8 Samprojekt i de allmänna anvisningarna"
+              }
+            },
+            {
+              "fieldClass": "infoElement",
+              "id": "joint-project-agreement-info",
+              "fieldType": "p",
+              "params": {},
+              "text": {
+                "fi": "Yhteishanke laatii kaikkia osapuolia koskevan yhteistyösopimuksen. Sopimus toimitetaan Opetushallitukselle vain erikseen pyydettäessä.",
+                "sv": "Samprojektet gör upp ett samarbetsavtal för alla parter. Avtalet lämnas endast till Utbildningsstyrelsen mot särskild begäran."
+              }
+            },
+            {
+              "fieldClass": "infoElement",
+              "id": "joint-project-agreement-template-info",
+              "fieldType": "p",
+              "params": {},
+              "text": {
+                "fi": "Yhteishanke voi hyödyntää mallipohjan sijaan myös omaa yhteistyösopimuspohjaa, johon tulee sisällyttää yleisohjeen alakohdat.",
+                "sv": "Samprojektet kan istället för modellbottnen använda en egen botten för samarbetsavtalet, men då ska underpunkterna i de allmänna anvisningarna om statsunderstöd ingå i avtalet."
+              }
+            },
+            {
+              "fieldClass": "infoElement",
+              "id": "joint-project-agreement-template-link",
+              "fieldType": "link",
+              "params": {
+                "href": {
+                  "fi": "https://www.oph.fi/sites/default/files/documents/Yhteishankkeen%20yhteisty%C3%B6sopimuksen%20mallipohja.docx",
+                  "sv": "https://www.oph.fi/sites/default/files/documents/Avtalsmodell%20f%C3%B6r%20samarbetsavtal%20i%20samprojekt.docx"
+                }
+              },
+              "text": {
+                "fi": "Opetushallituksen yhteistyösopimuksen mallipohja",
+                "sv": "Utbildningsstyrelsens modellbotten för samarbetsavtal"
+              }
+            },
+            {
+              "fieldClass": "wrapperElement",
+              "id": "other-organizations",
+              "fieldType": "growingFieldset",
+              "children": [
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "other-organizations-1",
+                  "fieldType": "growingFieldsetChild",
+                  "children": [
+                    {
+                      "label": {
+                        "fi": "Yhteishankkeen osapuolena toimivan organisaation virallinen nimi",
+                        "sv": "Det officiella namnet på den organisation som är part i samprojektet"
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "Lisää hankkeen toteuttamiseen osallistuvat yhteishankkeen osapuolet, joilla on oma osatoteuttamissuunnitelmansa ja talousarvionsa osana koko hanketta. Yhteishankkeen osapuolten tulee olla hakukelpoisia.",
+                        "sv": "Lägg till de parter i samprojektet som deltar i genomförandet av projektet och som har en egen plan för delgenomförandet och budget som en del av hela projektet. Parterna i samprojektet ska vara behöriga att söka statsunderstödet."
+                      },
+                      "id": "other-organizations.other-organizations-1.name",
+                      "params": {
+                        "size": "large",
+                        "maxlength": 80
+                      },
+                      "required": true,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "label": {
+                        "fi": "Yhteishankkeen osapuolen yhteyshenkilön nimi",
+                        "sv": "Namnet på kontaktpersonen för parten i samprojektet"
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "other-organizations.other-organizations-1.contactperson",
+                      "params": {
+                        "size": "large",
+                        "maxlength": 80
+                      },
+                      "required": true,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "label": {
+                        "fi": "Yhteishankkeen osapuolen yhteyshenkilön sähköpostiosoite",
+                        "sv": "E-postadress till kontaktpersonen för parten i samprojektet"
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "Yhteishankkeen osapuolen yhteyshenkilölle lähetetään tieto hakemuksen vireilletulosta, avustuspäätöksestä, mahdollisista muutospäätöksistä sekä väli- ja loppuselvitysten hyväksymisestä.",
+                        "sv": "Till kontaktpersonen för parten i samprojektet skickas information om att ansökan har blivit anhängig, beslut om statsunderstöd, eventuella ändringsbeslut samt godkännande av mellan- och slutredovisningar."
+                      },
+                      "id": "other-organizations.other-organizations-1.email",
+                      "params": {
+                        "size": "large",
+                        "maxlength": 80
+                      },
+                      "required": true,
+                      "fieldType": "emailField"
+                    },
+                    {
+                      "label": {
+                        "fi": "Rooli hankkeessa",
+                        "sv": "Roll i projektet"
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "Kuvaa kunkin yhteishankkeen osapuolen rooli, toiminta ja vastuut yhteishankkeessa.",
+                        "sv": "Beskriv rollen, verksamheten och ansvaret för varje enskild part i samprojektet."
+                      },
+                      "id": "other-organizations.other-organizations-1.role",
+                      "params": {
+                        "size": "small",
+                        "maxlength": 600
+                      },
+                      "required": true,
+                      "fieldType": "textArea"
+                    }
+                  ]
+                }
+              ],
+              "params": {
+                "showOnlyFirstLabels": false
+              }
+            }
+          ]
+        },
+        {
+          "label": {
+            "fi": "Muut yhteistyökumppanit ja heidän roolinsa",
+            "sv": "Övriga samarbetspartner och deras roll"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Kuvaa muut yhteistyökumppanit ja heidän roolinsa. Muilla yhteistyökumppaneilla tarkoitetaan toimijoita, jotka ovat mukana hankkeessa, mutta jotka eivät vastaanota valtionavustusta. Ne voivat olla esimerkiksi palveluja tarjoavia yhteisöjä.",
+            "sv": "Beskriv de övriga samarbetspartnerna och deras roll. Med övriga samarbetspartner avses aktörer som medverkar i projektet, men som inte tar emot statsunderstöd. De kan till exempel vara organisationer som erbjuder tjänster."
+          },
+          "id": "other-partners",
+          "params": {
+            "size": "medium",
+            "maxlength": 1000
+          },
+          "required": false,
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Jatketaanko haettavalla avustuksella Opetushallituksen aiemmin myöntämän valtionavustuksen toimintaa?",
+            "sv": "Planerar man att med det sökta statsunderstödet fortsätta verksamhet som Utbildningsstyrelsen tidigare har beviljat statsunderstöd för?"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "continuation-project",
+          "options": [
+            {
+              "value": "yes",
+              "label": {
+                "fi": "Kyllä",
+                "sv": "Ja"
+              }
+            },
+            {
+              "value": "no",
+              "label": {
+                "fi": "Ei",
+                "sv": "Nej"
+              }
+            }
+          ],
+          "required": false,
+          "fieldType": "radioButton"
+        },
+        {
+          "fieldClass": "wrapperElement",
+          "id": "togglable-wrapper-cp",
+          "fieldType": "fieldset",
+          "children": [
+            {
+              "label": {
+                "fi": "Minkä Opetushallituksen aiemmin myöntämän valtionavustuksen toimintaa haettavalla avustuksella jatketaan? Ilmoita avustuksen nimi ja Opetushallituksen päätöksen asiatunnus.",
+                "sv": "SV-KÄÄNNÖS TÄHÄN"
+              },
+              "fieldClass": "formField",
+              "helpText": {
+                "fi": "",
+                "sv": ""
+              },
+              "id": "precise-former-project",
+              "params": {
+                "size": "large",
+                "maxlength": 300
+              },
+              "required": true,
+              "fieldType": "textField"
+            }
+          ]
         }
       ],
       "label": {
-        "fi": "HANKKEEN TIEDOT",
-        "sv": "UPPGIFTER OM PROJEKTET\n"
+        "fi": "Hankkeen tiedot",
+        "sv": "Uppgifter om projektet"
       }
     },
     {
@@ -662,68 +973,38 @@
           "id": "selection-criteria",
           "fieldType": "bulletList",
           "params": {
-            "preview": false,
+            "preview": true,
             "initiallyOpen": true
           }
         },
         {
-          "fieldClass": "wrapperElement",
-          "id": "togglable-wrapper-cp",
-          "fieldType": "fieldset",
-          "children": []
-        },
-        {
-          "fieldClass": "wrapperElement",
-          "id": "pp-basic-education",
-          "fieldType": "fieldset",
-          "children": []
-        },
-        {
-          "fieldClass": "wrapperElement",
-          "id": "pp-upper-secondary",
-          "fieldType": "fieldset",
-          "children": [
-            {
-              "label": {
-                "fi": "Valitse avustuskohteet, joihin toiminta kohdistuu ",
-                "sv": "Välj ansökningsområden som verksamheten fokuserar på. "
-              },
-              "fieldClass": "formField",
-              "helpText": {
-                "fi": "Voit valita toisen tai molemmat vastausvaihtoehdot",
-                "sv": "Du kan välja det ena eller båda svarsalternativen."
-              },
-              "id": "checkboxButton-1",
-              "params": {},
-              "options": [
-                {
-                  "value": "opetuksen-lisaeaeminen",
-                  "label": {
-                    "fi": "Opetuksen lisääminen",
-                    "sv": "Ordnande av extra undervisning "
-                  }
-                },
-                {
-                  "value": "ohjauksen-ja-tukitoimien-lisaeaeminen",
-                  "label": {
-                    "fi": "Ohjauksen ja tukitoimien lisääminen",
-                    "sv": "Ordnande av extra handledning och stödåtgärder"
-                  }
-                }
-              ],
-              "required": true,
-              "fieldType": "checkboxButton"
-            }
-          ]
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Valitse yksi tai useampi painopistealue, johon hankkeen toiminta keskittyy.",
+            "sv": "Välj ett eller flera tyngdpunktsområden som projektets verksamhet fokuserar på."
+          },
+          "id": "focus-areas",
+          "required": true,
+          "fieldType": "vaFocusAreas"
         },
         {
           "fieldClass": "infoElement",
-          "id": "h3-0",
+          "id": "project-description-info-1",
           "fieldType": "h3",
           "params": {},
           "text": {
-            "fi": "Hankkeen tavoitteet, toiminta ja budjetti",
-            "sv": "Projektets mål, verksamhet och budget"
+            "fi": "Hankkeen tavoitteet, toiminta ja tulokset",
+            "sv": "Projektets mål, verksamhet och resultat"
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "project-description-info-2",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "Tässä osiossa hankkeelle kirjataan tavoitteet, tavoitteisiin liittyvä toiminta sekä tavoiteltavat tulokset ja vaikutukset. Hankkeen tavoitteiden tulee mukailla avustuksen yleisiä tavoitteita (ks. hakutiedote).",
+            "sv": "Beskriv målen, verksamheten för att uppnå målen samt de resultat och effekter som man eftersträvar i projektet. Målen för projektet ska följa de allmänna målen för understödet (se ansökningsmeddelandet)."
           }
         },
         {
@@ -743,12 +1024,12 @@
                   },
                   "fieldClass": "formField",
                   "helpText": {
-                    "fi": "Kuvaa hankkeen tavoite ja siihen liittyvä toiminta sekä budjetti avustuskohteittain. Kirjoita molemmista avustuskohteista omat kuvaukset.",
-                    "sv": "Beskriv projektets mål och tillhörande verksamhet samt budgeten för ansökningsområdena. Ge separata beskrivningar för bägge ansökningsområdena."
+                    "fi": "Hankkeen tavoitteet kuvataan kokonaisuuksina, joissa kunkin tavoitteen kuvaukseen liitetään kuvaus siihen liittyvästä toiminnasta hankkeessa sekä tämän seurauksena tavoiteltu tulos. Tavoitteita voidaan lisätä tarpeen mukaan.",
+                    "sv": "Projektets mål ska beskrivas som helheter. Beskriv verksamheten och de resultat man eftersträvar för varje enskilt mål. Man kan lägga till mål efter behov."
                   },
                   "id": "project-description.project-description-1.goal",
                   "params": {
-                    "size": "small",
+                    "size": "medium",
                     "maxlength": 800
                   },
                   "required": true,
@@ -761,12 +1042,12 @@
                   },
                   "fieldClass": "formField",
                   "helpText": {
-                    "fi": "",
-                    "sv": ""
+                    "fi": "Kuvaa tavoitteeseen liittyvä konkreettinen toiminta sekä käytettävät työ- ja toimintatavat.",
+                    "sv": "Beskriv den konkreta verksamheten för detta mål samt de arbets- och verksamhetssätt man använder sig av."
                   },
                   "id": "project-description.project-description-1.activity",
                   "params": {
-                    "size": "small",
+                    "size": "medium",
                     "maxlength": 800
                   },
                   "required": true,
@@ -774,17 +1055,17 @@
                 },
                 {
                   "label": {
-                    "fi": "Budjetti",
-                    "sv": "Budget"
+                    "fi": "Konkreettiset tulokset ja vaikutukset, jotka toiminnalla pyritään saavuttamaan",
+                    "sv": "Konkreta resultat och effekter som man eftersträvar med verksamheten"
                   },
                   "fieldClass": "formField",
                   "helpText": {
-                    "fi": "Erittely siitä, mistä kustannukset muodostuvat (laskentaperusteena tuntimäärä/kurssimäärä x tunnin/kurssin hinta). Vie opetuksen lisäämistä koskeva summa talousarvion kohtaan Henkilöstömenot 1 ja ohjauksen ja tukitoimien lisäämistä koskeva summa kohtaan Henkilöstömenot 2.",
-                    "sv": "Specificera hur kostnaderna bildas (som beräkningsgrund används antal undervisningstimmar/antal kurser x priset per timme/kurs). För in summan som berör extra undervisning i budgeten under Personalkostnader 1 och summan som berör extra handledning och stödåtgärder under Personalkostnader 2."
+                    "fi": "Kuvaa tavoitteeseen liittyvät konkreettiset tulokset ja vaikutukset, joita toiminnalla pyritään saavuttamaan. Tuloksilla tarkoitetaan hankkeen toiminnan välittömiä aikaansaannoksia ja saavutettavia muutoksia. Vaikutuksilla tarkoitetaan laajempia tai pidemmällä aikavälillä syntyviä muutoksia. Yksittäiset materiaalit, toimintamallit, julkaisut ja muut konkreettiset tuotokset voidaan kuvata niitä koskevassa erillisessä kysymyksessä.",
+                    "sv": "Beskriv de konkreta resultat och effekter som man strävar efter att uppnå genom verksamheten i anslutning till målet. Med resultat avses de omedelbara resultaten av projektets verksamhet och de förändringar som man strävar efter att åstadkomma. Med effekter avses mer omfattande förändringar eller förändringar som uppstår på längre sikt. Enskilda material, verksamhetsmodeller, publikationer och andra konkreta produkter kan beskrivas i en separat fråga om dem."
                   },
                   "id": "project-description.project-description-1.result",
                   "params": {
-                    "size": "small",
+                    "size": "medium",
                     "maxlength": 800
                   },
                   "required": true,
@@ -797,21 +1078,21 @@
             "showOnlyFirstLabels": false
           },
           "label": {
-            "fi": "Hankkeen tavoitteet, toiminta ja budjetti",
-            "sv": "Projektets mål, verksamhet och budget"
+            "fi": "",
+            "sv": ""
           }
         },
         {
           "label": {
-            "fi": "Hankkeen vaikutukset/vaikuttavuus.",
-            "sv": "Projektets inverkan/effekt. "
+            "fi": "Miten hankkeessa edistetään toiminnan vakiintumista osaksi opetuksen järjestäjän perustoimintaa?",
+            "sv": "Hur främjar man införandet av projektverksamheten i utbildningsanordnarens basverksamhet?"
           },
           "fieldClass": "formField",
           "helpText": {
-            "fi": "Kuvaa toiminnan toivottuja vaikutuksia opiskelijoiden oppimistuloksiin ja hyvinvointiin.",
-            "sv": "Beskriv verksamhetens önskade inverkan på studerandes inlärningsresultat och välbefinnande."
+            "fi": "",
+            "sv": ""
           },
-          "id": "project-effectiveness",
+          "id": "project-integration-to-basic-operations",
           "params": {
             "size": "medium",
             "maxlength": 1000
@@ -821,44 +1102,278 @@
         },
         {
           "label": {
-            "fi": "Hankkeen alkamisaika",
-            "sv": "Projektet inleds"
+            "fi": "Miksi hanke tarvitaan? Miten koulutustarve on kartoitettu?",
+            "sv": "Varför behövs projektet? Hur har man kartlagt utbildningsbehovet?"
           },
           "fieldClass": "formField",
           "helpText": {
             "fi": "",
             "sv": ""
           },
-          "id": "project-begin",
+          "id": "project-need-and-training-needs",
           "params": {
-            "size": "extra-small",
-            "maxlength": 10
+            "size": "medium",
+            "maxlength": 1000
           },
           "required": true,
-          "fieldType": "textField"
+          "fieldType": "textArea"
         },
         {
           "label": {
-            "fi": "Hankkeen päättymisaika",
-            "sv": "Projektet avslutas"
+            "fi": "Miten hankkeen tavoitteiden toteutumista seurataan?",
+            "sv": "Hur följer man upp att målen i projektet genomförs?"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Kuvaa, millä tavoilla hankkeen toteutumista suhteessa hyväksyttyihin tavoitteisiin seurataan ja mitataan. Miten kerätään palautetta koulutukseen osallistujilta?",
+            "sv": "Beskriv på vilket sätt genomförandet av projektet följs upp och mäts i förhållande till de godkända målen. Hur samlar man in respons från deltagarna i utbildningen?"
+          },
+          "id": "project-goal-monitoring",
+          "params": {
+            "size": "medium",
+            "maxlength": 1000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Hankkeessa syntyvät tuotokset ja materiaalit sekä niiden levittämissuunnitelma",
+            "sv": "Produkter och material som skapas i projektet samt en plan för spridningen av dem"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Miten hankkeessa syntyviä tuotoksia on tarkoitus levittää? Valtionavustuksella tuotettujen materiaalien tulee olla vapaasti levitettävissä. Myös Opetushallituksella on oikeus levittää aineistoa kaikissa levitysmuodoissa ja valmistaa siitä kopioita. Koulutuksessa tuotettuja aineistoja suositellaan levitettäviksi aoe.fi-palvelun kautta.",
+            "sv": "Hur kommer man att sprida de produkter som skapas i projektet? Material som producerats med statsunderstöd ska delas öppet. Utbildningsstyrelsen har också rätt att sprida materialet i alla olika former och producera kopior av det. Det rekommenderas att det material som produceras i utbildningen ska spridas genom tjänsten aoe.fi."
+          },
+          "id": "project-outputs-and-dissemination",
+          "params": {
+            "size": "medium",
+            "maxlength": 1000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Miten hankkeessa hyödynnetään aiemmin tehtyä kehittämistyötä sekä olemassa olevia verkostoja ja materiaaleja?",
+            "sv": "Hur använder man sig av tidigare utvecklingsarbete samt redan existerande nätverk och material i projektet?"
           },
           "fieldClass": "formField",
           "helpText": {
             "fi": "",
             "sv": ""
           },
-          "id": "project-end",
+          "id": "project-use-of-previous-development-work",
           "params": {
-            "size": "extra-small",
-            "maxlength": 10
+            "size": "medium",
+            "maxlength": 1000
           },
           "required": true,
-          "fieldType": "textField"
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Selvitä mitä laitehankintoja hanke edellyttää. Perustele hankintojen tarve.",
+            "sv": "Redogör för den anskaffning av apparatur som projektet kräver. Motivera behovet av anskaffningen."
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Laitehankinnat saavat olla enintään XX prosenttia hankkeen kokonaiskustannuksista.",
+            "sv": "Anskaffningen av apparatur får utgöra högst XX procent av projektets totala kostnader."
+          },
+          "id": "project-equipment-procurements",
+          "params": {
+            "size": "medium",
+            "maxlength": 1000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Millaisilla toimilla varmistetaan hankkeen sisällöllinen laajuus ja monialaisuus?",
+            "sv": "Med vilka åtgärder säkerställer man att bredden och den sektorsövergripande verksamheten syns i innehållet i projektet?"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "project-scope-and-multidisciplinarity",
+          "params": {
+            "size": "medium",
+            "maxlength": 1000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Millaisilla toimilla hankkeessa varmistetaan oppilaiden osallisuus?",
+            "sv": "Med vilka åtgärder säkerställer man elevernas delaktighet i projektet?"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "",
+            "sv": ""
+          },
+          "id": "project-pupil-participation-measures",
+          "params": {
+            "size": "medium",
+            "maxlength": 1000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Millaista arviointi-, tutkimus- tai selvitystoimintaa hankkeeseen sisältyy?",
+            "sv": "Hurdan utvärderings-, forsknings- eller utredningsverksamhet ingår i projektet?"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Kuvaa miten hanketta tai hankkeen käsittelemää aihealuetta arvioidaan, tutkitaan ja selvitetään. Kuvaa mahdolliset taustaselvitykset, tarve- ja seurantakartoitukset, hankkeen etenemisen ja tulosten arviointi, opinnäytetyöt, tieteelliset tutkimukset ja muu tutkimusyhteistyö.",
+            "sv": "Beskriv hur projektet eller det ämnesområde som projektet omfattar kommer att utvärderas, forskas i och utredas. Beskriv eventuella bakgrundsutredningar, behovs- och uppföljningskartläggningar, projektets framskridande och utvärdering av resultat, slutarbeten, vetenskapliga undersökningar och övrigt forskningssamarbete."
+          },
+          "id": "project-evaluation-research-and-studies",
+          "params": {
+            "size": "medium",
+            "maxlength": 1000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Toimenpiteet tulosten ja tuotosten levittämiseksi",
+            "sv": "Åtgärder för att sprida resultaten och produkterna"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Kuvaa hankkeen tulosten levittämissuunnitelma etenkin kohderyhmien, menetelmien ja tulosten osalta. Rahoitettavilta hankkeilta edellytetään malleja, toimintatapoja ja ratkaisuja, jotka ovat sekä levitettävissä että hyödyksi muille opetuksen järjestäjille.",
+            "sv": "Beskriv planen för att sprida projektets resultat särskilt med tanke på målgrupperna, metoderna och resultaten. Projekten som får finansiering förväntas skapa modeller, rutiner och lösningar som kan spridas vidare och vara till nytta för andra utbildningsanordnare."
+          },
+          "id": "project-dissemination-measures",
+          "params": {
+            "size": "medium",
+            "maxlength": 1000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Miten turvataan hankkeessa kehitettävien toimintamallien, materiaalien, palveluiden sekä ratkaisujen ylläpito, käyttö ja jatkokehittäminen avustuksen käyttöajan jälkeen?",
+            "sv": "Hur garanterar man att de verksamhetsmodeller, material, tjänster och lösningar som utvecklats i projektet upprätthålls, används och vidareutvecklas efter att användningstiden för statsunderstödet tagit slut?"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Kuvaa toimenpiteet, joilla varmistetaan, että hankkeessa kehitettäviä toimintamalleja, materiaaleja sekä digitaalisia ratkaisuja hyödynnetään, ylläpidetään ja jatkokehitetään myös hankekauden jälkeen. Voit kuvata esimerkiksi työnjakoa, henkilöstön sitouttamista, resursointia ja toimenpiteitä, joilla hankkeen toiminta pyritään juurruttamaan osaksi hakijan/hakijaverkoston perustoimintaa.",
+            "sv": "Beskriv de åtgärder som används för att säkerställa att de verksamhetsmodeller, material och digitala lösningar som utvecklas i projektet används, upprätthålls och vidareutvecklas också efter att projektperioden tagit slut. Man kan till exempel beskriva arbetsfördelningen, personalens engagemang, resurseringen och åtgärder för att införa projektverksamheten i den sökandes eller sökandenätverkets basverksamhet. "
+          },
+          "id": "project-sustainability-after-grant-period",
+          "params": {
+            "size": "medium",
+            "maxlength": 1000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Kuvaa yli avustuksen käyttöajan kestävää pitkän aikavälin kehitystä hankkeen aihealueen osalta.",
+            "sv": "SV-KÄÄNNÖS TÄHÄN"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Millaista kehitystä tavoitellaan hankkeen aihealueen osalta pidemmällä 3-10 vuoden aikajänteellä. Mikä on hakijan/hakijaorganisaation visio hankkeen teemaan liittyen.",
+            "sv": "Hurdan utveckling strävar man efter inom ämnesområdet för projektet i ett längre tidsperspektiv på 3–10 år. Vilken är den sökandes/organisationens vision för projektets tema?"
+          },
+          "id": "project-long-term-development",
+          "params": {
+            "size": "medium",
+            "maxlength": 1000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Miten oppilaita osallistetaan hankkeen toiminnassa ja miten hanke edistää oppilaan työskentelyä?",
+            "sv": "På vilket sätt inkluderar man eleverna i projektets verksamhet och på vilket sätt främjar man elevernas arbete?"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Kuvaa hankkeen tavoitteita, toimintaa ja tuloksia oppilaan näkökulmasta. Miten oppilaat osallistuvat hankkeeseen ja miten heitä osallistetaan. Minkälaisia vaikutuksia hankkeella on oppilaan arjen työskentelyyn?",
+            "sv": "Beskriv projektets mål, verksamhet och resultat ur elevens synvinkel. På vilket sätt deltar eleverna i projektet och hur inkluderar man dem? Hurdana effekter har projektet på elevens dagliga arbete?"
+          },
+          "id": "project-pupil-involvement-and-work",
+          "params": {
+            "size": "medium",
+            "maxlength": 1000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Miten hanke tukee opetussuunnitelman toteuttamista ja kehittämistä?",
+            "sv": "På vilket sätt stöder projektet genomförandet och utvecklingen av läroplanen?"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Mihin opetussuunnitelman tavoitteisiin ja sisältöihin hanke vastaa? Miten hanke edistää opetussuunnitelman tavoitteiden ja sisältöjen toteutumista? Miten hanke tukee opetussuunnitelman kehittämistä?",
+            "sv": "Vilka mål och innehåll i läroplanen stöder projektet? På vilket sätt främjar projektet genomförandet av målen och innehållet i läroplanen? På vilket sätt stödjer projektet utvecklingen av läroplanen?"
+          },
+          "id": "project-curriculum-support",
+          "params": {
+            "size": "medium",
+            "maxlength": 1000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Toimenpiteet tulosten ja tuotosten levittämiseksi sekä muiden opetuksen järjestäjien ja toimijoiden mahdollisuudet hyödyntää hankkeen saavutuksia, tuloksia ja tuotoksia.",
+            "sv": "Åtgärder för att sprida resultaten och produkterna samt möjligheterna för övriga utbildningsanordnare och aktörer att använda sig av resultaten och produkterna i projektet."
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Kuvaa hankkeen tulosten levittämissuunnitelma etenkin kohderyhmien, menetelmien ja tulosten osalta. Millä tavalla hankkeessa tehtävä työ sekä hankkeessa kehitettävät ratkaisut voivat olla hyödyksi muille opetuksen järjestäjille ja muille koulutustoimialan toimijoille?",
+            "sv": "Beskriv planen för att sprida projektets resultat särskilt med tanke på målgrupperna, metoderna och resultaten. På vilket sätt kan arbetet och de lösningar som utvecklas inom projektet vara till nytta för andra utbildningsanordnare och övriga aktörer inom utbildningsområdet?"
+          },
+          "id": "project-results-dissemination-and-reuse",
+          "params": {
+            "size": "medium",
+            "maxlength": 1000
+          },
+          "required": true,
+          "fieldType": "textArea"
+        },
+        {
+          "label": {
+            "fi": "Hankkeen yhteenveto (julkinen kuvaus)",
+            "sv": "Sammandrag av projektet (offentlig beskrivning)"
+          },
+          "fieldClass": "formField",
+          "helpText": {
+            "fi": "Kuvaa lyhyesti mistä hankkeessa on kyse: mitä tavoitellaan, miten toimitaan ja mitkä ovat tavoiteltavat vaikutukset? Kuvaus julkaistaan Valtiokonttorin Tutkiavustuksia.fi-palvelussa ja tarvittaessa Opetushallituksen palveluissa. Älä sisällytä julkiseen kuvaukseen henkilötietoja, liikesalaisuuksia tai muita salassa pidettäviä tietoja.",
+            "sv": "Bekriv i korthet vad projektet handlar om: vad vill man uppnå, hur går man tillväga och vilka blir resultaten? Beskrivningen publiceras i tjänsten Granskaunderstod.fi som upprätthålls av Statskontoret samt vid behov i Utbildningsstyrelsens tjänster. Sätt inte in personuppgifter, affärshemlighter eller andra sekretessbelagda uppgifter i den offentliga beskrivningen."
+          },
+          "id": "project-nutshell",
+          "params": {
+            "size": "medium",
+            "maxlength": 800
+          },
+          "required": true,
+          "fieldType": "textArea"
         }
       ],
       "label": {
-        "fi": "HANKESUUNNITELMA ",
-        "sv": "PROJEKTPLAN"
+        "fi": "Hankesuunnitelma",
+        "sv": "Projektplan"
       }
     },
     {
@@ -868,25 +1383,95 @@
       "children": [
         {
           "fieldClass": "infoElement",
-          "id": "financing-plan-help",
+          "id": "application-form-financing-info-1-accounting-law",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "Avustuksen saajan on järjestettävä kirjanpito kirjanpitolaissa ja -asetuksessa säädetyllä tavalla ja noudatettava hyvää kirjanpitotapaa. Kirjanpito on järjestettävä siten, että avustuksen käyttöä voidaan seurata kirjanpidosta luotettavasti omalla kustannuspaikalla.",
+            "sv": "SV-KÄÄNNÖS TÄHÄN"
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "application-form-financing-info-2-necessity",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "Kustannuksilla tarkoitetaan avustettavan hankkeen toteuttamisesta aiheutuneita todellisia ja todennettavia kustannuksia, jotka kirjataan hankkeen kustannuspaikkakohtaiseen kirjanpitoon.",
+            "sv": "SV-KÄÄNNÖS TÄHÄN"
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "financing-principles-intro",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "Avustuksen saajan tulee noudattaa seuraavia avustuksen käyttöä ohjaavia periaatteita:",
+            "sv": "SV-KÄÄNNÖS TÄHÄN"
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "financing-principle-causality",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "• Aiheuttamisperiaate: kustannusten tulee aiheutua hankkeesta, johon avustus on myönnetty. Kustannukset, jotka eivät perustu välittömästi hankkeesta aiheutuviin todellisiin ja todennettaviin kustannuksiin ja jotka olisivat syntyneet ilman kyseistä valtionavustustakin, eivät ole hyväksyttäviä kustannuksia.",
+            "sv": "SV-KÄÄNNÖS TÄHÄN"
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "financing-principle-timing",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "• Ajoittumisperiaate: kustannusten tulee aiheutua avustuksen hyväksyttynä käyttöaikana. Kustannukset, jotka syntyvät käyttöajan ulkopuolella, eivät ole hyväksyttäviä. Kustannus voidaan kuitenkin maksaa käyttöajan ulkopuolella, jos kustannus on tosiasiallisesti syntynyt hyväksyttynä käyttöaikana.",
+            "sv": "SV-KÄÄNNÖS TÄHÄN"
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "financing-principle-necessity",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "• Tarpeellisuusperiaate: kustannusten tulee olla tarpeellisia hankkeen toteuttamiseksi tai hankkeelle asetettujen tavoitteiden saavuttamiseksi.",
+            "sv": "SV-KÄÄNNÖS TÄHÄN"
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "financing-principle-reasonableness",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "• Kohtuullisuusperiaate: kustannusten tulee olla määrältään kohtuullisia. Kustannusten tulee vastata avustuksen saajan tai toimialan tavanomaista kustannustasoa.",
+            "sv": "SV-KÄÄNNÖS TÄHÄN"
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "application-form-financing-info-3-actual-costs",
           "fieldType": "p",
           "params": {
             "preview": false
           },
           "text": {
-            "fi": "Avustusta voi käyttää avustuksen saajan opetuksen, ohjauksen ja tuen lisätarpeen rahoittamiseen, mutta ei muuhun koulutuksen järjestäjän perustoimintaan. Valtionavustuksen kokonaiskustannuksiin hyväksytään hankkeesta aiheutuvat välittömät kustannukset sekä organisaation muista kustannuksista ne kustannuserät, jotka voidaan suoraan dokumentoida aiheuttamisperiaatteen mukaisesti kirjata menoksi. Vain todellisiin ja toteutuneisiin kustannuksiin perustuvat menot ovat hyväksyttäviä. Laskennallisia ja prosentuaalisia kustannuseriä, jotka eivät perustu välittömästi hankkeesta aiheutuviin todellisiin menoihin ja jotka olisivat syntyneet ilman kyseistä hankettakin, ei hyväksytä valtionavustuksella rahoitetun hankkeen kustannukseksi.",
-            "sv": "Understödet kan användas för att finansiera stödmottagarens behov av att ordna extra undervisning, handledning och stöd, men inte för att finansiera utbildningsanordnarens övriga basverksamhet. Som totala kostnader godkänns de omedelbara kostnader som uppstår vid genomförandet av projektet samt de kostnadsposter av de övriga kostnaderna i organisationen som man direkt kunnat hänvisa som utgifter för projektet enligt principen för hur de uppkommit. Endast de utgifter som bygger på faktiska och genomförda kostnader kan godkännas. Kalkylerade och procentuella kostnader, som inte direkt grundar sig på verkliga utgifter som uppstått ur projektet och som skulle ha uppstått även utan ifrågavarande projekt godkänns inte som kostnader för projekt som finansieras med statsunderstöd.\n\n"
+            "fi": "Valtionavustuksen kokonaiskustannuksiin hyväksytään hankkeesta aiheutuvat välittömät kustannukset sekä organisaation muista kustannuksista ne kustannuserät, jotka voidaan suoraan dokumentoida ja kirjata aiheuttamisperiaatteen mukaisesti hankkeen kustannukseksi. Vain todelliset ja toteutuneet kustannukset ovat hyväksyttäviä. Laskennalliset, prosenttiperusteiset tai muut kustannuserät, jotka eivät perustu hankkeen toteuttamisesta aiheutuviin todellisiin ja todennettaviin kustannuksiin, eivät ole hyväksyttäviä kustannuksia.",
+            "sv": "SV-KÄÄNNÖS TÄHÄN"
           }
         },
         {
           "label": {
             "fi": "Onko kustannukset ilmoitettu arvonlisäverollisina?",
-            "sv": "Har kostnaderna anmälts inklusive mervärdesskatt?\n"
+            "sv": "Har kostnaderna anmälts inklusive mervärdesskatt?"
           },
           "fieldClass": "formField",
           "helpText": {
-            "fi": "Arvonlisävero on hyväksyttävä kustannus, jos se jää hakijan lopulliseksi kustannukseksi. Yhteishankkeissa menot tulee ilmoittaa joko arvonlisäverollisina tai arvonlisäverottomina hakijan kirjanpidon mukaisesti. Tässä tapauksessa valitaan vaihtoehto ”kyllä”.",
-            "sv": "Mervärdesskatt är en godtagbar kostnad, om den blir en slutlig kostnad för sökanden. I samprojekt ska kostnaderna meddelas antingen med eller utan mervärdesskatt enligt den sökandes bokföring. I detta fall ska man välja alternativet ”ja”. "
+            "fi": "Arvonlisävero on hyväksyttävä kustannus, jos se jää hakijan lopulliseksi kustannukseksi. Jos kyse on yhteishankkeesta ja arvonlisävero jää yhdenkin yhteishankkeen osapuolen osalta lopulliseksi kustannukseksi, tulee päähakijayhteisön valita hakulomakkeessa tämän tiedon osalta ”Kyllä”, mutta vain ne yhteishankkeen osapuolet, joille arvonlisävero jää lopulliseksi kustannukseksi, ilmoittavat kustannukset arvonlisäverollisina kirjanpidossaan.",
+            "sv": "SV-KÄÄNNÖS TÄHÄN"
           },
           "id": "vat-included",
           "options": [
@@ -961,24 +1546,322 @@
                     "incrementsTotal": true
                   },
                   "label": {
-                    "fi": "Henkilöstömenot 1",
-                    "sv": "Personalkostnader 1"
+                    "fi": "Henkilöstökustannukset",
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
                   },
                   "helpText": {
-                    "fi": "Hyväksyttäviä kustannuksia ovat kohtuulliset palkkakustannukset, jotka aiheutuvat suoraan hankkeesta sekä palkan maksusta aiheutuvat erilaiset lakisääteiset henkilöstösivukulut. Osa-aikaisesti hankkeelle työskentelevien henkilöiden on pidettävä tuntiseurantaa. Selite-kohdassa kerrotaan, kuinka monta henkilöä hankkeen piirissä työskentelee koko- ja osa- aikaisesti.",
-                    "sv": "Godtagbara kostnader är skäliga lönekostnader som direkt ansluter sig till genomförandet av projektet och lagstadgade personbikostnader för utbetalning av lönen. Över de personer som arbetar inom projektet på deltid ska föras arbetstidsuppföljning. I förklaringspunkten ska anges hur många personer som arbetar inom projektet på heltid och på deltid."
+                    "fi": "Hyväksyttäviä kustannuksia ovat kohtuulliset palkkakustannukset, jotka aiheutuvat suoraan hankkeesta sekä palkan maksusta aiheutuvat erilaiset lakisääteiset henkilöstösivukulut. Osa-aikaisesti työskentelevien henkilöiden työajan käytöstä on tehtävä kokonaistyöajanseuranta ja päiväkohtainen työajanseuranta. Selite-kohdassa kerrotaan, kuinka monta henkilöä hankkeen piirissä työskentelee koko- ja osa-aikaisesti.",
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "material-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "initialValue": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "material-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "material-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Materiaali- ja tarvikekustannukset",
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
+                  },
+                  "helpText": {
+                    "fi": "Kustannuslajiin kuuluvat kohderyhmälle järjestettyyn toimintaan liittyvät opetus- ja koulutusmateriaalit sekä muut materiaalikustannukset, elintarvikkeet (pl. kokoustarjoilut), kalusteet ja toimistotarvikkeet sekä muut vastaavat fyysiset hankinnat. Myös pienet TVT-tarvikkeet, joita ei lueta laitteiksi, kirjataan tähän kustannuslajiin.",
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "equipment-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "equipment-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "equipment-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Laitekustannukset",
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
+                  },
+                  "helpText": {
+                    "fi": "Laitekustannuksiin kirjataan TVT-laitteet, kuten tietokoneet, tabletit, matkapuhelimet, näytöt, televisiot, älytaulut, 3D-tulostimet, virtuaalilasit, tulostimet, verkkolaitteet ja muut vastaavat. Ohjelmistojen lisenssimaksut kirjataan kohtaan Muut kustannukset ja TVT-pientarvikkeet kohtaan Materiaali- ja tarvikekustannukset. Jos laitteet hankitaan leasing-sopimuksella, hyväksytään hankkeen käytössä olevien laitteiden leasing-kustannukset hankkeen keston ajalta. Osassa valtionavustuksia laitekustannusten enimmäisosuutta kokonaiskustannuksista on rajoitettu. Mahdolliset rajoitukset kuvataan hakuasiakirjoissa.",
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "service-purchase-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "initialValue": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "service-purchase-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "service-purchase-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Palvelukustannukset",
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
+                  },
+                  "helpText": {
+                    "fi": "Ulkopuolisilta palveluntuottajilta ostettavat palvelut. Hankkeen toteuttamiseen liittyvien asiantuntija- ja koulutuspalvelujen kustannukset sekä muut maksut välittömästi hankkeen toteuttamiseen liittyvistä ostetuista palveluista (esim. mainos- ja markkinointikustannukset). Tähän kustannuslajiin kuuluvat myös kokouspalvelut, jos ne ostetaan pakettina (sis. kokouksen tilavuokrat, tarjoilut ja muut kokouspalvelut). Etäkokoustarjoilut eivät ole hyväksyttäviä kustannuksia.",
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "rent-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "rent-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "rent-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Vuokrakustannukset",
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
+                  },
+                  "helpText": {
+                    "fi": "Tilavuokrakustannukset aiheuttamisperiaatteen mukaisesti; esimerkiksi kokousten, koulutusten ja tapahtumien järjestämiseksi vuokratut tilat sekä avustuksella työskentelevän henkilöstön työtilan vuokrakustannukset suhteessa käytettyyn työaikaan. Selite-kohdassa kerrotaan, mistä vuokrakustannuksista on kyse. Jos tilaisuudelle on vuokrattu pelkän tilan sijaan kokouspaketti (sis. tarjoilut ja muut kokouspalvelut), ilmoitetaan sen kustannukset kustannuslajissa Palvelukustannukset.",
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "steamship-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "initialValue": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "steamship-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "steamship-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Matkakustannukset",
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
+                  },
+                  "helpText": {
+                    "fi": "Henkilöstön kohtuulliset matka- ja majoituskustannukset, auton vuokraaminen, polttoainekustannukset, kilometrikorvaukset sekä päivärahat valtion yleisen virka- ja työehtosopimuksen matkustusliitteen mukaisesti. Tehtyjen matkojen on liityttävä olennaisesti hankkeen toteutukseen. Selite-kohdassa kerrotaan, mistä matkakustannukset syntyvät (esim. kokousmatkat, koulutusmatkat tai kansainvälisten hankkeiden ulkomaanmatkat). Jos avustusta ei saa käyttää esimerkiksi ulkomaille suuntautuviin matkoihin, kuvataan tämä haku- ja päätösasiakirjoissa.",
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
+                  }
+                },
+                {
+                  "fieldClass": "wrapperElement",
+                  "id": "other-costs-row",
+                  "fieldType": "vaBudgetItemElement",
+                  "children": [
+                    {
+                      "initialValue": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "other-costs-row.description",
+                      "params": {
+                        "size": "medium",
+                        "maxlength": 250
+                      },
+                      "required": false,
+                      "fieldType": "textField"
+                    },
+                    {
+                      "initialValue": 0,
+                      "fieldClass": "formField",
+                      "helpText": {
+                        "fi": "",
+                        "sv": ""
+                      },
+                      "id": "other-costs-row.amount",
+                      "params": {
+                        "size": "extra-extra-small",
+                        "maxlength": 16
+                      },
+                      "required": true,
+                      "fieldType": "moneyField"
+                    }
+                  ],
+                  "params": {
+                    "incrementsTotal": true
+                  },
+                  "label": {
+                    "fi": "Muut kustannukset",
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
+                  },
+                  "helpText": {
+                    "fi": "Muut kustannukset -kohtaan kirjataan ne hankkeen kustannukset, joita ei voida kirjata muihin kustannuslajeihin. Muihin kustannuksiin voivat kuulua esimerkiksi puhelinliittymäkustannukset, ohjelmistokustannukset, lisenssimaksut sekä muut vastaavat käyttökustannukset.",
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
                   }
                 }
               ],
               "params": {
                 "sumRowLabel": {
-                  "fi": "Menot yhteensä",
+                  "fi": "Kustannukset yhteensä",
                   "sv": "Kostnader sammanlagt"
                 },
                 "columnTitles": {
                   "label": {
-                    "fi": "Menot",
-                    "sv": "Kostnader"
+                    "fi": "Kustannukset kustannuslajeittain",
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
                   },
                   "amount": {
                     "fi": "Yhteensä",
@@ -992,7 +1875,7 @@
                 "showColumnTitles": true
               },
               "label": {
-                "fi": "Talousarvio",
+                "fi": "Hankkeen talousarvio",
                 "sv": "Budget"
               }
             },
@@ -1044,12 +1927,12 @@
                     "incrementsTotal": false
                   },
                   "label": {
-                    "fi": "Hankkeesta saadut tulot",
-                    "sv": "Inkomster"
+                    "fi": "Hankkeesta saatavat tulot, ei Opetushallitukselta haettavaa valtionavustusta",
+                    "sv": "Inkomster från projektet, inte statsunderstöd som söks hos Utbildningsstyrelsen"
                   },
                   "helpText": {
-                    "fi": "Hankkeesta saatavat tulot on arvioitava ja kirjattava erikseen sillä ne vähentävät hyväksyttävien kustannusten määrää. Hankkeesta voidaan saada tuloa esimerkiksi, jos siinä syntyneitä materiaaleja myydään tai järjestään maksullista koulutusta. Tuloja ei voida lukea omarahoitukseksi.",
-                    "sv": "Inkomster som man får från projektet måste bedömas och dokumenteras separat, eftersom de drar ner på de godkända kostnaderna för projektet. Projektet kan få inkomster till exempel genom att sälja produkter som uppkommit som ett resultat av projektet eller ordnar avgiftsbelagd utbildning inom projektet. Inkomster som fås av projektet kan inte räknas som självfinansiering för projektet."
+                    "fi": "Ilmoita tässä vain hankkeen toteutuksesta syntyvät tulot, kuten osallistumismaksut, materiaalien myyntitulot tai muut hankkeesta saatavat tulot. Älä ilmoita tässä Opetushallitukselta haettavaa valtionavustusta. Valtionavustus ei ole hankkeen tuloa, vaan se huomioidaan erikseen. Hankkeesta saatavat tulot vähentävät hyväksyttävien kustannusten määrää, eikä niitä voida lukea omarahoitukseksi.",
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
                   }
                 }
               ],
@@ -1061,8 +1944,8 @@
                 "showColumnTitles": false
               },
               "label": {
-                "fi": "Tulot",
-                "sv": "Inkomster"
+                "fi": "Hankkeen tulot",
+                "sv": "SV-KÄÄNNÖS TÄHÄN"
               }
             },
             {
@@ -1110,7 +1993,11 @@
                   },
                   "label": {
                     "fi": "EU-rahoitus",
-                    "sv": "EU-program"
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
+                  },
+                  "helpText": {
+                    "fi": "Ilmoita tässä samaan toimintaan saatava EU-rahoitus. Älä ilmoita tässä Opetushallitukselta haettavaa valtionavustusta tai avustuksen saajan omarahoitusta. Muu rahoitus vähentää sitä osuutta hankkeen hyväksyttävistä kustannuksista, joka jää katettavaksi Opetushallituksen valtionavustuksella ja avustuksen saajan omarahoituksella.",
+                    "sv": "Ange här EU-finansiering som hänför sig till samma verksamhet. Ange inte statsunderstöd från Utbildningsstyrelsen eller mottagarens egen finansiering här. Övrig finansiering minskar den andel av projektets godtagbara kostnader som återstår att täckas med statsunderstöd från Utbildningsstyrelsen och mottagarens egen finansiering."
                   }
                 },
                 {
@@ -1154,6 +2041,10 @@
                   "label": {
                     "fi": "Muu julkinen rahoitus",
                     "sv": "Annan offentlig finansiering"
+                  },
+                  "helpText": {
+                    "fi": "Ilmoita tässä samaan toimintaan saatava muu julkinen rahoitus. Älä ilmoita tässä Opetushallitukselta haettavaa valtionavustusta tai avustuksen saajan omarahoitusta. Muu rahoitus vähentää sitä osuutta hankkeen hyväksyttävistä kustannuksista, joka jää katettavaksi Opetushallituksen valtionavustuksella ja avustuksen saajan omarahoituksella.",
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
                   }
                 },
                 {
@@ -1197,6 +2088,10 @@
                   "label": {
                     "fi": "Yksityinen rahoitus",
                     "sv": "Privat finansiering"
+                  },
+                  "helpText": {
+                    "fi": "Ilmoita tässä samaan toimintaan saatava yksityinen rahoitus. Älä ilmoita tässä Opetushallitukselta haettavaa valtionavustusta tai avustuksen saajan omarahoitusta. Muu rahoitus vähentää sitä osuutta hankkeen hyväksyttävistä kustannuksista, joka jää katettavaksi Opetushallituksen valtionavustuksella ja avustuksen saajan omarahoituksella.",
+                    "sv": "SV-KÄÄNNÖS TÄHÄN"
                   }
                 }
               ],
@@ -1208,8 +2103,8 @@
                 "showColumnTitles": false
               },
               "label": {
-                "fi": "Hankkeen muu rahoitus",
-                "sv": "Övrig finansiering"
+                "fi": "Muu rahoitus samaan toimintaan",
+                "sv": "SV-KÄÄNNÖS TÄHÄN"
               }
             },
             {
@@ -1244,7 +2139,7 @@
                 },
                 "ophFinancingLabel": {
                   "fi": "Opetushallitukselta haettava rahoitus",
-                  "sv": "Finansiering som söks av Utbildningsstyrelsen"
+                  "sv": "Finansiering som söks hos Utbildningsstyrelsen"
                 },
                 "selfFinancingLabel": {
                   "fi": "Omarahoitus",
@@ -1259,13 +2154,106 @@
         "fi": "Talousarvio",
         "sv": "Budget"
       }
+    },
+    {
+      "fieldClass": "wrapperElement",
+      "id": "data-provision",
+      "fieldType": "theme",
+      "children": [
+        {
+          "fieldClass": "infoElement",
+          "id": "application-form-data-provision-intertitle",
+          "fieldType": "h3",
+          "params": {},
+          "text": {
+            "fi": "Opetushallituksen valtionavustustietojen toimittaminen Valtiokonttorin kansalliseen valtionavustuspalveluun",
+            "sv": "Utbildningsstyrelsen levererar uppgifter om statsunderstöden till Statskontorets nationella tjänst för statsunderstöd."
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "application-form-data-provision-info-1-general",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "Valtiokonttori julkaisee valtionavustuksia koskevia tietoja 1.10.2023 jälkeen hakuun tulleiden valtionavustusten osalta haeavustuksia.fi- ja tutkiavustuksia.fi-palveluissa (valtionavustuslain 32 §).",
+            "sv": "Statskontoret publicerar uppgifter om de statsunderstöd som utlysts efter 1.10.2023 i tjänsterna sokunderstod.fi och tutkiavustuksia.fi (Statsunderstödslagen 32 §)."
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "application-form-data-provision-info-2-publication",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "Hakijaa koskevia julkaistavia tietoja ovat valtionavustuksen hakijan nimi ja Y-tunnus, haetun ja myönnetyn avustuksen euromäärä, tieto kielteisestä avustuspäätöksestä sekä avustuksen käyttötarkoitus ja alueellinen kohdentuminen.",
+            "sv": "De uppgifter som publiceras om den sökande är namnet och FO-numret för den som ansöker om statsunderstöd, eurobeloppet för det ansökta och beviljade statsunderstödet, uppgiften om ett negativt statsunderstödsbeslut samt ändamålet med statsunderstödet och den regionala fördelningen."
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "application-form-data-provision-info-3-extra-publication",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "Palvelussa voidaan lisäksi julkaista muita valtionavustuksen hakemista, myöntämistä ja käyttöä koskevia julkisia tietoja.",
+            "sv": "I tjänsten kan man därtill publicera andra offentliga uppgifter om ansökan, beviljandet och användningen av statsunderstödet."
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "application-form-data-provision-link-1-haeavustuksia",
+          "fieldType": "link",
+          "params": {
+            "href": {
+              "fi": "https://www.haeavustuksia.fi/fi/",
+              "sv": "https://www.haeavustuksia.fi/sv/"
+            }
+          },
+          "text": {
+            "fi": "Haeavustuksia.fi",
+            "sv": "Sokunderstod.fi"
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "application-form-data-provision-info-4-empty-space",
+          "fieldType": "p",
+          "params": {},
+          "text": {
+            "fi": "",
+            "sv": ""
+          }
+        },
+        {
+          "fieldClass": "infoElement",
+          "id": "application-form-data-provision-link-2-tutkiavustuksia",
+          "fieldType": "link",
+          "params": {
+            "href": {
+              "fi": "https://www.tutkihallintoa.fi/valtionavustukset/",
+              "sv": "https://www.tutkihallintoa.fi/valtionavustukset/"
+            }
+          },
+          "text": {
+            "fi": "Tutkiavustuksia.fi",
+            "sv": "Tutkiavustuksia.fi (på finska)"
+          }
+        }
+      ],
+      "label": {
+        "fi": "Kansallinen valtionavustuspalvelu",
+        "sv": "Nationella statsunderstödstjänsten"
+      }
     }
   ],
   "rules": [
     {
       "type": "includeIf",
       "triggerId": "combined-effort",
-      "targetIds": ["other-organizations"],
+      "targetIds": [
+        "other-organizations-wrapper"
+      ],
       "params": {
         "triggerValue": "yes"
       }
@@ -1273,12 +2261,14 @@
     {
       "type": "includeIf",
       "triggerId": "continuation-project",
-      "targetIds": ["togglable-wrapper-cp"],
+      "targetIds": [
+        "togglable-wrapper-cp"
+      ],
       "params": {
         "triggerValue": "yes"
       }
     }
   ],
-  "created_at": "2020-06-10T11:47:04Z",
-  "updated_at": "2020-06-15T07:59:35Z"
+  "created_at": "2026-03-26T07:54:48Z",
+  "updated_at": "2026-10-09T10:22:18Z"
 }

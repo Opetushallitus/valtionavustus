@@ -12,7 +12,12 @@ import {
   waitUntilMinEmails,
 } from '../../utils/emails'
 import { waitForNewTab } from '../../utils/util'
-import { HAKIJA_URL, TEST_Y_TUNNUS, VIRKAILIJA_URL } from '../../utils/constants'
+import {
+  DEFAULT_TRUSTED_CONTACT,
+  HAKIJA_URL,
+  TEST_Y_TUNNUS,
+  VIRKAILIJA_URL,
+} from '../../utils/constants'
 import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
 import { MuutoshakemusValues } from '../../utils/types'
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
@@ -45,12 +50,16 @@ const expectYhteyshenkiloColumns = (
   }
 ) => {
   const sheet = workbook.Sheets['Hakemuksien vastaukset']
-  expect(sheet.L1.v).toEqual('Yhteyshenkilö')
-  expect(sheet.L2.v).toEqual(name)
-  expect(sheet.M1.v).toEqual('Sähköposti')
-  expect(sheet.M2.v).toEqual(email)
-  expect(sheet.N1.v).toEqual('Puhelinumero')
-  expect(sheet.N2.v).toEqual(phone)
+  const valueInColumn = (header: string) => {
+    const headerCell = Object.keys(sheet).find(
+      (cell) => /^[A-Z]+1$/.test(cell) && sheet[cell].v === header
+    )
+    expect(headerCell, `column "${header}"`).toBeDefined()
+    return sheet[headerCell!.replace(/1$/, '2')].v
+  }
+  expect(valueInColumn('Yhteyshenkilön nimi')).toEqual(name)
+  expect(valueInColumn('Yhteyshenkilön sähköpostiosoite')).toEqual(email)
+  expect(valueInColumn('Yhteyshenkilön puhelinnumero')).toEqual(phone)
 }
 
 test('When muutoshakemus enabled haku has been published, a hakemus has been submitted, and päätös has been sent', async ({
@@ -149,10 +158,10 @@ test('When muutoshakemus enabled haku has been published, a hakemus has been sub
     await expect(locators.contactPersonEmail).not.toHaveClass(/error/)
     await expect(locators.sendMuutospyyntoButton).toBeEnabled()
   })
-  await test.step('varayhteyshenkilö fields should not be shown (as its not in the form)', async () => {
-    await expect(locators.trustedContact.name).toBeHidden()
-    await expect(locators.trustedContact.email).toBeHidden()
-    await expect(locators.trustedContact.phone).toBeHidden()
+  await test.step('varayhteyshenkilö fields show the values from the hakemus', async () => {
+    await expect(locators.trustedContact.name).toHaveValue(DEFAULT_TRUSTED_CONTACT.name)
+    await expect(locators.trustedContact.email).toHaveValue(DEFAULT_TRUSTED_CONTACT.email)
+    await expect(locators.trustedContact.phone).toHaveValue(DEFAULT_TRUSTED_CONTACT.phone)
   })
 
   await test.step('submit muutoshakemus #1', async () => {

@@ -134,6 +134,7 @@ export const defaultValues = workerScopedDefaultValues.extend<DefaultValueFixtur
       vaCodes: codes,
       talousarviotili,
       selectionCriteria: [],
+      focusAreas: ['Oppimisen tuki'],
       raportointivelvoitteet: [],
       lainsaadanto: [],
       hakemusFields: [],
