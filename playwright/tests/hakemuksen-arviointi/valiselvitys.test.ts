@@ -10,7 +10,7 @@ import {
   lastOrFail,
   waitUntilMinEmails,
 } from '../../utils/emails'
-import { HAKIJA_URL } from '../../utils/constants'
+import { DEFAULT_TRUSTED_CONTACT, HAKIJA_URL } from '../../utils/constants'
 import { HakijaSelvitysPage } from '../../pages/hakija/hakijaSelvitysPage'
 import { selvitysTest } from '../../fixtures/selvitysTest'
 import { HakujenHallintaPage } from '../../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
@@ -88,8 +88,11 @@ selvitysTest.describe('Väliselvitys', () => {
         hakemusID
       )
       const email = lastOrFail(emails)
-      expect(email['to-address']).toHaveLength(2)
-      expect(email['to-address']).toEqual(['erkki.esimerkki@example.com', 'hakija-1424884@oph.fi'])
+      expect(email['to-address']).toEqual([
+        'erkki.esimerkki@example.com',
+        DEFAULT_TRUSTED_CONTACT.email,
+        'hakija-1424884@oph.fi',
+      ])
       expect(email['from-address']).toEqual('no-reply@valtionavustukset.oph.fi')
       expect(email.subject).toEqual('Väliselvityksenne on vastaanotettu')
       await expectIsFinnishOphEmail(email)

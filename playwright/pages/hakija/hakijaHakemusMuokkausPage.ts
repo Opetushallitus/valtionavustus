@@ -5,7 +5,7 @@ export function HakijaHakemusMuokkausPage(page: Page, lang: 'fi' | 'sv') {
     aloitaMuokkaus: page.getByRole('button', { name: 'Aloita yhteystietojen muokkaus' }),
     lopetaMuokkaus: page.getByRole('button', { name: 'Tallenna muutokset' }),
     hakija: {
-      nimi: page.getByRole('textbox', { name: 'Yhteyshenkilön nimi' }),
+      nimi: page.getByRole('textbox', { name: 'Yhteyshenkilön nimi', exact: true }),
     },
   }
   const locatorsSv = {

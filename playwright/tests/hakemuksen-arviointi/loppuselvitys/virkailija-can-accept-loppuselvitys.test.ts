@@ -9,7 +9,7 @@ import {
   getLoppuselvitysSubmittedNotificationEmails,
   getLinkToPaatosFromEmails,
 } from '../../../utils/emails'
-import { VIRKAILIJA_URL } from '../../../utils/constants'
+import { DEFAULT_TRUSTED_CONTACT, VIRKAILIJA_URL } from '../../../utils/constants'
 import { isSetupScenario, printSetupLinks } from '../../../utils/setupLinks'
 
 const CURRENT_ORG_EMAIL = 'hakija-1424884@oph.fi'
@@ -56,7 +56,12 @@ emailFieldTest(
     await loppuselvitysPage.locators.taloustarkastus.accept.click()
     await expect
       .poll(() => taloustarkastusReceiverValues(page))
-      .toEqual([CURRENT_ORG_EMAIL, 'LSyhteyshenkilo@example.com', 'erkki.esimerkki@example.com'])
+      .toEqual([
+        CURRENT_ORG_EMAIL,
+        'LSyhteyshenkilo@example.com',
+        'erkki.esimerkki@example.com',
+        DEFAULT_TRUSTED_CONTACT.email,
+      ])
     await loppuselvitysPage.locators.taloustarkastus.confirmAcceptance.click()
     await expect(loppuselvitysPage.locators.taloustarkastus.confirmAcceptance).toBeHidden()
     await expect(loppuselvitysPage.locators.taloustarkastettu).toBeVisible()
@@ -109,9 +114,9 @@ test('virkailija can accept loppuselvitys', async ({
     await loppuselvitysPage.locators.taloustarkastus.accept.click()
     await expect
       .poll(() => taloustarkastusReceiverValues(page))
-      .toEqual([CURRENT_ORG_EMAIL, 'erkki.esimerkki@example.com'])
+      .toEqual([CURRENT_ORG_EMAIL, 'erkki.esimerkki@example.com', DEFAULT_TRUSTED_CONTACT.email])
     await page.click('[data-test-id="taloustarkastus-add-receiver"]')
-    await page.getByTestId('taloustarkastus-receiver-2').fill(additionalReceiver)
+    await page.getByTestId('taloustarkastus-receiver-3').fill(additionalReceiver)
     await page.getByTestId('taloustarkastus-email-subject').fill(subject)
     await page.getByTestId('taloustarkastus-email-content').fill(content)
     await loppuselvitysPage.locators.taloustarkastus.confirmAcceptance.click()
@@ -130,7 +135,7 @@ test('virkailija can accept loppuselvitys', async ({
     await expect(replyTo).toContainText('santeri.horttanainen@reaktor.com')
     await expect(
       page.getByText(
-        `Vastaanottajathakija-1424884@oph.fi, erkki.esimerkki@example.com, ${additionalReceiver}`
+        `Vastaanottajathakija-1424884@oph.fi, erkki.esimerkki@example.com, ${DEFAULT_TRUSTED_CONTACT.email}, ${additionalReceiver}`
       )
     ).toBeVisible()
     await expect(page.getByText(`Aihe${subject}`)).toBeVisible()

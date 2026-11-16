@@ -3,7 +3,7 @@ import { selvitysTest as test } from '../../../fixtures/selvitysTest'
 import SelvitysTab from '../../../pages/virkailija/hakujen-hallinta/CommonSelvitysPage'
 import { getLoppuselvitysMuistutusviestiEmails, waitUntilMinEmails } from '../../../utils/emails'
 import moment from 'moment'
-import { HAKIJA_URL } from '../../../utils/constants'
+import { DEFAULT_TRUSTED_CONTACT, HAKIJA_URL } from '../../../utils/constants'
 import { LoppuselvitysPage } from '../../../pages/virkailija/hakujen-hallinta/LoppuselvitysPage'
 
 test('virkailija can send muistutusviesti for loppuselvitys', async ({
@@ -51,7 +51,7 @@ Loppuselvitys tulee palauttaa Opetushallituksen sähköiseen valtionapujärjeste
     const form = page.getByTestId('muistutusviesti-email').locator('form')
 
     await loppuselvitysPage.locators.muistutusviesti.addReceiver.click()
-    await loppuselvitysPage.locators.muistutusviesti.nthReceiver(2).fill(additionalReceiver)
+    await loppuselvitysPage.locators.muistutusviesti.nthReceiver(3).fill(additionalReceiver)
     await loppuselvitysPage.locators.muistutusviesti.subject.fill('')
     await loppuselvitysPage.locators.muistutusviesti.content.fill(content)
     await expect.poll(() => isValid(form), 'Form should be invalid').toBeFalsy()
@@ -77,11 +77,12 @@ ${footer}`)
     expect(email.bcc).toBeNull()
     expect(email.cc).toEqual([])
     expect(email['reply-to']).toBe('santeri.horttanainen@reaktor.com')
-    expect(email['to-address']).toHaveLength(3)
+    expect(email['to-address']).toHaveLength(4)
     expect(email['to-address']).toEqual(
       expect.arrayContaining([
         'hakija-1424884@oph.fi',
         answers.contactPersonEmail,
+        DEFAULT_TRUSTED_CONTACT.email,
         additionalReceiver,
       ])
     )
@@ -94,7 +95,7 @@ ${footer}`)
     await page.getByTestId('open-email-0').click()
     await expect(
       page.getByText(
-        'Vastaanottajathakija-1424884@oph.fi, erkki.esimerkki@example.com, karri@kojootti.dog'
+        `Vastaanottajathakija-1424884@oph.fi, erkki.esimerkki@example.com, ${DEFAULT_TRUSTED_CONTACT.email}, karri@kojootti.dog`
       )
     ).toBeVisible()
     await expect(page.getByText(`Aihe${subject}`)).toBeVisible()
