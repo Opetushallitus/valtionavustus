@@ -54,9 +54,19 @@ test(`hakemusten arviointi additional info`, async ({
     await hakemustenArviointiPage.page
       .locator('[aria-label="Lisää valmistelija hakemukselle"]')
       .click()
-    await hakemustenArviointiPage.page
-      .locator('[aria-label="Lisää _ valtionavustus valmistelijaksi"]')
-      .click()
+    // The previous save's success indicator can still be visible during the
+    // debounced presenter save. Wait for this assignment before navigating away.
+    const [presenterSave] = await Promise.all([
+      page.waitForResponse(
+        (response) =>
+          response.url().includes(`/api/avustushaku/${avustushakuID}/hakemus/`) &&
+          response.url().endsWith('/arvio') &&
+          response.request().method() === 'POST' &&
+          response.request().postDataJSON()['presenter-role-id'] != null
+      ),
+      page.locator('[aria-label="Lisää _ valtionavustus valmistelijaksi"]').click(),
+    ])
+    expect(presenterSave.ok()).toBeTruthy()
     await hakemustenArviointiPage.waitForSave()
     await hakemustenArviointiPage.closeUkotusModal()
     const haunTiedotPage = await hakemustenArviointiPage.header.switchToHakujenHallinta()
