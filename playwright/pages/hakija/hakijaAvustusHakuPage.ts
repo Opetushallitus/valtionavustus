@@ -1,7 +1,7 @@
 import { expect, Page } from '@playwright/test'
 
 import { navigateHakija } from '../../utils/navigate'
-import { dummyExcelPath, TEST_Y_TUNNUS } from '../../utils/constants'
+import { DEFAULT_TRUSTED_CONTACT, dummyExcelPath, TEST_Y_TUNNUS } from '../../utils/constants'
 import { expectQueryParameter, expectToBeDefined } from '../../utils/util'
 import { getHakemusUrlFromEmail, pollUntilNewHakemusEmailArrives } from '../../utils/emails'
 import { Budget, fillBudget } from '../../utils/budget'
@@ -90,10 +90,14 @@ export function HakijaAvustusHakuPage(page: Page) {
     return HakijaHakemusMuokkausPage(page, lang)
   }
 
-  async function selectFromDropdown(index: number, text: string) {
-    await page.locator(`#koodistoField-${index}_input`).getByRole('textbox').fill(text)
+  async function selectFromKoodistoDropdown(fieldId: string, text: string) {
+    await page.locator(`[id='${fieldId}_input']`).getByRole('textbox').fill(text)
     await page.press('body', 'ArrowDown')
     await page.press('body', 'Enter')
+  }
+
+  async function selectFromDropdown(index: number, text: string) {
+    await selectFromKoodistoDropdown(`koodistoField-${index}`, text)
   }
 
   async function selectMaakuntaFromDropdown(text: string) {
@@ -196,10 +200,28 @@ export function HakijaAvustusHakuPage(page: Page) {
       return answers.signatories
     }
 
+    const isInForm = async (selector: string) => (await page.locator(selector).count()) > 0
+    const fillIfInForm = async (selector: string, value: string) => {
+      if (await isInForm(selector)) {
+        await page.fill(selector, value)
+      }
+    }
+    const selectOptionIfInForm = async (optionId: string) => {
+      const option = page.locator(`[id='${optionId}']`)
+      if ((await option.count()) > 0 && !(await option.isChecked())) {
+        await page.click(`[for='${optionId}']`)
+      }
+    }
+
     await fillSignatories(getSignatoriesOrDefault())
 
-    if (answers.trustedContact) {
-      await fillTrustedContact(answers.trustedContact)
+    const trustedContact =
+      answers.trustedContact ??
+      ((await isInForm("label[for='trusted-contact-name'] .required"))
+        ? DEFAULT_TRUSTED_CONTACT
+        : undefined)
+    if (trustedContact) {
+      await fillTrustedContact(trustedContact)
     }
 
     const kuntaRadio = page.locator('#radioButton-0\\.radio\\.0')
@@ -215,11 +237,16 @@ export function HakijaAvustusHakuPage(page: Page) {
 
     await page.click("[id='koodistoField-1_input']")
     await selectMaakuntaFromDropdown(lang === 'fi' ? 'Kainuu' : 'Åland')
-    await selectKotikuntaFromDropdown(lang === 'fi' ? 'Sotkamo' : 'Mariehamn')
+    const kotikunta = lang === 'fi' ? 'Sotkamo' : 'Mariehamn'
+    if (await isInForm("[id='avustushakemusAlueKunnat_input']")) {
+      await selectFromKoodistoDropdown('avustushakemusAlueKunnat', kotikunta)
+    } else {
+      await selectKotikuntaFromDropdown(kotikunta)
+    }
     await locators.form.bank.iban.fill('FI95 6682 9530 0087 65')
     await locators.form.bank.bic.fill('OKOYFIHH')
-    await page.fill('#textField-2', '2')
-    await page.fill('#textField-1', '20')
+    await fillIfInForm('#textField-2', '2')
+    await fillIfInForm('#textField-1', '20')
     await page.fill('#project-nutshell', 'Projekti pähkinänkuoressa')
     if (answers.projectName) {
       await tryToFillProjectName(answers.projectName)
@@ -227,10 +254,12 @@ export function HakijaAvustusHakuPage(page: Page) {
 
     await ensureLanguageSelected(lang)
 
-    await page.click("[for='checkboxButton-0.checkbox.0']")
-    await page
-      .getByText(lang === 'fi' ? 'Opetuksen lisääminen' : 'Ordnande av extra undervisning')
-      .click()
+    await selectOptionIfInForm('checkboxButton-0.checkbox.0')
+    if (await isInForm("[for='checkboxButton-1.checkbox.0']")) {
+      await page
+        .getByText(lang === 'fi' ? 'Opetuksen lisääminen' : 'Ordnande av extra undervisning')
+        .click()
+    }
     await page.fill(
       "[id='project-description.project-description-1.goal']",
       'Tarvitsemme kuutio tonneittain rahaa jotta voimme kylpeä siinä.'
@@ -243,16 +272,44 @@ export function HakijaAvustusHakuPage(page: Page) {
       "[id='project-description.project-description-1.result']",
       'Koko budjetti käytetään ja lisää aiotaan hakea.'
     )
-    await page.fill(
+    await fillIfInForm(
       "[id='project-effectiveness']",
       'Hanke vaikuttaa ylempään ja keskikorkeaan johtoportaaseen.'
     )
-    await page.fill("[id='project-begin']", '13.03.1992')
-    await page.fill("[id='project-end']", '13.03.2032')
-    await page.click("[for='vat-included.radio.0']")
+    await fillIfInForm("[id='project-begin']", '13.03.1992')
+    await fillIfInForm("[id='project-end']", '13.03.2032')
+    await selectOptionIfInForm('vat-included.radio.0')
     await page.fill("[id='personnel-costs-row.description']", 'Pieninä seteleinä kiitos.')
     await page.fill("[id='personnel-costs-row.amount']", '6942066')
     await page.fill("[id='self-financing-amount']", '1')
+
+    await selectOptionIfInForm('applicant-instructions-confirmation.radio.0')
+    await fillIfInForm('#official-address', 'Testikatu 1')
+    await fillIfInForm('#official-postcode', '00100')
+    await fillIfInForm('#official-district', 'Helsinki')
+    await selectOptionIfInForm('declaration-signatories.radio.0')
+    await selectOptionIfInForm('declaration-sanctions.radio.0')
+    await selectOptionIfInForm('combined-effort.radio.1')
+    await selectOptionIfInForm('focus-areas.checkbox.0')
+    for (const fieldId of [
+      'project-integration-to-basic-operations',
+      'project-need-and-training-needs',
+      'project-goal-monitoring',
+      'project-outputs-and-dissemination',
+      'project-use-of-previous-development-work',
+      'project-equipment-procurements',
+      'project-scope-and-multidisciplinarity',
+      'project-pupil-participation-measures',
+      'project-evaluation-research-and-studies',
+      'project-dissemination-measures',
+      'project-sustainability-after-grant-period',
+      'project-long-term-development',
+      'project-pupil-involvement-and-work',
+      'project-curriculum-support',
+      'project-results-dissemination-and-reuse',
+    ]) {
+      await fillIfInForm(`[id='${fieldId}']`, 'Kuvaus hankkeen toteutuksesta.')
+    }
 
     if (answers.hakemusFields?.length) {
       await Promise.all(

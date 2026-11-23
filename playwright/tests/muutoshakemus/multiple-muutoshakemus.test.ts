@@ -1,11 +1,24 @@
 import { expect } from '@playwright/test'
-import { muutoshakemusTest as test } from '../../fixtures/muutoshakemusTest'
+import { muutoshakemusTest } from '../../fixtures/muutoshakemusTest'
 import { HakemustenArviointiPage } from '../../pages/virkailija/hakemusten-arviointi/hakemustenArviointiPage'
 import { HakijaMuutoshakemusPage } from '../../pages/hakija/hakijaMuutoshakemusPage'
 import { MuutoshakemusValues } from '../../utils/types'
 import moment from 'moment/moment'
 import { navigate } from '../../utils/navigate'
 import { createMuutoshakemusTab } from '../../pages/virkailija/hakemusten-arviointi/MuutoshakemusTab'
+
+const test = muutoshakemusTest.extend({
+  answers: ({ answers }, use) =>
+    use({
+      ...answers,
+      hakemusFields: [{ fieldId: 'project-end', answer: '20.04.4200' }],
+    }),
+  hakuProps: ({ hakuProps }, use) =>
+    use({
+      ...hakuProps,
+      hakemusFields: [{ fieldId: 'project-end', type: 'textField' }],
+    }),
+})
 
 const muutoshakemus1: MuutoshakemusValues = {
   jatkoaika: moment(new Date()).add(2, 'months').add(1, 'days').locale('fi'),

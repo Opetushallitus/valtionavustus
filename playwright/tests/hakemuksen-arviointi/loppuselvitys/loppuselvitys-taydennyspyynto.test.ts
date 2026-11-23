@@ -13,7 +13,7 @@ import {
 } from '../../../utils/emails'
 import { HakijaSelvitysPage } from '../../../pages/hakija/hakijaSelvitysPage'
 import { navigate } from '../../../utils/navigate'
-import { swedishAnswers, VIRKAILIJA_URL } from '../../../utils/constants'
+import { DEFAULT_TRUSTED_CONTACT, swedishAnswers, VIRKAILIJA_URL } from '../../../utils/constants'
 import { setHakemusOrganization } from '../../../utils/hakemus'
 import { Answers } from '../../../utils/types'
 import { expectIsFinnishOphEmail } from '../../../utils/email-signature'
@@ -187,7 +187,7 @@ test('can send taydennyspyynto for loppuselvitys', async ({
     await page.getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-add-receiver').click()
     const extraEmail = 'erkki.esimerkki2@example.com'
     await page
-      .getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-receiver-2')
+      .getByTestId('loppuselvitys-taydennyspyynto-asiatarkastus-receiver-3')
       .fill(extraEmail)
     const subject = 'Täydennyspyyntö avustushaulle'
     await page
@@ -200,7 +200,9 @@ test('can send taydennyspyynto for loppuselvitys', async ({
     await expect(formHeading).toBeHidden()
     await page.getByTestId('open-email-0').click()
     await expect(
-      page.getByText(`Vastaanottajat${orgEmail}, ${contactEmail}, ${extraEmail}`)
+      page.getByText(
+        `Vastaanottajat${orgEmail}, ${contactEmail}, ${DEFAULT_TRUSTED_CONTACT.email}, ${extraEmail}`
+      )
     ).toBeVisible()
     await expect(page.getByText(`Aihe${subject}`)).toBeVisible()
     const emailsAfterSending = await waitUntilMinEmails(
@@ -265,6 +267,7 @@ Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avu
     )
     expect(email['to-address']).toStrictEqual([
       'erkki.esimerkki@example.com',
+      DEFAULT_TRUSTED_CONTACT.email,
       'hakija-1424884@oph.fi',
     ])
 
@@ -321,7 +324,9 @@ Hakemuksen loppuselvitystä on täydennetty: ${VIRKAILIJA_URL}/avustushaku/${avu
     await page.getByTestId('loppuselvitys-taydennyspyynto-taloustarkastus-submit').click()
     await expect(formHeading).toBeHidden()
     await page.getByTestId('open-email-0').nth(1).click()
-    await expect(page.getByText(`Vastaanottajat${orgEmail}, ${contactEmail}`)).toBeVisible()
+    await expect(
+      page.getByText(`Vastaanottajat${orgEmail}, ${contactEmail}, ${DEFAULT_TRUSTED_CONTACT.email}`)
+    ).toBeVisible()
     await expect(page.getByText(`Aihe${subject}`)).toBeVisible()
     const emailsAfter = await waitUntilMinEmails(
       getLoppuselvitysTaydennyspyyntoTaloustarkastusEmails,

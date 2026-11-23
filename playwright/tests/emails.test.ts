@@ -8,7 +8,7 @@ import {
   lastOrFail,
   waitUntilMinEmails,
 } from '../utils/emails'
-import { HAKIJA_URL } from '../utils/constants'
+import { DEFAULT_TRUSTED_CONTACT, HAKIJA_URL } from '../utils/constants'
 import { selectors, expect } from '@playwright/test'
 import { HakujenHallintaPage } from '../pages/virkailija/hakujen-hallinta/hakujenHallintaPage'
 import { HakijaMuutoshakemusPage } from '../pages/hakija/hakijaMuutoshakemusPage'
@@ -106,8 +106,8 @@ test('Täydennyspyyntö email', async ({
   expect(emails[0]['to-address']).toContain(answers.contactPersonEmail)
   expect(emails[0]['to-address']).toContain('hakija-1424884@oph.fi')
   expect(emails[0]['bcc']).toStrictEqual('santeri.horttanainen@reaktor.com')
-  expect(emails[0].cc).toHaveLength(3)
   expect(emails[0].cc).toStrictEqual([
+    DEFAULT_TRUSTED_CONTACT.email,
     'hakija-1424884@oph.fi',
     answers.signatories![0].email,
     answers.signatories![1].email,
@@ -188,6 +188,7 @@ const expectedSentToAddresses = [
   contactPersonEmail,
   signatories[0].email,
   signatories[1].email,
+  DEFAULT_TRUSTED_CONTACT.email,
   'hakija-1424884@oph.fi',
 ].sort()
 
@@ -282,6 +283,7 @@ test('sends emails to correct contact and hakemus emails', async ({
         newContactPersonEmail,
         signatories[0].email,
         signatories[1].email,
+        DEFAULT_TRUSTED_CONTACT.email,
         'hakija-1424884@oph.fi',
       ].sort()
     )
@@ -294,7 +296,11 @@ test('sends emails to correct contact and hakemus emails', async ({
     const emails = await waitUntilMinEmails(getValiselvitysEmails, 1, hakemusID)
     expect(emails).toHaveLength(1)
     const email = lastOrFail(emails)
-    expect(email['to-address']).toEqual([newContactPersonEmail, 'hakija-1424884@oph.fi'])
+    expect(email['to-address']).toEqual([
+      newContactPersonEmail,
+      DEFAULT_TRUSTED_CONTACT.email,
+      'hakija-1424884@oph.fi',
+    ])
     expect(email.bcc).toBeNull()
     expect(email.cc).toStrictEqual([])
     await expectIsFinnishOphEmail(email)
@@ -305,7 +311,11 @@ test('sends emails to correct contact and hakemus emails', async ({
     const emails = await waitUntilMinEmails(getLoppuselvitysEmails, 1, hakemusID)
     expect(emails).toHaveLength(1)
     const email = lastOrFail(emails)
-    expect(email['to-address']).toEqual([newContactPersonEmail, 'hakija-1424884@oph.fi'])
+    expect(email['to-address']).toEqual([
+      newContactPersonEmail,
+      DEFAULT_TRUSTED_CONTACT.email,
+      'hakija-1424884@oph.fi',
+    ])
     expect(email.bcc).toBeNull()
     expect(email.cc).toStrictEqual([])
     await expectIsFinnishOphEmail(email)

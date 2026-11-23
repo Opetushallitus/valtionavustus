@@ -40,6 +40,7 @@ export interface HakuProps {
   hankkeenAlkamispaiva: string
   hankkeenPaattymispaiva: string
   selectionCriteria: string[]
+  focusAreas: string[]
   raportointivelvoitteet: Raportointivelvoite[]
   hakemusFields: Field[]
   jaossaOlevaSumma?: number
@@ -210,6 +211,7 @@ export class HakujenHallintaPage {
     hankkeenAlkamispaiva,
     hankkeenPaattymispaiva,
     selectionCriteria,
+    focusAreas,
     arvioituMaksupaiva,
     lainsaadanto,
     jaossaOlevaSumma,
@@ -284,6 +286,14 @@ export class HakujenHallintaPage {
         await this.page.getByTestId('add-selection-criteria').click()
         await this.page.fill(`#selection-criteria-${i}-fi`, selectionCriteria[i])
         await this.page.fill(`#selection-criteria-${i}-sv`, selectionCriteria[i])
+      }
+      for (let i = 0; i < focusAreas.length; i++) {
+        const focusAreaFi = this.page.locator(`#focus-area-${i}-fi`)
+        if ((await focusAreaFi.count()) === 0) {
+          await this.page.getByRole('button', { name: 'Lisää uusi painopistealue' }).click()
+        }
+        await focusAreaFi.fill(focusAreas[i])
+        await this.page.locator(`#focus-area-${i}-sv`).fill(focusAreas[i])
       }
 
       await this.fillRaportointiVelvoitteet(raportointivelvoitteet)
