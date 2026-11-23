@@ -44,3 +44,5 @@ deploy-scripts/dist/
 /.lsp
 /.clj-kondo
 docs/superpowers/
+# Database dump written by scripts/psql/pg_dump-va-<env>.sh (task dump:dev)
+/valtionavustus-*.dump

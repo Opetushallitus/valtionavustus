@@ -19,14 +19,14 @@ Domain concepts and user roles are in `README.md` (Finnish).
 
 ## Commands
 
-Run `task --list` to see all commands, including `task setup:*`, which seeds data for manual testing.
+Run `task` to see all commands in workflow order, including `task setup:*`, which seeds data for manual testing. Pass arguments to the wrapped script after `--` (`task start -- --uberjar`); `task --summary <task>` lists the arguments a task takes.
 
 ```bash
-task dev                         # full local env in tmux (db, webpack watch, backend, mocks)
-task test                        # CDK tests + Playwright E2E (needs `task dev` running)
+task start                       # full local env in tmux (db, webpack watch, backend, mocks)
+task test                        # CDK tests + Playwright E2E (needs `task start` running)
 npm run playwright:test          # Playwright only
-npm run prettier-fix             # TS/JS formatting
-./lein cljfmt fix                # Clojure formatting
+task lint:fix                    # TS/JS formatting (prettier)
+task lint:fix-clojure            # Clojure formatting (cljfmt)
 ```
 
 Always use `./lein` (pinned version), not a global `lein`. There are no Clojure unit tests. Tests are Playwright E2E and CDK only.
@@ -34,7 +34,7 @@ Always use `./lein` (pinned version), not a global `lein`. There are no Clojure 
 ## Code style
 
 - **Domain terms stay in Finnish** (hakemus, avustushaku, virkailija, …) in function names, variables, and DB columns. Do not translate them: `hae-hakemus`, not `get-application`. Generic technical terms (user, session, token) can stay in English.
-- Run `./lein cljfmt fix` and `npm run prettier-fix` before committing.
+- Run `task lint:fix-clojure` and `task lint:fix` before committing.
 - `project.clj` has `:pedantic? :abort`, so all dependency versions must be explicit.
 - React components use PascalCase filenames; hooks and utilities use camelCase.
 

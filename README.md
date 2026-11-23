@@ -57,7 +57,7 @@ Haun roolista huolimatta kuka tahansa VA-käyttäjä voi kommentoida hakemuksia.
 Docker ajaa backendin, tietokannan ja muut palvelut, joten niiden työkaluketjua
 (Java, Leiningen, PostgreSQL) ei tarvita isäntäkoneella.
 
-**Pakolliset (`task dev`):**
+**Pakolliset (`task start`):**
 
 * [Docker](https://www.docker.com/) ja Docker Compose
 * [Task](https://taskfile.dev/) (go-task) – ajaa kehitysympäristön ja testit
@@ -83,7 +83,9 @@ https://trivy.util.yleiskayttoiset.opintopolku.fi/muut.html
 Kehitystyössä hyödyllisiä työkaluja:
 
 Kehitysympäristö ja testit ajetaan [Taskilla](https://taskfile.dev); komennot
-näkee komennolla `task --list` (ks. [`Taskfile.yml`](Taskfile.yml)). Repositoryn
+näkee komennolla `task` (ks. [`taskfile.yml`](taskfile.yml)). Skriptille annettavat
+argumentit kirjoitetaan `--`:n jälkeen (esim. `task start -- --uberjar`), ja
+`task --summary <task>` näyttää, mitä argumentteja komento ottaa. Repositoryn
 `lein`-skripti takaa lukitun Leiningen-version.
 
 ### Suositeltu hakemistojärjestely
@@ -101,7 +103,7 @@ Missä `valtionavustus` ja `valtionavustus-secret` ovat projektin git-repository
 
 ### Tietokanta
 
-Tietokanta ajetaan Docker Composella osana kehitysympäristöä (`task dev`),
+Tietokanta ajetaan Docker Composella osana kehitysympäristöä (`task start`),
 tai yksinään:
 
 ``` shell
@@ -118,7 +120,7 @@ pg_restore --user va -h localhost -v --clean --if-exists --no-acl --no-owner --d
 
 ### Frontend
 
-Frontendin assetit buildataan webpackilla. `task dev` käynnistää buildin
+Frontendin assetit buildataan webpackilla. `task start` käynnistää buildin
 automaattisesti ja buildaa uudelleen lähdekoodin muuttuessa. Buildin voi
 ajaa myös käsin repositoryn juuressa:
 

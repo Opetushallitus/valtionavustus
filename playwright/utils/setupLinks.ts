@@ -10,7 +10,7 @@
  * The only setup-specific logic that lives in a test is a single guarded line; the state
  * itself is produced by the test's existing fixtures and steps (the single source of truth).
  *
- * See scripts/setup-manual-test.sh and the `setup:*` tasks in Taskfile.yml.
+ * See scripts/setup-manual-test.sh and the `setup:*` tasks in taskfile.yml.
  */
 
 import * as fs from 'node:fs'

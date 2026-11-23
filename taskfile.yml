@@ -1,0 +1,162 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+# The discoverable front door to this repo's scripts: run `task` to list them.
+# Tasks only wrap scripts. Logic, environment and secrets stay in the scripts.
+#
+# Passing arguments: {{.CLI_ARGS}} is everything you type after `--`, forwarded
+# to the wrapped script as-is. For example
+#   task start -- --uberjar
+# runs
+#   ./start-local-env.sh --uberjar
+# Without `--`, {{.CLI_ARGS}} is empty and the script runs with no arguments.
+# Only tasks whose command ends in {{.CLI_ARGS}} accept arguments.
+# Those tasks list their arguments and examples in `summary:`; read it with
+#   task --summary <task>
+
+version: "3"
+
+tasks:
+  start:
+    desc: Start the local dev environment in tmux (wraps start-local-env.sh)
+    summary: |
+      Start the local dev environment in tmux: db, webpack watch, backend, mocks.
+
+      Arguments after --:
+        --uberjar       run the production uberjar build: slower, no hot-reload.
+                        The default runs with lein and hot-reload.
+
+      --uberjar must be the first argument. Anything else is ignored and the
+      default mode starts.
+
+      Example: task start -- --uberjar
+    cmd: ./start-local-env.sh {{.CLI_ARGS}}
+  repl:
+    desc: Connect a Clojure REPL to the running local server, needs a JDK (wraps repl-connect.sh)
+    cmd: ./repl-connect.sh
+
+  lint:
+    desc: Check prettier and cljfmt formatting, read-only, needs a JDK (wraps deploy-scripts/04-lint.sh)
+    cmd: ./deploy-scripts/04-lint.sh
+  lint:fix:
+    desc: Auto-fix TS/JS formatting with prettier, modifies files (wraps fix-lint.sh)
+    cmd: ./scripts/fix-lint.sh
+  lint:fix-clojure:
+    desc: Auto-fix Clojure formatting, modifies files, needs a JDK (wraps fix_clojure_formatting.sh)
+    cmd: ./scripts/fix_clojure_formatting.sh
+
+  test:
+    desc: Run CDK tests and Playwright E2E tests, needs `task start` running (wraps run-tests.sh)
+    summary: |
+      Run the CDK tests, then the Playwright E2E tests against the running
+      dev environment (start it first with `task start`).
+
+      Arguments after -- go through `npm run playwright:test`:
+        <file>              run only matching test files; passed straight on
+        -- <flags>          Playwright flags need a second `--`, otherwise npm
+                            swallows them
+
+      Examples:
+        task test -- hakulomake/look-and-feel.test.ts
+        task test -- -- --grep "name"
+      For the Playwright UI use `task test:ui`.
+    cmd: ./run-tests.sh {{.CLI_ARGS}}
+  test:ui:
+    desc: Open the Playwright UI, needs `task start` running (wraps run_isolated_system_tests.sh --ui)
+    summary: |
+      Open the Playwright UI against the running dev environment. Skips the
+      CDK tests.
+
+      Arguments after -- are passed to `playwright test` after --ui; flags work
+      here without a second `--`:
+        <file>          load only matching test files
+        --grep "name"   load only tests whose title matches
+
+      Example: task test:ui -- --grep "name"
+    cmd: ./run_isolated_system_tests.sh --ui {{.CLI_ARGS}}
+  test:update-snapshots:
+    desc: Regenerate the Linux Playwright snapshots in Docker (wraps update-linux-snapshots.sh)
+    summary: |
+      Build the app and Playwright images, then rerun the snapshot tests in
+      Docker with --update-snapshots. A fixed list of snapshot test files is
+      always included.
+
+      Arguments after -- are added to that `playwright test` command:
+        <file>          also run this test file
+        --grep "name"   only tests whose title matches
+
+      Example: task test:update-snapshots -- --grep "name"
+    cmd: ./scripts/update-linux-snapshots.sh {{.CLI_ARGS}}
+
+  setup:hakemus:
+    desc: Seed a published avustushaku + open application form, print links for manual testing
+    cmd: ./scripts/setup-manual-test.sh hakemus
+  setup:muutoshakemus:
+    desc: Seed an accepted hakemus with päätös sent + muutoshakemus link, print links
+    cmd: ./scripts/setup-manual-test.sh muutoshakemus
+  setup:yhteishanke-muutoshakemus:
+    desc: Seed an accepted yhteishanke hakemus ready for osapuolimuutos, print links
+    cmd: ./scripts/setup-manual-test.sh yhteishanke-muutoshakemus
+  setup:paatos:
+    desc: Seed an accepted haku with päätös + submitted loppuselvitys, print links
+    cmd: ./scripts/setup-manual-test.sh paatos
+
+  psql:local:
+    desc: Open a psql shell to the local database (wraps psql-local.sh)
+    cmd: ./scripts/psql-local.sh
+  psql:dev:
+    desc: Open a psql shell to the dev database through a tunnel (wraps psql-va-dev.sh)
+    summary: |
+      Open a psql shell to the dev database through a tunnel.
+      Needs Docker for the tunnel, an AWS SSO session, psql and jq on the host,
+      and the valtionavustus-secret repo checked out next to this one.
+
+      Arguments after -- are passed to psql:
+        -c "<sql>"      run one statement and exit
+        -f <file>       run the statements in a file
+
+      Example: task psql:dev -- -c "select now()"
+    cmd: ./scripts/psql/psql-va-dev.sh {{.CLI_ARGS}}
+  psql:qa:
+    desc: Open a psql shell to the QA database through a tunnel (wraps psql-va-qa.sh)
+    summary: |
+      Open a psql shell to the QA database through a tunnel.
+      Needs Docker for the tunnel, an AWS SSO session, psql and jq on the host,
+      and the valtionavustus-secret repo checked out next to this one.
+
+      Arguments after -- are passed to psql:
+        -c "<sql>"      run one statement and exit
+        -f <file>       run the statements in a file
+
+      Example: task psql:qa -- -c "select now()"
+    cmd: ./scripts/psql/psql-va-qa.sh {{.CLI_ARGS}}
+  psql:prod:
+    desc: Open a psql shell to the PRODUCTION database through a tunnel (wraps psql-va-prod.sh)
+    summary: |
+      Open a psql shell to the PRODUCTION database through a tunnel.
+      Needs Docker for the tunnel, an AWS SSO session, psql and jq on the host,
+      and the valtionavustus-secret repo checked out next to this one.
+
+      Arguments after -- are passed to psql:
+        -c "<sql>"      run one statement and exit
+        -f <file>       run the statements in a file
+
+      Example: task psql:prod -- -c "select now()"
+    cmd: ./scripts/psql/psql-va-prod.sh {{.CLI_ARGS}}
+
+  dump:dev:
+    desc: Dump the dev database to valtionavustus-dev.dump (wraps pg_dump-va-dev.sh)
+    summary: |
+      Dump the dev database through a tunnel into valtionavustus-dev.dump in
+      the repo root (gitignored). Takes no arguments.
+      Needs Docker for the tunnel, an AWS SSO session, pg_dump and jq on the
+      host, and the valtionavustus-secret repo checked out next to this one.
+    cmd: ./scripts/psql/pg_dump-va-dev.sh
+
+  pending-commits:
+    desc: List commits not yet deployed to dev, QA and prod (wraps pending-commits.sh)
+    cmd: ./scripts/pending-commits.sh
+
+  default:
+    desc: List all tasks in workflow order - what plain `task` runs
+    silent: true
+    cmd: task --list --sort none

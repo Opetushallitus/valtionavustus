@@ -41,7 +41,7 @@ esac
 # Seeders need the local dev environment running (same as the test suite).
 if ! curl --silent --fail --max-time 5 http://localhost:8081/api/healthcheck > /dev/null 2>&1; then
   echo "ERROR: dev environment is not running (http://localhost:8081/api/healthcheck unreachable)."
-  echo "Start it first with: task dev"
+  echo "Start it first with: task start"
   exit 1
 fi
 
