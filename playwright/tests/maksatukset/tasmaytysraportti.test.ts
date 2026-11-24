@@ -36,7 +36,7 @@ async function downloadToBlob(download: Download): Promise<Blob> {
   for await (const buf of stream) {
     downloadBufs.push(buf)
   }
-  return new Blob(downloadBufs)
+  return new Blob([Buffer.concat(downloadBufs)])
 }
 
 async function sendTasmaytysraporttiEmail(page: Page) {

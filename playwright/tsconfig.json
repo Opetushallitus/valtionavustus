@@ -8,6 +8,7 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "noEmit": true,
+    "types": ["node"],
     "paths": {
       "soresu-form/*": ["../soresu-form/*"]
     }
