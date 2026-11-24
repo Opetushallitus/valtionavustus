@@ -33,38 +33,37 @@ async function expectFirstVisitListsEveryMissingAnswer(
   await expect(errorSummaryToggle).toHaveText(summaryOnFirstVisit)
 }
 
-test('the error summary lists every missing answer of a väliselvitys while sending is disabled', async ({
+test('the error summary lists every missing answer of a väliselvitys and a loppuselvitys while sending is disabled', async ({
   page,
   avustushakuID,
   acceptedHakemus,
   väliselvityspyyntöSent,
-}) => {
-  expect(väliselvityspyyntöSent).toBeDefined()
-  const valiselvitysPage = ValiselvitysPage(page)
-  await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, acceptedHakemus.hakemusID)
-  const valiselvitysFormUrl = await valiselvitysPage.linkToHakemus.getAttribute('href')
-  if (!valiselvitysFormUrl) throw Error('valiselvitys form url not found')
-  await navigate(page, valiselvitysFormUrl)
-
-  await expectFirstVisitListsEveryMissingAnswer(page, {
-    id: 'project-name',
-    error: 'Hankkeen nimi: Pakollinen tieto',
-  })
-})
-
-test('the error summary lists every missing answer of a loppuselvitys while sending is disabled', async ({
-  page,
-  avustushakuID,
-  acceptedHakemus,
   loppuselvityspyyntöSent,
 }) => {
+  expect(väliselvityspyyntöSent).toBeDefined()
   expect(loppuselvityspyyntöSent).toBeDefined()
-  const loppuselvitysPage = LoppuselvitysPage(page)
-  await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, acceptedHakemus.hakemusID)
-  await navigate(page, await loppuselvitysPage.getSelvitysFormUrl())
 
-  await expectFirstVisitListsEveryMissingAnswer(page, {
-    id: 'textArea-0',
-    error: 'Lyhyt yhteenveto hankkeesta: Pakollinen tieto',
+  await test.step('väliselvitys', async () => {
+    const valiselvitysPage = ValiselvitysPage(page)
+    await valiselvitysPage.navigateToValiselvitysTab(avustushakuID, acceptedHakemus.hakemusID)
+    const valiselvitysFormUrl = await valiselvitysPage.linkToHakemus.getAttribute('href')
+    if (!valiselvitysFormUrl) throw Error('valiselvitys form url not found')
+    await navigate(page, valiselvitysFormUrl)
+
+    await expectFirstVisitListsEveryMissingAnswer(page, {
+      id: 'project-name',
+      error: 'Hankkeen nimi: Pakollinen tieto',
+    })
+  })
+
+  await test.step('loppuselvitys', async () => {
+    const loppuselvitysPage = LoppuselvitysPage(page)
+    await loppuselvitysPage.navigateToLoppuselvitysTab(avustushakuID, acceptedHakemus.hakemusID)
+    await navigate(page, await loppuselvitysPage.getSelvitysFormUrl())
+
+    await expectFirstVisitListsEveryMissingAnswer(page, {
+      id: 'textArea-0',
+      error: 'Lyhyt yhteenveto hankkeesta: Pakollinen tieto',
+    })
   })
 })

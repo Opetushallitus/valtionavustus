@@ -76,6 +76,14 @@ async function waitForFixtureAttachmentUploads(page: Page) {
   await expect(page.locator('#pending-changes')).toHaveText('false')
 }
 
+function heldUntilReleased() {
+  let release = () => {}
+  const released = new Promise<void>((resolve) => {
+    release = resolve
+  })
+  return { release, released }
+}
+
 test('hakemus requires all attachments to be uploaded before it can be sent', async ({
   hakijaAvustusHakuPage,
 }) => {
@@ -98,58 +106,41 @@ test('hakemus requires all attachments to be uploaded before it can be sent', as
       page.locator('#form-error-summary').getByTestId('financial-information-form')
     ).toHaveText('Taloustietolomake: Pakollinen tieto')
   })
-  await test.step('adding last attachment back allows sending', async () => {
-    await finaLocator.setInputFiles(dummyPdfPath)
-    await finaLocator.waitFor({ state: 'detached' })
-    await hakijaAvustusHakuPage.submitApplication()
-  })
-})
-
-function heldUntilReleased() {
-  let release = () => {}
-  const released = new Promise<void>((resolve) => {
-    release = resolve
-  })
-  return { release, released }
-}
-
-test('sending waits until an attachment upload and the following hakemus refresh have finished', async ({
-  hakijaAvustusHakuPage,
-}) => {
-  const { page } = hakijaAvustusHakuPage
-  await waitForFixtureAttachmentUploads(page)
-  const upload = heldUntilReleased()
-  const refresh = heldUntilReleased()
-  await page.route('**/attachments/financial-information-form', async (route) => {
-    if (route.request().method() === 'PUT') {
-      await upload.released
-    }
-    await route.continue()
-  })
-  await page.route(
-    (url) => /^\/api\/avustushaku\/\d+\/hakemus\/[^/]+$/.test(url.pathname),
-    async (route) => {
-      if (route.request().method() === 'GET') {
-        await refresh.released
+  await test.step('sending waits until the upload and the following hakemus refresh have finished', async () => {
+    await waitForFixtureAttachmentUploads(page)
+    const upload = heldUntilReleased()
+    const refresh = heldUntilReleased()
+    await page.route('**/attachments/financial-information-form', async (route) => {
+      if (route.request().method() === 'PUT') {
+        await upload.released
       }
       await route.continue()
-    }
-  )
+    })
+    await page.route(
+      (url) => /^\/api\/avustushaku\/\d+\/hakemus\/[^/]+$/.test(url.pathname),
+      async (route) => {
+        if (route.request().method() === 'GET') {
+          await refresh.released
+        }
+        await route.continue()
+      }
+    )
 
-  await page.locator("[name='financial-information-form']").setInputFiles(dummyPdfPath)
-  await expect(hakijaAvustusHakuPage.sendHakemusButton).toBeDisabled()
+    await finaLocator.setInputFiles(dummyPdfPath)
+    await expect(hakijaAvustusHakuPage.sendHakemusButton).toBeDisabled()
 
-  await Promise.all([
-    page.waitForResponse(
-      (response) =>
-        response.url().endsWith('/attachments/financial-information-form') &&
-        response.request().method() === 'PUT'
-    ),
-    upload.release(),
-  ])
-  await expect(page.locator("[name='financial-information-form']")).toHaveCount(0)
-  await expect(hakijaAvustusHakuPage.sendHakemusButton).toBeDisabled()
+    await Promise.all([
+      page.waitForResponse(
+        (response) =>
+          response.url().endsWith('/attachments/financial-information-form') &&
+          response.request().method() === 'PUT'
+      ),
+      upload.release(),
+    ])
+    await expect(finaLocator).toHaveCount(0)
+    await expect(hakijaAvustusHakuPage.sendHakemusButton).toBeDisabled()
 
-  refresh.release()
-  await hakijaAvustusHakuPage.submitApplication()
+    refresh.release()
+    await hakijaAvustusHakuPage.submitApplication()
+  })
 })

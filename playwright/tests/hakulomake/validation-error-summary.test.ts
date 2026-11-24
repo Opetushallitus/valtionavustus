@@ -42,58 +42,46 @@ async function fillAndWaitForSave(page: Page, field: Locator, value: string) {
   await expect(page.locator('#pending-changes')).toHaveText('false')
 }
 
-test('the error summary lists every missing answer of a new hakemus while sending is disabled', async ({
+test('the error summary lists the missing answers of a new hakemus while sending is disabled', async ({
   hakijaAvustusHakuPage,
   answers,
 }) => {
-  const { page } = hakijaAvustusHakuPage
+  const { page, sendHakemusButton } = hakijaAvustusHakuPage
   const errorSummaryToggle = page.locator('#form-error-summary .validation-errors-summary')
   const errorList = page.locator('#form-error-summary .popup.validation-errors')
   const { applicantName, contactPhoneNumber } = hakijaAvustusHakuPage.form.muutoshakuEnabledFields
 
-  await hakijaAvustusHakuPage.fillInBusinessId(AKAAN_KAUPUNKI_BUSINESS_ID)
-  await fillAndWaitForSave(page, applicantName, answers.contactPersonName)
+  await test.step('a hakemus that has never been saved shows no error summary', async () => {
+    await expect(page.locator('#entity-version')).toHaveText('1')
+    await expect(sendHakemusButton).toBeDisabled()
+    await expect(page.locator('#form-error-summary')).toBeHidden()
+  })
 
-  await expect(hakijaAvustusHakuPage.sendHakemusButton).toBeDisabled()
-  await expect(errorSummaryToggle).toBeVisible()
-  const summaryOnFirstVisit = (await errorSummaryToggle.textContent()) ?? ''
-  await errorSummaryToggle.click()
-  await expect(errorList.getByTestId('textField-0')).toHaveText('Puhelinumero: Pakollinen tieto')
+  await test.step('confirming the organisation lists the remaining missing answers', async () => {
+    await hakijaAvustusHakuPage.fillInBusinessId(AKAAN_KAUPUNKI_BUSINESS_ID)
+    await expect(sendHakemusButton).toBeDisabled()
+    await errorSummaryToggle.click()
+    await expect(errorList.getByTestId('applicant-name')).toHaveText(
+      'Yhteyshenkilö: Pakollinen tieto'
+    )
+    await expect(errorList.getByTestId('business-id')).toHaveCount(0)
+  })
 
-  await fillAndWaitForSave(page, contactPhoneNumber, answers.contactPersonPhoneNumber)
-  await expect(errorList.getByTestId('textField-0')).toBeHidden()
-  await expect(errorSummaryToggle).toHaveText(
-    `${parseInt(summaryOnFirstVisit, 10) - 1} vastauksessa puutteita`
-  )
-  const summaryAfterFilling = (await errorSummaryToggle.textContent()) ?? ''
+  await test.step('filling a missing answer removes it from the summary', async () => {
+    await fillAndWaitForSave(page, applicantName, answers.contactPersonName)
+    await expect(errorList.getByTestId('applicant-name')).toHaveCount(0)
+    await expect(errorList.getByTestId('textField-0')).toHaveText('Puhelinumero: Pakollinen tieto')
+    const errorCountBefore = parseInt((await errorSummaryToggle.textContent()) ?? '', 10)
 
-  await page.reload()
-  await expect(errorSummaryToggle).toHaveText(summaryAfterFilling)
-})
+    await fillAndWaitForSave(page, contactPhoneNumber, answers.contactPersonPhoneNumber)
+    await expect(errorList.getByTestId('textField-0')).toHaveCount(0)
+    await expect(errorSummaryToggle).toHaveText(`${errorCountBefore - 1} vastauksessa puutteita`)
+    await expect(sendHakemusButton).toBeDisabled()
+  })
 
-test('a hakemus that has never been saved shows no error summary while sending is disabled', async ({
-  hakijaAvustusHakuPage,
-}) => {
-  const { page } = hakijaAvustusHakuPage
-
-  await expect(page.locator('#entity-version')).toHaveText('1')
-  await expect(hakijaAvustusHakuPage.sendHakemusButton).toBeDisabled()
-  await expect(page.locator('#form-error-summary')).toBeHidden()
-})
-
-test('confirming the organisation lists the remaining missing answers while sending is disabled', async ({
-  hakijaAvustusHakuPage,
-}) => {
-  const { page } = hakijaAvustusHakuPage
-  const errorSummaryToggle = page.locator('#form-error-summary .validation-errors-summary')
-  const errorList = page.locator('#form-error-summary .popup.validation-errors')
-
-  await hakijaAvustusHakuPage.fillInBusinessId(AKAAN_KAUPUNKI_BUSINESS_ID)
-
-  await expect(hakijaAvustusHakuPage.sendHakemusButton).toBeDisabled()
-  await errorSummaryToggle.click()
-  await expect(errorList.getByTestId('applicant-name')).toHaveText(
-    'Yhteyshenkilö: Pakollinen tieto'
-  )
-  await expect(errorList.getByTestId('business-id')).toHaveCount(0)
+  await test.step('the summary stays the same after a reload', async () => {
+    const summaryAfterFilling = (await errorSummaryToggle.textContent()) ?? ''
+    await page.reload()
+    await expect(errorSummaryToggle).toHaveText(summaryAfterFilling)
+  })
 })

@@ -1,8 +1,8 @@
-# Playwright Testing Patterns: Avoiding Race Conditions
+# Playwright Testing Patterns
 
 ## Introduction
 
-VA-476 changed non-text form inputs to save with 100ms coalescing instead of 3000ms debounce. This creates more HTTP traffic and more frequent React re-renders, exposing latent race conditions in tests. Tests that relied on timing gaps between API calls now need explicit synchronization.
+Non-text form inputs save after a 100ms coalescing window, so tests see frequent HTTP traffic and React re-renders. Synchronize explicitly on saves and responses; never rely on timing gaps between API calls.
 
 ## Email assertions with retry
 
@@ -94,19 +94,14 @@ Shared fixtures (e.g., `budjettimuutoshakemusTest`) are extended by Swedish test
 **Good:**
 
 ```typescript
-await page.waitForFunction(() => {
-  const text = document.querySelector('div.save-message')?.textContent
-  return text?.includes('Tallennettu') || text?.includes('Sparat')
-})
+await expect(page.locator('div.save-message')).toContainText(/Tallennettu|Sparat/)
 ```
 
 **Bad:**
 
 ```typescript
 // BAD: breaks Swedish tests that extend this fixture
-await page.waitForFunction(() =>
-  document.querySelector('div.save-message')?.textContent?.includes('Tallennettu')
-)
+await expect(page.locator('div.save-message')).toContainText('Tallennettu')
 ```
 
 ## Ensure data-test-id locators are unique
