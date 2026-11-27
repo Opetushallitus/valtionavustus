@@ -27,7 +27,7 @@
 
                          ;; [org.apache.commons/commons-email "1.6.0"] ->
                          ;; fixes CVE-2025-7962 while retaining the javax.mail API
-                         [com.sun.mail/jakarta.mail "1.6.8"]
+                         [com.sun.mail/jakarta.mail "2.0.2"]
 
                          ;; [buddy/buddy-core "1.12.0-430"] ->
                          ;; fixes CVE-2025-8916 and CVE-2026-5588; keep aligned with bcprov
