@@ -1,10 +1,7 @@
 type LegacyFeatureFlag = { 'enabled?': boolean }
 
-/*
-  Add flags here
-  Currently empty string as no active flags
- */
-export type FeatureFlag = '' | 'enablePaatosTemplateVersion2'
+export type FeatureFlag =
+  '' | 'enablePaatosTemplateVersion2' | 'requireBilingualPainopistealueOnPublish'
 
 export interface EnvironmentApiResponse {
   name: string

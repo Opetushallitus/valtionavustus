@@ -61,7 +61,7 @@ export const HakuEdit = () => {
 
 const HakuEditor = () => {
   const avustushaku = useCurrentAvustushaku()
-  const { codeOptions, lainsaadantoOptions, helpTexts, userInfo } =
+  const { codeOptions, lainsaadantoOptions, environment, helpTexts, userInfo } =
     useHakujenHallintaSelector(selectLoadedInitialData)
   const loadingAvustushaku = useHakujenHallintaSelector(
     (state) => state.haku.loadStatus.loadingAvustushaku
@@ -73,8 +73,12 @@ const HakuEditor = () => {
   const isAllPaymentsPaid =
     hasPayments && !avustushaku.payments?.find((p) => p['paymentstatus-id'] !== 'paid')
   const userHasEditPrivilege = hasEditHakuPrivilege(avustushaku)
-  const { hakuIsValid, painopistealueidenJulkaisuvirhe } =
-    tarkistaAvustushaunJulkaisuehdot(avustushaku)
+  const painopistealueidenValidointiKaytossa =
+    environment['feature-flags']?.includes('requireBilingualPainopistealueOnPublish') ?? false
+  const { hakuIsValid, painopistealueidenJulkaisuvirhe } = tarkistaAvustushaunJulkaisuehdot(
+    avustushaku,
+    painopistealueidenValidointiKaytossa
+  )
   const allowAllHakuEdits =
     !loadingAvustushaku &&
     userHasEditPrivilege &&
@@ -1265,8 +1269,13 @@ function tarkistaPainopistealueetJulkaisuaVarten(
   }
 }
 
-function tarkistaAvustushaunJulkaisuehdot(avustushaku: VirkailijaAvustushaku) {
-  const painopistealueidenJulkaisuvirhe = tarkistaPainopistealueetJulkaisuaVarten(avustushaku)
+function tarkistaAvustushaunJulkaisuehdot(
+  avustushaku: VirkailijaAvustushaku,
+  painopistealueidenValidointiKaytossa: boolean
+) {
+  const painopistealueidenJulkaisuvirhe = painopistealueidenValidointiKaytossa
+    ? tarkistaPainopistealueetJulkaisuaVarten(avustushaku)
+    : undefined
   const hakuIsValid =
     !painopistealueidenJulkaisuvirhe &&
     isValidRegisterNumber(avustushaku['register-number']) &&

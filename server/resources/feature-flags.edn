@@ -1,3 +1,4 @@
 {; available environments: [:local :test :aws-dev :aws-qa :aws-prod ]
  :enablePaatosTemplateVersion2 [:local :test :aws-dev :aws-qa]
+ :requireBilingualPainopistealueOnPublish [:local :test :aws-dev :aws-qa]
 }

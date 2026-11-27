@@ -5,6 +5,7 @@
             [clojure.tools.logging :as log]
             [compojure.api.sweet :as compojure-api]
             [oph.common.datetime :as datetime]
+            [oph.soresu.common.config :refer [feature-enabled?]]
             [oph.soresu.common.db :refer [with-tx]]
             [oph.soresu.form.formutil :as formutil]
             [oph.soresu.form.schema :as form-schema]
@@ -126,6 +127,7 @@
 
         (and (= "published" (:status avustushaku))
              (not= "published" (:status tallennettu))
+             (feature-enabled? :requireBilingualPainopistealueOnPublish)
              (kaksikielinen-painopistealue-puuttuu? avustushaku))
         (http/bad-request {:error "Hakulomakkeella on Painopistealueet-kenttä. Lisää ennen julkaisua vähintään yksi painopistealue, jolla on nimi suomeksi ja ruotsiksi."})
 
