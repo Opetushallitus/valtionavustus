@@ -549,6 +549,7 @@ export type NonAddableFieldType =
   | 'decimalField'
   | 'finnishBusinessIdField'
   | 'vaEmailNotification'
+  | 'vaFocusAreas'
 export type BudgetFieldType =
   | 'vaBudget'
   | 'vaBudgetSummaryElement'

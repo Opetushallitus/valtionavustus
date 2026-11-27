@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import moment, { Moment } from 'moment'
 
 import DateUtil from 'soresu-form/web/DateUtil'
+import FormUtil from 'soresu-form/web/form/FormUtil'
 import { AVUSTUSHAKU_STATUSES, AvustushakuStatus, HelpTexts } from 'soresu-form/web/va/types'
 
 import { HakuRoles } from './HakuRoles'
@@ -37,6 +38,19 @@ import { avustushakuStatusDescription } from '../status'
 import { ScrollAwareValidationContainer } from './ValidationContainer'
 import * as validationContainerStyles from './ValidationContainer.module.css'
 import { OtantatarkastusBackfillModal } from './OtantatarkastusBackfillModal'
+
+const painopistealueidenJulkaisuvirheenTekstit = {
+  single:
+    'Avustushaun julkaiseminen ei ole mahdollista. Lisää vähintään yksi painopistealue, jolla on nimi suomeksi ja ruotsiksi.',
+}
+
+const yhteystietojenJulkaisuvirheenTekstit = {
+  single:
+    'Avustushaun lomakkeelta puuttuu tarpeellinen yhteystietokenttä. Avustushaun julkaiseminen ei ole mahdollista.',
+  multiple: (puuttuvienKenttienMaara: number) =>
+    `Avustushaun lomakkeelta puuttuu ${puuttuvienKenttienMaara} tarpeellista yhteystietokenttää. Avustushaun julkaiseminen ei ole mahdollista.`,
+}
+
 export const HakuEdit = () => {
   const avustushaku = tryToUseCurrentAvustushaku()
   if (!avustushaku) {
@@ -59,6 +73,8 @@ const HakuEditor = () => {
   const isAllPaymentsPaid =
     hasPayments && !avustushaku.payments?.find((p) => p['paymentstatus-id'] !== 'paid')
   const userHasEditPrivilege = hasEditHakuPrivilege(avustushaku)
+  const { hakuIsValid, painopistealueidenJulkaisuvirhe } =
+    tarkistaAvustushaunJulkaisuehdot(avustushaku)
   const allowAllHakuEdits =
     !loadingAvustushaku &&
     userHasEditPrivilege &&
@@ -84,6 +100,11 @@ const HakuEditor = () => {
 
   const [validationResult, setValidationResult] = useState<ValidationResult | undefined>()
   const [highlightValidationErrorByScaling, setHighlightValidationErrorByScaling] = useState(false)
+  const julkaisuvirhe =
+    painopistealueidenJulkaisuvirhe ?? (validationResult && avustushaku.muutoshakukelpoisuus)
+  const julkaisuvirheenTekstit = painopistealueidenJulkaisuvirhe
+    ? painopistealueidenJulkaisuvirheenTekstit
+    : yhteystietojenJulkaisuvirheenTekstit
 
   const onChangeListener = (target: EventTarget & HTMLElement, value: string) => {
     dispatch(updateField({ avustushaku, field: target, newValue: value }))
@@ -237,19 +258,14 @@ const HakuEditor = () => {
           </div>
         </WarningBanner>
       )}
-      {validationResult && avustushaku.muutoshakukelpoisuus && (
+      {julkaisuvirhe && (
         <ScrollAwareValidationContainer
-          result={avustushaku.muutoshakukelpoisuus}
+          result={julkaisuvirhe}
           avustushakuMuutoshakukelpoinen={avustushaku.muutoshakukelpoinen}
           extraClasses={
             highlightValidationErrorByScaling ? validationContainerStyles.scaleAnimation : ''
           }
-          errorTexts={{
-            single:
-              'Avustushaun lomakkeelta puuttuu tarpeellinen yhteystietokenttä. Avustushaun julkaiseminen ei ole mahdollista.',
-            multiple: (numberOfErrors) =>
-              `Avustushaun lomakkeelta puuttuu ${numberOfErrors} tarpeellista yhteystietokenttää. Avustushaun julkaiseminen ei ole mahdollista.`,
-          }}
+          errorTexts={julkaisuvirheenTekstit}
         />
       )}
       <div id="haku-edit-header" className="editor-header">
@@ -350,7 +366,7 @@ const HakuEditor = () => {
       <div className="two-column-container">
         <div>
           <SetStatus
-            hakuIsValid={checkIfAvustushakuIsValid(avustushaku)}
+            hakuIsValid={hakuIsValid}
             currentStatus={avustushaku.status}
             userHasEditPrivilege={userHasEditPrivilege}
             onChange={onChangeImmediate}
@@ -1226,10 +1242,36 @@ const HallinnoiavustuksiaRegisterNumber = ({
   )
 }
 
-function checkIfAvustushakuIsValid(avustushaku: VirkailijaAvustushaku) {
-  return (
+function tarkistaPainopistealueetJulkaisuaVarten(
+  avustushaku: VirkailijaAvustushaku
+): ValidationResult | undefined {
+  if (avustushaku.status === 'published') return
+
+  const painopistealuekentta = FormUtil.findFieldByFieldType(
+    avustushaku.formContent?.content ?? [],
+    'vaFocusAreas'
+  )
+  if (!painopistealuekentta) return
+
+  const onKaksikielinenPainopistealue = avustushaku.content['focus-areas'].items.some(
+    ({ fi, sv }) => fi?.trim() && sv?.trim()
+  )
+  if (onKaksikielinenPainopistealue) return
+
+  return {
+    'is-ok': false,
+    'ok-fields': [],
+    'erroneous-fields': [{ id: painopistealuekentta.id, label: 'Painopistealueet' }],
+  }
+}
+
+function tarkistaAvustushaunJulkaisuehdot(avustushaku: VirkailijaAvustushaku) {
+  const painopistealueidenJulkaisuvirhe = tarkistaPainopistealueetJulkaisuaVarten(avustushaku)
+  const hakuIsValid =
+    !painopistealueidenJulkaisuvirhe &&
     isValidRegisterNumber(avustushaku['register-number']) &&
     avustushaku['hankkeen-alkamispaiva'] != null &&
     avustushaku['hankkeen-paattymispaiva'] != null
-  )
+
+  return { hakuIsValid, painopistealueidenJulkaisuvirhe }
 }

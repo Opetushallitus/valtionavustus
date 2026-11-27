@@ -35,6 +35,11 @@ export const HaunTiedotPage = (page: Page) => {
     },
     statusInput: (status: 'draft' | 'published' | 'resolved') =>
       page.locator(`#set-status-${status}`),
+    julkaisuvirhe: {
+      warning: page.getByTestId('validation-warning'),
+      detailsButton: page.getByTestId('validation-warning-button'),
+      fieldId: page.getByTestId('validation-dropdown-item-id'),
+    },
     painopistealueet: {
       table: painopistealueet,
       inputs: painopistealueet.getByRole('textbox'),

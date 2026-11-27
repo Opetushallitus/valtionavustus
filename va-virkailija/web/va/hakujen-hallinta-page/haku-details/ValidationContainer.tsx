@@ -14,13 +14,8 @@ const fieldLabels: Record<string, string> = {
   'textField-0': 'Yhteyshenkilön puhelinnumero',
 }
 
-interface WarningProps {
-  result: ValidationResult
+interface WarningProps extends Pick<ValidationProps, 'result' | 'errorTexts'> {
   controlDropdown: () => void
-  errorTexts?: {
-    single: string
-    multiple: (numberOfErrors: number) => string
-  }
 }
 
 const IconExclamationMark = () => (
@@ -54,7 +49,7 @@ const Warning = ({ result, controlDropdown, errorTexts }: WarningProps) => {
   const numberOfErrors = result['erroneous-fields'].length
   const warningText =
     numberOfErrors > 1
-      ? errorTexts?.multiple(numberOfErrors) ||
+      ? errorTexts?.multiple?.(numberOfErrors) ||
         `Lomakkeesta puuttuu ${numberOfErrors} muutoshakemukselle tarpeellista kenttää. Muutoshaku ei ole mahdollista.`
       : errorTexts?.single ||
         `Lomakkeesta puuttuu muutoshakemukselle tarpeellinen kenttä. Muutoshaku ei ole mahdollista.`
@@ -133,7 +128,7 @@ interface ValidationProps {
   result: ValidationResult
   errorTexts?: {
     single: string
-    multiple: (numberOfErrors: number) => string
+    multiple?: (numberOfErrors: number) => string
   }
   avustushakuMuutoshakukelpoinen: boolean
   extraClasses?: string

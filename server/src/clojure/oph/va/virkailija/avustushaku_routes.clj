@@ -1,10 +1,12 @@
 (ns oph.va.virkailija.avustushaku-routes
   (:require [clj-time.coerce :as coerce]
             [clj-time.core :as time]
+            [clojure.string :as str]
             [clojure.tools.logging :as log]
             [compojure.api.sweet :as compojure-api]
             [oph.common.datetime :as datetime]
             [oph.soresu.common.db :refer [with-tx]]
+            [oph.soresu.form.formutil :as formutil]
             [oph.soresu.form.schema :as form-schema]
             [oph.va.hakija.api :as hakija-api]
             [oph.va.hakija.jotpa :refer [is-jotpa-avustushaku]]
@@ -96,6 +98,12 @@
                 old-end
                 (coerce/to-date (datetime/end-of-day new-end))))))
 
+(defn- kaksikielinen-painopistealue-puuttuu? [avustushaku]
+  (and (not-any? (fn [{:keys [fi sv]}] (and (not (str/blank? fi)) (not (str/blank? sv))))
+                 (get-in avustushaku [:content :focus-areas :items]))
+       (seq (formutil/find-fields* (partial formutil/has-field-type? "vaFocusAreas")
+                                   (:content (hakija-api/get-form-by-id (:form avustushaku)))))))
+
 (defn- post-avustushaku []
   (compojure-api/POST "/:avustushaku-id" []
     :path-params [avustushaku-id :- Long]
@@ -115,6 +123,11 @@
         (do
           (log/warn "Yritettiin muuttaa ratkaistun avustushaun" avustushaku-id "päätöstietoja")
           (http/bad-request {:error "Haku on ratkaistu, joten päätöksen tietoja ei voi muuttaa. Palauta haku tilaan Julkaistu tai Luonnos tehdäksesi muutoksia."}))
+
+        (and (= "published" (:status avustushaku))
+             (not= "published" (:status tallennettu))
+             (kaksikielinen-painopistealue-puuttuu? avustushaku))
+        (http/bad-request {:error "Hakulomakkeella on Painopistealueet-kenttä. Lisää ennen julkaisua vähintään yksi painopistealue, jolla on nimi suomeksi ja ruotsiksi."})
 
         :else
         (let [avustushaku (pin-hakuaika-end tallennettu avustushaku)
