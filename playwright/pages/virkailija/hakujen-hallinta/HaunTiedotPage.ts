@@ -9,6 +9,7 @@ const formatDate = (date: Date | moment.Moment) => moment(date).format(dateForma
 
 export const HaunTiedotPage = (page: Page) => {
   const common = CommonHakujenHallintaPage(page)
+  const painopistealueet = page.locator('table#focus-areas')
   const locators = {
     hakuName: {
       fi: page.locator('#haku-name-fi'),
@@ -31,6 +32,15 @@ export const HaunTiedotPage = (page: Page) => {
       draft: page.locator("label[for='set-status-draft']"),
       published: page.locator("label[for='set-status-published']"),
       resolved: page.locator("label[for='set-status-resolved']"),
+    },
+    statusInput: (status: 'draft' | 'published' | 'resolved') =>
+      page.locator(`#set-status-${status}`),
+    painopistealueet: {
+      table: painopistealueet,
+      inputs: painopistealueet.getByRole('textbox'),
+      input: (index: number, lang: 'fi' | 'sv') =>
+        painopistealueet.locator(`#focus-area-${index}-${lang}`),
+      addButton: painopistealueet.getByRole('button', { name: 'Lisää uusi painopistealue' }),
     },
     muutoshakukelpoinen: {
       yes: page.locator('#muutoshakukelpoinen_true'),
